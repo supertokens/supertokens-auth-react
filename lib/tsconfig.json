@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "noImplicitAny": true,
+        "allowSyntheticDefaultImports": true,
+        "strictNullChecks": true,
+        "noImplicitThis": true,
+        "module": "commonJS",
+        "outDir": "build",
+        "moduleResolution": "node",
+        "declaration": true
+    },
+    "compileOnSave": true
+}

@@ -1,0 +1,153 @@
+#!/bin/bash
+# Expects a releasePassword file to be ./
+
+# get version------------
+version=`cat package.json | grep -e '"version":'`
+while IFS='"' read -ra ADDR; do
+    counter=0
+    for i in "${ADDR[@]}"; do
+        if [ $counter == 3 ]
+        then
+            version=$i
+        fi
+        counter=$(($counter+1))
+    done
+done <<< "$version"
+
+branch_name="$(git symbolic-ref HEAD 2>/dev/null)" ||
+branch_name="(unnamed branch)"     # detached HEAD
+
+branch_name=${branch_name##refs/heads/}
+
+git fetch --prune --prune-tags
+
+password=`cat ./apiPassword`
+
+
+# we get from the server is the tests have passed or not.
+testPassedJson=`curl -s -X GET \
+"https://api.supertokens.io/0/frontend?password=$password&version=$version&name=auth-react" \
+-H 'api-version: 0'`
+
+
+if [[ `echo $testPassedJson | jq .testPassed` == "null"  ]]
+then
+  testPassed="false"
+else
+  testPassed=`echo $testPassedJson | jq .testPassed`
+fi
+
+if [[ $testPassed != "true" ]]
+then
+	RED='\033[0;31m'
+  NC='\033[0m' # No Color
+  printf "${RED}All tests have not passed. So stopping process.${NC}\n"
+  exit 1
+fi
+
+# check that current commit has a dev tag and that it is the correct version
+# get current commit hash------------
+if [ $# -eq 0 ]
+then
+	commit_hash=`git log --pretty=format:'%H' -n 1`
+else
+	commit_hash=$1
+fi
+
+
+# check if current commit already has a tag or not------------
+currTag=`git tag -l --points-at $commit_hash`
+
+expectedCurrTag=dev-v$version
+
+if [[ $currTag == $expectedCurrTag ]]
+then
+	continue=1
+else
+	RED='\033[0;31m'
+	NC='\033[0m'
+	printf "${RED}This commit does not have the right tag for the version you want to release.${NC}\n"
+	exit 1
+fi
+
+releasePassword=`cat ./releasePassword`
+
+# now we call the patch API to make it release mode
+responseStatus=`curl -s -o /dev/null -w "%{http_code}" -X PATCH \
+    https://api.supertokens.io/0/frontend \
+    -H 'Content-Type: application/json' \
+    -H 'api-version: 0' \
+    -d "{
+        \"password\": \"$releasePassword\",
+        \"name\":\"auth-react\",
+        \"version\":\"$version\",
+        \"release\": true
+    }"`
+
+if [ $responseStatus -ne "200" ]
+then
+    RED='\033[0;31m'
+    NC='\033[0m'
+    printf "${RED}patch api failed. Please try again.${NC}\n"
+    exit 1
+fi
+
+git tag --delete $currTag
+git push --delete origin $currTag
+
+git tag v$version
+git push --tags
+
+
+response=`curl -s -X GET \
+"https://api.supertokens.io/0/frontend/latest/check?password=$password&version=$version&name=auth-react" \
+-H 'api-version: 0'`
+response=`echo $response | jq .isLatest`
+
+
+if [[ $response == "null"  ]]
+then
+  RED='\033[0;31m'
+  NC='\033[0m'
+  printf "${RED}error while determining if we should push to master or not. Please do so manually if needed:${NC}\n"
+  if [[ $branch_name == "(unnamed branch)" ]]
+  then
+    echo "git checkout -b forrelease"
+    echo "git merge -s ours master"
+    echo "git checkout master"
+    echo "git merge forrelease"
+    echo "git push"
+    echo "git checkout forrelease"
+    exit 1
+  else
+    echo "git merge -s ours master"
+    echo "git checkout master"
+    echo "git merge $branch_name"
+    echo "git push"
+    echo "git checkout $branch_name"
+    exit 1
+  fi
+
+fi
+
+if [[ $response == "true" ]]
+then
+  echo "pushing to mater..."
+  if [[ $branch_name == "(unnamed branch)" ]]
+  then
+    git checkout -b forrelease
+    git merge -s ours master
+    git checkout master
+    git merge forrelease
+    git push
+    git checkout forrelease
+    echo "Done! Please delete this branch"
+  else
+    git merge -s ours master
+    git checkout master
+    git merge $branch_name
+    git push
+    git checkout $branch_name
+    echo "Done!"
+  fi
+fi

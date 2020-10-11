@@ -1,0 +1,44 @@
+{
+  "name": "supertokens-auth-react",
+  "version": "0.0.1",
+  "description": "ReactJS SDK that provides login functionality with SuperTokens.",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "isomorphic-fetch": "2.2.1",
+    "prettier": "1.18.2",
+    "typescript": "3.5.2",
+    "axios": "*"
+  },
+  "scripts": {
+    "test": "TEST_MODE=testing npx mocha --timeout 500000",
+    "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
+    "build": "cd lib && npx tsc -p tsconfig.json",
+    "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/**/*.js\"",
+    "build-pretty": "npm run build && npm run pretty",
+    "pretty-check": "cd lib && npx prettier --check --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/**/*.js\"",
+    "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/supertokens/supertokens-auth-react.git"
+  },
+  "keywords": [
+    "auth",
+    "authentication",
+    "authorisation",
+    "supertokens",
+    "chrome",
+    "firefox",
+    "IE",
+    "safari"
+  ],
+  "contributors": [
+    "rishabhpoddar"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/supertokens/supertokens-auth-react/issues"
+  },
+  "homepage": "https://github.com/supertokens/supertokens-auth-react#readme"
+}
