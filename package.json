@@ -3,15 +3,22 @@
   "version": "0.0.1",
   "description": "ReactJS SDK that provides login functionality with SuperTokens.",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "@types/node": "^14.11.8",
+    "regenerator-runtime": "^0.13.7"
+  },
   "devDependencies": {
+    "@babel/core": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/register": "^7.12.1",
+    "@babel/cli": "^7.12.1",
+    "axios": "*",
     "isomorphic-fetch": "2.2.1",
     "prettier": "1.18.2",
-    "typescript": "3.5.2",
-    "axios": "*"
+    "typescript": "3.5.2"
   },
   "scripts": {
-    "test": "TEST_MODE=testing npx mocha --timeout 500000",
+    "test": "npm run build && TEST_MODE=testing npx mocha --require @babel/register --timeout 500000",
     "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
     "build": "cd lib && npx tsc -p tsconfig.json",
     "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/**/*.js\"",

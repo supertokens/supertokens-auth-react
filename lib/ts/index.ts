@@ -13,4 +13,128 @@
  * under the License.
  */
 
-export default class SuperTokens {}
+/*
+ * Imports.
+ */
+import { getUrlFromDomain, getRecipeIdFromUrl, isTest, cleanPath } from "./utils";
+import RecipeModule from "./recipes/module";
+
+/*
+ * Consts.
+ */
+
+const apiBasePath = "/auth";
+const websiteBasePath = "/auth";
+
+/*
+ * Interfaces.
+ */
+
+interface AppInfo {
+    /*
+     * The name of your application.
+     */
+    appName: string;
+
+    /*
+     * The API that connects with your application.
+     */
+    apiDomain: string;
+
+    /*
+     * The base path for SuperTokens middleware in your API.
+     * Default to `/auth`
+     */
+    apiBasePath?: string;
+
+    /*
+     * The domain on which your application runs.
+     */
+    websiteDomain: string;
+
+    /*
+     * The base path for SuperTokens middleware in your front end application.
+     * Default to `/auth`
+     */
+    websiteBasePath?: string;
+
+    /*
+     * (Optional) URL for your logo that will be displayed on the login form.
+     */
+    logoFullURL?: string;
+}
+
+interface SuperTokensConfig {
+    appInfo: AppInfo;
+    recipeList: Array<RecipeModule>;
+}
+
+/*
+ * Class.
+ */
+
+export default class SuperTokens {
+    /*
+     * Attributes.
+     */
+    private static appInfo?: AppInfo;
+    private static recipeList: Array<RecipeModule> = [];
+
+    /*
+     * Static methods.
+     */
+    static init(config: SuperTokensConfig) {
+        if (SuperTokens.appInfo || SuperTokens.recipeList.length > 0)
+            throw new Error("SuperTokens was already initialized");
+
+        SuperTokens.appInfo = {
+            appName: config.appInfo.appName,
+            apiDomain: getUrlFromDomain(config.appInfo.apiDomain),
+            apiBasePath: config.appInfo.apiBasePath || apiBasePath,
+            websiteDomain: getUrlFromDomain(config.appInfo.websiteDomain),
+            websiteBasePath:
+                (config.appInfo.websiteBasePath && cleanPath(config.appInfo.websiteBasePath)) || websiteBasePath,
+            logoFullURL: config.appInfo.logoFullURL || undefined
+        };
+
+        if (!config.recipeList) throw new Error("No recipeList provided to SuperTokens."); // TODO Add link to appropriate docs.
+
+        SuperTokens.recipeList = config.recipeList;
+    }
+
+    static getAppInfo(): AppInfo {
+        if (SuperTokens.appInfo === undefined)
+            throw new Error("SuperTokens must be initialized before calling this method.");
+
+        return SuperTokens.appInfo;
+    }
+
+    static handleRoute(url: string): boolean {
+        return SuperTokens.recipeList.some(recipe => recipe.handleRoute(url));
+    }
+
+    static getRoutingComponent(url: string) {
+        // TODO
+    }
+
+    static getRecipeList() {
+        return SuperTokens.recipeList;
+    }
+
+    /*
+     * Helpers.
+     */
+    static prependWebsiteBasePath(path: string): string {
+        return `${SuperTokens.getAppInfo().websiteBasePath}${path}`;
+    }
+
+    /*
+     * Tests methods.
+     */
+    static reset() {
+        if (!isTest()) return;
+
+        SuperTokens.appInfo = undefined;
+        SuperTokens.recipeList.length = 0;
+    }
+}
