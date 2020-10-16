@@ -2,18 +2,39 @@
   "name": "supertokens-auth-react",
   "version": "0.0.1",
   "description": "ReactJS SDK that provides login functionality with SuperTokens.",
-  "main": "index.js",
-  "dependencies": {},
+  "main": "./lib/build/index.js",
   "devDependencies": {
-    "isomorphic-fetch": "2.2.1",
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-react": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.1",
+    "@babel/register": "^7.12.1",
+    "@types/node": "^14.11.10",
+    "@types/react": "^16.9.53",
+    "@types/react-router-dom": "^5.1.6",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "jsdom": "16.4.0",
+    "jsdom-global": "3.0.2",
     "prettier": "1.18.2",
-    "typescript": "3.5.2",
-    "axios": "*"
+    "puppeteer": "^5.3.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.0.0",
+    "react-router-dom": "^5.2.0",
+    "regenerator-runtime": "^0.13.7",
+    "typescript": "3.5.2"
+  },
+  "peerDependencies": {
+    "react": "^16.14.0",
+    "react-router-dom": "^5.2.0"
   },
   "scripts": {
-    "test": "TEST_MODE=testing npx mocha --timeout 500000",
+    "test": "npm run build-pretty && TEST_MODE=testing mocha --require @babel/register --timeout 500000",
     "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
-    "build": "cd lib && npx tsc -p tsconfig.json",
+    "tsc": "cd lib && npx tsc -p tsconfig.json",
+    "build": "npm run build-check && npm run compile",
+    "compile": "cd lib && babel ./ts/ --out-dir build/ --extensions '.ts,.tsx'",
+    "watch": "cd lib && babel --watch ./ts/ --out-dir ./build/ --extensions '.ts,.tsx'",
     "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/**/*.js\"",
     "build-pretty": "npm run build && npm run pretty",
     "pretty-check": "cd lib && npx prettier --check --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/**/*.js\"",
@@ -34,11 +55,18 @@
     "safari"
   ],
   "contributors": [
-    "rishabhpoddar"
+    "rishabhpoddar",
+    "NkxxkN"
   ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/supertokens/supertokens-auth-react/issues"
   },
-  "homepage": "https://github.com/supertokens/supertokens-auth-react#readme"
+  "homepage": "https://github.com/supertokens/supertokens-auth-react#readme",
+  "dependencies": {
+    "@emotion/core": "^10.0.35",
+    "emotion": "^10.0.27",
+    "emotion-server": "^10.0.27",
+    "react-shadow": "^18.4.2"
+  }
 }

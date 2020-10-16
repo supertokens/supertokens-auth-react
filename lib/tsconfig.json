@@ -8,7 +8,8 @@
         "module": "commonJS",
         "outDir": "build",
         "moduleResolution": "node",
-        "declaration": true
+        "declaration": true,
+        "jsx": "react"
     },
     "compileOnSave": true
 }

@@ -1,10 +1,3 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.package_version = void 0;
-
 /* Copyright (c) 2020, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
@@ -19,5 +12,19 @@ exports.package_version = void 0;
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-var package_version = "0.0.1";
-exports.package_version = package_version;
+
+/*
+ * Helpers.
+ */
+
+export function mockWindowLocation(url) {
+    try {
+        const location = new URL(url);
+        global.window = Object.create(window);
+        Object.defineProperty(window, "location", {
+            value: location
+        });
+    } catch (e) {
+        throw Error(`Failed to mock window location object with ${url}`, e);
+    }
+}
