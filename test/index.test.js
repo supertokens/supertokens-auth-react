@@ -103,4 +103,19 @@ describe("SuperTokens", function() {
         });
         assert.strictEqual(SuperTokens.getRecipeList().length, 1);
     });
+
+    it("SuperTokens handleRoute should work approriately", async function() {
+        SuperTokens.init({
+            ...defaultConfigs,
+            recipeList: [EmailPassword.init()]
+        });
+        // Get URL from
+        const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain;
+
+        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/blog/`), false);
+        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/blog/auth`), false);
+        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth/404`), false);
+        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth/`), true);
+        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth`), true);
+    });
 });

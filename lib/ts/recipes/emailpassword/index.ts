@@ -32,7 +32,7 @@ interface EmailPasswordConfig extends RecipeModuleConfig {
 export default class EmailPassword extends RecipeModule {
     static instance?: EmailPassword;
     static recipeId: string = "email-password";
-    static routes: Array<string> = ["/auth"];
+    static routes: Array<string> = [""];
 
     constructor(config: EmailPasswordConfig) {
         super({

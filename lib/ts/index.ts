@@ -125,7 +125,7 @@ export default class SuperTokens {
      * Helpers.
      */
     static prependWebsiteBasePath(path: string): string {
-        return `${SuperTokens.getAppInfo().websiteBasePath}${path}`;
+        return `${SuperTokens.getAppInfo().websiteBasePath}${cleanPath(path)}`;
     }
 
     /*

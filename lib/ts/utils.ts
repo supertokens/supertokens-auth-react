@@ -29,7 +29,7 @@ export function getRecipeIdFromUrl(urlString: string): string | null {
 
 export function cleanPath(path: string): string {
     // Remove pending `/` at the end of URL.
-    if (path.endsWith("/")) path.slice(0, -1);
+    if (path.endsWith("/")) path = path.slice(0, -1);
 
     return path;
 }
