@@ -26,21 +26,8 @@ import { AppInfo, SuperTokensConfig } from "./types";
  */
 
 export default class SuperTokens {
-    /*
-     * Attributes.
-     */
-    private static appInfo?: AppInfo;
-    private static recipeList: RecipeModule[] = [];
-
-    /*
-     * Static methods.
-     */
-    static init(config: SuperTokensConfig) {
-        if (SuperTokens.appInfo || SuperTokens.recipeList.length > 0) {
-            throw new Error("SuperTokens was already initialized");
-        }
-
-        SuperTokens.appInfo = {
+    constructor(config: SuperTokensConfig) {
+        this.appInfo = {
             appName: config.appInfo.appName,
             apiDomain: normaliseUrl(config.appInfo.apiDomain),
             apiBasePath: config.appInfo.apiBasePath || DEFAULT_API_BASE_PATH,
@@ -55,27 +42,69 @@ export default class SuperTokens {
             throw new Error("No recipeList provided to SuperTokens."); // TODO Add link to appropriate docs.
         }
 
-        SuperTokens.recipeList = config.recipeList;
+        this.recipeList = config.recipeList;
     }
 
-    static getAppInfo(): AppInfo {
-        if (SuperTokens.appInfo === undefined) {
-            throw new Error("SuperTokens must be initialized before calling this method.");
-        }
+    /*
+     * Instance Attributes.
+     */
+    private appInfo: AppInfo;
+    private recipeList: RecipeModule[] = [];
 
-        return SuperTokens.appInfo;
+    /*
+     * Instance Methods.
+     */
+    getAppInfo(): AppInfo {
+        return this.appInfo;
     }
 
-    static canHandleRoute(url: string): boolean {
-        return SuperTokens.recipeList.some(recipe => recipe.canHandleRoute(url));
+    canHandleRoute(url: string): boolean {
+        return this.recipeList.some(recipe => recipe.canHandleRoute(url));
     }
 
-    static getRoutingComponent(url: string) {
+    getRoutingComponent(url: string) {
         // TODO
     }
 
+    getRecipeList() {
+        return this.recipeList;
+    }
+
+    /*
+     * Static Attributes.
+     */
+    private static instance?: SuperTokens;
+
+    /*
+     * Static Methods.
+     */
+    static init(config: SuperTokensConfig) {
+        if (SuperTokens.instance !== undefined) throw new Error("SuperTokens was already initialized");
+
+        return (SuperTokens.instance = new SuperTokens(config));
+    }
+
+    private static getInstance(): SuperTokens {
+        if (SuperTokens.instance === undefined)
+            throw new Error("SuperTokens must be initialized before calling this method.");
+
+        return SuperTokens.instance;
+    }
+
+    static getAppInfo(): AppInfo {
+        return SuperTokens.getInstance().getAppInfo();
+    }
+
+    static canHandleRoute(url: string): boolean {
+        return SuperTokens.getInstance().canHandleRoute(url);
+    }
+
+    static getRoutingComponent(url: string) {
+        return SuperTokens.getInstance().getRoutingComponent(url);
+    }
+
     static getRecipeList() {
-        return SuperTokens.recipeList;
+        return SuperTokens.getInstance().getRecipeList();
     }
 
     /*
@@ -86,7 +115,11 @@ export default class SuperTokens {
             return;
         }
 
-        SuperTokens.appInfo = undefined;
-        SuperTokens.recipeList.length = 0;
+        SuperTokens.instance = undefined;
     }
 }
+
+export const canHandleRoute = SuperTokens.canHandleRoute;
+export const init = SuperTokens.init;
+export const getRecipeList = SuperTokens.getRecipeList;
+export const getRoutingComponent = SuperTokens.getRoutingComponent;
