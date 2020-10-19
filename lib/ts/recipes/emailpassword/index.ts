@@ -18,6 +18,7 @@
  */
 import RecipeModule from "../recipeModule";
 import { EmailPasswordConfig } from "../../types";
+import SignInUp from "./SignInUp";
 
 /*
  * Class.
@@ -29,12 +30,14 @@ export default class EmailPassword extends RecipeModule {
         super({
             ...config,
             recipeId: "email-password",
-            routes: [""]
+            features: {
+                "/": SignInUp
+            }
         });
     }
 
     static init(config: EmailPasswordConfig): RecipeModule {
-        return new EmailPassword(config);
+        return (EmailPassword.instance = new EmailPassword(config));
     }
 
     static getInstanceIfDefined(): EmailPassword {
@@ -45,3 +48,5 @@ export default class EmailPassword extends RecipeModule {
         return EmailPassword.instance;
     }
 }
+
+export { SignInUp };

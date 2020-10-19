@@ -1,3 +1,4 @@
+import { ComponentClass } from "react";
 import RecipeModule from "./recipes/recipeModule";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoConfig;
@@ -19,8 +20,11 @@ export declare type AppInfo = AppInfoBase & {
     apiBasePath: string;
     websiteBasePath: string;
 };
+export declare type FeatureHash = {
+    [route: string]: ComponentClass;
+};
 export declare type RecipeModuleConfig = {
-    routes: string[];
+    features: FeatureHash;
     recipeId: string;
 };
 export declare type EmailPasswordConfig = RecipeModuleConfig & {

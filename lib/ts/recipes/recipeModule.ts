@@ -18,37 +18,58 @@
  */
 import { normalisePath, getRecipeIdFromUrl } from "../utils";
 import SuperTokens from "../";
-import { RecipeModuleConfig } from "../types";
+import { FeatureHash, RecipeModuleConfig } from "../types";
+import { Component, ComponentClass } from "react";
 
 /*
  * Class.
  */
 export default abstract class RecipeModule {
-    private routes: string[];
+    private features: FeatureHash;
     private recipeId: string;
 
     constructor(config: RecipeModuleConfig) {
         this.recipeId = config.recipeId;
-        // Add websiteBasePath prefix to routes.
-        this.routes = config.routes;
+        this.features = config.features;
     }
 
     getRecipeId() {
         return this.recipeId;
     }
 
-    canHandleRoute(urlString: string): boolean {
-        // If rId from URL exists and doesn't match, return false.
-        const rIdFromUrl = getRecipeIdFromUrl(urlString);
-        if (rIdFromUrl !== null && rIdFromUrl !== this.recipeId) {
+    canHandleRoute(route: string, rId: string | null): boolean {
+        // If rId from URL exists and doesn't match, or if route path doesn't start with return false.
+        if (rId !== null && rId !== this.recipeId) {
             return false;
         }
 
-        const url = new URL(urlString);
-
         // Otherwise, if recipeId matches, or if none was provided, check if url matches any module routes.
-        return this.routes.some(route => {
-            return normalisePath(url.pathname) === `${SuperTokens.getAppInfo().websiteBasePath}${normalisePath(route)}`;
-        });
+        // Remove websiteBasePath from normalised path to match with features hash keys.
+        const routeWithoutBasePath = this.getNormalisedRouteWithoutWebsiteBasePath(route);
+        return Boolean(this.features[routeWithoutBasePath]);
+    }
+
+    getRoutingComponent(route: string, rId: string | null): ComponentClass | undefined {
+        // If rId from URL exists and doesn't match, or if route path doesn't start with return undefined.
+        if (rId !== null && rId !== this.recipeId) {
+            return undefined;
+        }
+
+        const routeWithoutBasePath = this.getNormalisedRouteWithoutWebsiteBasePath(route);
+        return this.features[routeWithoutBasePath];
+    }
+
+    private getNormalisedRouteWithoutWebsiteBasePath(path: string): string {
+        // If base path is present, remove it.
+        if (path.startsWith(SuperTokens.getAppInfo().websiteBasePath)) {
+            let newPath = path.slice(SuperTokens.getAppInfo().websiteBasePath.length);
+            if (newPath.length === 0) {
+                newPath = "/";
+            }
+            return newPath;
+        }
+
+        // Otherwise, return url unchanged.
+        return path;
     }
 }

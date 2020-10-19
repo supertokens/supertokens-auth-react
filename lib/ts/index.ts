@@ -16,10 +16,11 @@
 /*
  * Imports.
  */
-import { normaliseUrl, isTest, normalisePath } from "./utils";
+import { normaliseUrl, isTest, normalisePath, getRecipeIdFromUrl } from "./utils";
 import RecipeModule from "./recipes/recipeModule";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH } from "./constants";
 import { AppInfo, SuperTokensConfig } from "./types";
+import { ComponentClass } from "react";
 
 /*
  * Class.
@@ -30,7 +31,9 @@ export default class SuperTokens {
         this.appInfo = {
             appName: config.appInfo.appName,
             apiDomain: normaliseUrl(config.appInfo.apiDomain),
-            apiBasePath: config.appInfo.apiBasePath || DEFAULT_API_BASE_PATH,
+            apiBasePath:
+                (config.appInfo.apiBasePath !== undefined && normalisePath(config.appInfo.apiBasePath)) ||
+                DEFAULT_API_BASE_PATH,
             websiteDomain: normaliseUrl(config.appInfo.websiteDomain),
             websiteBasePath:
                 (config.appInfo.websiteBasePath !== undefined && normalisePath(config.appInfo.websiteBasePath)) ||
@@ -58,12 +61,36 @@ export default class SuperTokens {
         return this.appInfo;
     }
 
-    canHandleRoute(url: string): boolean {
-        return this.recipeList.some(recipe => recipe.canHandleRoute(url));
+    canHandleRoute(urlString: string): boolean {
+        const url = new URL(urlString);
+        const pathname = normalisePath(url.pathname);
+
+        // If pathname doesn't start with websiteBasePath, return false.
+        if (!pathname.startsWith(SuperTokens.getAppInfo().websiteBasePath)) {
+            return false;
+        }
+
+        const rId = getRecipeIdFromUrl(urlString);
+        return this.recipeList.some(recipe => recipe.canHandleRoute(pathname, rId));
     }
 
-    getRoutingComponent(url: string) {
-        // TODO
+    getRoutingComponent(urlString: string): ComponentClass | undefined {
+        const url = new URL(urlString);
+        const pathname = normalisePath(url.pathname);
+
+        // If pathname doesn't start with websiteBasePath, return false.
+        if (!pathname.startsWith(SuperTokens.getAppInfo().websiteBasePath)) {
+            return undefined;
+        }
+
+        const rId = getRecipeIdFromUrl(urlString);
+        let component: ComponentClass | undefined;
+        this.recipeList.find(recipe => {
+            component = recipe.getRoutingComponent(pathname, rId);
+            if (component !== undefined) return true; // exist the loop.
+        });
+
+        return component;
     }
 
     getRecipeList() {
@@ -84,7 +111,7 @@ export default class SuperTokens {
         return (SuperTokens.instance = new SuperTokens(config));
     }
 
-    private static getInstance(): SuperTokens {
+    private static getInstanceIfDefined(): SuperTokens {
         if (SuperTokens.instance === undefined)
             throw new Error("SuperTokens must be initialized before calling this method.");
 
@@ -92,19 +119,19 @@ export default class SuperTokens {
     }
 
     static getAppInfo(): AppInfo {
-        return SuperTokens.getInstance().getAppInfo();
+        return SuperTokens.getInstanceIfDefined().getAppInfo();
     }
 
     static canHandleRoute(url: string): boolean {
-        return SuperTokens.getInstance().canHandleRoute(url);
+        return SuperTokens.getInstanceIfDefined().canHandleRoute(url);
     }
 
     static getRoutingComponent(url: string) {
-        return SuperTokens.getInstance().getRoutingComponent(url);
+        return SuperTokens.getInstanceIfDefined().getRoutingComponent(url);
     }
 
     static getRecipeList() {
-        return SuperTokens.getInstance().getRecipeList();
+        return SuperTokens.getInstanceIfDefined().getRecipeList();
     }
 
     /*

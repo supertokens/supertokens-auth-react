@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
+import { Component, ComponentClass } from "react";
 import RecipeModule from "./recipes/recipeModule";
 
 export type SuperTokensConfig = {
@@ -89,11 +89,15 @@ export type AppInfo = AppInfoBase & {
     websiteBasePath: string;
 };
 
+export type FeatureHash = {
+    [route: string]: ComponentClass;
+};
+
 export type RecipeModuleConfig = {
     /*
-     * Routes that the module responds to.
+     * Features that the module responds to.
      */
-    routes: string[];
+    features: FeatureHash;
 
     /*
      * Unique Identifier of a module.

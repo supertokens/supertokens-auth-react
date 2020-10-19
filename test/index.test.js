@@ -20,7 +20,7 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import SuperTokens from "../lib/build/index";
-import EmailPassword from "../lib/build/recipes/emailpassword";
+import EmailPassword, { SignInUp } from "../lib/build/recipes/emailpassword";
 import assert from "assert";
 
 /*
@@ -120,5 +120,23 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/auth`), true);
         assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/auth/`), true);
         assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/auth/.`), true);
+    });
+
+    it("SuperTokens getRoutingComponent should work approriately", async function() {
+        SuperTokens.init({
+            ...defaultConfigs,
+            recipeList: [EmailPassword.init()]
+        });
+
+        // Get URL from configs (will use window.location.href) in prod, but window object not available in tests.
+        const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain;
+
+        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/blog/`), undefined);
+        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/blog/.`), undefined);
+        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/blog/auth`), undefined);
+        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/auth/404`), undefined);
+        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/auth`), SignInUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/auth/`), SignInUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/auth/.`), SignInUp);
     });
 });

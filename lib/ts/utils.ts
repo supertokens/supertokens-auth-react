@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { RECIPE_ID_GET_PARAM } from "./constants";
+import { RECIPE_ID_QUERY_PARAM } from "./constants";
 
 /*
  * normaliseUrl
@@ -46,7 +46,7 @@ export function normaliseUrl(url: string): string {
 export function getRecipeIdFromUrl(urlString: string): string | null {
     const url = new URL(urlString);
     const urlParams = new URLSearchParams(url.search);
-    return urlParams.get(RECIPE_ID_GET_PARAM);
+    return urlParams.get(RECIPE_ID_QUERY_PARAM);
 }
 
 /*

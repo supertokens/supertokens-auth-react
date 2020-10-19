@@ -13,8 +13,18 @@
  * under the License.
  */
 
-export const RECIPE_ID_QUERY_PARAM = "rid";
+/*
+ * Imports.
+ */
 
-export const DEFAULT_API_BASE_PATH = "/auth";
+ import React, {Component, Fragment} from "react";
 
-export const DEFAULT_WEBSITE_BASE_PATH = "/auth";
+/*
+ * Class.
+ */
+export default class SignInUp extends Component {
+    render () {
+        return (<Fragment></Fragment>);
+    }
+
+}
