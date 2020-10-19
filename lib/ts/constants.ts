@@ -13,4 +13,4 @@
  * under the License.
  */
 
-export const recipeIdGetParam = "rId";
+export const recipeIdGetParam = "rid";
