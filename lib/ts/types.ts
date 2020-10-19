@@ -90,11 +90,25 @@ export type AppInfo = AppInfoBase & {
 };
 
 export type RecipeModuleConfig = {
+    /*
+     * Routes that the module responds to.
+     */
     routes: string[];
+
+    /*
+     * Unique Identifier of a module.
+     */
     recipeId: string;
 };
 
 export type EmailPasswordConfig = RecipeModuleConfig & {
+    /*
+     * Sign In and Sign Up feature.
+     */
     signInAndUpFeature: any;
+
+    /*
+     * Reset password Using Token feature.
+     */
     resetPasswordUsingTokenFeature: any;
 };

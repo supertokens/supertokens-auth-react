@@ -41,7 +41,7 @@ export function normaliseUrl(url: string): string {
 /*
  * getRecipeIdFromPath
  * Input: string url.
- * Output The "rId" query param if present, null otherwise.
+ * Output The "rid" query param if present, null otherwise.
  */
 export function getRecipeIdFromUrl(urlString: string): string | null {
     const url = new URL(urlString);
