@@ -104,7 +104,7 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.getRecipeList().length, 1);
     });
 
-    it("SuperTokens handleRoute should work approriately", async function() {
+    it("SuperTokens canHandleRoute should work approriately", async function() {
         SuperTokens.init({
             ...defaultConfigs,
             recipeList: [EmailPassword.init()]
@@ -113,12 +113,12 @@ describe("SuperTokens", function() {
         // Get URL from configs (will use window.location.href) in prod, but window object not available in tests.
         const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain;
 
-        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/blog/`), false);
-        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/blog/.`), false);
-        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/blog/auth`), false);
-        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth/404`), false);
-        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth`), true);
-        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth/`), true);
-        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth/.`), true);
+        assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/blog/`), false);
+        assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/blog/.`), false);
+        assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/blog/auth`), false);
+        assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/auth/404`), false);
+        assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/auth`), true);
+        assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/auth/`), true);
+        assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/auth/.`), true);
     });
 });

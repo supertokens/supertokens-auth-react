@@ -66,8 +66,8 @@ export default class SuperTokens {
         return SuperTokens.appInfo;
     }
 
-    static handleRoute(url: string): boolean {
-        return SuperTokens.recipeList.some(recipe => recipe.handleRoute(url));
+    static canHandleRoute(url: string): boolean {
+        return SuperTokens.recipeList.some(recipe => recipe.canHandleRoute(url));
     }
 
     static getRoutingComponent(url: string) {

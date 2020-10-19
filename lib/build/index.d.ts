@@ -5,7 +5,7 @@ export default class SuperTokens {
     private static recipeList;
     static init(config: SuperTokensConfig): void;
     static getAppInfo(): AppInfo;
-    static handleRoute(url: string): boolean;
+    static canHandleRoute(url: string): boolean;
     static getRoutingComponent(url: string): void;
     static getRecipeList(): RecipeModule[];
     static reset(): void;

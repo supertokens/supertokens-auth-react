@@ -37,7 +37,7 @@ export default abstract class RecipeModule {
         return this.recipeId;
     }
 
-    handleRoute(urlString: string): boolean {
+    canHandleRoute(urlString: string): boolean {
         // If rId from URL exists and doesn't match, return false.
         const rIdFromUrl = getRecipeIdFromUrl(urlString);
         if (rIdFromUrl !== null && rIdFromUrl !== this.recipeId) {

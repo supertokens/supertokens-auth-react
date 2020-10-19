@@ -4,5 +4,5 @@ export default abstract class RecipeModule {
     private recipeId;
     constructor(config: RecipeModuleConfig);
     getRecipeId(): string;
-    handleRoute(urlString: string): boolean;
+    canHandleRoute(urlString: string): boolean;
 }
