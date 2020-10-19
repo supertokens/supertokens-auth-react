@@ -13,4 +13,8 @@
  * under the License.
  */
 
-export const recipeIdGetParam = "rid";
+export const RECIPE_ID_GET_PARAM = "rid";
+
+export const DEFAULT_API_BASE_PATH = "/auth";
+
+export const DEFAULT_WEBSITE_BASE_PATH = "/auth";

@@ -13,22 +13,18 @@
  * under the License.
  */
 
-import { cleanPath, getRecipeIdFromUrl } from "../utils";
-import SuperTokens from "../";
-
 /*
- * Interface.
+ * Imports.
  */
-export interface RecipeModuleConfig {
-    routes: Array<string>;
-    recipeId: string;
-}
+import { normalisePath, getRecipeIdFromUrl } from "../utils";
+import SuperTokens from "../";
+import { RecipeModuleConfig } from "../types";
 
 /*
  * Class.
  */
-export default class RecipeModule {
-    private routes: Array<string>;
+export default abstract class RecipeModule {
+    private routes: string[];
     private recipeId: string;
 
     constructor(config: RecipeModuleConfig) {
@@ -37,24 +33,22 @@ export default class RecipeModule {
         this.routes = config.routes;
     }
 
-    static getInstanceIfDefined() {
-        throw new Error("Unimplemented method");
-    }
-
-    static init(config: RecipeModuleConfig) {
-        throw new Error("Unimplemented method");
+    getRecipeId() {
+        return this.recipeId;
     }
 
     handleRoute(urlString: string): boolean {
         // If rId from URL exists and doesn't match, return false.
         const rIdFromUrl = getRecipeIdFromUrl(urlString);
-        if (rIdFromUrl !== null && rIdFromUrl !== this.recipeId) return false;
+        if (rIdFromUrl !== null && rIdFromUrl !== this.recipeId) {
+            return false;
+        }
 
         const url = new URL(urlString);
 
         // Otherwise, if recipeId matches, or if none was provided, check if url matches any module routes.
         return this.routes.some(route => {
-            return cleanPath(url.pathname) === SuperTokens.prependWebsiteBasePath(route);
+            return normalisePath(url.pathname) === `${SuperTokens.getAppInfo().websiteBasePath}${normalisePath(route)}`;
         });
     }
 }

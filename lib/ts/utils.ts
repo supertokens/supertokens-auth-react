@@ -13,22 +13,29 @@
  * under the License.
  */
 
-import { recipeIdGetParam } from "./constants";
+import { RECIPE_ID_GET_PARAM } from "./constants";
 
 /*
- * getUrlFromDomain
- * Input: string Domain.
+ * normaliseUrl
+ * Input: string url (or domain).
  * Output: A url with appropriate protocol.
  */
-export function getUrlFromDomain(domain: string): string {
-    // If protocol already present, return unchanged.
-    if (domain.startsWith("https://") || domain.startsWith("http://")) return domain;
+export function normaliseUrl(url: string): string {
+    let newUrl: string;
 
-    // If development environment, return http protocol.
-    if (domain.startsWith("localhost:")) return `http://${domain}`;
+    // If development environment or IP address, return http protocol.
+    if (url.startsWith("localhost:") || isIpV4Address(url)) {
+        newUrl = `http://${url}`;
 
-    // Otherwise, enforce https.
-    return `https://${domain}`;
+        // If no protocol, add https.
+    } else if (url.startsWith("https://") === false && url.startsWith("http://") === false) {
+        newUrl = `https://${url}`;
+
+        // If protocol already present, return unchanged.
+    } else {
+        newUrl = url;
+    }
+    return new URL(newUrl).origin;
 }
 
 /*
@@ -39,14 +46,53 @@ export function getUrlFromDomain(domain: string): string {
 export function getRecipeIdFromUrl(urlString: string): string | null {
     const url = new URL(urlString);
     const urlParams = new URLSearchParams(url.search);
-    return urlParams.get(recipeIdGetParam);
+    return urlParams.get(RECIPE_ID_GET_PARAM);
 }
 
-export function cleanPath(path: string): string {
-    // Remove pending `/` at the end of URL.
-    if (path.endsWith("/")) path = path.slice(0, -1);
+/*
+ * normalisePath
+ * Input: string path (compatible with url).
+ * Output normalised path.
+ */
+export function normalisePath(path: string): string {
+    try {
+        // If URL, extract pathname, remove URL and query params.
+        path = new URL(path).pathname;
+    } catch (e) {
+        // Otherwise if path, remove query params.
+        // Prepend "/" at the begining if not present.
+        if (path.startsWith("/") === false) {
+            path = `/${path}`;
+        }
+
+        const ANY_DOMAIN_TO_CONSTRUCT_URL = "https://a.b";
+        path = new URL(`${ANY_DOMAIN_TO_CONSTRUCT_URL}${path}`).pathname;
+    }
+
+    // Remove pending "/""
+    if (path.endsWith("/")) {
+        path = path.slice(0, -1);
+    }
 
     return path;
+}
+
+/*
+ * isIpV4Address
+ */
+function isIpV4Address(ip: string): boolean {
+    const ipArray = ip.split(".");
+
+    // Return false if IP does not contain 4 blocks exactly.
+    if (ipArray.length !== 4) {
+        return false;
+    }
+
+    // Otehrwise, make sure all blocks are integers and between IP ranges.
+    return ipArray.every(b => {
+        const block = Number(b);
+        return Number.isInteger(block) === true && block >= 0 && block <= 255;
+    });
 }
 
 /*

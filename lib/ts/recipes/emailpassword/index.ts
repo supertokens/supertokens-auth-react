@@ -16,29 +16,20 @@
 /*
  * Imports.
  */
-import RecipeModule, { RecipeModuleConfig } from "../module";
-
-/*
- * Interface.
- */
-interface EmailPasswordConfig extends RecipeModuleConfig {
-    signInAndUpFeature: any;
-    resetPasswordUsingTokenFeature: any;
-}
+import RecipeModule from "../recipeModule";
+import { EmailPasswordConfig } from "../../types";
 
 /*
  * Class.
  */
 export default class EmailPassword extends RecipeModule {
     static instance?: EmailPassword;
-    static recipeId: string = "email-password";
-    static routes: Array<string> = [""];
 
     constructor(config: EmailPasswordConfig) {
         super({
             ...config,
-            recipeId: EmailPassword.recipeId,
-            routes: EmailPassword.routes
+            recipeId: "email-password",
+            routes: [""]
         });
     }
 
@@ -47,8 +38,9 @@ export default class EmailPassword extends RecipeModule {
     }
 
     static getInstanceIfDefined(): EmailPassword {
-        if (EmailPassword.instance === undefined)
-            throw Error(`No instance of ${EmailPassword.constructor.name} found. Make sure to call "init" method.`); // TODO Add relevant doc.
+        if (EmailPassword.instance === undefined) {
+            throw Error(`No instance of ${EmailPassword.constructor.name} found. Make sure to call the "init" method.`); // TODO Add relevant doc.
+        }
 
         return EmailPassword.instance;
     }

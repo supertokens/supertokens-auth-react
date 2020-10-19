@@ -109,13 +109,16 @@ describe("SuperTokens", function() {
             ...defaultConfigs,
             recipeList: [EmailPassword.init()]
         });
+
         // Get URL from configs (will use window.location.href) in prod, but window object not available in tests.
         const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain;
 
         assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/blog/`), false);
+        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/blog/.`), false);
         assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/blog/auth`), false);
         assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth/404`), false);
-        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth/`), true);
         assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth`), true);
+        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth/`), true);
+        assert.strictEqual(SuperTokens.handleRoute(`${randomWebsitePath}/auth/.`), true);
     });
 });
