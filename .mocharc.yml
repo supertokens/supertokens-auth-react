@@ -3,5 +3,5 @@ spec: test/**/*.test.js
 reporter: spec
 slow: 20000
 timeout: 30000
-require:
-  - isomorphic-fetch
+# require:
+#   - isomorphic-fetch
