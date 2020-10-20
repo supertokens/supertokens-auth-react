@@ -1,7 +1,7 @@
 import { ComponentClass } from "react";
 import RecipeModule from "./recipes/recipeModule";
 export declare type SuperTokensConfig = {
-    appInfo: AppInfoConfig;
+    appInfo: AppInfoUserInput;
     recipeList: RecipeModule[];
 };
 declare type AppInfoBase = {
@@ -12,7 +12,7 @@ declare type AppInfoBase = {
     websiteBasePath?: string;
     logoFullURL?: string;
 };
-export declare type AppInfoConfig = AppInfoBase & {
+export declare type AppInfoUserInput = AppInfoBase & {
     apiBasePath?: string;
     websiteBasePath?: string;
 };

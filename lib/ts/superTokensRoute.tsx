@@ -17,14 +17,28 @@
  * Imports.
  */
 
- import React, {Component, Fragment} from "react";
+import React, {Component, Fragment} from "react";
+import SuperTokens from "./supertokens";
+import {Route} from "react-router-dom";
 
 /*
- * Class.
+ * Component.
  */
-export default class SignInUp extends Component {
-    render () {
-        return (<Fragment></Fragment>);
-    }
-
+export default class SuperTokensRoute extends Component {
+	render () {
+		return (
+			<Fragment>
+				{
+					SuperTokens.getRecipeList().map(recipe => {
+						const features = recipe.getFeatures();
+						return Object.keys(features).map(featurePath => {
+							const fullPath = `${SuperTokens.getAppInfo().websiteBasePath}${featurePath}`;
+							// if (!feature.disableDefaultRoute) { //TODO
+							return <Route path={fullPath} component={features[featurePath]} />
+						});
+					})
+				}
+			</Fragment>
+		)
+	} 
 }

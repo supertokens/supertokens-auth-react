@@ -12,14 +12,14 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { Component, ComponentClass } from "react";
-import RecipeModule from "./recipes/recipeModule";
+import { ComponentClass } from "react";
+import RecipeModule from "./recipe/recipeModule";
 
 export type SuperTokensConfig = {
     /*
      * Configurations for authentication.
      */
-    appInfo: AppInfoConfig;
+    appInfo: AppInfoUserInput;
 
     /*
      * List of recipes for authentication and session management.
@@ -39,21 +39,9 @@ type AppInfoBase = {
     apiDomain: string;
 
     /*
-     * The base path for SuperTokens middleware in your API.
-     * Default to `/auth`
-     */
-    apiBasePath?: string;
-
-    /*
      * The domain on which your application runs.
      */
     websiteDomain: string;
-
-    /*
-     * The base path for SuperTokens middleware in your front end application.
-     * Default to `/auth`
-     */
-    websiteBasePath?: string;
 
     /*
      * (Optional) URL for your logo that will be displayed on the login form.
@@ -61,7 +49,7 @@ type AppInfoBase = {
     logoFullURL?: string;
 };
 
-export type AppInfoConfig = AppInfoBase & {
+export type AppInfoUserInput = AppInfoBase & {
     /*
      * The base path for SuperTokens middleware in your API.
      * Default to `/auth`
@@ -89,7 +77,7 @@ export type AppInfo = AppInfoBase & {
     websiteBasePath: string;
 };
 
-export type FeatureHash = {
+export type FeatureMap = {
     [route: string]: ComponentClass;
 };
 
@@ -97,7 +85,7 @@ export type RecipeModuleConfig = {
     /*
      * Features that the module responds to.
      */
-    features: FeatureHash;
+    features: FeatureMap;
 
     /*
      * Unique Identifier of a module.

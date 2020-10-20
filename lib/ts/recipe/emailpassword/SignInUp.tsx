@@ -16,26 +16,15 @@
 /*
  * Imports.
  */
-import { SuperTokensConfig } from "./types";
-import SuperTokens from "./superTokens";
+
+ import React, {Component, Fragment} from "react";
+
 /*
- * API Wrapper exposed to user.
+ * Component.
  */
-
-export default class SuperTokensAPIWrapper {
-    static init(config: SuperTokensConfig) {
-        SuperTokens.init(config);
+export default class SignInUp extends Component {
+    render () {
+        return (<Fragment></Fragment>);
     }
 
-    static canHandleRoute(url: string): boolean {
-        return SuperTokens.canHandleRoute(url);
-    }
-
-    static getRoutingComponent(url: string) {
-        return SuperTokens.getRoutingComponent(url);
-    }
 }
-
-export const canHandleRoute = SuperTokensAPIWrapper.canHandleRoute;
-export const init = SuperTokensAPIWrapper.init;
-export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;

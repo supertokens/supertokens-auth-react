@@ -16,15 +16,15 @@
 import { RECIPE_ID_QUERY_PARAM } from "./constants";
 
 /*
- * normaliseUrl
+ * normaliseUrlOrThrowError
  * Input: string url (or domain).
  * Output: A url with appropriate protocol.
  */
-export function normaliseUrl(url: string): string {
+export function normaliseUrlOrThrowError(url: string): string {
     let newUrl: string;
 
     // If development environment or IP address, return http protocol.
-    if (url.startsWith("localhost:") || isIpV4Address(url)) {
+    if (isLocalhost(url) || isIpV4Address(url)) {
         newUrl = `http://${url}`;
 
         // If no protocol, add https.
@@ -35,7 +35,11 @@ export function normaliseUrl(url: string): string {
     } else {
         newUrl = url;
     }
-    return new URL(newUrl).origin;
+    try {
+        return new URL(newUrl).origin;
+    } catch (e) {
+        throw Error(`There was an error parsing the url you provided: (${url}). Please make sure it is correct.`);
+    }
 }
 
 /*
@@ -93,6 +97,13 @@ function isIpV4Address(ip: string): boolean {
         const block = Number(b);
         return Number.isInteger(block) === true && block >= 0 && block <= 255;
     });
+}
+
+/*
+ * isIpV4Address
+ */
+function isLocalhost(url: string): boolean {
+    return url.startsWith("localhost:") || url === "localhost";
 }
 
 /*

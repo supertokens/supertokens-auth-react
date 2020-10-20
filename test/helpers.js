@@ -14,28 +14,18 @@
  */
 
 /*
- * Imports.
- */
-import { SuperTokensConfig } from "./types";
-import SuperTokens from "./superTokens";
-/*
- * API Wrapper exposed to user.
+ * Helpers.
  */
 
-export default class SuperTokensAPIWrapper {
-    static init(config: SuperTokensConfig) {
-        SuperTokens.init(config);
-    }
-
-    static canHandleRoute(url: string): boolean {
-        return SuperTokens.canHandleRoute(url);
-    }
-
-    static getRoutingComponent(url: string) {
-        return SuperTokens.getRoutingComponent(url);
+export function mockWindowLocation(url) {
+    try {
+        const location = new URL(url);
+        global.window = Object.create(window);
+        Object.defineProperty(window, "location", {
+            value: location
+        });
+    } catch (e) {
+        console.log(e);
+        throw Error(`Failed to mock window location object with ${url}`, e);
     }
 }
-
-export const canHandleRoute = SuperTokensAPIWrapper.canHandleRoute;
-export const init = SuperTokensAPIWrapper.init;
-export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
