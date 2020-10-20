@@ -77,7 +77,7 @@ export type AppInfo = AppInfoBase & {
     websiteBasePath: string;
 };
 
-export type FeatureMap = {
+export type RouteToFeatureComponentMap = {
     [route: string]: ComponentClass;
 };
 
@@ -85,7 +85,7 @@ export type RecipeModuleConfig = {
     /*
      * Features that the module responds to.
      */
-    features: FeatureMap;
+    features: RouteToFeatureComponentMap;
 
     /*
      * Unique Identifier of a module.

@@ -18,11 +18,11 @@ export declare type AppInfo = AppInfoBase & {
     apiBasePath: string;
     websiteBasePath: string;
 };
-export declare type FeatureMap = {
+export declare type RouteToFeatureComponentMap = {
     [route: string]: ComponentClass;
 };
 export declare type RecipeModuleConfig = {
-    features: FeatureMap;
+    features: RouteToFeatureComponentMap;
     recipeId: string;
 };
 export declare type EmailPasswordConfig = RecipeModuleConfig & {

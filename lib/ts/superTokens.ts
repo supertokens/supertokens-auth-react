@@ -21,7 +21,7 @@ import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH } from "./constants";
 import { AppInfo, SuperTokensConfig } from "./types";
 import { ComponentClass } from "react";
 import SuperTokensUrl from "./helpers/superTokensUrl";
-import { isTest } from "./helpers/utils";
+import { isTest, normalisePath, normaliseUrlOrThrowError } from "./helpers/utils";
 
 /*
  * Class.
@@ -45,14 +45,14 @@ export default class SuperTokens {
     constructor(config: SuperTokensConfig) {
         this.appInfo = {
             appName: config.appInfo.appName,
-            apiDomain: SuperTokensUrl.normaliseUrlOrThrowError(config.appInfo.apiDomain),
-            websiteDomain: SuperTokensUrl.normaliseUrlOrThrowError(config.appInfo.websiteDomain),
+            apiDomain: normaliseUrlOrThrowError(config.appInfo.apiDomain),
+            websiteDomain: normaliseUrlOrThrowError(config.appInfo.websiteDomain),
             apiBasePath: SuperTokens.getNormalisedBasePathOrDefault(DEFAULT_API_BASE_PATH, config.appInfo.apiBasePath),
             websiteBasePath: SuperTokens.getNormalisedBasePathOrDefault(
                 DEFAULT_WEBSITE_BASE_PATH,
                 config.appInfo.websiteBasePath
             ),
-            logoFullURL: config.appInfo.logoFullURL || undefined
+            logoFullURL: config.appInfo.logoFullURL
         };
 
         if (config.recipeList === undefined) {
@@ -99,7 +99,7 @@ export default class SuperTokens {
 
     static getNormalisedBasePathOrDefault(defaultPath: string, path?: string): string {
         if (path !== undefined) {
-            return SuperTokensUrl.normalisePath(path);
+            return normalisePath(path);
         } else {
             return defaultPath;
         }

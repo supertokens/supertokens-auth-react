@@ -160,6 +160,10 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.canHandleRoute(), true);
         mockWindowLocation(`${randomWebsitePath}/auth/.`);
         assert.strictEqual(SuperTokens.canHandleRoute(), true);
+        mockWindowLocation(`${randomWebsitePath}/auth?rid=email-password`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
+        mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
     });
 
     it("SuperTokens getRoutingComponent should work approriately", async function() {
@@ -185,5 +189,9 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.getRoutingComponent(), SignInUp);
         mockWindowLocation(`${randomWebsitePath}/auth/.`);
         assert.strictEqual(SuperTokens.getRoutingComponent(), SignInUp);
+        mockWindowLocation(`${randomWebsitePath}/auth?rid=email-password`);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInUp);
+        mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
     });
 });

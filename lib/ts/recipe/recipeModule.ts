@@ -17,7 +17,7 @@
  * Imports.
  */
 import SuperTokens from "../superTokens";
-import { FeatureMap, RecipeModuleConfig } from "../types";
+import { RouteToFeatureComponentMap, RecipeModuleConfig } from "../types";
 import { ComponentClass } from "react";
 import SuperTokensUrl from "../helpers/superTokensUrl";
 
@@ -25,7 +25,7 @@ import SuperTokensUrl from "../helpers/superTokensUrl";
  * Class.
  */
 export default abstract class RecipeModule {
-    private features: FeatureMap;
+    private features: RouteToFeatureComponentMap;
     private recipeId: string;
 
     constructor(config: RecipeModuleConfig) {
@@ -37,7 +37,7 @@ export default abstract class RecipeModule {
         return this.recipeId;
     };
 
-    getFeatures = (): FeatureMap => {
+    getFeatures = (): RouteToFeatureComponentMap => {
         return this.features;
     };
 
@@ -52,19 +52,5 @@ export default abstract class RecipeModule {
         }
 
         return this.features[url.normalisedPathnameWithoutWebsiteBasePath];
-    };
-
-    private getNormalisedRouteWithoutWebsiteBasePath = (path: string): string => {
-        // If base path is present, remove it.
-        if (path.startsWith(SuperTokens.getAppInfo().websiteBasePath)) {
-            let newPath = path.slice(SuperTokens.getAppInfo().websiteBasePath.length);
-            if (newPath.length === 0) {
-                newPath = "/";
-            }
-            return newPath;
-        }
-
-        // Otherwise, return url unchanged.
-        return path;
     };
 }
