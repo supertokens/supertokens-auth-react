@@ -19,10 +19,10 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import SuperTokens from "../lib/build/superTokens";
-import EmailPassword, { SignInUp } from "../lib/build/recipe/emailpassword";
+import SuperTokens from "../../lib/build/superTokens";
+import EmailPassword, { SignInUp } from "../../lib/build/recipe/emailpassword";
 import assert from "assert";
-import { mockWindowLocation } from "./helpers";
+import { mockWindowLocation } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();

@@ -2,8 +2,10 @@
   "name": "supertokens-auth-react",
   "version": "0.0.1",
   "description": "ReactJS SDK that provides login functionality with SuperTokens.",
+  "main": "./lib/build/index.js",
   "exports": {
-    "./": "./lib/build/"
+    "./*": "./lib/build/*",
+    "./recipe/emailpassword/*": "./lib/build/recipe/emailpassword/*"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
@@ -18,6 +20,7 @@
     "jsdom": "16.4.0",
     "jsdom-global": "3.0.2",
     "prettier": "1.18.2",
+    "puppeteer": "^5.3.1",
     "react": "^16.14.0",
     "react-router-dom": "^5.2.0",
     "regenerator-runtime": "^0.13.7",
