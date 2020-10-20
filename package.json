@@ -5,9 +5,6 @@
   "exports": {
     "./": "./lib/build/"
   },
-  "dependencies": {
-    "react": "^16.14.0"
-  },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
     "@babel/core": "^7.12.1",
@@ -15,14 +12,23 @@
     "@babel/register": "^7.12.1",
     "@types/node": "^14.11.10",
     "@types/react": "^16.9.53",
+    "@types/react-router-dom": "^5.1.6",
     "axios": "*",
     "isomorphic-fetch": "2.2.1",
+    "jsdom": "16.4.0",
+    "jsdom-global": "3.0.2",
     "prettier": "1.18.2",
+    "react": "^16.14.0",
+    "react-router-dom": "^5.2.0",
     "regenerator-runtime": "^0.13.7",
     "typescript": "3.5.2"
   },
+  "peerDependencies": {
+    "react": "^16.14.0",
+    "react-router-dom": "^5.2.0"
+  },
   "scripts": {
-    "test": "npm run build-pretty && TEST_MODE=testing mocha --require @babel/register --timeout 500000",
+    "test": "npm run build-pretty && TEST_MODE=testing mocha --require jsdom-global/register --require @babel/register --timeout 500000",
     "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
     "build": "cd lib && npx tsc -p tsconfig.json",
     "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/**/*.js\"",
