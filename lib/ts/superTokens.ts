@@ -16,11 +16,12 @@
 /*
  * Imports.
  */
-import { normaliseUrlOrThrowError, isTest, normalisePath, getRecipeIdFromUrl } from "./utils";
 import RecipeModule from "./recipe/recipeModule";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH } from "./constants";
 import { AppInfo, SuperTokensConfig } from "./types";
 import { ComponentClass } from "react";
+import SuperTokensUrl from "./helpers/superTokensUrl";
+import { isTest } from "./helpers/utils";
 
 /*
  * Class.
@@ -44,8 +45,8 @@ export default class SuperTokens {
     constructor(config: SuperTokensConfig) {
         this.appInfo = {
             appName: config.appInfo.appName,
-            apiDomain: normaliseUrlOrThrowError(config.appInfo.apiDomain),
-            websiteDomain: normaliseUrlOrThrowError(config.appInfo.websiteDomain),
+            apiDomain: SuperTokensUrl.normaliseUrlOrThrowError(config.appInfo.apiDomain),
+            websiteDomain: SuperTokensUrl.normaliseUrlOrThrowError(config.appInfo.websiteDomain),
             apiBasePath: SuperTokens.getNormalisedBasePathOrDefault(DEFAULT_API_BASE_PATH, config.appInfo.apiBasePath),
             websiteBasePath: SuperTokens.getNormalisedBasePathOrDefault(
                 DEFAULT_WEBSITE_BASE_PATH,
@@ -84,12 +85,12 @@ export default class SuperTokens {
         return SuperTokens.getInstanceIfDefined().getAppInfo();
     }
 
-    static canHandleRoute(url: string): boolean {
-        return SuperTokens.getInstanceIfDefined().canHandleRoute(url);
+    static canHandleRoute(): boolean {
+        return SuperTokens.getInstanceIfDefined().canHandleRoute();
     }
 
-    static getRoutingComponent(url: string): ComponentClass | undefined {
-        return SuperTokens.getInstanceIfDefined().getRoutingComponent(url);
+    static getRoutingComponent(): ComponentClass | undefined {
+        return SuperTokens.getInstanceIfDefined().getRoutingComponent();
     }
 
     static getRecipeList(): RecipeModule[] {
@@ -98,7 +99,7 @@ export default class SuperTokens {
 
     static getNormalisedBasePathOrDefault(defaultPath: string, path?: string): string {
         if (path !== undefined) {
-            return normalisePath(path);
+            return SuperTokensUrl.normalisePath(path);
         } else {
             return defaultPath;
         }
@@ -111,32 +112,28 @@ export default class SuperTokens {
         return this.appInfo;
     };
 
-    canHandleRoute = (urlString: string): boolean => {
-        const url = new URL(urlString);
-        const pathname = normalisePath(url.pathname);
+    canHandleRoute = (): boolean => {
+        const url = new SuperTokensUrl();
 
         // If pathname doesn't start with websiteBasePath, return false.
-        if (!pathname.startsWith(SuperTokens.getAppInfo().websiteBasePath)) {
+        if (!url.matchesBasePath) {
             return false;
         }
 
-        const rId = getRecipeIdFromUrl(urlString);
-        return this.recipeList.some(recipe => recipe.canHandleRoute(pathname, rId));
+        return this.recipeList.some(recipe => recipe.canHandleRoute(url));
     };
 
-    getRoutingComponent = (urlString: string): ComponentClass | undefined => {
-        const url = new URL(urlString);
-        const pathname = normalisePath(url.pathname);
+    getRoutingComponent = (): ComponentClass | undefined => {
+        const url = new SuperTokensUrl();
 
         // If pathname doesn't start with websiteBasePath, return false.
-        if (!pathname.startsWith(SuperTokens.getAppInfo().websiteBasePath)) {
+        if (!url.matchesBasePath) {
             return undefined;
         }
 
-        const rId = getRecipeIdFromUrl(urlString);
         let component: ComponentClass | undefined;
         for (let i = 0; i < this.recipeList.length; i++) {
-            component = this.recipeList[i].getRoutingComponent(pathname, rId);
+            component = this.recipeList[i].getRoutingComponent(url);
             if (component !== undefined) {
                 break;
             }

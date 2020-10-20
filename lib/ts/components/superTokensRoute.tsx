@@ -18,7 +18,7 @@
  */
 
 import React, {Component, Fragment} from "react";
-import SuperTokens from "./supertokens";
+import SuperTokens from "../superTokens";
 import {Route} from "react-router-dom";
 
 /*

@@ -27,12 +27,12 @@ export default class SuperTokensAPIWrapper {
         SuperTokens.init(config);
     }
 
-    static canHandleRoute(url: string): boolean {
-        return SuperTokens.canHandleRoute(url);
+    static canHandleRoute(): boolean {
+        return SuperTokens.canHandleRoute();
     }
 
-    static getRoutingComponent(url: string) {
-        return SuperTokens.getRoutingComponent(url);
+    static getRoutingComponent() {
+        return SuperTokens.getRoutingComponent();
     }
 }
 

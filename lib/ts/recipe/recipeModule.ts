@@ -19,6 +19,7 @@
 import SuperTokens from "../superTokens";
 import { FeatureMap, RecipeModuleConfig } from "../types";
 import { ComponentClass } from "react";
+import SuperTokensUrl from "../helpers/superTokensUrl";
 
 /*
  * Class.
@@ -40,26 +41,17 @@ export default abstract class RecipeModule {
         return this.features;
     };
 
-    canHandleRoute = (route: string, rId: string | null): boolean => {
-        // If rId from URL exists and doesn't match, or if route path doesn't start with return false.
-        if (rId !== null && rId !== this.recipeId) {
-            return false;
-        }
-
-        // Otherwise, if recipeId matches, or if none was provided, check if url matches any module routes.
-        // Remove websiteBasePath from normalised path to match with features hash keys.
-        const routeWithoutBasePath = this.getNormalisedRouteWithoutWebsiteBasePath(route);
-        return this.features[routeWithoutBasePath] !== undefined;
+    canHandleRoute = (url: SuperTokensUrl): boolean => {
+        return this.getRoutingComponent(url) !== undefined;
     };
 
-    getRoutingComponent = (route: string, rId: string | null): ComponentClass | undefined => {
+    getRoutingComponent = (url: SuperTokensUrl): ComponentClass | undefined => {
         // If rId from URL exists and doesn't match, or if route path doesn't start with return undefined.
-        if (rId !== null && rId !== this.recipeId) {
+        if (url.recipeId !== null && url.recipeId !== this.recipeId) {
             return undefined;
         }
 
-        const routeWithoutBasePath = this.getNormalisedRouteWithoutWebsiteBasePath(route);
-        return this.features[routeWithoutBasePath];
+        return this.features[url.normalisedPathnameWithoutWebsiteBasePath];
     };
 
     private getNormalisedRouteWithoutWebsiteBasePath = (path: string): string => {

@@ -9,13 +9,13 @@ export default class SuperTokens {
     static init(config: SuperTokensConfig): void;
     private static getInstanceIfDefined;
     static getAppInfo(): AppInfo;
-    static canHandleRoute(url: string): boolean;
-    static getRoutingComponent(url: string): ComponentClass | undefined;
+    static canHandleRoute(): boolean;
+    static getRoutingComponent(): ComponentClass | undefined;
     static getRecipeList(): RecipeModule[];
     static getNormalisedBasePathOrDefault(defaultPath: string, path?: string): string;
     getAppInfo: () => AppInfo;
-    canHandleRoute: (urlString: string) => boolean;
-    getRoutingComponent: (urlString: string) => ComponentClass<{}, any> | undefined;
+    canHandleRoute: () => boolean;
+    getRoutingComponent: () => ComponentClass<{}, any> | undefined;
     getRecipeList: () => RecipeModule[];
     static reset(): void;
 }

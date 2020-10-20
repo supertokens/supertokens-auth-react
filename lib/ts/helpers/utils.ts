@@ -14,17 +14,33 @@
  */
 
 /*
- * Helpers.
+ * isIpV4Address
  */
+export function isIpV4Address(ip: string): boolean {
+    const ipArray = ip.split(".");
 
-export function mockWindowLocation(url) {
-    try {
-        const location = new URL(url);
-        global.window = Object.create(window);
-        Object.defineProperty(window, "location", {
-            value: location
-        });
-    } catch (e) {
-        throw Error(`Failed to mock window location object with ${url}`, e);
+    // Return false if IP does not contain 4 blocks exactly.
+    if (ipArray.length !== 4) {
+        return false;
     }
+
+    // Otehrwise, make sure all blocks are integers and between IP ranges.
+    return ipArray.every(b => {
+        const block = Number(b);
+        return Number.isInteger(block) === true && block >= 0 && block <= 255;
+    });
+}
+
+/*
+ * isIpV4Address
+ */
+export function isLocalhost(url: string): boolean {
+    return url.startsWith("localhost:") || url === "localhost";
+}
+
+/*
+ * isTest
+ */
+export function isTest(): boolean {
+    return process.env.TEST_MODE === "testing";
 }

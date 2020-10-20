@@ -19,10 +19,14 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import SuperTokens from "../lib/build/supertokens";
+import SuperTokens from "../lib/build/superTokens";
 import EmailPassword, { SignInUp } from "../lib/build/recipe/emailpassword";
 import assert from "assert";
 import { mockWindowLocation } from "./helpers";
+
+// Run the tests in a DOM environment.
+require("jsdom-global")();
+
 /*
  * Consts.
  */
@@ -144,12 +148,18 @@ describe("SuperTokens", function() {
 
         mockWindowLocation(`${randomWebsitePath}/blog/`);
         assert.strictEqual(SuperTokens.canHandleRoute(), false);
-        // assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/blog/.`), false);
-        // assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/blog/auth`), false);
-        // assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/auth/404`), false);
-        // assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/auth`), true);
-        // assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/auth/`), true);
-        // assert.strictEqual(SuperTokens.canHandleRoute(`${randomWebsitePath}/auth/.`), true);
+        mockWindowLocation(`${randomWebsitePath}/blog/.`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
+        mockWindowLocation(`${randomWebsitePath}/blog/auth`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
+        mockWindowLocation(`${randomWebsitePath}/auth/404`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
+        mockWindowLocation(`${randomWebsitePath}/auth`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
+        mockWindowLocation(`${randomWebsitePath}/auth/`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
+        mockWindowLocation(`${randomWebsitePath}/auth/.`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
     });
 
     it("SuperTokens getRoutingComponent should work approriately", async function() {
@@ -161,12 +171,19 @@ describe("SuperTokens", function() {
         // Get URL from configs (will use window.location.href) in prod, but window object not available in tests.
         const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain;
 
-        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/blog/`), undefined);
-        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/blog/.`), undefined);
-        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/blog/auth`), undefined);
-        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/auth/404`), undefined);
-        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/auth`), SignInUp);
-        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/auth/`), SignInUp);
-        assert.strictEqual(SuperTokens.getRoutingComponent(`${randomWebsitePath}/auth/.`), SignInUp);
+        mockWindowLocation(`${randomWebsitePath}/blog/`);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
+        mockWindowLocation(`${randomWebsitePath}/blog/.`);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
+        mockWindowLocation(`${randomWebsitePath}/blog/auth`);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
+        mockWindowLocation(`${randomWebsitePath}/auth/404`);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
+        mockWindowLocation(`${randomWebsitePath}/auth`);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInUp);
+        mockWindowLocation(`${randomWebsitePath}/auth/`);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInUp);
+        mockWindowLocation(`${randomWebsitePath}/auth/.`);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInUp);
     });
 });

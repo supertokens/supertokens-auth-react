@@ -1,5 +1,5 @@
 import { ComponentClass } from "react";
-import RecipeModule from "./recipes/recipeModule";
+import RecipeModule from "./recipe/recipeModule";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: RecipeModule[];
@@ -7,9 +7,7 @@ export declare type SuperTokensConfig = {
 declare type AppInfoBase = {
     appName: string;
     apiDomain: string;
-    apiBasePath?: string;
     websiteDomain: string;
-    websiteBasePath?: string;
     logoFullURL?: string;
 };
 export declare type AppInfoUserInput = AppInfoBase & {
@@ -20,11 +18,11 @@ export declare type AppInfo = AppInfoBase & {
     apiBasePath: string;
     websiteBasePath: string;
 };
-export declare type FeatureHash = {
+export declare type FeatureMap = {
     [route: string]: ComponentClass;
 };
 export declare type RecipeModuleConfig = {
-    features: FeatureHash;
+    features: FeatureMap;
     recipeId: string;
 };
 export declare type EmailPasswordConfig = RecipeModuleConfig & {
