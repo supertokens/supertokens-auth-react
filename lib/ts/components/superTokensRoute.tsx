@@ -17,28 +17,30 @@
  * Imports.
  */
 
-import React, {Component, Fragment} from "react";
+import * as React from "react";
 import SuperTokens from "../superTokens";
-import {Route} from "react-router-dom";
+
+import {Route, Switch} from "react-router-dom";
+
 
 /*
  * Component.
  */
-export default class SuperTokensRoute extends Component {
+export default class SuperTokensRoute extends React.Component {
 	render () {
 		return (
-			<Fragment>
+			<Switch>
 				{
 					SuperTokens.getRecipeList().map(recipe => {
 						const features = recipe.getFeatures();
 						return Object.keys(features).map(featurePath => {
-							const fullPath = `${SuperTokens.getAppInfo().websiteBasePath}${featurePath}`;
+							const fullPath = `${SuperTokens.getAppInfo().websiteBasePath}${featurePath}`
 							// if (!feature.disableDefaultRoute) { //TODO
-							return <Route path={fullPath} component={features[featurePath]} />
+							return <Route exact key={`st-${fullPath}`} path={fullPath} component={features[featurePath]} />
 						});
 					})
 				}
-			</Fragment>
+			</Switch>
 		)
-	} 
+	}
 }

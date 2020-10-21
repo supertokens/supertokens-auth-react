@@ -31,7 +31,8 @@ export default class EmailPassword extends RecipeModule {
             ...config,
             recipeId: "email-password",
             features: {
-                "/": SignInUp
+                "/": SignInUp,
+                "/login": SignInUp
             }
         });
     }

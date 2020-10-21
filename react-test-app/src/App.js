@@ -1,11 +1,9 @@
 import React from 'react';
 import './App.css';
-import AppWithReactDomRouter from './AppWithReactDomRouter';
 import AppWithoutRouter from './AppWithoutRouter';
-
+import AppWithReactDomRouter from './AppWithReactDomRouter';
 import SuperTokens from 'supertokens-auth-react';
 import EmailPassword from 'supertokens-auth-react/recipe/emailpassword';
-
 SuperTokens.init({
   appInfo: {
     appName: "SuperTokens",
@@ -13,7 +11,7 @@ SuperTokens.init({
     apiDomain: "dev.supertokens.io"
   },
   recipeList: [
-    // EmailPassword.init()
+    EmailPassword.init()
   ]
 });
 
@@ -24,7 +22,7 @@ function App() {
     return <AppWithoutRouter />
   }
   
-  return <AppWithReactDomRouter />
+  return <AppWithReactDomRouter/>
 }
 
 function getRouterFromLocationQueryParams() {

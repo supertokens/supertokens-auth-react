@@ -3,10 +3,6 @@
   "version": "0.0.1",
   "description": "ReactJS SDK that provides login functionality with SuperTokens.",
   "main": "./lib/build/index.js",
-  "exports": {
-    "./*": "./lib/build/*",
-    "./recipe/emailpassword/*": "./lib/build/recipe/emailpassword/*"
-  },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
     "@babel/core": "^7.12.1",
@@ -54,7 +50,8 @@
     "safari"
   ],
   "contributors": [
-    "rishabhpoddar"
+    "rishabhpoddar",
+    "NkxxkN"
   ],
   "license": "Apache-2.0",
   "bugs": {

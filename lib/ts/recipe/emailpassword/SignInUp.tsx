@@ -17,14 +17,14 @@
  * Imports.
  */
 
- import React, {Component, Fragment} from "react";
+ import * as React from "react";
 
 /*
  * Component.
  */
-export default class SignInUp extends Component {
+export default class SignInUp extends React.Component {
     render () {
-        return (<Fragment></Fragment>);
+        return (<>SignInSignUp</>);
     }
 
 }
