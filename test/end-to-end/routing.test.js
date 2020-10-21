@@ -22,7 +22,7 @@ import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
-import { CLASS_CONTAINER } from "../../lib/build/constants";
+import { CLASS_CONTAINER, CLASS_UNKNOWN_RECIPE_ID } from "../../lib/build/constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -68,10 +68,24 @@ describe("SuperTokens Routing in Test App", function() {
             assert.strictEqual(superTokensComponent, null);
         });
 
-        it("/auth should load ST components.", async function() {
+        it("/auth should load SignInUp components.", async function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_APP_BASE_URL}/auth`, { waitUntil: "networkidle2" });
             const superTokensComponent = await page.$(`.${CLASS_CONTAINER}`);
+            assert.notStrictEqual(superTokensComponent, null);
+        });
+
+        it("/auth?rid=email-password should load SignInUp components.", async function() {
+            const page = await browser.newPage();
+            await page.goto(`${TEST_APP_BASE_URL}/auth?rid=email-password`, { waitUntil: "networkidle2" });
+            const superTokensComponent = await page.$(`.${CLASS_CONTAINER}`);
+            assert.notStrictEqual(superTokensComponent, null);
+        });
+
+        it("/auth?rid=unknown-rid should load UnknownRecipeId components.", async function() {
+            const page = await browser.newPage();
+            await page.goto(`${TEST_APP_BASE_URL}/auth?rid=unknown`, { waitUntil: "networkidle2" });
+            const superTokensComponent = await page.$(`.${CLASS_UNKNOWN_RECIPE_ID}`);
             assert.notStrictEqual(superTokensComponent, null);
         });
     });

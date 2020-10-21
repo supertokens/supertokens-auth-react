@@ -104,3 +104,19 @@ export type EmailPasswordConfig = RecipeModuleConfig & {
      */
     resetPasswordUsingTokenFeature: any;
 };
+
+export type ComponentWithRecipeId = {
+    /*
+     * recipeId of the component.
+     */
+    rid: string;
+
+    /*
+     * Component.
+     */
+    component: ComponentClass;
+};
+
+export type PathToComponentWithRecipeIdMap = {
+    [route: string]: ComponentWithRecipeId[];
+};

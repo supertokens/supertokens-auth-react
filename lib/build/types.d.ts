@@ -29,4 +29,11 @@ export declare type EmailPasswordConfig = RecipeModuleConfig & {
     signInAndUpFeature: any;
     resetPasswordUsingTokenFeature: any;
 };
+export declare type ComponentWithRecipeId = {
+    rid: string;
+    component: ComponentClass;
+};
+export declare type PathToComponentWithRecipeIdMap = {
+    [route: string]: ComponentWithRecipeId[];
+};
 export {};

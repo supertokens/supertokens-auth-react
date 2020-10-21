@@ -20,3 +20,5 @@ export const DEFAULT_API_BASE_PATH = "/auth";
 export const DEFAULT_WEBSITE_BASE_PATH = "/auth";
 
 export const CLASS_CONTAINER = "supertokens-root";
+
+export const CLASS_UNKNOWN_RECIPE_ID = "supertokens-unknown-recipe-id";
