@@ -1,4 +1,2 @@
-import * as React from "react";
-export default class SuperTokensRoute extends React.Component {
-    render(): JSX.Element;
-}
+/// <reference types="react" />
+export declare function getSuperTokensRoutesForReactDomRouter(): JSX.Element[];

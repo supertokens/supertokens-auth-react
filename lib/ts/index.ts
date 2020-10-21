@@ -18,7 +18,6 @@
  */
 import { SuperTokensConfig } from "./types";
 import SuperTokens from "./superTokens";
-// import {default as SuperTokensRouteComponent} from "./components/superTokensRoute";
 
 /*
  * API Wrapper exposed to user.
@@ -36,9 +35,13 @@ export default class SuperTokensAPIWrapper {
     static getRoutingComponent() {
         return SuperTokens.getRoutingComponent();
     }
+
+    static getSuperTokensRoutesForReactDomRouter() {
+        return SuperTokens.getSuperTokensRoutesForReactDomRouter();
+    }
 }
 
 export const canHandleRoute = SuperTokensAPIWrapper.canHandleRoute;
 export const init = SuperTokensAPIWrapper.init;
 export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
-// export const SuperTokensRoute = SuperTokensRouteComponent;
+export const getSuperTokensRoutesForReactDomRouter = SuperTokens.getSuperTokensRoutesForReactDomRouter;

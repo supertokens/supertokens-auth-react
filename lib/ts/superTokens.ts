@@ -20,8 +20,9 @@ import RecipeModule from "./recipe/recipeModule";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH } from "./constants";
 import { AppInfo, SuperTokensConfig } from "./types";
 import { ComponentClass } from "react";
-import SuperTokensUrl from "./helpers/superTokensUrl";
-import { isTest, normalisePath, normaliseUrlOrThrowError } from "./helpers/utils";
+import SuperTokensUrl from "./superTokensUrl";
+import { isTest, normaliseURLPathOrThrowError, normaliseURLDomainOrThrowError } from "./utils";
+const { getSuperTokensRoutesForReactDomRouter } = require("./components/superTokensRoute");
 
 /*
  * Class.
@@ -45,10 +46,10 @@ export default class SuperTokens {
     constructor(config: SuperTokensConfig) {
         this.appInfo = {
             appName: config.appInfo.appName,
-            apiDomain: normaliseUrlOrThrowError(config.appInfo.apiDomain),
-            websiteDomain: normaliseUrlOrThrowError(config.appInfo.websiteDomain),
-            apiBasePath: SuperTokens.getNormalisedBasePathOrDefault(DEFAULT_API_BASE_PATH, config.appInfo.apiBasePath),
-            websiteBasePath: SuperTokens.getNormalisedBasePathOrDefault(
+            apiDomain: normaliseURLDomainOrThrowError(config.appInfo.apiDomain),
+            websiteDomain: normaliseURLDomainOrThrowError(config.appInfo.websiteDomain),
+            apiBasePath: SuperTokens.getNormalisedURLPathOrDefault(DEFAULT_API_BASE_PATH, config.appInfo.apiBasePath),
+            websiteBasePath: SuperTokens.getNormalisedURLPathOrDefault(
                 DEFAULT_WEBSITE_BASE_PATH,
                 config.appInfo.websiteBasePath
             ),
@@ -97,12 +98,16 @@ export default class SuperTokens {
         return SuperTokens.getInstanceIfDefined().getRecipeList();
     }
 
-    static getNormalisedBasePathOrDefault(defaultPath: string, path?: string): string {
+    static getNormalisedURLPathOrDefault(defaultPath: string, path?: string): string {
         if (path !== undefined) {
-            return normalisePath(path);
+            return normaliseURLPathOrThrowError(path);
         } else {
             return defaultPath;
         }
+    }
+
+    static getSuperTokensRoutesForReactDomRouter(): JSX.Element[] {
+        return getSuperTokensRoutesForReactDomRouter();
     }
 
     /*

@@ -16,10 +16,9 @@
 /*
  * Imports.
  */
-import SuperTokens from "../superTokens";
 import { RouteToFeatureComponentMap, RecipeModuleConfig } from "../types";
 import { ComponentClass } from "react";
-import SuperTokensUrl from "../helpers/superTokensUrl";
+import SuperTokensUrl from "../superTokensUrl";
 
 /*
  * Class.

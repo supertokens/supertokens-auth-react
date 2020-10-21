@@ -1,7 +1,11 @@
 import React from 'react';
 import './App.css';
+import logo from './logo.svg';
+import './App.css';
 import AppWithoutRouter from './AppWithoutRouter';
 import AppWithReactDomRouter from './AppWithReactDomRouter';
+
+/* SuperTokens imports */
 import SuperTokens from 'supertokens-auth-react';
 import EmailPassword from 'supertokens-auth-react/recipe/emailpassword';
 SuperTokens.init({
@@ -15,6 +19,8 @@ SuperTokens.init({
   ]
 });
 
+
+/* App */
 function App() {
   const router = getRouterFromLocationQueryParams();
 
@@ -31,3 +37,32 @@ function getRouterFromLocationQueryParams() {
 }
 
 export default App;
+
+export function BaseComponent ({children}) {
+  return (
+    <header className="App-header">
+      <img src={logo} className="App-logo" alt="logo" />
+      {children}
+    </header>
+  )
+}
+
+export function Home () {
+  return (
+      <div>/Home</div>
+    )
+}
+
+export function About () {
+  return (
+      <div>/About</div>
+
+    )
+}
+
+export function Contact () {
+  return (
+      <div>/Contact</div>
+
+    )
+}

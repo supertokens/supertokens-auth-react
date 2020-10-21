@@ -1,6 +1,6 @@
 import { RouteToFeatureComponentMap, RecipeModuleConfig } from "../types";
 import { ComponentClass } from "react";
-import SuperTokensUrl from "../helpers/superTokensUrl";
+import SuperTokensUrl from "../superTokensUrl";
 export default abstract class RecipeModule {
     private features;
     private recipeId;

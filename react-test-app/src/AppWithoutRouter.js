@@ -1,27 +1,46 @@
 import React from 'react';
-import logo from './logo.svg';
-
+import {BaseComponent, Home} from './App';
 import {canHandleRoute, getRoutingComponent} from 'supertokens-auth-react';
 
 function AppWithoutRouter() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          App without router lib
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      <h1>Without Routing</h1>
+      <Nav />
+      <Routing></Routing>
+    </>
+  )
 }
 
+function Routing () {
+  if (canHandleRoute()) {
+    const SuperTokensComponent = getRoutingComponent();
+    debugger;
+    return (<BaseComponent>
+      <SuperTokensComponent />
+    </BaseComponent>);
+  }
+
+  // Custom router...
+
+  return (<BaseComponent>
+    <Home />
+  </BaseComponent>)
+}
+
+function Nav () {
+  return (
+    <nav>
+        <ul>
+          <li>
+            <a href="/?router=no-router">Home</a>
+          </li>
+          <li>
+            <a href="/auth?router=no-router">Auth</a>
+          </li>
+        </ul>
+    </nav>
+  )
+}
 export default AppWithoutRouter;

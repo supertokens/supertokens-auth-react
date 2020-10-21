@@ -18,13 +18,18 @@
  */
 
  import * as React from "react";
+import { CLASS_CONTAINER } from "../../constants";
 
 /*
  * Component.
  */
 export default class SignInUp extends React.Component {
     render () {
-        return (<>SignInSignUp</>);
+        return (<div
+            className={CLASS_CONTAINER}
+        >
+            SignInSignUp
+        </div>);
     }
 
 }

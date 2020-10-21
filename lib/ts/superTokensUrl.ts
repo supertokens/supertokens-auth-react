@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import SuperTokens from "../superTokens";
+import SuperTokens from "./superTokens";
 import { getRecipeIdFromSearch, removePendingSlashFromPath, getNormalisedRouteWithoutWebsiteBasePath } from "./utils";
 
 /*

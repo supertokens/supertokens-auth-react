@@ -12,7 +12,8 @@ export default class SuperTokens {
     static canHandleRoute(): boolean;
     static getRoutingComponent(): ComponentClass | undefined;
     static getRecipeList(): RecipeModule[];
-    static getNormalisedBasePathOrDefault(defaultPath: string, path?: string): string;
+    static getNormalisedURLPathOrDefault(defaultPath: string, path?: string): string;
+    static getSuperTokensRoutesForReactDomRouter(): JSX.Element[];
     getAppInfo: () => AppInfo;
     canHandleRoute: () => boolean;
     getRoutingComponent: () => ComponentClass<{}, any> | undefined;
