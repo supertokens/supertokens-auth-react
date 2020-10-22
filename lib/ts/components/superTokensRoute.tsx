@@ -32,7 +32,7 @@ import { getRecipeIdFromSearch } from "../utils";
 * on the rId.
 * See SuperTokensRouteWithRecipeId below.
 */
-export function getSuperTokensRoutesForReactDomRouter (): JSX.Element[] {
+export function getSuperTokensRoutesForReactRouterDom (): JSX.Element[] {
 	try {
 		let pathsToComponentWithRecipeIdMap: PathToComponentWithRecipeIdMap = {};
 		SuperTokens.getRecipeList().map(recipe => {

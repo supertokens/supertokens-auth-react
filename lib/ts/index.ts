@@ -36,12 +36,12 @@ export default class SuperTokensAPIWrapper {
         return SuperTokens.getRoutingComponent();
     }
 
-    static getSuperTokensRoutesForReactDomRouter() {
-        return SuperTokens.getSuperTokensRoutesForReactDomRouter();
+    static getSuperTokensRoutesForReactRouterDom() {
+        return SuperTokens.getSuperTokensRoutesForReactRouterDom();
     }
 }
 
 export const canHandleRoute = SuperTokensAPIWrapper.canHandleRoute;
 export const init = SuperTokensAPIWrapper.init;
 export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
-export const getSuperTokensRoutesForReactDomRouter = SuperTokens.getSuperTokensRoutesForReactDomRouter;
+export const getSuperTokensRoutesForReactRouterDom = SuperTokens.getSuperTokensRoutesForReactRouterDom;

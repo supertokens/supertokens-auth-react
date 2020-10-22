@@ -10,8 +10,8 @@ import EmailPassword from 'supertokens-auth-react/recipe/emailpassword';
 SuperTokens.init({
   appInfo: {
     appName: "SuperTokens",
-    websiteDomain: "supertokens.io",
-    apiDomain: "dev.supertokens.io"
+    websiteDomain: "localhost:3031",
+    apiDomain: "localhost:9090" // Not used yet.
   },
   recipeList: [
     EmailPassword.init()

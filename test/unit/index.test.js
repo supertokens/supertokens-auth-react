@@ -21,6 +21,7 @@
 import regeneratorRuntime from "regenerator-runtime";
 import SuperTokens from "../../lib/build/superTokens";
 import EmailPassword, { SignInAndUp } from "../../lib/build/recipe/emailpassword";
+import { DEFAULT_WEBSITE_BASE_PATH, DEFAULT_API_BASE_PATH } from "../../lib/build/constants";
 import assert from "assert";
 import { mockWindowLocation } from "../helpers";
 
@@ -39,11 +40,6 @@ const defaultConfigs = {
     recipeList: []
 };
 
-const defaultBasePaths = {
-    api: "/auth",
-    website: "/auth"
-};
-
 /*
  * Tests.
  */
@@ -57,8 +53,8 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.getAppInfo().appName, defaultConfigs.appInfo.appName);
         assert.strictEqual(SuperTokens.getAppInfo().websiteDomain, `https://${defaultConfigs.appInfo.websiteDomain}`);
         assert.strictEqual(SuperTokens.getAppInfo().apiDomain, `https://${defaultConfigs.appInfo.apiDomain}`);
-        assert.strictEqual(SuperTokens.getAppInfo().apiBasePath, defaultBasePaths.api);
-        assert.strictEqual(SuperTokens.getAppInfo().websiteBasePath, defaultBasePaths.website);
+        assert.strictEqual(SuperTokens.getAppInfo().apiBasePath, DEFAULT_API_BASE_PATH);
+        assert.strictEqual(SuperTokens.getAppInfo().websiteBasePath, DEFAULT_WEBSITE_BASE_PATH);
         assert.strictEqual(SuperTokens.getAppInfo().logoFullURL, undefined);
     });
 
@@ -125,7 +121,7 @@ describe("SuperTokens", function() {
                 apiDomain
             }
         });
-        // assert.strictEqual(SuperTokens.getAppInfo().websiteDomain, `http://${websiteDomain}`);
+        assert.strictEqual(SuperTokens.getAppInfo().websiteDomain, `http://${websiteDomain}`);
         assert.strictEqual(SuperTokens.getAppInfo().apiDomain, apiDomain);
     });
 
@@ -143,7 +139,6 @@ describe("SuperTokens", function() {
             recipeList: [EmailPassword.init()]
         });
 
-        // Get URL from configs (will use window.location.href) in prod, but window object not available in tests.
         const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain;
 
         mockWindowLocation(`${randomWebsitePath}/blog/`);
@@ -172,7 +167,6 @@ describe("SuperTokens", function() {
             recipeList: [EmailPassword.init()]
         });
 
-        // Get URL from configs (will use window.location.href) in prod, but window object not available in tests.
         const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain;
 
         mockWindowLocation(`${randomWebsitePath}/blog/`);

@@ -22,7 +22,7 @@ import { AppInfo, SuperTokensConfig } from "./types";
 import { ComponentClass } from "react";
 import SuperTokensUrl from "./superTokensUrl";
 import { isTest, normaliseURLPathOrThrowError, normaliseURLDomainOrThrowError } from "./utils";
-const { getSuperTokensRoutesForReactDomRouter } = require("./components/superTokensRoute");
+const { getSuperTokensRoutesForReactRouterDom } = require("./components/superTokensRoute");
 
 /*
  * Class.
@@ -106,8 +106,8 @@ export default class SuperTokens {
         }
     }
 
-    static getSuperTokensRoutesForReactDomRouter(): JSX.Element[] {
-        return getSuperTokensRoutesForReactDomRouter();
+    static getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
+        return getSuperTokensRoutesForReactRouterDom();
     }
 
     /*

@@ -61,7 +61,7 @@ describe("SuperTokens Routing in Test App", function() {
     });
 
     describe("using react-router-dom", function() {
-        it("/about should not load any ST components.", async function() {
+        it("/about should not load any SuperTokens components.", async function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_APP_BASE_URL}/about`);
             const superTokensComponent = await page.$(`.${CLASS_CONTAINER}`);
@@ -91,7 +91,7 @@ describe("SuperTokens Routing in Test App", function() {
     });
 
     describe("without react-router-dom", function() {
-        it("/about should not load any ST components.", async function() {
+        it("/about should not load any SuperTokens components.", async function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_APP_BASE_URL}/about?router=no-router`);
             const superTokensComponent = await page.$(`.${CLASS_CONTAINER}`);
@@ -112,7 +112,7 @@ describe("SuperTokens Routing in Test App", function() {
             assert.notStrictEqual(superTokensComponent, null);
         });
 
-        it("/auth?rid=unknown-rid should not load any ST components.", async function() {
+        it("/auth?rid=unknown-rid should not load any SuperTokens components.", async function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router&rid=unknown`);
             const superTokensComponent = await page.$(`#${CLASS_CONTAINER}`);

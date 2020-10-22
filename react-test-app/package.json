@@ -7,7 +7,7 @@
     "react-dom": "^16.14.0",
     "react-scripts": "3.4.3",
     "supertokens-auth-react": "file:../",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "4.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

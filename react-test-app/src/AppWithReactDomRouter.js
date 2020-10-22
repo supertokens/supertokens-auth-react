@@ -5,7 +5,7 @@ import {
   Route,
   Link
 } from "react-router-dom";
-import {getSuperTokensRoutesForReactDomRouter} from 'supertokens-auth-react';
+import {getSuperTokensRoutesForReactRouterDom} from 'supertokens-auth-react';
 
 import {BaseComponent, Home, About, Contact} from './App';
 
@@ -17,7 +17,7 @@ function AppWithReactDomRouter() {
         <h1>With Routing</h1>
         <BaseComponent>
           <Switch>
-            {getSuperTokensRoutesForReactDomRouter()}
+            {getSuperTokensRoutesForReactRouterDom()}
             <Route exact path="/">
               <Home />
             </Route>
