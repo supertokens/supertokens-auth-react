@@ -12,8 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License. 
 */
-declare module '*.css';
-
 import EmailPassword from '../../lib/build/recipe/emailpassword';
 
 export default EmailPassword;
