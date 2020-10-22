@@ -3,6 +3,5 @@
       [
         "@babel/preset-env"
       ]
-    ],
-    "plugins": ["emotion"]
+    ]
   }

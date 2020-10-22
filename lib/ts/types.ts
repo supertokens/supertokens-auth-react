@@ -129,14 +129,14 @@ export type PathToComponentWithRecipeIdMap = {
 };
 
 /*
- * Props.
+ * Props Types.
  */
+export type RecipeModuleProps = {
+    __internal?: InternalRecipeModuleProps;
+};
 
 type InternalRecipeModuleProps = {
     instance: RecipeModule;
-};
-export type RecipeModuleProps = {
-    __internal?: InternalRecipeModuleProps;
 };
 
 export type ThemeProps = {

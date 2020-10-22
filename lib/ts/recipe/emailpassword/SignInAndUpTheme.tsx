@@ -23,7 +23,6 @@ import { ThemeProps } from "../../types";
 
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { css } from '@emotion/core';
 
 /*
  * Component.
@@ -31,7 +30,7 @@ import { css } from '@emotion/core';
 class SignInAndUpTheme extends React.Component<ThemeProps> {
     render () {
         return (
-        <div css={{backgroundColor: 'blue'}} >
+        <div css={defaultStyles.container} >
             <div css={defaultStyles.row}>
                 
                 <div css={styles.header}>
@@ -60,7 +59,6 @@ class SignInAndUpTheme extends React.Component<ThemeProps> {
                 </form>
 
                 <button> Sign In </button>
-                <h1> Sign In </h1>
                 <div>Forgot password?</div>
 
             </div>
@@ -81,7 +79,6 @@ const styles = {
         fontWeight: 700,
         fontFamily: palette.fonts.primary,
         color: palette.colors.primary,
-        backgroundColor:'green'
     },
     headerSubtitle: {
         fontSize: palette.fonts.size[0],

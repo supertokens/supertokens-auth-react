@@ -12,7 +12,14 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-const { normaliseURLPathOrThrowError, normaliseURLDomainOrThrowError } = require("../../lib/build/utils");
+import {
+    normaliseURLPathOrThrowError,
+    normaliseURLDomainOrThrowError,
+    getNormalisedRouteWithoutWebsiteBasePath,
+    removePendingSlashFromPath,
+    getRecipeIdFromSearch
+} from "../../lib/build/utils";
+
 const assert = require("assert");
 import { mockWindowLocation } from "../helpers";
 
@@ -108,5 +115,30 @@ describe("Config tests", function() {
         } catch (err) {
             assert(err.message === "Please provide a valid domain name");
         }
+    });
+
+    it("testing removing website base path from normalised path", async function() {
+        assert.strictEqual(getNormalisedRouteWithoutWebsiteBasePath("/auth/login", "/auth"), "/login");
+        assert.strictEqual(getNormalisedRouteWithoutWebsiteBasePath("/auth", "/auth"), "/");
+        assert.strictEqual(getNormalisedRouteWithoutWebsiteBasePath("/auth/", "/auth"), "/");
+        assert.strictEqual(getNormalisedRouteWithoutWebsiteBasePath("/auth/", "/customBasePath"), "/auth/");
+        assert.strictEqual(getNormalisedRouteWithoutWebsiteBasePath("/auth/login", "/customBasePath"), "/auth/login");
+    });
+
+    it("testing removing pending slashed from normalised path", async function() {
+        assert.strictEqual(removePendingSlashFromPath(""), "");
+        assert.strictEqual(removePendingSlashFromPath("/"), "/");
+        assert.strictEqual(removePendingSlashFromPath("/auth/login"), "/auth/login");
+        assert.strictEqual(removePendingSlashFromPath("/auth/login/"), "/auth/login");
+        assert.strictEqual(removePendingSlashFromPath("/auth/login//"), "/auth/login");
+    });
+
+    it("get recipe Id from URL search", async function() {
+        assert.strictEqual(getRecipeIdFromSearch(""), null);
+        assert.strictEqual(getRecipeIdFromSearch("?rid=test"), "test");
+        assert.strictEqual(getRecipeIdFromSearch("?rid=2"), "2");
+        assert.strictEqual(getRecipeIdFromSearch("?gid=blue&rid=green&foo=bar"), "green");
+        assert.strictEqual(getRecipeIdFromSearch("?rId=blue&rid=green"), "green");
+        assert.strictEqual(getRecipeIdFromSearch("?rId=blue&foo=bar"), null);
     });
 });

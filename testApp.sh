@@ -19,7 +19,7 @@ if [[ $1 == "--start" ]]; then
         npm run build
     fi
     echo "LOGS: Starting test example app"
-    # Prevent clashes  on react-router-dom.
+    # Prevent clashes  on react-router-dom, and react.
     mv node_modules/react-router-dom node_modules/react-router-dom-tmp
     mv node_modules/react node_modules/react-tmp
     startTestApp

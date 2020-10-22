@@ -32,7 +32,7 @@ export function getRecipeIdFromSearch(search: string): string | null {
  */
 export function removePendingSlashFromPath(path: string): string {
     // Remove pending "/""
-    if (path.endsWith("/")) {
+    while (path.length > 1 && path.endsWith("/")) {
         path = path.slice(0, -1);
     }
 

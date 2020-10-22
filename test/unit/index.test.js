@@ -20,7 +20,7 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import SuperTokens from "../../lib/build/superTokens";
-import EmailPassword, { SignInUp } from "../../lib/build/recipe/emailpassword";
+import EmailPassword, { SignInAndUp } from "../../lib/build/recipe/emailpassword";
 import assert from "assert";
 import { mockWindowLocation } from "../helpers";
 
@@ -184,13 +184,13 @@ describe("SuperTokens", function() {
         mockWindowLocation(`${randomWebsitePath}/auth/404`);
         assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
         mockWindowLocation(`${randomWebsitePath}/auth`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
         mockWindowLocation(`${randomWebsitePath}/auth/`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
         mockWindowLocation(`${randomWebsitePath}/auth/.`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
         mockWindowLocation(`${randomWebsitePath}/auth?rid=email-password`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
         assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
     });
