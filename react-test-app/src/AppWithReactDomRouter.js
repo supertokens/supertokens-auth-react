@@ -13,8 +13,8 @@ function AppWithReactDomRouter() {
   return (
     <div className="App">
       <Router>
-        <h1>With Routing</h1>
         <Nav/> 
+        <h1>With Routing</h1>
         <BaseComponent>
           <Switch>
             {getSuperTokensRoutesForReactDomRouter()}
@@ -39,16 +39,16 @@ function Nav () {
     <nav>
       <ul>
         <li>
-          <Link to="/">Home</Link>
+          <Link style={{ textDecoration: 'none' }} to="/">Home</Link>
         </li>
         <li>
-          <Link to="/about">About</Link>
+          <Link style={{ textDecoration: 'none' }} to="/about">About</Link>
         </li>
         <li>
-          <Link to="/contact">Contact</Link>
+          <Link style={{ textDecoration: 'none' }} to="/contact">Contact</Link>
         </li>
         <li>
-          <Link to="/auth">Auth</Link>
+          <Link style={{ textDecoration: 'none' }} to="/auth">Auth</Link>
         </li>
       </ul>
     </nav> 

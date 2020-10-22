@@ -34,7 +34,7 @@ const TEST_APP_BASE_URL = "http://localhost:3031";
 describe("SuperTokens Routing in Test App", function() {
     let testAppChildProcess, browser;
     before(async function() {
-        testAppChildProcess = spawn("./testApp.sh", ["--start"]);
+        testAppChildProcess = spawn("./testApp.sh", ["--start", "--no-build"]);
 
         testAppChildProcess.stderr.on("data", function(data) {
             console.log("stderr:" + data);
@@ -63,30 +63,60 @@ describe("SuperTokens Routing in Test App", function() {
     describe("using react-router-dom", function() {
         it("/about should not load any ST components.", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/about`, { waitUntil: "networkidle2" });
+            await page.goto(`${TEST_APP_BASE_URL}/about`);
             const superTokensComponent = await page.$(`.${CLASS_CONTAINER}`);
             assert.strictEqual(superTokensComponent, null);
         });
 
         it("/auth should load SignInUp components.", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth`, { waitUntil: "networkidle2" });
-            const superTokensComponent = await page.$(`.${CLASS_CONTAINER}`);
+            await page.goto(`${TEST_APP_BASE_URL}/auth`);
+            const superTokensComponent = await page.$(`#${CLASS_CONTAINER}`);
             assert.notStrictEqual(superTokensComponent, null);
         });
 
         it("/auth?rid=email-password should load SignInUp components.", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth?rid=email-password`, { waitUntil: "networkidle2" });
-            const superTokensComponent = await page.$(`.${CLASS_CONTAINER}`);
+            await page.goto(`${TEST_APP_BASE_URL}/auth?rid=email-password`);
+            const superTokensComponent = await page.$(`#${CLASS_CONTAINER}`);
             assert.notStrictEqual(superTokensComponent, null);
         });
 
         it("/auth?rid=unknown-rid should load UnknownRecipeId components.", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth?rid=unknown`, { waitUntil: "networkidle2" });
-            const superTokensComponent = await page.$(`.${CLASS_UNKNOWN_RECIPE_ID}`);
+            await page.goto(`${TEST_APP_BASE_URL}/auth?rid=unknown`);
+            const superTokensComponent = await page.$(`#${CLASS_UNKNOWN_RECIPE_ID}`);
             assert.notStrictEqual(superTokensComponent, null);
+        });
+    });
+
+    describe("without react-router-dom", function() {
+        it("/about should not load any ST components.", async function() {
+            const page = await browser.newPage();
+            await page.goto(`${TEST_APP_BASE_URL}/about?router=no-router`);
+            const superTokensComponent = await page.$(`.${CLASS_CONTAINER}`);
+            assert.strictEqual(superTokensComponent, null);
+        });
+
+        it("/auth should load SignInUp components.", async function() {
+            const page = await browser.newPage();
+            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router`);
+            const superTokensComponent = await page.$(`#${CLASS_CONTAINER}`);
+            assert.notStrictEqual(superTokensComponent, null);
+        });
+
+        it("/auth?rid=email-password should load SignInUp components.", async function() {
+            const page = await browser.newPage();
+            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router&rid=email-password`);
+            const superTokensComponent = await page.$(`#${CLASS_CONTAINER}`);
+            assert.notStrictEqual(superTokensComponent, null);
+        });
+
+        it("/auth?rid=unknown-rid should not load any ST components.", async function() {
+            const page = await browser.newPage();
+            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router&rid=unknown`);
+            const superTokensComponent = await page.$(`#${CLASS_CONTAINER}`);
+            assert.strictEqual(superTokensComponent, null);
         });
     });
 });

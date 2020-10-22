@@ -15,6 +15,10 @@
 import { ComponentClass } from "react";
 import RecipeModule from "./recipe/recipeModule";
 
+/*
+ * Config Types.
+ */
+
 export type SuperTokensConfig = {
     /*
      * Configurations for authentication.
@@ -77,6 +81,21 @@ export type AppInfo = AppInfoBase & {
     websiteBasePath: string;
 };
 
+export type EmailPasswordConfig = RecipeModuleConfig & {
+    /*
+     * Sign In and Sign Up feature.
+     */
+    signInAndUpFeature: any;
+
+    /*
+     * Reset password Using Token feature.
+     */
+    resetPasswordUsingTokenFeature: any;
+};
+
+/*
+ * Routing manipulation types.
+ */
 export type RouteToFeatureComponentMap = {
     [route: string]: ComponentClass;
 };
@@ -93,18 +112,6 @@ export type RecipeModuleConfig = {
     recipeId: string;
 };
 
-export type EmailPasswordConfig = RecipeModuleConfig & {
-    /*
-     * Sign In and Sign Up feature.
-     */
-    signInAndUpFeature: any;
-
-    /*
-     * Reset password Using Token feature.
-     */
-    resetPasswordUsingTokenFeature: any;
-};
-
 export type ComponentWithRecipeId = {
     /*
      * recipeId of the component.
@@ -118,5 +125,28 @@ export type ComponentWithRecipeId = {
 };
 
 export type PathToComponentWithRecipeIdMap = {
-    [route: string]: ComponentWithRecipeId[];
+    [path: string]: ComponentWithRecipeId[];
+};
+
+/*
+ * Props.
+ */
+
+type InternalRecipeModuleProps = {
+    instance: RecipeModule;
+};
+export type RecipeModuleProps = {
+    __internal?: InternalRecipeModuleProps;
+};
+
+export type ThemeProps = {
+    formFields: FormFieldsProps[];
+};
+
+export type FormFieldsProps = {
+    id: string;
+    label: string;
+    placeholder?: string;
+    validate?: (value: string) => Promise<boolean | undefined>;
+    optional?: boolean;
 };

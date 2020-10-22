@@ -76,5 +76,5 @@ function SuperTokensRouteWithRecipeId(path: string, routeComponents: ComponentWi
 
 function UnknownRecipeId () {
 	console.log('Unknown Recipe Id');
-	return <div className={CLASS_UNKNOWN_RECIPE_ID}></div>;
+	return <div id={CLASS_UNKNOWN_RECIPE_ID}></div>;
 }

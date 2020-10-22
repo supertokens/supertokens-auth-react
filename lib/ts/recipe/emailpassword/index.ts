@@ -19,7 +19,7 @@
 import RecipeModule from "../recipeModule";
 import { EmailPasswordConfig } from "../../types";
 import SignInUp from "./SignInUp";
-
+import SignInAndUpTheme from "./SignInAndUpTheme";
 /*
  * Class.
  */
@@ -31,8 +31,7 @@ export default class EmailPassword extends RecipeModule {
             ...config,
             recipeId: "email-password",
             features: {
-                "/": SignInUp,
-                "/login": SignInUp
+                "/": SignInUp
             }
         });
     }
@@ -50,4 +49,4 @@ export default class EmailPassword extends RecipeModule {
     }
 }
 
-export { SignInUp };
+export { SignInUp, SignInAndUpTheme };

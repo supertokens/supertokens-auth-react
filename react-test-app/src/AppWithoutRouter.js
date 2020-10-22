@@ -6,8 +6,8 @@ function AppWithoutRouter() {
 
   return (
     <>
-      <h1>Without Routing</h1>
       <Nav />
+      <h1>Without Routing</h1>
       <Routing></Routing>
     </>
   )
@@ -16,8 +16,8 @@ function AppWithoutRouter() {
 function Routing () {
   if (canHandleRoute()) {
     const SuperTokensComponent = getRoutingComponent();
-    debugger;
-    return (<BaseComponent>
+
+  return (<BaseComponent>
       <SuperTokensComponent />
     </BaseComponent>);
   }

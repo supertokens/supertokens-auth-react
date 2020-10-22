@@ -16,20 +16,58 @@
 /*
  * Imports.
  */
-
- import * as React from "react";
+import * as React from "react";
 import { CLASS_CONTAINER } from "../../constants";
+import { RecipeModuleProps } from '../../types';
+import EmailPassword from "./";
+import {SignInAndUpTheme} from './';
+import root from 'react-shadow/emotion';
 
 /*
  * Component.
  */
-export default class SignInUp extends React.Component {
+class SignInUp extends React.Component<RecipeModuleProps> {
+    getRecipeInstanceOrThrow = () => {
+		let instance;
+		if (this.props.__internal !== undefined && this.props.__internal.instance !== undefined) {
+			instance = this.props.__internal.instance;
+		} else {
+			instance = EmailPassword.getInstanceIfDefined();
+		}
+		return instance;
+    }
+
     render () {
-        return (<div
-            className={CLASS_CONTAINER}
-        >
-            SignInSignUp
-        </div>);
+        return (
+            <div id={CLASS_CONTAINER}>
+                <SignInAndUpTheme
+                    // TODO Get the form Fields from the recipe.
+                    formFields={[
+                        {
+                            id: 'email',
+                            label: 'Email',
+                            placeholder: 'youremail@example.com',
+                            validate: (email: string) => {
+                                return new Promise(resolve => resolve(true));
+                            },
+                        },{
+                            id: 'password',
+                            label: 'Password',
+                            placeholder: 'Enter your password',
+                            validate: (password: string) => {
+                                return new Promise(resolve => resolve(true));
+                            }
+                        }
+                    ]}
+
+                />
+                {/* <style type="text/css">
+                    {"html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video { margin: 0;padding: 0;border: 0;font-size: 100%;font: inherit;vertical-align: baseline;}"}
+                </style> */}
+            </div>
+        );
     }
 
 }
+
+export default SignInUp;
