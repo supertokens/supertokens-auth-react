@@ -111,7 +111,7 @@ describe("SuperTokens", function() {
     });
 
     it("Initializing SuperTokens with localhost and unsecure protocol", async function() {
-        const websiteDomain = "http://localhost:4000";
+        const websiteDomain = "localhost:4000";
         const apiDomain = "http://api.supertokens.io";
         SuperTokens.init({
             ...defaultConfigs,
