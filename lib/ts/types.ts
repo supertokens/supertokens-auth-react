@@ -28,7 +28,7 @@ export type SuperTokensConfig = {
     /*
      * List of recipes for authentication and session management.
      */
-    recipeList: RecipeModule[];
+    recipeList: (() => RecipeModule)[];
 };
 
 type AppInfoBase = {

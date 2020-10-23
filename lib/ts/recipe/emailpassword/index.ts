@@ -36,9 +36,11 @@ export default class EmailPassword extends RecipeModule {
         });
     }
 
-    static init(config: EmailPasswordConfig): RecipeModule {
-        EmailPassword.instance = new EmailPassword(config);
-        return EmailPassword.instance;
+    static init(config: EmailPasswordConfig): () => RecipeModule {
+        return (): RecipeModule => {
+            EmailPassword.instance = new EmailPassword(config);
+            return EmailPassword.instance;
+        };
     }
 
     static getInstanceIfDefined(): EmailPassword {

@@ -60,7 +60,9 @@ export default class SuperTokens {
             throw new Error("No recipeList provided to SuperTokens."); // TODO Add link to appropriate docs.
         }
 
-        this.recipeList = config.recipeList;
+        this.recipeList = config.recipeList.map(recipe => {
+            return recipe();
+        });
     }
 
     /*
