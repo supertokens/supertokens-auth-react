@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { CLASS_CONTAINER } from "../../constants";
+import { ST_ROOT_CONTAINER } from "../../constants";
 import { RecipeModuleProps } from '../../types';
 import EmailPassword from ".";
 import {SignInAndUpTheme} from '.';
@@ -39,7 +39,7 @@ class SignInAndUp extends React.Component<RecipeModuleProps> {
 
     render () {
         return (
-            <root.div id={CLASS_CONTAINER}>
+            <root.div id={ST_ROOT_CONTAINER}>
                 <SignInAndUpTheme
                     // TODO Get the form Fields from the recipe.
                     formFields={[

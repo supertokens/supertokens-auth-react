@@ -22,7 +22,7 @@ import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
-import { CLASS_CONTAINER, CLASS_UNKNOWN_RECIPE_ID } from "../../lib/build/constants";
+import { ST_ROOT_CONTAINER } from "../../lib/build/constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -33,6 +33,8 @@ const TEST_APP_BASE_URL = "http://localhost:3031";
  */
 describe("SuperTokens Routing in Test App", function() {
     let testAppChildProcess, browser;
+    const SignInButtonQuerySelector = `document.querySelector('#${ST_ROOT_CONTAINER}').shadowRoot.querySelector('button').innerText`;
+
     before(async function() {
         testAppChildProcess = spawn("./testApp.sh", ["--start", "--no-build"]);
 
@@ -64,58 +66,67 @@ describe("SuperTokens Routing in Test App", function() {
         it("/about should not load any SuperTokens components.", async function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_APP_BASE_URL}/about`);
-            const superTokensComponent = await page.$(`.${CLASS_CONTAINER}`);
+            const superTokensComponent = await page.$(`.${ST_ROOT_CONTAINER}`);
             assert.strictEqual(superTokensComponent, null);
         });
 
         it("/auth should load SignInUp components.", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth`);
-            const superTokensComponent = await page.$(`#${CLASS_CONTAINER}`);
-            assert.notStrictEqual(superTokensComponent, null);
+            await page.goto(`${TEST_APP_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
+            const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
+            assert.notStrictEqual(signInButton, null);
+            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
         });
 
         it("/auth?rid=email-password should load SignInUp components.", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth?rid=email-password`);
-            const superTokensComponent = await page.$(`#${CLASS_CONTAINER}`);
-            assert.notStrictEqual(superTokensComponent, null);
+            await page.goto(`${TEST_APP_BASE_URL}/auth?rid=email-password`, { waitUntil: "domcontentloaded" });
+            const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
+            assert.notStrictEqual(signInButton, null);
+            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
         });
 
-        it("/auth?rid=unknown-rid should load UnknownRecipeId components.", async function() {
+        it("/auth?rid=unknown-rid should load first components.", async function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_APP_BASE_URL}/auth?rid=unknown`);
-            const superTokensComponent = await page.$(`#${CLASS_UNKNOWN_RECIPE_ID}`);
-            assert.notStrictEqual(superTokensComponent, null);
+            const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
+            assert.notStrictEqual(signInButton, null);
+            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
         });
     });
 
     describe("without react-router-dom", function() {
         it("/about should not load any SuperTokens components.", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/about?router=no-router`);
-            const superTokensComponent = await page.$(`.${CLASS_CONTAINER}`);
+            await page.goto(`${TEST_APP_BASE_URL}/about?router=no-router`, { waitUntil: "domcontentloaded" });
+            const superTokensComponent = await page.$(`.${ST_ROOT_CONTAINER}`);
             assert.strictEqual(superTokensComponent, null);
         });
 
         it("/auth should load SignInUp components.", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router`);
-            const superTokensComponent = await page.$(`#${CLASS_CONTAINER}`);
-            assert.notStrictEqual(superTokensComponent, null);
+            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router`, { waitUntil: "domcontentloaded" });
+            const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
+            assert.notStrictEqual(signInButton, null);
+            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
         });
 
         it("/auth?rid=email-password should load SignInUp components.", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router&rid=email-password`);
-            const superTokensComponent = await page.$(`#${CLASS_CONTAINER}`);
-            assert.notStrictEqual(superTokensComponent, null);
+            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router&rid=email-password`, {
+                waitUntil: "domcontentloaded"
+            });
+            const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
+            assert.notStrictEqual(signInButton, null);
+            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
         });
 
         it("/auth?rid=unknown-rid should not load any SuperTokens components.", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router&rid=unknown`);
-            const superTokensComponent = await page.$(`#${CLASS_CONTAINER}`);
+            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router&rid=unknown`, {
+                waitUntil: "domcontentloaded"
+            });
+            const superTokensComponent = await page.$(`#${ST_ROOT_CONTAINER}`);
             assert.strictEqual(superTokensComponent, null);
         });
     });

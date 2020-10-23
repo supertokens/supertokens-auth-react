@@ -18,7 +18,6 @@
  */
 
 import * as React from "react";
-import { CLASS_UNKNOWN_RECIPE_ID } from "../constants";
 import SuperTokens from "../superTokens";
 import { ComponentWithRecipeId, PathToComponentWithRecipeIdMap } from "../types";
 import { getRecipeIdFromSearch } from "../utils";
@@ -38,11 +37,10 @@ export function getSuperTokensRoutesForReactRouterDom (): JSX.Element[] {
 		SuperTokens.getRecipeList().map(recipe => {
 			const features = recipe.getFeatures();
 			return Object.keys(features).map(featurePath => {
-				// if (!feature.disableDefaultRoute) { //TODO
 				const fullPath = `${SuperTokens.getAppInfo().websiteBasePath}${featurePath}`;
 
 				// If no components yet for this route, initialize empty array.
-				if(!pathsToComponentWithRecipeIdMap[fullPath]) {
+				if(pathsToComponentWithRecipeIdMap[fullPath] === undefined) {
 					pathsToComponentWithRecipeIdMap[fullPath] = []
 				}
 
@@ -66,23 +64,16 @@ function SuperTokensRouteWithRecipeId(path: string, routeComponents: ComponentWi
 	const Route = require('react-router-dom').Route;
 	const recipeId = getRecipeIdFromSearch(window.location.search);
 
-	// If no recipe Id provided, return first matching component.
-	if (recipeId === null)
-		return <Route exact key={`st-${path}`} path={path} component={routeComponents[0].component} />
-
-	// Otherwise, find matching recipeId.
-	// let routeComponent: RouteComponent;
-	for (let i = 0; i < routeComponents.length; i++) {
-		if (recipeId === routeComponents[i].rid) {
-			return <Route exact key={`st-${path}`} path={path} component={routeComponents[i].component} />;
+	// If recipeId provided, try to find a match.
+	if (recipeId !== null) {
+		for (let i = 0; i < routeComponents.length; i++) {
+			if (recipeId === routeComponents[i].rid) {
+				return <Route exact key={`st-${path}`} path={path} component={routeComponents[i].component} />;
+			}
 		}
 	}
+	
+	// Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
+	return <Route exact key={`st-${path}`} path={path} component={routeComponents[0].component} />
 
-	// If no recipeId matches, return unknown recipe Id component.
-	return <Route exact key={`st-${path}`} path={path} component={UnknownRecipeId} />;
-}
-
-function UnknownRecipeId () {
-	console.log('Unknown Recipe Id');
-	return <div id={CLASS_UNKNOWN_RECIPE_ID}></div>;
 }
