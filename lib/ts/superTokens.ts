@@ -52,8 +52,7 @@ export default class SuperTokens {
             websiteBasePath: SuperTokens.getNormalisedURLPathOrDefault(
                 DEFAULT_WEBSITE_BASE_PATH,
                 config.appInfo.websiteBasePath
-            ),
-            logoFullURL: config.appInfo.logoFullURL
+            )
         };
 
         if (config.recipeList === undefined) {

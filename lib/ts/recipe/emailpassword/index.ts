@@ -17,7 +17,7 @@
  * Imports.
  */
 import RecipeModule from "../recipeModule";
-import { EmailPasswordConfig } from "../../types";
+import { EmailPasswordConfig } from "./types";
 import SignInAndUp from "./SignInAndUp";
 import SignInAndUpTheme from "./SignInAndUpTheme";
 /*

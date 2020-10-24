@@ -26,20 +26,6 @@ export function getRecipeIdFromSearch(search: string): string | null {
 }
 
 /*
- * removePendingSlashFromPath
- * Input: string path (compatible with url).
- * Output path without pending "/" at the end.
- */
-export function removePendingSlashFromPath(path: string): string {
-    // Remove pending "/""
-    while (path.length > 1 && path.endsWith("/")) {
-        path = path.slice(0, -1);
-    }
-
-    return path;
-}
-
-/*
  * getNormalisedRouteWithoutWebsiteBasePath
  * Input: string path
  * Output path without the website base path.
