@@ -17,12 +17,13 @@
     "jsdom": "16.4.0",
     "jsdom-global": "3.0.2",
     "prettier": "1.18.2",
-    "puppeteer": "^5.3.1",
-    "react": "^16.14.0",
-    "react-dom": "^16.0.0",
-    "react-router-dom": "^5.2.0",
-    "regenerator-runtime": "^0.13.7",
-    "typescript": "3.5.2"
+    "puppeteer": "5.3.1",
+    "react": "16.14.0",
+    "react-dom": "16.0.0",
+    "react-router-dom": "5.2.0",
+    "regenerator-runtime": "0.13.7",
+    "typescript": "3.5.2",
+    "mocha": "6.1.4"
   },
   "peerDependencies": {
     "react": "^16.14.0",
@@ -32,7 +33,7 @@
     "test": "npm run build-pretty && TEST_MODE=testing mocha --require @babel/register --timeout 500000",
     "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
     "tsc": "cd lib && npx tsc -p tsconfig.json",
-    "build": "npm run build-check && npm run compile",
+    "build": "cd lib && npx tsc -p tsconfig.json --emitDeclarationOnly && cd ../ && npm run compile",
     "compile": "cd lib && babel ./ts/ --out-dir build/ --extensions '.ts,.tsx'",
     "watch": "cd lib && babel --watch ./ts/ --out-dir ./build/ --extensions '.ts,.tsx'",
     "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/**/*.js\"",

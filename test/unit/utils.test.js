@@ -12,13 +12,10 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import {
-    normaliseURLPathOrThrowError,
-    normaliseURLDomainOrThrowError,
-    getNormalisedRouteWithoutWebsiteBasePath,
-    removePendingSlashFromPath,
-    getRecipeIdFromSearch
-} from "../../lib/build/utils";
+import { getNormalisedRouteWithoutWebsiteBasePath, getRecipeIdFromSearch } from "../../lib/build/utils";
+
+import NormalisedURLPath, { normaliseURLPathOrThrowError } from "../../lib/build/normalisedURLPath";
+import { normaliseURLDomainOrThrowError } from "../../lib/build/normalisedURLDomain";
 
 const assert = require("assert");
 import { mockWindowLocation } from "../helpers";
@@ -118,19 +115,41 @@ describe("Config tests", function() {
     });
 
     it("testing removing website base path from normalised path", async function() {
-        assert.strictEqual(getNormalisedRouteWithoutWebsiteBasePath("/auth/login", "/auth"), "/login");
-        assert.strictEqual(getNormalisedRouteWithoutWebsiteBasePath("/auth", "/auth"), "/");
-        assert.strictEqual(getNormalisedRouteWithoutWebsiteBasePath("/auth/", "/auth"), "/");
-        assert.strictEqual(getNormalisedRouteWithoutWebsiteBasePath("/auth/", "/customBasePath"), "/auth/");
-        assert.strictEqual(getNormalisedRouteWithoutWebsiteBasePath("/auth/login", "/customBasePath"), "/auth/login");
-    });
-
-    it("testing removing pending slashed from normalised path", async function() {
-        assert.strictEqual(removePendingSlashFromPath(""), "");
-        assert.strictEqual(removePendingSlashFromPath("/"), "/");
-        assert.strictEqual(removePendingSlashFromPath("/auth/login"), "/auth/login");
-        assert.strictEqual(removePendingSlashFromPath("/auth/login/"), "/auth/login");
-        assert.strictEqual(removePendingSlashFromPath("/auth/login//"), "/auth/login");
+        assert.strictEqual(
+            getNormalisedRouteWithoutWebsiteBasePath(
+                new NormalisedURLPath("/auth/login"),
+                new NormalisedURLPath("/auth")
+            ).getAsStringDangerous(),
+            "/login"
+        );
+        assert.strictEqual(
+            getNormalisedRouteWithoutWebsiteBasePath(
+                new NormalisedURLPath("/auth"),
+                new NormalisedURLPath("/auth")
+            ).getAsStringDangerous(),
+            ""
+        );
+        assert.strictEqual(
+            getNormalisedRouteWithoutWebsiteBasePath(
+                new NormalisedURLPath("/auth/"),
+                new NormalisedURLPath("/auth")
+            ).getAsStringDangerous(),
+            ""
+        );
+        assert.strictEqual(
+            getNormalisedRouteWithoutWebsiteBasePath(
+                new NormalisedURLPath("/auth/"),
+                new NormalisedURLPath("/customBasePath")
+            ).getAsStringDangerous(),
+            "/auth"
+        );
+        assert.strictEqual(
+            getNormalisedRouteWithoutWebsiteBasePath(
+                new NormalisedURLPath("/auth/login"),
+                new NormalisedURLPath("/customBasePath")
+            ).getAsStringDangerous(),
+            "/auth/login"
+        );
     });
 
     it("get recipe Id from URL search", async function() {

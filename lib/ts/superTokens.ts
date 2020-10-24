@@ -21,7 +21,9 @@ import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH } from "./constants";
 import { AppInfo, SuperTokensConfig } from "./types";
 import { ComponentClass } from "react";
 import SuperTokensUrl from "./superTokensUrl";
-import { isTest, normaliseURLPathOrThrowError, normaliseURLDomainOrThrowError } from "./utils";
+import { isTest } from "./utils";
+import NormalisedURLDomain from "./normalisedURLDomain";
+import NormalisedURLPath from "./normalisedURLPath";
 const { getSuperTokensRoutesForReactRouterDom } = require("./components/superTokensRoute");
 
 /*
@@ -46,8 +48,8 @@ export default class SuperTokens {
     constructor(config: SuperTokensConfig) {
         this.appInfo = {
             appName: config.appInfo.appName,
-            apiDomain: normaliseURLDomainOrThrowError(config.appInfo.apiDomain),
-            websiteDomain: normaliseURLDomainOrThrowError(config.appInfo.websiteDomain),
+            apiDomain: new NormalisedURLDomain(config.appInfo.apiDomain),
+            websiteDomain: new NormalisedURLDomain(config.appInfo.websiteDomain),
             apiBasePath: SuperTokens.getNormalisedURLPathOrDefault(DEFAULT_API_BASE_PATH, config.appInfo.apiBasePath),
             websiteBasePath: SuperTokens.getNormalisedURLPathOrDefault(
                 DEFAULT_WEBSITE_BASE_PATH,
@@ -99,11 +101,11 @@ export default class SuperTokens {
         return SuperTokens.getInstanceIfDefined().getRecipeList();
     }
 
-    static getNormalisedURLPathOrDefault(defaultPath: string, path?: string): string {
+    static getNormalisedURLPathOrDefault(defaultPath: string, path?: string): NormalisedURLPath {
         if (path !== undefined) {
-            return normaliseURLPathOrThrowError(path);
+            return new NormalisedURLPath(path);
         } else {
-            return defaultPath;
+            return new NormalisedURLPath(defaultPath);
         }
     }
 

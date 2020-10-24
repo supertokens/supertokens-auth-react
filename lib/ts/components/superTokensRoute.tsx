@@ -20,7 +20,8 @@
 import * as React from "react";
 import SuperTokens from "../superTokens";
 import { ComponentWithRecipeId, PathToComponentWithRecipeIdMap } from "../types";
-import { getRecipeIdFromSearch } from "../utils";
+import SuperTokensUrl from '../superTokensUrl';
+import NormalisedURLPath from '../normalisedURLPath';
 
 /*
 * SuperTokensRouteWithRecipeId
@@ -31,16 +32,17 @@ import { getRecipeIdFromSearch } from "../utils";
 * on the rId.
 * See SuperTokensRouteWithRecipeId below.
 */
-export function getSuperTokensRoutesForReactRouterDom (): JSX.Element[] {
+export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
 	try {
 		let pathsToComponentWithRecipeIdMap: PathToComponentWithRecipeIdMap = {};
 		SuperTokens.getRecipeList().map(recipe => {
 			const features = recipe.getFeatures();
 			return Object.keys(features).map(featurePath => {
-				const fullPath = `${SuperTokens.getAppInfo().websiteBasePath}${featurePath}`;
+				const fullPath = SuperTokens.getAppInfo().websiteBasePath.appendPath(
+					new NormalisedURLPath(featurePath)).getAsStringDangerous();
 
 				// If no components yet for this route, initialize empty array.
-				if(pathsToComponentWithRecipeIdMap[fullPath] === undefined) {
+				if (pathsToComponentWithRecipeIdMap[fullPath] === undefined) {
 					pathsToComponentWithRecipeIdMap[fullPath] = []
 				}
 
@@ -55,14 +57,12 @@ export function getSuperTokensRoutesForReactRouterDom (): JSX.Element[] {
 	} catch (e) {
 		return [];
 	}
-	
-	
 }
 
 
 function SuperTokensRouteWithRecipeId(path: string, routeComponents: ComponentWithRecipeId[]): JSX.Element {
 	const Route = require('react-router-dom').Route;
-	const recipeId = getRecipeIdFromSearch(window.location.search);
+	const recipeId = new SuperTokensUrl().recipeId
 
 	// If recipeId provided, try to find a match.
 	if (recipeId !== null) {
@@ -72,7 +72,7 @@ function SuperTokensRouteWithRecipeId(path: string, routeComponents: ComponentWi
 			}
 		}
 	}
-	
+
 	// Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
 	return <Route exact key={`st-${path}`} path={path} component={routeComponents[0].component} />
 

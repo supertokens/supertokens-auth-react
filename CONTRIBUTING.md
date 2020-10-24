@@ -24,6 +24,7 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 4. Install the project dependencies
    ```
    npm i -d
+   cd react-test-app && npm i -d
    ```
 5. Add git pre-commit hooks
    ```
@@ -43,8 +44,7 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 
 
 ## Run the test application.
-1. `(cd react-test-app && npm install)`
-2. `./testApp.sh --start`
+1. `./testApp.sh --start`
 
 
 ## Pull Request

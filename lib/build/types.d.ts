@@ -1,26 +1,24 @@
 import { ComponentClass } from "react";
 import RecipeModule from "./recipe/recipeModule";
+import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLDomain from "./normalisedURLDomain";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
-    recipeList: RecipeModule[];
+    recipeList: (() => RecipeModule)[];
 };
-declare type AppInfoBase = {
+export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;
     websiteDomain: string;
-    logoFullURL?: string;
-};
-export declare type AppInfoUserInput = AppInfoBase & {
     apiBasePath?: string;
     websiteBasePath?: string;
 };
-export declare type AppInfo = AppInfoBase & {
-    apiBasePath: string;
-    websiteBasePath: string;
-};
-export declare type EmailPasswordConfig = RecipeModuleConfig & {
-    signInAndUpFeature: any;
-    resetPasswordUsingTokenFeature: any;
+export declare type AppInfo = {
+    appName: string;
+    apiDomain: NormalisedURLDomain;
+    websiteDomain: NormalisedURLDomain;
+    apiBasePath: NormalisedURLPath;
+    websiteBasePath: NormalisedURLPath;
 };
 export declare type RouteToFeatureComponentMap = {
     [route: string]: ComponentClass;
@@ -36,11 +34,11 @@ export declare type ComponentWithRecipeId = {
 export declare type PathToComponentWithRecipeIdMap = {
     [path: string]: ComponentWithRecipeId[];
 };
-declare type InternalRecipeModuleProps = {
-    instance: RecipeModule;
-};
 export declare type RecipeModuleProps = {
     __internal?: InternalRecipeModuleProps;
+};
+declare type InternalRecipeModuleProps = {
+    instance: RecipeModule;
 };
 export declare type ThemeProps = {
     formFields: FormFieldsProps[];
