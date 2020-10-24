@@ -12,4 +12,5 @@
  * License for the specific language governing permissions and limitations
  * under the License. 
 */
-export * from '../../lib/ts/recipe/emailpassword';
+
+export * from './lib/ts/';
