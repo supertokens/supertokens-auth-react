@@ -7,6 +7,6 @@ export default class EmailPassword extends RecipeModule {
     static instance?: EmailPassword;
     constructor(config: EmailPasswordConfig);
     static init(config: EmailPasswordConfig): CreateRecipeFunction;
-    static getInstanceIfDefined(): EmailPassword;
+    static getInstanceOrThrowError(): EmailPassword;
 }
 export { SignInAndUp, SignInAndUpTheme };

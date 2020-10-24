@@ -47,7 +47,7 @@ export default class EmailPassword extends RecipeModule {
         };
     }
 
-    static getInstanceIfDefined(): EmailPassword {
+    static getInstanceOrThrowError(): EmailPassword {
         if (EmailPassword.instance === undefined) {
             throw Error(`No instance of ${EmailPassword.constructor.name} found. Make sure to call the "init" method.`); // TODO Add relevant doc.
         }

@@ -20,7 +20,7 @@ import * as React from "react";
 import { ST_ROOT_CONTAINER } from "../../constants";
 import { RecipeModuleProps } from '../../types';
 import EmailPassword from ".";
-import {SignInAndUpTheme} from '.';
+import { SignInAndUpTheme } from '.';
 import root from 'react-shadow/emotion';
 
 /*
@@ -28,16 +28,16 @@ import root from 'react-shadow/emotion';
  */
 class SignInAndUp extends React.Component<RecipeModuleProps> {
     getRecipeInstanceOrThrow = () => {
-		let instance;
-		if (this.props.__internal !== undefined && this.props.__internal.instance !== undefined) {
-			instance = this.props.__internal.instance;
-		} else {
-			instance = EmailPassword.getInstanceIfDefined();
-		}
-		return instance;
+        let instance;
+        if (this.props.__internal !== undefined && this.props.__internal.instance !== undefined) {
+            instance = this.props.__internal.instance;
+        } else {
+            instance = EmailPassword.getInstanceOrThrowError();
+        }
+        return instance;
     }
 
-    render () {
+    render() {
         return (
             <root.div id={ST_ROOT_CONTAINER}>
                 <SignInAndUpTheme
@@ -50,7 +50,7 @@ class SignInAndUp extends React.Component<RecipeModuleProps> {
                             validate: (email: string) => {
                                 return new Promise(resolve => resolve(true));
                             },
-                        },{
+                        }, {
                             id: 'password',
                             label: 'Password',
                             placeholder: 'Enter your password',
