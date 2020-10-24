@@ -12,6 +12,4 @@
  * License for the specific language governing permissions and limitations
  * under the License. 
 */
-import EmailPassword from '../../lib/build/recipe/emailpassword';
-
-export default EmailPassword;
+export * from '../../lib/build/recipe/emailpassword';
