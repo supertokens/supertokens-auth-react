@@ -51,11 +51,16 @@ describe("SuperTokens", function() {
     it("Initializing SuperTokens config with default values", async function() {
         SuperTokens.init(defaultConfigs);
         assert.strictEqual(SuperTokens.getAppInfo().appName, defaultConfigs.appInfo.appName);
-        assert.strictEqual(SuperTokens.getAppInfo().websiteDomain, `https://${defaultConfigs.appInfo.websiteDomain}`);
-        assert.strictEqual(SuperTokens.getAppInfo().apiDomain, `https://${defaultConfigs.appInfo.apiDomain}`);
-        assert.strictEqual(SuperTokens.getAppInfo().apiBasePath, DEFAULT_API_BASE_PATH);
-        assert.strictEqual(SuperTokens.getAppInfo().websiteBasePath, DEFAULT_WEBSITE_BASE_PATH);
-        assert.strictEqual(SuperTokens.getAppInfo().logoFullURL, undefined);
+        assert.strictEqual(
+            SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous(),
+            `https://${defaultConfigs.appInfo.websiteDomain}`
+        );
+        assert.strictEqual(
+            SuperTokens.getAppInfo().apiDomain.getAsStringDangerous(),
+            `https://${defaultConfigs.appInfo.apiDomain}`
+        );
+        assert.strictEqual(SuperTokens.getAppInfo().apiBasePath.getAsStringDangerous(), DEFAULT_API_BASE_PATH);
+        assert.strictEqual(SuperTokens.getAppInfo().websiteBasePath.getAsStringDangerous(), DEFAULT_WEBSITE_BASE_PATH);
     });
 
     it("Initializing SuperTokens twice should throw", async function() {
@@ -98,18 +103,6 @@ describe("SuperTokens", function() {
         );
     });
 
-    it("Initializing SuperTokens with logofullURL", async function() {
-        const logoFullURL = "https://my.beautiful.logo.com/logo.png";
-        SuperTokens.init({
-            ...defaultConfigs,
-            appInfo: {
-                logoFullURL,
-                ...defaultConfigs.appInfo
-            }
-        });
-        assert.strictEqual(SuperTokens.getAppInfo().logoFullURL, logoFullURL);
-    });
-
     it("Initializing SuperTokens with localhost and unsecure protocol", async function() {
         const websiteDomain = "localhost:4000";
         const apiDomain = "http://api.supertokens.io";
@@ -121,8 +114,8 @@ describe("SuperTokens", function() {
                 apiDomain
             }
         });
-        assert.strictEqual(SuperTokens.getAppInfo().websiteDomain, `http://${websiteDomain}`);
-        assert.strictEqual(SuperTokens.getAppInfo().apiDomain, apiDomain);
+        assert.strictEqual(SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous(), `http://${websiteDomain}`);
+        assert.strictEqual(SuperTokens.getAppInfo().apiDomain.getAsStringDangerous(), apiDomain);
     });
 
     it("Initializing SuperTokens with EmailPassword module", async function() {
@@ -139,7 +132,7 @@ describe("SuperTokens", function() {
             recipeList: [EmailPassword.init()]
         });
 
-        const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain;
+        const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous();
 
         mockWindowLocation(`${randomWebsitePath}/blog/`);
         assert.strictEqual(SuperTokens.canHandleRoute(), false);
@@ -167,7 +160,7 @@ describe("SuperTokens", function() {
             recipeList: [EmailPassword.init()]
         });
 
-        const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain;
+        const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous();
 
         mockWindowLocation(`${randomWebsitePath}/blog/`);
         assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);

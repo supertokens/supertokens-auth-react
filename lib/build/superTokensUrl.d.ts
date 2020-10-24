@@ -1,7 +1,8 @@
+import NormalisedURLPath from "./normalisedURLPath";
 export default class SuperTokensUrl {
     recipeId: string | null;
-    normalisedPathname: string;
+    pathname: NormalisedURLPath;
     matchesBasePath: boolean;
-    normalisedPathnameWithoutWebsiteBasePath: string;
+    pathnameWithoutWebsiteBasePath: NormalisedURLPath;
     constructor();
 }

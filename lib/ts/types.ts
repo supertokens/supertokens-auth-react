@@ -14,6 +14,8 @@
  */
 import { ComponentClass } from "react";
 import RecipeModule from "./recipe/recipeModule";
+import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLDomain from "./normalisedURLDomain";
 
 /*
  * Config Types.
@@ -31,7 +33,7 @@ export type SuperTokensConfig = {
     recipeList: (() => RecipeModule)[];
 };
 
-type AppInfoBase = {
+export type AppInfoUserInput = {
     /*
      * The name of your application.
      */
@@ -46,9 +48,7 @@ type AppInfoBase = {
      * The domain on which your application runs.
      */
     websiteDomain: string;
-};
 
-export type AppInfoUserInput = AppInfoBase & {
     /*
      * The base path for SuperTokens middleware in your API.
      * Default to `/auth`
@@ -62,18 +62,33 @@ export type AppInfoUserInput = AppInfoBase & {
     websiteBasePath?: string;
 };
 
-export type AppInfo = AppInfoBase & {
+export type AppInfo = {
+    /*
+     * The name of your application.
+     */
+    appName: string;
+
+    /*
+     * The API that connects with your application.
+     */
+    apiDomain: NormalisedURLDomain;
+
+    /*
+     * The domain on which your application runs.
+     */
+    websiteDomain: NormalisedURLDomain;
+
     /*
      * The base path for SuperTokens middleware in your API.
      * Default to `/auth`
      */
-    apiBasePath: string;
+    apiBasePath: NormalisedURLPath;
 
     /*
      * The base path for SuperTokens middleware in your front end application.
      * Default to `/auth`
      */
-    websiteBasePath: string;
+    websiteBasePath: NormalisedURLPath;
 };
 
 /*

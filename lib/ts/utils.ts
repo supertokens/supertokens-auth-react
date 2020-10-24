@@ -14,6 +14,7 @@
  */
 
 import { RECIPE_ID_QUERY_PARAM } from "./constants";
+import NormalisedURLPath from "./normalisedURLPath";
 
 /*
  * getRecipeIdFromPath
@@ -25,124 +26,21 @@ export function getRecipeIdFromSearch(search: string): string | null {
     return urlParams.get(RECIPE_ID_QUERY_PARAM);
 }
 
-/*
- * getNormalisedRouteWithoutWebsiteBasePath
- * Input: string path
- * Output path without the website base path.
- */
-export function getNormalisedRouteWithoutWebsiteBasePath(path: string, basePath: string): string {
+export function getNormalisedRouteWithoutWebsiteBasePath(
+    path: NormalisedURLPath,
+    basePath: NormalisedURLPath
+): NormalisedURLPath {
     // If base path is present, remove it.
     if (path.startsWith(basePath)) {
-        let newPath = path.slice(basePath.length);
+        let newPath = path.getAsStringDangerous().slice(basePath.getAsStringDangerous().length);
         if (newPath.length === 0) {
             newPath = "/";
         }
-        return newPath;
+        return new NormalisedURLPath(newPath);
     }
 
     // Otherwise, return url unchanged.
     return path;
-}
-
-/*
- * normaliseUrlOrThrowError
- * Input: string url (or domain).
- * Output: A url with appropriate protocol.
- */
-export function normaliseURLDomainOrThrowError(input: string): string {
-    function isAnIpAddress(ipaddress: string) {
-        return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
-            ipaddress
-        );
-    }
-
-    input = input.trim().toLowerCase();
-
-    try {
-        if (!input.startsWith("http://") && !input.startsWith("https://") && !input.startsWith("supertokens://")) {
-            throw new Error("converting to proper URL");
-        }
-        let urlObj = new URL(input);
-        if (urlObj.protocol === "supertokens:") {
-            if (urlObj.hostname.startsWith("localhost") || isAnIpAddress(urlObj.hostname)) {
-                input = "http://" + urlObj.host;
-            } else {
-                input = "https://" + urlObj.host;
-            }
-        } else {
-            input = urlObj.protocol + "//" + urlObj.host;
-        }
-
-        return input;
-    } catch (err) {}
-    // not a valid URL
-
-    if (input.indexOf(".") === 0) {
-        input = input.substr(1);
-    }
-
-    // If the input contains a . it means they have given a domain name.
-    // So we try assuming that they have given a domain name
-    if (
-        (input.indexOf(".") !== -1 || input.startsWith("localhost")) &&
-        !input.startsWith("http://") &&
-        !input.startsWith("https://")
-    ) {
-        // The supertokens:// signifies to the recursive call that the call was made by us.
-        input = "supertokens://" + input;
-
-        // at this point, it should be a valid URL. So we test that before doing a recursive call
-        try {
-            new URL(input);
-            return normaliseURLDomainOrThrowError(input);
-        } catch (err) {}
-    }
-
-    throw new Error("Please provide a valid domain name");
-}
-
-export function normaliseURLPathOrThrowError(input: string): string {
-    input = input.trim().toLowerCase();
-
-    try {
-        if (!input.startsWith("http://") && !input.startsWith("https://")) {
-            throw new Error("converting to proper URL");
-        }
-        let urlObj = new URL(input);
-        input = urlObj.pathname;
-
-        if (input.charAt(input.length - 1) === "/") {
-            return input.substr(0, input.length - 1);
-        }
-
-        return input;
-    } catch (err) {}
-    // not a valid URL
-
-    // If the input contains a . it means they have given a domain name.
-    // So we try assuming that they have given a domain name + path
-    if (
-        (input.indexOf(".") !== -1 || input.startsWith("localhost")) &&
-        !input.startsWith("http://") &&
-        !input.startsWith("https://")
-    ) {
-        input = "http://" + input;
-        return normaliseURLPathOrThrowError(input);
-    }
-
-    if (input.charAt(0) !== "/") {
-        input = "/" + input;
-    }
-
-    // at this point, we should be able to convert it into a fake URL and recursively call this function.
-    try {
-        // test that we can convert this to prevent an infinite loop
-        new URL("http://example.com" + input);
-
-        return normaliseURLPathOrThrowError("http://example.com" + input);
-    } catch (err) {
-        throw new Error("Please provide a valid URL path");
-    }
 }
 
 /*
