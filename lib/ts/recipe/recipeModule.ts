@@ -16,10 +16,11 @@
 /*
  * Imports.
  */
-import { RouteToFeatureComponentMap, RecipeModuleConfig } from "../types";
+import { RouteToFeatureComponentMap, RecipeModuleConfig, AppInfo } from "../types";
 import { ComponentClass } from "react";
 import SuperTokensUrl from "../superTokensUrl";
 import NormalisedURLPath from "../normalisedURLPath";
+import SuperTokens from "../superTokens";
 
 /*
  * Class.
@@ -27,15 +28,17 @@ import NormalisedURLPath from "../normalisedURLPath";
 export default abstract class RecipeModule {
     private features: RouteToFeatureComponentMap;
     private recipeId: string;
+    private appInfo: AppInfo;
 
     constructor(config: RecipeModuleConfig) {
         this.recipeId = config.recipeId;
+        this.appInfo = config.appInfo;
         this.features = {};
 
         // we store the normalised version of the path here.
         Object.keys(config.features).forEach(path => {
-            let normalisedPath = new NormalisedURLPath(path);
-            this.features[normalisedPath.getAsStringDangerous()] = config.features[path];
+            let normalisedFullPath = this.appInfo.websiteBasePath.appendPath(new NormalisedURLPath(path));
+            this.features[normalisedFullPath.getAsStringDangerous()] = config.features[path];
         });
     }
 
@@ -56,6 +59,6 @@ export default abstract class RecipeModule {
         if (url.recipeId !== null && url.recipeId !== this.recipeId) {
             return undefined;
         }
-        return this.features[url.pathnameWithoutWebsiteBasePath.getAsStringDangerous()];
+        return this.features[url.pathname.getAsStringDangerous()];
     };
 }

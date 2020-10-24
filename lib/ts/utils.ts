@@ -26,23 +26,6 @@ export function getRecipeIdFromSearch(search: string): string | null {
     return urlParams.get(RECIPE_ID_QUERY_PARAM);
 }
 
-export function getNormalisedRouteWithoutWebsiteBasePath(
-    path: NormalisedURLPath,
-    basePath: NormalisedURLPath
-): NormalisedURLPath {
-    // If base path is present, remove it.
-    if (path.startsWith(basePath)) {
-        let newPath = path.getAsStringDangerous().slice(basePath.getAsStringDangerous().length);
-        if (newPath.length === 0) {
-            newPath = "/";
-        }
-        return new NormalisedURLPath(newPath);
-    }
-
-    // Otherwise, return url unchanged.
-    return path;
-}
-
 /*
  * isTest
  */

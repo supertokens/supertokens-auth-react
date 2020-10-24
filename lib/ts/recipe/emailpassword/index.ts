@@ -20,6 +20,7 @@ import RecipeModule from "../recipeModule";
 import { EmailPasswordConfig } from "./types";
 import SignInAndUp from "./SignInAndUp";
 import SignInAndUpTheme from "./SignInAndUpTheme";
+import { AppInfo, CreateRecipeFunction } from "../../types";
 /*
  * Class.
  */
@@ -36,9 +37,12 @@ export default class EmailPassword extends RecipeModule {
         });
     }
 
-    static init(config: EmailPasswordConfig): () => RecipeModule {
-        return (): RecipeModule => {
-            EmailPassword.instance = new EmailPassword(config);
+    static init(config: EmailPasswordConfig): CreateRecipeFunction {
+        return (appInfo: AppInfo): RecipeModule => {
+            EmailPassword.instance = new EmailPassword({
+                ...config,
+                appInfo
+            });
             return EmailPassword.instance;
         };
     }

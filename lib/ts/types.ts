@@ -30,8 +30,10 @@ export type SuperTokensConfig = {
     /*
      * List of recipes for authentication and session management.
      */
-    recipeList: (() => RecipeModule)[];
+    recipeList: CreateRecipeFunction[];
 };
+
+export type CreateRecipeFunction = (appInfo: AppInfo) => RecipeModule;
 
 export type AppInfoUserInput = {
     /*
@@ -108,6 +110,12 @@ export type RecipeModuleConfig = {
      * Unique Identifier of a module.
      */
     recipeId: string;
+
+    /**
+     *
+     * AppInfo as present in the recipe module manager
+     */
+    appInfo: AppInfo;
 };
 
 export type ComponentWithRecipeId = {
