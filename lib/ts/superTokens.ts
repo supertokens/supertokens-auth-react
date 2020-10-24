@@ -77,7 +77,7 @@ export default class SuperTokens {
         SuperTokens.instance = new SuperTokens(config);
     }
 
-    private static getInstanceIfDefined(): SuperTokens {
+    private static getInstanceOrThrowError(): SuperTokens {
         if (SuperTokens.instance === undefined) {
             throw new Error("SuperTokens must be initialized before calling this method.");
         }
@@ -86,19 +86,19 @@ export default class SuperTokens {
     }
 
     static getAppInfo(): AppInfo {
-        return SuperTokens.getInstanceIfDefined().getAppInfo();
+        return SuperTokens.getInstanceOrThrowError().getAppInfo();
     }
 
     static canHandleRoute(): boolean {
-        return SuperTokens.getInstanceIfDefined().canHandleRoute();
+        return SuperTokens.getInstanceOrThrowError().canHandleRoute();
     }
 
     static getRoutingComponent(): ComponentClass | undefined {
-        return SuperTokens.getInstanceIfDefined().getRoutingComponent();
+        return SuperTokens.getInstanceOrThrowError().getRoutingComponent();
     }
 
     static getRecipeList(): RecipeModule[] {
-        return SuperTokens.getInstanceIfDefined().getRecipeList();
+        return SuperTokens.getInstanceOrThrowError().getRecipeList();
     }
 
     static getNormalisedURLPathOrDefault(defaultPath: string, path?: string): NormalisedURLPath {
