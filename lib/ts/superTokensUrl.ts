@@ -14,7 +14,7 @@
  */
 
 import SuperTokens from "./superTokens";
-import { getRecipeIdFromSearch, removePendingSlashFromPath, getNormalisedRouteWithoutWebsiteBasePath } from "./utils";
+import { getRecipeIdFromSearch, normaliseURLPathOrThrowError, getNormalisedRouteWithoutWebsiteBasePath } from "./utils";
 
 /*
  * Class.
@@ -28,7 +28,7 @@ export default class SuperTokensUrl {
 
     constructor() {
         this.recipeId = getRecipeIdFromSearch(window.location.search);
-        this.normalisedPathname = removePendingSlashFromPath(window.location.pathname);
+        this.normalisedPathname = normaliseURLPathOrThrowError(window.location.pathname);
         this.matchesBasePath = this.normalisedPathname.startsWith(SuperTokens.getAppInfo().websiteBasePath);
         this.normalisedPathnameWithoutWebsiteBasePath = getNormalisedRouteWithoutWebsiteBasePath(
             this.normalisedPathname,

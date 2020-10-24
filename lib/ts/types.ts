@@ -46,11 +46,6 @@ type AppInfoBase = {
      * The domain on which your application runs.
      */
     websiteDomain: string;
-
-    /*
-     * (Optional) URL for your logo that will be displayed on the login form.
-     */
-    logoFullURL?: string;
 };
 
 export type AppInfoUserInput = AppInfoBase & {
@@ -79,18 +74,6 @@ export type AppInfo = AppInfoBase & {
      * Default to `/auth`
      */
     websiteBasePath: string;
-};
-
-export type EmailPasswordConfig = RecipeModuleConfig & {
-    /*
-     * Sign In and Sign Up feature.
-     */
-    signInAndUpFeature: any;
-
-    /*
-     * Reset password Using Token feature.
-     */
-    resetPasswordUsingTokenFeature: any;
 };
 
 /*
