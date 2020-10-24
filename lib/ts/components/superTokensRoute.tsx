@@ -38,15 +38,13 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
 		SuperTokens.getRecipeList().map(recipe => {
 			const features = recipe.getFeatures();
 			return Object.keys(features).map(featurePath => {
-				const fullPath = SuperTokens.getAppInfo().websiteBasePath.appendPath(
-					new NormalisedURLPath(featurePath)).getAsStringDangerous();
 
 				// If no components yet for this route, initialize empty array.
-				if (pathsToComponentWithRecipeIdMap[fullPath] === undefined) {
-					pathsToComponentWithRecipeIdMap[fullPath] = []
+				if (pathsToComponentWithRecipeIdMap[featurePath] === undefined) {
+					pathsToComponentWithRecipeIdMap[featurePath] = []
 				}
 
-				pathsToComponentWithRecipeIdMap[fullPath].push({
+				pathsToComponentWithRecipeIdMap[featurePath].push({
 					rid: recipe.getRecipeId(),
 					component: features[featurePath]
 				})

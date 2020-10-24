@@ -4,8 +4,9 @@ import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
-    recipeList: (() => RecipeModule)[];
+    recipeList: CreateRecipeFunction[];
 };
+export declare type CreateRecipeFunction = (appInfo: AppInfo) => RecipeModule;
 export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;
@@ -26,6 +27,11 @@ export declare type RouteToFeatureComponentMap = {
 export declare type RecipeModuleConfig = {
     features: RouteToFeatureComponentMap;
     recipeId: string;
+    /**
+     *
+     * AppInfo as present in the recipe module manager
+     */
+    appInfo: AppInfo;
 };
 export declare type ComponentWithRecipeId = {
     rid: string;

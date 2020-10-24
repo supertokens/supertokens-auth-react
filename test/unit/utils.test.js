@@ -12,9 +12,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { getNormalisedRouteWithoutWebsiteBasePath, getRecipeIdFromSearch } from "../../lib/build/utils";
+import { getRecipeIdFromSearch } from "../../lib/build/utils";
 
-import NormalisedURLPath, { normaliseURLPathOrThrowError } from "../../lib/build/normalisedURLPath";
+import { normaliseURLPathOrThrowError } from "../../lib/build/normalisedURLPath";
 import { normaliseURLDomainOrThrowError } from "../../lib/build/normalisedURLDomain";
 
 const assert = require("assert");
@@ -112,44 +112,6 @@ describe("Config tests", function() {
         } catch (err) {
             assert(err.message === "Please provide a valid domain name");
         }
-    });
-
-    it("testing removing website base path from normalised path", async function() {
-        assert.strictEqual(
-            getNormalisedRouteWithoutWebsiteBasePath(
-                new NormalisedURLPath("/auth/login"),
-                new NormalisedURLPath("/auth")
-            ).getAsStringDangerous(),
-            "/login"
-        );
-        assert.strictEqual(
-            getNormalisedRouteWithoutWebsiteBasePath(
-                new NormalisedURLPath("/auth"),
-                new NormalisedURLPath("/auth")
-            ).getAsStringDangerous(),
-            ""
-        );
-        assert.strictEqual(
-            getNormalisedRouteWithoutWebsiteBasePath(
-                new NormalisedURLPath("/auth/"),
-                new NormalisedURLPath("/auth")
-            ).getAsStringDangerous(),
-            ""
-        );
-        assert.strictEqual(
-            getNormalisedRouteWithoutWebsiteBasePath(
-                new NormalisedURLPath("/auth/"),
-                new NormalisedURLPath("/customBasePath")
-            ).getAsStringDangerous(),
-            "/auth"
-        );
-        assert.strictEqual(
-            getNormalisedRouteWithoutWebsiteBasePath(
-                new NormalisedURLPath("/auth/login"),
-                new NormalisedURLPath("/customBasePath")
-            ).getAsStringDangerous(),
-            "/auth/login"
-        );
     });
 
     it("get recipe Id from URL search", async function() {

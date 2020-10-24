@@ -4,6 +4,7 @@ import SuperTokensUrl from "../superTokensUrl";
 export default abstract class RecipeModule {
     private features;
     private recipeId;
+    private appInfo;
     constructor(config: RecipeModuleConfig);
     getRecipeId: () => string;
     getFeatures: () => RouteToFeatureComponentMap;
