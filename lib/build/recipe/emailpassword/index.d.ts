@@ -1,12 +1,8 @@
-import RecipeModule from "../recipeModule";
-import { EmailPasswordConfig } from "./types";
-import SignInAndUp from "./SignInAndUp";
-import SignInAndUpTheme from "./SignInAndUpTheme";
 import { CreateRecipeFunction } from "../../types";
-export default class EmailPassword extends RecipeModule {
-    static instance?: EmailPassword;
-    constructor(config: EmailPasswordConfig);
+import { EmailPasswordConfig } from "./types";
+import SignInAndUp from "./components/SignInAndUp";
+import SignInAndUpTheme from "./components/SignInAndUpTheme";
+export default class EmailPasswordAPIWrapper {
     static init(config: EmailPasswordConfig): CreateRecipeFunction;
-    static getInstanceOrThrowError(): EmailPassword;
 }
 export { SignInAndUp, SignInAndUpTheme };

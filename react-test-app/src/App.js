@@ -3,7 +3,7 @@ import './App.css';
 import './App.css';
 import AppWithoutRouter from './AppWithoutRouter';
 import AppWithReactDomRouter from './AppWithReactDomRouter';
-
+import Footer from "./Footer";
 /* SuperTokens imports */
 import SuperTokens from 'supertokens-auth-react';
 import EmailPassword from 'supertokens-auth-react/recipe/emailpassword';
@@ -39,28 +39,31 @@ export default App;
 
 export function BaseComponent ({children}) {
   return (
-    <header className="App-header">
-      {children}
-    </header>
+       <>
+       <div className="page">
+          {children}
+       </div>
+        <Footer/>
+      </>
   )
 }
 
 export function Home () {
   return (
-      <div>/Home</div>
+      <h2>/Home</h2>
     )
 }
 
 export function About () {
   return (
-      <div>/About</div>
+      <h2>/About</h2>
 
     )
 }
 
 export function Contact () {
   return (
-      <div>/Contact</div>
+      <h2>/Contact</h2>
 
     )
 }

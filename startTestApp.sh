@@ -8,9 +8,6 @@ function startTestApp () {
     )
 }
 
-
-
-
 # Start test app.
 if [[ $1 == "--start" ]]; then
     # Build if --no-build is not present.

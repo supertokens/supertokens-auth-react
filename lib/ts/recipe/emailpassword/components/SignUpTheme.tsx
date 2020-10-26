@@ -17,9 +17,8 @@
  * Imports.
  */
 import * as React from "react";
-import {defaultStyles, palette} from '../../styles/styles';
-import { ThemeProps } from "../../types";
-
+import {defaultStyles} from '../../../styles/styles';
+import { SignUpThemeProps } from "../types";
 
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
@@ -27,69 +26,44 @@ import { jsx } from '@emotion/core';
 /*
  * Component.
  */
-class SignInAndUpTheme extends React.Component<ThemeProps> {
-    render () {
-        return (
+export default function SignUpTheme(props: SignUpThemeProps) {
+    return (
         <div css={defaultStyles.container} >
             <div css={defaultStyles.row}>
                 
-                <div css={styles.header}>
-                    <div css={styles.headerTitle} >Sign In</div>
-                    <div css={styles.headerSubtitle} >
-                        <div>Not registered yet?</div>
-                        <div css={styles.signUpLink}>Sign up</div>
+                <div css={defaultStyles.header}>
+                    <div css={defaultStyles.headerTitle}>Sign Up</div>
+                    <div css={defaultStyles.headerSubtitle} >
+                        <div>Already registered?</div>
+                        <a onClick={props.signInClicked} css={defaultStyles.link}>Sign in</a>
                     </div>
                 </div>
-
                 <div css={defaultStyles.divider}></div>
-
                 <form>
                     {
-                        this.props.formFields.map(field => {
+                        props.formFields.map(field => {
                             return (
                                 <div key={field.id}>
                                     <label>
                                         {field.label}
                                     </label>
-                                    <input name={field.id}  placeholder={field.placeholder}/> 
+                                    <input name={field.id} placeholder={field.placeholder}/> 
                                 </div>
                             )
                         })
                     }
                 </form>
+                <input
+                    type="checkbox"
+                    value={""}
+                    checked={true}
+                />
+                <div>
+                    By signin up, you agree to our <a>Terms of Service</a> and <a>Privacy Policy</a>
+                </div>
 
-                <button> Sign In </button>
-                <div>Forgot password?</div>
-
+                <button>Sign Up</button>
             </div>
 
         </div>);
-    }
-
 }
-const styles = {
-    header: {
-        height: '141px'
-    },
-    headerTitle: {
-        paddingTop: "49px",
-        fontSize: palette.fonts.size[1],
-        lineHeight: "40px",
-        letterSpacing: "0.28px",
-        fontWeight: 700,
-        fontFamily: palette.fonts.primary,
-        color: palette.colors.primary,
-    },
-    headerSubtitle: {
-        fontSize: palette.fonts.size[0],
-        fontWeight: 400,
-        color: palette.colors.secondary,
-        fontFamily: palette.fonts.primary
-    },
-    signUpLink: {
-        color: 'blue'
-    }
-};
-
-
-export default SignInAndUpTheme;

@@ -2,6 +2,7 @@ import { ComponentClass } from "react";
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
+import { CSSInterpolation } from "@emotion/serialize/types/index";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction[];
@@ -21,9 +22,6 @@ export declare type AppInfo = {
     apiBasePath: NormalisedURLPath;
     websiteBasePath: NormalisedURLPath;
 };
-export declare type RouteToFeatureComponentMap = {
-    [route: string]: ComponentClass;
-};
 export declare type RecipeModuleConfig = {
     features: RouteToFeatureComponentMap;
     recipeId: string;
@@ -33,6 +31,9 @@ export declare type RecipeModuleConfig = {
      */
     appInfo: AppInfo;
 };
+export declare type RouteToFeatureComponentMap = {
+    [route: string]: ComponentClass;
+};
 export declare type ComponentWithRecipeId = {
     rid: string;
     component: ComponentClass;
@@ -40,20 +41,15 @@ export declare type ComponentWithRecipeId = {
 export declare type PathToComponentWithRecipeIdMap = {
     [path: string]: ComponentWithRecipeId[];
 };
-export declare type RecipeModuleProps = {
-    __internal?: InternalRecipeModuleProps;
+export declare type FeatureConfigBase = {
+    style?: CSSInterpolation;
 };
-declare type InternalRecipeModuleProps = {
-    instance: RecipeModule;
-};
-export declare type ThemeProps = {
-    formFields: FormFieldsProps[];
-};
-export declare type FormFieldsProps = {
+export declare type FormFieldsBaseConfig = {
     id: string;
     label: string;
     placeholder?: string;
-    validate?: (value: string) => Promise<boolean | undefined>;
-    optional?: boolean;
 };
-export {};
+export declare type FormFields = FormFieldsBaseConfig & {
+    validate?: (value: string) => Promise<string | undefined>;
+    optional: boolean;
+};

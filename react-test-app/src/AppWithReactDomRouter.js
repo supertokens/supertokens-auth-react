@@ -36,22 +36,21 @@ function AppWithReactDomRouter() {
 
 function Nav () {
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link style={{ textDecoration: 'none' }} to="/">Home</Link>
-        </li>
-        <li>
-          <Link style={{ textDecoration: 'none' }} to="/about">About</Link>
-        </li>
-        <li>
-          <Link style={{ textDecoration: 'none' }} to="/contact">Contact</Link>
-        </li>
-        <li>
-          <Link style={{ textDecoration: 'none' }} to="/auth">Auth</Link>
-        </li>
+    <div class="header__menu menu">
+    <div class="menu__icon icon-menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="menu__body">
+      <ul class="menu__list">
+        <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/">Home</Link></li>
+        <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/about">About</Link></li>
+        <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/contact">Contact</Link></li>
+        <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/auth">Auth</Link></li>
       </ul>
-    </nav> 
+    </nav>
+  </div>
   )
 }
 

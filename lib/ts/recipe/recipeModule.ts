@@ -20,7 +20,6 @@ import { RouteToFeatureComponentMap, RecipeModuleConfig, AppInfo } from "../type
 import { ComponentClass } from "react";
 import SuperTokensUrl from "../superTokensUrl";
 import NormalisedURLPath from "../normalisedURLPath";
-import SuperTokens from "../superTokens";
 
 /*
  * Class.
@@ -34,7 +33,6 @@ export default abstract class RecipeModule {
         this.recipeId = config.recipeId;
         this.appInfo = config.appInfo;
         this.features = {};
-
         // we store the normalised version of the path here.
         Object.keys(config.features).forEach(path => {
             let normalisedFullPath = this.appInfo.websiteBasePath.appendPath(new NormalisedURLPath(path));

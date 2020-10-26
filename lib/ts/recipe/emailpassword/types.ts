@@ -13,18 +13,193 @@
  * under the License.
  */
 
-import { RecipeModuleConfig } from "../../types";
+import { FeatureConfigBase, FormFields, FormFieldsBaseConfig, RecipeModuleConfig } from "../../types";
+import EmailPassword from "./emailPassword";
+import { CSSInterpolation } from "@emotion/serialize/types/index";
 
-export type EmailPasswordConfig = RecipeModuleConfig & {
+/*
+ * EmailPassword Config Types.
+ */
+
+export type EmailPasswordUserInput = {
     /*
      * Sign In and Sign Up feature.
      */
-    // TODO: remove the any
-    signInAndUpFeature: any;
+    signInAndUpFeature?: SignInAndUpConfig;
 
     /*
      * Reset password Using Token feature.
      */
-    // TODO: remove the any
-    resetPasswordUsingTokenFeature: any;
+    resetPasswordUsingTokenFeature?: any;
 };
+
+export type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUserInput;
+
+export type SignInAndUpConfig = {
+    /*
+     * Disable default implementation with default routes.
+     */
+    disableDefaultImplementation?: boolean;
+
+    /*
+     * URL to redirect to in case disableDefaultImplemention is true
+     */
+    onSuccessRedirectURL?: string;
+
+    /*
+     * SignUp form config.
+     */
+
+    signUpForm?: SignUpFormFeatureConfig;
+
+    /*
+     * SignIn form config.
+     */
+
+    signInForm?: SignInFormFeatureConfig;
+};
+
+export type SignInAndUp = {
+    /*
+     * Disable default implementation with default routes.
+     */
+    disableDefaultImplementation: boolean;
+
+    /*
+     * URL to redirect to in case disableDefaultImplemention is true
+     */
+    onSuccessRedirectURL: string;
+
+    /*
+     * SignUp form config.
+     */
+
+    signUpForm?: SignUpFormFeatureConfig;
+
+    /*
+     * SignIn form config.
+     */
+
+    signInForm?: SignInFormFeatureConfig;
+};
+
+export type FormFieldsSignInConfig = FormFieldsBaseConfig;
+
+export type FormFieldsSignUpConfig = FormFields;
+
+export type SignUpFormFeatureConfig = FeatureConfigBase & {
+    /*
+     * Form fields for SignUp.
+     */
+    formFields?: FormFieldsSignUpConfig[];
+
+    /*
+     * Privacy policy link for sign up form.
+     */
+    privacyPolicyLink?: string;
+
+    /*
+     * Terms and conditions link for sign up form.
+     */
+    termsAndConditionsLink?: string;
+};
+
+export type SignInFormFeatureConfig = FeatureConfigBase & {
+    /*
+     * Form fields for SignUp.
+     */
+    formFields?: FormFieldsSignInConfig[];
+
+    /*
+     * Link to the reset password URL in case disableDefaultImplemention is true.
+     */
+    resetPasswordURL?: string;
+};
+
+/*
+ * Props Types.
+ */
+export type EmailPasswordProps = {
+    __internal?: InternalEmailPasswordProps;
+};
+
+type InternalEmailPasswordProps = {
+    instance: EmailPassword;
+};
+
+export type SignUpThemeProps = {
+    /*
+     * TODO.
+     */
+    callApi?: any;
+
+    /*
+     * TODO.
+     */
+    onSuccess?: () => void;
+
+    /*
+     * Callback called when Sign In link is clicked.
+     */
+    signInClicked?: () => void;
+
+    /*
+     * TODO.
+     */
+    styleFormInit?: CSSInterpolation;
+
+    /*
+     * Form fields to use in the signin form.
+     */
+    formFields: FormFieldsSignInProps[];
+
+    /*
+     * Privacy policy link.
+     */
+    privacyPolicyLink?: string;
+
+    /*
+     * Terms and conditions link.
+     */
+    termsAndConditionsLink?: string;
+};
+
+export type SignInThemeProps = {
+    /*
+     * TODO.
+     */
+    callApi?: any;
+
+    /*
+     * TODO.
+     */
+    onSuccess?: () => void;
+
+    /*
+     * Callback called when Sign Up link is clicked.
+     */
+    signUpClicked?: () => void;
+
+    /*
+     * TODO.
+     */
+    styleFormInit?: CSSInterpolation;
+
+    /*
+     * Form fields to use in the signin form.
+     */
+    formFields: FormFieldsSignInProps[];
+
+    /*
+     * Reset password URL for forgot password button.
+     */
+    resetPasswordURL?: string;
+};
+
+export type SignInAndUpThemeProps = {
+    signInForm: SignInThemeProps;
+    signUpForm: SignUpThemeProps;
+};
+
+// Feature is responsible for adding "validate" function.
+export type FormFieldsSignInProps = FormFieldsSignUpConfig;

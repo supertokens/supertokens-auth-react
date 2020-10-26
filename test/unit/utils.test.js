@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { getRecipeIdFromSearch } from "../../lib/build/utils";
+import { getRecipeIdFromSearch, mergeFormFields } from "../../lib/build/utils";
 
 import { normaliseURLPathOrThrowError } from "../../lib/build/normalisedURLPath";
 import { normaliseURLDomainOrThrowError } from "../../lib/build/normalisedURLDomain";
@@ -121,5 +121,131 @@ describe("Config tests", function() {
         assert.strictEqual(getRecipeIdFromSearch("?gid=blue&rid=green&foo=bar"), "green");
         assert.strictEqual(getRecipeIdFromSearch("?rId=blue&rid=green"), "green");
         assert.strictEqual(getRecipeIdFromSearch("?rId=blue&foo=bar"), null);
+    });
+
+    it("merge form fields", async function() {
+        const defaultEmailFormField = {
+            id: "email",
+            label: "Email",
+            placeholder: "youremail@example.com",
+            validate: email => {
+                return new Promise(resolve => resolve(undefined));
+            },
+            optional: false
+        };
+
+        const defaultPasswordFormField = {
+            id: "password",
+            label: "Password",
+            placeholder: "Enter your password",
+            validate: password => {
+                return new Promise(resolve => resolve(undefined));
+            },
+            optional: false
+        };
+
+        const customEmailFormField = {
+            id: "email",
+            label: " Custom Email Label",
+            placeholder: "Custom Email Placeholder",
+            validate: email => {
+                return new Promise(resolve => resolve("Wrong email! Keep trying"));
+            },
+            optional: false
+        };
+
+        const optionalCustomEmailFormField = {
+            id: "email",
+            label: " Custom Email Label",
+            placeholder: "Custom Email Placeholder",
+            validate: email => {
+                return new Promise(resolve => resolve("Wrong email! Keep trying"));
+            },
+            optional: true
+        };
+
+        const customEmailFormFieldWithoutValidateMethod = {
+            id: "email",
+            label: " Custom Email Label Without Validate",
+            placeholder: "Custom Email Placeholder Without Validate"
+        };
+
+        const customPasswordFormField = {
+            id: "password",
+            label: "Custom Password",
+            placeholder: "Enter your password",
+            validate: password => {
+                return new Promise(resolve => resolve(undefined));
+            },
+            optional: false
+        };
+
+        const randomCustomFormField = {
+            id: "random",
+            label: "Custom Random",
+            placeholder: "Enter whatever",
+            validate: random => {
+                return new Promise(resolve => resolve("Always throw an error"));
+            },
+            optional: true
+        };
+
+        // No user input => default form fields.
+        assert.deepStrictEqual(mergeFormFields([defaultEmailFormField, defaultPasswordFormField], []), [
+            defaultEmailFormField,
+            defaultPasswordFormField
+        ]);
+
+        // custom email => custom email, default password.
+        assert.deepStrictEqual(
+            mergeFormFields([defaultEmailFormField, defaultPasswordFormField], [customEmailFormField]),
+            [customEmailFormField, defaultPasswordFormField]
+        );
+
+        // default email + custom password => default email, custom password.
+        assert.deepStrictEqual(
+            mergeFormFields([defaultEmailFormField, defaultPasswordFormField], [customPasswordFormField]),
+            [defaultEmailFormField, customPasswordFormField]
+        );
+
+        // custom password + custom email (reverse order) => custom email + custom password (right order).
+        assert.deepStrictEqual(
+            mergeFormFields(
+                [defaultEmailFormField, defaultPasswordFormField],
+                [customPasswordFormField, customEmailFormField]
+            ),
+            [customEmailFormField, customPasswordFormField]
+        );
+
+        // custom field => default email, default password, custom field.
+        assert.deepStrictEqual(
+            mergeFormFields([defaultEmailFormField, defaultPasswordFormField], [randomCustomFormField]),
+            [defaultEmailFormField, defaultPasswordFormField, randomCustomFormField]
+        );
+
+        // optional custom email => custom email not optional.
+        const mergedOptionalCustomEmailFormFields = mergeFormFields(
+            [defaultEmailFormField, defaultPasswordFormField],
+            [optionalCustomEmailFormField]
+        );
+        assert.strictEqual(mergedOptionalCustomEmailFormFields[0].optional, false);
+
+        // custom field, custom password, custom email => custom email, custom password, custom field
+        assert.deepStrictEqual(
+            mergeFormFields(
+                [defaultEmailFormField, defaultPasswordFormField],
+                [randomCustomFormField, customPasswordFormField, customEmailFormField]
+            ),
+            [customEmailFormField, customPasswordFormField, randomCustomFormField]
+        );
+
+        // custom email without validate method => custom email with default validate method.
+        const mergedCustomWithoutValidate = mergeFormFields(
+            [defaultEmailFormField, defaultPasswordFormField],
+            [customEmailFormFieldWithoutValidateMethod]
+        );
+        assert(mergedCustomWithoutValidate[0].label === customEmailFormFieldWithoutValidateMethod.label);
+        assert(mergedCustomWithoutValidate[0].placeholder === customEmailFormFieldWithoutValidateMethod.placeholder);
+        assert(mergedCustomWithoutValidate[0].validate !== undefined);
     });
 });

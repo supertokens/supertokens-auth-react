@@ -8,7 +8,7 @@ export default class SuperTokens {
     private recipeList;
     constructor(config: SuperTokensConfig);
     static init(config: SuperTokensConfig): void;
-    private static getInstanceOrThrowError;
+    private static getInstanceOrThrow;
     static getAppInfo(): AppInfo;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): ComponentClass | undefined;

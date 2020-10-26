@@ -12,13 +12,13 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { ComponentClass } from "react";
+import { ComponentClass, DependencyList } from "react";
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
-
+import { CSSInterpolation } from "@emotion/serialize/types/index";
 /*
- * Config Types.
+ * Recipe Module Manager Config Types.
  */
 
 export type SuperTokensConfig = {
@@ -93,13 +93,6 @@ export type AppInfo = {
     websiteBasePath: NormalisedURLPath;
 };
 
-/*
- * Routing manipulation types.
- */
-export type RouteToFeatureComponentMap = {
-    [route: string]: ComponentClass;
-};
-
 export type RecipeModuleConfig = {
     /*
      * Features that the module responds to.
@@ -118,6 +111,13 @@ export type RecipeModuleConfig = {
     appInfo: AppInfo;
 };
 
+/*
+ * Routing manipulation types.
+ */
+export type RouteToFeatureComponentMap = {
+    [route: string]: ComponentClass;
+};
+
 export type ComponentWithRecipeId = {
     /*
      * recipeId of the component.
@@ -133,26 +133,42 @@ export type ComponentWithRecipeId = {
 export type PathToComponentWithRecipeIdMap = {
     [path: string]: ComponentWithRecipeId[];
 };
-
 /*
- * Props Types.
+ * Features Config Types.
  */
-export type RecipeModuleProps = {
-    __internal?: InternalRecipeModuleProps;
+
+export type FeatureConfigBase = {
+    /*
+     * Additional styles to override themes.
+     */
+    style?: CSSInterpolation;
 };
 
-type InternalRecipeModuleProps = {
-    instance: RecipeModule;
-};
-
-export type ThemeProps = {
-    formFields: FormFieldsProps[];
-};
-
-export type FormFieldsProps = {
+export type FormFieldsBaseConfig = {
+    /*
+     * name of the input field.
+     */
     id: string;
+
+    /*
+     * Label of the input field.
+     */
     label: string;
+
+    /*
+     * placeholder of the input field.
+     */
     placeholder?: string;
-    validate?: (value: string) => Promise<boolean | undefined>;
-    optional?: boolean;
+};
+
+export type FormFields = FormFieldsBaseConfig & {
+    /*
+     * Validation function of the input field. Returns an error as a string, or undefined.
+     */
+    validate?: (value: string) => Promise<string | undefined>;
+
+    /*
+     * Whether the field is optional or not.
+     */
+    optional: boolean;
 };

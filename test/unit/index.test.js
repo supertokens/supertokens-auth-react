@@ -126,7 +126,7 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.getRecipeList().length, 1);
     });
 
-    it("SuperTokens canHandleRoute should work approriately", async function() {
+    it("SuperTokens canHandleRoute should work appropriately", async function() {
         SuperTokens.init({
             ...defaultConfigs,
             recipeList: [EmailPassword.init()]
@@ -151,6 +151,28 @@ describe("SuperTokens", function() {
         mockWindowLocation(`${randomWebsitePath}/auth?rid=email-password`);
         assert.strictEqual(SuperTokens.canHandleRoute(), true);
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
+    });
+
+    it("SuperTokens disable default Implementation should disable default routes for Email Password", async function() {
+        SuperTokens.init({
+            ...defaultConfigs,
+            recipeList: [
+                EmailPassword.init({
+                    signInAndUpFeature: {
+                        disableDefaultImplementation: true
+                    }
+                })
+            ]
+        });
+
+        const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous();
+
+        mockWindowLocation(`${randomWebsitePath}/auth`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
+        mockWindowLocation(`${randomWebsitePath}/auth/`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
+        mockWindowLocation(`${randomWebsitePath}/auth/.`);
         assert.strictEqual(SuperTokens.canHandleRoute(), false);
     });
 
