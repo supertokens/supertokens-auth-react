@@ -2,7 +2,7 @@
   "name": "supertokens-auth-react",
   "version": "0.0.1",
   "description": "ReactJS SDK that provides login functionality with SuperTokens.",
-  "main": "./lib/build/index.js",
+  "main": "./index.js",
   "devDependencies": {
     "@babel/cli": "7.12.1",
     "@babel/core": "7.12.1",
