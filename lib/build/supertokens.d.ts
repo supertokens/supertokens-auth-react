@@ -1,11 +1,14 @@
+import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
 import { AppInfo, SuperTokensConfig } from "./types";
 import { ComponentClass } from "react";
 import NormalisedURLPath from "./normalisedURLPath";
+import { PathToComponentWithRecipeIdMap } from "./types";
 export default class SuperTokens {
     private static instance?;
     private appInfo;
     private recipeList;
+    private pathsToComponentWithRecipeIdMap?;
     constructor(config: SuperTokensConfig);
     static init(config: SuperTokensConfig): void;
     private static getInstanceOrThrow;
@@ -13,11 +16,15 @@ export default class SuperTokens {
     static canHandleRoute(): boolean;
     static getRoutingComponent(): ComponentClass | undefined;
     static getRecipeList(): RecipeModule[];
+    static getPathsToComponentWithRecipeIdMap(): PathToComponentWithRecipeIdMap;
+    static getMatchingComponentForRouteAndRecipeId(path: string, recipeId: string | null): ComponentClass | undefined;
     static getNormalisedURLPathOrDefault(defaultPath: string, path?: string): NormalisedURLPath;
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[];
     getAppInfo: () => AppInfo;
     canHandleRoute: () => boolean;
-    getRoutingComponent: () => ComponentClass<{}, any> | undefined;
+    getRoutingComponent: () => React.ComponentClass<{}, any> | undefined;
+    getPathsToComponentWithRecipeIdMap: () => PathToComponentWithRecipeIdMap;
+    getMatchingComponentForRouteAndRecipeId: (path: string, recipeId: string | null) => React.ComponentClass<{}, any> | undefined;
     getRecipeList: () => RecipeModule[];
     static reset(): void;
 }

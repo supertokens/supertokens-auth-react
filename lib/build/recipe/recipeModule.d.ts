@@ -1,6 +1,5 @@
-import { RouteToFeatureComponentMap, RecipeModuleConfig } from "../types";
+import { RouteToFeatureComponentMap, RecipeModuleConfig, RouteWithPathAndRecipeId } from "../types";
 import { ComponentClass } from "react";
-import SuperTokensUrl from "../superTokensUrl";
 export default abstract class RecipeModule {
     private features;
     private recipeId;
@@ -8,6 +7,6 @@ export default abstract class RecipeModule {
     constructor(config: RecipeModuleConfig);
     getRecipeId: () => string;
     getFeatures: () => RouteToFeatureComponentMap;
-    canHandleRoute: (url: SuperTokensUrl) => boolean;
-    getRoutingComponent: (url: SuperTokensUrl) => ComponentClass<{}, any> | undefined;
+    canHandleRoute: (route: RouteWithPathAndRecipeId) => boolean;
+    getRoutingComponent: (route: RouteWithPathAndRecipeId) => ComponentClass<{}, any> | undefined;
 }

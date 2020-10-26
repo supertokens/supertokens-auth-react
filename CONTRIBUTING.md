@@ -44,7 +44,7 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 
 
 ## Run the test application.
-1. `./testApp.sh --start`
+1. `npm run testapp`
 
 
 ## Pull Request

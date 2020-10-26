@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { ComponentClass, DependencyList } from "react";
+import { ComponentClass } from "react";
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
@@ -33,6 +33,17 @@ export type SuperTokensConfig = {
     recipeList: CreateRecipeFunction[];
 };
 
+export type RouteWithPathAndRecipeId = {
+    /*
+     * Normalised path.
+     */
+    path: NormalisedURLPath;
+
+    /*
+     * Unique Identifier of a module.
+     */
+    recipeId: string | null;
+};
 export type CreateRecipeFunction = (appInfo: AppInfo) => RecipeModule;
 
 export type AppInfoUserInput = {
@@ -171,4 +182,11 @@ export type FormFields = FormFieldsBaseConfig & {
      * Whether the field is optional or not.
      */
     optional: boolean;
+};
+
+/*
+ * Props Types.
+ */
+export type SuperTokensRouteWithRecipeIdProps = {
+    path: string;
 };

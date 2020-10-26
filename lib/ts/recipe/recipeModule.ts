@@ -16,9 +16,8 @@
 /*
  * Imports.
  */
-import { RouteToFeatureComponentMap, RecipeModuleConfig, AppInfo } from "../types";
+import { RouteToFeatureComponentMap, RecipeModuleConfig, AppInfo, RouteWithPathAndRecipeId } from "../types";
 import { ComponentClass } from "react";
-import SuperTokensUrl from "../superTokensUrl";
 import NormalisedURLPath from "../normalisedURLPath";
 
 /*
@@ -48,15 +47,15 @@ export default abstract class RecipeModule {
         return this.features;
     };
 
-    canHandleRoute = (url: SuperTokensUrl): boolean => {
-        return this.getRoutingComponent(url) !== undefined;
+    canHandleRoute = (route: RouteWithPathAndRecipeId): boolean => {
+        return this.getRoutingComponent(route) !== undefined;
     };
 
-    getRoutingComponent = (url: SuperTokensUrl): ComponentClass | undefined => {
+    getRoutingComponent = (route: RouteWithPathAndRecipeId): ComponentClass | undefined => {
         // If rId from URL exists and doesn't match, or if route path doesn't start with return undefined.
-        if (url.recipeId !== null && url.recipeId !== this.recipeId) {
+        if (route.recipeId !== null && route.recipeId !== this.recipeId) {
             return undefined;
         }
-        return this.features[url.pathname.getAsStringDangerous()];
+        return this.features[route.path.getAsStringDangerous()];
     };
 }

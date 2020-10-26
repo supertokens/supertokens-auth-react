@@ -151,7 +151,8 @@ describe("SuperTokens", function() {
         mockWindowLocation(`${randomWebsitePath}/auth?rid=email-password`);
         assert.strictEqual(SuperTokens.canHandleRoute(), true);
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
-        assert.strictEqual(SuperTokens.canHandleRoute(), false);
+        // returns first component if rid=unknownd.
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
     });
 
     it("SuperTokens disable default Implementation should disable default routes for Email Password", async function() {
@@ -200,7 +201,8 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
         mockWindowLocation(`${randomWebsitePath}/auth?rid=email-password`);
         assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
+        // returns first component if rid=unknownd.
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
     });
 });

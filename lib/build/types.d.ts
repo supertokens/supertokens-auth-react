@@ -7,6 +7,10 @@ export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction[];
 };
+export declare type RouteWithPathAndRecipeId = {
+    path: NormalisedURLPath;
+    recipeId: string | null;
+};
 export declare type CreateRecipeFunction = (appInfo: AppInfo) => RecipeModule;
 export declare type AppInfoUserInput = {
     appName: string;
@@ -52,4 +56,7 @@ export declare type FormFieldsBaseConfig = {
 export declare type FormFields = FormFieldsBaseConfig & {
     validate?: (value: string) => Promise<string | undefined>;
     optional: boolean;
+};
+export declare type SuperTokensRouteWithRecipeIdProps = {
+    path: string;
 };

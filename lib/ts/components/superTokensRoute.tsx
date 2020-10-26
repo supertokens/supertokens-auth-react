@@ -19,9 +19,8 @@
 
 import * as React from "react";
 import SuperTokens from "../superTokens";
-import { ComponentWithRecipeId, PathToComponentWithRecipeIdMap } from "../types";
-import SuperTokensUrl from '../superTokensUrl';
-import NormalisedURLPath from '../normalisedURLPath';
+import { SuperTokensRouteWithRecipeIdProps } from "../types";
+import { getRecipeIdFromSearch } from "../utils";
 
 /*
 * SuperTokensRouteWithRecipeId
@@ -34,44 +33,20 @@ import NormalisedURLPath from '../normalisedURLPath';
 */
 export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
 	try {
-		let pathsToComponentWithRecipeIdMap: PathToComponentWithRecipeIdMap = {};
-		SuperTokens.getRecipeList().map(recipe => {
-			const features = recipe.getFeatures();
-			return Object.keys(features).map(featurePath => {
 
-				// If no components yet for this route, initialize empty array.
-				if (pathsToComponentWithRecipeIdMap[featurePath] === undefined) {
-					pathsToComponentWithRecipeIdMap[featurePath] = []
-				}
-
-				pathsToComponentWithRecipeIdMap[featurePath].push({
-					rid: recipe.getRecipeId(),
-					component: features[featurePath]
-				})
-
-			})
-		});
-		return Object.keys(pathsToComponentWithRecipeIdMap).map(path => SuperTokensRouteWithRecipeId(path, pathsToComponentWithRecipeIdMap[path]));
+		const pathsToComponentWithRecipeIdMap = SuperTokens.getPathsToComponentWithRecipeIdMap();
+		return Object.keys(pathsToComponentWithRecipeIdMap).map(path => 
+			<SuperTokensRouteWithRecipeId path={path} />
+		);
 	} catch (e) {
 		return [];
 	}
 }
 
-
-function SuperTokensRouteWithRecipeId(path: string, routeComponents: ComponentWithRecipeId[]): JSX.Element {
+function SuperTokensRouteWithRecipeId(props: SuperTokensRouteWithRecipeIdProps): JSX.Element {
 	const Route = require('react-router-dom').Route;
-	const recipeId = new SuperTokensUrl().recipeId
-
-	// If recipeId provided, try to find a match.
-	if (recipeId !== null) {
-		for (let i = 0; i < routeComponents.length; i++) {
-			if (recipeId === routeComponents[i].rid) {
-				return <Route exact key={`st-${path}`} path={path} component={routeComponents[i].component} />;
-			}
-		}
-	}
-
-	// Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
-	return <Route exact key={`st-${path}`} path={path} component={routeComponents[0].component} />
+	const recipeId = getRecipeIdFromSearch(window.location.search);
+	const component = SuperTokens.getMatchingComponentForRouteAndRecipeId(props.path, recipeId);
+	return <Route exact key={`st-${props.path}`} path={props.path} component={component} />
 
 }

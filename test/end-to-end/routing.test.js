@@ -36,7 +36,7 @@ describe("SuperTokens Routing in Test App", function() {
     const SignInButtonQuerySelector = `document.querySelector('#${ST_ROOT_CONTAINER}').shadowRoot.querySelector('button').innerText`;
 
     before(async function() {
-        testAppChildProcess = spawn("./startTestApp.sh", ["--start", "--no-build"]);
+        testAppChildProcess = spawn("./test/startTestApp.sh", ["--test"]);
 
         testAppChildProcess.stderr.on("data", function(data) {
             console.log("stderr:" + data);
@@ -48,7 +48,7 @@ describe("SuperTokens Routing in Test App", function() {
             }
         });
 
-        await new Promise(r => setTimeout(r, 3000));
+        await new Promise(r => setTimeout(r, 4000));
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -59,7 +59,7 @@ describe("SuperTokens Routing in Test App", function() {
     after(async function() {
         await browser.close();
         testAppChildProcess.kill();
-        spawn("./startTestApp.sh", ["--stop"]);
+        // spawn("./test/startTestApp.sh", ["--stop"]);
     });
 
     describe("using react-router-dom", function() {
@@ -127,7 +127,10 @@ describe("SuperTokens Routing in Test App", function() {
                 waitUntil: "domcontentloaded"
             });
             const superTokensComponent = await page.$(`#${ST_ROOT_CONTAINER}`);
-            assert.strictEqual(superTokensComponent, null);
+            assert.notStrictEqual(superTokensComponent, null);
+            const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
+            assert.notStrictEqual(signInButton, null);
+            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
         });
     });
 });

@@ -16,15 +16,16 @@
 /*
  * Imports.
  */
+import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH } from "./constants";
 import { AppInfo, SuperTokensConfig } from "./types";
 import { ComponentClass } from "react";
-import SuperTokensUrl from "./superTokensUrl";
-import { isTest } from "./utils";
+import { getRecipeIdFromSearch, isTest } from "./utils";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 const { getSuperTokensRoutesForReactRouterDom } = require("./components/superTokensRoute");
+import { PathToComponentWithRecipeIdMap } from "./types";
 
 /*
  * Class.
@@ -41,6 +42,7 @@ export default class SuperTokens {
      */
     private appInfo: AppInfo;
     private recipeList: RecipeModule[] = [];
+    private pathsToComponentWithRecipeIdMap?: PathToComponentWithRecipeIdMap;
 
     /*
      * Constructor.
@@ -101,6 +103,15 @@ export default class SuperTokens {
         return SuperTokens.getInstanceOrThrow().getRecipeList();
     }
 
+    static getPathsToComponentWithRecipeIdMap (): PathToComponentWithRecipeIdMap {
+        return SuperTokens.getInstanceOrThrow().getPathsToComponentWithRecipeIdMap();
+     }
+   
+     
+    static getMatchingComponentForRouteAndRecipeId(path: string, recipeId: string | null): ComponentClass | undefined {
+        return SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(path, recipeId);
+    }
+
     static getNormalisedURLPathOrDefault(defaultPath: string, path?: string): NormalisedURLPath {
         if (path !== undefined) {
             return new NormalisedURLPath(path);
@@ -121,34 +132,62 @@ export default class SuperTokens {
     };
 
     canHandleRoute = (): boolean => {
-        const url = new SuperTokensUrl();
-
-        // If pathname doesn't start with websiteBasePath, return false.
-        if (!url.matchesBasePath) {
-            return false;
-        }
-
-        return this.recipeList.some(recipe => recipe.canHandleRoute(url));
+        const path = new NormalisedURLPath(window.location.pathname)
+        return this.getPathsToComponentWithRecipeIdMap()[path.getAsStringDangerous()] !== undefined;
     };
 
     getRoutingComponent = (): ComponentClass | undefined => {
-        const url = new SuperTokensUrl();
+        const path = new NormalisedURLPath(window.location.pathname);
+	    const recipeId = getRecipeIdFromSearch(window.location.search);
+        return this.getMatchingComponentForRouteAndRecipeId(path.getAsStringDangerous(), recipeId);
 
-        // If pathname doesn't start with websiteBasePath, return false.
-        if (!url.matchesBasePath) {
-            return undefined;
-        }
+    };
 
-        let component: ComponentClass | undefined;
-        for (let i = 0; i < this.recipeList.length; i++) {
-            component = this.recipeList[i].getRoutingComponent(url);
-            if (component !== undefined) {
-                break;
+    getPathsToComponentWithRecipeIdMap = (): PathToComponentWithRecipeIdMap  => {
+        if (this.pathsToComponentWithRecipeIdMap)
+            return this.pathsToComponentWithRecipeIdMap;
+
+        let pathsToComponentWithRecipeIdMap: PathToComponentWithRecipeIdMap = {};
+        for (let i = 0; i < this.getRecipeList().length; i++) {
+            const recipe = this.getRecipeList()[i];
+            const features = recipe.getFeatures();
+            const featurePaths = Object.keys(features);
+            for (let j = 0; j < featurePaths.length; j++) {
+                // If no components yet for this route, initialize empty array.
+                const featurePath = featurePaths[j];
+                if (pathsToComponentWithRecipeIdMap[featurePath] === undefined) {
+                    pathsToComponentWithRecipeIdMap[featurePath] = []
+                }
+
+                pathsToComponentWithRecipeIdMap[featurePath].push({
+                    rid: recipe.getRecipeId(),
+                    component: features[featurePath]
+                });
             }
         }
 
-        return component;
-    };
+        this.pathsToComponentWithRecipeIdMap = pathsToComponentWithRecipeIdMap
+        return this.pathsToComponentWithRecipeIdMap;
+    }
+
+    getMatchingComponentForRouteAndRecipeId = (path: string, recipeId: string | null): ComponentClass | undefined => {
+        const routeComponents = SuperTokens.getPathsToComponentWithRecipeIdMap()[path];
+        if (routeComponents === undefined)
+            return undefined;
+
+	    // If recipeId provided, try to find a match.
+        if (recipeId !== null) {
+            for (let i = 0; i < routeComponents.length; i++) {
+                if (recipeId === routeComponents[i].rid) {
+                    return routeComponents[i].component;
+                }
+            }
+        }
+
+	    // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
+        return routeComponents[0].component;
+
+    }
 
     getRecipeList = (): RecipeModule[] => {
         return this.recipeList;
