@@ -17,6 +17,24 @@ import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
+
+/*
+ * Enums.
+ */
+
+export enum APIStatus {
+    FIELD_ERROR = "FIELD_ERROR",
+    GENERAL_ERROR = "GENERAL_ERROR",
+    OK = "OK",
+    WRONG_CREDENTIALS_ERROR = "WRONG_CREDENTIALS_ERROR"
+}
+
+export enum SuccessAction {
+    SESSION_ALREADY_EXISTS = "SESSION_ALREADY_EXISTS",
+    SIGN_IN_COMPLETE = "SIGN_IN_COMPLETE",
+    SIGN_UP_COMPLETE = "SIGN_UP_COMPLETE"
+}
+
 /*
  * Recipe Module Manager Config Types.
  */
@@ -184,9 +202,24 @@ export type FormFields = FormFieldsBaseConfig & {
     optional: boolean;
 };
 
-/*
- * Props Types.
- */
-export type SuperTokensRouteWithRecipeIdProps = {
-    path: string;
+export type APIFormFields = {
+    /*
+     * Id, or name of the input.
+     */
+
+    id: string;
+
+    /*
+     * Value of the corresponding id.
+     */
+
+    value: string;
+};
+
+export type RequestJson = {
+    /*
+     * Standard form fields passed to the API.
+     */
+
+    formFields: APIFormFields[];
 };

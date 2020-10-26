@@ -13,9 +13,26 @@
  * under the License.
  */
 
-import { FeatureConfigBase, FormFields, FormFieldsBaseConfig, RecipeModuleConfig } from "../../types";
+import {
+    APIFormFields,
+    APIStatus,
+    FeatureConfigBase,
+    FormFields,
+    FormFieldsBaseConfig,
+    RecipeModuleConfig,
+    RequestJson
+} from "../../types";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
+
+/*
+ * EmailPassword enums.
+ */
+
+export enum SignInAPIFieldsID {
+    email = "email",
+    password = "password"
+}
 
 /*
  * EmailPassword Config Types.
@@ -121,6 +138,18 @@ export type SignInFormFeatureConfig = FeatureConfigBase & {
  */
 export type EmailPasswordProps = {
     __internal?: InternalEmailPasswordProps;
+
+    history?: History;
+
+    onHandleForgotPasswordClicked?: () => Promise<boolean>;
+
+    doesSessionExist?: () => Promise<boolean>;
+
+    onHandleSuccess?: (context: any, user?: any, responseJson?: any) => Promise<boolean>;
+
+    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+
+    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
 };
 
 type InternalEmailPasswordProps = {
@@ -131,7 +160,7 @@ export type SignUpThemeProps = {
     /*
      * TODO.
      */
-    callApi?: any;
+    callAPI?: (formFields: APIFormFields[]) => Promise<Response>;
 
     /*
      * TODO.
@@ -168,7 +197,7 @@ export type SignInThemeProps = {
     /*
      * TODO.
      */
-    callApi?: any;
+    callAPI: (fields: APIFormFields[]) => Promise<APIResponse>;
 
     /*
      * TODO.
@@ -203,3 +232,17 @@ export type SignInAndUpThemeProps = {
 
 // Feature is responsible for adding "validate" function.
 export type FormFieldsSignInProps = FormFieldsSignUpConfig;
+
+export type APIResponse = {
+    status: APIStatus;
+    fields?: {
+        id: SignInAPIFieldsID;
+        error: string;
+    }[];
+    message?: string;
+};
+
+export type User = {
+    id: string;
+    email: string;
+};

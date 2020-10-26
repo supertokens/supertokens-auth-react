@@ -19,18 +19,8 @@
 
 import * as React from "react";
 import SuperTokens from "../superTokens";
-import { SuperTokensRouteWithRecipeIdProps } from "../types";
 import { getRecipeIdFromSearch } from "../utils";
 
-/*
-* SuperTokensRouteWithRecipeId
-* Using react-router-dom, we can only match based on the route and not on the combination of path and query params.
-* having one route per component would lead to clashes when two components have the same route but different recipeId,
-* the first one would always take precedence.
-* Hence, the component rendered in the Route is an abstraction that decides which Feature to render based
-* on the rId.
-* See SuperTokensRouteWithRecipeId below.
-*/
 export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
 	try {
 
@@ -39,14 +29,15 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
 			<SuperTokensRouteWithRecipeId path={path} />
 		);
 	} catch (e) {
+		// If react-router-dom is absent from dependencies, return [];
 		return [];
 	}
 }
 
-function SuperTokensRouteWithRecipeId(props: SuperTokensRouteWithRecipeIdProps): JSX.Element {
+function SuperTokensRouteWithRecipeId({path}: { path: string}): JSX.Element {
 	const Route = require('react-router-dom').Route;
 	const recipeId = getRecipeIdFromSearch(window.location.search);
-	const component = SuperTokens.getMatchingComponentForRouteAndRecipeId(props.path, recipeId);
-	return <Route exact key={`st-${props.path}`} path={props.path} component={component} />
+	const component = SuperTokens.getMatchingComponentForRouteAndRecipeId(path, recipeId);
+	return <Route exact key={`st-${path}`} path={path} component={component} />
 
 }

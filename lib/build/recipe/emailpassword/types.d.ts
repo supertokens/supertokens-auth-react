@@ -1,6 +1,10 @@
-import { FeatureConfigBase, FormFields, FormFieldsBaseConfig, RecipeModuleConfig } from "../../types";
+import { APIFormFields, APIStatus, FeatureConfigBase, FormFields, FormFieldsBaseConfig, RecipeModuleConfig, RequestJson } from "../../types";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
+export declare enum SignInAPIFieldsID {
+    email = "email",
+    password = "password"
+}
 export declare type EmailPasswordUserInput = {
     signInAndUpFeature?: SignInAndUpConfig;
     resetPasswordUsingTokenFeature?: any;
@@ -31,12 +35,18 @@ export declare type SignInFormFeatureConfig = FeatureConfigBase & {
 };
 export declare type EmailPasswordProps = {
     __internal?: InternalEmailPasswordProps;
+    history?: History;
+    onHandleForgotPasswordClicked?: () => Promise<boolean>;
+    doesSessionExist?: () => Promise<boolean>;
+    onHandleSuccess?: (context: any, user?: any, responseJson?: any) => Promise<boolean>;
+    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
 };
 declare type InternalEmailPasswordProps = {
     instance: EmailPassword;
 };
 export declare type SignUpThemeProps = {
-    callApi?: any;
+    callAPI?: (formFields: APIFormFields[]) => Promise<Response>;
     onSuccess?: () => void;
     signInClicked?: () => void;
     styleFormInit?: CSSInterpolation;
@@ -45,7 +55,7 @@ export declare type SignUpThemeProps = {
     termsAndConditionsLink?: string;
 };
 export declare type SignInThemeProps = {
-    callApi?: any;
+    callAPI: (fields: APIFormFields[]) => Promise<APIResponse>;
     onSuccess?: () => void;
     signUpClicked?: () => void;
     styleFormInit?: CSSInterpolation;
@@ -57,4 +67,16 @@ export declare type SignInAndUpThemeProps = {
     signUpForm: SignUpThemeProps;
 };
 export declare type FormFieldsSignInProps = FormFieldsSignUpConfig;
+export declare type APIResponse = {
+    status: APIStatus;
+    fields?: {
+        id: SignInAPIFieldsID;
+        error: string;
+    }[];
+    message?: string;
+};
+export declare type User = {
+    id: string;
+    email: string;
+};
 export {};

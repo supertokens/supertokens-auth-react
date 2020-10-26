@@ -3,6 +3,17 @@ import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
+export declare enum APIStatus {
+    FIELD_ERROR = "FIELD_ERROR",
+    GENERAL_ERROR = "GENERAL_ERROR",
+    OK = "OK",
+    WRONG_CREDENTIALS_ERROR = "WRONG_CREDENTIALS_ERROR"
+}
+export declare enum SuccessAction {
+    SESSION_ALREADY_EXISTS = "SESSION_ALREADY_EXISTS",
+    SIGN_IN_COMPLETE = "SIGN_IN_COMPLETE",
+    SIGN_UP_COMPLETE = "SIGN_UP_COMPLETE"
+}
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction[];
@@ -57,6 +68,10 @@ export declare type FormFields = FormFieldsBaseConfig & {
     validate?: (value: string) => Promise<string | undefined>;
     optional: boolean;
 };
-export declare type SuperTokensRouteWithRecipeIdProps = {
-    path: string;
+export declare type APIFormFields = {
+    id: string;
+    value: string;
+};
+export declare type RequestJson = {
+    formFields: APIFormFields[];
 };

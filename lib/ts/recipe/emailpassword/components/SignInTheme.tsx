@@ -17,6 +17,7 @@
  * Imports.
  */
 import * as React from "react";
+import { FormEvent, useCallback, useRef, useState } from "react";
 import {defaultStyles, palette} from '../../../styles/styles';
 import { SignInThemeProps } from "../types";
 
@@ -28,6 +29,48 @@ import { jsx } from '@emotion/core';
  * Component.
  */
 export default function SignInTheme(props: SignInThemeProps) {
+    /*
+     * Props.
+     */
+    const {callAPI} = props;
+
+    /*
+     * State.
+     */
+    const [formFields, setFormFields] = useState(props.formFields.map(field => {
+        return {
+            ...field,
+            ref: useRef<HTMLInputElement>(null)
+        }
+    }))
+
+    /*
+     * Callbacks.
+     */
+    const onSignIn = useCallback(
+        async () => {
+            const fields = formFields.map(field => {
+                return {
+                    id: field.id,
+                    value: (field.ref.current !== null) ? field.ref.current.value : ""
+                }
+            });
+            const res = await callAPI(fields);
+        },
+        [formFields, props.callAPI, setFormFields]
+    );
+
+    /*
+     * Event Handlers.
+     */
+    const onFormSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        onSignIn();
+    }
+
+    /*
+     * Render.
+     */
     return (
         <div css={defaultStyles.container} >
             <div css={defaultStyles.row}>
@@ -42,23 +85,24 @@ export default function SignInTheme(props: SignInThemeProps) {
 
                 <div css={defaultStyles.divider}></div>
 
-                <form>
+                <form onSubmit={onFormSubmit}>
                     {
-                        props.formFields.map(field => {
+                        formFields.map(field => {
                             return (
                                 <div key={field.id}>
                                     <label>
                                         {field.label}
                                     </label>
-                                    <input name={field.id}  placeholder={field.placeholder}/> 
+                                    <input type={field.id !== "password" ? "text" : "password"} name={field.id}  placeholder={field.placeholder} ref={field.ref} /> 
                                 </div>
                             )
                         })
                     }
+
+                    <button type="submit"> Sign In </button>
+                    <div>Forgot password?</div>
                 </form>
 
-                <button> Sign In </button>
-                <div>Forgot password?</div>
 
             </div>
 
@@ -66,6 +110,9 @@ export default function SignInTheme(props: SignInThemeProps) {
     );
 }
 
+/*
+ * Styles.
+ */
 const styles = {
     header: {
         height: '141px'

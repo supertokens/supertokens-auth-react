@@ -13,8 +13,10 @@
  * under the License.
  */
 
+import { ComponentClass } from "react";
 import { RECIPE_ID_QUERY_PARAM } from "./constants";
 import { FormFields } from "./types";
+const { withRouter } = require("react-router-dom");
 
 /*
  * getRecipeIdFromPath
@@ -101,4 +103,12 @@ export async function validateEmail(email: string): Promise<string | undefined> 
 
 export async function validatePassword(password: string): Promise<string | undefined> {
     return new Promise(resolve => resolve(undefined));
+}
+
+export function withOrWithoutRouter(component: ComponentClass) {
+    try {
+        return withRouter(component);
+    } catch (e) {
+        return component;
+    }
 }

@@ -34,7 +34,7 @@
     "testapp": "./test/startTestApp.sh --start",
     "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
     "tsc": "cd lib && npx tsc -p tsconfig.json",
-    "build": "cd lib && rm -r ./build 2> /dev/null && npx tsc -p tsconfig.json --emitDeclarationOnly && cd ../ && npm run compile",
+    "build": "cd lib && rm -r ./build 2> /dev/null && mkdir -p ./build && npx tsc -p tsconfig.json --emitDeclarationOnly && cd ../ && npm run compile",
     "compile": "cd lib && babel ./ts/ --out-dir build/ --extensions '.ts,.tsx'",
     "watch": "cd lib && babel --watch ./ts/ --out-dir ./build/ --extensions '.ts,.tsx'",
     "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\"",

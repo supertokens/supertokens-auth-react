@@ -17,7 +17,7 @@
  * Imports.
  */
 import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, AppInfo, FormFields, RouteToFeatureComponentMap } from "../../types";
+import { CreateRecipeFunction, AppInfo, FormFields, RouteToFeatureComponentMap, RequestJson } from "../../types";
 import {
     EmailPasswordConfig,
     SignInAndUpConfig,
@@ -29,6 +29,8 @@ import { isTest } from "../../utils";
 import SignInFeature from "./signInFeature";
 import SignUpFeature from "./signUpFeature";
 import SignInAndUp from "./components/SignInAndUp";
+import HttpRequest from "../../httpRequest";
+
 /*
  * Class.
  */
@@ -44,6 +46,7 @@ export default class EmailPassword extends RecipeModule {
     private signInFeature: SignInFeature;
     private signUpFeature: SignUpFeature;
     private onSuccessRedirectURL: string;
+    private httpRequest: HttpRequest;
 
     /*
      * Constructor.
@@ -57,6 +60,8 @@ export default class EmailPassword extends RecipeModule {
         } else {
             this.onSuccessRedirectURL = "/";
         }
+
+        this.httpRequest = new HttpRequest(config.appInfo);
 
         let signUpForm: SignUpFormFeatureConfig | undefined = undefined;
         let signInForm: SignInFormFeatureConfig | undefined = undefined;
@@ -90,6 +95,22 @@ export default class EmailPassword extends RecipeModule {
 
     getOnSuccessRedirectURL = (): string => {
         return this.onSuccessRedirectURL;
+    };
+
+    signUpApi = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+        // TODO Validation.
+        return this.httpRequest.post("/signup", {
+            body: JSON.stringify(requestJson),
+            headers
+        });
+    };
+
+    signInApi = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+        // TODO Validation.
+        return this.httpRequest.post("/signin", {
+            body: JSON.stringify(requestJson),
+            headers
+        });
     };
 
     /*

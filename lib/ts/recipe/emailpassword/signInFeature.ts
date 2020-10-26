@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { FormFields } from "../../types";
+import { FormFields, RequestJson } from "../../types";
 import { SignInFormFeatureConfig } from "./types";
 import { mergeFormFields } from "../../utils";
 /*

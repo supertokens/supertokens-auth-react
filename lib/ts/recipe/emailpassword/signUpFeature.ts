@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { FormFields } from "../../types";
+import { FormFields, RequestJson } from "../../types";
 import { SignUpFormFeatureConfig } from "./types";
 import { mergeFormFields, validateEmail, validatePassword } from "../../utils";
 

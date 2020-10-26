@@ -6,7 +6,7 @@ import {
   Link
 } from "react-router-dom";
 import {getSuperTokensRoutesForReactRouterDom} from 'supertokens-auth-react';
-
+import {SignInAndUp} from 'supertokens-auth-react/recipe/emailpassword';
 import {BaseComponent, Home, About, Contact} from './App';
 
 function AppWithReactDomRouter() {
@@ -27,6 +27,9 @@ function AppWithReactDomRouter() {
             </Route>
             <Route path="/contact">
               <Contact />
+            </Route>
+            <Route path="/custom-supertokens-login">
+              <SignInAndUp />
             </Route>
           </Switch>
         </BaseComponent>
@@ -49,6 +52,7 @@ function Nav () {
         <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/about">About</Link></li>
         <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/contact">Contact</Link></li>
         <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/auth">Auth</Link></li>
+        <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/custom-supertokens-login">Custom-supertokens-login</Link></li>
       </ul>
     </nav>
   </div>
