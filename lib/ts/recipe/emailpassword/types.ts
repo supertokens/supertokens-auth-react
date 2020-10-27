@@ -152,31 +152,45 @@ type InternalEmailPasswordProps = {
     instance: EmailPassword;
 };
 
-export type SignUpThemeProps = {
+type EmailPasswordThemeProps = {
     /*
-     * TODO.
+     * Call Sign In API.
      */
-    callAPI?: (formFields: APIFormField[]) => Promise<Response>;
+    callAPI: (fields: APIFormField[]) => Promise<APIResponse>;
 
     /*
-     * TODO.
+     * Called on successful signin/signup/resetpassword.
      */
     onSuccess?: () => void;
 
     /*
-     * Callback called when Sign In link is clicked.
+     * Custom styling from user.
      */
-    signInClicked?: () => void;
-
-    /*
-     * TODO.
-     */
-    styleFormInit?: CSSInterpolation;
+    styleFormInit?: { [key: string]: CSSInterpolation };
 
     /*
      * Form fields to use in the signin form.
      */
     formFields: FormFieldThemeProps[];
+};
+
+export type SignInThemeProps = EmailPasswordThemeProps & {
+    /*
+     * Callback called when Sign Up link is clicked.
+     */
+    signUpClicked?: () => void;
+
+    /*
+     * Reset password URL for forgot password button.
+     */
+    resetPasswordURL?: string;
+};
+
+export type SignUpThemeProps = EmailPasswordThemeProps & {
+    /*
+     * Callback called when Sign In link is clicked.
+     */
+    signInClicked?: () => void;
 
     /*
      * Privacy policy link.
@@ -189,44 +203,11 @@ export type SignUpThemeProps = {
     termsAndConditionsLink?: string;
 };
 
-export type SignInThemeProps = {
-    /*
-     * TODO.
-     */
-    callAPI: (fields: APIFormField[]) => Promise<APIResponse>;
-
-    /*
-     * TODO.
-     */
-    onSuccess?: () => void;
-
-    /*
-     * Callback called when Sign Up link is clicked.
-     */
-    signUpClicked?: () => void;
-
-    /*
-     * TODO.
-     */
-    styleFormInit?: CSSInterpolation;
-
-    /*
-     * Form fields to use in the signin form.
-     */
-    formFields: FormFieldThemeProps[];
-
-    /*
-     * Reset password URL for forgot password button.
-     */
-    resetPasswordURL?: string;
-};
-
 export type SignInAndUpThemeProps = {
     signInForm: SignInThemeProps;
     signUpForm: SignUpThemeProps;
 };
 
-// Feature is responsible for adding "validate" function.
 export type FormFieldThemeProps = NormalisedFormField & {
     /*
      * Error message to display to users.

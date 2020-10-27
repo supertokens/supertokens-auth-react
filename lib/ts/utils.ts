@@ -137,7 +137,7 @@ function getNormalisedURLPathOrDefault(defaultPath: string, path?: string): Norm
  */
 
 export async function validateEmail(email: string): Promise<string | undefined> {
-    return new Promise(resolve => resolve(undefined));
+    return undefined;
 }
 
 /*
@@ -147,7 +147,7 @@ export async function validateEmail(email: string): Promise<string | undefined> 
  */
 
 export async function validatePassword(password: string): Promise<string | undefined> {
-    return new Promise(resolve => resolve(undefined));
+    return undefined;
 }
 
 /*
@@ -161,7 +161,6 @@ export function capitalize(value: string): string {
 /*
  * defaultValidate
  */
-
-export function defaultValidate(value: string): Promise<string | undefined> {
-    return new Promise(resolve => resolve(undefined));
+export async function defaultValidate(value: string): Promise<string | undefined> {
+    return undefined;
 }

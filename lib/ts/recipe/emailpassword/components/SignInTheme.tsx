@@ -33,7 +33,7 @@ export default function SignInTheme(props: SignInThemeProps) {
     /*
      * Props.
      */
-    const {callAPI, onSuccess} = props;
+    const {callAPI, onSuccess, styleFormInit} = props;
 
     /*
      * States.
@@ -115,7 +115,7 @@ export default function SignInTheme(props: SignInThemeProps) {
      * Render.
      */
     return (
-        <div css={defaultStyles.container} >
+        <div css={[defaultStyles.container]} >
             <div css={defaultStyles.row}>
                 
                 <div css={styles.header}>
@@ -147,7 +147,7 @@ export default function SignInTheme(props: SignInThemeProps) {
                         })
                     }
 
-                    <button type="submit"> Sign In </button>
+                    <button disabled={isLoading} type="submit"> Sign In </button>
                     <div>Forgot password?</div>
                 </form>
 

@@ -42,22 +42,22 @@ export declare type EmailPasswordProps = {
 declare type InternalEmailPasswordProps = {
     instance: EmailPassword;
 };
-export declare type SignUpThemeProps = {
-    callAPI?: (formFields: APIFormField[]) => Promise<Response>;
-    onSuccess?: () => void;
-    signInClicked?: () => void;
-    styleFormInit?: CSSInterpolation;
-    formFields: FormFieldThemeProps[];
-    privacyPolicyLink?: string;
-    termsAndConditionsLink?: string;
-};
-export declare type SignInThemeProps = {
+declare type EmailPasswordThemeProps = {
     callAPI: (fields: APIFormField[]) => Promise<APIResponse>;
     onSuccess?: () => void;
-    signUpClicked?: () => void;
-    styleFormInit?: CSSInterpolation;
+    styleFormInit?: {
+        [key: string]: CSSInterpolation;
+    };
     formFields: FormFieldThemeProps[];
+};
+export declare type SignInThemeProps = EmailPasswordThemeProps & {
+    signUpClicked?: () => void;
     resetPasswordURL?: string;
+};
+export declare type SignUpThemeProps = EmailPasswordThemeProps & {
+    signInClicked?: () => void;
+    privacyPolicyLink?: string;
+    termsAndConditionsLink?: string;
 };
 export declare type SignInAndUpThemeProps = {
     signInForm: SignInThemeProps;

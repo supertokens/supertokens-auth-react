@@ -142,7 +142,7 @@ describe("EmailPassword", function() {
             id: "email",
             label: "Custom Email Label",
             placeholder: "Your custom email",
-            validate: email => new Promise(resolve => resolve("Custom Email")),
+            validate: async email => "Custom Email",
             optional: false
         };
         EmailPassword.init({
@@ -194,7 +194,7 @@ describe("EmailPassword", function() {
             id: "email",
             label: "Custom Email Label",
             placeholder: "Your custom email",
-            validate: email => new Promise(resolve => resolve("Custom Email")),
+            validate: async email => "Custom Email Error",
             optional: false
         };
 
@@ -202,7 +202,7 @@ describe("EmailPassword", function() {
             id: "random",
             label: "Random",
             placeholder: "Random",
-            validate: email => new Promise(resolve => resolve()),
+            validate: async value => undefined,
             optional: false
         };
 
@@ -240,6 +240,6 @@ describe("EmailPassword", function() {
             .getSignInFeature()
             .getFormFields()[0]
             .validate("foo");
-        assert.strictEqual(signInEmailValidateError, "Custom Email");
+        assert.strictEqual(signInEmailValidateError, "Custom Email Error");
     });
 });

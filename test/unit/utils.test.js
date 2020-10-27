@@ -128,8 +128,8 @@ describe("Config tests", function() {
             id: "email",
             label: "Email",
             placeholder: "youremail@example.com",
-            validate: email => {
-                return new Promise(resolve => resolve(undefined));
+            validate: async email => {
+                return undefined;
             },
             optional: false
         };
@@ -138,8 +138,8 @@ describe("Config tests", function() {
             id: "password",
             label: "Password",
             placeholder: "Enter your password",
-            validate: password => {
-                return new Promise(resolve => resolve(undefined));
+            validate: async password => {
+                return undefined;
             },
             optional: false
         };
@@ -148,8 +148,8 @@ describe("Config tests", function() {
             id: "email",
             label: " Custom Email Label",
             placeholder: "Custom Email Placeholder",
-            validate: email => {
-                return new Promise(resolve => resolve("Wrong email! Keep trying"));
+            validate: async email => {
+                return undefined;
             },
             optional: false
         };
@@ -158,8 +158,8 @@ describe("Config tests", function() {
             id: "email",
             label: " Custom Email Label",
             placeholder: "Custom Email Placeholder",
-            validate: email => {
-                return new Promise(resolve => resolve("Wrong email! Keep trying"));
+            validate: async email => {
+                return "Wrong email! Keep trying";
             },
             optional: true
         };
@@ -174,8 +174,8 @@ describe("Config tests", function() {
             id: "password",
             label: "Custom Password",
             placeholder: "Enter your password",
-            validate: password => {
-                return new Promise(resolve => resolve(undefined));
+            validate: async password => {
+                return undefined;
             },
             optional: false
         };
@@ -184,8 +184,8 @@ describe("Config tests", function() {
             id: "random",
             label: "Custom Random",
             placeholder: "Enter whatever",
-            validate: random => {
-                return new Promise(resolve => resolve("Always throw an error"));
+            validate: async random => {
+                return "Always throw an error";
             },
             optional: true
         };

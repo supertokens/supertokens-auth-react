@@ -63,31 +63,25 @@ function SignInAndUp (props: EmailPasswordProps) {
 
                     // If status >= 300, it means there is a GENERAL_ERROR.
                     if (result.status >= 300) {
-                        return new Promise(resolve => {
-                            resolve({
-                                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                                message: data.message
-                            });
-                        });
+                        return {
+                            status: API_RESPONSE_STATUS.GENERAL_ERROR,
+                            message: data.message
+                        };
                     }
                     
                     // Otherwise, if field errors.
                     if (data.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-                        return new Promise(resolve => {
-                            resolve({
+                        return {
                                 status: API_RESPONSE_STATUS.FIELD_ERROR,
                                 fields: data.fields
-                            });
-                        });
+                        };
                     }
 
                     // Otherwise, if wrong credentials error.
                     if (data.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
-                        return new Promise(resolve => {
-                            resolve({
-                                status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
-                            });
-                        });
+                        return {
+                            status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
+                        };
                     }
 
                     // Otherwise, status === OK, update state wit huser and responseJSON.
@@ -99,11 +93,9 @@ function SignInAndUp (props: EmailPasswordProps) {
                     setUser(user);
                     setResponseJson(data);
 
-                    return new Promise(resolve => {
-                        resolve({
-                            status: API_RESPONSE_STATUS.OK
-                        });
-                    });
+                    return {
+                        status: API_RESPONSE_STATUS.OK
+                    }
                 }
             )(formFields);
             },
@@ -114,11 +106,16 @@ function SignInAndUp (props: EmailPasswordProps) {
         await onHandleSuccess({ action: SuccessAction.SIGN_IN_COMPLETE }, user, responseJson);
     }
 
-    const signUpAPI = async (formFields: APIFormField[]): Promise<Response>  => {
+    const signUpAPI = async (formFields: APIFormField[]): Promise<APIResponse>  => {
         const headers: Headers = new Headers({
             rid: getRecipeInstanceOrThrow().getRecipeId()
         });
-        return onCallSignUpAPI({formFields}, headers);
+        const result = await onCallSignUpAPI({formFields}, headers);
+
+        // TODO.
+        return {
+            status: API_RESPONSE_STATUS.OK
+        }
     }
 
     const onSignUpSuccess = async () => {
