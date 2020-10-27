@@ -2,9 +2,11 @@
 !**/*.d.ts
 .git/
 test/
+react-test-app/
 hooks/
 .circleci/
 lib/tsconfig.json
+lib/babel.config.json
 .mocharc.yml
 lib/.prettierrc
 lib/tslint.json
@@ -13,3 +15,5 @@ addReleaseTag
 frontendDriverInterfaceSupported.json
 .github/
 .babelrc
+.gitattributes
+testApp.sh

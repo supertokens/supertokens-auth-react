@@ -13,4 +13,35 @@
  * under the License.
  */
 
-export default class SuperTokens {}
+/*
+ * Imports.
+ */
+import { SuperTokensConfig } from "./types";
+import SuperTokens from "./superTokens";
+
+/*
+ * API Wrapper exposed to user.
+ */
+
+export default class SuperTokensAPIWrapper {
+    static init(config: SuperTokensConfig) {
+        SuperTokens.init(config);
+    }
+
+    static canHandleRoute(): boolean {
+        return SuperTokens.canHandleRoute();
+    }
+
+    static getRoutingComponent() {
+        return SuperTokens.getRoutingComponent();
+    }
+
+    static getSuperTokensRoutesForReactRouterDom() {
+        return SuperTokens.getSuperTokensRoutesForReactRouterDom();
+    }
+}
+
+export const canHandleRoute = SuperTokensAPIWrapper.canHandleRoute;
+export const init = SuperTokensAPIWrapper.init;
+export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
+export const getSuperTokensRoutesForReactRouterDom = SuperTokens.getSuperTokensRoutesForReactRouterDom;
