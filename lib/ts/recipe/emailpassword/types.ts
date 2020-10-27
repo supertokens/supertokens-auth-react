@@ -15,7 +15,6 @@
 
 import {
     APIFormField,
-    APIStatus,
     FeatureConfigBase,
     FormField,
     FormFieldBaseConfig,
@@ -23,17 +22,13 @@ import {
     RecipeModuleConfig,
     RequestJson
 } from "../../types";
+import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID } from "../../constants";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 
 /*
  * EmailPassword enums.
  */
-
-export enum SignInAPIFieldsID {
-    email = "email",
-    password = "password"
-}
 
 /*
  * EmailPassword Config Types.
@@ -240,9 +235,9 @@ export type FormFieldThemeProps = NormalisedFormField & {
 };
 
 export type APIResponse = {
-    status: APIStatus;
+    status: API_RESPONSE_STATUS;
     fields?: {
-        id: SignInAPIFieldsID;
+        id: MANDATORY_FORM_FIELDS_ID;
         error: string;
     }[];
     message?: string;

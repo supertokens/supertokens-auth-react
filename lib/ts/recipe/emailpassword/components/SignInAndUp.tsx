@@ -18,7 +18,6 @@
  */
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { ST_ROOT_CONTAINER } from "../../../constants";
 import { APIResponse, EmailPasswordProps, User } from '../types';
 import EmailPassword from "../emailPassword";
 import {SignInAndUpTheme} from "..";
@@ -26,7 +25,8 @@ import root from "react-shadow/emotion";
 import { defaultStyles } from "../../../styles/styles";
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { APIFormField, APIStatus, RequestJson, SuccessAction } from "../../../types";
+import { APIFormField, RequestJson } from "../../../types";
+import { ST_ROOT_CONTAINER, API_RESPONSE_STATUS, SuccessAction } from "../../../constants";
 
 /*
  * Component.
@@ -65,31 +65,30 @@ function SignInAndUp (props: EmailPasswordProps) {
                     if (result.status >= 300) {
                         return new Promise(resolve => {
                             resolve({
-                                status: APIStatus.GENERAL_ERROR,
+                                status: API_RESPONSE_STATUS.GENERAL_ERROR,
                                 message: data.message
                             });
                         });
                     }
                     
                     // Otherwise, if field errors.
-                    if (data.status === APIStatus.FIELD_ERROR) {
+                    if (data.status === API_RESPONSE_STATUS.FIELD_ERROR) {
                         return new Promise(resolve => {
                             resolve({
-                                status: APIStatus.FIELD_ERROR,
+                                status: API_RESPONSE_STATUS.FIELD_ERROR,
                                 fields: data.fields
                             });
                         });
                     }
 
                     // Otherwise, if wrong credentials error.
-                    if (data.status === APIStatus.WRONG_CREDENTIALS_ERROR) {
+                    if (data.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
                         return new Promise(resolve => {
                             resolve({
-                                status: APIStatus.WRONG_CREDENTIALS_ERROR
+                                status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
                             });
                         });
                     }
-
 
                     // Otherwise, status === OK, update state wit huser and responseJSON.
                     const user: User = {
@@ -102,7 +101,7 @@ function SignInAndUp (props: EmailPasswordProps) {
 
                     return new Promise(resolve => {
                         resolve({
-                            status: APIStatus.OK
+                            status: API_RESPONSE_STATUS.OK
                         });
                     });
                 }

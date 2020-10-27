@@ -41,7 +41,7 @@ describe("EmailPassword", function() {
             websiteDomain: "supertokens.io",
             apiDomain: "api.supertokens.io"
         },
-        recipeList: []
+        recipeList: [EmailPassword.init()]
     });
 
     afterEach(async function() {

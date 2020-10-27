@@ -20,8 +20,7 @@ import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH } from "./constants";
 import { AppInfo, ReactComponentClass, SuperTokensConfig } from "./types";
-import { ComponentClass } from "react";
-import { getRecipeIdFromSearch, isTest } from "./utils";
+import { getRecipeIdFromSearch, isTest, normaliseInputAppInfoOrThrowError } from "./utils";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 const { getSuperTokensRoutesForReactRouterDom } = require("./components/superTokensRoute");
@@ -48,19 +47,10 @@ export default class SuperTokens {
      * Constructor.
      */
     constructor(config: SuperTokensConfig) {
-        this.appInfo = {
-            appName: config.appInfo.appName,
-            apiDomain: new NormalisedURLDomain(config.appInfo.apiDomain),
-            websiteDomain: new NormalisedURLDomain(config.appInfo.websiteDomain),
-            apiBasePath: SuperTokens.getNormalisedURLPathOrDefault(DEFAULT_API_BASE_PATH, config.appInfo.apiBasePath),
-            websiteBasePath: SuperTokens.getNormalisedURLPathOrDefault(
-                DEFAULT_WEBSITE_BASE_PATH,
-                config.appInfo.websiteBasePath
-            )
-        };
+        this.appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
 
-        if (config.recipeList === undefined) {
-            throw new Error("No recipeList provided to SuperTokens."); // TODO Add link to appropriate docs.
+        if (config.recipeList === undefined || config.recipeList.length === 0) {
+            throw new Error("Please provide at least one recipe to the supertokens.init function call"); // TODO Add link to appropriate docs.
         }
 
         this.recipeList = config.recipeList.map(recipe => {
@@ -110,14 +100,6 @@ export default class SuperTokens {
      
     static getMatchingComponentForRouteAndRecipeId(path: string, recipeId: string | null): ReactComponentClass | undefined {
         return SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(path, recipeId);
-    }
-
-    static getNormalisedURLPathOrDefault(defaultPath: string, path?: string): NormalisedURLPath {
-        if (path !== undefined) {
-            return new NormalisedURLPath(path);
-        } else {
-            return new NormalisedURLPath(defaultPath);
-        }
     }
 
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {

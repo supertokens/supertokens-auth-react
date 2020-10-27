@@ -13,8 +13,15 @@
  * under the License.
  */
 
-import { RECIPE_ID_QUERY_PARAM } from "./constants";
-import { FormField, mandatoryInputFields, NormalisedFormField } from "./types";
+import {
+    DEFAULT_API_BASE_PATH,
+    DEFAULT_WEBSITE_BASE_PATH,
+    MANDATORY_FORM_FIELDS_ID_ARRAY,
+    RECIPE_ID_QUERY_PARAM
+} from "./constants";
+import NormalisedURLDomain from "./normalisedURLDomain";
+import NormalisedURLPath from "./normalisedURLPath";
+import { AppInfo, AppInfoUserInput, FormField, NormalisedFormField } from "./types";
 
 /*
  * getRecipeIdFromPath
@@ -63,7 +70,7 @@ export function mergeFormFields(
                 }
 
                 // If "email" or "password", always mandatory.
-                if (mandatoryFormFields.includes(userField.id)) {
+                if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(userField.id)) {
                     optional = false;
                 }
 
@@ -91,6 +98,38 @@ export function mergeFormFields(
     }
 
     return mergedFormFields;
+}
+
+export function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): AppInfo {
+    if (appInfo === undefined) {
+        throw new Error("Please provide the appInfo object when calling supertokens.init");
+    }
+
+    if (appInfo.apiDomain === undefined) {
+        throw new Error("Please provide your apiDomain inside the appInfo object when calling supertokens.init");
+    }
+    if (appInfo.appName === undefined) {
+        throw new Error("Please provide your appNmae inside the appInfo object when calling supertokens.init");
+    }
+    if (appInfo.websiteDomain === undefined) {
+        throw new Error("Please provide your websiteDomain inside the appInfo object when calling supertokens.init");
+    }
+
+    return {
+        appName: appInfo.appName,
+        apiDomain: new NormalisedURLDomain(appInfo.apiDomain),
+        websiteDomain: new NormalisedURLDomain(appInfo.websiteDomain),
+        apiBasePath: getNormalisedURLPathOrDefault(DEFAULT_API_BASE_PATH, appInfo.apiBasePath),
+        websiteBasePath: getNormalisedURLPathOrDefault(DEFAULT_WEBSITE_BASE_PATH, appInfo.websiteBasePath)
+    };
+}
+
+function getNormalisedURLPathOrDefault(defaultPath: string, path?: string): NormalisedURLPath {
+    if (path !== undefined) {
+        return new NormalisedURLPath(path);
+    } else {
+        return new NormalisedURLPath(defaultPath);
+    }
 }
 
 /*
@@ -126,5 +165,3 @@ export function capitalize(value: string): string {
 export function defaultValidate(value: string): Promise<string | undefined> {
     return new Promise(resolve => resolve(undefined));
 }
-
-export const mandatoryFormFields = (<any>Object).values(mandatoryInputFields);

@@ -121,9 +121,21 @@ describe("SuperTokens Routing in Test App", function() {
             assert.strictEqual(signInButton._remoteObject.value, "Sign In");
         });
 
-        it("/auth?rid=unknown-rid should not load any SuperTokens components", async function() {
+        it("/auth?rid=unknown-rid should load first SuperTokens components that matches", async function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router&rid=unknown`, {
+                waitUntil: "domcontentloaded"
+            });
+            const superTokensComponent = await page.$(`#${ST_ROOT_CONTAINER}`);
+            assert.notStrictEqual(superTokensComponent, null);
+            const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
+            assert.notStrictEqual(signInButton, null);
+            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
+        });
+
+        it("/custom-supertokens-login should load SignIn SuperTokens components", async function() {
+            const page = await browser.newPage();
+            await page.goto(`${TEST_APP_BASE_URL}/custom-supertokens-login`, {
                 waitUntil: "domcontentloaded"
             });
             const superTokensComponent = await page.$(`#${ST_ROOT_CONTAINER}`);

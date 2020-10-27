@@ -32,7 +32,8 @@ import {
     SignUpFormFeatureConfig,
     EmailPasswordUserInput
 } from "./types";
-import { isTest, mandatoryFormFields } from "../../utils";
+import { isTest } from "../../utils";
+import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 import SignInFeature from "./signInFeature";
 import SignUpFeature from "./signUpFeature";
 import SignInAndUp from "./components/SignInAndUp";
@@ -84,7 +85,7 @@ export default class EmailPassword extends RecipeModule {
          * i.e. If the user overrides sign Up fields, that is propagated to default sign In fields.
          */
         const defaultSignInFields: NormalisedFormField[] = this.signUpFeature.formFields.filter(field => {
-            return mandatoryFormFields.includes(field.id);
+            return MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id);
         });
         this.signInFeature = new SignInFeature(defaultSignInFields, signInForm);
     }

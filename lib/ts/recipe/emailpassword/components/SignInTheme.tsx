@@ -24,8 +24,7 @@ import { SignInThemeProps } from "../types";
 
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { APIStatus, mandatoryInputFields } from "../../../types";
-import { mandatoryFormFields } from "../../../utils";
+import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../../constants";
 
 /*
  * Component.
@@ -71,7 +70,7 @@ export default function SignInTheme(props: SignInThemeProps) {
         setIsLoading(false);
 
         // If successfully logged in.
-        if (result.status === APIStatus.OK) {
+        if (result.status === API_RESPONSE_STATUS.OK) {
             // TODO: Show result in UI?
 
             // Call onSuccess if exist.
@@ -81,7 +80,7 @@ export default function SignInTheme(props: SignInThemeProps) {
         }
 
         //If field error.
-        if (result.status === APIStatus.FIELD_ERROR && result.fields !== undefined) {
+        if (result.status === API_RESPONSE_STATUS.FIELD_ERROR && result.fields !== undefined) {
             const errorFields = result.fields;
             // Update formFields state with errors.
             setFormFields(
@@ -134,7 +133,7 @@ export default function SignInTheme(props: SignInThemeProps) {
                         formFields.map(field => {
                             let type: string = "text";
                             // If email or password, replace field type.
-                            if (mandatoryFormFields.includes(field.id)) {
+                            if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
                                 type = field.id;
                             }
                             return (

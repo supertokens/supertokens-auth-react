@@ -18,28 +18,6 @@ import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 
 /*
- * Enums.
- */
-
-export enum APIStatus {
-    FIELD_ERROR = "FIELD_ERROR",
-    GENERAL_ERROR = "GENERAL_ERROR",
-    OK = "OK",
-    WRONG_CREDENTIALS_ERROR = "WRONG_CREDENTIALS_ERROR"
-}
-
-export enum SuccessAction {
-    SESSION_ALREADY_EXISTS = "SESSION_ALREADY_EXISTS",
-    SIGN_IN_COMPLETE = "SIGN_IN_COMPLETE",
-    SIGN_UP_COMPLETE = "SIGN_UP_COMPLETE"
-}
-
-export enum mandatoryInputFields {
-    EMAIL = "email",
-    PASSWORD = "password"
-}
-
-/*
  * Recipe Module Manager Config Types.
  */
 

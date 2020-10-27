@@ -3,21 +3,6 @@ import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
-export declare enum APIStatus {
-    FIELD_ERROR = "FIELD_ERROR",
-    GENERAL_ERROR = "GENERAL_ERROR",
-    OK = "OK",
-    WRONG_CREDENTIALS_ERROR = "WRONG_CREDENTIALS_ERROR"
-}
-export declare enum SuccessAction {
-    SESSION_ALREADY_EXISTS = "SESSION_ALREADY_EXISTS",
-    SIGN_IN_COMPLETE = "SIGN_IN_COMPLETE",
-    SIGN_UP_COMPLETE = "SIGN_UP_COMPLETE"
-}
-export declare enum mandatoryInputFields {
-    EMAIL = "email",
-    PASSWORD = "password"
-}
 export declare type ReactComponentClass = <T>(props: T) => JSX.Element;
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;

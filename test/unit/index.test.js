@@ -37,7 +37,7 @@ const defaultConfigs = {
         websiteDomain: "supertokens.io",
         apiDomain: "api.supertokens.io"
     },
-    recipeList: []
+    recipeList: [EmailPassword.init()]
 };
 
 /*
@@ -65,42 +65,42 @@ describe("SuperTokens", function() {
 
     it("Initializing SuperTokens twice should throw", async function() {
         SuperTokens.init(defaultConfigs);
-        assert.throws(
-            () => {
-                SuperTokens.init(defaultConfigs);
-            },
-            Error,
-            "SuperTokens was already initialized"
-        );
+        assert.throws(() => {
+            SuperTokens.init(defaultConfigs);
+        }, new Error("SuperTokens was already initialized"));
+    });
+
+    it("Initializing SuperTokens without appInfo name should throw", async function() {
+        assert.throws(() => {
+            SuperTokens.init({
+                ...defaultConfigs,
+                appInfo: {
+                    ...defaultConfigs.appInfo,
+                    appName: undefined
+                }
+            });
+        }, new Error("Please provide your appNmae inside the appInfo object when calling supertokens.init"));
     });
 
     it("Initializing SuperTokens with corrupted URL should throw", async function() {
-        assert.throws(
-            () => {
-                SuperTokens.init({
-                    ...defaultConfigs,
-                    appInfo: {
-                        ...defaultConfigs.appInfo,
-                        apiDomain: ":"
-                    }
-                });
-            },
-            Error,
-            "There was an error parsing the url you provided: (:). Please make sure it is correct."
-        );
-        assert.throws(
-            () => {
-                SuperTokens.init({
-                    ...defaultConfigs,
-                    appInfo: {
-                        ...defaultConfigs.appInfo,
-                        websiteDomain: "http:://malformed.url"
-                    }
-                });
-            },
-            Error,
-            "There was an error parsing the url you provided: (http:://malformed.url). Please make sure it is correct."
-        );
+        assert.throws(() => {
+            SuperTokens.init({
+                ...defaultConfigs,
+                appInfo: {
+                    ...defaultConfigs.appInfo,
+                    apiDomain: ":"
+                }
+            });
+        }, Error("Please provide a valid domain name"));
+        assert.throws(() => {
+            SuperTokens.init({
+                ...defaultConfigs,
+                appInfo: {
+                    ...defaultConfigs.appInfo,
+                    websiteDomain: "http:://malformed.url"
+                }
+            });
+        }, Error("Please provide a valid domain name"));
     });
 
     it("Initializing SuperTokens with localhost and unsecure protocol", async function() {

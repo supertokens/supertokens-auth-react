@@ -16,9 +16,11 @@
 /*
  * Imports.
  */
-import { FormField, NormalisedFormField, RequestJson } from "../../types";
+import { FormField, NormalisedFormField } from "../../types";
 import { SignInFormFeatureConfig } from "./types";
-import { mergeFormFields, mandatoryFormFields } from "../../utils";
+import { mergeFormFields } from "../../utils";
+import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
+
 /*
  * Class.
  */
@@ -40,7 +42,7 @@ export default class SignInFeature {
             if (config.formFields) {
                 userFormFields = config.formFields.reduce((acc: FormField[], field) => {
                     // Filter on email and password only.
-                    if (!mandatoryFormFields.includes(field.id)) {
+                    if (!MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
                         return acc;
                     }
                     return [
