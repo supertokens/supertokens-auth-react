@@ -19,7 +19,7 @@
 import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH } from "./constants";
-import { AppInfo, SuperTokensConfig } from "./types";
+import { AppInfo, ReactComponentClass, SuperTokensConfig } from "./types";
 import { ComponentClass } from "react";
 import { getRecipeIdFromSearch, isTest } from "./utils";
 import NormalisedURLDomain from "./normalisedURLDomain";
@@ -95,7 +95,7 @@ export default class SuperTokens {
         return SuperTokens.getInstanceOrThrow().canHandleRoute();
     }
 
-    static getRoutingComponent(): ComponentClass | undefined {
+    static getRoutingComponent(): ReactComponentClass | undefined {
         return SuperTokens.getInstanceOrThrow().getRoutingComponent();
     }
 
@@ -108,7 +108,7 @@ export default class SuperTokens {
      }
    
      
-    static getMatchingComponentForRouteAndRecipeId(path: string, recipeId: string | null): ComponentClass | undefined {
+    static getMatchingComponentForRouteAndRecipeId(path: string, recipeId: string | null): ReactComponentClass | undefined {
         return SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(path, recipeId);
     }
 
@@ -136,7 +136,7 @@ export default class SuperTokens {
         return this.getPathsToComponentWithRecipeIdMap()[path.getAsStringDangerous()] !== undefined;
     };
 
-    getRoutingComponent = (): ComponentClass | undefined => {
+    getRoutingComponent = (): ReactComponentClass | undefined => {
         const path = new NormalisedURLPath(window.location.pathname);
 	    const recipeId = getRecipeIdFromSearch(window.location.search);
         return this.getMatchingComponentForRouteAndRecipeId(path.getAsStringDangerous(), recipeId);
@@ -170,7 +170,7 @@ export default class SuperTokens {
         return this.pathsToComponentWithRecipeIdMap;
     }
 
-    getMatchingComponentForRouteAndRecipeId = (path: string, recipeId: string | null): ComponentClass | undefined => {
+    getMatchingComponentForRouteAndRecipeId = (path: string, recipeId: string | null): ReactComponentClass | undefined => {
         const routeComponents = SuperTokens.getPathsToComponentWithRecipeIdMap()[path];
         if (routeComponents === undefined)
             return undefined;

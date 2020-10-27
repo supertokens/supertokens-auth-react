@@ -17,7 +17,14 @@
  * Imports.
  */
 import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, AppInfo, FormFields, RouteToFeatureComponentMap, RequestJson } from "../../types";
+import {
+    CreateRecipeFunction,
+    AppInfo,
+    FormField,
+    RouteToFeatureComponentMap,
+    RequestJson,
+    NormalisedFormField
+} from "../../types";
 import {
     EmailPasswordConfig,
     SignInAndUpConfig,
@@ -25,7 +32,7 @@ import {
     SignUpFormFeatureConfig,
     EmailPasswordUserInput
 } from "./types";
-import { isTest } from "../../utils";
+import { isTest, mandatoryFormFields } from "../../utils";
 import SignInFeature from "./signInFeature";
 import SignUpFeature from "./signUpFeature";
 import SignInAndUp from "./components/SignInAndUp";
@@ -76,8 +83,8 @@ export default class EmailPassword extends RecipeModule {
          * Default Sign In corresponds tocomputed Sign Up fields filtered by email and password only.
          * i.e. If the user overrides sign Up fields, that is propagated to default sign In fields.
          */
-        const defaultSignInFields: FormFields[] = this.signUpFeature.formFields.filter(field => {
-            return ["email", "password"].includes(field.id);
+        const defaultSignInFields: NormalisedFormField[] = this.signUpFeature.formFields.filter(field => {
+            return mandatoryFormFields.includes(field.id);
         });
         this.signInFeature = new SignInFeature(defaultSignInFields, signInForm);
     }

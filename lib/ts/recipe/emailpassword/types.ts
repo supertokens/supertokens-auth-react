@@ -14,11 +14,12 @@
  */
 
 import {
-    APIFormFields,
+    APIFormField,
     APIStatus,
     FeatureConfigBase,
-    FormFields,
-    FormFieldsBaseConfig,
+    FormField,
+    FormFieldBaseConfig,
+    NormalisedFormField,
     RecipeModuleConfig,
     RequestJson
 } from "../../types";
@@ -100,15 +101,15 @@ export type SignInAndUp = {
     signInForm?: SignInFormFeatureConfig;
 };
 
-export type FormFieldsSignInConfig = FormFieldsBaseConfig;
+export type FormFieldSignInConfig = FormFieldBaseConfig;
 
-export type FormFieldsSignUpConfig = FormFields;
+export type FormFieldSignUpConfig = FormField;
 
 export type SignUpFormFeatureConfig = FeatureConfigBase & {
     /*
      * Form fields for SignUp.
      */
-    formFields?: FormFieldsSignUpConfig[];
+    formFields?: FormFieldSignUpConfig[];
 
     /*
      * Privacy policy link for sign up form.
@@ -125,7 +126,7 @@ export type SignInFormFeatureConfig = FeatureConfigBase & {
     /*
      * Form fields for SignUp.
      */
-    formFields?: FormFieldsSignInConfig[];
+    formFields?: FormFieldSignInConfig[];
 
     /*
      * Link to the reset password URL in case disableDefaultImplemention is true.
@@ -160,7 +161,7 @@ export type SignUpThemeProps = {
     /*
      * TODO.
      */
-    callAPI?: (formFields: APIFormFields[]) => Promise<Response>;
+    callAPI?: (formFields: APIFormField[]) => Promise<Response>;
 
     /*
      * TODO.
@@ -180,7 +181,7 @@ export type SignUpThemeProps = {
     /*
      * Form fields to use in the signin form.
      */
-    formFields: FormFieldsSignInProps[];
+    formFields: FormFieldThemeProps[];
 
     /*
      * Privacy policy link.
@@ -197,7 +198,7 @@ export type SignInThemeProps = {
     /*
      * TODO.
      */
-    callAPI: (fields: APIFormFields[]) => Promise<APIResponse>;
+    callAPI: (fields: APIFormField[]) => Promise<APIResponse>;
 
     /*
      * TODO.
@@ -217,7 +218,7 @@ export type SignInThemeProps = {
     /*
      * Form fields to use in the signin form.
      */
-    formFields: FormFieldsSignInProps[];
+    formFields: FormFieldThemeProps[];
 
     /*
      * Reset password URL for forgot password button.
@@ -231,7 +232,12 @@ export type SignInAndUpThemeProps = {
 };
 
 // Feature is responsible for adding "validate" function.
-export type FormFieldsSignInProps = FormFieldsSignUpConfig;
+export type FormFieldThemeProps = NormalisedFormField & {
+    /*
+     * Error message to display to users.
+     */
+    error?: string;
+};
 
 export type APIResponse = {
     status: APIStatus;

@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { getRecipeIdFromSearch, mergeFormFields } from "../../lib/build/utils";
+import { getRecipeIdFromSearch, mergeFormFields, defaultValidate, capitalize } from "../../lib/build/utils";
 
 import { normaliseURLPathOrThrowError } from "../../lib/build/normalisedURLPath";
 import { normaliseURLDomainOrThrowError } from "../../lib/build/normalisedURLDomain";
@@ -180,7 +180,7 @@ describe("Config tests", function() {
             optional: false
         };
 
-        const randomCustomFormField = {
+        const randomCustomFormFieldWithValidate = {
             id: "random",
             label: "Custom Random",
             placeholder: "Enter whatever",
@@ -188,6 +188,11 @@ describe("Config tests", function() {
                 return new Promise(resolve => resolve("Always throw an error"));
             },
             optional: true
+        };
+
+        const randomCustomFormFieldWithoutOptionalProperties = {
+            id: "random",
+            label: "Custom Random"
         };
 
         // No user input => default form fields.
@@ -219,8 +224,8 @@ describe("Config tests", function() {
 
         // custom field => default email, default password, custom field.
         assert.deepStrictEqual(
-            mergeFormFields([defaultEmailFormField, defaultPasswordFormField], [randomCustomFormField]),
-            [defaultEmailFormField, defaultPasswordFormField, randomCustomFormField]
+            mergeFormFields([defaultEmailFormField, defaultPasswordFormField], [randomCustomFormFieldWithValidate]),
+            [defaultEmailFormField, defaultPasswordFormField, randomCustomFormFieldWithValidate]
         );
 
         // optional custom email => custom email not optional.
@@ -234,18 +239,35 @@ describe("Config tests", function() {
         assert.deepStrictEqual(
             mergeFormFields(
                 [defaultEmailFormField, defaultPasswordFormField],
-                [randomCustomFormField, customPasswordFormField, customEmailFormField]
+                [randomCustomFormFieldWithValidate, customPasswordFormField, customEmailFormField]
             ),
-            [customEmailFormField, customPasswordFormField, randomCustomFormField]
+            [customEmailFormField, customPasswordFormField, randomCustomFormFieldWithValidate]
         );
 
         // custom email without validate method => custom email with default validate method.
-        const mergedCustomWithoutValidate = mergeFormFields(
+        const mergedCustomEmailWithoutValidate = mergeFormFields(
             [defaultEmailFormField, defaultPasswordFormField],
             [customEmailFormFieldWithoutValidateMethod]
         );
-        assert(mergedCustomWithoutValidate[0].label === customEmailFormFieldWithoutValidateMethod.label);
-        assert(mergedCustomWithoutValidate[0].placeholder === customEmailFormFieldWithoutValidateMethod.placeholder);
-        assert(mergedCustomWithoutValidate[0].validate !== undefined);
+        assert(mergedCustomEmailWithoutValidate[0].label === customEmailFormFieldWithoutValidateMethod.label);
+        assert(
+            mergedCustomEmailWithoutValidate[0].placeholder === customEmailFormFieldWithoutValidateMethod.placeholder
+        );
+        assert(mergedCustomEmailWithoutValidate[0].validate !== undefined);
+
+        // custom field without validate => default validate and optional = false.
+        const mergedRandomWithoutValidateNorOptional = mergeFormFields(
+            [defaultEmailFormField, defaultPasswordFormField],
+            [randomCustomFormFieldWithoutOptionalProperties]
+        );
+        assert(
+            mergedRandomWithoutValidateNorOptional[2].label === randomCustomFormFieldWithoutOptionalProperties.label
+        );
+        assert(
+            mergedRandomWithoutValidateNorOptional[2].placeholder ===
+                capitalize(randomCustomFormFieldWithoutOptionalProperties.id)
+        );
+        assert(mergedRandomWithoutValidateNorOptional[2].validate === defaultValidate);
+        assert(mergedRandomWithoutValidateNorOptional[2].optional === false);
     });
 });

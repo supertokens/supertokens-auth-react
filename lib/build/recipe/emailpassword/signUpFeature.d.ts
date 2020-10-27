@@ -1,12 +1,12 @@
-import { FormFields } from "../../types";
+import { NormalisedFormField } from "../../types";
 import { SignUpFormFeatureConfig } from "./types";
 export default class SignUpFeature {
-    formFields: FormFields[];
+    formFields: NormalisedFormField[];
     privacyPolicyLink?: string;
     termsAndConditionsLink?: string;
     constructor(config?: SignUpFormFeatureConfig);
-    getFormFields: () => FormFields[];
+    getFormFields: () => NormalisedFormField[];
     getPrivacyPolicyLink: () => string | undefined;
     getTermsAndConditionsLink: () => string | undefined;
-    getDefaultFormFields: () => FormFields[];
+    getDefaultFormFields: () => NormalisedFormField[];
 }

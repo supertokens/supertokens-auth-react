@@ -12,7 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { ComponentClass } from "react";
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
@@ -35,9 +34,16 @@ export enum SuccessAction {
     SIGN_UP_COMPLETE = "SIGN_UP_COMPLETE"
 }
 
+export enum mandatoryInputFields {
+    EMAIL = "email",
+    PASSWORD = "password"
+}
+
 /*
  * Recipe Module Manager Config Types.
  */
+
+export type ReactComponentClass = <T>(props: T) => JSX.Element;
 
 export type SuperTokensConfig = {
     /*
@@ -144,7 +150,7 @@ export type RecipeModuleConfig = {
  * Routing manipulation types.
  */
 export type RouteToFeatureComponentMap = {
-    [route: string]: ComponentClass;
+    [route: string]: ReactComponentClass;
 };
 
 export type ComponentWithRecipeId = {
@@ -156,7 +162,7 @@ export type ComponentWithRecipeId = {
     /*
      * Component.
      */
-    component: ComponentClass;
+    component: ReactComponentClass;
 };
 
 export type PathToComponentWithRecipeIdMap = {
@@ -173,7 +179,7 @@ export type FeatureConfigBase = {
     style?: CSSInterpolation;
 };
 
-export type FormFieldsBaseConfig = {
+export type FormFieldBaseConfig = {
     /*
      * name of the input field.
      */
@@ -190,7 +196,7 @@ export type FormFieldsBaseConfig = {
     placeholder?: string;
 };
 
-export type FormFields = FormFieldsBaseConfig & {
+export type FormField = FormFieldBaseConfig & {
     /*
      * Validation function of the input field. Returns an error as a string, or undefined.
      */
@@ -199,10 +205,10 @@ export type FormFields = FormFieldsBaseConfig & {
     /*
      * Whether the field is optional or not.
      */
-    optional: boolean;
+    optional?: boolean;
 };
 
-export type APIFormFields = {
+export type APIFormField = {
     /*
      * Id, or name of the input.
      */
@@ -221,5 +227,32 @@ export type RequestJson = {
      * Standard form fields passed to the API.
      */
 
-    formFields: APIFormFields[];
+    formFields: APIFormField[];
+};
+
+export type NormalisedFormField = {
+    /*
+     * name of the input field.
+     */
+    id: string;
+
+    /*
+     * Label of the input field.
+     */
+    label: string;
+
+    /*
+     * placeholder of the input field.
+     */
+    placeholder: string;
+
+    /*
+     * Validation function of the input field. Returns an error as a string, or undefined.
+     */
+    validate: (value: string) => Promise<string | undefined>;
+
+    /*
+     * Whether the field is optional or not.
+     */
+    optional: boolean;
 };

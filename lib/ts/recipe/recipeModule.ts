@@ -16,7 +16,13 @@
 /*
  * Imports.
  */
-import { RouteToFeatureComponentMap, RecipeModuleConfig, AppInfo, RouteWithPathAndRecipeId } from "../types";
+import {
+    RouteToFeatureComponentMap,
+    RecipeModuleConfig,
+    AppInfo,
+    RouteWithPathAndRecipeId,
+    ReactComponentClass
+} from "../types";
 import { ComponentClass } from "react";
 import NormalisedURLPath from "../normalisedURLPath";
 
@@ -51,7 +57,7 @@ export default abstract class RecipeModule {
         return this.getRoutingComponent(route) !== undefined;
     };
 
-    getRoutingComponent = (route: RouteWithPathAndRecipeId): ComponentClass | undefined => {
+    getRoutingComponent = (route: RouteWithPathAndRecipeId): ReactComponentClass | undefined => {
         // If rId from URL exists and doesn't match, or if route path doesn't start with return undefined.
         if (route.recipeId !== null && route.recipeId !== this.recipeId) {
             return undefined;

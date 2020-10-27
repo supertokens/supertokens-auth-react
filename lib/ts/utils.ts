@@ -13,10 +13,8 @@
  * under the License.
  */
 
-import { ComponentClass } from "react";
 import { RECIPE_ID_QUERY_PARAM } from "./constants";
-import { FormFields } from "./types";
-const { withRouter } = require("react-router-dom");
+import { FormField, mandatoryInputFields, NormalisedFormField } from "./types";
 
 /*
  * getRecipeIdFromPath
@@ -39,9 +37,12 @@ export function isTest(): boolean {
  * mergeFormFields by keeping the provided order, defaultFormFields or merged first, and unmerged userFormFields after.
  */
 
-export function mergeFormFields(defaultFormFields: FormFields[], userFormFields: FormFields[]): FormFields[] {
+export function mergeFormFields(
+    defaultFormFields: NormalisedFormField[],
+    userFormFields: FormField[]
+): NormalisedFormField[] {
     // Create a new array with default fields.
-    const mergedFormFields: FormFields[] = defaultFormFields;
+    const mergedFormFields: NormalisedFormField[] = defaultFormFields;
 
     // Loop through user provided fields.
     for (let i = 0; i < userFormFields.length; i++) {
@@ -62,7 +63,7 @@ export function mergeFormFields(defaultFormFields: FormFields[], userFormFields:
                 }
 
                 // If "email" or "password", always mandatory.
-                if (["email", "password"].includes(userField.id) === true) {
+                if (mandatoryFormFields.includes(userField.id)) {
                     optional = false;
                 }
 
@@ -80,7 +81,12 @@ export function mergeFormFields(defaultFormFields: FormFields[], userFormFields:
 
         // If new field, push to mergeFormFields.
         if (isNewField) {
-            mergedFormFields.push(userField);
+            mergedFormFields.push({
+                optional: false,
+                placeholder: capitalize(userField.id),
+                validate: defaultValidate,
+                ...userField
+            });
         }
     }
 
@@ -105,10 +111,20 @@ export async function validatePassword(password: string): Promise<string | undef
     return new Promise(resolve => resolve(undefined));
 }
 
-export function withOrWithoutRouter(component: ComponentClass) {
-    try {
-        return withRouter(component);
-    } catch (e) {
-        return component;
-    }
+/*
+ * capitalize
+ */
+
+export function capitalize(value: string): string {
+    return value.charAt(0).toUpperCase() + value.slice(1);
 }
+
+/*
+ * defaultValidate
+ */
+
+export function defaultValidate(value: string): Promise<string | undefined> {
+    return new Promise(resolve => resolve(undefined));
+}
+
+export const mandatoryFormFields = (<any>Object).values(mandatoryInputFields);

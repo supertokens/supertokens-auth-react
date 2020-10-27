@@ -1,9 +1,9 @@
-import { FormFields } from "../../types";
+import { NormalisedFormField } from "../../types";
 import { SignInFormFeatureConfig } from "./types";
 export default class SignInFeature {
-    formFields: FormFields[];
+    formFields: NormalisedFormField[];
     resetPasswordURL?: string;
-    constructor(defaultFormFields: FormFields[], config?: SignInFormFeatureConfig);
-    getFormFields: () => FormFields[];
+    constructor(defaultFormFields: NormalisedFormField[], config?: SignInFormFeatureConfig);
+    getFormFields: () => NormalisedFormField[];
     getResetPasswordURL: () => string | undefined;
 }

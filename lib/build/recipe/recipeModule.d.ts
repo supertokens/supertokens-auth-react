@@ -1,5 +1,4 @@
-import { RouteToFeatureComponentMap, RecipeModuleConfig, RouteWithPathAndRecipeId } from "../types";
-import { ComponentClass } from "react";
+import { RouteToFeatureComponentMap, RecipeModuleConfig, RouteWithPathAndRecipeId, ReactComponentClass } from "../types";
 export default abstract class RecipeModule {
     private features;
     private recipeId;
@@ -8,5 +7,5 @@ export default abstract class RecipeModule {
     getRecipeId: () => string;
     getFeatures: () => RouteToFeatureComponentMap;
     canHandleRoute: (route: RouteWithPathAndRecipeId) => boolean;
-    getRoutingComponent: (route: RouteWithPathAndRecipeId) => ComponentClass<{}, any> | undefined;
+    getRoutingComponent: (route: RouteWithPathAndRecipeId) => ReactComponentClass | undefined;
 }

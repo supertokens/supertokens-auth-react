@@ -16,9 +16,9 @@
 /*
  * Imports.
  */
-import { FormFields, RequestJson } from "../../types";
+import { FormField, NormalisedFormField, RequestJson } from "../../types";
 import { SignInFormFeatureConfig } from "./types";
-import { mergeFormFields } from "../../utils";
+import { mergeFormFields, mandatoryFormFields } from "../../utils";
 /*
  * Class.
  */
@@ -26,21 +26,21 @@ export default class SignInFeature {
     /*
      * Instance attributes.
      */
-    formFields: FormFields[];
+    formFields: NormalisedFormField[];
     resetPasswordURL?: string;
 
     /*
      * Constructor.
      */
-    constructor(defaultFormFields: FormFields[], config?: SignInFormFeatureConfig) {
-        let userFormFields: FormFields[] = [];
+    constructor(defaultFormFields: NormalisedFormField[], config?: SignInFormFeatureConfig) {
+        let userFormFields: FormField[] = [];
         if (config !== undefined) {
             this.resetPasswordURL = config.resetPasswordURL;
 
             if (config.formFields) {
-                userFormFields = config.formFields.reduce((acc: FormFields[], field) => {
+                userFormFields = config.formFields.reduce((acc: FormField[], field) => {
                     // Filter on email and password only.
-                    if (!["email", "password"].includes(field.id)) {
+                    if (!mandatoryFormFields.includes(field.id)) {
                         return acc;
                     }
                     return [
@@ -61,7 +61,7 @@ export default class SignInFeature {
      * Instance methods.
      */
 
-    getFormFields = (): FormFields[] => {
+    getFormFields = (): NormalisedFormField[] => {
         return this.formFields;
     };
 

@@ -22,6 +22,7 @@ import regeneratorRuntime from "regenerator-runtime";
 import EmailPassword from "../../lib/build/recipe/emailpassword/emailPassword";
 import assert from "assert";
 import SuperTokens from "../../lib/build/SuperTokens";
+import { defaultValidate } from "../../lib/build/utils";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -114,7 +115,10 @@ describe("EmailPassword", function() {
                 EmailPassword.getInstanceOrThrow()
                     .getSignUpFeature()
                     .getDefaultFormFields()[1],
-                companyCustomField
+                {
+                    validate: defaultValidate,
+                    ...companyCustomField
+                }
             ]
         );
         // Sign In fields unchanged.

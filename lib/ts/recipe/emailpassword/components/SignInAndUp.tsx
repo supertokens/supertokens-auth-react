@@ -17,6 +17,7 @@
  * Imports.
  */
 import * as React from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ST_ROOT_CONTAINER } from "../../../constants";
 import { APIResponse, EmailPasswordProps, User } from '../types';
 import EmailPassword from "../emailPassword";
@@ -25,181 +26,214 @@ import root from "react-shadow/emotion";
 import { defaultStyles } from "../../../styles/styles";
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { APIFormFields, APIStatus, RequestJson, SuccessAction } from "../../../types";
+import { APIFormField, APIStatus, RequestJson, SuccessAction } from "../../../types";
 
 /*
  * Component.
  */
-class SignInAndUp extends React.Component<EmailPasswordProps> {
-    getRecipeInstanceOrThrow = () => {
+function SignInAndUp (props: EmailPasswordProps) {
+    /*
+     * States.
+     */
+    const [user, setUser] = useState<User | undefined>(undefined);
+    const [responseJson, setResponseJson] = useState<any>(undefined);
+
+    /*
+     * Methods.
+     */
+    const getRecipeInstanceOrThrow = () => {
 		let instance;
-		if (this.props.__internal !== undefined && this.props.__internal.instance !== undefined) {
-			instance = this.props.__internal.instance;
+		if (props.__internal !== undefined && props.__internal.instance !== undefined) {
+			instance = props.__internal.instance;
 		} else {
 			instance = EmailPassword.getInstanceOrThrow();
 		}
 		return instance;
     }
 
-    async componentDidMount () {
-        // First, check if a session already exists.
-        const hasSession = await this.doesSessionExist();
-        if (hasSession) {
-            this.onHandleSuccess({action: "SESSION_ALREADY_EXISTS"});
-        }
+    const signInAPI = useCallback(
+        async (formFields: APIFormField[]): Promise<APIResponse> => {
+            return await (
+                async (formFields: APIFormField[]): Promise<APIResponse>  => {
+                    const headers: HeadersInit = {
+                        rid: getRecipeInstanceOrThrow().getRecipeId()
+                    }
+                    const result = await onCallSignInAPI({formFields}, headers);
+                    const {data} = await result.json();
+
+                    // If status >= 300, it means there is a GENERAL_ERROR.
+                    if (result.status >= 300) {
+                        return new Promise(resolve => {
+                            resolve({
+                                status: APIStatus.GENERAL_ERROR,
+                                message: data.message
+                            });
+                        });
+                    }
+                    
+                    // Otherwise, if field errors.
+                    if (data.status === APIStatus.FIELD_ERROR) {
+                        return new Promise(resolve => {
+                            resolve({
+                                status: APIStatus.FIELD_ERROR,
+                                fields: data.fields
+                            });
+                        });
+                    }
+
+                    // Otherwise, if wrong credentials error.
+                    if (data.status === APIStatus.WRONG_CREDENTIALS_ERROR) {
+                        return new Promise(resolve => {
+                            resolve({
+                                status: APIStatus.WRONG_CREDENTIALS_ERROR
+                            });
+                        });
+                    }
+
+
+                    // Otherwise, status === OK, update state wit huser and responseJSON.
+                    const user: User = {
+                        id: data.user.id,
+                        email: data.user.email
+                    }
+
+                    setUser(user);
+                    setResponseJson(data);
+
+                    return new Promise(resolve => {
+                        resolve({
+                            status: APIStatus.OK
+                        });
+                    });
+                }
+            )(formFields);
+            },
+            [getRecipeInstanceOrThrow, setUser, setResponseJson]
+    )
+
+    const onSignInSuccess = async () => {
+        await onHandleSuccess({ action: SuccessAction.SIGN_IN_COMPLETE }, user, responseJson);
     }
 
-    render () {
-        const signUpFeature = this.getRecipeInstanceOrThrow().getSignUpFeature();
-        const privacyPolicyLink = signUpFeature.getPrivacyPolicyLink();
-        const termsAndConditionsLink = signUpFeature.getTermsAndConditionsLink();
-        const signUpFormFields = signUpFeature.getFormFields();
-
-        const signInFeature = this.getRecipeInstanceOrThrow().getSignInFeature();
-        const resetPasswordURL = signInFeature.getResetPasswordURL();
-        const signInFormFields = signInFeature.getFormFields();
-
-        return (
-            <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
-
-                <SignInAndUpTheme
-
-                    signInForm={{
-                        formFields: signInFormFields,
-                        resetPasswordURL,
-                        callAPI: this.signInAPI
-                    }}
-
-                    signUpForm={{
-                        formFields: signUpFormFields,
-                        privacyPolicyLink,
-                        termsAndConditionsLink,
-                        callAPI: this.signUpAPI
-                    }}
-
-                />
-
-            </root.div>
-        );
-    }
-
-    signInAPI = async (formFields: APIFormFields[]): Promise<APIResponse>  => {
-        const headers: HeadersInit = {
-            rid: this.getRecipeInstanceOrThrow().getRecipeId()
-        }
-        const result = await this.onCallSignInAPI({formFields}, headers);
-        const {data} = await result.json();
-
-        // If status > 300, it means there is a GENERAL_ERROR.
-        if (result.status >= 300) {
-            return new Promise(resolve => {
-                resolve({
-                    status: APIStatus.GENERAL_ERROR,
-                    message: data.message
-                });
-            });
-        }
-        
-        // Otherwise, if field errors.
-        if (data.status === APIStatus.FIELD_ERROR) {
-            return new Promise(resolve => {
-                resolve({
-                    status: APIStatus.FIELD_ERROR,
-                    fields: data.fields
-                });
-            });
-        }
-
-        // Otherwise, if wrong credentials error.
-        if (data.status === APIStatus.WRONG_CREDENTIALS_ERROR) {
-            return new Promise(resolve => {
-                resolve({
-                    status: APIStatus.WRONG_CREDENTIALS_ERROR
-                });
-            });
-        }
-
-
-        // Otherwise, status === OK.
-        const user: User = {
-            id: data.user.id,
-            email: data.user.email
-        }
-
-        // Call onHandleSuccess, and return OK.
-        await this.onHandleSuccess({ action: SuccessAction.SIGN_IN_COMPLETE }, user, data);
-        return new Promise(resolve => {
-            resolve({
-                status: APIStatus.OK
-            });
-        });
-    }
-
-    signUpAPI = async (formFields: APIFormFields[]): Promise<Response>  => {
+    const signUpAPI = async (formFields: APIFormField[]): Promise<Response>  => {
         const headers: Headers = new Headers({
-            rid: this.getRecipeInstanceOrThrow().getRecipeId()
+            rid: getRecipeInstanceOrThrow().getRecipeId()
         });
-        return this.onCallSignUpAPI({formFields}, headers);
+        return onCallSignUpAPI({formFields}, headers);
     }
 
-    doesSessionExist = async (): Promise<boolean> => {
+    const onSignUpSuccess = async () => {
+        await onHandleSuccess({ action: SuccessAction.SIGN_UP_COMPLETE }, user, responseJson);
+    }
+    const doesSessionExist = async (): Promise<boolean> => {
         // If props provided by user.
-        if (this.props.doesSessionExist) {
-            return await this.props.doesSessionExist();
+        if (props.doesSessionExist) {
+            return await props.doesSessionExist();
         }
 
         // TODO Otherwise, use supertokens session management.
         return new Promise(resolve => resolve(false));
     }
 
-    onHandleForgotPasswordClicked = async () => {
+    const onHandleForgotPasswordClicked = async () => {
         // If props provided by user, and successfully handled.
-        if (this.props.onHandleForgotPasswordClicked) {
-            const isHandledByUser: boolean = await this.props.onHandleForgotPasswordClicked();
+        if (props.onHandleForgotPasswordClicked) {
+            const isHandledByUser: boolean = await props.onHandleForgotPasswordClicked();
             if (isHandledByUser) {
                 return;
             }
         }
 
         // Otherwise, use default, redirect to resetPasswordURL
-        const onResetPasswordUrl = this.getRecipeInstanceOrThrow().getSignInFeature().getResetPasswordURL;
+        const onResetPasswordUrl = getRecipeInstanceOrThrow().getSignInFeature().getResetPasswordURL;
         // TODO What if user uses react-router-dom history? => take router from props correctly (see withOrWithoutRouter)
         window.history.pushState(onResetPasswordUrl, '');
         return;
     }
 
-    onHandleSuccess = async (context: any, user?: any, responseJson?: any) => {
+    const onHandleSuccess = async (context: any, user?: any, responseJson?: any) => {
         // If props provided by user, and successfully handled.
-        if (this.props.onHandleSuccess) {
-            const isHandledByUser = await this.props.onHandleSuccess(context, user, responseJson);
+        if (props.onHandleSuccess) {
+            const isHandledByUser = await props.onHandleSuccess(context, user, responseJson);
             if (isHandledByUser) {
                 return;
             }
         }
 
         // Otherwise, use default, redirect to onSuccessRedirectURL
-        const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getOnSuccessRedirectURL();
+        const onSuccessRedirectURL = getRecipeInstanceOrThrow().getOnSuccessRedirectURL();
          // TODO What if user uses react-router-dom history? => take router from props correctly (see withOrWithoutRouter)
         window.history.pushState(onSuccessRedirectURL, '');
     }
 
-    onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+    const onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
         // If props provided by user.
-        if (this.props.onCallSignUpAPI) {
-            return this.props.onCallSignUpAPI(requestJson, headers);
+        if (props.onCallSignUpAPI) {
+            return props.onCallSignUpAPI(requestJson, headers);
         }
 
-        return this.getRecipeInstanceOrThrow().signUpApi(requestJson, headers);
+        return getRecipeInstanceOrThrow().signUpApi(requestJson, headers);
     }
 
-    onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
-        if (this.props.onCallSignInAPI) {
-            return this.props.onCallSignInAPI(requestJson, headers);
+    const onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+        if (props.onCallSignInAPI) {
+            return props.onCallSignInAPI(requestJson, headers);
         }
 
-        return this.getRecipeInstanceOrThrow().signInApi(requestJson, headers);
+        return getRecipeInstanceOrThrow().signInApi(requestJson, headers);
     }
 
+    /*
+     * Init.
+     */
+    useEffect(() => {
+        (
+            async () => {
+                const sessionExists = await doesSessionExist();
+                if (sessionExists) {
+                    await onHandleSuccess({action: "SESSION_ALREADY_EXISTS"});
+                }
+            }
+        )();
+    }, [doesSessionExist, onHandleSuccess]);
+
+    const signUpFeature = getRecipeInstanceOrThrow().getSignUpFeature();
+    const privacyPolicyLink = signUpFeature.getPrivacyPolicyLink();
+    const termsAndConditionsLink = signUpFeature.getTermsAndConditionsLink();
+    const signUpFormFields = signUpFeature.getFormFields();
+
+    const signInFeature = getRecipeInstanceOrThrow().getSignInFeature();
+    const resetPasswordURL = signInFeature.getResetPasswordURL();
+    const signInFormFields = signInFeature.getFormFields();
+
+        
+    /*
+     * Render.
+     */
+    return (
+        <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
+
+            <SignInAndUpTheme
+
+                signInForm={{
+                    formFields: signInFormFields,
+                    resetPasswordURL,
+                    callAPI: signInAPI,
+                    onSuccess: onSignInSuccess
+                }}
+
+                signUpForm={{
+                    formFields: signUpFormFields,
+                    privacyPolicyLink,
+                    termsAndConditionsLink,
+                    onSuccess: onSignUpSuccess,
+                    callAPI: signUpAPI
+                }}
+
+            />
+
+        </root.div>
+    );
 }
 
 export default SignInAndUp;

@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { FormFields, RequestJson } from "../../types";
+import { FormField, NormalisedFormField } from "../../types";
 import { SignUpFormFeatureConfig } from "./types";
 import { mergeFormFields, validateEmail, validatePassword } from "../../utils";
 
@@ -27,7 +27,7 @@ export default class SignUpFeature {
     /*
      * Instance attributes.
      */
-    formFields: FormFields[];
+    formFields: NormalisedFormField[];
     privacyPolicyLink?: string;
     termsAndConditionsLink?: string;
 
@@ -37,7 +37,7 @@ export default class SignUpFeature {
     constructor(config?: SignUpFormFeatureConfig) {
         const defaultFormFields = this.getDefaultFormFields();
 
-        let userFormFields: FormFields[] = [];
+        let userFormFields: FormField[] = [];
         if (config !== undefined) {
             this.privacyPolicyLink = config.privacyPolicyLink;
             this.termsAndConditionsLink = config.termsAndConditionsLink;
@@ -54,7 +54,7 @@ export default class SignUpFeature {
      * Instance methods.
      */
 
-    getFormFields = (): FormFields[] => {
+    getFormFields = (): NormalisedFormField[] => {
         return this.formFields;
     };
 
@@ -66,7 +66,7 @@ export default class SignUpFeature {
         return this.termsAndConditionsLink;
     };
 
-    getDefaultFormFields = (): FormFields[] => {
+    getDefaultFormFields = (): NormalisedFormField[] => {
         return [
             {
                 id: "email",

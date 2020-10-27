@@ -1,4 +1,4 @@
-import { APIFormFields, APIStatus, FeatureConfigBase, FormFields, FormFieldsBaseConfig, RecipeModuleConfig, RequestJson } from "../../types";
+import { APIFormField, APIStatus, FeatureConfigBase, FormField, FormFieldBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson } from "../../types";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 export declare enum SignInAPIFieldsID {
@@ -22,15 +22,15 @@ export declare type SignInAndUp = {
     signUpForm?: SignUpFormFeatureConfig;
     signInForm?: SignInFormFeatureConfig;
 };
-export declare type FormFieldsSignInConfig = FormFieldsBaseConfig;
-export declare type FormFieldsSignUpConfig = FormFields;
+export declare type FormFieldSignInConfig = FormFieldBaseConfig;
+export declare type FormFieldSignUpConfig = FormField;
 export declare type SignUpFormFeatureConfig = FeatureConfigBase & {
-    formFields?: FormFieldsSignUpConfig[];
+    formFields?: FormFieldSignUpConfig[];
     privacyPolicyLink?: string;
     termsAndConditionsLink?: string;
 };
 export declare type SignInFormFeatureConfig = FeatureConfigBase & {
-    formFields?: FormFieldsSignInConfig[];
+    formFields?: FormFieldSignInConfig[];
     resetPasswordURL?: string;
 };
 export declare type EmailPasswordProps = {
@@ -46,27 +46,29 @@ declare type InternalEmailPasswordProps = {
     instance: EmailPassword;
 };
 export declare type SignUpThemeProps = {
-    callAPI?: (formFields: APIFormFields[]) => Promise<Response>;
+    callAPI?: (formFields: APIFormField[]) => Promise<Response>;
     onSuccess?: () => void;
     signInClicked?: () => void;
     styleFormInit?: CSSInterpolation;
-    formFields: FormFieldsSignInProps[];
+    formFields: FormFieldThemeProps[];
     privacyPolicyLink?: string;
     termsAndConditionsLink?: string;
 };
 export declare type SignInThemeProps = {
-    callAPI: (fields: APIFormFields[]) => Promise<APIResponse>;
+    callAPI: (fields: APIFormField[]) => Promise<APIResponse>;
     onSuccess?: () => void;
     signUpClicked?: () => void;
     styleFormInit?: CSSInterpolation;
-    formFields: FormFieldsSignInProps[];
+    formFields: FormFieldThemeProps[];
     resetPasswordURL?: string;
 };
 export declare type SignInAndUpThemeProps = {
     signInForm: SignInThemeProps;
     signUpForm: SignUpThemeProps;
 };
-export declare type FormFieldsSignInProps = FormFieldsSignUpConfig;
+export declare type FormFieldThemeProps = NormalisedFormField & {
+    error?: string;
+};
 export declare type APIResponse = {
     status: APIStatus;
     fields?: {

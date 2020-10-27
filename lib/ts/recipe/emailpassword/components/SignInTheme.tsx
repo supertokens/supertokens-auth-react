@@ -17,13 +17,15 @@
  * Imports.
  */
 import * as React from "react";
-import { FormEvent, useCallback, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import {defaultStyles, palette} from '../../../styles/styles';
 import { SignInThemeProps } from "../types";
 
 
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
+import { APIStatus, mandatoryInputFields } from "../../../types";
+import { mandatoryFormFields } from "../../../utils";
 
 /*
  * Component.
@@ -32,33 +34,75 @@ export default function SignInTheme(props: SignInThemeProps) {
     /*
      * Props.
      */
-    const {callAPI} = props;
+    const {callAPI, onSuccess} = props;
 
     /*
-     * State.
+     * States.
      */
     const [formFields, setFormFields] = useState(props.formFields.map(field => {
         return {
             ...field,
             ref: useRef<HTMLInputElement>(null)
         }
-    }))
+    }));
+
+    const [isLoading, setIsLoading] = useState(false);
 
     /*
      * Callbacks.
      */
-    const onSignIn = useCallback(
-        async () => {
-            const fields = formFields.map(field => {
-                return {
-                    id: field.id,
-                    value: (field.ref.current !== null) ? field.ref.current.value : ""
-                }
-            });
-            const res = await callAPI(fields);
-        },
-        [formFields, props.callAPI, setFormFields]
-    );
+    const onSignIn = async () => {
+
+        // Set isLoading to true.
+        setIsLoading(true);
+
+        // Get the fields values from form.
+        const fields = formFields.map(field => {
+            return {
+                id: field.id,
+                value: (field.ref.current !== null) ? field.ref.current.value : ""
+            }
+        });
+
+        // Call Sign In API.
+        const result = await callAPI(fields);
+
+        // Set isLoading to false.
+        setIsLoading(false);
+
+        // If successfully logged in.
+        if (result.status === APIStatus.OK) {
+            // TODO: Show result in UI?
+
+            // Call onSuccess if exist.
+            if (onSuccess !== undefined) {
+                onSuccess();
+            }
+        }
+
+        //If field error.
+        if (result.status === APIStatus.FIELD_ERROR && result.fields !== undefined) {
+            const errorFields = result.fields;
+            // Update formFields state with errors.
+            setFormFields(
+                formFields.map(field => {
+                    for (let i = 0; i < errorFields.length; i++) {
+                        if (field.id === errorFields[i].id) {
+                            field.error = errorFields[i].error;
+                        }
+                    }
+                    return field;
+                })
+            );
+        }
+    }
+
+    /*
+     * Effects.
+     */
+    useEffect(() => {
+        onSignIn()
+    }, [setIsLoading, callAPI, onSuccess])
 
     /*
      * Event Handlers.
@@ -66,7 +110,7 @@ export default function SignInTheme(props: SignInThemeProps) {
     const onFormSubmit = (e: FormEvent) => {
         e.preventDefault();
         onSignIn();
-    }
+    };
 
     /*
      * Render.
@@ -88,12 +132,17 @@ export default function SignInTheme(props: SignInThemeProps) {
                 <form onSubmit={onFormSubmit}>
                     {
                         formFields.map(field => {
+                            let type: string = "text";
+                            // If email or password, replace field type.
+                            if (mandatoryFormFields.includes(field.id)) {
+                                type = field.id;
+                            }
                             return (
                                 <div key={field.id}>
                                     <label>
                                         {field.label}
                                     </label>
-                                    <input type={field.id !== "password" ? "text" : "password"} name={field.id}  placeholder={field.placeholder} ref={field.ref} /> 
+                                    <input type={type} name={field.id}  placeholder={field.placeholder} ref={field.ref} /> 
                                 </div>
                             )
                         })

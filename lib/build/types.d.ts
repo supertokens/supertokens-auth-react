@@ -1,4 +1,4 @@
-import { ComponentClass } from "react";
+/// <reference types="react" />
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
@@ -14,6 +14,11 @@ export declare enum SuccessAction {
     SIGN_IN_COMPLETE = "SIGN_IN_COMPLETE",
     SIGN_UP_COMPLETE = "SIGN_UP_COMPLETE"
 }
+export declare enum mandatoryInputFields {
+    EMAIL = "email",
+    PASSWORD = "password"
+}
+export declare type ReactComponentClass = <T>(props: T) => JSX.Element;
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction[];
@@ -47,11 +52,11 @@ export declare type RecipeModuleConfig = {
     appInfo: AppInfo;
 };
 export declare type RouteToFeatureComponentMap = {
-    [route: string]: ComponentClass;
+    [route: string]: ReactComponentClass;
 };
 export declare type ComponentWithRecipeId = {
     rid: string;
-    component: ComponentClass;
+    component: ReactComponentClass;
 };
 export declare type PathToComponentWithRecipeIdMap = {
     [path: string]: ComponentWithRecipeId[];
@@ -59,19 +64,26 @@ export declare type PathToComponentWithRecipeIdMap = {
 export declare type FeatureConfigBase = {
     style?: CSSInterpolation;
 };
-export declare type FormFieldsBaseConfig = {
+export declare type FormFieldBaseConfig = {
     id: string;
     label: string;
     placeholder?: string;
 };
-export declare type FormFields = FormFieldsBaseConfig & {
+export declare type FormField = FormFieldBaseConfig & {
     validate?: (value: string) => Promise<string | undefined>;
-    optional: boolean;
+    optional?: boolean;
 };
-export declare type APIFormFields = {
+export declare type APIFormField = {
     id: string;
     value: string;
 };
 export declare type RequestJson = {
-    formFields: APIFormFields[];
+    formFields: APIFormField[];
+};
+export declare type NormalisedFormField = {
+    id: string;
+    label: string;
+    placeholder: string;
+    validate: (value: string) => Promise<string | undefined>;
+    optional: boolean;
 };
