@@ -59,7 +59,6 @@ describe("SuperTokens Routing in Test App", function() {
     after(async function() {
         await browser.close();
         testAppChildProcess.kill();
-        // spawn("./test/startTestApp.sh", ["--stop"]);
     });
 
     describe("using react-router-dom", function() {

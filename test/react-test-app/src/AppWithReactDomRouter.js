@@ -40,19 +40,19 @@ function AppWithReactDomRouter() {
 
 function Nav () {
   return (
-    <div class="header__menu menu">
-    <div class="menu__icon icon-menu">
+    <div className="header__menu menu">
+    <div className="menu__icon icon-menu">
       <span></span>
       <span></span>
       <span></span>
     </div>
-    <nav class="menu__body">
-      <ul class="menu__list">
-        <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/">Home</Link></li>
-        <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/about">About</Link></li>
-        <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/contact">Contact</Link></li>
-        <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/auth">Auth</Link></li>
-        <li><Link className="menu__link" style={{ textDecoration: 'none' }} to="/custom-supertokens-login">Custom-supertokens-login</Link></li>
+    <nav className="menu__body">
+      <ul className="menu__list">
+        <li key="home"><Link  className="menu__link" style={{ textDecoration: 'none' }} to="/">Home</Link></li>
+        <li key="about"><Link className="menu__link" style={{ textDecoration: 'none' }} to="/about">About</Link></li>
+        <li key="contact"><Link className="menu__link" style={{ textDecoration: 'none' }} to="/contact">Contact</Link></li>
+        <li key="auth"><Link className="menu__link" style={{ textDecoration: 'none' }} to="/auth">Auth</Link></li>
+        <li key="custom"><Link className="menu__link" style={{ textDecoration: 'none' }} to="/custom-supertokens-login">Custom-supertokens-login</Link></li>
       </ul>
     </nav>
   </div>

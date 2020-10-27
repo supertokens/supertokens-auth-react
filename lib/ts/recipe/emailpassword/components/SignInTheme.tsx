@@ -48,7 +48,7 @@ export default function SignInTheme(props: SignInThemeProps) {
     const [isLoading, setIsLoading] = useState(false);
 
     /*
-     * Callbacks.
+     * Methods.
      */
     const onSignIn = async () => {
 
@@ -95,13 +95,6 @@ export default function SignInTheme(props: SignInThemeProps) {
             );
         }
     }
-
-    /*
-     * Effects.
-     */
-    useEffect(() => {
-        onSignIn()
-    }, [setIsLoading, callAPI, onSuccess])
 
     /*
      * Event Handlers.

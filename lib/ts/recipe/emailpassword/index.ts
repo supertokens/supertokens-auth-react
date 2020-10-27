@@ -16,8 +16,6 @@
 /*
  * Imports.
  */
-import RecipeModule from "../recipeModule";
-
 import { CreateRecipeFunction } from "../../types";
 import { EmailPasswordConfig } from "./types";
 

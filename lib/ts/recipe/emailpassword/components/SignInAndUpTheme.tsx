@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { SignInAndUpThemeProps } from "../types";
 
 import SignUpTheme from "./SignUpTheme";
@@ -34,30 +34,13 @@ export function SignInAndUpTheme (props: SignInAndUpThemeProps): JSX.Element {
     const [isSignIn, setSignIn] = useState(true);
 
     /*
-     * Callbacks.
-     */
-    const onSwitchToSignIn = useCallback(
-        () => {
-            setSignIn(true);
-        },
-        [setSignIn]
-    );
-
-    const onSwitchToSignUp = useCallback(
-        () => {
-            setSignIn(false);
-        },
-        [setSignIn]
-    );
-
-    /*
     * Render.
     */ 
     if (isSignIn) {
         return (
             <SignInTheme
                 {...props.signInForm}
-                signUpClicked={onSwitchToSignUp}
+                signUpClicked={() => setSignIn(false)}
 
             />
 
@@ -66,7 +49,7 @@ export function SignInAndUpTheme (props: SignInAndUpThemeProps): JSX.Element {
         return (
             <SignUpTheme 
                 {...props.signUpForm}
-                signInClicked={onSwitchToSignIn}
+                signInClicked={() => setSignIn(true)}
             />
         );
     }

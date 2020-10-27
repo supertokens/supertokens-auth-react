@@ -26,7 +26,7 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
 
 		const pathsToComponentWithRecipeIdMap = SuperTokens.getPathsToComponentWithRecipeIdMap();
 		return Object.keys(pathsToComponentWithRecipeIdMap).map(path => 
-			<SuperTokensRouteWithRecipeId path={path} />
+			<SuperTokensRouteWithRecipeId key={`st-${path}`} path={path} />
 		);
 	} catch (e) {
 		// If react-router-dom is absent from dependencies, return [];

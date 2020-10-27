@@ -51,56 +51,49 @@ function SignInAndUp (props: EmailPasswordProps) {
 		return instance;
     }
 
-    const signInAPI = useCallback(
-        async (formFields: APIFormField[]): Promise<APIResponse> => {
-            return await (
-                async (formFields: APIFormField[]): Promise<APIResponse>  => {
-                    const headers: HeadersInit = {
-                        rid: getRecipeInstanceOrThrow().getRecipeId()
-                    }
-                    const result = await onCallSignInAPI({formFields}, headers);
-                    const {data} = await result.json();
+    const signInAPI = async (formFields: APIFormField[]): Promise<APIResponse>  => {
+        const headers: HeadersInit = {
+            rid: getRecipeInstanceOrThrow().getRecipeId()
+        }
+        const result = await onCallSignInAPI({formFields}, headers);
+        const {data} = await result.json();
 
-                    // If status >= 300, it means there is a GENERAL_ERROR.
-                    if (result.status >= 300) {
-                        return {
-                            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                            message: data.message
-                        };
-                    }
-                    
-                    // Otherwise, if field errors.
-                    if (data.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-                        return {
-                                status: API_RESPONSE_STATUS.FIELD_ERROR,
-                                fields: data.fields
-                        };
-                    }
+        // If status >= 300, it means there is a GENERAL_ERROR.
+        if (result.status >= 300) {
+            return {
+                status: API_RESPONSE_STATUS.GENERAL_ERROR,
+                message: data.message
+            };
+        }
+        
+        // Otherwise, if field errors.
+        if (data.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+            return {
+                    status: API_RESPONSE_STATUS.FIELD_ERROR,
+                    fields: data.fields
+            };
+        }
 
-                    // Otherwise, if wrong credentials error.
-                    if (data.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
-                        return {
-                            status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
-                        };
-                    }
+        // Otherwise, if wrong credentials error.
+        if (data.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
+            return {
+                status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
+            };
+        }
 
-                    // Otherwise, status === OK, update state wit huser and responseJSON.
-                    const user: User = {
-                        id: data.user.id,
-                        email: data.user.email
-                    }
+        // Otherwise, status === OK, update state wit huser and responseJSON.
+        const user: User = {
+            id: data.user.id,
+            email: data.user.email
+        }
 
-                    setUser(user);
-                    setResponseJson(data);
+        setUser(user);
+        setResponseJson(data);
 
-                    return {
-                        status: API_RESPONSE_STATUS.OK
-                    }
-                }
-            )(formFields);
-            },
-            [getRecipeInstanceOrThrow, setUser, setResponseJson]
-    )
+        return {
+            status: API_RESPONSE_STATUS.OK
+        }
+    };
 
     const onSignInSuccess = async () => {
         await onHandleSuccess({ action: SuccessAction.SIGN_IN_COMPLETE }, user, responseJson);

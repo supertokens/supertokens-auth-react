@@ -33,7 +33,7 @@ import {
     EmailPasswordUserInput
 } from "./types";
 import { isTest } from "../../utils";
-import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
+import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 import SignInFeature from "./signInFeature";
 import SignUpFeature from "./signUpFeature";
 import SignInAndUp from "./components/SignInAndUp";
@@ -106,7 +106,6 @@ export default class EmailPassword extends RecipeModule {
     };
 
     signUpApi = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
-        // TODO Validation.
         return this.httpRequest.post("/signup", {
             body: JSON.stringify(requestJson),
             headers
@@ -114,7 +113,6 @@ export default class EmailPassword extends RecipeModule {
     };
 
     signInApi = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
-        // TODO Validation.
         return this.httpRequest.post("/signin", {
             body: JSON.stringify(requestJson),
             headers
