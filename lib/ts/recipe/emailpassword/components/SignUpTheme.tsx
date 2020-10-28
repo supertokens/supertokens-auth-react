@@ -17,49 +17,42 @@
  * Imports.
  */
 import * as React from "react";
-import {defaultStyles} from '../../../styles/styles';
+import { defaultStyles } from "../../../styles/styles";
 import { SignUpThemeProps } from "../types";
 
 /** @jsx jsx */
-import { jsx } from '@emotion/core';
+import { jsx } from "@emotion/core";
 
 /*
  * Component.
  */
 export default function SignUpTheme(props: SignUpThemeProps) {
     return (
-        <div css={defaultStyles.container} >
+        <div css={defaultStyles.container}>
             <div css={defaultStyles.row}>
-                
-                    <div>Sign Up</div>
-                    <div>Already registered?</div>
-                    <a onClick={props.signInClicked} css={defaultStyles.link}>Sign in</a>
+                <div>Sign Up</div>
+                <div>Already registered?</div>
+                <a onClick={props.signInClicked} css={defaultStyles.link}>
+                    Sign in
+                </a>
                 <div css={defaultStyles.divider}></div>
                 <form>
-                    {
-                        props.formFields.map(field => {
-                            return (
-                                <div key={field.id}>
-                                    <label>
-                                        {field.label}
-                                    </label>
-                                    <input name={field.id} placeholder={field.placeholder}/> 
-                                </div>
-                            )
-                        })
-                    }
+                    {props.formFields.map(field => {
+                        return (
+                            <div key={field.id}>
+                                <label>{field.label}</label>
+                                <input name={field.id} placeholder={field.placeholder} />
+                            </div>
+                        );
+                    })}
                 </form>
-                <input
-                    type="checkbox"
-                    value={""}
-                    checked={true}
-                />
+                <input type="checkbox" value={""} checked={true} />
                 <div>
                     By signin up, you agree to our <a>Terms of Service</a> and <a>Privacy Policy</a>
                 </div>
 
                 <button>Sign Up</button>
             </div>
-
-        </div>);
+        </div>
+    );
 }

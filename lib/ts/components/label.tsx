@@ -25,16 +25,11 @@ import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { defaultStyles } from "../styles/styles";
 
 type LabelProps = {
-	style: CSSInterpolation;
-	value: string;
-}
+    style: CSSInterpolation;
+    value: string;
+};
 
 export default function Label(props: LabelProps): JSX.Element {
-	const {style, value} = props;
-	return (
-		<div css={[defaultStyles.label, style]}>
-			{value}:
-		</div>
-	)
-
+    const { style, value } = props;
+    return <div css={[defaultStyles.label, style]}>{value}:</div>;
 }

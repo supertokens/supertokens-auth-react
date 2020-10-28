@@ -20,63 +20,61 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 
-
 import * as React from "react";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
-import { forwardRef, RefObject} from "react";
+import { forwardRef, RefObject } from "react";
 import { defaultStyles } from "../styles/styles";
 import { APIFormField } from "../types";
 
 type InputProps = {
-	style?: CSSInterpolation;
-	errorStyle?: CSSInterpolation;
-	type: string;
-	name: string;
-	hasError: boolean
-	placeholder: string;
-	ref: RefObject<any>;
-	onChange?: (field: APIFormField) => void
-}
+    style?: CSSInterpolation;
+    errorStyle?: CSSInterpolation;
+    type: string;
+    name: string;
+    hasError: boolean;
+    placeholder: string;
+    ref: RefObject<any>;
+    onChange?: (field: APIFormField) => void;
+};
 function Input(props: InputProps, ref: RefObject<any>): JSX.Element {
-	/*
-	 * Props.
-	 */
-	let {style, type, name, hasError, errorStyle, onChange, placeholder} = props;
+    /*
+     * Props.
+     */
+    let { style, type, name, hasError, errorStyle, onChange, placeholder } = props;
 
-	if (hasError !== true) {
-		errorStyle = undefined;
-	} else {
-		errorStyle = Object.assign(defaultStyles.inputError, errorStyle)
-	}
+    if (hasError !== true) {
+        errorStyle = undefined;
+    } else {
+        errorStyle = Object.assign(defaultStyles.inputError, errorStyle);
+    }
 
-	/*
-	 * Method.
-	 */
-	function handleChange () {
-		if (onChange) {
-			onChange({
-				id: ref.current.name,
-				value: ref.current.value
-			});
-		}
-	}
+    /*
+     * Method.
+     */
+    function handleChange() {
+        if (onChange) {
+            onChange({
+                id: ref.current.name,
+                value: ref.current.value
+            });
+        }
+    }
 
-	/*
-	 * Render.
-	 */
-	return (
-		<input 
-			onBlur={handleChange}
-			onPaste={handleChange} 
-			onCut={handleChange}
-			css={[defaultStyles.input, style, errorStyle]} 
-			type={type}
-			name={name}  
-			placeholder={placeholder} 
-			ref={ref}
-		/>
-	)
-
+    /*
+     * Render.
+     */
+    return (
+        <input
+            onBlur={handleChange}
+            onPaste={handleChange}
+            onCut={handleChange}
+            css={[defaultStyles.input, style, errorStyle]}
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            ref={ref}
+        />
+    );
 }
 
 export default forwardRef(Input);

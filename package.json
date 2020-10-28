@@ -13,7 +13,12 @@
     "@types/node": "14.11.10",
     "@types/react": "16.9.53",
     "@types/react-router-dom": "5.1.6",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
     "babel-plugin-transform-class-properties": "6.24.1",
+    "eslint": "^7.12.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "jsdom": "16.4.0",
     "jsdom-global": "3.0.2",
     "mocha": "6.1.4",
@@ -23,6 +28,7 @@
     "react-dom": "16.0.0",
     "react-router-dom": "5.2.0",
     "regenerator-runtime": "0.13.7",
+    "tslint": "^6.1.3",
     "typescript": "3.5.2"
   },
   "peerDependencies": {
@@ -37,8 +43,9 @@
     "build": "cd lib && rm -r ./build 2> /dev/null && mkdir -p ./build && npx tsc -p tsconfig.json --emitDeclarationOnly && cd ../ && npm run compile",
     "compile": "cd lib && babel ./ts/ --out-dir build/ --extensions '.ts,.tsx'",
     "watch": "cd lib && babel --watch ./ts/ --out-dir ./build/ --extensions '.ts,.tsx'",
-    "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\"",
+    "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"ts/**/*.tsx\" \"build/**/*.js\" \"ts/**/*.tsx\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\"",
     "build-pretty": "npm run build && npm run pretty",
+    "lint": "cd lib && eslint ./ts --ext .ts",
     "pretty-check": "cd lib && npx prettier --check --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\"",
     "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
   },

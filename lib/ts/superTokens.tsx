@@ -18,10 +18,8 @@
  */
 import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
-import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH } from "./constants";
 import { AppInfo, ReactComponentClass, SuperTokensConfig } from "./types";
 import { getRecipeIdFromSearch, isTest, normaliseInputAppInfoOrThrowError } from "./utils";
-import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 const { getSuperTokensRoutesForReactRouterDom } = require("./components/superTokensRoute");
 import { PathToComponentWithRecipeIdMap } from "./types";
@@ -93,12 +91,14 @@ export default class SuperTokens {
         return SuperTokens.getInstanceOrThrow().getRecipeList();
     }
 
-    static getPathsToComponentWithRecipeIdMap (): PathToComponentWithRecipeIdMap {
+    static getPathsToComponentWithRecipeIdMap(): PathToComponentWithRecipeIdMap {
         return SuperTokens.getInstanceOrThrow().getPathsToComponentWithRecipeIdMap();
-     }
-   
-     
-    static getMatchingComponentForRouteAndRecipeId(path: string, recipeId: string | null): ReactComponentClass | undefined {
+    }
+
+    static getMatchingComponentForRouteAndRecipeId(
+        path: string,
+        recipeId: string | null
+    ): ReactComponentClass | undefined {
         return SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(path, recipeId);
     }
 
@@ -114,20 +114,18 @@ export default class SuperTokens {
     };
 
     canHandleRoute = (): boolean => {
-        const path = new NormalisedURLPath(window.location.pathname)
+        const path = new NormalisedURLPath(window.location.pathname);
         return this.getPathsToComponentWithRecipeIdMap()[path.getAsStringDangerous()] !== undefined;
     };
 
     getRoutingComponent = (): ReactComponentClass | undefined => {
         const path = new NormalisedURLPath(window.location.pathname);
-	    const recipeId = getRecipeIdFromSearch(window.location.search);
+        const recipeId = getRecipeIdFromSearch(window.location.search);
         return this.getMatchingComponentForRouteAndRecipeId(path.getAsStringDangerous(), recipeId);
-
     };
 
-    getPathsToComponentWithRecipeIdMap = (): PathToComponentWithRecipeIdMap  => {
-        if (this.pathsToComponentWithRecipeIdMap)
-            return this.pathsToComponentWithRecipeIdMap;
+    getPathsToComponentWithRecipeIdMap = (): PathToComponentWithRecipeIdMap => {
+        if (this.pathsToComponentWithRecipeIdMap) return this.pathsToComponentWithRecipeIdMap;
 
         let pathsToComponentWithRecipeIdMap: PathToComponentWithRecipeIdMap = {};
         for (let i = 0; i < this.getRecipeList().length; i++) {
@@ -138,7 +136,7 @@ export default class SuperTokens {
                 // If no components yet for this route, initialize empty array.
                 const featurePath = featurePaths[j];
                 if (pathsToComponentWithRecipeIdMap[featurePath] === undefined) {
-                    pathsToComponentWithRecipeIdMap[featurePath] = []
+                    pathsToComponentWithRecipeIdMap[featurePath] = [];
                 }
 
                 pathsToComponentWithRecipeIdMap[featurePath].push({
@@ -148,16 +146,18 @@ export default class SuperTokens {
             }
         }
 
-        this.pathsToComponentWithRecipeIdMap = pathsToComponentWithRecipeIdMap
+        this.pathsToComponentWithRecipeIdMap = pathsToComponentWithRecipeIdMap;
         return this.pathsToComponentWithRecipeIdMap;
-    }
+    };
 
-    getMatchingComponentForRouteAndRecipeId = (path: string, recipeId: string | null): ReactComponentClass | undefined => {
+    getMatchingComponentForRouteAndRecipeId = (
+        path: string,
+        recipeId: string | null
+    ): ReactComponentClass | undefined => {
         const routeComponents = SuperTokens.getPathsToComponentWithRecipeIdMap()[path];
-        if (routeComponents === undefined)
-            return undefined;
+        if (routeComponents === undefined) return undefined;
 
-	    // If recipeId provided, try to find a match.
+        // If recipeId provided, try to find a match.
         if (recipeId !== null) {
             for (let i = 0; i < routeComponents.length; i++) {
                 if (recipeId === routeComponents[i].rid) {
@@ -166,10 +166,9 @@ export default class SuperTokens {
             }
         }
 
-	    // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
+        // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
         return routeComponents[0].component;
-
-    }
+    };
 
     getRecipeList = (): RecipeModule[] => {
         return this.recipeList;

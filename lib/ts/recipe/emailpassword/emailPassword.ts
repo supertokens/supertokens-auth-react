@@ -167,7 +167,9 @@ export default class EmailPassword extends RecipeModule {
     }
 
     static hasDisabledSignInAndUpDefaultImplementation(signInAndUpConfig?: SignInAndUpConfig): boolean {
-        if (signInAndUpConfig == undefined) return false;
+        if (signInAndUpConfig === undefined) {
+            return false;
+        }
 
         return signInAndUpConfig.disableDefaultImplementation === true;
     }

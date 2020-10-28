@@ -25,16 +25,11 @@ import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { defaultStyles } from "../styles/styles";
 
 type FormRowProps = {
-	style: CSSInterpolation;
-	children: JSX.Element;
-}
+    style: CSSInterpolation;
+    children: JSX.Element;
+};
 
 export default function FormRow(props: FormRowProps): JSX.Element {
-	const {style, children} = props;
-	return (
-		<div css={[defaultStyles.formRow, style]}>
-			{children}
-		</div>
-	)
-
+    const { style, children } = props;
+    return <div css={[defaultStyles.formRow, style]}>{children}</div>;
 }

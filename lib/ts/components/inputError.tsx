@@ -20,22 +20,16 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 
-
 import * as React from "react";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { defaultStyles } from "../styles/styles";
 
 type InputErrorProps = {
-	style: CSSInterpolation;
-	error: string;
-}
+    style: CSSInterpolation;
+    error: string;
+};
 
-export default function InputError(props: InputErrorProps): JSX.Element{
-	const {style, error} = props;
-	return (
-		<div css={[defaultStyles.inputErrorMessage, style]}>
-			{error}
-		</div>
-	)
-
+export default function InputError(props: InputErrorProps): JSX.Element {
+    const { style, error } = props;
+    return <div css={[defaultStyles.inputErrorMessage, style]}>{error}</div>;
 }

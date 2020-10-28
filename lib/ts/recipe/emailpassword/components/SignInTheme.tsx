@@ -17,8 +17,8 @@
  * Imports.
  */
 import * as React from "react";
-import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
-import {defaultStyles, palette} from '../../../styles/styles';
+import { createRef, FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { defaultStyles, palette } from "../../../styles/styles";
 import { SignInThemeProps } from "../types";
 import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../../constants";
 import { Button, FormRow, Input, InputError, Label } from "../../../components";
@@ -26,7 +26,7 @@ import { APIFormField } from "../../../types";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 
 /** @jsx jsx */
-import { jsx } from '@emotion/core';
+import { jsx } from "@emotion/core";
 
 /*
  * Component.
@@ -35,17 +35,19 @@ export default function SignInTheme(props: SignInThemeProps) {
     /*
      * Props.
      */
-    const {callAPI, onSuccess, signUpClicked, forgotPasswordClick} = props;
+    const { callAPI, onSuccess, signUpClicked, forgotPasswordClick } = props;
     let styleFromInit = props.styleFromInit || {};
     /*
      * States.
      */
-    const [formFields, setFormFields] = useState(props.formFields.map(field => {
-        return {
-            ...field,
-            ref: useRef<HTMLInputElement>(null)
-        }
-    }));
+    const [formFields, setFormFields] = useState(
+        props.formFields.map(field => {
+            return {
+                ...field,
+                ref: createRef<HTMLInputElement>()
+            };
+        })
+    );
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -53,7 +55,6 @@ export default function SignInTheme(props: SignInThemeProps) {
      * Methods.
      */
     const onSignIn = async () => {
-
         // Set isLoading to true.
         setIsLoading(true);
 
@@ -61,8 +62,8 @@ export default function SignInTheme(props: SignInThemeProps) {
         const fields = formFields.map(field => {
             return {
                 id: field.id,
-                value: (field.ref.current !== null) ? field.ref.current.value : ""
-            }
+                value: field.ref.current !== null ? field.ref.current.value : ""
+            };
         });
 
         // Call Sign In API.
@@ -81,7 +82,7 @@ export default function SignInTheme(props: SignInThemeProps) {
             }
         }
 
-        //If field error.
+        // If field error.
         if (result.status === API_RESPONSE_STATUS.FIELD_ERROR && result.fields !== undefined) {
             const errorFields = result.fields;
             // Update formFields state with errors.
@@ -96,7 +97,7 @@ export default function SignInTheme(props: SignInThemeProps) {
                 })
             );
         }
-    }
+    };
 
     const handleInputChange = useCallback(
         async (field: APIFormField) => {
@@ -108,9 +109,7 @@ export default function SignInTheme(props: SignInThemeProps) {
             }
 
             // Delay the error update to prevent UI glitches.
-            setTimeout(
-                () => setFormFields([...formFields])
-            , 300);
+            setTimeout(() => setFormFields([...formFields]), 300);
         },
         [formFields, setFormFields]
     );
@@ -127,17 +126,13 @@ export default function SignInTheme(props: SignInThemeProps) {
      * Render.
      */
     return (
-        <div css={[defaultStyles.container, styleFromInit.container]} >
+        <div css={[defaultStyles.container, styleFromInit.container]}>
             <div css={[defaultStyles.row, styleFromInit.row]}>
-                
-                <div css={[styles.headerTitle, styleFromInit.headerTitle]} >Sign In</div>
-                <div css={[styles.headerSubTitle, styleFromInit.headerSubtitle]} >
-                    <div css={[defaultStyles.secondaryText, styleFromInit.secondaryText]} >
-                        Not registered yet? 
-                        <span 
-                            onClick={signUpClicked}
-                            css={[styles.signUpLink, defaultStyles.link, styleFromInit.link]}
-                        >
+                <div css={[styles.headerTitle, styleFromInit.headerTitle]}>Sign In</div>
+                <div css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
+                    <div css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
+                        Not registered yet?
+                        <span onClick={signUpClicked} css={[styles.signUpLink, defaultStyles.link, styleFromInit.link]}>
                             Sign up
                         </span>
                     </div>
@@ -146,47 +141,54 @@ export default function SignInTheme(props: SignInThemeProps) {
                 <div css={[defaultStyles.divider, styleFromInit.divider]}></div>
 
                 <form noValidate onSubmit={onFormSubmit}>
-                    {
-                        formFields.map(field => {
-                            let type = "text";
-                            // If email or password, replace field type.
-                            if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
-                                type = field.id;
-                            }
-                            return (
-                                <FormRow style={{}} key={field.id}>
-                                    <>
-                                        <Label style={styleFromInit.label} value={field.label} />
-                                        <Input 
-                                            style={styleFromInit.input}
-                                            errorStyle={styleFromInit.inputError}
-                                            type={type} 
-                                            name={field.id}  
-                                            placeholder={field.placeholder} 
-                                            ref={field.ref}
-                                            onChange={handleInputChange}
-                                            hasError={field.error !== undefined}
-                                        /> 
-                                        {field.error && <InputError style={styleFromInit.inputErrorMessage} error={field.error} />}
-                                    </>
-                                </FormRow>
-                            )
-                        })
-                    }
+                    {formFields.map(field => {
+                        let type = "text";
+                        // If email or password, replace field type.
+                        if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
+                            type = field.id;
+                        }
+                        return (
+                            <FormRow style={{}} key={field.id}>
+                                <>
+                                    <Label style={styleFromInit.label} value={field.label} />
+                                    <Input
+                                        style={styleFromInit.input}
+                                        errorStyle={styleFromInit.inputError}
+                                        type={type}
+                                        name={field.id}
+                                        placeholder={field.placeholder}
+                                        ref={field.ref}
+                                        onChange={handleInputChange}
+                                        hasError={field.error !== undefined}
+                                    />
+                                    {field.error && (
+                                        <InputError style={styleFromInit.inputErrorMessage} error={field.error} />
+                                    )}
+                                </>
+                            </FormRow>
+                        );
+                    })}
                     <FormRow style={styleFromInit.formRow} key="signin-button">
-                        <Button style={styleFromInit.button} disabled={isLoading} isLoading={isLoading} type="submit" label="SIGN IN" />
-                    </FormRow> 
-                    <div 
-                        css={[defaultStyles.link, defaultStyles.secondaryText, styleFromInit.link, styleFromInit.secondaryText]}
-                        onClick={forgotPasswordClick}
-                    >
+                        <Button
+                            style={styleFromInit.button}
+                            disabled={isLoading}
+                            isLoading={isLoading}
+                            type="submit"
+                            label="SIGN IN"
+                        />
+                    </FormRow>
+                    <div
+                        css={[
+                            defaultStyles.link,
+                            defaultStyles.secondaryText,
+                            styleFromInit.link,
+                            styleFromInit.secondaryText
+                        ]}
+                        onClick={forgotPasswordClick}>
                         Forgot password?
                     </div>
                 </form>
-
-
             </div>
-
         </div>
     );
 }
@@ -195,7 +197,6 @@ export default function SignInTheme(props: SignInThemeProps) {
  * Styles.
  */
 const styles = {
-
     headerTitle: {
         fontSize: palette.fonts.size[2],
         lineHeight: "40px",
@@ -210,6 +211,6 @@ const styles = {
     } as CSSInterpolation,
 
     signUpLink: {
-        paddingLeft: '5px'
+        paddingLeft: "5px"
     }
-}
+};

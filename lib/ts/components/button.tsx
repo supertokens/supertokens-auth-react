@@ -24,23 +24,22 @@ import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { defaultStyles } from "../styles/styles";
 
 type ButtonProps = {
-	style: CSSInterpolation;
-	label: string;
-	isLoading: boolean;
-	disabled?: boolean;
-	type: "submit" | "button" | "reset" | undefined
-}
+    style: CSSInterpolation;
+    label: string;
+    isLoading: boolean;
+    disabled?: boolean;
+    type: "submit" | "button" | "reset" | undefined;
+};
 
-export default function Button(props: ButtonProps): JSX.Element{
-	let {style, type, label, disabled, isLoading} = props;
-	if (disabled === undefined) {
-		disabled = false;
-	}
-	return (
-		<button type={type} disabled={disabled} css={[defaultStyles.button, style]}>
-			{label}
-			{isLoading && '...'}
-		</button>
-	)
-
+export default function Button(props: ButtonProps): JSX.Element {
+    let { style, type, label, disabled, isLoading } = props;
+    if (disabled === undefined) {
+        disabled = false;
+    }
+    return (
+        <button type={type} disabled={disabled} css={[defaultStyles.button, style]}>
+            {label}
+            {isLoading && "..."}
+        </button>
+    );
 }
