@@ -18,19 +18,20 @@
  */
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { APIResponse, EmailPasswordProps, User } from "../types";
+import { SignInThemeResponse, EmailPasswordProps, User, SignUpThemeResponse } from "../types";
 import EmailPassword from "../emailPassword";
 import { SignInAndUpTheme } from "..";
-import root from "react-shadow/emotion";
-import { defaultStyles } from "../../../styles/styles";
+import { APIFormField, RequestJson } from "../../../types";
+import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../../constants";
+import FeatureWrapper from "../../components/featureWrapper";
+
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { APIFormField, RequestJson } from "../../../types";
-import { ST_ROOT_CONTAINER, API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../../constants";
 
 /*
  * Component.
  */
+
 function SignInAndUp(props: EmailPasswordProps) {
     /*
      * States.
@@ -51,12 +52,13 @@ function SignInAndUp(props: EmailPasswordProps) {
         return instance;
     }, [props.__internal]);
 
-    const signInAPI = async (formFields: APIFormField[]): Promise<APIResponse> => {
-        // Validators.
+    const signInAPI = async (formFields: APIFormField[]): Promise<SignInThemeResponse> => {
+        // Front end validation.
         const validationErrors = await getRecipeInstanceOrThrow()
             .getSignInFeature()
             .validate(formFields);
 
+        // If errors, return.
         if (validationErrors.length > 0) {
             return {
                 status: API_RESPONSE_STATUS.FIELD_ERROR,
@@ -64,64 +66,118 @@ function SignInAndUp(props: EmailPasswordProps) {
             };
         }
 
-        // Api.
-        const headers: HeadersInit = {
-            rid: getRecipeInstanceOrThrow().getRecipeId()
-        };
-        const result = await onCallSignInAPI({ formFields }, headers);
-        const { data } = await result.json();
+        // Otherwise, call API.
+        try {
+            const headers: HeadersInit = {
+                rid: getRecipeInstanceOrThrow().getRecipeId()
+            };
+            const result = await onCallSignInAPI({ formFields }, headers);
+            const { data } = await result.json();
 
-        // If status >= 300, it means there is a GENERAL_ERROR.
-        if (result.status >= 300) {
+            // If status >= 300, it means there is a GENERAL_ERROR.
+            if (result.status >= 300) {
+                return {
+                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
+                    message: data.message
+                };
+            }
+
+            // Otherwise, if field errors.
+            if (data.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+                return {
+                    status: API_RESPONSE_STATUS.FIELD_ERROR,
+                    fields: data.fields
+                };
+            }
+
+            // Otherwise, if wrong credentials error.
+            if (data.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
+                return {
+                    status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR,
+                    message: "Incorrect email & password combination"
+                };
+            }
+
+            // Otherwise, status === OK, update state wit huser and responseJSON.
+            const user: User = {
+                id: data.user.id,
+                email: data.user.email
+            };
+
+            setUser(user);
+            setResponseJson(data);
+
+            return {
+                status: API_RESPONSE_STATUS.OK
+            };
+        } catch (e) {
             return {
                 status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: data.message
+                message: "Something went wrong. Please try again"
             };
         }
-
-        // Otherwise, if field errors.
-        if (data.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-            return {
-                status: API_RESPONSE_STATUS.FIELD_ERROR,
-                fields: data.fields
-            };
-        }
-
-        // Otherwise, if wrong credentials error.
-        if (data.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
-            return {
-                status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
-            };
-        }
-
-        // Otherwise, status === OK, update state wit huser and responseJSON.
-        const user: User = {
-            id: data.user.id,
-            email: data.user.email
-        };
-
-        setUser(user);
-        setResponseJson(data);
-
-        return {
-            status: API_RESPONSE_STATUS.OK
-        };
     };
 
     const onSignInSuccess = async () => {
         await onHandleSuccess({ action: SUCCESS_ACTION.SIGN_IN_COMPLETE }, user, responseJson);
     };
 
-    const signUpAPI = async (formFields: APIFormField[]): Promise<APIResponse> => {
-        const headers: Headers = new Headers({
-            rid: getRecipeInstanceOrThrow().getRecipeId()
-        });
-        const result = await onCallSignUpAPI({ formFields }, headers);
+    const signUpAPI = async (formFields: APIFormField[]): Promise<SignUpThemeResponse> => {
+        // Front end validation.
+        const validationErrors = await getRecipeInstanceOrThrow()
+            .getSignUpFeature()
+            .validate(formFields);
 
-        // TODO.
-        return {
-            status: API_RESPONSE_STATUS.OK
-        };
+        // If errors, return.
+        if (validationErrors.length > 0) {
+            return {
+                status: API_RESPONSE_STATUS.FIELD_ERROR,
+                fields: validationErrors
+            };
+        }
+
+        // Otherwise, call API.
+        try {
+            const headers: HeadersInit = {
+                rid: getRecipeInstanceOrThrow().getRecipeId()
+            };
+            const result = await onCallSignUpAPI({ formFields }, headers);
+            const { data } = await result.json();
+
+            // If status >= 300, it means there is a GENERAL_ERROR.
+            if (result.status >= 300) {
+                return {
+                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
+                    message: data.message
+                };
+            }
+
+            // Otherwise, if field errors.
+            if (data.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+                return {
+                    status: API_RESPONSE_STATUS.FIELD_ERROR,
+                    fields: data.fields
+                };
+            }
+
+            // Otherwise, status === OK, update state wit huser and responseJSON.
+            const user: User = {
+                id: data.user.id,
+                email: data.user.email
+            };
+
+            setUser(user);
+            setResponseJson(data);
+
+            return {
+                status: API_RESPONSE_STATUS.OK
+            };
+        } catch (e) {
+            return {
+                status: API_RESPONSE_STATUS.GENERAL_ERROR,
+                message: "Something went wrong. Please try again"
+            };
+        }
     };
 
     const onSignUpSuccess = async () => {
@@ -135,7 +191,7 @@ function SignInAndUp(props: EmailPasswordProps) {
         }
 
         // TODO Otherwise, use supertokens session management.
-        return new Promise(resolve => resolve(false));
+        return false;
     }, [props]);
 
     const onHandleForgotPasswordClicked = async () => {
@@ -147,15 +203,16 @@ function SignInAndUp(props: EmailPasswordProps) {
             }
         }
 
-        // Otherwise, use default, redirect to resetPasswordURL
+        // Otherwise, redirect to resetPasswordURL if defined.
         const resetPasswordUrl = getRecipeInstanceOrThrow()
             .getSignInFeature()
             .getResetPasswordURL();
-        // TODO What if user uses react-router-dom history? => take router from props correctly (see withOrWithoutRouter)
-        if (resetPasswordUrl !== undefined) {
-            window.history.pushState(null, "", resetPasswordUrl);
+
+        if (resetPasswordUrl === undefined) {
+            return;
         }
-        return;
+
+        window.history.pushState(null, "", resetPasswordUrl);
     };
 
     const onHandleSuccess = useCallback(
@@ -230,15 +287,14 @@ function SignInAndUp(props: EmailPasswordProps) {
      * Render.
      */
     return (
-        <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
-            {/* No custom theme, use default. */}
-            {props.children === undefined && <SignInAndUpTheme signInForm={signInForm} signUpForm={signUpForm} />}
-
-            {/* Otherwise, custom theme is provided, propagate props. */}
-            {props.children && React.cloneElement(props.children, { signInForm, signUpForm })}
-
-            <link href="//fonts.googleapis.com/css?family=Rubik" rel="stylesheet" type="text/css"></link>
-        </root.div>
+        <FeatureWrapper>
+            <>
+                {/* No custom theme, use default. */}
+                {props.children === undefined && <SignInAndUpTheme signInForm={signInForm} signUpForm={signUpForm} />}
+                {/* Otherwise, custom theme is provided, propagate props. */}
+                {props.children && React.cloneElement(props.children, { signInForm, signUpForm })}
+            </>
+        </FeatureWrapper>
     );
 }
 

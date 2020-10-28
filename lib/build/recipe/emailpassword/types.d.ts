@@ -1,8 +1,8 @@
-/// <reference types="react" />
 import { APIFormField, FeatureConfigBase, FormField, FormFieldBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson } from "../../types";
 import { API_RESPONSE_STATUS } from "../../constants";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { RefObject } from "react";
 export declare type EmailPasswordUserInput = {
     signInAndUpFeature?: SignInAndUpConfig;
     resetPasswordUsingTokenFeature?: any;
@@ -32,7 +32,9 @@ export declare type SignInFormFeatureConfig = FeatureConfigBase & {
     resetPasswordURL?: string;
 };
 export declare type EmailPasswordProps = {
-    __internal?: InternalEmailPasswordProps;
+    __internal?: {
+        instance: EmailPassword;
+    };
     children?: JSX.Element;
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
     doesSessionExist?: () => Promise<boolean>;
@@ -40,11 +42,8 @@ export declare type EmailPasswordProps = {
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
 };
-declare type InternalEmailPasswordProps = {
-    instance: EmailPassword;
-};
 declare type EmailPasswordThemeProps = {
-    callAPI: (fields: APIFormField[]) => Promise<APIResponse>;
+    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse>;
     onSuccess?: () => void;
     styleFromInit?: {
         [key: string]: CSSInterpolation;
@@ -73,13 +72,26 @@ export declare type FormFieldError = {
     id: string;
     error: string;
 };
-export declare type APIResponse = {
-    status: API_RESPONSE_STATUS;
-    fields?: FormFieldError[];
+export declare type SignUpThemeResponse = {
+    status: API_RESPONSE_STATUS.OK;
+} | {
+    status: API_RESPONSE_STATUS.GENERAL_ERROR;
+    message?: string;
+} | {
+    status: API_RESPONSE_STATUS.FIELD_ERROR;
+    fields: FormFieldError[];
+};
+export declare type SignInThemeResponse = SignUpThemeResponse | {
+    status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR;
     message?: string;
 };
 export declare type User = {
     id: string;
     email: string;
+};
+export declare type FormFieldState = FormFieldThemeProps & {
+    validated: boolean;
+    ref: RefObject<HTMLInputElement>;
+    showIsRequired: boolean;
 };
 export {};

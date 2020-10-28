@@ -21,6 +21,10 @@ import * as React from "react";
 import SuperTokens from "../superTokens";
 import { getRecipeIdFromSearch } from "../utils";
 
+/*
+ * Component.
+ */
+
 export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
     try {
         const pathsToComponentWithRecipeIdMap = SuperTokens.getPathsToComponentWithRecipeIdMap();

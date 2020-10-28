@@ -134,18 +134,24 @@ function getNormalisedURLPathOrDefault(defaultPath: string, path?: string): Norm
 }
 
 /*
- * validateForm
+ * validateFormOrThrow
  */
 
-export async function validateForm(
+// We check that the number of fields in input and config form field is the same.
+// We check that each item in the config form field is also present in the input form field
+export async function validateFormOrThrow(
     inputs: APIFormField[],
-    formFields: NormalisedFormField[]
+    configFormFields: NormalisedFormField[]
 ): Promise<FormFieldError[]> {
     let validationErrors: FormFieldError[] = [];
 
+    if (configFormFields.length !== inputs.length) {
+        throw Error("Are you sending too many / too few formFields?");
+    }
+
     // Loop through all form fields.
-    for (let i = 0; i < formFields.length; i++) {
-        const field = formFields[i];
+    for (let i = 0; i < configFormFields.length; i++) {
+        const field = configFormFields[i];
 
         // Find corresponding input value.
         const input = inputs.find(i => i.id === field.id);
@@ -174,59 +180,8 @@ export async function validateForm(
 }
 
 /*
- * validateEmail.
- */
-
-export async function defaultEmailValidator(value: string) {
-    // We check if the email syntax is correct
-    // As per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
-    // Regex from https://stackoverflow.com/a/46181/3867175
-
-    if (
-        value.match(
-            /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        ) === null
-    ) {
-        return "Email is invalid";
-    }
-
-    return undefined;
-}
-
-/*
- * validatePassword.
- * min 8 characters.
- * Contains lowercase, uppercase, and numbers.
- */
-
-export async function defaultPasswordValidator(value: string) {
-    // length >= 8 && < 100
-    // must have a number and a character
-    // as per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
-
-    if (value.length < 8) {
-        return "Password must contain at least 8 characters, including a number";
-    }
-
-    if (value.length >= 100) {
-        return "Password's length must be lesser than 100 characters";
-    }
-
-    if (value.match(/^.*[A-Za-z]+.*$/) === null) {
-        return "Password must contain at least one alphabet";
-    }
-
-    if (value.match(/^.*[0-9]+.*$/) === null) {
-        return "Password must contain at least one number";
-    }
-
-    return undefined;
-}
-
-/*
  * capitalize
  */
-
 export function capitalize(value: string): string {
     return value.charAt(0).toUpperCase() + value.slice(1);
 }
@@ -236,4 +191,15 @@ export function capitalize(value: string): string {
  */
 export async function defaultValidate(value: string): Promise<string | undefined> {
     return undefined;
+}
+
+/*
+ * openExternalLink
+ */
+export function openExternalLink(link?: string) {
+    if (link === undefined) {
+        return;
+    }
+
+    window.open(link, "_blank");
 }

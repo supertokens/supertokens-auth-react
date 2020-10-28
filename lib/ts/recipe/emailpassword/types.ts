@@ -22,9 +22,10 @@ import {
     RecipeModuleConfig,
     RequestJson
 } from "../../types";
-import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID } from "../../constants";
+import { API_RESPONSE_STATUS } from "../../constants";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { RefObject } from "react";
 
 /*
  * EmailPassword enums.
@@ -133,7 +134,10 @@ export type SignInFormFeatureConfig = FeatureConfigBase & {
  * Props Types.
  */
 export type EmailPasswordProps = {
-    __internal?: InternalEmailPasswordProps;
+    /*
+     * Internal props provided by
+     */
+    __internal?: { instance: EmailPassword };
 
     children?: JSX.Element;
 
@@ -148,15 +152,11 @@ export type EmailPasswordProps = {
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
 };
 
-type InternalEmailPasswordProps = {
-    instance: EmailPassword;
-};
-
 type EmailPasswordThemeProps = {
     /*
      * Call Sign In API.
      */
-    callAPI: (fields: APIFormField[]) => Promise<APIResponse>;
+    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse>;
 
     /*
      * Called on successful signin/signup/resetpassword.
@@ -209,7 +209,14 @@ export type SignUpThemeProps = EmailPasswordThemeProps & {
 };
 
 export type SignInAndUpThemeProps = {
+    /*
+     * Sign in form props.
+     */
     signInForm: SignInThemeProps;
+
+    /*
+     * Sign up form props.
+     */
     signUpForm: SignUpThemeProps;
 };
 
@@ -219,19 +226,96 @@ export type NormalisedFormFieldWithError = NormalisedFormField & {
      */
     error?: string;
 };
+
 export type FormFieldThemeProps = NormalisedFormFieldWithError;
 
 export type FormFieldError = {
+    /*
+     * Field id.
+     */
     id: string;
+
+    /*
+     * Error message.
+     */
     error: string;
 };
-export type APIResponse = {
-    status: API_RESPONSE_STATUS;
-    fields?: FormFieldError[];
-    message?: string;
-};
+
+/*eslint-disable */
+export type SignUpThemeResponse =
+    | {
+          /*
+           * Success.
+           */
+          status: API_RESPONSE_STATUS.OK;
+      }
+    | {
+          /*
+           * General error.
+           */
+          status: API_RESPONSE_STATUS.GENERAL_ERROR;
+
+          /*
+           * General error message.
+           */
+          message?: string;
+      }
+    | {
+          /*
+           * Field validation errors.
+           */
+          status: API_RESPONSE_STATUS.FIELD_ERROR;
+
+          /*
+           * Array of Field Id and their corresponding error.
+           */
+          fields: FormFieldError[];
+      };
+
+export type SignInThemeResponse =
+    | SignUpThemeResponse
+    | {
+          /*
+           * Wrong credentials error.
+           */
+          status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR;
+
+          /*
+           * Wrong credentials error message.
+           */
+          message?: string;
+      };
+/*eslint-enabled */
 
 export type User = {
+    /*
+     * User id.
+     */
     id: string;
+
+    /*
+     * User email.
+     */
     email: string;
+};
+
+/*
+ * State type.
+ */
+
+export type FormFieldState = FormFieldThemeProps & {
+    /*
+     * Has the value already been submitted to its validator.
+     */
+    validated: boolean;
+
+    /*
+     * Has the value already been submitted to its validator.
+     */
+    ref: RefObject<HTMLInputElement>;
+
+    /*
+     * Has the value already been submitted to its validator.
+     */
+    showIsRequired: boolean;
 };

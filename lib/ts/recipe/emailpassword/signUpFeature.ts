@@ -18,7 +18,7 @@
  */
 import { APIFormField, FormField, NormalisedFormField } from "../../types";
 import { FormFieldError, SignUpFormFeatureConfig } from "./types";
-import { mergeFormFields, validateForm } from "../../utils";
+import { mergeFormFields, validateFormOrThrow } from "../../utils";
 import { defaultEmailValidator, defaultPasswordValidator } from "./utils";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 
@@ -93,6 +93,6 @@ export default class SignUpFeature {
     };
 
     async validate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return validateForm(input, this.formFields);
+        return validateFormOrThrow(input, this.formFields);
     }
 }

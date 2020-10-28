@@ -14,12 +14,14 @@ function mvClashingNodeModulesToTmp () {
     echo "LOGS: Move clashing node_modules to tmp."
     mv node_modules/react-router-dom node_modules/react-router-dom-tmp
     mv node_modules/react node_modules/react-tmp
+    mv node_modules/eslint node_modules/eslint-tmp
 }
 
 function resetNodeModules () {
     echo "LOGS: Adding back node_modules/react-router-dom"
     mv node_modules/react-router-dom-tmp node_modules/react-router-dom
     mv node_modules/react-tmp node_modules/react
+    mv node_modules/eslint-tmp node_modules/eslint
 }
 
 trap "resetNodeModules" EXIT # Trap to execute on script shutdown (by user or killed by tests)

@@ -19,24 +19,40 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
+const Checked = require("../../../assets/images/checked.svg") as string;
+const Error = require("../../../assets/images/error.svg") as string;
 import * as React from "react";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { defaultStyles } from "../styles/styles";
+
+export type AdornmentType = "success" | "error" | undefined;
 
 /*
  * Props.
  */
 
-type InputErrorProps = {
-    style: CSSInterpolation;
-    error: string;
+type InputAdornmentProps = {
+    style?: CSSInterpolation;
+    type: AdornmentType;
 };
 
 /*
  * Component.
  */
 
-export default function InputError(props: InputErrorProps): JSX.Element {
-    const { style, error } = props;
-    return <div css={[defaultStyles.inputErrorMessage, style]}>{error}</div>;
+export default function InputAdornment(props: InputAdornmentProps): JSX.Element {
+    /*
+     * Props.
+     */
+    let { type, style } = props;
+
+    /*
+     * Render.
+     */
+    return (
+        <div css={[defaultStyles.inputAdornment, style]}>
+            {type === "success" && <img src={Checked} alt="" />}
+            {type === "error" && <img src={Error} alt="" />}
+        </div>
+    );
 }

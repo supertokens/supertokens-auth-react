@@ -16,7 +16,34 @@ if (!hasDisabledDefaultImplementationFromLocationQueryParams()) {
       apiDomain: "localhost:9090"
     },
     recipeList: [
-      EmailPassword.init()
+      EmailPassword.init({
+        signInAndUpFeature: {
+          signUpForm: {
+            privacyPolicyLink: "http://localhost:3031/privacy",
+            termsAndConditionsLink: "http://localhost:3031/terms",
+            formFields: [{
+              id: "company",
+              label: "Company",
+              placeholder: "Your company name"
+            }, {
+              id: "First Name",
+              label: "First Name",
+              placeholder: "First Name",
+              optional: false
+            }, {
+              id: "Last Name",
+              label: "Last Name",
+              placeholder: "Last Name",
+              optional: false
+            },  {
+              id: "City",
+              label: "City",
+              placeholder: "City",
+              optional: true
+            }]
+          }
+        }
+      })
     ]
   });
 } else {

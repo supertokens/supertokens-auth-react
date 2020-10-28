@@ -24,12 +24,27 @@ import * as React from "react";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { defaultStyles } from "../styles/styles";
 
+/*
+ * Props.
+ */
+
 type LabelProps = {
     style: CSSInterpolation;
     value: string;
+    showIsRequired?: boolean;
 };
 
+/*
+ * Component.
+ */
+
 export default function Label(props: LabelProps): JSX.Element {
-    const { style, value } = props;
-    return <div css={[defaultStyles.label, style]}>{value}:</div>;
+    const { style, value, showIsRequired } = props;
+    return (
+        <div css={[defaultStyles.label, style]}>
+            {value}
+            {":"}
+            {showIsRequired && " *"}
+        </div>
+    );
 }

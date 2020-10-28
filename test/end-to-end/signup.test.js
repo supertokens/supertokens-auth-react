@@ -27,7 +27,6 @@ import { ST_ROOT_CONTAINER } from "../../lib/build/constants";
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
-const TEST_APP_BASE_URL = "http://localhost:3031";
 /*
  * Tests.
  */
@@ -64,9 +63,7 @@ describe("SuperTokens SignUp feature/theme", function() {
     describe("SignUp test (default)", function() {
         it("Should contain email and password fields + privacy/terms checkbox only (TODO)", async function() {});
 
-        it('Should switch to signup when "Sign In" is clicked.', async function() {});
-
-        it('Should switch to resetPassword when "Forgot password" is clicked.', async function() {});
+        it('Should switch to signin when "Sign In" is clicked (TODO)', async function() {});
 
         it("Should disable clicking on signin when email and password are empty (TODO)", async function() {});
 
@@ -75,5 +72,13 @@ describe("SuperTokens SignUp feature/theme", function() {
         it("Should show error message when password is too short (TODO)", async function() {});
 
         it("Should redirect to '/' on successful signup (TODO)", async function() {});
+
+        it("Signup without filling all required fields shows error (TODO)", async function() {});
+
+        it("Server error shows general error (TODO)", async function() {});
+
+        it("Optional fields are not required (TODO)", async function() {});
+
+        it("Wrong email format shows field error (TODO)", async function() {});
     });
 });

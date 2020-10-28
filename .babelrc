@@ -3,5 +3,8 @@
       [
         "@babel/preset-env"
       ]
+    ],
+    "plugins": [
+      "inline-react-svg"
     ]
   }

@@ -16,27 +16,31 @@
 /*
  * Imports.
  */
-
-/** @jsx jsx */
-import { jsx } from "@emotion/core";
-import * as React from "react";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
-import { defaultStyles } from "../styles/styles";
-
-/*
- * Props.
- */
-
-type InputErrorProps = {
-    style: CSSInterpolation;
-    error: string;
-};
+import React from "react";
+import { ErrorInfo } from "react";
 
 /*
  * Component.
  */
+export default class ErrorBoundary extends React.Component<{}, { hasError: boolean }> {
+    constructor(props: any) {
+        super(props);
+        this.state = { hasError: false };
+    }
 
-export default function InputError(props: InputErrorProps): JSX.Element {
-    const { style, error } = props;
-    return <div css={[defaultStyles.inputErrorMessage, style]}>{error}</div>;
+    static getDerivedStateFromError(error: Error) {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+        console.log(error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return <></>;
+        }
+
+        return this.props.children;
+    }
 }

@@ -17,26 +17,29 @@
  * Imports.
  */
 
+import * as React from "react";
+import root from "react-shadow/emotion";
+import { ST_ROOT_CONTAINER } from "../../constants";
+import ErrorBoundary from "./errorBoundary";
+import { defaultStyles } from "../../styles/styles";
+
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import * as React from "react";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
-import { defaultStyles } from "../styles/styles";
-
-/*
- * Props.
- */
-
-type InputErrorProps = {
-    style: CSSInterpolation;
-    error: string;
-};
 
 /*
  * Component.
  */
 
-export default function InputError(props: InputErrorProps): JSX.Element {
-    const { style, error } = props;
-    return <div css={[defaultStyles.inputErrorMessage, style]}>{error}</div>;
+export default function FeatureWrapper({ children }: { children: JSX.Element }): JSX.Element {
+    /*
+     * Render.
+     */
+    return (
+        <ErrorBoundary>
+            <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
+                {children}
+                <link href="//fonts.googleapis.com/css?family=Rubik" rel="stylesheet" type="text/css"></link>
+            </root.div>
+        </ErrorBoundary>
+    );
 }

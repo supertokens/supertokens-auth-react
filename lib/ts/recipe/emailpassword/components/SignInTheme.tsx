@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { createRef, FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { createRef, FormEvent, useCallback, useState } from "react";
 import { defaultStyles, palette } from "../../../styles/styles";
 import { SignInThemeProps } from "../types";
 import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../../constants";
@@ -29,14 +29,34 @@ import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { jsx } from "@emotion/core";
 
 /*
+ * Styles.
+ */
+const styles = {
+    headerTitle: {
+        fontSize: palette.fonts.size[2],
+        lineHeight: "40px",
+        letterSpacing: "0.58px",
+        fontWeight: 800,
+        color: palette.colors.primary
+    } as CSSInterpolation,
+
+    headerSubTitle: {
+        marginTop: "9px",
+        marginBottom: "21px"
+    } as CSSInterpolation
+};
+
+/*
  * Component.
  */
+
 export default function SignInTheme(props: SignInThemeProps) {
     /*
      * Props.
      */
     const { callAPI, onSuccess, signUpClicked, forgotPasswordClick } = props;
     let styleFromInit = props.styleFromInit || {};
+
     /*
      * States.
      */
@@ -44,16 +64,19 @@ export default function SignInTheme(props: SignInThemeProps) {
         props.formFields.map(field => {
             return {
                 ...field,
-                ref: createRef<HTMLInputElement>()
+                ref: createRef<HTMLInputElement>(),
+                validated: false
             };
         })
     );
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [generalError, setGeneralError] = useState<string>();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     /*
      * Methods.
      */
+
     const onSignIn = async () => {
         // Set isLoading to true.
         setIsLoading(true);
@@ -82,9 +105,19 @@ export default function SignInTheme(props: SignInThemeProps) {
             }
         }
 
+        // If general error, or wrong credentials error.
+        if (
+            result.status === API_RESPONSE_STATUS.GENERAL_ERROR ||
+            result.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
+        ) {
+            // Update general error message state.
+            setGeneralError(result.message);
+        }
+
         // If field error.
-        if (result.status === API_RESPONSE_STATUS.FIELD_ERROR && result.fields !== undefined) {
+        if (result.status === API_RESPONSE_STATUS.FIELD_ERROR) {
             const errorFields = result.fields;
+
             // Update formFields state with errors.
             setFormFields(
                 formFields.map(field => {
@@ -92,6 +125,8 @@ export default function SignInTheme(props: SignInThemeProps) {
                         if (field.id === errorFields[i].id) {
                             field.error = errorFields[i].error;
                         }
+                        // Indicate to inputs that the valeu was submitted for validation.
+                        field.validated = true;
                     }
                     return field;
                 })
@@ -105,6 +140,7 @@ export default function SignInTheme(props: SignInThemeProps) {
                 if (field.id === formFields[i].id) {
                     // remove error on input change.
                     formFields[i].error = undefined;
+                    formFields[i].validated = false;
                 }
             }
 
@@ -132,15 +168,18 @@ export default function SignInTheme(props: SignInThemeProps) {
                 <div css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
                     <div css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
                         Not registered yet?
-                        <span onClick={signUpClicked} css={[styles.signUpLink, defaultStyles.link, styleFromInit.link]}>
-                            Sign up
+                        <span onClick={signUpClicked} css={[defaultStyles.link, styleFromInit.link]}>
+                            Sign Up
                         </span>
                     </div>
                 </div>
 
                 <div css={[defaultStyles.divider, styleFromInit.divider]}></div>
 
-                <form noValidate onSubmit={onFormSubmit}>
+                {generalError && (
+                    <div css={[defaultStyles.generalError, styleFromInit.generalError]}>{generalError}</div>
+                )}
+                <form autoComplete="off" noValidate onSubmit={onFormSubmit}>
                     {formFields.map(field => {
                         let type = "text";
                         // If email or password, replace field type.
@@ -151,6 +190,7 @@ export default function SignInTheme(props: SignInThemeProps) {
                             <FormRow style={{}} key={field.id}>
                                 <>
                                     <Label style={styleFromInit.label} value={field.label} />
+
                                     <Input
                                         style={styleFromInit.input}
                                         errorStyle={styleFromInit.inputError}
@@ -160,7 +200,9 @@ export default function SignInTheme(props: SignInThemeProps) {
                                         ref={field.ref}
                                         onChange={handleInputChange}
                                         hasError={field.error !== undefined}
+                                        validated={field.validated}
                                     />
+
                                     {field.error && (
                                         <InputError style={styleFromInit.inputErrorMessage} error={field.error} />
                                     )}
@@ -168,49 +210,32 @@ export default function SignInTheme(props: SignInThemeProps) {
                             </FormRow>
                         );
                     })}
+
                     <FormRow style={styleFromInit.formRow} key="signin-button">
-                        <Button
-                            style={styleFromInit.button}
-                            disabled={isLoading}
-                            isLoading={isLoading}
-                            type="submit"
-                            label="SIGN IN"
-                        />
+                        <>
+                            <Button
+                                style={styleFromInit.button}
+                                disabled={isLoading}
+                                isLoading={isLoading}
+                                type="submit"
+                                label="SIGN IN"
+                            />
+                            <div
+                                css={[
+                                    defaultStyles.link,
+                                    defaultStyles.secondaryText,
+                                    defaultStyles.forgotPasswordLink,
+                                    styleFromInit.link,
+                                    styleFromInit.secondaryText,
+                                    styleFromInit.forgotPasswordLink
+                                ]}
+                                onClick={forgotPasswordClick}>
+                                Forgot password?
+                            </div>
+                        </>
                     </FormRow>
-                    <div
-                        css={[
-                            defaultStyles.link,
-                            defaultStyles.secondaryText,
-                            styleFromInit.link,
-                            styleFromInit.secondaryText
-                        ]}
-                        onClick={forgotPasswordClick}>
-                        Forgot password?
-                    </div>
                 </form>
             </div>
         </div>
     );
 }
-
-/*
- * Styles.
- */
-const styles = {
-    headerTitle: {
-        fontSize: palette.fonts.size[2],
-        lineHeight: "40px",
-        letterSpacing: "0.28px",
-        fontWeight: 800,
-        color: palette.colors.primary
-    } as CSSInterpolation,
-
-    headerSubTitle: {
-        marginTop: "15px",
-        marginBottom: "15px"
-    } as CSSInterpolation,
-
-    signUpLink: {
-        paddingLeft: "5px"
-    }
-};

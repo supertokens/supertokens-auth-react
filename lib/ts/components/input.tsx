@@ -25,10 +25,17 @@ import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { forwardRef, RefObject } from "react";
 import { defaultStyles } from "../styles/styles";
 import { APIFormField } from "../types";
+import { InputAdornment } from ".";
+import { AdornmentType } from "./inputAdornment";
+
+/*
+ * Props.
+ */
 
 type InputProps = {
     style?: CSSInterpolation;
     errorStyle?: CSSInterpolation;
+    validated: boolean;
     type: string;
     name: string;
     hasError: boolean;
@@ -36,16 +43,27 @@ type InputProps = {
     ref: RefObject<any>;
     onChange?: (field: APIFormField) => void;
 };
+
+/*
+ * Component.
+ */
+
 function Input(props: InputProps, ref: RefObject<any>): JSX.Element {
     /*
      * Props.
      */
-    let { style, type, name, hasError, errorStyle, onChange, placeholder } = props;
+    let { style, type, name, hasError, errorStyle, onChange, placeholder, validated } = props;
 
     if (hasError !== true) {
         errorStyle = undefined;
     } else {
         errorStyle = Object.assign(defaultStyles.inputError, errorStyle);
+    }
+
+    let adornmentType: AdornmentType = undefined;
+
+    if (validated) {
+        adornmentType = hasError ? "error" : "success";
     }
 
     /*
@@ -64,16 +82,19 @@ function Input(props: InputProps, ref: RefObject<any>): JSX.Element {
      * Render.
      */
     return (
-        <input
-            onBlur={handleChange}
-            onPaste={handleChange}
-            onCut={handleChange}
-            css={[defaultStyles.input, style, errorStyle]}
-            type={type}
-            name={name}
-            placeholder={placeholder}
-            ref={ref}
-        />
+        <div css={[defaultStyles.inputWrapper, style, errorStyle]}>
+            <input
+                css={defaultStyles.input}
+                onBlur={handleChange}
+                onPaste={handleChange}
+                onCut={handleChange}
+                type={type}
+                name={name}
+                placeholder={placeholder}
+                ref={ref}
+            />
+            <InputAdornment type={adornmentType} />
+        </div>
     );
 }
 

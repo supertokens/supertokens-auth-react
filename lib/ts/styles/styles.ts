@@ -21,6 +21,7 @@ import { CSSInterpolation } from "@emotion/serialize/types/index";
 export const palette = {
     colors: {
         background: "white",
+        inputBackground: "#f2f2f2",
         primary: "#222222",
         secondary: "#656565",
         link: "#0076ff",
@@ -28,9 +29,7 @@ export const palette = {
     },
 
     fonts: {
-        size: [14, 16, 28],
-        bold: "Rubik-Bold",
-        primary: "Rubik"
+        size: [14, 16, 28]
     }
 };
 
@@ -60,27 +59,57 @@ export const defaultStyles = {
 
     row: {
         margin: "0 auto",
-        width: "60%",
-        paddingTop: "50px",
-        paddingBottom: "50px"
+        width: "69%",
+        paddingTop: "45px",
+        paddingBottom: "20px"
+    } as CSSInterpolation,
+
+    generalError: {
+        backgroundColor: "#ffebeb",
+        paddingTop: "10px",
+        paddingBottom: "10px",
+        paddingLeft: "18px",
+        paddingRight: "18px",
+        letterSpacing: "0.2px",
+        fontSize: palette.fonts.size[1],
+        borderRadius: "12px",
+        color: palette.colors.error
+    } as CSSInterpolation,
+
+    inputWrapper: {
+        float: "left",
+        display: "flex",
+        flexDirection: "row",
+        backgroundColor: palette.colors.inputBackground,
+        borderRadius: "12px",
+        border: "1px solid #dddddd",
+        width: "100%",
+        height: "42px"
     } as CSSInterpolation,
 
     input: {
-        float: "left",
-        backgroundColor: "#f2f2f2",
+        letterSpacing: "1.2px",
+        backgroundColor: `${palette.colors.inputBackground} !important`,
         borderRadius: "12px",
-        border: "1px solid #dddddd",
-        width: "93%",
-        height: "42px",
+        width: "90%",
+        border: "none",
         fontSize: palette.fonts.size[0],
         paddingLeft: "20px",
         "&:focus": {
-            outline: "none"
+            outline: "none",
+            border: "none"
         }
     } as CSSInterpolation,
 
     inputError: {
         border: `1px solid ${palette.colors.error}`
+    } as CSSInterpolation,
+
+    inputAdornment: {
+        float: "right",
+        width: "10%",
+        borderRadius: "12px",
+        display: "flex"
     } as CSSInterpolation,
 
     inputErrorMessage: {
@@ -120,22 +149,25 @@ export const defaultStyles = {
     formRow: {
         display: "flex",
         flexDirection: "column",
-        paddingTop: "15px",
-        paddingBottom: "15px"
+        paddingTop: "5px",
+        paddingBottom: "24px"
     } as CSSInterpolation,
 
     secondaryText: {
         fontSize: palette.fonts.size[1],
         fontWeight: 400,
+        letterSpacing: "0.4px",
         color: palette.colors.secondary
     } as CSSInterpolation,
 
     link: {
+        paddingLeft: "3px",
+        paddingRight: "3px",
         color: palette.colors.link,
         fontSize: palette.fonts.size[1],
         cursor: "pointer",
         letterSpacing: "0.16px",
-        lineHeight: "40px"
+        lineHeight: "26px"
     } as CSSInterpolation,
 
     divider: {
@@ -144,5 +176,9 @@ export const defaultStyles = {
         borderBottom: "0.3px solid #dddddd",
         display: "flex",
         alignItems: "center"
+    } as CSSInterpolation,
+
+    forgotPasswordLink: {
+        marginTop: "10px"
     } as CSSInterpolation
 };

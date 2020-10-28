@@ -34,6 +34,7 @@ const TEST_APP_BASE_URL = "http://localhost:3031";
 describe("SuperTokens Routing in Test App", function() {
     let testAppChildProcess, browser;
     const SignInButtonQuerySelector = `document.querySelector('#${ST_ROOT_CONTAINER}').shadowRoot.querySelector('button').innerText`;
+    const signInLabel = "SIGN IN";
 
     before(async function() {
         testAppChildProcess = spawn("./test/startTestApp.sh", ["--test"]);
@@ -74,7 +75,7 @@ describe("SuperTokens Routing in Test App", function() {
             await page.goto(`${TEST_APP_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
-            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
+            assert.strictEqual(signInButton._remoteObject.value, signInLabel);
         });
 
         it("/auth?rid=email-password should load SignInUp components", async function() {
@@ -82,7 +83,7 @@ describe("SuperTokens Routing in Test App", function() {
             await page.goto(`${TEST_APP_BASE_URL}/auth?rid=email-password`, { waitUntil: "domcontentloaded" });
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
-            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
+            assert.strictEqual(signInButton._remoteObject.value, signInLabel);
         });
 
         it("/auth?rid=unknown-rid should load first components.", async function() {
@@ -90,7 +91,7 @@ describe("SuperTokens Routing in Test App", function() {
             await page.goto(`${TEST_APP_BASE_URL}/auth?rid=unknown`);
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
-            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
+            assert.strictEqual(signInButton._remoteObject.value, signInLabel);
         });
     });
 
@@ -107,7 +108,7 @@ describe("SuperTokens Routing in Test App", function() {
             await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router`, { waitUntil: "domcontentloaded" });
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
-            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
+            assert.strictEqual(signInButton._remoteObject.value, signInLabel);
         });
 
         it("/auth?rid=email-password should load SignInUp components", async function() {
@@ -117,7 +118,7 @@ describe("SuperTokens Routing in Test App", function() {
             });
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
-            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
+            assert.strictEqual(signInButton._remoteObject.value, signInLabel);
         });
 
         it("/auth?rid=unknown-rid should load first SuperTokens components that matches", async function() {
@@ -129,7 +130,7 @@ describe("SuperTokens Routing in Test App", function() {
             assert.notStrictEqual(superTokensComponent, null);
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
-            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
+            assert.strictEqual(signInButton._remoteObject.value, signInLabel);
         });
 
         it("/custom-supertokens-login should load SignIn SuperTokens components", async function() {
@@ -141,7 +142,7 @@ describe("SuperTokens Routing in Test App", function() {
             assert.notStrictEqual(superTokensComponent, null);
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
-            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
+            assert.strictEqual(signInButton._remoteObject.value, signInLabel);
         });
     });
 });

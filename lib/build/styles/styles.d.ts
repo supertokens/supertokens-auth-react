@@ -2,6 +2,7 @@ import { CSSInterpolation } from "@emotion/serialize/types/index";
 export declare const palette: {
     colors: {
         background: string;
+        inputBackground: string;
         primary: string;
         secondary: string;
         link: string;
@@ -9,16 +10,17 @@ export declare const palette: {
     };
     fonts: {
         size: number[];
-        bold: string;
-        primary: string;
     };
 };
 export declare const defaultStyles: {
     root: CSSInterpolation;
     container: CSSInterpolation;
     row: CSSInterpolation;
+    generalError: CSSInterpolation;
+    inputWrapper: CSSInterpolation;
     input: CSSInterpolation;
     inputError: CSSInterpolation;
+    inputAdornment: CSSInterpolation;
     inputErrorMessage: CSSInterpolation;
     button: CSSInterpolation;
     label: CSSInterpolation;
@@ -26,4 +28,5 @@ export declare const defaultStyles: {
     secondaryText: CSSInterpolation;
     link: CSSInterpolation;
     divider: CSSInterpolation;
+    forgotPasswordLink: CSSInterpolation;
 };

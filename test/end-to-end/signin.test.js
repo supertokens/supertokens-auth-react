@@ -67,7 +67,7 @@ describe("SuperTokens SignIn feature/theme", function() {
             await page.goto(`${TEST_APP_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
-            assert.strictEqual(signInButton._remoteObject.value, "Sign In");
+            assert.strictEqual(signInButton._remoteObject.value, "SIGN IN");
         });
 
         it('Should switch to signup when "Sign Up" is clicked.', async function() {});
@@ -81,5 +81,29 @@ describe("SuperTokens SignIn feature/theme", function() {
         it("Should show error message when password is too short (TODO)", async function() {});
 
         it("Should redirect to '/' on successful login (TODO)", async function() {});
+
+        it("Clicking on signin before filling the fields shows error messages (TODO)", async function() {});
+
+        it("Clicking on signin with incorrect email format shows error message (TODO)", async function() {});
+
+        it("Clicking on signin with incorrect password format shows error messages(TODO)", async function() {});
+
+        it("Wrong credentials shows wrong credentials general error (TODO)", async function() {});
+
+        it("Good credentials redirects to onSuccessulRedirectURL (TODO)", async function() {});
+
+        it("Server Error shows Something went wrong general error (TODO)", async function() {});
+
+        it("Call doesSessionExist callback on load if provided (TODO)", async function() {});
+
+        it("Call onHandleSuccess callback on success if provided (TODO)", async function() {});
+
+        it("Redirect to onSuccessRedirect when doesSessionExist returns true (TODO)", async function() {});
+
+        it("Call onCallSignInAPI callback on signin if provided (TODO)", async function() {});
+
+        it("Call onCallSignUpAPI callback on signup if provided (TODO)", async function() {});
+
+        it("Call onHandleForgotPasswordClicked callback on forgotPassword clicked if provided (TODO)", async function() {});
     });
 });

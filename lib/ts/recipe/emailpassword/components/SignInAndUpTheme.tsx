@@ -26,6 +26,7 @@ import SignInTheme from "./SignInTheme";
 /*
  * Component.
  */
+
 export function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
     /*
      * State.
@@ -35,11 +36,14 @@ export function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
     /*
      * Render.
      */
+
+    // If isSignIn, return signInTheme.
     if (isSignIn) {
         return <SignInTheme {...props.signInForm} signUpClicked={() => setSignIn(false)} />;
-    } else {
-        return <SignUpTheme {...props.signUpForm} signInClicked={() => setSignIn(true)} />;
     }
+
+    // Otherwise, return SignUpTheme.
+    return <SignUpTheme {...props.signUpForm} signInClicked={() => setSignIn(true)} />;
 }
 
 export default SignInAndUpTheme;

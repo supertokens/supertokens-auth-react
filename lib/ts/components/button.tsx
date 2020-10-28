@@ -16,12 +16,17 @@
 /*
  * Imports.
  */
+
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 
 import * as React from "react";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { defaultStyles } from "../styles/styles";
+
+/*
+ * Props.
+ */
 
 type ButtonProps = {
     style: CSSInterpolation;
@@ -30,6 +35,10 @@ type ButtonProps = {
     disabled?: boolean;
     type: "submit" | "button" | "reset" | undefined;
 };
+
+/*
+ * Component.
+ */
 
 export default function Button(props: ButtonProps): JSX.Element {
     let { style, type, label, disabled, isLoading } = props;

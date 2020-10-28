@@ -14,7 +14,7 @@
  */
 import {
     getRecipeIdFromSearch,
-    validateForm,
+    validateFormOrThrow,
     mergeFormFields,
     defaultValidate,
     capitalize
@@ -277,7 +277,7 @@ describe("Config tests", function() {
         assert(mergedRandomWithoutValidateNorOptional[2].optional === false);
     });
 
-    it("validateForm (TODO)", async function() {
+    it("validateFormOrThrow (TODO)", async function() {
         /*
          * TODO
          * - Test that no error return empty array [].
@@ -318,7 +318,7 @@ describe("Config tests", function() {
                 value: "anything will throw"
             }
         ];
-        const errors = await validateForm(input, formFields);
+        const errors = await validateFormOrThrow(input, formFields);
         assert.deepStrictEqual(errors, [
             {
                 id: "password",
