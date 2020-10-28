@@ -98,7 +98,7 @@ function SignInAndUp(props: EmailPasswordProps) {
                 };
             }
 
-            // Otherwise, status === OK, update state wit huser and responseJSON.
+            // Otherwise, status === OK, update state with user and responseJSON.
             const user: User = {
                 id: data.user.id,
                 email: data.user.email
@@ -160,7 +160,7 @@ function SignInAndUp(props: EmailPasswordProps) {
                 };
             }
 
-            // Otherwise, status === OK, update state wit huser and responseJSON.
+            // Otherwise, status === OK, update state with user and responseJSON.
             const user: User = {
                 id: data.user.id,
                 email: data.user.email
@@ -238,14 +238,17 @@ function SignInAndUp(props: EmailPasswordProps) {
             return props.onCallSignUpAPI(requestJson, headers);
         }
 
+        // Otherwise, use default.
         return getRecipeInstanceOrThrow().signUpApi(requestJson, headers);
     };
 
     const onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+        // If props provided by user.
         if (props.onCallSignInAPI) {
             return props.onCallSignInAPI(requestJson, headers);
         }
 
+        // Otherwise, use default.
         return getRecipeInstanceOrThrow().signInApi(requestJson, headers);
     };
 

@@ -79,6 +79,6 @@ export default class SignInFeature {
     };
 
     async validate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return validateFormOrThrow(input, this.formFields);
+        return await validateFormOrThrow(input, this.formFields);
     }
 }
