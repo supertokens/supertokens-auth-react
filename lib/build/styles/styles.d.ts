@@ -4,25 +4,26 @@ export declare const palette: {
         background: string;
         primary: string;
         secondary: string;
+        link: string;
         error: string;
     };
     fonts: {
         size: number[];
+        bold: string;
         primary: string;
     };
 };
 export declare const defaultStyles: {
     root: CSSInterpolation;
     container: CSSInterpolation;
+    row: CSSInterpolation;
     input: CSSInterpolation;
+    inputError: CSSInterpolation;
     inputErrorMessage: CSSInterpolation;
     button: CSSInterpolation;
     label: CSSInterpolation;
     formRow: CSSInterpolation;
-    header: CSSInterpolation;
-    headerTitle: CSSInterpolation;
-    headerSubtitle: CSSInterpolation;
+    secondaryText: CSSInterpolation;
     link: CSSInterpolation;
-    row: CSSInterpolation;
     divider: CSSInterpolation;
 };

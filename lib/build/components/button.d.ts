@@ -4,7 +4,7 @@ declare type ButtonProps = {
     style: CSSInterpolation;
     label: string;
     isLoading: boolean;
-    disabled: boolean;
+    disabled?: boolean;
     type: "submit" | "button" | "reset" | undefined;
 };
 export default function Button(props: ButtonProps): JSX.Element;

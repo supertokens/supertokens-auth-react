@@ -20,7 +20,6 @@ import RecipeModule from "../recipeModule";
 import {
     CreateRecipeFunction,
     AppInfo,
-    FormField,
     RouteToFeatureComponentMap,
     RequestJson,
     NormalisedFormField
@@ -33,7 +32,7 @@ import {
     EmailPasswordUserInput
 } from "./types";
 import { isTest } from "../../utils";
-import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
+import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 import SignInFeature from "./signInFeature";
 import SignUpFeature from "./signUpFeature";
 import SignInAndUp from "./components/SignInAndUp";

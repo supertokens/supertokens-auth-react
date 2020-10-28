@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { APIFormField, FeatureConfigBase, FormField, FormFieldBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson } from "../../types";
 import { API_RESPONSE_STATUS } from "../../constants";
 import EmailPassword from "./emailPassword";
@@ -32,7 +33,7 @@ export declare type SignInFormFeatureConfig = FeatureConfigBase & {
 };
 export declare type EmailPasswordProps = {
     __internal?: InternalEmailPasswordProps;
-    history?: History;
+    children?: JSX.Element;
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
     doesSessionExist?: () => Promise<boolean>;
     onHandleSuccess?: (context: any, user?: any, responseJson?: any) => Promise<boolean>;
@@ -45,13 +46,14 @@ declare type InternalEmailPasswordProps = {
 declare type EmailPasswordThemeProps = {
     callAPI: (fields: APIFormField[]) => Promise<APIResponse>;
     onSuccess?: () => void;
-    styleFormInit?: {
+    styleFromInit?: {
         [key: string]: CSSInterpolation;
     };
     formFields: FormFieldThemeProps[];
 };
 export declare type SignInThemeProps = EmailPasswordThemeProps & {
     signUpClicked?: () => void;
+    forgotPasswordClick?: () => void;
     resetPasswordURL?: string;
 };
 export declare type SignUpThemeProps = EmailPasswordThemeProps & {

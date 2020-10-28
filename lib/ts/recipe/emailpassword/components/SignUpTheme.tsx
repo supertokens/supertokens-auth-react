@@ -31,13 +31,9 @@ export default function SignUpTheme(props: SignUpThemeProps) {
         <div css={defaultStyles.container} >
             <div css={defaultStyles.row}>
                 
-                <div css={defaultStyles.header}>
-                    <div css={defaultStyles.headerTitle}>Sign Up</div>
-                    <div css={defaultStyles.headerSubtitle} >
-                        <div>Already registered?</div>
-                        <a onClick={props.signInClicked} css={defaultStyles.link}>Sign in</a>
-                    </div>
-                </div>
+                    <div>Sign Up</div>
+                    <div>Already registered?</div>
+                    <a onClick={props.signInClicked} css={defaultStyles.link}>Sign in</a>
                 <div css={defaultStyles.divider}></div>
                 <form>
                     {

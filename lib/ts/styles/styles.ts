@@ -23,11 +23,13 @@ export const palette = {
         background: "white",
         primary: "#222222",
         secondary: "#656565",
+        link: "#0076ff",
         error: "#ff1717"
     },
 
     fonts: {
         size: [14, 16, 28],
+        bold: "Rubik-Bold",
         primary: "Rubik"
     }
 };
@@ -56,6 +58,13 @@ export const defaultStyles = {
         }
     } as CSSInterpolation,
 
+    row: {
+        margin: "0 auto",
+        width: "60%",
+        paddingTop: "50px",
+        paddingBottom: "50px"
+    } as CSSInterpolation,
+
     input: {
         float: "left",
         backgroundColor: "#f2f2f2",
@@ -70,12 +79,16 @@ export const defaultStyles = {
         }
     } as CSSInterpolation,
 
+    inputError: {
+        border: `1px solid ${palette.colors.error}`
+    } as CSSInterpolation,
+
     inputErrorMessage: {
         color: palette.colors.error,
         lineHeight: "24px",
-        fontWeight: 500,
+        fontWeight: 400,
         textAlign: "left",
-        paddingTop: "10px"
+        paddingTop: "5px"
     } as CSSInterpolation,
 
     button: {
@@ -87,8 +100,13 @@ export const defaultStyles = {
         borderWidth: "0px",
         borderRadius: "8px",
         "&:disabled": {
-            backgroundColor: "#dddddd"
-        }
+            cursor: "no-drop"
+        },
+        "&:active": {
+            outline: "none",
+            border: "none"
+        },
+        cursor: "pointer"
     } as CSSInterpolation,
 
     label: {
@@ -106,34 +124,18 @@ export const defaultStyles = {
         paddingBottom: "15px"
     } as CSSInterpolation,
 
-    header: {
-        height: "141px"
-    } as CSSInterpolation,
-
-    headerTitle: {
-        paddingTop: "49px",
-        fontSize: palette.fonts.size[2],
-        lineHeight: "40px",
-        letterSpacing: "0.28px",
-        fontWeight: 700,
-        fontFamily: palette.fonts.primary,
-        color: palette.colors.primary
-    } as CSSInterpolation,
-
-    headerSubtitle: {
+    secondaryText: {
         fontSize: palette.fonts.size[1],
         fontWeight: 400,
-        color: palette.colors.secondary,
-        fontFamily: palette.fonts.primary
+        color: palette.colors.secondary
     } as CSSInterpolation,
 
     link: {
-        color: "blue"
-    } as CSSInterpolation,
-
-    row: {
-        margin: "0 auto",
-        width: "60%"
+        color: palette.colors.link,
+        fontSize: palette.fonts.size[1],
+        cursor: "pointer",
+        letterSpacing: "0.16px",
+        lineHeight: "40px"
     } as CSSInterpolation,
 
     divider: {

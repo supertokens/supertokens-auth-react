@@ -31,19 +31,40 @@ if (!hasDisabledDefaultImplementationFromLocationQueryParams()) {
         signInAndUpFeature: {
           disableDefaultImplementation: true,
           signUpForm: {
-              privacyPolicyLink: "http://localhost:3031/privacy",
-              termsAndConditionsLink: "http://localhost:3031/terms",
-              formFields: [{
-                id: "company",
-                label: "Company",
-                placeholder: "Your company name",
-                optional: true
+            privacyPolicyLink: "http://localhost:3031/privacy",
+            termsAndConditionsLink: "http://localhost:3031/terms",
+            formFields: [{
+              id: "company",
+              label: "Company",
+              placeholder: "Your company name",
+              optional: true
             }]
           },
           signInForm: {
-            resetPasswordURL: "http://localhost:3031/reset-password"
+            resetPasswordURL: "http://localhost:3031/reset-password",
+            style: {
+              container: {
+                border: '0px',
+                background: 'linear-gradient(180deg,#2f4566 0,#193055);'
+              },
+              secondaryText: {
+                color: '#fff'
+              },
+              label: {
+                color: "white"
+              },
+              button: {
+                backgroundColor: '#3b3b94'
+              },
+              link: {
+                color: "red"
+              },
+              headerTitle: {
+                color: 'white'
+              }
+            }
           }
-      }
+        }
       })
     ]
   });

@@ -154,7 +154,7 @@ export type FeatureConfigBase = {
     /*
      * Additional styles to override themes.
      */
-    style?: CSSInterpolation;
+    style?: { [key: string]: CSSInterpolation };
 };
 
 export type FormFieldBaseConfig = {

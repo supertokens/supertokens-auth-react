@@ -20,6 +20,7 @@ import { APIFormField, FormField, NormalisedFormField } from "../../types";
 import { FormFieldError, SignUpFormFeatureConfig } from "./types";
 import { mergeFormFields, validateForm } from "../../utils";
 import { defaultEmailValidator, defaultPasswordValidator } from "./utils";
+import { CSSInterpolation } from "@emotion/serialize/types/index";
 
 /*
  * Class.
@@ -31,7 +32,7 @@ export default class SignUpFeature {
     formFields: NormalisedFormField[];
     privacyPolicyLink?: string;
     termsAndConditionsLink?: string;
-
+    style: { [key: string]: CSSInterpolation };
     /*
      * Constructor.
      */
@@ -40,6 +41,7 @@ export default class SignUpFeature {
 
         let userFormFields: FormField[] = [];
         if (config !== undefined) {
+            this.style = config.style || {};
             this.privacyPolicyLink = config.privacyPolicyLink;
             this.termsAndConditionsLink = config.termsAndConditionsLink;
 
@@ -57,6 +59,10 @@ export default class SignUpFeature {
 
     getFormFields = (): NormalisedFormField[] => {
         return this.formFields;
+    };
+
+    getStyle = (): { [key: string]: CSSInterpolation } => {
+        return this.style;
     };
 
     getPrivacyPolicyLink = (): string | undefined => {

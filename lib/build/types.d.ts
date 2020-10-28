@@ -47,7 +47,9 @@ export declare type PathToComponentWithRecipeIdMap = {
     [path: string]: ComponentWithRecipeId[];
 };
 export declare type FeatureConfigBase = {
-    style?: CSSInterpolation;
+    style?: {
+        [key: string]: CSSInterpolation;
+    };
 };
 export declare type FormFieldBaseConfig = {
     id: string;

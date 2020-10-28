@@ -147,9 +147,12 @@ function SignInAndUp (props: EmailPasswordProps) {
         }
 
         // Otherwise, use default, redirect to resetPasswordURL
-        const onResetPasswordUrl = getRecipeInstanceOrThrow().getSignInFeature().getResetPasswordURL;
+        const resetPasswordUrl = getRecipeInstanceOrThrow().getSignInFeature().getResetPasswordURL();
         // TODO What if user uses react-router-dom history? => take router from props correctly (see withOrWithoutRouter)
-        window.history.pushState(onResetPasswordUrl, '');
+        if (resetPasswordUrl !== undefined) {
+            window.history.pushState(null, '', resetPasswordUrl);
+
+        }
         return;
     }
 
@@ -164,8 +167,7 @@ function SignInAndUp (props: EmailPasswordProps) {
 
         // Otherwise, use default, redirect to onSuccessRedirectURL
         const onSuccessRedirectURL = getRecipeInstanceOrThrow().getOnSuccessRedirectURL();
-         // TODO What if user uses react-router-dom history? => take router from props correctly (see withOrWithoutRouter)
-        window.history.pushState(onSuccessRedirectURL, '');
+        window.history.pushState(null, '', onSuccessRedirectURL);
     }
 
     const onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
@@ -200,39 +202,48 @@ function SignInAndUp (props: EmailPasswordProps) {
     }, [doesSessionExist, onHandleSuccess]);
 
     const signUpFeature = getRecipeInstanceOrThrow().getSignUpFeature();
-    const privacyPolicyLink = signUpFeature.getPrivacyPolicyLink();
-    const termsAndConditionsLink = signUpFeature.getTermsAndConditionsLink();
-    const signUpFormFields = signUpFeature.getFormFields();
 
     const signInFeature = getRecipeInstanceOrThrow().getSignInFeature();
-    const resetPasswordURL = signInFeature.getResetPasswordURL();
-    const signInFormFields = signInFeature.getFormFields();
 
-        
+    const signInForm = {
+        styleFromInit: signInFeature.getStyle(),
+        formFields: signInFeature.getFormFields(),
+        resetPasswordURL: signInFeature.getResetPasswordURL(),
+        callAPI: signInAPI,
+        onSuccess: onSignInSuccess,
+        forgotPasswordClick: onHandleForgotPasswordClicked
+    }
+
+    const signUpForm={
+        styleFromInit: signUpFeature.getStyle(),
+        formFields: signUpFeature.getFormFields(),
+        privacyPolicyLink: signUpFeature.getPrivacyPolicyLink(),
+        termsAndConditionsLink: signUpFeature.getTermsAndConditionsLink(),
+        onSuccess: onSignUpSuccess,
+        callAPI: signUpAPI
+    }
     /*
      * Render.
      */
     return (
         <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
-            <SignInAndUpTheme
 
-                signInForm={{
-                    formFields: signInFormFields,
-                    resetPasswordURL,
-                    callAPI: signInAPI,
-                    onSuccess: onSignInSuccess
-                }}
+            {/* No custom theme, use default. */}
+            {
+                props.children === undefined && 
+                    <SignInAndUpTheme
+                        signInForm={signInForm}
+                        signUpForm={signUpForm}
+                    />
+            }
 
-                signUpForm={{
-                    formFields: signUpFormFields,
-                    privacyPolicyLink,
-                    termsAndConditionsLink,
-                    onSuccess: onSignUpSuccess,
-                    callAPI: signUpAPI
-                }}
+            {/* Otherwise, custom theme is provided, propagate props. */}
+            {
+                props.children && 
+                React.cloneElement(props.children, {signInForm, signUpForm})
+            }
 
-            />
-
+            <link href="//fonts.googleapis.com/css?family=Rubik" rel="stylesheet" type="text/css"></link>
         </root.div>
     );
 }

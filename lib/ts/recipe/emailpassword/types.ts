@@ -135,7 +135,7 @@ export type SignInFormFeatureConfig = FeatureConfigBase & {
 export type EmailPasswordProps = {
     __internal?: InternalEmailPasswordProps;
 
-    history?: History;
+    children?: JSX.Element;
 
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
 
@@ -166,7 +166,7 @@ type EmailPasswordThemeProps = {
     /*
      * Custom styling from user.
      */
-    styleFormInit?: { [key: string]: CSSInterpolation };
+    styleFromInit?: { [key: string]: CSSInterpolation };
 
     /*
      * Form fields to use in the signin form.
@@ -179,6 +179,11 @@ export type SignInThemeProps = EmailPasswordThemeProps & {
      * Callback called when Sign Up link is clicked.
      */
     signUpClicked?: () => void;
+
+    /*
+     * Callback called when Forgot password link is clicked.
+     */
+    forgotPasswordClick?: () => void;
 
     /*
      * Reset password URL for forgot password button.

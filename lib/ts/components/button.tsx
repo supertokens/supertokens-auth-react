@@ -27,12 +27,15 @@ type ButtonProps = {
 	style: CSSInterpolation;
 	label: string;
 	isLoading: boolean;
-	disabled: boolean;
+	disabled?: boolean;
 	type: "submit" | "button" | "reset" | undefined
 }
 
 export default function Button(props: ButtonProps): JSX.Element{
-	const {style, type, label, disabled, isLoading} = props;
+	let {style, type, label, disabled, isLoading} = props;
+	if (disabled === undefined) {
+		disabled = false;
+	}
 	return (
 		<button type={type} disabled={disabled} css={[defaultStyles.button, style]}>
 			{label}

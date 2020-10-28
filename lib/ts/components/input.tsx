@@ -28,36 +28,52 @@ import { defaultStyles } from "../styles/styles";
 import { APIFormField } from "../types";
 
 type InputProps = {
-	style: CSSInterpolation;
+	style?: CSSInterpolation;
+	errorStyle?: CSSInterpolation;
 	type: string;
 	name: string;
+	hasError: boolean
 	placeholder: string;
 	ref: RefObject<any>;
-	handleChange?: (field: APIFormField) => void
+	onChange?: (field: APIFormField) => void
 }
 function Input(props: InputProps, ref: RefObject<any>): JSX.Element {
-	const {style, handleChange, type, name, placeholder} = props;
+	/*
+	 * Props.
+	 */
+	let {style, type, name, hasError, errorStyle, onChange, placeholder} = props;
 
-	function onChange () {
-		if (handleChange) {
-			handleChange({
+	if (hasError !== true) {
+		errorStyle = undefined;
+	} else {
+		errorStyle = Object.assign(defaultStyles.inputError, errorStyle)
+	}
+
+	/*
+	 * Method.
+	 */
+	function handleChange () {
+		if (onChange) {
+			onChange({
 				id: ref.current.name,
 				value: ref.current.value
 			});
 		}
 	}
 
+	/*
+	 * Render.
+	 */
 	return (
 		<input 
-			onBlur={onChange} 
-			// onChange={onChange} 
-			// onKeyDown={onChange} 
-			onPaste={onChange} 
-			onCut={onChange}
-			css={[defaultStyles.input, style]} 
-			type={type} name={name}  
+			onBlur={handleChange}
+			onPaste={handleChange} 
+			onCut={handleChange}
+			css={[defaultStyles.input, style, errorStyle]} 
+			type={type}
+			name={name}  
 			placeholder={placeholder} 
-			ref={ref} 
+			ref={ref}
 		/>
 	)
 

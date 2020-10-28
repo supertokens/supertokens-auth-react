@@ -20,6 +20,7 @@ import { APIFormField, FormField, FormFieldBaseConfig, NormalisedFormField } fro
 import { FormFieldError, SignInFormFeatureConfig } from "./types";
 import { mergeFormFields, validateForm } from "../../utils";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
+import { CSSInterpolation } from "@emotion/serialize/types/index";
 
 /*
  * Class.
@@ -30,6 +31,7 @@ export default class SignInFeature {
      */
     formFields: NormalisedFormField[];
     resetPasswordURL?: string;
+    style: { [key: string]: CSSInterpolation };
 
     /*
      * Constructor.
@@ -37,6 +39,7 @@ export default class SignInFeature {
     constructor(defaultFormFields: NormalisedFormField[], config?: SignInFormFeatureConfig) {
         let userFormFields: FormField[] = [];
         if (config !== undefined) {
+            this.style = config.style || {};
             this.resetPasswordURL = config.resetPasswordURL;
 
             if (config.formFields) {
@@ -65,6 +68,10 @@ export default class SignInFeature {
 
     getFormFields = (): NormalisedFormField[] => {
         return this.formFields;
+    };
+
+    getStyle = (): { [key: string]: CSSInterpolation } => {
+        return this.style;
     };
 
     getResetPasswordURL = (): string | undefined => {

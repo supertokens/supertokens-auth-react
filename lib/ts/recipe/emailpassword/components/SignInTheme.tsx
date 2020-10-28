@@ -23,6 +23,7 @@ import { SignInThemeProps } from "../types";
 import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../../constants";
 import { Button, FormRow, Input, InputError, Label } from "../../../components";
 import { APIFormField } from "../../../types";
+import { CSSInterpolation } from "@emotion/serialize/types/index";
 
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
@@ -34,8 +35,8 @@ export default function SignInTheme(props: SignInThemeProps) {
     /*
      * Props.
      */
-    const {callAPI, onSuccess, styleFormInit} = props;
-
+    const {callAPI, onSuccess, signUpClicked, forgotPasswordClick} = props;
+    let styleFromInit = props.styleFromInit || {};
     /*
      * States.
      */
@@ -47,7 +48,6 @@ export default function SignInTheme(props: SignInThemeProps) {
     }));
 
     const [isLoading, setIsLoading] = useState(false);
-    const [isDisabled, setIsDisabled] = useState(true);
 
     /*
      * Methods.
@@ -102,13 +102,15 @@ export default function SignInTheme(props: SignInThemeProps) {
         async (field: APIFormField) => {
             for (let i = 0; i < formFields.length; i++) {
                 if (field.id === formFields[i].id) {
-
-                    // Validate field on Change.
-                    formFields[i].error = await formFields[i].validate(field.value);
-                    // Update state.
+                    // remove error on input change.
+                    formFields[i].error = undefined;
                 }
             }
-            setFormFields([...formFields]);
+
+            // Delay the error update to prevent UI glitches.
+            setTimeout(
+                () => setFormFields([...formFields])
+            , 300);
         },
         [formFields, setFormFields]
     );
@@ -122,43 +124,28 @@ export default function SignInTheme(props: SignInThemeProps) {
     };
 
     /*
-     * UseEffect
-     */
-    useEffect(() => {
-        const isDisabled = formFields.some(field => {
-
-            // If one field contains an error, set isDisabled to true.
-            if (field.error !== undefined) {
-                return true;
-            }
-
-            // If one non optional field is empty, set isDisabled to true.
-            if (field.optional === false && field.ref.current && field.ref.current.value.length === 0) {
-                return true;
-            }
- 
-        });
-        setIsDisabled(isDisabled);
-    }, [formFields, setIsDisabled]);
-
-    /*
      * Render.
      */
     return (
-        <div css={[defaultStyles.container]} >
-            <div css={defaultStyles.row}>
+        <div css={[defaultStyles.container, styleFromInit.container]} >
+            <div css={[defaultStyles.row, styleFromInit.row]}>
                 
-                <div css={styles.header}>
-                    <div css={styles.headerTitle} >Sign In</div>
-                    <div css={styles.headerSubtitle} >
-                        <div>Not registered yet?</div>
-                        <a onClick={props.signUpClicked} css={styles.signUpLink}>Sign up</a>
+                <div css={[styles.headerTitle, styleFromInit.headerTitle]} >Sign In</div>
+                <div css={[styles.headerSubTitle, styleFromInit.headerSubtitle]} >
+                    <div css={[defaultStyles.secondaryText, styleFromInit.secondaryText]} >
+                        Not registered yet? 
+                        <span 
+                            onClick={signUpClicked}
+                            css={[styles.signUpLink, defaultStyles.link, styleFromInit.link]}
+                        >
+                            Sign up
+                        </span>
                     </div>
                 </div>
 
-                <div css={defaultStyles.divider}></div>
+                <div css={[defaultStyles.divider, styleFromInit.divider]}></div>
 
-                <form onSubmit={onFormSubmit}>
+                <form noValidate onSubmit={onFormSubmit}>
                     {
                         formFields.map(field => {
                             let type = "text";
@@ -169,27 +156,32 @@ export default function SignInTheme(props: SignInThemeProps) {
                             return (
                                 <FormRow style={{}} key={field.id}>
                                     <>
-                                        <Label style={{}} value={field.label} />
+                                        <Label style={styleFromInit.label} value={field.label} />
                                         <Input 
-                                            style={{}} 
+                                            style={styleFromInit.input}
+                                            errorStyle={styleFromInit.inputError}
                                             type={type} 
                                             name={field.id}  
                                             placeholder={field.placeholder} 
-                                            ref={field.ref} 
-                                            handleChange={handleInputChange}
+                                            ref={field.ref}
+                                            onChange={handleInputChange}
+                                            hasError={field.error !== undefined}
                                         /> 
-                                        {field.error && <InputError style={{}} error={field.error} />}
+                                        {field.error && <InputError style={styleFromInit.inputErrorMessage} error={field.error} />}
                                     </>
                                 </FormRow>
                             )
                         })
                     }
-                    <FormRow style={{}} key="signin-button">
-                        <Button style={{}} disabled={isDisabled} isLoading={isLoading} type="submit" label="SIGN IN" />
+                    <FormRow style={styleFromInit.formRow} key="signin-button">
+                        <Button style={styleFromInit.button} disabled={isLoading} isLoading={isLoading} type="submit" label="SIGN IN" />
                     </FormRow> 
-                    <FormRow style={{}} key="forgot-password-link">
-                        <div>Forgot password?</div>
-                    </FormRow> 
+                    <div 
+                        css={[defaultStyles.link, defaultStyles.secondaryText, styleFromInit.link, styleFromInit.secondaryText]}
+                        onClick={forgotPasswordClick}
+                    >
+                        Forgot password?
+                    </div>
                 </form>
 
 
@@ -203,25 +195,21 @@ export default function SignInTheme(props: SignInThemeProps) {
  * Styles.
  */
 const styles = {
-    header: {
-        height: '141px'
-    },
+
     headerTitle: {
-        paddingTop: "49px",
-        fontSize: palette.fonts.size[1],
+        fontSize: palette.fonts.size[2],
         lineHeight: "40px",
         letterSpacing: "0.28px",
-        fontWeight: 700,
-        fontFamily: palette.fonts.primary,
-        color: palette.colors.primary,
-    },
-    headerSubtitle: {
-        fontSize: palette.fonts.size[0],
-        fontWeight: 400,
-        color: palette.colors.secondary,
-        fontFamily: palette.fonts.primary
-    },
+        fontWeight: 800,
+        color: palette.colors.primary
+    } as CSSInterpolation,
+
+    headerSubTitle: {
+        marginTop: "15px",
+        marginBottom: "15px"
+    } as CSSInterpolation,
+
     signUpLink: {
-        color: 'blue'
+        paddingLeft: '5px'
     }
-};
+}

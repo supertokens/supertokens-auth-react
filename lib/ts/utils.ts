@@ -153,7 +153,7 @@ export async function validateForm(
         // Absent or not optional empty field
         if (input === undefined || (input.value === "" && field.optional === false)) {
             validationErrors.push({
-                error: "Field is not optional",
+                error: "This field can not be empty",
                 id: field.id
             });
         } else {
