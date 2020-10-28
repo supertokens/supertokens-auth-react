@@ -79,7 +79,7 @@ describe("SuperTokens", function() {
                     appName: undefined
                 }
             });
-        }, new Error("Please provide your appNmae inside the appInfo object when calling supertokens.init"));
+        }, new Error("Please provide your appName inside the appInfo object when calling supertokens.init"));
     });
 
     it("Initializing SuperTokens with corrupted URL should throw", async function() {

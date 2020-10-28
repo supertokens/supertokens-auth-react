@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { APIResponse, EmailPasswordProps, User } from '../types';
 import EmailPassword from "../emailPassword";
 import {SignInAndUpTheme} from "..";
@@ -52,6 +52,19 @@ function SignInAndUp (props: EmailPasswordProps) {
     }
 
     const signInAPI = async (formFields: APIFormField[]): Promise<APIResponse>  => {
+
+        // Validators.
+        const validationErrors = await getRecipeInstanceOrThrow().getSignInFeature().validate(formFields);
+
+        if (validationErrors.length > 0) {
+            return {
+                status: API_RESPONSE_STATUS.FIELD_ERROR,
+                fields: validationErrors
+            }
+        }
+
+
+        // Api.
         const headers: HeadersInit = {
             rid: getRecipeInstanceOrThrow().getRecipeId()
         }
@@ -201,7 +214,6 @@ function SignInAndUp (props: EmailPasswordProps) {
      */
     return (
         <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
-
             <SignInAndUpTheme
 
                 signInForm={{

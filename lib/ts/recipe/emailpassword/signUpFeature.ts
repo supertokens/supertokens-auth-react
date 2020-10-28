@@ -16,9 +16,10 @@
 /*
  * Imports.
  */
-import { FormField, NormalisedFormField } from "../../types";
-import { SignUpFormFeatureConfig } from "./types";
-import { mergeFormFields, validateEmail, validatePassword } from "../../utils";
+import { APIFormField, FormField, NormalisedFormField } from "../../types";
+import { FormFieldError, SignUpFormFeatureConfig } from "./types";
+import { mergeFormFields, validateForm } from "../../utils";
+import { defaultEmailValidator, defaultPasswordValidator } from "./utils";
 
 /*
  * Class.
@@ -72,16 +73,20 @@ export default class SignUpFeature {
                 id: "email",
                 label: "Email",
                 placeholder: "youremail@example.com",
-                validate: validateEmail,
+                validate: defaultEmailValidator,
                 optional: false
             },
             {
                 id: "password",
                 label: "Password",
                 placeholder: "Enter your password",
-                validate: validatePassword,
+                validate: defaultPasswordValidator,
                 optional: false
             }
         ];
     };
+
+    async validate(input: APIFormField[]): Promise<FormFieldError[]> {
+        return validateForm(input, this.formFields);
+    }
 }

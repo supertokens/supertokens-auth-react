@@ -16,9 +16,9 @@
 /*
  * Imports.
  */
-import { FormField, NormalisedFormField } from "../../types";
-import { SignInFormFeatureConfig } from "./types";
-import { mergeFormFields } from "../../utils";
+import { APIFormField, FormField, FormFieldBaseConfig, NormalisedFormField } from "../../types";
+import { FormFieldError, SignInFormFeatureConfig } from "./types";
+import { mergeFormFields, validateForm } from "../../utils";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 
 /*
@@ -40,7 +40,7 @@ export default class SignInFeature {
             this.resetPasswordURL = config.resetPasswordURL;
 
             if (config.formFields) {
-                userFormFields = config.formFields.reduce((acc: FormField[], field) => {
+                userFormFields = config.formFields.reduce((acc: FormField[], field: FormFieldBaseConfig) => {
                     // Filter on email and password only.
                     if (!MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
                         return acc;
@@ -70,4 +70,8 @@ export default class SignInFeature {
     getResetPasswordURL = (): string | undefined => {
         return this.resetPasswordURL;
     };
+
+    async validate(input: APIFormField[]): Promise<FormFieldError[]> {
+        return validateForm(input, this.formFields);
+    }
 }

@@ -17,14 +17,15 @@
  * Imports.
  */
 import * as React from "react";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import {defaultStyles, palette} from '../../../styles/styles';
 import { SignInThemeProps } from "../types";
-
+import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../../constants";
+import { Button, FormRow, Input, InputError, Label } from "../../../components";
+import { APIFormField } from "../../../types";
 
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../../constants";
 
 /*
  * Component.
@@ -46,6 +47,7 @@ export default function SignInTheme(props: SignInThemeProps) {
     }));
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(true);
 
     /*
      * Methods.
@@ -96,6 +98,21 @@ export default function SignInTheme(props: SignInThemeProps) {
         }
     }
 
+    const handleInputChange = useCallback(
+        async (field: APIFormField) => {
+            for (let i = 0; i < formFields.length; i++) {
+                if (field.id === formFields[i].id) {
+
+                    // Validate field on Change.
+                    formFields[i].error = await formFields[i].validate(field.value);
+                    // Update state.
+                }
+            }
+            setFormFields([...formFields]);
+        },
+        [formFields, setFormFields]
+    );
+
     /*
      * Event Handlers.
      */
@@ -103,6 +120,26 @@ export default function SignInTheme(props: SignInThemeProps) {
         e.preventDefault();
         onSignIn();
     };
+
+    /*
+     * UseEffect
+     */
+    useEffect(() => {
+        const isDisabled = formFields.some(field => {
+
+            // If one field contains an error, set isDisabled to true.
+            if (field.error !== undefined) {
+                return true;
+            }
+
+            // If one non optional field is empty, set isDisabled to true.
+            if (field.optional === false && field.ref.current && field.ref.current.value.length === 0) {
+                return true;
+            }
+ 
+        });
+        setIsDisabled(isDisabled);
+    }, [formFields, setIsDisabled]);
 
     /*
      * Render.
@@ -124,24 +161,35 @@ export default function SignInTheme(props: SignInThemeProps) {
                 <form onSubmit={onFormSubmit}>
                     {
                         formFields.map(field => {
-                            let type: string = "text";
+                            let type = "text";
                             // If email or password, replace field type.
                             if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
                                 type = field.id;
                             }
                             return (
-                                <div key={field.id}>
-                                    <label>
-                                        {field.label}
-                                    </label>
-                                    <input type={type} name={field.id}  placeholder={field.placeholder} ref={field.ref} /> 
-                                </div>
+                                <FormRow style={{}} key={field.id}>
+                                    <>
+                                        <Label style={{}} value={field.label} />
+                                        <Input 
+                                            style={{}} 
+                                            type={type} 
+                                            name={field.id}  
+                                            placeholder={field.placeholder} 
+                                            ref={field.ref} 
+                                            handleChange={handleInputChange}
+                                        /> 
+                                        {field.error && <InputError style={{}} error={field.error} />}
+                                    </>
+                                </FormRow>
                             )
                         })
                     }
-
-                    <button disabled={isLoading} type="submit"> Sign In </button>
-                    <div>Forgot password?</div>
+                    <FormRow style={{}} key="signin-button">
+                        <Button style={{}} disabled={isDisabled} isLoading={isLoading} type="submit" label="SIGN IN" />
+                    </FormRow> 
+                    <FormRow style={{}} key="forgot-password-link">
+                        <div>Forgot password?</div>
+                    </FormRow> 
                 </form>
 
 

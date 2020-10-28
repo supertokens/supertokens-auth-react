@@ -19,10 +19,10 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import EmailPassword from "../../lib/build/recipe/emailpassword/emailPassword";
+import EmailPassword from "../../../../lib/build/recipe/emailpassword/emailPassword";
 import assert from "assert";
-import SuperTokens from "../../lib/build/SuperTokens";
-import { defaultValidate } from "../../lib/build/utils";
+import SuperTokens from "../../../../lib/build/SuperTokens";
+import { defaultValidate } from "../../../../lib/build/utils";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();

@@ -1,5 +1,5 @@
-import { NormalisedFormField } from "../../types";
-import { SignUpFormFeatureConfig } from "./types";
+import { APIFormField, NormalisedFormField } from "../../types";
+import { FormFieldError, SignUpFormFeatureConfig } from "./types";
 export default class SignUpFeature {
     formFields: NormalisedFormField[];
     privacyPolicyLink?: string;
@@ -9,4 +9,5 @@ export default class SignUpFeature {
     getPrivacyPolicyLink: () => string | undefined;
     getTermsAndConditionsLink: () => string | undefined;
     getDefaultFormFields: () => NormalisedFormField[];
+    validate(input: APIFormField[]): Promise<FormFieldError[]>;
 }

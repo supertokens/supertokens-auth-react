@@ -208,19 +208,21 @@ export type SignInAndUpThemeProps = {
     signUpForm: SignUpThemeProps;
 };
 
-export type FormFieldThemeProps = NormalisedFormField & {
+export type NormalisedFormFieldWithError = NormalisedFormField & {
     /*
      * Error message to display to users.
      */
     error?: string;
 };
+export type FormFieldThemeProps = NormalisedFormFieldWithError;
 
+export type FormFieldError = {
+    id: string;
+    error: string;
+};
 export type APIResponse = {
     status: API_RESPONSE_STATUS;
-    fields?: {
-        id: MANDATORY_FORM_FIELDS_ID;
-        error: string;
-    }[];
+    fields?: FormFieldError[];
     message?: string;
 };
 

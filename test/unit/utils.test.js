@@ -12,7 +12,13 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { getRecipeIdFromSearch, mergeFormFields, defaultValidate, capitalize } from "../../lib/build/utils";
+import {
+    getRecipeIdFromSearch,
+    validateForm,
+    mergeFormFields,
+    defaultValidate,
+    capitalize
+} from "../../lib/build/utils";
 
 import { normaliseURLPathOrThrowError } from "../../lib/build/normalisedURLPath";
 import { normaliseURLDomainOrThrowError } from "../../lib/build/normalisedURLDomain";
@@ -269,5 +275,55 @@ describe("Config tests", function() {
         );
         assert(mergedRandomWithoutValidateNorOptional[2].validate === defaultValidate);
         assert(mergedRandomWithoutValidateNorOptional[2].optional === false);
+    });
+
+    it("validateForm (TODO)", async function() {
+        /*
+         * TODO
+         * - Test that no error return empty array [].
+         * - Test that when an input is not provided at all it will return an error.
+         * - Test that when an empty value is provided for a non optional value, it returns an error.
+         * - Test that multiple errors can be returned.
+         */
+
+        // returns errors for password only.
+        const formFields = [
+            {
+                id: "email",
+                label: "Email",
+                placeholder: "youremail@example.com",
+                validate: async email => {
+                    return undefined;
+                },
+                optional: false
+            },
+            {
+                id: "password",
+                label: "Password",
+                placeholder: "Enter your password",
+                validate: async password => {
+                    return "Error validating your password";
+                },
+                optional: false
+            }
+        ];
+
+        const input = [
+            {
+                id: "email",
+                value: "john@doe.com"
+            },
+            {
+                id: "password",
+                value: "anything will throw"
+            }
+        ];
+        const errors = await validateForm(input, formFields);
+        assert.deepStrictEqual(errors, [
+            {
+                id: "password",
+                error: "Error validating your password"
+            }
+        ]);
     });
 });

@@ -21,7 +21,8 @@ import {
 } from "./constants";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
-import { AppInfo, AppInfoUserInput, FormField, NormalisedFormField } from "./types";
+import { FormFieldError } from "./recipe/emailpassword/types";
+import { APIFormField, AppInfo, AppInfoUserInput, FormField, NormalisedFormField } from "./types";
 
 /*
  * getRecipeIdFromPath
@@ -109,7 +110,7 @@ export function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): Ap
         throw new Error("Please provide your apiDomain inside the appInfo object when calling supertokens.init");
     }
     if (appInfo.appName === undefined) {
-        throw new Error("Please provide your appNmae inside the appInfo object when calling supertokens.init");
+        throw new Error("Please provide your appName inside the appInfo object when calling supertokens.init");
     }
     if (appInfo.websiteDomain === undefined) {
         throw new Error("Please provide your websiteDomain inside the appInfo object when calling supertokens.init");
@@ -133,10 +134,62 @@ function getNormalisedURLPathOrDefault(defaultPath: string, path?: string): Norm
 }
 
 /*
+ * validateForm
+ */
+
+export async function validateForm(
+    inputs: APIFormField[],
+    formFields: NormalisedFormField[]
+): Promise<FormFieldError[]> {
+    let validationErrors: FormFieldError[] = [];
+
+    // Loop through all form fields.
+    for (let i = 0; i < formFields.length; i++) {
+        const field = formFields[i];
+
+        // Find corresponding input value.
+        const input = inputs.find(i => i.id === field.id);
+
+        // Absent or not optional empty field
+        if (input === undefined || (input.value === "" && field.optional === false)) {
+            validationErrors.push({
+                error: "Field is not optional",
+                id: field.id
+            });
+        } else {
+            // Otherwise, use validate function.
+            const error = await field.validate(input.value);
+
+            // If error, add it.
+            if (error !== undefined) {
+                validationErrors.push({
+                    error,
+                    id: field.id
+                });
+            }
+        }
+    }
+
+    return validationErrors;
+}
+
+/*
  * validateEmail.
  */
 
-export async function validateEmail(email: string): Promise<string | undefined> {
+export async function defaultEmailValidator(value: string) {
+    // We check if the email syntax is correct
+    // As per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
+    // Regex from https://stackoverflow.com/a/46181/3867175
+
+    if (
+        value.match(
+            /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        ) === null
+    ) {
+        return "Email is invalid";
+    }
+
     return undefined;
 }
 
@@ -146,7 +199,27 @@ export async function validateEmail(email: string): Promise<string | undefined> 
  * Contains lowercase, uppercase, and numbers.
  */
 
-export async function validatePassword(password: string): Promise<string | undefined> {
+export async function defaultPasswordValidator(value: string) {
+    // length >= 8 && < 100
+    // must have a number and a character
+    // as per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
+
+    if (value.length < 8) {
+        return "Password must contain at least 8 characters, including a number";
+    }
+
+    if (value.length >= 100) {
+        return "Password's length must be lesser than 100 characters";
+    }
+
+    if (value.match(/^.*[A-Za-z]+.*$/) === null) {
+        return "Password must contain at least one alphabet";
+    }
+
+    if (value.match(/^.*[0-9]+.*$/) === null) {
+        return "Password must contain at least one number";
+    }
+
     return undefined;
 }
 
