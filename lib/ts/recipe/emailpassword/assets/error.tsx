@@ -45,6 +45,16 @@ export default function Error({ color }: { color?: string }): JSX.Element {
                         transform="translate(-789 -316) translate(789 316)"
                     />
                 </g>
+                <text
+                    fill="#fff"
+                    fontFamily="Rubik-Bold, Rubik"
+                    fontSize="12px"
+                    fontWeight="700"
+                    transform="translate(-789 -316) translate(796.696 330.715)">
+                    <tspan x="0" y="0">
+                        !
+                    </tspan>
+                </text>
             </g>
         </svg>
     );
