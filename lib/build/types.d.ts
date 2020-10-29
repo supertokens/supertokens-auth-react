@@ -3,16 +3,11 @@ import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
-export declare type ReactComponentClass = <T>(props: T) => JSX.Element;
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction[];
 };
-export declare type RouteWithPathAndRecipeId = {
-    path: NormalisedURLPath;
-    recipeId: string | null;
-};
-export declare type CreateRecipeFunction = (appInfo: AppInfo) => RecipeModule;
+export declare type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule;
 export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;
@@ -20,7 +15,7 @@ export declare type AppInfoUserInput = {
     apiBasePath?: string;
     websiteBasePath?: string;
 };
-export declare type AppInfo = {
+export declare type NormalisedAppInfo = {
     appName: string;
     apiDomain: NormalisedURLDomain;
     websiteDomain: NormalisedURLDomain;
@@ -28,16 +23,19 @@ export declare type AppInfo = {
     websiteBasePath: NormalisedURLPath;
 };
 export declare type RecipeModuleConfig = {
-    features: RouteToFeatureComponentMap;
     recipeId: string;
     /**
      *
      * AppInfo as present in the recipe module manager
      */
-    appInfo: AppInfo;
+    appInfo: NormalisedAppInfo;
 };
 export declare type RouteToFeatureComponentMap = {
     [route: string]: ReactComponentClass;
+};
+export declare type RouteWithPathAndRecipeId = {
+    path: NormalisedURLPath;
+    recipeId: string | null;
 };
 export declare type ComponentWithRecipeId = {
     rid: string;
@@ -46,8 +44,13 @@ export declare type ComponentWithRecipeId = {
 export declare type PathToComponentWithRecipeIdMap = {
     [path: string]: ComponentWithRecipeId[];
 };
-export declare type FeatureConfigBase = {
+export declare type FeatureBaseConfig = {
     style?: {
+        [key: string]: CSSInterpolation;
+    };
+};
+export declare type NormalisedBaseConfig = {
+    style: {
         [key: string]: CSSInterpolation;
     };
 };
@@ -74,3 +77,4 @@ export declare type NormalisedFormField = {
     validate: (value: string) => Promise<string | undefined>;
     optional: boolean;
 };
+export declare type ReactComponentClass = <T>(props: T) => JSX.Element;

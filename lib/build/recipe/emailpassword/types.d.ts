@@ -1,36 +1,50 @@
-import { APIFormField, FeatureConfigBase, FormField, FormFieldBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson } from "../../types";
+import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson } from "../../types";
 import { API_RESPONSE_STATUS } from "../../constants";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
+import NormalisedURLPath from "../../normalisedURLPath";
 export declare type EmailPasswordUserInput = {
-    signInAndUpFeature?: SignInAndUpConfig;
+    signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: any;
 };
 export declare type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUserInput;
-export declare type SignInAndUpConfig = {
+export declare type NormalisedEmailPasswordConfig = {
+    signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
+    resetPasswordUsingTokenFeature?: any;
+};
+export declare type SignInAndUpFeatureUserInput = {
     disableDefaultImplementation?: boolean;
     onSuccessRedirectURL?: string;
-    signUpForm?: SignUpFormFeatureConfig;
-    signInForm?: SignInFormFeatureConfig;
+    signUpForm?: SignUpFormFeatureUserInput;
+    signInForm?: SignInFormFeatureUserInput;
 };
-export declare type SignInAndUp = {
+export declare type NormalisedSignInAndUpFeatureConfig = {
     disableDefaultImplementation: boolean;
-    onSuccessRedirectURL: string;
-    signUpForm?: SignUpFormFeatureConfig;
-    signInForm?: SignInFormFeatureConfig;
+    onSuccessRedirectURL: NormalisedURLPath;
+    signUpForm: NormalisedSignUpFormFeatureConfig;
+    signInForm: NormalisedSignInFormFeatureConfig;
 };
-export declare type FormFieldSignInConfig = FormFieldBaseConfig;
-export declare type FormFieldSignUpConfig = FormField;
-export declare type SignUpFormFeatureConfig = FeatureConfigBase & {
+export declare type SignUpFormFeatureUserInput = FeatureBaseConfig & {
     formFields?: FormFieldSignUpConfig[];
     privacyPolicyLink?: string;
     termsAndConditionsLink?: string;
 };
-export declare type SignInFormFeatureConfig = FeatureConfigBase & {
+export declare type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
+    formFields: NormalisedFormField[];
+    privacyPolicyLink?: string;
+    termsAndConditionsLink?: string;
+};
+export declare type SignInFormFeatureUserInput = FeatureBaseConfig & {
     formFields?: FormFieldSignInConfig[];
     resetPasswordURL?: string;
 };
+export declare type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
+    formFields: NormalisedFormField[];
+    resetPasswordURL: NormalisedURLPath;
+};
+export declare type FormFieldSignInConfig = FormFieldBaseConfig;
+export declare type FormFieldSignUpConfig = FormField;
 export declare type EmailPasswordProps = {
     __internal?: {
         instance: EmailPassword;
@@ -53,7 +67,7 @@ declare type EmailPasswordThemeProps = {
 export declare type SignInThemeProps = EmailPasswordThemeProps & {
     signUpClicked?: () => void;
     forgotPasswordClick?: () => void;
-    resetPasswordURL?: string;
+    resetPasswordURL?: NormalisedURLPath;
 };
 export declare type SignUpThemeProps = EmailPasswordThemeProps & {
     signInClicked?: () => void;

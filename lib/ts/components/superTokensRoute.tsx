@@ -27,9 +27,10 @@ import { getRecipeIdFromSearch } from "../utils";
 
 export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
     try {
+        const Route = require("react-router-dom").Route;
         const pathsToComponentWithRecipeIdMap = SuperTokens.getPathsToComponentWithRecipeIdMap();
         return Object.keys(pathsToComponentWithRecipeIdMap).map(path => (
-            <SuperTokensRouteWithRecipeId key={`st-${path}`} path={path} />
+            <SuperTokensRouteWithRecipeId Route={Route} key={`st-${path}`} path={path} />
         ));
     } catch (e) {
         // If react-router-dom is absent from dependencies, return [];
@@ -37,8 +38,13 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
     }
 }
 
-function SuperTokensRouteWithRecipeId({ path }: { path: string }): JSX.Element {
-    const Route = require("react-router-dom").Route;
+function SuperTokensRouteWithRecipeId({
+    path,
+    Route
+}: {
+    path: string;
+    Route: new () => React.Component<any>;
+}): JSX.Element {
     const recipeId = getRecipeIdFromSearch(window.location.search);
     const component = SuperTokens.getMatchingComponentForRouteAndRecipeId(path, recipeId);
     return <Route exact key={`st-${path}`} path={path} component={component} />;

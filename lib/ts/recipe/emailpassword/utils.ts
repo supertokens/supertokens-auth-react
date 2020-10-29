@@ -13,6 +13,21 @@
  * under the License.
  */
 
+import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
+import NormalisedURLPath from "../../normalisedURLPath";
+import { FormField, FormFieldBaseConfig, NormalisedAppInfo, NormalisedFormField } from "../../types";
+import { mergeFormFields } from "../../utils";
+import {
+    EmailPasswordConfig,
+    NormalisedEmailPasswordConfig,
+    NormalisedSignInAndUpFeatureConfig,
+    NormalisedSignInFormFeatureConfig,
+    NormalisedSignUpFormFeatureConfig,
+    SignInAndUpFeatureUserInput,
+    SignInFormFeatureUserInput,
+    SignUpFormFeatureUserInput
+} from "./types";
+
 /*
  * defaultEmailValidator.
  */
@@ -61,4 +76,141 @@ export async function defaultPasswordValidator(value: string) {
     }
 
     return undefined;
+}
+
+export function normaliseEmailPasswordConfigOrThrow(config: EmailPasswordConfig): NormalisedEmailPasswordConfig {
+    const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
+        config.appInfo,
+        config.signInAndUpFeature
+    );
+    const resetPasswordUsingTokenFeature: any = undefined;
+    return {
+        signInAndUpFeature,
+        resetPasswordUsingTokenFeature
+    };
+}
+
+export function normaliseSignInAndUpFeature(
+    appInfo: NormalisedAppInfo,
+    config?: SignInAndUpFeatureUserInput
+): NormalisedSignInAndUpFeatureConfig {
+    if (config === undefined) {
+        config = {};
+    }
+
+    const disableDefaultImplementation = config.disableDefaultImplementation === true;
+    const onSuccessRedirectURL =
+        config.onSuccessRedirectURL !== undefined
+            ? new NormalisedURLPath(config.onSuccessRedirectURL)
+            : new NormalisedURLPath("/");
+    const signUpForm: NormalisedSignUpFormFeatureConfig = normaliseSignUpFormFeatureConfig(config.signUpForm);
+
+    /*
+     * Default Sign In corresponds tocomputed Sign Up fields filtered by email and password only.
+     * i.e. If the user overrides sign Up fields, that is propagated to default sign In fields.
+     */
+
+    const defaultSignInFields: NormalisedFormField[] = signUpForm.formFields.filter(field => {
+        return MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id);
+    });
+
+    const signInForm: NormalisedSignInFormFeatureConfig = normaliseSignInFormFeatureConfig(
+        appInfo,
+        defaultSignInFields,
+        config.signInForm
+    );
+    return {
+        onSuccessRedirectURL,
+        disableDefaultImplementation,
+        signUpForm,
+        signInForm
+    };
+}
+
+export function normaliseSignUpFormFeatureConfig(
+    config?: SignUpFormFeatureUserInput
+): NormalisedSignUpFormFeatureConfig {
+    if (config === undefined) {
+        config = {};
+    }
+
+    const defaultFormFields = getDefaultFormFields();
+
+    let userFormFields: FormField[] = [];
+    if (config.formFields !== undefined) {
+        userFormFields = config.formFields;
+    }
+    const formFields = mergeFormFields(defaultFormFields, userFormFields);
+    const privacyPolicyLink = config.privacyPolicyLink;
+    const termsAndConditionsLink = config.termsAndConditionsLink;
+    const style = config.style || {};
+
+    return {
+        style,
+        formFields,
+        privacyPolicyLink,
+        termsAndConditionsLink
+    };
+}
+
+export function normaliseSignInFormFeatureConfig(
+    appInfo: NormalisedAppInfo,
+    defaultFormFields: NormalisedFormField[],
+    config?: SignInFormFeatureUserInput
+): NormalisedSignInFormFeatureConfig {
+    if (config === undefined) {
+        config = {};
+    }
+
+    let userFormFields: FormField[] = [];
+    if (config.formFields !== undefined) {
+        userFormFields = config.formFields.reduce((acc: FormField[], field: FormFieldBaseConfig) => {
+            // Filter on email and password only.
+            if (!MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
+                return acc;
+            }
+            return [
+                ...acc,
+                {
+                    ...field,
+                    optional: false // Sign In fields are never optional.
+                }
+            ];
+        }, []);
+    }
+    const formFields = mergeFormFields(defaultFormFields, userFormFields);
+
+    let resetPasswordURL: NormalisedURLPath;
+    if (config.resetPasswordURL) {
+        resetPasswordURL = new NormalisedURLPath(config.resetPasswordURL);
+    } else {
+        resetPasswordURL = new NormalisedURLPath(`${appInfo.websiteBasePath}${DEFAULT_RESET_PASSWORD_PATH}`);
+    }
+
+    const style = config.style || {};
+
+    return {
+        style,
+        formFields,
+        resetPasswordURL
+    };
+}
+
+export function getDefaultFormFields(): NormalisedFormField[] {
+    return [
+        {
+            id: "email",
+            label: "Email",
+            placeholder: "youremail@example.com",
+            validate: defaultEmailValidator,
+            optional: false
+        },
+        {
+            id: "password",
+            label: "Password",
+            placeholder: "Enter your password",
+            validate: defaultPasswordValidator,
+            optional: false
+        }
+    ];
 }

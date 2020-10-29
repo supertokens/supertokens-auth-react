@@ -15,9 +15,10 @@
 
 import {
     APIFormField,
-    FeatureConfigBase,
+    FeatureBaseConfig,
     FormField,
     FormFieldBaseConfig,
+    NormalisedBaseConfig,
     NormalisedFormField,
     RecipeModuleConfig,
     RequestJson
@@ -26,20 +27,17 @@ import { API_RESPONSE_STATUS } from "../../constants";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
+import NormalisedURLPath from "../../normalisedURLPath";
 
 /*
- * EmailPassword enums.
- */
-
-/*
- * EmailPassword Config Types.
+ * EmailPassword User InputsConfig Types.
  */
 
 export type EmailPasswordUserInput = {
     /*
      * Sign In and Sign Up feature.
      */
-    signInAndUpFeature?: SignInAndUpConfig;
+    signInAndUpFeature?: SignInAndUpFeatureUserInput;
 
     /*
      * Reset password Using Token feature.
@@ -49,7 +47,19 @@ export type EmailPasswordUserInput = {
 
 export type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUserInput;
 
-export type SignInAndUpConfig = {
+export type NormalisedEmailPasswordConfig = {
+    /*
+     * Sign In and Sign Up feature.
+     */
+    signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
+
+    /*
+     * Reset password Using Token feature.
+     */
+    resetPasswordUsingTokenFeature?: any;
+};
+
+export type SignInAndUpFeatureUserInput = {
     /*
      * Disable default implementation with default routes.
      */
@@ -64,16 +74,16 @@ export type SignInAndUpConfig = {
      * SignUp form config.
      */
 
-    signUpForm?: SignUpFormFeatureConfig;
+    signUpForm?: SignUpFormFeatureUserInput;
 
     /*
      * SignIn form config.
      */
 
-    signInForm?: SignInFormFeatureConfig;
+    signInForm?: SignInFormFeatureUserInput;
 };
 
-export type SignInAndUp = {
+export type NormalisedSignInAndUpFeatureConfig = {
     /*
      * Disable default implementation with default routes.
      */
@@ -82,26 +92,22 @@ export type SignInAndUp = {
     /*
      * URL to redirect to in case disableDefaultImplemention is true
      */
-    onSuccessRedirectURL: string;
+    onSuccessRedirectURL: NormalisedURLPath;
 
     /*
      * SignUp form config.
      */
 
-    signUpForm?: SignUpFormFeatureConfig;
+    signUpForm: NormalisedSignUpFormFeatureConfig;
 
     /*
      * SignIn form config.
      */
 
-    signInForm?: SignInFormFeatureConfig;
+    signInForm: NormalisedSignInFormFeatureConfig;
 };
 
-export type FormFieldSignInConfig = FormFieldBaseConfig;
-
-export type FormFieldSignUpConfig = FormField;
-
-export type SignUpFormFeatureConfig = FeatureConfigBase & {
+export type SignUpFormFeatureUserInput = FeatureBaseConfig & {
     /*
      * Form fields for SignUp.
      */
@@ -118,7 +124,24 @@ export type SignUpFormFeatureConfig = FeatureConfigBase & {
     termsAndConditionsLink?: string;
 };
 
-export type SignInFormFeatureConfig = FeatureConfigBase & {
+export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
+    /*
+     * Normalised form fields for SignUp.
+     */
+    formFields: NormalisedFormField[];
+
+    /*
+     * Privacy policy link for sign up form.
+     */
+    privacyPolicyLink?: string;
+
+    /*
+     * Terms and conditions link for sign up form.
+     */
+    termsAndConditionsLink?: string;
+};
+
+export type SignInFormFeatureUserInput = FeatureBaseConfig & {
     /*
      * Form fields for SignUp.
      */
@@ -129,6 +152,22 @@ export type SignInFormFeatureConfig = FeatureConfigBase & {
      */
     resetPasswordURL?: string;
 };
+
+export type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
+    /*
+     * Form fields for SignUp.
+     */
+    formFields: NormalisedFormField[];
+
+    /*
+     * Link to the reset password URL in case disableDefaultImplemention is true.
+     */
+    resetPasswordURL: NormalisedURLPath;
+};
+
+export type FormFieldSignInConfig = FormFieldBaseConfig;
+
+export type FormFieldSignUpConfig = FormField;
 
 /*
  * Props Types.
@@ -188,7 +227,7 @@ export type SignInThemeProps = EmailPasswordThemeProps & {
     /*
      * Reset password URL for forgot password button.
      */
-    resetPasswordURL?: string;
+    resetPasswordURL?: NormalisedURLPath;
 };
 
 export type SignUpThemeProps = EmailPasswordThemeProps & {

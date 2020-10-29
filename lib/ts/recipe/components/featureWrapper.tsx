@@ -21,7 +21,7 @@ import * as React from "react";
 import root from "react-shadow/emotion";
 import { ST_ROOT_CONTAINER } from "../../constants";
 import ErrorBoundary from "./errorBoundary";
-import { defaultStyles } from "../../styles/styles";
+import { defaultStyles } from "../emailpassword/styles/styles";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";

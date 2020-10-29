@@ -21,8 +21,6 @@ import { CSSInterpolation } from "@emotion/serialize/types/index";
  * Recipe Module Manager Config Types.
  */
 
-export type ReactComponentClass = <T>(props: T) => JSX.Element;
-
 export type SuperTokensConfig = {
     /*
      * Configurations for authentication.
@@ -35,18 +33,7 @@ export type SuperTokensConfig = {
     recipeList: CreateRecipeFunction[];
 };
 
-export type RouteWithPathAndRecipeId = {
-    /*
-     * Normalised path.
-     */
-    path: NormalisedURLPath;
-
-    /*
-     * Unique Identifier of a module.
-     */
-    recipeId: string | null;
-};
-export type CreateRecipeFunction = (appInfo: AppInfo) => RecipeModule;
+export type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule;
 
 export type AppInfoUserInput = {
     /*
@@ -77,7 +64,7 @@ export type AppInfoUserInput = {
     websiteBasePath?: string;
 };
 
-export type AppInfo = {
+export type NormalisedAppInfo = {
     /*
      * The name of your application.
      */
@@ -108,11 +95,6 @@ export type AppInfo = {
 
 export type RecipeModuleConfig = {
     /*
-     * Features that the module responds to.
-     */
-    features: RouteToFeatureComponentMap;
-
-    /*
      * Unique Identifier of a module.
      */
     recipeId: string;
@@ -121,7 +103,7 @@ export type RecipeModuleConfig = {
      *
      * AppInfo as present in the recipe module manager
      */
-    appInfo: AppInfo;
+    appInfo: NormalisedAppInfo;
 };
 
 /*
@@ -129,6 +111,18 @@ export type RecipeModuleConfig = {
  */
 export type RouteToFeatureComponentMap = {
     [route: string]: ReactComponentClass;
+};
+
+export type RouteWithPathAndRecipeId = {
+    /*
+     * Normalised path.
+     */
+    path: NormalisedURLPath;
+
+    /*
+     * Unique Identifier of a module.
+     */
+    recipeId: string | null;
 };
 
 export type ComponentWithRecipeId = {
@@ -146,15 +140,23 @@ export type ComponentWithRecipeId = {
 export type PathToComponentWithRecipeIdMap = {
     [path: string]: ComponentWithRecipeId[];
 };
+
 /*
  * Features Config Types.
  */
 
-export type FeatureConfigBase = {
+export type FeatureBaseConfig = {
     /*
      * Additional styles to override themes.
      */
     style?: { [key: string]: CSSInterpolation };
+};
+
+export type NormalisedBaseConfig = {
+    /*
+     * Additional styles to override themes.
+     */
+    style: { [key: string]: CSSInterpolation };
 };
 
 export type FormFieldBaseConfig = {
@@ -234,3 +236,5 @@ export type NormalisedFormField = {
      */
     optional: boolean;
 };
+
+export type ReactComponentClass = <T>(props: T) => JSX.Element;

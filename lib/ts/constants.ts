@@ -44,3 +44,5 @@ export const DEFAULT_WEBSITE_BASE_PATH = "/auth";
 export const ST_ROOT_CONTAINER = "supertokens-root";
 
 export const MANDATORY_FORM_FIELDS_ID_ARRAY = (<any>Object).values(MANDATORY_FORM_FIELDS_ID);
+
+export const DEFAULT_RESET_PASSWORD_PATH = "/reset-password";

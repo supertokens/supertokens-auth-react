@@ -22,7 +22,7 @@ import {
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfo, AppInfoUserInput, FormField, NormalisedFormField } from "./types";
+import { APIFormField, AppInfoUserInput, FormField, NormalisedAppInfo, NormalisedFormField } from "./types";
 
 /*
  * getRecipeIdFromPath
@@ -101,7 +101,7 @@ export function mergeFormFields(
     return mergedFormFields;
 }
 
-export function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): AppInfo {
+export function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): NormalisedAppInfo {
     if (appInfo === undefined) {
         throw new Error("Please provide the appInfo object when calling supertokens.init");
     }
@@ -202,4 +202,11 @@ export function openExternalLink(link?: string) {
     }
 
     window.open(link, "_blank");
+}
+
+/*
+ * getCurrentNormalisedUrlPath
+ */
+export function getCurrentNormalisedUrlPath() {
+    return new NormalisedURLPath(window.location.pathname);
 }

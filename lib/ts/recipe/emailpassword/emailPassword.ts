@@ -19,24 +19,23 @@
 import RecipeModule from "../recipeModule";
 import {
     CreateRecipeFunction,
-    AppInfo,
     RouteToFeatureComponentMap,
     RequestJson,
-    NormalisedFormField
+    NormalisedAppInfo,
+    APIFormField
 } from "../../types";
 import {
     EmailPasswordConfig,
-    SignInAndUpConfig,
-    SignInFormFeatureConfig,
-    SignUpFormFeatureConfig,
-    EmailPasswordUserInput
+    EmailPasswordUserInput,
+    FormFieldError,
+    NormalisedEmailPasswordConfig,
+    NormalisedSignUpFormFeatureConfig
 } from "./types";
-import { isTest } from "../../utils";
-import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
-import SignInFeature from "./signInFeature";
-import SignUpFeature from "./signUpFeature";
-import SignInAndUp from "./components/SignInAndUp";
+import { isTest, validateFormOrThrow } from "../../utils";
 import HttpRequest from "../../httpRequest";
+import { normaliseEmailPasswordConfigOrThrow } from "./utils";
+import { SignInAndUp } from ".";
+import NormalisedURLPath from "../../normalisedURLPath";
 
 /*
  * Class.
@@ -50,58 +49,25 @@ export default class EmailPassword extends RecipeModule {
     /*
      * Instance Attributes.
      */
-    private signInFeature: SignInFeature;
-    private signUpFeature: SignUpFeature;
-    private onSuccessRedirectURL: string;
+    private config: NormalisedEmailPasswordConfig;
+
     private httpRequest: HttpRequest;
 
     /*
      * Constructor.
      */
-    constructor(config: EmailPasswordConfig, features: RouteToFeatureComponentMap = {}) {
+    constructor(config: EmailPasswordConfig) {
         super(config);
-
-        const signInAndUpConfig = EmailPassword.getSignInAndUpConfig(config);
-        if (signInAndUpConfig !== undefined && signInAndUpConfig.onSuccessRedirectURL !== undefined) {
-            this.onSuccessRedirectURL = signInAndUpConfig.onSuccessRedirectURL;
-        } else {
-            this.onSuccessRedirectURL = "/";
-        }
-
+        this.config = normaliseEmailPasswordConfigOrThrow(config);
         this.httpRequest = new HttpRequest(config.appInfo);
-
-        let signUpForm: SignUpFormFeatureConfig | undefined = undefined;
-        let signInForm: SignInFormFeatureConfig | undefined = undefined;
-        if (signInAndUpConfig !== undefined) {
-            signUpForm = signInAndUpConfig.signUpForm;
-            signInForm = signInAndUpConfig.signInForm;
-        }
-
-        this.signUpFeature = new SignUpFeature(signUpForm);
-
-        /*
-         * Default Sign In corresponds tocomputed Sign Up fields filtered by email and password only.
-         * i.e. If the user overrides sign Up fields, that is propagated to default sign In fields.
-         */
-        const defaultSignInFields: NormalisedFormField[] = this.signUpFeature.formFields.filter(field => {
-            return MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id);
-        });
-        this.signInFeature = new SignInFeature(defaultSignInFields, signInForm);
     }
 
     /*
      * Instance methods.
      */
-    getSignInFeature = (): SignInFeature => {
-        return this.signInFeature;
-    };
 
-    getSignUpFeature = (): SignUpFeature => {
-        return this.signUpFeature;
-    };
-
-    getOnSuccessRedirectURL = (): string => {
-        return this.onSuccessRedirectURL;
+    getConfig = (): NormalisedEmailPasswordConfig => {
+        return this.config;
     };
 
     signUpApi = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
@@ -118,32 +84,34 @@ export default class EmailPassword extends RecipeModule {
         });
     };
 
+    async signUpValidate(input: APIFormField[]): Promise<FormFieldError[]> {
+        return await validateFormOrThrow(input, this.config.signInAndUpFeature.signUpForm.formFields);
+    }
+
+    async signInValidate(input: APIFormField[]): Promise<FormFieldError[]> {
+        return await validateFormOrThrow(input, this.config.signInAndUpFeature.signInForm.formFields);
+    }
+
+    getFeatures = (): RouteToFeatureComponentMap => {
+        let features: RouteToFeatureComponentMap = {};
+        if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
+            let normalisedFullPath = this.getAppInfo().websiteBasePath.appendPath(new NormalisedURLPath("/"));
+            features[normalisedFullPath.getAsStringDangerous()] = SignInAndUp;
+        }
+
+        // TODO Forgot Password.
+        return features;
+    };
+
     /*
      * Static methods.
      */
 
     static init(config?: EmailPasswordUserInput): CreateRecipeFunction {
-        return (appInfo: AppInfo): RecipeModule => {
-            /*
-             * This needs to happen before the constructor is called
-             * See https://github.com/microsoft/TypeScript/issues/8277
-             */
-            let features: RouteToFeatureComponentMap = {};
-
-            if (config === undefined) config = {};
-
-            const signInAndUpConfig = EmailPassword.getSignInAndUpConfig(config);
-
-            if (!EmailPassword.hasDisabledSignInAndUpDefaultImplementation(signInAndUpConfig)) {
-                features = {
-                    "/": SignInAndUp
-                };
-            }
-
+        return (appInfo: NormalisedAppInfo): RecipeModule => {
             EmailPassword.instance = new EmailPassword({
                 ...config,
                 appInfo,
-                features,
                 recipeId: "email-password"
             });
             return EmailPassword.instance;
@@ -156,22 +124,6 @@ export default class EmailPassword extends RecipeModule {
         }
 
         return EmailPassword.instance;
-    }
-
-    static getSignInAndUpConfig(config: EmailPasswordUserInput): SignInAndUpConfig | undefined {
-        if (config === undefined) {
-            return undefined;
-        }
-
-        return config.signInAndUpFeature;
-    }
-
-    static hasDisabledSignInAndUpDefaultImplementation(signInAndUpConfig?: SignInAndUpConfig): boolean {
-        if (signInAndUpConfig === undefined) {
-            return false;
-        }
-
-        return signInAndUpConfig.disableDefaultImplementation === true;
     }
 
     /*

@@ -20,8 +20,8 @@ import { CreateRecipeFunction } from "../../types";
 import { EmailPasswordConfig } from "./types";
 
 import EmailPassword from "./emailPassword";
-import SignInAndUp from "./components/SignInAndUp";
-import SignInAndUpTheme from "./components/SignInAndUpTheme";
+import SignInAndUp from "./components/signInAndUp/SignInAndUp";
+import SignInAndUpTheme from "./components/signInAndUp/themes/default";
 /*
  * Class.
  */

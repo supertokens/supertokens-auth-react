@@ -13,54 +13,53 @@
  * under the License.
  */
 import NormalisedURLPath from "./normalisedURLPath";
-import { AppInfo } from "./types";
-import { package_version } from "./version";
+import { NormalisedAppInfo } from "./types";
 
 export default class HttpRequest {
     /*
      * Instance Attributes.
      */
-    private appInfo: AppInfo;
+    private appInfo: NormalisedAppInfo;
 
     /*
      * Constructor.
      */
-    constructor(appInfo: AppInfo) {
+    constructor(appInfo: NormalisedAppInfo) {
         this.appInfo = appInfo;
     }
 
     /*
      * Instance Methods.
      */
-    get = async (path: string, config?: RequestInit) => {
+    get = async (path: string, config: RequestInit) => {
         return await this.fetch(this.getFullUrl(path), {
             method: "GET",
             ...config
         });
     };
 
-    post = async (path: string, config?: RequestInit) => {
+    post = async (path: string, config: RequestInit) => {
         return await this.fetch(this.getFullUrl(path), {
             method: "POST",
             ...config
         });
     };
 
-    delete = async (path: string, config?: RequestInit) => {
+    delete = async (path: string, config: RequestInit) => {
         return await this.fetch(this.getFullUrl(path), {
             method: "DELETE",
             ...config
         });
     };
 
-    put = async (path: string, config?: RequestInit) => {
+    put = async (path: string, config: RequestInit) => {
         return await this.fetch(this.getFullUrl(path), {
             method: "PUT",
             ...config
         });
     };
 
-    fetch = async (url: RequestInfo, config?: RequestInit) => {
+    fetch = async (url: RequestInfo, config: RequestInit) => {
         let headers;
         if (config === undefined) {
             headers = {};
@@ -72,8 +71,7 @@ export default class HttpRequest {
             ...config,
             headers: {
                 ...headers,
-                "Content-Type": "application/json",
-                "supertokens-auth-react-version": package_version
+                "Content-Type": "application/json"
             }
         });
     };

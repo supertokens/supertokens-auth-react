@@ -1,10 +1,12 @@
+import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfo, AppInfoUserInput, FormField, NormalisedFormField } from "./types";
+import { APIFormField, AppInfoUserInput, FormField, NormalisedAppInfo, NormalisedFormField } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function isTest(): boolean;
 export declare function mergeFormFields(defaultFormFields: NormalisedFormField[], userFormFields: FormField[]): NormalisedFormField[];
-export declare function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): AppInfo;
+export declare function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): NormalisedAppInfo;
 export declare function validateFormOrThrow(inputs: APIFormField[], configFormFields: NormalisedFormField[]): Promise<FormFieldError[]>;
 export declare function capitalize(value: string): string;
 export declare function defaultValidate(value: string): Promise<string | undefined>;
 export declare function openExternalLink(link?: string): void;
+export declare function getCurrentNormalisedUrlPath(): NormalisedURLPath;

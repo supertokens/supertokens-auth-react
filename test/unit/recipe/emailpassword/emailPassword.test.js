@@ -20,9 +20,11 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import EmailPassword from "../../../../lib/build/recipe/emailpassword/emailPassword";
+import {getDefaultFormFields} from "../../../../lib/build/recipe/emailpassword/utils"
 import assert from "assert";
 import SuperTokens from "../../../../lib/build/SuperTokens";
 import { defaultValidate } from "../../../../lib/build/utils";
+import NormalisedURLPath from "../../../../lib/build/normalisedURLPath";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -52,23 +54,17 @@ describe("EmailPassword", function() {
         EmailPassword.init()(SuperTokens.getAppInfo());
         assert.deepStrictEqual(
             EmailPassword.getInstanceOrThrow()
-                .getSignUpFeature()
-                .getFormFields(),
-            EmailPassword.getInstanceOrThrow()
-                .getSignUpFeature()
-                .getDefaultFormFields()
+                .getConfig().signInAndUpFeature.signUpForm.formFields,
+            getDefaultFormFields()
         );
         assert.deepStrictEqual(
             EmailPassword.getInstanceOrThrow()
-                .getSignInFeature()
-                .getFormFields(),
-            EmailPassword.getInstanceOrThrow()
-                .getSignUpFeature()
-                .getDefaultFormFields()
+                .getConfig().signInAndUpFeature.signInForm.formFields,
+            getDefaultFormFields()
         );
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] !== undefined);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getRecipeId(), "email-password");
-        assert.strictEqual(EmailPassword.getInstanceOrThrow().getOnSuccessRedirectURL(), "/");
+        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL.getAsStringDangerous(), new NormalisedURLPath("/").getAsStringDangerous());
     });
 
     it("Initializing EmailPassword with onSuccessRedirectURL and disable default implementation for signInAndUp", async function() {
@@ -86,7 +82,8 @@ describe("EmailPassword", function() {
             }
         })(SuperTokens.getAppInfo());
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/"] === undefined);
-        assert.strictEqual(EmailPassword.getInstanceOrThrow().getOnSuccessRedirectURL(), onSuccessRedirectURL);
+        const normalisedOnSuccessRedirectURL = new NormalisedURLPath(onSuccessRedirectURL);
+        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL.getAsStringDangerous(), normalisedOnSuccessRedirectURL.getAsStringDangerous());
     });
 
     it("Initializing EmailPassword with optional custom Fields for SignUp", async function() {
@@ -106,15 +103,10 @@ describe("EmailPassword", function() {
         // Default Sign Up fields + Custom fields.
         assert.deepStrictEqual(
             EmailPassword.getInstanceOrThrow()
-                .getSignUpFeature()
-                .getFormFields(),
+                .getConfig().signInAndUpFeature.signUpForm.formFields,
             [
-                EmailPassword.getInstanceOrThrow()
-                    .getSignUpFeature()
-                    .getDefaultFormFields()[0],
-                EmailPassword.getInstanceOrThrow()
-                    .getSignUpFeature()
-                    .getDefaultFormFields()[1],
+                getDefaultFormFields()[0],
+                getDefaultFormFields()[1],
                 {
                     validate: defaultValidate,
                     ...companyCustomField
@@ -124,15 +116,11 @@ describe("EmailPassword", function() {
         // Sign In fields unchanged.
         assert.deepStrictEqual(
             EmailPassword.getInstanceOrThrow()
-                .getSignInFeature()
-                .getFormFields(),
+                .getConfig().signInAndUpFeature.signInForm
+                .formFields,
             [
-                EmailPassword.getInstanceOrThrow()
-                    .getSignUpFeature()
-                    .getDefaultFormFields()[0],
-                EmailPassword.getInstanceOrThrow()
-                    .getSignUpFeature()
-                    .getDefaultFormFields()[1]
+                getDefaultFormFields()[0],
+                getDefaultFormFields()[1]
             ]
         );
     });
@@ -155,36 +143,31 @@ describe("EmailPassword", function() {
         // Default Sign Up fields + Custom fields.
         assert.deepStrictEqual(
             EmailPassword.getInstanceOrThrow()
-                .getSignUpFeature()
-                .getFormFields(),
+                .getConfig().signInAndUpFeature.signUpForm.formFields,
             [
                 companyEmailField,
-                EmailPassword.getInstanceOrThrow()
-                    .getSignUpFeature()
-                    .getDefaultFormFields()[1]
+                getDefaultFormFields()[1]
             ]
         );
         const signUpEmailValidateError = await EmailPassword.getInstanceOrThrow()
-            .getSignUpFeature()
-            .getFormFields()[0]
+            .getConfig().signInAndUpFeature.signUpForm
+            .formFields[0]
             .validate("foo");
         assert.strictEqual(signUpEmailValidateError, "Custom Email");
 
         // Sign In fields changed.
         assert.deepStrictEqual(
             EmailPassword.getInstanceOrThrow()
-                .getSignInFeature()
-                .getFormFields(),
+                .getConfig().signInAndUpFeature.signInForm
+                .formFields,
             [
                 companyEmailField,
-                EmailPassword.getInstanceOrThrow()
-                    .getSignUpFeature()
-                    .getDefaultFormFields()[1]
+                getDefaultFormFields()[1]
             ]
         );
         const signInEmailValidateError = await EmailPassword.getInstanceOrThrow()
-            .getSignInFeature()
-            .getFormFields()[0]
+            .getConfig().signInAndUpFeature.signInForm
+            .formFields[0]
             .validate("foo");
         assert.strictEqual(signInEmailValidateError, "Custom Email");
     });
@@ -216,29 +199,24 @@ describe("EmailPassword", function() {
         // Sign Up fields unchanged.
         assert.deepStrictEqual(
             EmailPassword.getInstanceOrThrow()
-                .getSignUpFeature()
-                .getFormFields(),
-            EmailPassword.getInstanceOrThrow()
-                .getSignUpFeature()
-                .getDefaultFormFields()
+                .getConfig().signInAndUpFeature.signUpForm.formFields,
+            getDefaultFormFields()
         );
 
         // Sign In email field changed only.
         assert.deepStrictEqual(
             EmailPassword.getInstanceOrThrow()
-                .getSignInFeature()
-                .getFormFields(),
+                .getConfig().signInAndUpFeature.signInForm
+                .formFields,
             [
                 customEmailField,
-                EmailPassword.getInstanceOrThrow()
-                    .getSignUpFeature()
-                    .getDefaultFormFields()[1]
+                getDefaultFormFields()[1]
             ]
         );
 
         const signInEmailValidateError = await EmailPassword.getInstanceOrThrow()
-            .getSignInFeature()
-            .getFormFields()[0]
+            .getConfig().signInAndUpFeature.signInForm
+            .formFields[0]
             .validate("foo");
         assert.strictEqual(signInEmailValidateError, "Custom Email Error");
     });
