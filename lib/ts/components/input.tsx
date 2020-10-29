@@ -85,9 +85,7 @@ function Input(props: InputProps, ref: RefObject<any>): JSX.Element {
         <div css={[defaultStyles.inputWrapper, style, errorStyle]}>
             <input
                 css={defaultStyles.input}
-                onBlur={handleChange}
-                onPaste={handleChange}
-                onCut={handleChange}
+                onFocus={handleChange}
                 type={type}
                 name={name}
                 placeholder={placeholder}
