@@ -109,7 +109,8 @@ export const defaultStyles = {
         float: "right",
         width: "10%",
         borderRadius: "12px",
-        display: "flex"
+        display: "flex",
+        alignItems: "center"
     } as CSSInterpolation,
 
     inputErrorMessage: {

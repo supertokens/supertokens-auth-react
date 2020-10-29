@@ -19,8 +19,8 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-const Checked = require("../../../assets/images/checked.svg") as string;
-const Error = require("../../../assets/images/error.svg") as string;
+const Checked = require("../../../assets/images/checked.svg");
+const Error = require("../../../assets/images/error.svg");
 import * as React from "react";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { defaultStyles } from "../styles/styles";
@@ -51,8 +51,8 @@ export default function InputAdornment(props: InputAdornmentProps): JSX.Element 
      */
     return (
         <div css={[defaultStyles.inputAdornment, style]}>
-            {type === "success" && <img src={Checked} alt="" />}
-            {type === "error" && <img src={Error} alt="" />}
+            {type === "success" && <Checked />}
+            {type === "error" && <Error />}
         </div>
     );
 }
