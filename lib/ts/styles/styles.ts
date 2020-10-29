@@ -22,10 +22,11 @@ export const palette = {
     colors: {
         background: "white",
         inputBackground: "#f2f2f2",
-        primary: "#222222",
+        primary: "#ff9b33",
         secondary: "#656565",
         link: "#0076ff",
-        error: "#ff1717"
+        error: "#ff1717",
+        textPrimary: "#222222"
     },
 
     fonts: {
@@ -39,7 +40,6 @@ export const palette = {
 
 export const defaultStyles = {
     root: {
-        minHeight: "550px",
         margin: "26px"
     } as CSSInterpolation,
 
@@ -84,6 +84,10 @@ export const defaultStyles = {
         borderRadius: "12px",
         border: "1px solid #dddddd",
         width: "100%",
+        "&:focus-within": {
+            border: `1px solid ${palette.colors.primary}`,
+            outline: "none"
+        },
         height: "42px"
     } as CSSInterpolation,
 
@@ -124,7 +128,7 @@ export const defaultStyles = {
     button: {
         width: "100%",
         height: "42px",
-        backgroundColor: "#ff9933",
+        backgroundColor: palette.colors.primary,
         color: "white",
         fontWeight: 700,
         borderWidth: "0px",

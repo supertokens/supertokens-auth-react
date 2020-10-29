@@ -7,6 +7,7 @@ export declare const palette: {
         secondary: string;
         link: string;
         error: string;
+        textPrimary: string;
     };
     fonts: {
         size: number[];

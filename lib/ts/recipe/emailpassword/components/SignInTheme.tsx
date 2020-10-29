@@ -37,7 +37,7 @@ const styles = {
         lineHeight: "40px",
         letterSpacing: "0.58px",
         fontWeight: 800,
-        color: palette.colors.primary
+        color: palette.colors.textPrimary
     } as CSSInterpolation,
 
     headerSubTitle: {

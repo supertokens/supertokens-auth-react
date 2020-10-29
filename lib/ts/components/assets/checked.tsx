@@ -19,40 +19,26 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import Checked from "./assets/checked";
-import Error from "./assets/error";
+
 import * as React from "react";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
-import { defaultStyles } from "../styles/styles";
-
-export type AdornmentType = "success" | "error" | undefined;
-
-/*
- * Props.
- */
-
-type InputAdornmentProps = {
-    style?: CSSInterpolation;
-    type: AdornmentType;
-};
+import { palette } from "../../styles/styles";
 
 /*
  * Component.
  */
 
-export default function InputAdornment(props: InputAdornmentProps): JSX.Element {
-    /*
-     * Props.
-     */
-    let { type, style } = props;
-
-    /*
-     * Render.
-     */
+export default function Checked({ color }: { color?: string }): JSX.Element {
+    if (color === undefined) {
+        color = palette.colors.primary;
+    }
     return (
-        <div css={[defaultStyles.inputAdornment, style]}>
-            {type === "success" && <Checked />}
-            {type === "error" && <Error />}
-        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+            <path
+                id="checked"
+                fill={color}
+                d="M10 0a10 10 0 1 0 10 10A10 10 0 0 0 10 0zM8.166 15.137l-4.4-4.4L5.23 9.266 8.166 12.2l6.6-6.6 1.468 1.468z"
+                data-name="checked (3)"
+            />
+        </svg>
     );
 }
