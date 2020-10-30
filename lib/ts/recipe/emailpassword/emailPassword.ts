@@ -24,13 +24,7 @@ import {
     NormalisedAppInfo,
     APIFormField
 } from "../../types";
-import {
-    EmailPasswordConfig,
-    EmailPasswordUserInput,
-    FormFieldError,
-    NormalisedEmailPasswordConfig,
-    NormalisedSignUpFormFeatureConfig
-} from "./types";
+import { EmailPasswordConfig, EmailPasswordUserInput, FormFieldError, NormalisedEmailPasswordConfig } from "./types";
 import { isTest, validateFormOrThrow } from "../../utils";
 import HttpRequest from "../../httpRequest";
 import { normaliseEmailPasswordConfigOrThrow } from "./utils";

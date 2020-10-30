@@ -21,16 +21,25 @@ import * as React from "react";
 import root from "react-shadow/emotion";
 import { ST_ROOT_CONTAINER } from "../../constants";
 import ErrorBoundary from "./errorBoundary";
-import { defaultStyles } from "../emailpassword/styles/styles";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
+import { NormalisedDefaultStyles } from "../emailpassword/types";
+
+/*
+ * Props.
+ */
+
+type FeatureWrapperProps = {
+    defaultStyles: NormalisedDefaultStyles;
+    children: JSX.Element;
+};
 
 /*
  * Component.
  */
 
-export default function FeatureWrapper({ children }: { children: JSX.Element }): JSX.Element {
+export default function FeatureWrapper({ children, defaultStyles }: FeatureWrapperProps): JSX.Element {
     /*
      * Render.
      */

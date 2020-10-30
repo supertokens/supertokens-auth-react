@@ -1,4 +1,4 @@
 /// <reference types="react" />
 export default function Error({ color }: {
-    color?: string;
+    color: string;
 }): JSX.Element;

@@ -21,20 +21,16 @@
 import { jsx } from "@emotion/core";
 
 import * as React from "react";
-import { palette } from "../styles/styles";
 
 /*
  * Component.
  */
 
-export default function Error({ color }: { color?: string }): JSX.Element {
-    if (color === undefined) {
-        color = palette.colors.error;
-    }
+export default function Error({ color }: { color: string }): JSX.Element {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
             <g>
-                <g fill="#ff1717">
+                <g fill={color}>
                     <path
                         d="M15.683 17.75H3.317c-.619 0-1.18-.316-1.499-.846-.32-.53-.338-1.174-.049-1.72L7.952 3.467c.309-.584.887-.933 1.548-.933.66 0 1.24.349 1.548.933l6.183 11.715c.289.547.27 1.19-.05 1.72-.319.53-.88.847-1.498.847z"
                         transform="translate(-789 -316) translate(789 316)"

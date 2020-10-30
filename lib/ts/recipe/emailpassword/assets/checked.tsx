@@ -21,16 +21,12 @@
 import { jsx } from "@emotion/core";
 
 import * as React from "react";
-import { palette } from "../styles/styles";
 
 /*
  * Component.
  */
 
-export default function Checked({ color }: { color?: string }): JSX.Element {
-    if (color === undefined) {
-        color = palette.colors.primary;
-    }
+export default function Checked({ color }: { color: string }): JSX.Element {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
             <path

@@ -23,7 +23,7 @@ import Checked from "../../assets/checked";
 import Error from "../../assets/error";
 import * as React from "react";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
-import { defaultStyles } from "../../styles/styles";
+import { NormalisedDefaultStyles, NormalisedPalette } from "../../types";
 
 export type AdornmentType = "success" | "error" | undefined;
 
@@ -34,25 +34,23 @@ export type AdornmentType = "success" | "error" | undefined;
 type InputAdornmentProps = {
     style?: CSSInterpolation;
     type: AdornmentType;
+    defaultStyles: NormalisedDefaultStyles;
+    palette: NormalisedPalette;
 };
 
 /*
  * Component.
  */
 
-export default function InputAdornment(props: InputAdornmentProps): JSX.Element {
-    /*
-     * Props.
-     */
-    let { type, style } = props;
-
+export default function InputAdornment({ type, style, defaultStyles, palette }: InputAdornmentProps): JSX.Element {
     /*
      * Render.
      */
+
     return (
         <div className="inputAdornment" css={[defaultStyles.inputAdornment, style]}>
-            {type === "success" && <Checked />}
-            {type === "error" && <Error />}
+            {type === "success" && <Checked color={palette.colors.primary} />}
+            {type === "error" && <Error color={palette.colors.error} />}
         </div>
     );
 }

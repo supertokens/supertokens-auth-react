@@ -5,11 +5,13 @@ import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 export declare type EmailPasswordUserInput = {
+    palette?: PaletteUserInput;
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: any;
 };
 export declare type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUserInput;
 export declare type NormalisedEmailPasswordConfig = {
+    palette: NormalisedPalette;
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature?: any;
 };
@@ -63,6 +65,8 @@ declare type EmailPasswordThemeProps = {
         [key: string]: CSSInterpolation;
     };
     formFields: FormFieldThemeProps[];
+    defaultStyles: NormalisedDefaultStyles;
+    palette: NormalisedPalette;
 };
 export declare type SignInThemeProps = EmailPasswordThemeProps & {
     signUpClicked?: () => void;
@@ -107,5 +111,53 @@ export declare type FormFieldState = FormFieldThemeProps & {
     validated: boolean;
     ref: RefObject<HTMLInputElement>;
     showIsRequired: boolean;
+};
+declare enum paletteColorOptions {
+    BACKGROUND = "background",
+    INPUTBACKGROUND = "inputBackground",
+    PRIMARY = "primary",
+    ERROR = "error",
+    TEXTPRIMARY = "textPrimary",
+    TEXTSECONDARY = "textSecondary",
+    TEXTLINK = "textLink"
+}
+export declare type PaletteUserInput = {
+    colors?: {
+        [key in paletteColorOptions]: string;
+    };
+    fonts?: {
+        size: string[];
+    };
+};
+export declare type NormalisedPalette = {
+    colors: {
+        [key in paletteColorOptions]: string;
+    };
+    fonts: {
+        size: string[];
+    };
+};
+declare enum defaultStylesOptions {
+    ROOT = "root",
+    CONTAINER = "container",
+    ROW = "row",
+    GENERALERROR = "generalError",
+    INPUTWRAPPER = "inputWrapper",
+    INPUT = "input",
+    INPUTERROR = "inputError",
+    INPUTADORNMENT = "inputAdornment",
+    INPUTERRORMESSAGE = "inputErrorMessage",
+    BUTTON = "button",
+    LABEL = "label",
+    FORMROW = "formRow",
+    SECONDARYTEXT = "secondaryText",
+    LINK = "link",
+    DIVIDER = "divider"
+}
+export declare type DefaultStylesUserInput = {
+    [key in defaultStylesOptions]?: CSSInterpolation;
+};
+export declare type NormalisedDefaultStyles = {
+    [key in defaultStylesOptions]: CSSInterpolation;
 };
 export {};

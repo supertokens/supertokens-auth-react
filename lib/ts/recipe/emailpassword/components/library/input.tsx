@@ -23,10 +23,10 @@ import { jsx } from "@emotion/core";
 import * as React from "react";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { forwardRef, RefObject } from "react";
-import { defaultStyles } from "../../styles/styles";
 import { APIFormField } from "../../../../types";
 import { InputAdornment } from ".";
 import { AdornmentType } from "./inputAdornment";
+import { NormalisedDefaultStyles, NormalisedPalette } from "../../types";
 
 /*
  * Props.
@@ -41,6 +41,8 @@ type InputProps = {
     name: string;
     hasError: boolean;
     placeholder: string;
+    defaultStyles: NormalisedDefaultStyles;
+    palette: NormalisedPalette;
     ref: RefObject<any>;
     onChange?: (field: APIFormField) => void;
 };
@@ -49,12 +51,22 @@ type InputProps = {
  * Component.
  */
 
-function Input(props: InputProps, ref: RefObject<any>): JSX.Element {
-    /*
-     * Props.
-     */
-    let { style, type, name, hasError, errorStyle, adornmentStyle, onChange, placeholder, validated } = props;
-
+function Input(
+    {
+        style,
+        type,
+        name,
+        hasError,
+        adornmentStyle,
+        onChange,
+        placeholder,
+        validated,
+        defaultStyles,
+        palette,
+        errorStyle
+    }: InputProps,
+    ref: RefObject<any>
+): JSX.Element {
     if (hasError !== true) {
         errorStyle = undefined;
     } else {
@@ -70,6 +82,7 @@ function Input(props: InputProps, ref: RefObject<any>): JSX.Element {
     /*
      * Method.
      */
+
     function handleChange() {
         if (onChange) {
             onChange({
@@ -92,7 +105,12 @@ function Input(props: InputProps, ref: RefObject<any>): JSX.Element {
                 placeholder={placeholder}
                 ref={ref}
             />
-            <InputAdornment style={adornmentStyle} type={adornmentType} />
+            <InputAdornment
+                defaultStyles={defaultStyles}
+                palette={palette}
+                style={adornmentStyle}
+                type={adornmentType}
+            />
         </div>
     );
 }

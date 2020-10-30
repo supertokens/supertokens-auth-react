@@ -21,7 +21,7 @@
 import { jsx } from "@emotion/core";
 import * as React from "react";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
-import { defaultStyles } from "../../styles/styles";
+import { NormalisedDefaultStyles } from "../../types";
 
 /*
  * Props.
@@ -30,14 +30,14 @@ import { defaultStyles } from "../../styles/styles";
 type FormRowProps = {
     style: CSSInterpolation;
     children: JSX.Element;
+    defaultStyles: NormalisedDefaultStyles;
 };
 
 /*
  * Component.
  */
 
-export default function FormRow(props: FormRowProps): JSX.Element {
-    const { style, children } = props;
+export default function FormRow({ style, children, defaultStyles }: FormRowProps): JSX.Element {
     return (
         <div className="formRow" css={[defaultStyles.formRow, style]}>
             {children}

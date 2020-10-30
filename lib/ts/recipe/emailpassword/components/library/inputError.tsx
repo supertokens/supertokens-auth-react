@@ -21,7 +21,7 @@
 import { jsx } from "@emotion/core";
 import * as React from "react";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
-import { defaultStyles } from "../../styles/styles";
+import { NormalisedDefaultStyles } from "../../types";
 
 /*
  * Props.
@@ -30,14 +30,18 @@ import { defaultStyles } from "../../styles/styles";
 type InputErrorProps = {
     style: CSSInterpolation;
     error: string;
+    defaultStyles: NormalisedDefaultStyles;
 };
 
 /*
  * Component.
  */
 
-export default function InputError(props: InputErrorProps): JSX.Element {
-    const { style, error } = props;
+export default function InputError({ style, error, defaultStyles }: InputErrorProps): JSX.Element {
+    /*
+     * Render.
+     */
+
     return (
         <div className="inputErrorMessage" css={[defaultStyles.inputErrorMessage, style]}>
             {error}

@@ -18,7 +18,14 @@
  */
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { SignInThemeResponse, EmailPasswordProps, User, SignUpThemeResponse } from "../../types";
+import {
+    SignInThemeResponse,
+    EmailPasswordProps,
+    User,
+    SignUpThemeResponse,
+    NormalisedDefaultStyles,
+    NormalisedPalette
+} from "../../types";
 import EmailPassword from "../../emailPassword";
 import { SignInAndUpTheme } from "../..";
 import { APIFormField, RequestJson } from "../../../../types";
@@ -27,6 +34,7 @@ import FeatureWrapper from "../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
+import { getDefaultStyles } from "../../styles/styles";
 
 /*
  * Component.
@@ -262,13 +270,18 @@ function SignInAndUp(props: EmailPasswordProps) {
 
     const signInFeature = getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm;
 
+    const defaultStyles: NormalisedDefaultStyles = getDefaultStyles(getRecipeInstanceOrThrow().getConfig().palette);
+    const palette: NormalisedPalette = getRecipeInstanceOrThrow().getConfig().palette;
+
     const signInForm = {
         styleFromInit: signInFeature.style,
         formFields: signInFeature.formFields,
         resetPasswordURL: signInFeature.resetPasswordURL,
         callAPI: signInAPI,
         onSuccess: onSignInSuccess,
-        forgotPasswordClick: onHandleForgotPasswordClicked
+        forgotPasswordClick: onHandleForgotPasswordClicked,
+        defaultStyles,
+        palette
     };
 
     const signUpForm = {
@@ -277,19 +290,25 @@ function SignInAndUp(props: EmailPasswordProps) {
         privacyPolicyLink: signUpFeature.privacyPolicyLink,
         termsAndConditionsLink: signUpFeature.termsAndConditionsLink,
         onSuccess: onSignUpSuccess,
-        callAPI: signUpAPI
+        callAPI: signUpAPI,
+        defaultStyles,
+        palette
     };
 
     /*
      * Render.
      */
     return (
-        <FeatureWrapper>
+        <FeatureWrapper defaultStyles={defaultStyles}>
             <>
                 {/* No custom theme, use default. */}
                 {props.children === undefined && <SignInAndUpTheme signInForm={signInForm} signUpForm={signUpForm} />}
                 {/* Otherwise, custom theme is provided, propagate props. */}
-                {props.children && React.cloneElement(props.children, { signInForm, signUpForm })}
+                {props.children &&
+                    React.cloneElement(props.children, {
+                        signInForm,
+                        signUpForm
+                    })}
             </>
         </FeatureWrapper>
     );

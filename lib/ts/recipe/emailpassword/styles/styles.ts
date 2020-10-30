@@ -16,9 +16,9 @@
 /*
  * Palette
  */
-import { CSSInterpolation } from "@emotion/serialize/types";
+import { NormalisedDefaultStyles, NormalisedPalette } from "../types";
 
-export const palette = {
+export const defaultPalette: NormalisedPalette = {
     colors: {
         background: "white",
         inputBackground: "#f2f2f2",
@@ -30,7 +30,7 @@ export const palette = {
     },
 
     fonts: {
-        size: [14, 16, 28]
+        size: ["14px", "16px", "28px"]
     }
 };
 
@@ -38,148 +38,151 @@ export const palette = {
  * Default styles.
  */
 
-export const defaultStyles = {
-    root: {
-        margin: "26px"
-    } as CSSInterpolation,
+export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
+    return {
+        root: {
+            margin: "26px"
+        },
 
-    container: {
-        maxWidth: "524px",
-        width: "60vw",
-        margin: "0 auto",
-        minWidth: "420px",
-        minHeight: "498px",
-        borderRadius: "8px",
-        boxShadow: "1px 1px 10px rgba(0,0,0,0.16)",
-        backgroundColor: palette.colors.background,
-        "@media (max-width: 440px)": {
-            minWidth: "320px"
+        container: {
+            maxWidth: "524px",
+            width: "60vw",
+            margin: "0 auto",
+            minWidth: "420px",
+            minHeight: "498px",
+            borderRadius: "8px",
+            boxShadow: "1px 1px 10px rgba(0,0,0,0.16)",
+            backgroundColor: palette.colors.background,
+            "@media (max-width: 440px)": {
+                minWidth: "320px"
+            }
+        },
+
+        row: {
+            margin: "0 auto",
+            width: "69%",
+            paddingTop: "45px",
+            paddingBottom: "20px"
+        },
+
+        generalError: {
+            backgroundColor: "#ffebeb",
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            paddingLeft: "18px",
+            paddingRight: "18px",
+            letterSpacing: "0.2px",
+            fontSize: palette.fonts.size[1],
+            borderRadius: "12px",
+            color: palette.colors.error
+        },
+
+        inputWrapper: {
+            float: "left",
+            display: "flex",
+            flexDirection: "row",
+            backgroundColor: palette.colors.inputBackground,
+            borderRadius: "12px",
+            border: "1px solid #dddddd",
+            width: "100%",
+            "&:focus-within": {
+                border: `1px solid ${palette.colors.primary}`,
+                outline: "none"
+            },
+            height: "42px"
+        },
+
+        inputError: {
+            border: `1px solid ${palette.colors.error}`
+        },
+
+        input: {
+            letterSpacing: "1.2px",
+            backgroundColor: `${palette.colors.inputBackground} !important`,
+            borderRadius: "12px",
+            "&:focus": {
+                outline: "none",
+                border: "none"
+            },
+            width: "90%",
+            border: "none",
+            fontSize: palette.fonts.size[0],
+            paddingLeft: "20px"
+        },
+
+        inputAdornment: {
+            float: "right",
+            width: "10%",
+            borderRadius: "12px",
+            display: "flex",
+            alignItems: "center"
+        },
+
+        inputErrorMessage: {
+            color: palette.colors.error,
+            lineHeight: "24px",
+            fontWeight: 400,
+            textAlign: "left",
+            paddingTop: "5px"
+        },
+
+        button: {
+            width: "100%",
+            height: "42px",
+            backgroundColor: palette.colors.primary,
+            color: "white",
+            fontWeight: 700,
+            borderWidth: "0px",
+            borderRadius: "8px",
+            "&:disabled": {
+                cursor: "no-drop"
+            },
+            "&:active": {
+                outline: "none",
+                border: "none"
+            },
+            cursor: "pointer"
+        },
+
+        label: {
+            textAlign: "left",
+            fontWeight: 600,
+            fontSize: palette.fonts.size[1],
+            lineHeight: "24px",
+            paddingBottom: "10px",
+            color: palette.colors.textPrimary
+        },
+
+        formRow: {
+            display: "flex",
+            flexDirection: "column",
+            paddingTop: "5px",
+            paddingBottom: "24px"
+        },
+
+        secondaryText: {
+            fontSize: palette.fonts.size[1],
+            fontWeight: 400,
+            letterSpacing: "0.4px",
+            color: palette.colors.textSecondary
+        },
+
+        link: {
+            paddingLeft: "3px",
+            paddingRight: "3px",
+            color: palette.colors.textLink,
+            fontSize: palette.fonts.size[1],
+            cursor: "pointer",
+            letterSpacing: "0.16px",
+            lineHeight: "26px"
+        },
+
+        divider: {
+            marginTop: "1em",
+            marginBottom: "1em",
+            borderBottom: "0.3px solid #dddddd",
+            display: "flex",
+            alignItems: "center"
         }
-    } as CSSInterpolation,
-
-    row: {
-        margin: "0 auto",
-        width: "69%",
-        paddingTop: "45px",
-        paddingBottom: "20px"
-    } as CSSInterpolation,
-
-    generalError: {
-        backgroundColor: "#ffebeb",
-        paddingTop: "10px",
-        paddingBottom: "10px",
-        paddingLeft: "18px",
-        paddingRight: "18px",
-        letterSpacing: "0.2px",
-        fontSize: palette.fonts.size[1],
-        borderRadius: "12px",
-        color: palette.colors.error
-    } as CSSInterpolation,
-
-    inputWrapper: {
-        float: "left",
-        display: "flex",
-        flexDirection: "row",
-        backgroundColor: palette.colors.inputBackground,
-        borderRadius: "12px",
-        border: "1px solid #dddddd",
-        width: "100%",
-        "&:focus-within": {
-            border: `1px solid ${palette.colors.primary}`,
-            outline: "none"
-        },
-        height: "42px"
-    } as CSSInterpolation,
-
-    input: {
-        letterSpacing: "1.2px",
-        backgroundColor: `${palette.colors.inputBackground} !important`,
-        borderRadius: "12px",
-        width: "90%",
-        border: "none",
-        fontSize: palette.fonts.size[0],
-        paddingLeft: "20px",
-        "&:focus": {
-            outline: "none",
-            border: "none"
-        }
-    } as CSSInterpolation,
-
-    inputError: {
-        border: `1px solid ${palette.colors.error}`
-    } as CSSInterpolation,
-
-    inputAdornment: {
-        float: "right",
-        width: "10%",
-        borderRadius: "12px",
-        display: "flex",
-        alignItems: "center"
-    } as CSSInterpolation,
-
-    inputErrorMessage: {
-        color: palette.colors.error,
-        lineHeight: "24px",
-        fontWeight: 400,
-        textAlign: "left",
-        paddingTop: "5px"
-    } as CSSInterpolation,
-
-    button: {
-        width: "100%",
-        height: "42px",
-        backgroundColor: palette.colors.primary,
-        color: "white",
-        fontWeight: 700,
-        borderWidth: "0px",
-        borderRadius: "8px",
-        "&:disabled": {
-            cursor: "no-drop"
-        },
-        "&:active": {
-            outline: "none",
-            border: "none"
-        },
-        cursor: "pointer"
-    } as CSSInterpolation,
-
-    label: {
-        textAlign: "left",
-        fontWeight: 600,
-        fontSize: palette.fonts.size[1],
-        lineHeight: "24px",
-        paddingBottom: "10px"
-    } as CSSInterpolation,
-
-    formRow: {
-        display: "flex",
-        flexDirection: "column",
-        paddingTop: "5px",
-        paddingBottom: "24px"
-    } as CSSInterpolation,
-
-    secondaryText: {
-        fontSize: palette.fonts.size[1],
-        fontWeight: 400,
-        letterSpacing: "0.4px",
-        color: palette.colors.textSecondary
-    } as CSSInterpolation,
-
-    link: {
-        paddingLeft: "3px",
-        paddingRight: "3px",
-        color: palette.colors.textLink,
-        fontSize: palette.fonts.size[1],
-        cursor: "pointer",
-        letterSpacing: "0.16px",
-        lineHeight: "26px"
-    } as CSSInterpolation,
-
-    divider: {
-        marginTop: "1em",
-        marginBottom: "1em",
-        borderBottom: "0.3px solid #dddddd",
-        display: "flex",
-        alignItems: "center"
-    } as CSSInterpolation
-};
+    };
+}

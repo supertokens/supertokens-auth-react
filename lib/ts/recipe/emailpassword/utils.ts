@@ -17,9 +17,11 @@ import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../
 import NormalisedURLPath from "../../normalisedURLPath";
 import { FormField, FormFieldBaseConfig, NormalisedAppInfo, NormalisedFormField } from "../../types";
 import { mergeFormFields } from "../../utils";
+import { defaultPalette } from "./styles/styles";
 import {
     EmailPasswordConfig,
     NormalisedEmailPasswordConfig,
+    NormalisedPalette,
     NormalisedSignInAndUpFeatureConfig,
     NormalisedSignInFormFeatureConfig,
     NormalisedSignUpFormFeatureConfig,
@@ -84,7 +86,25 @@ export function normaliseEmailPasswordConfigOrThrow(config: EmailPasswordConfig)
         config.signInAndUpFeature
     );
     const resetPasswordUsingTokenFeature: any = undefined;
+
+    let palette: NormalisedPalette = defaultPalette;
+    if (config.palette !== undefined) {
+        if (config.palette.colors !== undefined) {
+            palette.colors = {
+                ...defaultPalette.colors,
+                ...config.palette.colors
+            };
+        }
+        if (config.palette.fonts !== undefined) {
+            palette.fonts = {
+                ...defaultPalette.fonts,
+                ...config.palette.fonts
+            };
+        }
+    }
+
     return {
+        palette,
         signInAndUpFeature,
         resetPasswordUsingTokenFeature
     };

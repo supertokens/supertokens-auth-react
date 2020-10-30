@@ -17,8 +17,7 @@
  */
 import * as React from "react";
 import { createRef, FormEvent, useCallback, useState } from "react";
-import { defaultStyles, palette } from "../../../../styles/styles";
-import { FormFieldState, SignUpThemeProps } from "../../../../types";
+import { FormFieldState, NormalisedPalette, SignUpThemeProps } from "../../../../types";
 import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../../../../../constants";
 import { Button, FormRow, Input, InputError, Label } from "../../../library";
 import { APIFormField } from "../../../../../../types";
@@ -31,20 +30,26 @@ import { openExternalLink } from "../../../../../../utils";
 /*
  * Styles.
  */
-const styles = {
-    headerTitle: {
-        fontSize: palette.fonts.size[2],
-        lineHeight: "40px",
-        letterSpacing: "0.58px",
-        fontWeight: 800,
-        color: palette.colors.primary
-    } as CSSInterpolation,
+function getStyles(palette: NormalisedPalette): any {
+    return {
+        headerTitle: {
+            fontSize: palette.fonts.size[2],
+            lineHeight: "40px",
+            letterSpacing: "0.58px",
+            fontWeight: 800,
+            color: palette.colors.textPrimary
+        } as CSSInterpolation,
 
-    headerSubTitle: {
-        marginTop: "9px",
-        marginBottom: "21px"
-    } as CSSInterpolation
-};
+        headerSubTitle: {
+            marginTop: "9px",
+            marginBottom: "21px"
+        } as CSSInterpolation,
+
+        privacyPolicyAndTermsAndConditions: {
+            marginTop: "10px"
+        } as CSSInterpolation
+    };
+}
 
 /*
  * Component.
@@ -54,8 +59,17 @@ export default function SignUpTheme(props: SignUpThemeProps) {
     /*
      * Props.
      */
-    const { callAPI, privacyPolicyLink, termsAndConditionsLink, onSuccess, signInClicked } = props;
+    const {
+        callAPI,
+        privacyPolicyLink,
+        termsAndConditionsLink,
+        onSuccess,
+        signInClicked,
+        defaultStyles,
+        palette
+    } = props;
     let styleFromInit = props.styleFromInit || {};
+    const styles = getStyles(palette);
 
     /*
      * States.
@@ -182,14 +196,17 @@ export default function SignUpTheme(props: SignUpThemeProps) {
                             type = field.id;
                         }
                         return (
-                            <FormRow style={styleFromInit.formRow} key={field.id}>
+                            <FormRow defaultStyles={defaultStyles} style={styleFromInit.formRow} key={field.id}>
                                 <>
                                     <Label
+                                        defaultStyles={defaultStyles}
                                         style={styleFromInit.label}
                                         value={field.label}
                                         showIsRequired={field.showIsRequired}
                                     />
                                     <Input
+                                        defaultStyles={defaultStyles}
+                                        palette={palette}
                                         style={styleFromInit.input}
                                         errorStyle={styleFromInit.inputError}
                                         type={type}
@@ -201,39 +218,53 @@ export default function SignUpTheme(props: SignUpThemeProps) {
                                         validated={field.validated}
                                     />
                                     {field.error && (
-                                        <InputError style={styleFromInit.inputErrorMessage} error={field.error} />
+                                        <InputError
+                                            defaultStyles={defaultStyles}
+                                            style={styleFromInit.inputErrorMessage}
+                                            error={field.error}
+                                        />
                                     )}
                                 </>
                             </FormRow>
                         );
                     })}
 
-                    <FormRow style={styleFromInit.formRow} key="signin-button">
-                        <Button
-                            style={styleFromInit.button}
-                            disabled={isLoading}
-                            isLoading={isLoading}
-                            type="submit"
-                            label="SIGN UP"
-                        />
-                    </FormRow>
+                    <FormRow defaultStyles={defaultStyles} style={styleFromInit.formRow} key="signin-button">
+                        <>
+                            <Button
+                                defaultStyles={defaultStyles}
+                                style={styleFromInit.button}
+                                disabled={isLoading}
+                                isLoading={isLoading}
+                                type="submit"
+                                label="SIGN UP"
+                            />
 
-                    <div className="secondaryText" css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
-                        By signin up, you agree to our
-                        <span
-                            className="link"
-                            css={[defaultStyles.link, styleFromInit.link]}
-                            onClick={() => openExternalLink(termsAndConditionsLink)}>
-                            Terms of Service
-                        </span>
-                        and
-                        <span
-                            className="link"
-                            css={[defaultStyles.link, styleFromInit.link]}
-                            onClick={() => openExternalLink(privacyPolicyLink)}>
-                            Privacy Policy
-                        </span>
-                    </div>
+                            <div
+                                className="privacyPolicyAndTermsAndConditions secondaryText"
+                                css={[
+                                    defaultStyles.secondaryText,
+                                    styles.privacyPolicyAndTermsAndConditions,
+                                    styleFromInit.secondaryText,
+                                    styleFromInit.privacyPolicyAndTermsAndConditions
+                                ]}>
+                                By signin up, you agree to our
+                                <span
+                                    className="link"
+                                    css={[defaultStyles.link, styleFromInit.link]}
+                                    onClick={() => openExternalLink(termsAndConditionsLink)}>
+                                    Terms of Service
+                                </span>
+                                and
+                                <span
+                                    className="link"
+                                    css={[defaultStyles.link, styleFromInit.link]}
+                                    onClick={() => openExternalLink(privacyPolicyLink)}>
+                                    Privacy Policy
+                                </span>
+                            </div>
+                        </>
+                    </FormRow>
                 </form>
             </div>
         </div>

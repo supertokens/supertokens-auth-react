@@ -18,8 +18,7 @@
  */
 import * as React from "react";
 import { createRef, FormEvent, useCallback, useState } from "react";
-import { defaultStyles, palette } from "../../../../styles/styles";
-import { SignInThemeProps } from "../../../../types";
+import { NormalisedPalette, SignInThemeProps } from "../../../../types";
 import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../../../../../constants";
 import { Button, FormRow, Input, InputError, Label } from "../../../library";
 import { APIFormField } from "../../../../../../types";
@@ -31,24 +30,27 @@ import { jsx } from "@emotion/core";
 /*
  * Styles.
  */
-const styles = {
-    headerTitle: {
-        fontSize: palette.fonts.size[2],
-        lineHeight: "40px",
-        letterSpacing: "0.58px",
-        fontWeight: 800,
-        color: palette.colors.textPrimary
-    } as CSSInterpolation,
 
-    headerSubTitle: {
-        marginTop: "9px",
-        marginBottom: "21px"
-    } as CSSInterpolation,
+function getStyles(palette: NormalisedPalette): any {
+    return {
+        headerTitle: {
+            fontSize: palette.fonts.size[2],
+            lineHeight: "40px",
+            letterSpacing: "0.58px",
+            fontWeight: 800,
+            color: palette.colors.textPrimary
+        } as CSSInterpolation,
 
-    forgotPasswordLink: {
-        marginTop: "10px"
-    } as CSSInterpolation
-};
+        headerSubTitle: {
+            marginTop: "9px",
+            marginBottom: "21px"
+        } as CSSInterpolation,
+
+        forgotPasswordLink: {
+            marginTop: "10px"
+        } as CSSInterpolation
+    };
+}
 
 /*
  * Component.
@@ -58,9 +60,9 @@ export default function SignInTheme(props: SignInThemeProps) {
     /*
      * Props.
      */
-    const { callAPI, onSuccess, signUpClicked, forgotPasswordClick } = props;
+    const { callAPI, onSuccess, signUpClicked, forgotPasswordClick, defaultStyles, palette } = props;
     let styleFromInit = props.styleFromInit || {};
-
+    const styles = getStyles(palette);
     /*
      * States.
      */
@@ -195,9 +197,13 @@ export default function SignInTheme(props: SignInThemeProps) {
                             type = field.id;
                         }
                         return (
-                            <FormRow style={styleFromInit.formRow} key={field.id}>
+                            <FormRow style={styleFromInit.formRow} key={field.id} defaultStyles={defaultStyles}>
                                 <>
-                                    <Label style={styleFromInit.label} value={field.label} />
+                                    <Label
+                                        style={styleFromInit.label}
+                                        value={field.label}
+                                        defaultStyles={defaultStyles}
+                                    />
 
                                     <Input
                                         style={styleFromInit.input}
@@ -210,19 +216,26 @@ export default function SignInTheme(props: SignInThemeProps) {
                                         onChange={handleInputChange}
                                         hasError={field.error !== undefined}
                                         validated={field.validated}
+                                        defaultStyles={defaultStyles}
+                                        palette={palette}
                                     />
 
                                     {field.error && (
-                                        <InputError style={styleFromInit.inputErrorMessage} error={field.error} />
+                                        <InputError
+                                            style={styleFromInit.inputErrorMessage}
+                                            error={field.error}
+                                            defaultStyles={defaultStyles}
+                                        />
                                     )}
                                 </>
                             </FormRow>
                         );
                     })}
 
-                    <FormRow style={styleFromInit.formRow} key="signin-button">
+                    <FormRow style={styleFromInit.formRow} key="signin-button" defaultStyles={defaultStyles}>
                         <>
                             <Button
+                                defaultStyles={defaultStyles}
                                 style={styleFromInit.button}
                                 disabled={isLoading}
                                 isLoading={isLoading}

@@ -31,6 +31,7 @@ export function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
     /*
      * State.
      */
+
     const [isSignIn, setSignIn] = useState(true);
 
     /*

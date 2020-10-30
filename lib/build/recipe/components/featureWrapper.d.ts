@@ -1,4 +1,8 @@
 /// <reference types="react" />
-export default function FeatureWrapper({ children }: {
+import { NormalisedDefaultStyles } from "../emailpassword/types";
+declare type FeatureWrapperProps = {
+    defaultStyles: NormalisedDefaultStyles;
     children: JSX.Element;
-}): JSX.Element;
+};
+export default function FeatureWrapper({ children, defaultStyles }: FeatureWrapperProps): JSX.Element;
+export {};

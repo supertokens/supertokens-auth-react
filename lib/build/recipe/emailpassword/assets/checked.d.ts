@@ -1,4 +1,4 @@
 /// <reference types="react" />
 export default function Checked({ color }: {
-    color?: string;
+    color: string;
 }): JSX.Element;

@@ -55,6 +55,15 @@ if (!hasDisabledDefaultImplementationFromLocationQueryParams()) {
     },
     recipeList: [
       EmailPassword.init({
+        palette: {
+          colors: {
+            primary: '#1d1d50',
+            background: '#2f4566',
+            textPrimary: "white",
+            textSecondary: "#fff",
+            textLink: 'red'
+          }
+        },
         signInAndUpFeature: {
           disableDefaultImplementation: true,
           signUpForm: {
@@ -68,28 +77,7 @@ if (!hasDisabledDefaultImplementationFromLocationQueryParams()) {
             }]
           },
           signInForm: {
-            resetPasswordURL: "http://localhost:3031/reset-password",
-            style: {
-              container: {
-                border: '0px',
-                background: 'linear-gradient(180deg,#2f4566 0,#193055);'
-              },
-              secondaryText: {
-                color: '#fff'
-              },
-              label: {
-                color: "white"
-              },
-              button: {
-                backgroundColor: '#3b3b94'
-              },
-              link: {
-                color: "red"
-              },
-              headerTitle: {
-                color: 'white'
-              }
-            }
+            resetPasswordURL: "http://localhost:3031/reset-password"
           }
         }
       })
