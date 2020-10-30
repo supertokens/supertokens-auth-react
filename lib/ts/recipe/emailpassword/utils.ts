@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
+import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { FormField, FormFieldBaseConfig, NormalisedAppInfo, NormalisedFormField } from "../../types";
 import { mergeFormFields } from "../../utils";
@@ -80,6 +80,19 @@ export async function defaultPasswordValidator(value: string) {
     return undefined;
 }
 
+/*
+ * defaultLoginPasswordValidator.
+ * min 1 characters.
+ */
+
+export async function defaultLoginPasswordValidator(value: string) {
+    // length = 0
+    if (value.length === 0) {
+        return "Password must not be empty";
+    }
+    return undefined;
+}
+
 export function normaliseEmailPasswordConfigOrThrow(config: EmailPasswordConfig): NormalisedEmailPasswordConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
         config.appInfo,
@@ -126,13 +139,29 @@ export function normaliseSignInAndUpFeature(
     const signUpForm: NormalisedSignUpFormFeatureConfig = normaliseSignUpFormFeatureConfig(config.signUpForm);
 
     /*
-     * Default Sign In corresponds tocomputed Sign Up fields filtered by email and password only.
+     * Default Sign In corresponds to computed Sign Up fields filtered by email and password only.
      * i.e. If the user overrides sign Up fields, that is propagated to default sign In fields.
+     * Exception made of the password validator which only verifies that the value is not empty for login.
      */
+    const defaultSignInFields: NormalisedFormField[] = signUpForm.formFields.reduce(
+        (signInFieldsAccumulator, field) => {
+            if (field.id === MANDATORY_FORM_FIELDS_ID.EMAIL) {
+                return [...signInFieldsAccumulator, field];
+            }
+            if (field.id === MANDATORY_FORM_FIELDS_ID.PASSWORD) {
+                return [
+                    ...signInFieldsAccumulator,
+                    {
+                        ...field,
+                        validate: defaultLoginPasswordValidator
+                    }
+                ];
+            }
 
-    const defaultSignInFields: NormalisedFormField[] = signUpForm.formFields.filter(field => {
-        return MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id);
-    });
+            return signInFieldsAccumulator;
+        },
+        []
+    );
 
     const signInForm: NormalisedSignInFormFeatureConfig = normaliseSignInFormFeatureConfig(
         appInfo,

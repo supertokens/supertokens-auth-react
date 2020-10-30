@@ -14,6 +14,7 @@
  */
 import NormalisedURLPath from "./normalisedURLPath";
 import { NormalisedAppInfo } from "./types";
+import { supported_fdi } from "./version";
 
 export default class HttpRequest {
     /*
@@ -59,7 +60,7 @@ export default class HttpRequest {
         });
     };
 
-    fetch = async (url: RequestInfo, config: RequestInit) => {
+    fetch = async (url: RequestInfo, config: RequestInit): Promise<any> => {
         let headers;
         if (config === undefined) {
             headers = {};
@@ -67,13 +68,15 @@ export default class HttpRequest {
             headers = config.headers;
         }
 
-        return await fetch(url, {
+        const result = await fetch(url, {
             ...config,
             headers: {
                 ...headers,
+                "fdi-version": supported_fdi.join(","),
                 "Content-Type": "application/json"
             }
         });
+        return await result.json();
     };
 
     getFullUrl = (pathStr: string) => {

@@ -78,26 +78,25 @@ function SignInAndUp(props: EmailPasswordProps) {
                 rid: getRecipeInstanceOrThrow().getRecipeId()
             };
             const result = await onCallSignInAPI({ formFields }, headers);
-            const { data } = await result.json();
 
             // If status >= 300, it means there is a GENERAL_ERROR.
             if (result.status >= 300) {
                 return {
                     status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                    message: data.message
+                    message: result.message
                 };
             }
 
             // Otherwise, if field errors.
-            if (data.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+            if (result.status === API_RESPONSE_STATUS.FIELD_ERROR) {
                 return {
                     status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    fields: data.fields
+                    fields: result.fields
                 };
             }
 
             // Otherwise, if wrong credentials error.
-            if (data.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
+            if (result.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
                 return {
                     status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR,
                     message: "Incorrect email & password combination"
@@ -106,12 +105,12 @@ function SignInAndUp(props: EmailPasswordProps) {
 
             // Otherwise, status === OK, update state with user and responseJSON.
             const user: User = {
-                id: data.user.id,
-                email: data.user.email
+                id: result.user.id,
+                email: result.user.email
             };
 
             setUser(user);
-            setResponseJson(data);
+            setResponseJson(result);
 
             return {
                 status: API_RESPONSE_STATUS.OK
@@ -147,14 +146,6 @@ function SignInAndUp(props: EmailPasswordProps) {
             };
             const result = await onCallSignUpAPI({ formFields }, headers);
             const { data } = await result.json();
-
-            // If status >= 300, it means there is a GENERAL_ERROR.
-            if (result.status >= 300) {
-                return {
-                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                    message: data.message
-                };
-            }
 
             // Otherwise, if field errors.
             if (data.status === API_RESPONSE_STATUS.FIELD_ERROR) {
@@ -234,7 +225,7 @@ function SignInAndUp(props: EmailPasswordProps) {
         [props, getRecipeInstanceOrThrow]
     );
 
-    const onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+    const onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
         // If props provided by user.
         if (props.onCallSignUpAPI) {
             return props.onCallSignUpAPI(requestJson, headers);
@@ -244,7 +235,7 @@ function SignInAndUp(props: EmailPasswordProps) {
         return getRecipeInstanceOrThrow().signUpApi(requestJson, headers);
     };
 
-    const onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+    const onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
         // If props provided by user.
         if (props.onCallSignInAPI) {
             return props.onCallSignInAPI(requestJson, headers);

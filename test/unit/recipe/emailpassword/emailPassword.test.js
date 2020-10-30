@@ -20,7 +20,7 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import EmailPassword from "../../../../lib/build/recipe/emailpassword/emailPassword";
-import {getDefaultFormFields} from "../../../../lib/build/recipe/emailpassword/utils"
+import {getDefaultFormFields, defaultLoginPasswordValidator} from "../../../../lib/build/recipe/emailpassword/utils"
 import assert from "assert";
 import SuperTokens from "../../../../lib/build/SuperTokens";
 import { defaultValidate } from "../../../../lib/build/utils";
@@ -60,7 +60,14 @@ describe("EmailPassword", function() {
         assert.deepStrictEqual(
             EmailPassword.getInstanceOrThrow()
                 .getConfig().signInAndUpFeature.signInForm.formFields,
-            getDefaultFormFields()
+            [
+                getDefaultFormFields()[0],
+                {
+                    ...getDefaultFormFields()[1],
+                    validate: defaultLoginPasswordValidator
+                }
+            ]
+
         );
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] !== undefined);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getRecipeId(), "email-password");
@@ -120,7 +127,10 @@ describe("EmailPassword", function() {
                 .formFields,
             [
                 getDefaultFormFields()[0],
-                getDefaultFormFields()[1]
+                {
+                    ...getDefaultFormFields()[1],
+                    validate: defaultLoginPasswordValidator
+                }
             ]
         );
     });
@@ -162,7 +172,10 @@ describe("EmailPassword", function() {
                 .formFields,
             [
                 companyEmailField,
-                getDefaultFormFields()[1]
+                {
+                    ...getDefaultFormFields()[1],
+                    validate: defaultLoginPasswordValidator
+                }
             ]
         );
         const signInEmailValidateError = await EmailPassword.getInstanceOrThrow()
@@ -210,7 +223,10 @@ describe("EmailPassword", function() {
                 .formFields,
             [
                 customEmailField,
-                getDefaultFormFields()[1]
+                {
+                    ...getDefaultFormFields()[1],
+                    validate: defaultLoginPasswordValidator
+                }
             ]
         );
 
