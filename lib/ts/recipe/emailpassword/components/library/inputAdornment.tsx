@@ -50,7 +50,7 @@ export default function InputAdornment(props: InputAdornmentProps): JSX.Element 
      * Render.
      */
     return (
-        <div css={[defaultStyles.inputAdornment, style]}>
+        <div className="inputAdornment" css={[defaultStyles.inputAdornment, style]}>
             {type === "success" && <Checked />}
             {type === "error" && <Error />}
         </div>

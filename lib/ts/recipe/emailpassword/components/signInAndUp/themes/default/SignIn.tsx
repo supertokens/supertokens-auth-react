@@ -43,6 +43,10 @@ const styles = {
     headerSubTitle: {
         marginTop: "9px",
         marginBottom: "21px"
+    } as CSSInterpolation,
+
+    forgotPasswordLink: {
+        marginTop: "10px"
     } as CSSInterpolation
 };
 
@@ -162,22 +166,26 @@ export default function SignInTheme(props: SignInThemeProps) {
      * Render.
      */
     return (
-        <div css={[defaultStyles.container, styleFromInit.container]}>
-            <div css={[defaultStyles.row, styleFromInit.row]}>
-                <div css={[styles.headerTitle, styleFromInit.headerTitle]}>Sign In</div>
-                <div css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
-                    <div css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
+        <div className="container" css={[defaultStyles.container, styleFromInit.container]}>
+            <div className="row" css={[defaultStyles.row, styleFromInit.row]}>
+                <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
+                    Sign In
+                </div>
+                <div className="headerSubtitle" css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
+                    <div className="secondaryText" css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
                         Not registered yet?
-                        <span onClick={signUpClicked} css={[defaultStyles.link, styleFromInit.link]}>
+                        <span className="link" onClick={signUpClicked} css={[defaultStyles.link, styleFromInit.link]}>
                             Sign Up
                         </span>
                     </div>
                 </div>
 
-                <div css={[defaultStyles.divider, styleFromInit.divider]}></div>
+                <div className="divider" css={[defaultStyles.divider, styleFromInit.divider]}></div>
 
                 {generalError && (
-                    <div css={[defaultStyles.generalError, styleFromInit.generalError]}>{generalError}</div>
+                    <div className="generalError" css={[defaultStyles.generalError, styleFromInit.generalError]}>
+                        {generalError}
+                    </div>
                 )}
                 <form autoComplete="off" noValidate onSubmit={onFormSubmit}>
                     {formFields.map(field => {
@@ -187,13 +195,14 @@ export default function SignInTheme(props: SignInThemeProps) {
                             type = field.id;
                         }
                         return (
-                            <FormRow style={{}} key={field.id}>
+                            <FormRow style={styleFromInit.formRow} key={field.id}>
                                 <>
                                     <Label style={styleFromInit.label} value={field.label} />
 
                                     <Input
                                         style={styleFromInit.input}
                                         errorStyle={styleFromInit.inputError}
+                                        adornmentStyle={styleFromInit.inputAdornment}
                                         type={type}
                                         name={field.id}
                                         placeholder={field.placeholder}
@@ -221,10 +230,11 @@ export default function SignInTheme(props: SignInThemeProps) {
                                 label="SIGN IN"
                             />
                             <div
+                                className="link secondaryText forgotPasswordLink"
                                 css={[
                                     defaultStyles.link,
                                     defaultStyles.secondaryText,
-                                    defaultStyles.forgotPasswordLink,
+                                    styles.forgotPasswordLink,
                                     styleFromInit.link,
                                     styleFromInit.secondaryText,
                                     styleFromInit.forgotPasswordLink

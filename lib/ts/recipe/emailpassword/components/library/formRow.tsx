@@ -38,5 +38,9 @@ type FormRowProps = {
 
 export default function FormRow(props: FormRowProps): JSX.Element {
     const { style, children } = props;
-    return <div css={[defaultStyles.formRow, style]}>{children}</div>;
+    return (
+        <div className="formRow" css={[defaultStyles.formRow, style]}>
+            {children}
+        </div>
+    );
 }

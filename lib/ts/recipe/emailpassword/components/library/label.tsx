@@ -41,7 +41,7 @@ type LabelProps = {
 export default function Label(props: LabelProps): JSX.Element {
     const { style, value, showIsRequired } = props;
     return (
-        <div css={[defaultStyles.label, style]}>
+        <div className="label" css={[defaultStyles.label, style]}>
             {value}
             {":"}
             {showIsRequired && " *"}

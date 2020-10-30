@@ -35,6 +35,7 @@ import { AdornmentType } from "./inputAdornment";
 type InputProps = {
     style?: CSSInterpolation;
     errorStyle?: CSSInterpolation;
+    adornmentStyle?: CSSInterpolation;
     validated: boolean;
     type: string;
     name: string;
@@ -52,7 +53,7 @@ function Input(props: InputProps, ref: RefObject<any>): JSX.Element {
     /*
      * Props.
      */
-    let { style, type, name, hasError, errorStyle, onChange, placeholder, validated } = props;
+    let { style, type, name, hasError, errorStyle, adornmentStyle, onChange, placeholder, validated } = props;
 
     if (hasError !== true) {
         errorStyle = undefined;
@@ -82,7 +83,7 @@ function Input(props: InputProps, ref: RefObject<any>): JSX.Element {
      * Render.
      */
     return (
-        <div css={[defaultStyles.inputWrapper, style, errorStyle]}>
+        <div className="inputWrapper inputError" css={[defaultStyles.inputWrapper, style, errorStyle]}>
             <input
                 css={defaultStyles.input}
                 onFocus={handleChange}
@@ -91,7 +92,7 @@ function Input(props: InputProps, ref: RefObject<any>): JSX.Element {
                 placeholder={placeholder}
                 ref={ref}
             />
-            <InputAdornment type={adornmentType} />
+            <InputAdornment style={adornmentStyle} type={adornmentType} />
         </div>
     );
 }

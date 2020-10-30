@@ -46,7 +46,7 @@ export default function Button(props: ButtonProps): JSX.Element {
         disabled = false;
     }
     return (
-        <button type={type} disabled={disabled} css={[defaultStyles.button, style]}>
+        <button type={type} disabled={disabled} css={[defaultStyles.button, style]} className="button">
             {label}
             {isLoading && "..."}
         </button>

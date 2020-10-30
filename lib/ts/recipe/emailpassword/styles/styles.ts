@@ -16,17 +16,17 @@
 /*
  * Palette
  */
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSInterpolation } from "@emotion/serialize/types";
 
 export const palette = {
     colors: {
         background: "white",
         inputBackground: "#f2f2f2",
         primary: "#ff9b33",
-        secondary: "#656565",
-        link: "#0076ff",
         error: "#ff1717",
-        textPrimary: "#222222"
+        textPrimary: "#222222",
+        textSecondary: "#656565",
+        textLink: "#0076ff"
     },
 
     fonts: {
@@ -162,13 +162,13 @@ export const defaultStyles = {
         fontSize: palette.fonts.size[1],
         fontWeight: 400,
         letterSpacing: "0.4px",
-        color: palette.colors.secondary
+        color: palette.colors.textSecondary
     } as CSSInterpolation,
 
     link: {
         paddingLeft: "3px",
         paddingRight: "3px",
-        color: palette.colors.link,
+        color: palette.colors.textLink,
         fontSize: palette.fonts.size[1],
         cursor: "pointer",
         letterSpacing: "0.16px",
@@ -181,9 +181,5 @@ export const defaultStyles = {
         borderBottom: "0.3px solid #dddddd",
         display: "flex",
         alignItems: "center"
-    } as CSSInterpolation,
-
-    forgotPasswordLink: {
-        marginTop: "10px"
     } as CSSInterpolation
 };

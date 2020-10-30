@@ -158,19 +158,21 @@ export default function SignUpTheme(props: SignUpThemeProps) {
      * Render.
      */
     return (
-        <div css={[defaultStyles.container, styleFromInit.container]}>
-            <div css={[defaultStyles.row, styleFromInit.row]}>
-                <div css={[styles.headerTitle, styleFromInit.headerTitle]}>Sign Up</div>
-                <div css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
-                    <div css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
+        <div className="container" css={[defaultStyles.container, styleFromInit.container]}>
+            <div className="row" css={[defaultStyles.row, styleFromInit.row]}>
+                <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
+                    Sign Up
+                </div>
+                <div className="headerSubtitle" css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
+                    <div className="secondaryText" css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
                         Already have an account?
-                        <span onClick={signInClicked} css={[defaultStyles.link, styleFromInit.link]}>
+                        <span className="link" onClick={signInClicked} css={[defaultStyles.link, styleFromInit.link]}>
                             Sign In
                         </span>
                     </div>
                 </div>
 
-                <div css={[defaultStyles.divider, styleFromInit.divider]}></div>
+                <div className="divider" css={[defaultStyles.divider, styleFromInit.divider]}></div>
 
                 <form autoComplete="off" noValidate onSubmit={onFormSubmit}>
                     {formFields.map(field => {
@@ -180,7 +182,7 @@ export default function SignUpTheme(props: SignUpThemeProps) {
                             type = field.id;
                         }
                         return (
-                            <FormRow style={{}} key={field.id}>
+                            <FormRow style={styleFromInit.formRow} key={field.id}>
                                 <>
                                     <Label
                                         style={styleFromInit.label}
@@ -216,15 +218,17 @@ export default function SignUpTheme(props: SignUpThemeProps) {
                         />
                     </FormRow>
 
-                    <div css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
+                    <div className="secondaryText" css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
                         By signin up, you agree to our
                         <span
+                            className="link"
                             css={[defaultStyles.link, styleFromInit.link]}
                             onClick={() => openExternalLink(termsAndConditionsLink)}>
                             Terms of Service
                         </span>
                         and
                         <span
+                            className="link"
                             css={[defaultStyles.link, styleFromInit.link]}
                             onClick={() => openExternalLink(privacyPolicyLink)}>
                             Privacy Policy

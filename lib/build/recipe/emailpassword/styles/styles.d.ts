@@ -1,13 +1,13 @@
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSInterpolation } from "@emotion/serialize/types";
 export declare const palette: {
     colors: {
         background: string;
         inputBackground: string;
         primary: string;
-        secondary: string;
-        link: string;
         error: string;
         textPrimary: string;
+        textSecondary: string;
+        textLink: string;
     };
     fonts: {
         size: number[];
@@ -29,5 +29,4 @@ export declare const defaultStyles: {
     secondaryText: CSSInterpolation;
     link: CSSInterpolation;
     divider: CSSInterpolation;
-    forgotPasswordLink: CSSInterpolation;
 };

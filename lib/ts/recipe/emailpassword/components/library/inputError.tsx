@@ -38,5 +38,9 @@ type InputErrorProps = {
 
 export default function InputError(props: InputErrorProps): JSX.Element {
     const { style, error } = props;
-    return <div css={[defaultStyles.inputErrorMessage, style]}>{error}</div>;
+    return (
+        <div className="inputErrorMessage" css={[defaultStyles.inputErrorMessage, style]}>
+            {error}
+        </div>
+    );
 }

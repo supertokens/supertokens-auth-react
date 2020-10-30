@@ -5,6 +5,7 @@ import { APIFormField } from "../../../../types";
 declare type InputProps = {
     style?: CSSInterpolation;
     errorStyle?: CSSInterpolation;
+    adornmentStyle?: CSSInterpolation;
     validated: boolean;
     type: string;
     name: string;
@@ -13,5 +14,5 @@ declare type InputProps = {
     ref: RefObject<any>;
     onChange?: (field: APIFormField) => void;
 };
-declare const _default: React.ForwardRefExoticComponent<Pick<InputProps, "style" | "name" | "type" | "onChange" | "placeholder" | "hasError" | "errorStyle" | "validated"> & React.RefAttributes<any>>;
+declare const _default: React.ForwardRefExoticComponent<Pick<InputProps, "style" | "name" | "type" | "onChange" | "placeholder" | "hasError" | "errorStyle" | "adornmentStyle" | "validated"> & React.RefAttributes<any>>;
 export default _default;
