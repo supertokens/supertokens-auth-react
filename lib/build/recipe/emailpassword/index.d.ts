@@ -6,4 +6,4 @@ export default class EmailPasswordAPIWrapper {
     static init(config: EmailPasswordConfig): CreateRecipeFunction;
 }
 export declare const init: typeof EmailPasswordAPIWrapper.init;
-export { SignInAndUp, SignInAndUpTheme };
+export { SignInAndUp, SignInAndUpTheme, EmailPasswordAPIWrapper };
