@@ -1,8 +1,8 @@
-/// <reference types="react" />
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { ComponentClass } from "react";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction[];
@@ -77,4 +77,4 @@ export declare type NormalisedFormField = {
     validate: (value: string) => Promise<string | undefined>;
     optional: boolean;
 };
-export declare type ReactComponentClass = <T>(props: T) => JSX.Element;
+export declare type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);

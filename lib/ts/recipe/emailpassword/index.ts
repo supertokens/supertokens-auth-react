@@ -30,5 +30,6 @@ export default class EmailPasswordAPIWrapper {
         return EmailPassword.init(config);
     }
 }
+export const init = EmailPasswordAPIWrapper.init;
 
 export { SignInAndUp, SignInAndUpTheme };

@@ -110,7 +110,7 @@ export declare type User = {
 export declare type FormFieldState = FormFieldThemeProps & {
     validated: boolean;
     ref: RefObject<HTMLInputElement>;
-    showIsRequired: boolean;
+    showIsRequired?: boolean;
 };
 declare enum paletteColorOptions {
     BACKGROUND = "background",
@@ -159,5 +159,25 @@ export declare type DefaultStylesUserInput = {
 };
 export declare type NormalisedDefaultStyles = {
     [key in defaultStylesOptions]: CSSInterpolation;
+};
+export declare type FormBaseState = {
+    formFields: FormFieldState[];
+    generalError: string | undefined;
+    isLoading: boolean;
+};
+export declare type FormBaseProps = {
+    header: JSX.Element;
+    footer: JSX.Element;
+    formFields: FormFieldState[];
+    generalError?: string;
+    isLoading: boolean;
+    buttonLabel: string;
+    onSuccess?: () => void;
+    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse | SignUpThemeResponse>;
+    defaultStyles: NormalisedDefaultStyles;
+    palette: NormalisedPalette;
+    styleFromInit?: {
+        [key: string]: CSSInterpolation;
+    };
 };
 export {};

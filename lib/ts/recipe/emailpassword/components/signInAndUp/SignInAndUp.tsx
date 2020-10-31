@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { Component, useCallback, useEffect, useState } from "react";
 import {
     SignInThemeResponse,
     EmailPasswordProps,
@@ -40,29 +40,35 @@ import { getDefaultStyles } from "../../styles/styles";
  * Component.
  */
 
-function SignInAndUp(props: EmailPasswordProps) {
+class SignInAndUp extends Component<EmailPasswordProps, { user?: User; responseJson: any }> {
     /*
-     * States.
+     * Constructor.
      */
-    const [user, setUser] = useState<User | undefined>(undefined);
-    const [responseJson, setResponseJson] = useState<any>(undefined);
+    constructor(props: EmailPasswordProps) {
+        super(props);
+
+        this.state = {
+            user: undefined,
+            responseJson: undefined
+        };
+    }
 
     /*
      * Methods.
      */
-    const getRecipeInstanceOrThrow = useCallback(() => {
+    getRecipeInstanceOrThrow = () => {
         let instance;
-        if (props.__internal !== undefined && props.__internal.instance !== undefined) {
-            instance = props.__internal.instance;
+        if (this.props.__internal !== undefined && this.props.__internal.instance !== undefined) {
+            instance = this.props.__internal.instance;
         } else {
             instance = EmailPassword.getInstanceOrThrow();
         }
         return instance;
-    }, [props.__internal]);
+    };
 
-    const signInAPI = async (formFields: APIFormField[]): Promise<SignInThemeResponse> => {
+    signIn = async (formFields: APIFormField[]): Promise<SignInThemeResponse> => {
         // Front end validation.
-        const validationErrors = await getRecipeInstanceOrThrow().signInValidate(formFields);
+        const validationErrors = await this.getRecipeInstanceOrThrow().signInValidate(formFields);
 
         // If errors, return.
         if (validationErrors.length > 0) {
@@ -72,64 +78,91 @@ function SignInAndUp(props: EmailPasswordProps) {
             };
         }
 
+        const { response, responseJson } = await this.signInAPI(formFields);
+
+        if (responseJson !== undefined && responseJson.user !== undefined) {
+            const user: User = {
+                id: responseJson.user.id,
+                email: responseJson.user.email
+            };
+            this.setState({
+                user,
+                responseJson
+            });
+        }
+
+        return response;
+    };
+
+    signInAPI = async (formFields: APIFormField[]): Promise<{ response: SignInThemeResponse; responseJson?: any }> => {
+        // Front end validation.
+        const validationErrors = await this.getRecipeInstanceOrThrow().signInValidate(formFields);
+
+        // If errors, return.
+        if (validationErrors.length > 0) {
+            return {
+                response: {
+                    status: API_RESPONSE_STATUS.FIELD_ERROR,
+                    fields: validationErrors
+                }
+            };
+        }
+
         // Otherwise, call API.
         try {
             const headers: HeadersInit = {
-                rid: getRecipeInstanceOrThrow().getRecipeId()
+                rid: this.getRecipeInstanceOrThrow().getRecipeId()
             };
-            const result = await onCallSignInAPI({ formFields }, headers);
-
-            // If status >= 300, it means there is a GENERAL_ERROR.
-            if (result.status >= 300) {
-                return {
-                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                    message: result.message
-                };
-            }
+            const responseJson = await this.onCallSignInAPI({ formFields }, headers);
 
             // Otherwise, if field errors.
-            if (result.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+            if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
                 return {
-                    status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    fields: result.fields
+                    response: {
+                        status: API_RESPONSE_STATUS.FIELD_ERROR,
+                        fields: responseJson.fields
+                    }
                 };
             }
 
             // Otherwise, if wrong credentials error.
-            if (result.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
+            if (responseJson.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
                 return {
-                    status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR,
-                    message: "Incorrect email & password combination"
+                    response: {
+                        status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR,
+                        message: "Incorrect email & password combination"
+                    }
                 };
             }
 
-            // Otherwise, status === OK, update state with user and responseJSON.
-            const user: User = {
-                id: result.user.id,
-                email: result.user.email
-            };
-
-            setUser(user);
-            setResponseJson(result);
-
+            // Otherwise, status === OK
             return {
-                status: API_RESPONSE_STATUS.OK
+                response: {
+                    status: API_RESPONSE_STATUS.OK
+                },
+                responseJson
             };
         } catch (e) {
             return {
-                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: "Something went wrong. Please try again"
+                response: {
+                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
+                    message: "Something went wrong. Please try again"
+                }
             };
         }
     };
 
-    const onSignInSuccess = async () => {
-        await onHandleSuccess({ action: SUCCESS_ACTION.SIGN_IN_COMPLETE }, user, responseJson);
+    onSignInSuccess = async () => {
+        await this.onHandleSuccess(
+            { action: SUCCESS_ACTION.SIGN_IN_COMPLETE },
+            this.state.user,
+            this.state.responseJson
+        );
     };
 
-    const signUpAPI = async (formFields: APIFormField[]): Promise<SignUpThemeResponse> => {
+    signUp = async (formFields: APIFormField[]): Promise<SignUpThemeResponse> => {
         // Front end validation.
-        const validationErrors = await getRecipeInstanceOrThrow().signUpValidate(formFields);
+        const validationErrors = await this.getRecipeInstanceOrThrow().signUpValidate(formFields);
 
         // If errors, return.
         if (validationErrors.length > 0) {
@@ -139,67 +172,89 @@ function SignInAndUp(props: EmailPasswordProps) {
             };
         }
 
-        // Otherwise, call API.
+        const { response, responseJson } = await this.signUpAPI(formFields);
+        if (responseJson !== undefined && responseJson.user !== undefined) {
+            const user: User = {
+                id: responseJson.user.id,
+                email: responseJson.user.email
+            };
+            this.setState({
+                user,
+                responseJson
+            });
+        }
+        return response;
+    };
+
+    signUpAPI = async (formFields: APIFormField[]): Promise<{ response: SignUpThemeResponse; responseJson?: any }> => {
         try {
             const headers: HeadersInit = {
-                rid: getRecipeInstanceOrThrow().getRecipeId()
+                rid: this.getRecipeInstanceOrThrow().getRecipeId()
             };
-            const result = await onCallSignUpAPI({ formFields }, headers);
-            const { data } = await result.json();
+            const responseJson = await this.onCallSignUpAPI({ formFields }, headers);
 
             // Otherwise, if field errors.
-            if (data.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+            if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
                 return {
-                    status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    fields: data.fields
+                    response: {
+                        status: API_RESPONSE_STATUS.FIELD_ERROR,
+                        fields: responseJson.fields
+                    }
                 };
             }
 
             // Otherwise, status === OK, update state with user and responseJSON.
             const user: User = {
-                id: data.user.id,
-                email: data.user.email
+                id: responseJson.user.id,
+                email: responseJson.user.email
             };
 
-            setUser(user);
-            setResponseJson(data);
-
             return {
-                status: API_RESPONSE_STATUS.OK
+                response: {
+                    status: API_RESPONSE_STATUS.OK
+                },
+                responseJson
             };
         } catch (e) {
             return {
-                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: "Something went wrong. Please try again"
+                response: {
+                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
+                    message: "Something went wrong. Please try again"
+                }
             };
         }
     };
 
-    const onSignUpSuccess = async () => {
-        await onHandleSuccess({ action: SUCCESS_ACTION.SIGN_UP_COMPLETE }, user, responseJson);
+    onSignUpSuccess = async () => {
+        await this.onHandleSuccess(
+            { action: SUCCESS_ACTION.SIGN_UP_COMPLETE },
+            this.state.user,
+            this.state.responseJson
+        );
     };
 
-    const doesSessionExist = useCallback(async (): Promise<boolean> => {
+    doesSessionExist = async (): Promise<boolean> => {
         // If props provided by user.
-        if (props.doesSessionExist) {
-            return await props.doesSessionExist();
+        if (this.props.doesSessionExist) {
+            return await this.props.doesSessionExist();
         }
 
         // TODO Otherwise, use supertokens session management.
         return false;
-    }, [props]);
+    };
 
-    const onHandleForgotPasswordClicked = async () => {
+    onHandleForgotPasswordClicked = async () => {
         // If props provided by user, and successfully handled.
-        if (props.onHandleForgotPasswordClicked) {
-            const isHandledByUser: boolean = await props.onHandleForgotPasswordClicked();
+        if (this.props.onHandleForgotPasswordClicked) {
+            const isHandledByUser: boolean = await this.props.onHandleForgotPasswordClicked();
             if (isHandledByUser) {
                 return;
             }
         }
 
         // Otherwise, redirect to resetPasswordURL if defined.
-        const resetPasswordUrl = getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm.resetPasswordURL;
+        const resetPasswordUrl = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm
+            .resetPasswordURL;
 
         if (resetPasswordUrl === undefined) {
             return;
@@ -208,101 +263,103 @@ function SignInAndUp(props: EmailPasswordProps) {
         window.history.pushState(null, "", resetPasswordUrl.getAsStringDangerous());
     };
 
-    const onHandleSuccess = useCallback(
-        async (context: any, user?: any, responseJson?: any) => {
-            // If props provided by user, and successfully handled.
-            if (props.onHandleSuccess) {
-                const isHandledByUser = await props.onHandleSuccess(context, user, responseJson);
-                if (isHandledByUser) {
-                    return;
-                }
+    onHandleSuccess = async (context: any, user?: any, responseJson?: any) => {
+        // If props provided by user, and successfully handled.
+        if (this.props.onHandleSuccess) {
+            const isHandledByUser = await this.props.onHandleSuccess(context, user, responseJson);
+            if (isHandledByUser) {
+                return;
             }
-
-            // Otherwise, use default, redirect to onSuccessRedirectURL
-            const onSuccessRedirectURL = getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL;
-            window.history.pushState(null, "", onSuccessRedirectURL.getAsStringDangerous());
-        },
-        [props, getRecipeInstanceOrThrow]
-    );
-
-    const onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
-        // If props provided by user.
-        if (props.onCallSignUpAPI) {
-            return props.onCallSignUpAPI(requestJson, headers);
         }
 
-        // Otherwise, use default.
-        return getRecipeInstanceOrThrow().signUpApi(requestJson, headers);
+        // Otherwise, use default, redirect to onSuccessRedirectURL
+        const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature
+            .onSuccessRedirectURL;
+        window.history.pushState(null, "", onSuccessRedirectURL.getAsStringDangerous());
     };
 
-    const onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
+    onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
         // If props provided by user.
-        if (props.onCallSignInAPI) {
-            return props.onCallSignInAPI(requestJson, headers);
+        if (this.props.onCallSignUpAPI) {
+            return this.props.onCallSignUpAPI(requestJson, headers);
         }
 
         // Otherwise, use default.
-        return getRecipeInstanceOrThrow().signInApi(requestJson, headers);
+        return this.getRecipeInstanceOrThrow().signUpApi(requestJson, headers);
+    };
+
+    onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
+        // If props provided by user.
+        if (this.props.onCallSignInAPI) {
+            return this.props.onCallSignInAPI(requestJson, headers);
+        }
+
+        // Otherwise, use default.
+        return this.getRecipeInstanceOrThrow().signInApi(requestJson, headers);
     };
 
     /*
      * Init.
      */
-    useEffect(() => {
-        (async () => {
-            const sessionExists = await doesSessionExist();
-            if (sessionExists) {
-                await onHandleSuccess({ action: "SESSION_ALREADY_EXISTS" });
-            }
-        })();
-    }, [doesSessionExist, onHandleSuccess]);
-
-    const signUpFeature = getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signUpForm;
-
-    const signInFeature = getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm;
-
-    const defaultStyles: NormalisedDefaultStyles = getDefaultStyles(getRecipeInstanceOrThrow().getConfig().palette);
-    const palette: NormalisedPalette = getRecipeInstanceOrThrow().getConfig().palette;
-
-    const signInForm = {
-        styleFromInit: signInFeature.style,
-        formFields: signInFeature.formFields,
-        resetPasswordURL: signInFeature.resetPasswordURL,
-        callAPI: signInAPI,
-        onSuccess: onSignInSuccess,
-        forgotPasswordClick: onHandleForgotPasswordClicked,
-        defaultStyles,
-        palette
+    componentDidMount = async () => {
+        const sessionExists = await this.doesSessionExist();
+        if (sessionExists) {
+            await this.onHandleSuccess({ action: "SESSION_ALREADY_EXISTS" });
+        }
     };
 
-    const signUpForm = {
-        styleFromInit: signUpFeature.style,
-        formFields: signUpFeature.formFields,
-        privacyPolicyLink: signUpFeature.privacyPolicyLink,
-        termsAndConditionsLink: signUpFeature.termsAndConditionsLink,
-        onSuccess: onSignUpSuccess,
-        callAPI: signUpAPI,
-        defaultStyles,
-        palette
-    };
+    render = () => {
+        const signUpFeature = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signUpForm;
 
-    /*
-     * Render.
-     */
-    return (
-        <FeatureWrapper defaultStyles={defaultStyles}>
-            <>
-                {/* No custom theme, use default. */}
-                {props.children === undefined && <SignInAndUpTheme signInForm={signInForm} signUpForm={signUpForm} />}
-                {/* Otherwise, custom theme is provided, propagate props. */}
-                {props.children &&
-                    React.cloneElement(props.children, {
-                        signInForm,
-                        signUpForm
-                    })}
-            </>
-        </FeatureWrapper>
-    );
+        const signInFeature = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm;
+
+        const defaultStyles: NormalisedDefaultStyles = getDefaultStyles(
+            this.getRecipeInstanceOrThrow().getConfig().palette
+        );
+        const palette: NormalisedPalette = this.getRecipeInstanceOrThrow().getConfig().palette;
+
+        const signInForm = {
+            styleFromInit: signInFeature.style,
+            formFields: signInFeature.formFields,
+            resetPasswordURL: signInFeature.resetPasswordURL,
+            callAPI: this.signIn,
+            onSuccess: this.onSignInSuccess,
+            forgotPasswordClick: this.onHandleForgotPasswordClicked,
+            defaultStyles,
+            palette
+        };
+
+        const signUpForm = {
+            styleFromInit: signUpFeature.style,
+            formFields: signUpFeature.formFields,
+            privacyPolicyLink: signUpFeature.privacyPolicyLink,
+            termsAndConditionsLink: signUpFeature.termsAndConditionsLink,
+            onSuccess: this.onSignUpSuccess,
+            callAPI: this.signUp,
+            defaultStyles,
+            palette
+        };
+
+        /*
+         * Render.
+         */
+        return (
+            <FeatureWrapper defaultStyles={defaultStyles}>
+                <>
+                    {/* No custom theme, use default. */}
+                    {this.props.children === undefined && (
+                        <SignInAndUpTheme signInForm={signInForm} signUpForm={signUpForm} />
+                    )}
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {this.props.children &&
+                        React.cloneElement(this.props.children, {
+                            signInForm,
+                            signUpForm
+                        })}
+                </>
+            </FeatureWrapper>
+        );
+    };
 }
 
 export default SignInAndUp;

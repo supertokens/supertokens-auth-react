@@ -17,8 +17,8 @@
  * Imports.
  */
 import * as React from "react";
-import { createRef, FormEvent, useCallback, useState } from "react";
-import { NormalisedPalette, SignInThemeProps } from "../../../../types";
+import { Component, createRef, FormEvent } from "react";
+import { NormalisedPalette, FormBaseState, SignInThemeProps } from "../../../../types";
 import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../../../../../constants";
 import { Button, FormRow, Input, InputError, Label } from "../../../library";
 import { APIFormField } from "../../../../../../types";
@@ -26,6 +26,7 @@ import { CSSInterpolation } from "@emotion/serialize/types/index";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
+import FormBase from "./FormBase";
 
 /*
  * Styles.
@@ -56,209 +57,84 @@ function getStyles(palette: NormalisedPalette): any {
  * Component.
  */
 
-export default function SignInTheme(props: SignInThemeProps) {
+export default class SignInTheme extends Component<SignInThemeProps, FormBaseState> {
     /*
-     * Props.
+     * Constructor.
      */
-    const { callAPI, onSuccess, signUpClicked, forgotPasswordClick, defaultStyles, palette } = props;
-    let styleFromInit = props.styleFromInit || {};
-    const styles = getStyles(palette);
-    /*
-     * States.
-     */
-    const [formFields, setFormFields] = useState(
-        props.formFields.map(field => {
+    constructor(props: SignInThemeProps) {
+        super(props);
+
+        const formFields = props.formFields.map(field => {
             return {
                 ...field,
                 ref: createRef<HTMLInputElement>(),
                 validated: false
             };
-        })
-    );
-
-    const [generalError, setGeneralError] = useState<string>();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-
-    /*
-     * Methods.
-     */
-
-    const onSignIn = async () => {
-        // Set isLoading to true.
-        setIsLoading(true);
-
-        // Get the fields values from form.
-        const fields = formFields.map(field => {
-            return {
-                id: field.id,
-                value: field.ref.current !== null ? field.ref.current.value : ""
-            };
         });
 
-        // Call Sign In API.
-        const result = await callAPI(fields);
-
-        // Set isLoading to false.
-        setIsLoading(false);
-
-        // If successfully logged in.
-        if (result.status === API_RESPONSE_STATUS.OK) {
-            // TODO: Show result in UI?
-
-            // Call onSuccess if exist.
-            if (onSuccess !== undefined) {
-                onSuccess();
-            }
-        }
-
-        // If general error, or wrong credentials error.
-        if (
-            result.status === API_RESPONSE_STATUS.GENERAL_ERROR ||
-            result.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
-        ) {
-            // Update general error message state.
-            setGeneralError(result.message);
-        }
-
-        // If field error.
-        if (result.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-            const errorFields = result.fields;
-
-            // Update formFields state with errors.
-            setFormFields(
-                formFields.map(field => {
-                    for (let i = 0; i < errorFields.length; i++) {
-                        if (field.id === errorFields[i].id) {
-                            field.error = errorFields[i].error;
-                        }
-                        // Indicate to inputs that the valeu was submitted for validation.
-                        field.validated = true;
-                    }
-                    return field;
-                })
-            );
-        }
-    };
-
-    const handleInputChange = useCallback(
-        async (field: APIFormField) => {
-            for (let i = 0; i < formFields.length; i++) {
-                if (field.id === formFields[i].id) {
-                    // remove error on input change.
-                    formFields[i].error = undefined;
-                    formFields[i].validated = false;
-                }
-            }
-
-            // Delay the error update to prevent UI glitches.
-            setTimeout(() => setFormFields([...formFields]), 300);
-        },
-        [formFields, setFormFields]
-    );
-
-    /*
-     * Event Handlers.
-     */
-    const onFormSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        onSignIn();
-    };
+        this.state = {
+            formFields,
+            generalError: undefined,
+            isLoading: false
+        };
+    }
 
     /*
      * Render.
      */
-    return (
-        <div className="container" css={[defaultStyles.container, styleFromInit.container]}>
-            <div className="row" css={[defaultStyles.row, styleFromInit.row]}>
-                <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
-                    Sign In
-                </div>
-                <div className="headerSubtitle" css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
-                    <div className="secondaryText" css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
-                        Not registered yet?
-                        <span className="link" onClick={signUpClicked} css={[defaultStyles.link, styleFromInit.link]}>
-                            Sign Up
-                        </span>
-                    </div>
-                </div>
 
-                <div className="divider" css={[defaultStyles.divider, styleFromInit.divider]}></div>
+    render() {
+        const { signUpClicked, forgotPasswordClick, defaultStyles, palette, onSuccess, callAPI } = this.props;
+        let styleFromInit = this.props.styleFromInit || {};
+        const { generalError, formFields, isLoading } = this.state;
+        const styles = getStyles(palette);
 
-                {generalError && (
-                    <div className="generalError" css={[defaultStyles.generalError, styleFromInit.generalError]}>
-                        {generalError}
-                    </div>
-                )}
-                <form autoComplete="off" noValidate onSubmit={onFormSubmit}>
-                    {formFields.map(field => {
-                        let type = "text";
-                        // If email or password, replace field type.
-                        if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
-                            type = field.id;
-                        }
-                        return (
-                            <FormRow style={styleFromInit.formRow} key={field.id} defaultStyles={defaultStyles}>
-                                <>
-                                    <Label
-                                        style={styleFromInit.label}
-                                        value={field.label}
-                                        defaultStyles={defaultStyles}
-                                    />
-
-                                    <Input
-                                        style={styleFromInit.input}
-                                        errorStyle={styleFromInit.inputError}
-                                        adornmentStyle={styleFromInit.inputAdornment}
-                                        type={type}
-                                        name={field.id}
-                                        placeholder={field.placeholder}
-                                        ref={field.ref}
-                                        onChange={handleInputChange}
-                                        hasError={field.error !== undefined}
-                                        validated={field.validated}
-                                        defaultStyles={defaultStyles}
-                                        palette={palette}
-                                    />
-
-                                    {field.error && (
-                                        <InputError
-                                            style={styleFromInit.inputErrorMessage}
-                                            error={field.error}
-                                            defaultStyles={defaultStyles}
-                                        />
-                                    )}
-                                </>
-                            </FormRow>
-                        );
-                    })}
-
-                    <FormRow style={styleFromInit.formRow} key="signin-button" defaultStyles={defaultStyles}>
-                        <>
-                            <Button
-                                defaultStyles={defaultStyles}
-                                style={styleFromInit.button}
-                                disabled={isLoading}
-                                isLoading={isLoading}
-                                type="submit"
-                                label="SIGN IN"
-                            />
+        return (
+            <FormBase
+                header={
+                    <>
+                        <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
+                            Sign In
+                        </div>
+                        <div className="headerSubtitle" css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
                             <div
-                                className="link secondaryText forgotPasswordLink"
-                                css={[
-                                    defaultStyles.link,
-                                    defaultStyles.secondaryText,
-                                    styles.forgotPasswordLink,
-                                    styleFromInit.link,
-                                    styleFromInit.secondaryText,
-                                    styleFromInit.forgotPasswordLink
-                                ]}
-                                onClick={forgotPasswordClick}>
-                                Forgot password?
+                                className="secondaryText"
+                                css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
+                                Not registered yet?
+                                <span
+                                    className="link"
+                                    onClick={signUpClicked}
+                                    css={[defaultStyles.link, styleFromInit.link]}>
+                                    Sign Up
+                                </span>
                             </div>
-                        </>
-                    </FormRow>
-                </form>
-            </div>
-        </div>
-    );
+                        </div>
+                    </>
+                }
+                footer={
+                    <div
+                        className="link secondaryText forgotPasswordLink"
+                        css={[
+                            defaultStyles.link,
+                            defaultStyles.secondaryText,
+                            styles.forgotPasswordLink,
+                            styleFromInit.link,
+                            styleFromInit.secondaryText,
+                            styleFromInit.forgotPasswordLink
+                        ]}
+                        onClick={forgotPasswordClick}>
+                        Forgot password?
+                    </div>
+                }
+                formFields={formFields}
+                generalError={generalError}
+                defaultStyles={defaultStyles}
+                palette={palette}
+                isLoading={isLoading}
+                buttonLabel={"SIGN IN"}
+                onSuccess={onSuccess}
+                callAPI={callAPI}
+            />
+        );
+    }
 }

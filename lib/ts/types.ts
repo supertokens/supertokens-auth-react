@@ -16,6 +16,7 @@ import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { Component, ComponentClass } from "react";
 
 /*
  * Recipe Module Manager Config Types.
@@ -237,4 +238,4 @@ export type NormalisedFormField = {
     optional: boolean;
 };
 
-export type ReactComponentClass = <T>(props: T) => JSX.Element;
+export type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);

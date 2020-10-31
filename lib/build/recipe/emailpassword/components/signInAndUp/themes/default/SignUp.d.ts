@@ -1,3 +1,6 @@
-/// <reference types="react" />
-import { SignUpThemeProps } from "../../../../types";
-export default function SignUpTheme(props: SignUpThemeProps): JSX.Element;
+import { Component } from "react";
+import { FormBaseState, SignUpThemeProps } from "../../../../types";
+export default class SignUpTheme extends Component<SignUpThemeProps, FormBaseState> {
+    constructor(props: SignUpThemeProps);
+    render(): JSX.Element;
+}

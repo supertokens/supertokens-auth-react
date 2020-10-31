@@ -26,7 +26,7 @@ import {
 import { API_RESPONSE_STATUS } from "../../constants";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
-import { RefObject } from "react";
+import { ElementType, RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 
 /*
@@ -376,7 +376,7 @@ export type FormFieldState = FormFieldThemeProps & {
     /*
      * Has the value already been submitted to its validator.
      */
-    showIsRequired: boolean;
+    showIsRequired?: boolean;
 };
 
 enum paletteColorOptions {
@@ -431,4 +431,36 @@ export type DefaultStylesUserInput = {
 
 export type NormalisedDefaultStyles = {
     [key in defaultStylesOptions]: CSSInterpolation;
+};
+
+export type FormBaseState = {
+    formFields: FormFieldState[];
+
+    generalError: string | undefined;
+
+    isLoading: boolean;
+};
+
+export type FormBaseProps = {
+    header: JSX.Element;
+
+    footer: JSX.Element;
+
+    formFields: FormFieldState[];
+
+    generalError?: string;
+
+    isLoading: boolean;
+
+    buttonLabel: string;
+
+    onSuccess?: () => void;
+
+    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse | SignUpThemeResponse>;
+
+    defaultStyles: NormalisedDefaultStyles;
+
+    palette: NormalisedPalette;
+
+    styleFromInit?: { [key: string]: CSSInterpolation };
 };

@@ -16,16 +16,14 @@
  * Imports.
  */
 import * as React from "react";
-import { createRef, FormEvent, useCallback, useState } from "react";
-import { FormFieldState, NormalisedPalette, SignUpThemeProps } from "../../../../types";
-import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../../../../../constants";
-import { Button, FormRow, Input, InputError, Label } from "../../../library";
-import { APIFormField } from "../../../../../../types";
+import { Component, createRef } from "react";
+import { FormBaseState, NormalisedPalette, SignUpThemeProps } from "../../../../types";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import { openExternalLink } from "../../../../../../utils";
+import FormBase from "./FormBase";
 
 /*
  * Styles.
@@ -55,28 +53,15 @@ function getStyles(palette: NormalisedPalette): any {
  * Component.
  */
 
-export default function SignUpTheme(props: SignUpThemeProps) {
+export default class SignUpTheme extends Component<SignUpThemeProps, FormBaseState> {
     /*
-     * Props.
+     * Constructor.
      */
-    const {
-        callAPI,
-        privacyPolicyLink,
-        termsAndConditionsLink,
-        onSuccess,
-        signInClicked,
-        defaultStyles,
-        palette
-    } = props;
-    let styleFromInit = props.styleFromInit || {};
-    const styles = getStyles(palette);
+    constructor(props: SignUpThemeProps) {
+        super(props);
 
-    /*
-     * States.
-     */
-    const emailPasswordOnly = props.formFields.length === 2;
-    const [formFields, setFormFields] = useState<FormFieldState[]>(
-        props.formFields.map(field => {
+        const emailPasswordOnly = props.formFields.length === 2;
+        const formFields = props.formFields.map(field => {
             return {
                 ...field,
                 ref: createRef<HTMLInputElement>(),
@@ -90,183 +75,88 @@ export default function SignUpTheme(props: SignUpThemeProps) {
                     return field.optional === false;
                 })()
             };
-        })
-    );
-
-    const [isLoading, setIsLoading] = useState(false);
-
-    /*
-     * Methods.
-     */
-    const onSignUp = async () => {
-        // Set isLoading to true.
-        setIsLoading(true);
-
-        // Get the fields values from form.
-        const fields = formFields.map(field => {
-            return {
-                id: field.id,
-                value: field.ref.current !== null ? field.ref.current.value : ""
-            };
         });
 
-        // Call Sign Up API.
-        const result = await callAPI(fields);
-
-        // Set isLoading to false.
-        setIsLoading(false);
-
-        // If successfully logged in.
-        if (result.status === API_RESPONSE_STATUS.OK) {
-            // TODO: Show result in UI?
-
-            // If onSuccess if exist, sleep for 2seconds and call it.
-            if (onSuccess !== undefined) {
-                setTimeout(() => onSuccess(), 2000);
-            }
-        }
-
-        // If field error.
-        if (result.status === API_RESPONSE_STATUS.FIELD_ERROR && result.fields !== undefined) {
-            const errorFields = result.fields;
-            // Update formFields state with errors.
-            setFormFields(
-                formFields.map(field => {
-                    for (let i = 0; i < errorFields.length; i++) {
-                        if (field.id === errorFields[i].id) {
-                            field.error = errorFields[i].error;
-                        }
-                        field.validated = true;
-                    }
-                    return field;
-                })
-            );
-        }
-    };
-
-    const handleInputChange = useCallback(
-        async (field: APIFormField) => {
-            for (let i = 0; i < formFields.length; i++) {
-                if (field.id === formFields[i].id) {
-                    // remove error on input change.
-                    formFields[i].error = undefined;
-                    formFields[i].validated = false;
-                }
-            }
-
-            // Slightly delay the error update to prevent UI glitches.
-            setTimeout(() => setFormFields([...formFields]), 300);
-        },
-        [formFields, setFormFields]
-    );
-
-    /*
-     * Event Handlers.
-     */
-    const onFormSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        onSignUp();
-    };
+        this.state = {
+            formFields,
+            generalError: undefined,
+            isLoading: false
+        };
+    }
 
     /*
      * Render.
      */
-    return (
-        <div className="container" css={[defaultStyles.container, styleFromInit.container]}>
-            <div className="row" css={[defaultStyles.row, styleFromInit.row]}>
-                <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
-                    Sign Up
-                </div>
-                <div className="headerSubtitle" css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
-                    <div className="secondaryText" css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
-                        Already have an account?
-                        <span className="link" onClick={signInClicked} css={[defaultStyles.link, styleFromInit.link]}>
-                            Sign In
-                        </span>
-                    </div>
-                </div>
+    render() {
+        const {
+            privacyPolicyLink,
+            termsAndConditionsLink,
+            signInClicked,
+            defaultStyles,
+            palette,
+            onSuccess,
+            callAPI
+        } = this.props;
+        const { generalError, formFields, isLoading } = this.state;
+        let styleFromInit = this.props.styleFromInit || {};
+        const styles = getStyles(palette);
 
-                <div className="divider" css={[defaultStyles.divider, styleFromInit.divider]}></div>
-
-                <form autoComplete="off" noValidate onSubmit={onFormSubmit}>
-                    {formFields.map(field => {
-                        let type = "text";
-                        // If email or password, replace field type.
-                        if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
-                            type = field.id;
-                        }
-                        return (
-                            <FormRow defaultStyles={defaultStyles} style={styleFromInit.formRow} key={field.id}>
-                                <>
-                                    <Label
-                                        defaultStyles={defaultStyles}
-                                        style={styleFromInit.label}
-                                        value={field.label}
-                                        showIsRequired={field.showIsRequired}
-                                    />
-                                    <Input
-                                        defaultStyles={defaultStyles}
-                                        palette={palette}
-                                        style={styleFromInit.input}
-                                        errorStyle={styleFromInit.inputError}
-                                        type={type}
-                                        name={field.id}
-                                        placeholder={field.placeholder}
-                                        ref={field.ref}
-                                        onChange={handleInputChange}
-                                        hasError={field.error !== undefined}
-                                        validated={field.validated}
-                                    />
-                                    {field.error && (
-                                        <InputError
-                                            defaultStyles={defaultStyles}
-                                            style={styleFromInit.inputErrorMessage}
-                                            error={field.error}
-                                        />
-                                    )}
-                                </>
-                            </FormRow>
-                        );
-                    })}
-
-                    <FormRow defaultStyles={defaultStyles} style={styleFromInit.formRow} key="signin-button">
-                        <>
-                            <Button
-                                defaultStyles={defaultStyles}
-                                style={styleFromInit.button}
-                                disabled={isLoading}
-                                isLoading={isLoading}
-                                type="submit"
-                                label="SIGN UP"
-                            />
-
+        return (
+            <FormBase
+                formFields={formFields}
+                generalError={generalError}
+                defaultStyles={defaultStyles}
+                palette={palette}
+                isLoading={isLoading}
+                buttonLabel={"SIGN UP"}
+                onSuccess={onSuccess}
+                callAPI={callAPI}
+                header={
+                    <>
+                        <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
+                            Sign Up
+                        </div>
+                        <div className="headerSubtitle" css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
                             <div
-                                className="privacyPolicyAndTermsAndConditions secondaryText"
-                                css={[
-                                    defaultStyles.secondaryText,
-                                    styles.privacyPolicyAndTermsAndConditions,
-                                    styleFromInit.secondaryText,
-                                    styleFromInit.privacyPolicyAndTermsAndConditions
-                                ]}>
-                                By signin up, you agree to our
+                                className="secondaryText"
+                                css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
+                                Already have an account?
                                 <span
                                     className="link"
-                                    css={[defaultStyles.link, styleFromInit.link]}
-                                    onClick={() => openExternalLink(termsAndConditionsLink)}>
-                                    Terms of Service
-                                </span>
-                                and
-                                <span
-                                    className="link"
-                                    css={[defaultStyles.link, styleFromInit.link]}
-                                    onClick={() => openExternalLink(privacyPolicyLink)}>
-                                    Privacy Policy
+                                    onClick={signInClicked}
+                                    css={[defaultStyles.link, styleFromInit.link]}>
+                                    Sign In
                                 </span>
                             </div>
-                        </>
-                    </FormRow>
-                </form>
-            </div>
-        </div>
-    );
+                        </div>
+                    </>
+                }
+                footer={
+                    <div
+                        className="privacyPolicyAndTermsAndConditions secondaryText"
+                        css={[
+                            defaultStyles.secondaryText,
+                            styles.privacyPolicyAndTermsAndConditions,
+                            styleFromInit.secondaryText,
+                            styleFromInit.privacyPolicyAndTermsAndConditions
+                        ]}>
+                        By signin up, you agree to our
+                        <span
+                            className="link"
+                            css={[defaultStyles.link, styleFromInit.link]}
+                            onClick={() => openExternalLink(termsAndConditionsLink)}>
+                            Terms of Service
+                        </span>
+                        and
+                        <span
+                            className="link"
+                            css={[defaultStyles.link, styleFromInit.link]}
+                            onClick={() => openExternalLink(privacyPolicyLink)}>
+                            Privacy Policy
+                        </span>
+                    </div>
+                }
+            />
+        );
+    }
 }
