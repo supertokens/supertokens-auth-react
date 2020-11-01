@@ -12,31 +12,28 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 /*
  * Imports.
  */
 import * as React from "react";
 import { Component, createRef } from "react";
-import { NormalisedPalette, FormBaseState, SignInThemeProps, FormFieldState } from "../../../../types";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { NormalisedPalette, EnterEmailThemeProps, FormFieldState } from "../../../../types";
+import { CSSInterpolation } from "@emotion/serialize/types";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import FormBase from "../../../library/FormBase";
-import { FormField } from "../../../../../../types";
 
 /*
  * Styles.
  */
-
 function getStyles(palette: NormalisedPalette): any {
     return {
         headerTitle: {
             fontSize: palette.fonts.size[2],
             lineHeight: "40px",
             letterSpacing: "0.58px",
-            fontWeight: 800,
+            fontWeight: 600,
             color: palette.colors.textPrimary
         } as CSSInterpolation,
 
@@ -45,8 +42,8 @@ function getStyles(palette: NormalisedPalette): any {
             marginBottom: "21px"
         } as CSSInterpolation,
 
-        forgotPasswordLink: {
-            marginTop: "10px"
+        successMessage: {
+            marginBottom: "15px"
         } as CSSInterpolation
     };
 }
@@ -55,11 +52,14 @@ function getStyles(palette: NormalisedPalette): any {
  * Component.
  */
 
-export default class SignInTheme extends Component<SignInThemeProps, { formFields: FormFieldState[] }> {
+export default class EnterEmailTheme extends Component<
+    EnterEmailThemeProps,
+    { emailSent?: boolean; formFields: FormFieldState[] }
+> {
     /*
      * Constructor.
      */
-    constructor(props: SignInThemeProps) {
+    constructor(props: EnterEmailThemeProps) {
         super(props);
 
         const formFields = props.formFields.map(field => {
@@ -76,59 +76,80 @@ export default class SignInTheme extends Component<SignInThemeProps, { formField
     }
 
     /*
-     * Render.
+     * Methods.
      */
 
+    onSuccess = () => {
+        this.setState({
+            emailSent: true
+        });
+        if (this.props.onSuccess) {
+            this.props.onSuccess();
+        }
+    };
+
+    resend = () => {
+        this.setState({
+            emailSent: false
+        });
+    };
+
+    /*
+     * Render.
+     */
     render() {
-        const { signUpClicked, forgotPasswordClick, defaultStyles, palette, onSuccess, callAPI } = this.props;
+        const { defaultStyles, palette, callAPI } = this.props;
+        const { formFields, emailSent } = this.state;
         let styleFromInit = this.props.styleFromInit || {};
-        const { formFields } = this.state;
         const styles = getStyles(palette);
 
+        // If email sent, show succes UI.
+        if (emailSent === true) {
+            return (
+                <div className="container" css={[defaultStyles.container, styleFromInit.container]}>
+                    <div className="row" css={[defaultStyles.row, styleFromInit.row]}>
+                        <div
+                            className="primaryText successMessage"
+                            css={[
+                                defaultStyles.primaryText,
+                                styleFromInit.primaryText,
+                                styles.successMessage,
+                                styleFromInit.successMessage
+                            ]}>
+                            If that email address exists, you will receive a password recovery link within a few
+                            minutes.
+                            <span className="link" css={[defaultStyles.link, styleFromInit.link]} onClick={this.resend}>
+                                Resend
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Otherwise, return Form.
         return (
             <FormBase
                 formFields={formFields}
                 defaultStyles={defaultStyles}
                 palette={palette}
-                buttonLabel={"SIGN IN"}
-                onSuccess={onSuccess}
+                buttonLabel={"Email me"}
+                onSuccess={this.onSuccess}
                 callAPI={callAPI}
-                showLabels={true}
+                showLabels={false}
                 header={
                     <>
                         <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
-                            Sign In
+                            Reset your password
                         </div>
                         <div className="headerSubtitle" css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
                             <div
                                 className="secondaryText"
                                 css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
-                                Not registered yet?
-                                <span
-                                    className="link"
-                                    onClick={signUpClicked}
-                                    css={[defaultStyles.link, styleFromInit.link]}>
-                                    Sign Up
-                                </span>
+                                We will send you an email to reset your password
                             </div>
                         </div>
-                        <div className="divider" css={[defaultStyles.divider, styleFromInit.divider]}></div>
                     </>
-                }
-                footer={
-                    <div
-                        className="link secondaryText forgotPasswordLink"
-                        css={[
-                            defaultStyles.link,
-                            defaultStyles.secondaryText,
-                            styles.forgotPasswordLink,
-                            styleFromInit.link,
-                            styleFromInit.secondaryText,
-                            styleFromInit.forgotPasswordLink
-                        ]}
-                        onClick={forgotPasswordClick}>
-                        Forgot password?
-                    </div>
                 }
             />
         );

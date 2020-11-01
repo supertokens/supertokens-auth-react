@@ -18,13 +18,13 @@
  */
 import * as React from "react";
 import { Component, FormEvent } from "react";
-import { FormBaseState, FormBaseProps } from "../../../../types";
-import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../../../../../constants";
-import { Button, FormRow, Input, InputError, Label } from "../../../library";
-import { APIFormField } from "../../../../../../types";
+import { FormBaseState, FormBaseProps } from "../../types";
+import { Button, FormRow, Input, InputError, Label } from ".";
+import { APIFormField } from "../../../../types";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
+import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 
 /*
  * Component.
@@ -74,6 +74,7 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
 
         // Set isLoading to true.
         this.setState({
+            generalError: undefined,
             isLoading: true
         });
 
@@ -97,10 +98,8 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
         if (result.status === API_RESPONSE_STATUS.OK) {
             // TODO: Show result in UI?
 
-            // If onSuccess if exist, sleep for 2seconds and call it.
             if (this.props.onSuccess !== undefined) {
-                const onSuccess = this.props.onSuccess;
-                setTimeout(() => onSuccess(), 2000);
+                this.props.onSuccess();
             }
             return;
         }
@@ -126,28 +125,29 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
             return;
         }
 
-        // Otherwise, general error or wrong credentials.
-        this.setState({
-            generalError: result.message
-        });
+        // Otherwise if message, set generalError
+        if (
+            result.status === API_RESPONSE_STATUS.GENERAL_ERROR ||
+            result.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
+        ) {
+            this.setState({
+                generalError: result.message
+            });
+        }
     };
 
     /*
      * Render.
      */
     render() {
-        const { defaultStyles, palette, header, footer, buttonLabel } = this.props;
+        const { defaultStyles, palette, header, footer, buttonLabel, showLabels } = this.props;
         let styleFromInit = this.props.styleFromInit || {};
-        debugger;
         const { generalError, formFields, isLoading } = this.state;
 
         return (
             <div className="container" css={[defaultStyles.container, styleFromInit.container]}>
                 <div className="row" css={[defaultStyles.row, styleFromInit.row]}>
                     {header}
-
-                    <div className="divider" css={[defaultStyles.divider, styleFromInit.divider]}></div>
-
                     {generalError && (
                         <div className="generalError" css={[defaultStyles.generalError, styleFromInit.generalError]}>
                             {generalError}
@@ -161,16 +161,21 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
                             if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
                                 type = field.id;
                             }
+                            if (field.id === "confirm-password") {
+                                type = "password";
+                            }
 
                             return (
                                 <FormRow style={styleFromInit.formRow} key={field.id} defaultStyles={defaultStyles}>
                                     <>
-                                        <Label
-                                            style={styleFromInit.label}
-                                            value={field.label}
-                                            showIsRequired={field.showIsRequired}
-                                            defaultStyles={defaultStyles}
-                                        />
+                                        {showLabels && (
+                                            <Label
+                                                style={styleFromInit.label}
+                                                value={field.label}
+                                                showIsRequired={field.showIsRequired}
+                                                defaultStyles={defaultStyles}
+                                            />
+                                        )}
 
                                         <Input
                                             style={styleFromInit.input}
@@ -209,7 +214,6 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
                                     type="submit"
                                     label={buttonLabel}
                                 />
-
                                 {footer}
                             </>
                         </FormRow>

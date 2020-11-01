@@ -209,6 +209,11 @@ export type RequestJson = {
      */
 
     formFields: APIFormField[];
+
+    /*
+     * Reset password token.
+     */
+    token?: string;
 };
 
 export type NormalisedFormField = {

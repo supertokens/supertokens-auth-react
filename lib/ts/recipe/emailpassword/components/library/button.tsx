@@ -35,18 +35,32 @@ type ButtonProps = {
     disabled?: boolean;
     type: "submit" | "button" | "reset" | undefined;
     defaultStyles: NormalisedDefaultStyles;
+    onClick?: () => void;
 };
 
 /*
  * Component.
  */
 
-export default function Button({ style, type, label, disabled, isLoading, defaultStyles }: ButtonProps): JSX.Element {
+export default function Button({
+    style,
+    type,
+    label,
+    disabled,
+    isLoading,
+    defaultStyles,
+    onClick
+}: ButtonProps): JSX.Element {
     if (disabled === undefined) {
         disabled = false;
     }
     return (
-        <button type={type} disabled={disabled} css={[defaultStyles.button, style]} className="button">
+        <button
+            type={type}
+            disabled={disabled}
+            onClick={onClick}
+            css={[defaultStyles.button, style]}
+            className="button">
             {label}
             {isLoading && "..."}
         </button>

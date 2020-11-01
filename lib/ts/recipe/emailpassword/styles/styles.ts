@@ -24,6 +24,7 @@ export const defaultPalette: NormalisedPalette = {
         inputBackground: "#f2f2f2",
         primary: "#ff9b33",
         error: "#ff1717",
+        textTitle: "#222222",
         textPrimary: "#222222",
         textSecondary: "#656565",
         textLink: "#0076ff"
@@ -49,7 +50,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             width: "60vw",
             margin: "0 auto",
             minWidth: "420px",
-            minHeight: "498px",
+            textAlign: "center",
             borderRadius: "8px",
             boxShadow: "1px 1px 10px rgba(0,0,0,0.16)",
             backgroundColor: palette.colors.background,
@@ -158,6 +159,13 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             flexDirection: "column",
             paddingTop: "5px",
             paddingBottom: "24px"
+        },
+
+        primaryText: {
+            fontSize: palette.fonts.size[1],
+            fontWeight: 400,
+            letterSpacing: "0.4px",
+            color: palette.colors.textPrimary
         },
 
         secondaryText: {

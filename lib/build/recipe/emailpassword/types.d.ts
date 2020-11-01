@@ -1,19 +1,19 @@
 import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson } from "../../types";
-import { API_RESPONSE_STATUS } from "../../constants";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
+import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
 export declare type EmailPasswordUserInput = {
     palette?: PaletteUserInput;
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
-    resetPasswordUsingTokenFeature?: any;
+    resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
 };
 export declare type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUserInput;
 export declare type NormalisedEmailPasswordConfig = {
     palette: NormalisedPalette;
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
-    resetPasswordUsingTokenFeature?: any;
+    resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
 };
 export declare type SignInAndUpFeatureUserInput = {
     disableDefaultImplementation?: boolean;
@@ -47,36 +47,77 @@ export declare type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
 };
 export declare type FormFieldSignInConfig = FormFieldBaseConfig;
 export declare type FormFieldSignUpConfig = FormField;
-export declare type EmailPasswordProps = {
+export declare type ResetPasswordUsingTokenUserInput = {
+    disableDefaultImplementation?: boolean;
+    onSuccessRedirectURL?: string;
+    submitNewPasswordForm?: FeatureBaseConfig;
+    enterEmailForm?: FeatureBaseConfig;
+};
+export declare type NormalisedResetPasswordUsingTokenFeatureConfig = {
+    disableDefaultImplementation: boolean;
+    onSuccessRedirectURL: NormalisedURLPath;
+    submitNewPasswordForm: NormalisedSubmitNewPasswordForm;
+    enterEmailForm: NormalisedEnterEmailForm;
+};
+export declare type NormalisedSubmitNewPasswordForm = FeatureBaseConfig & {
+    formFields: NormalisedFormField[];
+};
+export declare type NormalisedEnterEmailForm = FeatureBaseConfig & {
+    formFields: NormalisedFormField[];
+};
+export declare type BaseProps = {
     __internal?: {
         instance: EmailPassword;
     };
     children?: JSX.Element;
+};
+export declare type SignInAndUpProps = BaseProps & {
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
     doesSessionExist?: () => Promise<boolean>;
-    onHandleSuccess?: (context: any, user?: any, responseJson?: any) => Promise<boolean>;
+    onHandleSuccess?: (context: onHandleSignInAndUpSuccessContext) => Promise<boolean>;
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
 };
-declare type EmailPasswordThemeProps = {
-    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse>;
-    onSuccess?: () => void;
+export declare type onHandleSignInAndUpSuccessContext = {
+    action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS;
+} | {
+    action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
+    user: {
+        id: string;
+        email: string;
+    };
+    responseJson: any;
+};
+export declare type ResetPasswordUsingTokenProps = BaseProps & {
+    onHandleSuccess(context: {
+        action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
+    }): Promise<boolean>;
+    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<any>;
+    onCallEnterEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<any>;
+};
+export declare type onHandleResetPasswordUsingTokenSuccessContext = {
+    action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
+};
+declare type ThemeBaseProps = {
     styleFromInit?: {
         [key: string]: CSSInterpolation;
     };
     formFields: FormFieldThemeProps[];
     defaultStyles: NormalisedDefaultStyles;
     palette: NormalisedPalette;
+    onSuccess?: () => void;
 };
-export declare type SignInThemeProps = EmailPasswordThemeProps & {
+export declare type SignInThemeProps = ThemeBaseProps & {
     signUpClicked?: () => void;
     forgotPasswordClick?: () => void;
     resetPasswordURL?: NormalisedURLPath;
+    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse>;
 };
-export declare type SignUpThemeProps = EmailPasswordThemeProps & {
+export declare type SignUpThemeProps = ThemeBaseProps & {
     signInClicked?: () => void;
     privacyPolicyLink?: string;
     termsAndConditionsLink?: string;
+    callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
 };
 export declare type SignInAndUpThemeProps = {
     signInForm: SignInThemeProps;
@@ -90,22 +131,39 @@ export declare type FormFieldError = {
     id: string;
     error: string;
 };
-export declare type SignUpThemeResponse = {
+export declare type BaseResponse = {
     status: API_RESPONSE_STATUS.OK;
 } | {
     status: API_RESPONSE_STATUS.GENERAL_ERROR;
-    message?: string;
+    message: string;
 } | {
     status: API_RESPONSE_STATUS.FIELD_ERROR;
     fields: FormFieldError[];
 };
-export declare type SignInThemeResponse = SignUpThemeResponse | {
+export declare type SignUpThemeResponse = BaseResponse;
+export declare type SignInThemeResponse = BaseResponse | {
     status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR;
-    message?: string;
+    message: string;
+};
+export declare type EnterEmailThemeResponse = BaseResponse;
+export declare type SubmitNewPasswordThemeResponse = BaseResponse | {
+    status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
 };
 export declare type User = {
     id: string;
     email: string;
+};
+export declare type ResetPasswordUsingTokenThemeProps = {
+    enterEmail: EnterEmailThemeProps;
+    submitNewPassword: SubmitNewPasswordThemeProps;
+    hasToken: boolean;
+};
+export declare type EnterEmailThemeProps = ThemeBaseProps & {
+    callAPI: (fields: APIFormField[]) => Promise<EnterEmailThemeResponse>;
+};
+export declare type SubmitNewPasswordThemeProps = ThemeBaseProps & {
+    callAPI: (fields: APIFormField[]) => Promise<SubmitNewPasswordThemeResponse>;
+    onSignInClicked: () => void;
 };
 export declare type FormFieldState = FormFieldThemeProps & {
     validated: boolean;
@@ -117,6 +175,7 @@ declare enum paletteColorOptions {
     INPUTBACKGROUND = "inputBackground",
     PRIMARY = "primary",
     ERROR = "error",
+    TEXTTITLE = "textTitle",
     TEXTPRIMARY = "textPrimary",
     TEXTSECONDARY = "textSecondary",
     TEXTLINK = "textLink"
@@ -124,9 +183,6 @@ declare enum paletteColorOptions {
 export declare type PaletteUserInput = {
     colors?: {
         [key in paletteColorOptions]: string;
-    };
-    fonts?: {
-        size: string[];
     };
 };
 export declare type NormalisedPalette = {
@@ -150,6 +206,7 @@ declare enum defaultStylesOptions {
     BUTTON = "button",
     LABEL = "label",
     FORMROW = "formRow",
+    PRIMARYTEXT = "primaryText",
     SECONDARYTEXT = "secondaryText",
     LINK = "link",
     DIVIDER = "divider"
@@ -166,14 +223,13 @@ export declare type FormBaseState = {
     isLoading: boolean;
 };
 export declare type FormBaseProps = {
-    header: JSX.Element;
-    footer: JSX.Element;
+    header?: JSX.Element;
+    footer?: JSX.Element;
     formFields: FormFieldState[];
-    generalError?: string;
-    isLoading: boolean;
+    showLabels: boolean;
     buttonLabel: string;
     onSuccess?: () => void;
-    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse | SignUpThemeResponse>;
+    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse | SignUpThemeResponse | SubmitNewPasswordThemeResponse | EnterEmailThemeResponse>;
     defaultStyles: NormalisedDefaultStyles;
     palette: NormalisedPalette;
     styleFromInit?: {

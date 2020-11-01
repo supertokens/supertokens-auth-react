@@ -17,13 +17,13 @@
  */
 import * as React from "react";
 import { Component, createRef } from "react";
-import { FormBaseState, NormalisedPalette, SignUpThemeProps } from "../../../../types";
+import { FormBaseState, FormFieldState, NormalisedPalette, SignUpThemeProps } from "../../../../types";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import { openExternalLink } from "../../../../../../utils";
-import FormBase from "./FormBase";
+import FormBase from "../../../library/FormBase";
 
 /*
  * Styles.
@@ -53,7 +53,7 @@ function getStyles(palette: NormalisedPalette): any {
  * Component.
  */
 
-export default class SignUpTheme extends Component<SignUpThemeProps, FormBaseState> {
+export default class SignUpTheme extends Component<SignUpThemeProps, { formFields: FormFieldState[] }> {
     /*
      * Constructor.
      */
@@ -78,9 +78,7 @@ export default class SignUpTheme extends Component<SignUpThemeProps, FormBaseSta
         });
 
         this.state = {
-            formFields,
-            generalError: undefined,
-            isLoading: false
+            formFields
         };
     }
 
@@ -97,20 +95,19 @@ export default class SignUpTheme extends Component<SignUpThemeProps, FormBaseSta
             onSuccess,
             callAPI
         } = this.props;
-        const { generalError, formFields, isLoading } = this.state;
+        const { formFields } = this.state;
         let styleFromInit = this.props.styleFromInit || {};
         const styles = getStyles(palette);
 
         return (
             <FormBase
                 formFields={formFields}
-                generalError={generalError}
                 defaultStyles={defaultStyles}
                 palette={palette}
-                isLoading={isLoading}
                 buttonLabel={"SIGN UP"}
                 onSuccess={onSuccess}
                 callAPI={callAPI}
+                showLabels={true}
                 header={
                     <>
                         <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
@@ -129,6 +126,7 @@ export default class SignUpTheme extends Component<SignUpThemeProps, FormBaseSta
                                 </span>
                             </div>
                         </div>
+                        <div className="divider" css={[defaultStyles.divider, styleFromInit.divider]}></div>
                     </>
                 }
                 footer={

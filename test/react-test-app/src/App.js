@@ -77,7 +77,7 @@ if (!hasDisabledDefaultImplementationFromLocationQueryParams()) {
             }]
           },
           signInForm: {
-            resetPasswordURL: "http://localhost:3031/reset-password"
+            resetPasswordURL: "http://localhost:3031/auth-bis/reset-password"
           }
         }
       })

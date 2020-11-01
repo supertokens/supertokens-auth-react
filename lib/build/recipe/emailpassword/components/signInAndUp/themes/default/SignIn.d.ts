@@ -1,6 +1,8 @@
 import { Component } from "react";
-import { FormBaseState, SignInThemeProps } from "../../../../types";
-export default class SignInTheme extends Component<SignInThemeProps, FormBaseState> {
+import { SignInThemeProps, FormFieldState } from "../../../../types";
+export default class SignInTheme extends Component<SignInThemeProps, {
+    formFields: FormFieldState[];
+}> {
     constructor(props: SignInThemeProps);
     render(): JSX.Element;
 }

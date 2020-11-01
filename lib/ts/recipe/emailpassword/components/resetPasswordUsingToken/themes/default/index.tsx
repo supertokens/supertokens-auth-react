@@ -1,10 +1,3 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.ST_ROOT_CONTAINER = exports.DEFAULT_WEBSITE_BASE_PATH = exports.DEFAULT_API_BASE_PATH = exports.RECIPE_ID_QUERY_PARAM = void 0;
-
 /* Copyright (c) 2020, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
@@ -21,13 +14,30 @@ exports.ST_ROOT_CONTAINER = exports.DEFAULT_WEBSITE_BASE_PATH = exports.DEFAULT_
  */
 
 /*
- * Enums.
+ * Imports.
  */
-var RECIPE_ID_QUERY_PARAM = "rid";
-exports.RECIPE_ID_QUERY_PARAM = RECIPE_ID_QUERY_PARAM;
-var DEFAULT_API_BASE_PATH = "/auth";
-exports.DEFAULT_API_BASE_PATH = DEFAULT_API_BASE_PATH;
-var DEFAULT_WEBSITE_BASE_PATH = "/auth";
-exports.DEFAULT_WEBSITE_BASE_PATH = DEFAULT_WEBSITE_BASE_PATH;
-var ST_ROOT_CONTAINER = "supertokens-root";
-exports.ST_ROOT_CONTAINER = ST_ROOT_CONTAINER;
+import * as React from "react";
+import { ResetPasswordUsingTokenThemeProps } from "../../../../types";
+
+import EnterEmail from "./enterEmail";
+import SubmitNewPassword from "./submitNewPassword";
+
+/*
+ * Component.
+ */
+
+export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenThemeProps): JSX.Element {
+    /*
+     * Render.
+     */
+
+    // If no token, return SubmitNewPassword.
+    if (props.hasToken) {
+        return <SubmitNewPassword {...props.submitNewPassword} />;
+    }
+
+    // Otherwise, return EnterEmail.
+    return <EnterEmail {...props.enterEmail} />;
+}
+
+export default ResetPasswordUsingTokenTheme;

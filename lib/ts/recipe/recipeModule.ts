@@ -17,7 +17,6 @@
  * Imports.
  */
 import { RouteToFeatureComponentMap, RecipeModuleConfig, NormalisedAppInfo } from "../types";
-import NormalisedURLPath from "../normalisedURLPath";
 
 /*
  * Class.

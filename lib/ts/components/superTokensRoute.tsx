@@ -29,9 +29,15 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
     try {
         const Route = require("react-router-dom").Route;
         const pathsToComponentWithRecipeIdMap = SuperTokens.getPathsToComponentWithRecipeIdMap();
-        return Object.keys(pathsToComponentWithRecipeIdMap).map(path => (
-            <SuperTokensRouteWithRecipeId Route={Route} key={`st-${path}`} path={path} />
-        ));
+        return (
+            Object.keys(pathsToComponentWithRecipeIdMap)
+                /*
+                 *  Sort by path length to make sure a shorter path doesn't take precedence
+                 * i.e. /auth/reset-password comes before /auth/
+                 */
+                .sort(path => -path.length)
+                .map(path => <SuperTokensRouteWithRecipeId Route={Route} key={`st-${path}`} path={path} />)
+        );
     } catch (e) {
         // If react-router-dom is absent from dependencies, return [];
         return [];

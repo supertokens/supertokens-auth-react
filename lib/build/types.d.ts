@@ -69,6 +69,7 @@ export declare type APIFormField = {
 };
 export declare type RequestJson = {
     formFields: APIFormField[];
+    token?: string;
 };
 export declare type NormalisedFormField = {
     id: string;

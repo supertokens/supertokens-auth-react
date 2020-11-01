@@ -91,6 +91,7 @@ function Nav () {
         <li key="custom3"><a className="menu__link" style={{ textDecoration: 'none' }} href="/custom-props">Custom login with props methods</a></li>
         <li key="custom4"><a className="menu__link" style={{ textDecoration: 'none' }} href="/custom-theme">Custom theme</a></li>
         <li key="custom5"><a className="menu__link" style={{ textDecoration: 'none' }} href="/session-exist">Session already exist.</a></li>
+        <li key="custom6"><a className="menu__link" style={{ textDecoration: 'none' }} href="/auth/reset-password">Reset Password</a></li>
       </ul>
     </nav>
   </div>

@@ -20,10 +20,9 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import EmailPassword from "../../../../lib/build/recipe/emailpassword/emailPassword";
-import {getDefaultFormFields, defaultLoginPasswordValidator} from "../../../../lib/build/recipe/emailpassword/utils"
+import {getDefaultFormFields, defaultLoginPasswordValidator, defaultValidate} from "../../../../lib/build/recipe/emailpassword/utils"
 import assert from "assert";
 import SuperTokens from "../../../../lib/build/SuperTokens";
-import { defaultValidate } from "../../../../lib/build/utils";
 import NormalisedURLPath from "../../../../lib/build/normalisedURLPath";
 
 // Run the tests in a DOM environment.
@@ -37,13 +36,16 @@ describe("EmailPassword", function() {
     const privacyPolicyLink = "https://example.com/privacy";
     const termsAndConditionsLink = "https://example.com/terms";
     const resetPasswordURL = "https://example.com/reset";
-    SuperTokens.init({
-        appInfo: {
-            appName: "SuperTokens",
-            websiteDomain: "supertokens.io",
-            apiDomain: "api.supertokens.io"
-        },
-        recipeList: [EmailPassword.init()]
+
+    before(async function() {
+        SuperTokens.init({
+            appInfo: {
+                appName: "SuperTokens",
+                websiteDomain: "supertokens.io",
+                apiDomain: "api.supertokens.io"
+            },
+            recipeList: [EmailPassword.init()]
+        });
     });
 
     afterEach(async function() {
@@ -70,6 +72,7 @@ describe("EmailPassword", function() {
 
         );
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] !== undefined);
+        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] !== undefined);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getRecipeId(), "email-password");
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL.getAsStringDangerous(), new NormalisedURLPath("/").getAsStringDangerous());
     });
@@ -86,9 +89,13 @@ describe("EmailPassword", function() {
                 signInForm: {
                     resetPasswordURL
                 }
+            },
+            resetPasswordUsingTokenFeature: {
+                disableDefaultImplementation: true
             }
         })(SuperTokens.getAppInfo());
-        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/"] === undefined);
+        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] === undefined);
+        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] === undefined);
         const normalisedOnSuccessRedirectURL = new NormalisedURLPath(onSuccessRedirectURL);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL.getAsStringDangerous(), normalisedOnSuccessRedirectURL.getAsStringDangerous());
     });

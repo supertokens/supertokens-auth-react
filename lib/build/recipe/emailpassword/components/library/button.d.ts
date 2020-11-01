@@ -8,6 +8,7 @@ declare type ButtonProps = {
     disabled?: boolean;
     type: "submit" | "button" | "reset" | undefined;
     defaultStyles: NormalisedDefaultStyles;
+    onClick?: () => void;
 };
-export default function Button({ style, type, label, disabled, isLoading, defaultStyles }: ButtonProps): JSX.Element;
+export default function Button({ style, type, label, disabled, isLoading, defaultStyles, onClick }: ButtonProps): JSX.Element;
 export {};

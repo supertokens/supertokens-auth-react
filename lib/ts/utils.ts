@@ -13,16 +13,11 @@
  * under the License.
  */
 
-import {
-    DEFAULT_API_BASE_PATH,
-    DEFAULT_WEBSITE_BASE_PATH,
-    MANDATORY_FORM_FIELDS_ID_ARRAY,
-    RECIPE_ID_QUERY_PARAM
-} from "./constants";
+import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, FormField, NormalisedAppInfo, NormalisedFormField } from "./types";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 
 /*
  * getRecipeIdFromPath
@@ -39,66 +34,6 @@ export function getRecipeIdFromSearch(search: string): string | null {
  */
 export function isTest(): boolean {
     return process.env.TEST_MODE === "testing";
-}
-
-/*
- * mergeFormFields by keeping the provided order, defaultFormFields or merged first, and unmerged userFormFields after.
- */
-
-export function mergeFormFields(
-    defaultFormFields: NormalisedFormField[],
-    userFormFields: FormField[]
-): NormalisedFormField[] {
-    // Create a new array with default fields.
-    const mergedFormFields: NormalisedFormField[] = defaultFormFields;
-
-    // Loop through user provided fields.
-    for (let i = 0; i < userFormFields.length; i++) {
-        const userField = userFormFields[i];
-        let isNewField: boolean = true;
-
-        // Loop through the merged fields array.
-        for (let j = 0; j < mergedFormFields.length; j++) {
-            const mergedField = mergedFormFields[j];
-
-            // If id is equal, merge the fields
-            if (userField.id === mergedField.id) {
-                // Make sure that email and password are kept mandatory.
-                let optional: boolean = mergedField.optional; // Init with default value.
-                // If user provided value, overwrite.
-                if (userField.optional !== undefined) {
-                    optional = userField.optional;
-                }
-
-                // If "email" or "password", always mandatory.
-                if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(userField.id)) {
-                    optional = false;
-                }
-
-                // Merge.
-                mergedFormFields[j] = {
-                    ...mergedFormFields[j],
-                    ...userField,
-                    optional
-                };
-
-                isNewField = false;
-                break;
-            }
-        }
-
-        // If new field, push to mergeFormFields.
-        if (isNewField) {
-            mergedFormFields.push({
-                optional: false,
-                placeholder: capitalize(userField.id),
-                validate: defaultValidate,
-                ...userField
-            });
-        }
-    }
-
-    return mergedFormFields;
 }
 
 export function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): NormalisedAppInfo {
@@ -180,20 +115,6 @@ export async function validateFormOrThrow(
 }
 
 /*
- * capitalize
- */
-export function capitalize(value: string): string {
-    return value.charAt(0).toUpperCase() + value.slice(1);
-}
-
-/*
- * defaultValidate
- */
-export async function defaultValidate(value: string): Promise<string | undefined> {
-    return undefined;
-}
-
-/*
  * openExternalLink
  */
 export function openExternalLink(link?: string) {
@@ -209,4 +130,17 @@ export function openExternalLink(link?: string) {
  */
 export function getCurrentNormalisedUrlPath() {
     return new NormalisedURLPath(window.location.pathname);
+}
+
+/*
+ * redirectTo
+ */
+export function redirectTo(path: NormalisedURLPath) {
+    let newPath: string = path.getAsStringDangerous();
+
+    if (newPath.length === 0) {
+        newPath = "/";
+    }
+
+    window.location.href = newPath;
 }

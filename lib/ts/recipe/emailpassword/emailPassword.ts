@@ -30,6 +30,8 @@ import HttpRequest from "../../httpRequest";
 import { normaliseEmailPasswordConfigOrThrow } from "./utils";
 import { SignInAndUp } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
+import ResetPasswordUsingToken from "./components/resetPasswordUsingToken/resetPasswordUsingToken";
+import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 
 /*
  * Class.
@@ -64,6 +66,30 @@ export default class EmailPassword extends RecipeModule {
         return this.config;
     };
 
+    getFeatures = (): RouteToFeatureComponentMap => {
+        let features: RouteToFeatureComponentMap = {};
+        if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
+            let normalisedFullPath = this.getAppInfo().websiteBasePath.appendPath(new NormalisedURLPath("/"));
+            features[normalisedFullPath.getAsStringDangerous()] = SignInAndUp;
+        }
+
+        if (this.config.resetPasswordUsingTokenFeature.disableDefaultImplementation !== true) {
+            let normalisedFullPath = this.getAppInfo().websiteBasePath.appendPath(
+                new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH)
+            );
+            features[normalisedFullPath.getAsStringDangerous()] = ResetPasswordUsingToken;
+        }
+        return features;
+    };
+
+    /*
+     * API.
+     */
+
+    /*
+     * SignIn/SignUp
+     */
+
     signUpApi = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
         return this.httpRequest.post("/signup", {
             body: JSON.stringify(requestJson),
@@ -78,6 +104,32 @@ export default class EmailPassword extends RecipeModule {
         });
     };
 
+    /*
+     * Reset Password
+     */
+
+    submitNewPasswordAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+        return this.httpRequest.post("/user/password/reset", {
+            body: JSON.stringify(requestJson),
+            headers
+        });
+    };
+
+    enterEmailAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+        return this.httpRequest.post("/user/password/reset/token", {
+            body: JSON.stringify(requestJson),
+            headers
+        });
+    };
+
+    /*
+     * Validate
+     */
+
+    /*
+     * SignIn/SignUp
+     */
+
     async signUpValidate(input: APIFormField[]): Promise<FormFieldError[]> {
         return await validateFormOrThrow(input, this.config.signInAndUpFeature.signUpForm.formFields);
     }
@@ -86,16 +138,20 @@ export default class EmailPassword extends RecipeModule {
         return await validateFormOrThrow(input, this.config.signInAndUpFeature.signInForm.formFields);
     }
 
-    getFeatures = (): RouteToFeatureComponentMap => {
-        let features: RouteToFeatureComponentMap = {};
-        if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
-            let normalisedFullPath = this.getAppInfo().websiteBasePath.appendPath(new NormalisedURLPath("/"));
-            features[normalisedFullPath.getAsStringDangerous()] = SignInAndUp;
-        }
+    /*
+     * Reset Password
+     */
 
-        // TODO Forgot Password.
-        return features;
-    };
+    async submitNewPasswordValidate(input: APIFormField[]): Promise<FormFieldError[]> {
+        return await validateFormOrThrow(
+            input,
+            this.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+        );
+    }
+
+    async enterEmailValidate(input: APIFormField[]): Promise<FormFieldError[]> {
+        return await validateFormOrThrow(input, this.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields);
+    }
 
     /*
      * Static methods.

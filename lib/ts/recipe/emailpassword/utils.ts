@@ -13,18 +13,21 @@
  * under the License.
  */
 
-import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { FormField, FormFieldBaseConfig, NormalisedAppInfo, NormalisedFormField } from "../../types";
-import { mergeFormFields } from "../../utils";
+import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID, MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
 import { defaultPalette } from "./styles/styles";
 import {
     EmailPasswordConfig,
     NormalisedEmailPasswordConfig,
+    NormalisedEnterEmailForm,
     NormalisedPalette,
+    NormalisedResetPasswordUsingTokenFeatureConfig,
     NormalisedSignInAndUpFeatureConfig,
     NormalisedSignInFormFeatureConfig,
     NormalisedSignUpFormFeatureConfig,
+    NormalisedSubmitNewPasswordForm,
+    ResetPasswordUsingTokenUserInput,
     SignInAndUpFeatureUserInput,
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput
@@ -98,7 +101,9 @@ export function normaliseEmailPasswordConfigOrThrow(config: EmailPasswordConfig)
         config.appInfo,
         config.signInAndUpFeature
     );
-    const resetPasswordUsingTokenFeature: any = undefined;
+    const resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig = normaliseResetPasswordUsingTokenFeature(
+        config.resetPasswordUsingTokenFeature
+    );
 
     let palette: NormalisedPalette = defaultPalette;
     if (config.palette !== undefined) {
@@ -106,12 +111,6 @@ export function normaliseEmailPasswordConfigOrThrow(config: EmailPasswordConfig)
             palette.colors = {
                 ...defaultPalette.colors,
                 ...config.palette.colors
-            };
-        }
-        if (config.palette.fonts !== undefined) {
-            palette.fonts = {
-                ...defaultPalette.fonts,
-                ...config.palette.fonts
             };
         }
     }
@@ -246,20 +245,155 @@ export function normaliseSignInFormFeatureConfig(
 }
 
 export function getDefaultFormFields(): NormalisedFormField[] {
-    return [
-        {
-            id: "email",
-            label: "Email",
-            placeholder: "youremail@example.com",
-            validate: defaultEmailValidator,
-            optional: false
-        },
-        {
-            id: "password",
-            label: "Password",
-            placeholder: "Enter your password",
-            validate: defaultPasswordValidator,
-            optional: false
+    return [getDefaultEmailFormField(), getDefaultPasswordFormField()];
+}
+
+function getDefaultEmailFormField(): NormalisedFormField {
+    return {
+        id: "email",
+        label: "Email",
+        placeholder: "Email address",
+        validate: defaultEmailValidator,
+        optional: false
+    };
+}
+
+function getDefaultPasswordFormField(): NormalisedFormField {
+    return {
+        id: "password",
+        label: "Password",
+        placeholder: "Password",
+        validate: defaultPasswordValidator,
+        optional: false
+    };
+}
+
+export function normaliseResetPasswordUsingTokenFeature(
+    config?: ResetPasswordUsingTokenUserInput
+): NormalisedResetPasswordUsingTokenFeatureConfig {
+    if (config === undefined) {
+        config = {};
+    }
+
+    const disableDefaultImplementation = config.disableDefaultImplementation === true;
+    const onSuccessRedirectURL =
+        config.onSuccessRedirectURL !== undefined
+            ? new NormalisedURLPath(config.onSuccessRedirectURL)
+            : new NormalisedURLPath("/");
+
+    const submitNewPasswordFormStyle =
+        config.submitNewPasswordForm !== undefined && config.submitNewPasswordForm.style !== undefined
+            ? config.submitNewPasswordForm.style
+            : {};
+
+    const submitNewPasswordForm: NormalisedSubmitNewPasswordForm = {
+        style: submitNewPasswordFormStyle,
+        formFields: [
+            Object.assign(
+                {
+                    label: "New password",
+                    placeholder: "New password"
+                },
+                getDefaultPasswordFormField()
+            ),
+            {
+                id: "confirm-password",
+                label: "Confirm password",
+                placeholder: "Confirm your password",
+                validate: defaultPasswordValidator,
+                optional: false
+            }
+        ]
+    };
+
+    const enterEmailFormStyle =
+        config.enterEmailForm !== undefined && config.enterEmailForm.style !== undefined
+            ? config.enterEmailForm.style
+            : {};
+
+    const enterEmailForm: NormalisedEnterEmailForm = {
+        style: enterEmailFormStyle,
+        formFields: [getDefaultEmailFormField()]
+    };
+
+    return {
+        onSuccessRedirectURL,
+        disableDefaultImplementation,
+        submitNewPasswordForm,
+        enterEmailForm
+    };
+}
+
+/*
+ * mergeFormFields by keeping the provided order, defaultFormFields or merged first, and unmerged userFormFields after.
+ */
+
+export function mergeFormFields(
+    defaultFormFields: NormalisedFormField[],
+    userFormFields: FormField[]
+): NormalisedFormField[] {
+    // Create a new array with default fields.
+    const mergedFormFields: NormalisedFormField[] = defaultFormFields;
+
+    // Loop through user provided fields.
+    for (let i = 0; i < userFormFields.length; i++) {
+        const userField = userFormFields[i];
+        let isNewField: boolean = true;
+
+        // Loop through the merged fields array.
+        for (let j = 0; j < mergedFormFields.length; j++) {
+            const mergedField = mergedFormFields[j];
+
+            // If id is equal, merge the fields
+            if (userField.id === mergedField.id) {
+                // Make sure that email and password are kept mandatory.
+                let optional: boolean = mergedField.optional; // Init with default value.
+                // If user provided value, overwrite.
+                if (userField.optional !== undefined) {
+                    optional = userField.optional;
+                }
+
+                // If "email" or "password", always mandatory.
+                if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(userField.id)) {
+                    optional = false;
+                }
+
+                // Merge.
+                mergedFormFields[j] = {
+                    ...mergedFormFields[j],
+                    ...userField,
+                    optional
+                };
+
+                isNewField = false;
+                break;
+            }
         }
-    ];
+
+        // If new field, push to mergeFormFields.
+        if (isNewField) {
+            mergedFormFields.push({
+                optional: false,
+                placeholder: capitalize(userField.id),
+                validate: defaultValidate,
+                ...userField
+            });
+        }
+    }
+
+    return mergedFormFields;
+}
+
+/*
+ * capitalize
+ */
+export function capitalize(value: string): string {
+    return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+/*
+ * defaultValidate
+ */
+export async function defaultValidate(value: string): Promise<string | undefined> {
+    return undefined;
 }

@@ -22,6 +22,9 @@ import { EmailPasswordConfig } from "./types";
 import EmailPassword from "./emailPassword";
 import SignInAndUp from "./components/signInAndUp/SignInAndUp";
 import SignInAndUpTheme from "./components/signInAndUp/themes/default";
+import ResetPasswordUsingToken from "./components/resetPasswordUsingToken/resetPasswordUsingToken";
+import ResetPasswordUsingTokenTheme from "./components/resetPasswordUsingToken/themes/default";
+
 /*
  * Class.
  */
@@ -32,4 +35,10 @@ export default class EmailPasswordAPIWrapper {
 }
 export const init = EmailPasswordAPIWrapper.init;
 
-export { SignInAndUp, SignInAndUpTheme, EmailPasswordAPIWrapper };
+export {
+    SignInAndUp,
+    SignInAndUpTheme,
+    ResetPasswordUsingToken,
+    ResetPasswordUsingTokenTheme,
+    EmailPasswordAPIWrapper
+};

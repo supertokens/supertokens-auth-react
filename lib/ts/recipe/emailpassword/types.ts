@@ -23,11 +23,11 @@ import {
     RecipeModuleConfig,
     RequestJson
 } from "../../types";
-import { API_RESPONSE_STATUS } from "../../constants";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
-import { ElementType, RefObject } from "react";
+import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
+import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
 
 /*
  * EmailPassword User InputsConfig Types.
@@ -47,7 +47,7 @@ export type EmailPasswordUserInput = {
     /*
      * Reset password Using Token feature.
      */
-    resetPasswordUsingTokenFeature?: any;
+    resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
 };
 
 export type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUserInput;
@@ -66,7 +66,7 @@ export type NormalisedEmailPasswordConfig = {
     /*
      * Reset password Using Token feature.
      */
-    resetPasswordUsingTokenFeature?: any;
+    resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
 };
 
 export type SignInAndUpFeatureUserInput = {
@@ -179,39 +179,108 @@ export type FormFieldSignInConfig = FormFieldBaseConfig;
 
 export type FormFieldSignUpConfig = FormField;
 
+export type ResetPasswordUsingTokenUserInput = {
+    /*
+     * Disable default implementation with default routes.
+     */
+    disableDefaultImplementation?: boolean;
+
+    /*
+     * URL to redirect to in case disableDefaultImplemention is true
+     */
+    onSuccessRedirectURL?: string;
+
+    /*
+     * submitNewPasswordForm config.
+     */
+    submitNewPasswordForm?: FeatureBaseConfig;
+
+    /*
+     * enterEmailForm config.
+     */
+    enterEmailForm?: FeatureBaseConfig;
+};
+
+export type NormalisedResetPasswordUsingTokenFeatureConfig = {
+    /*
+     * Disable default implementation with default routes.
+     */
+    disableDefaultImplementation: boolean;
+
+    /*
+     * URL to redirect to in case disableDefaultImplemention is true
+     */
+    onSuccessRedirectURL: NormalisedURLPath;
+
+    /*
+     * submitNewPasswordForm config.
+     */
+    submitNewPasswordForm: NormalisedSubmitNewPasswordForm;
+
+    /*
+     * enterEmailForm config.
+     */
+    enterEmailForm: NormalisedEnterEmailForm;
+};
+
+export type NormalisedSubmitNewPasswordForm = FeatureBaseConfig & {
+    formFields: NormalisedFormField[];
+};
+
+export type NormalisedEnterEmailForm = FeatureBaseConfig & {
+    formFields: NormalisedFormField[];
+};
+
 /*
  * Props Types.
  */
-export type EmailPasswordProps = {
+export type BaseProps = {
     /*
      * Internal props provided by
      */
     __internal?: { instance: EmailPassword };
 
+    /*
+     * Children elemnt
+     */
     children?: JSX.Element;
+};
 
+export type SignInAndUpProps = BaseProps & {
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
 
     doesSessionExist?: () => Promise<boolean>;
 
-    onHandleSuccess?: (context: any, user?: any, responseJson?: any) => Promise<boolean>;
+    onHandleSuccess?: (context: onHandleSignInAndUpSuccessContext) => Promise<boolean>;
 
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
 
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
 };
 
-type EmailPasswordThemeProps = {
-    /*
-     * Call Sign In API.
-     */
-    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse>;
+export type onHandleSignInAndUpSuccessContext =
+    | { action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS }
+    | {
+          action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
+          user: { id: string; email: string };
+          responseJson: any;
+      };
 
-    /*
-     * Called on successful signin/signup/resetpassword.
-     */
-    onSuccess?: () => void;
+export type ResetPasswordUsingTokenProps = BaseProps & {
+    onHandleSuccess(context: {
+        action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
+    }): Promise<boolean>;
 
+    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<any>;
+
+    onCallEnterEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<any>;
+};
+
+export type onHandleResetPasswordUsingTokenSuccessContext = {
+    action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
+};
+
+type ThemeBaseProps = {
     /*
      * Custom styling from user.
      */
@@ -231,9 +300,14 @@ type EmailPasswordThemeProps = {
      * Sign up form props.
      */
     palette: NormalisedPalette;
+
+    /*
+     * Called on successful signin/signup/resetpassword.
+     */
+    onSuccess?: () => void;
 };
 
-export type SignInThemeProps = EmailPasswordThemeProps & {
+export type SignInThemeProps = ThemeBaseProps & {
     /*
      * Callback called when Sign Up link is clicked.
      */
@@ -248,9 +322,14 @@ export type SignInThemeProps = EmailPasswordThemeProps & {
      * Reset password URL for forgot password button.
      */
     resetPasswordURL?: NormalisedURLPath;
+
+    /*
+     * Call Sign In API.
+     */
+    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse>;
 };
 
-export type SignUpThemeProps = EmailPasswordThemeProps & {
+export type SignUpThemeProps = ThemeBaseProps & {
     /*
      * Callback called when Sign In link is clicked.
      */
@@ -265,6 +344,11 @@ export type SignUpThemeProps = EmailPasswordThemeProps & {
      * Terms and conditions link.
      */
     termsAndConditionsLink?: string;
+
+    /*
+     * Call Sign In API.
+     */
+    callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
 };
 
 export type SignInAndUpThemeProps = {
@@ -301,7 +385,7 @@ export type FormFieldError = {
 };
 
 /*eslint-disable */
-export type SignUpThemeResponse =
+export type BaseResponse =
     | {
           /*
            * Success.
@@ -317,7 +401,7 @@ export type SignUpThemeResponse =
           /*
            * General error message.
            */
-          message?: string;
+          message: string;
       }
     | {
           /*
@@ -331,8 +415,10 @@ export type SignUpThemeResponse =
           fields: FormFieldError[];
       };
 
+export type SignUpThemeResponse = BaseResponse;
+
 export type SignInThemeResponse =
-    | SignUpThemeResponse
+    | BaseResponse
     | {
           /*
            * Wrong credentials error.
@@ -342,8 +428,20 @@ export type SignInThemeResponse =
           /*
            * Wrong credentials error message.
            */
-          message?: string;
+          message: string;
       };
+
+export type EnterEmailThemeResponse = BaseResponse;
+
+export type SubmitNewPasswordThemeResponse =
+    | BaseResponse
+    | {
+          /*
+           * Wrong credentials error.
+           */
+          status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
+      };
+
 /*eslint-enabled */
 
 export type User = {
@@ -356,6 +454,39 @@ export type User = {
      * User email.
      */
     email: string;
+};
+
+export type ResetPasswordUsingTokenThemeProps = {
+    /*
+     * Enter email form props.
+     */
+    enterEmail: EnterEmailThemeProps;
+
+    /*
+     * Submit new password form props.
+     */
+    submitNewPassword: SubmitNewPasswordThemeProps;
+
+    /*
+     * A token is present in the query params or not.
+     */
+    hasToken: boolean;
+};
+
+export type EnterEmailThemeProps = ThemeBaseProps & {
+    /*
+     * Call Sign In API.
+     */
+    callAPI: (fields: APIFormField[]) => Promise<EnterEmailThemeResponse>;
+};
+
+export type SubmitNewPasswordThemeProps = ThemeBaseProps & {
+    /*
+     * Call Sign In API.
+     */
+    callAPI: (fields: APIFormField[]) => Promise<SubmitNewPasswordThemeResponse>;
+
+    onSignInClicked: () => void;
 };
 
 /*
@@ -384,6 +515,7 @@ enum paletteColorOptions {
     INPUTBACKGROUND = "inputBackground",
     PRIMARY = "primary",
     ERROR = "error",
+    TEXTTITLE = "textTitle",
     TEXTPRIMARY = "textPrimary",
     TEXTSECONDARY = "textSecondary",
     TEXTLINK = "textLink"
@@ -392,9 +524,6 @@ enum paletteColorOptions {
 export type PaletteUserInput = {
     colors?: {
         [key in paletteColorOptions]: string;
-    };
-    fonts?: {
-        size: string[];
     };
 };
 
@@ -420,6 +549,7 @@ enum defaultStylesOptions {
     BUTTON = "button",
     LABEL = "label",
     FORMROW = "formRow",
+    PRIMARYTEXT = "primaryText",
     SECONDARYTEXT = "secondaryText",
     LINK = "link",
     DIVIDER = "divider"
@@ -442,21 +572,21 @@ export type FormBaseState = {
 };
 
 export type FormBaseProps = {
-    header: JSX.Element;
+    header?: JSX.Element;
 
-    footer: JSX.Element;
+    footer?: JSX.Element;
 
     formFields: FormFieldState[];
 
-    generalError?: string;
-
-    isLoading: boolean;
+    showLabels: boolean;
 
     buttonLabel: string;
 
     onSuccess?: () => void;
 
-    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse | SignUpThemeResponse>;
+    callAPI: (
+        fields: APIFormField[]
+    ) => Promise<SignInThemeResponse | SignUpThemeResponse | SubmitNewPasswordThemeResponse | EnterEmailThemeResponse>;
 
     defaultStyles: NormalisedDefaultStyles;
 

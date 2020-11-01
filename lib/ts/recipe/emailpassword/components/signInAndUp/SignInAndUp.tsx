@@ -17,34 +17,36 @@
  * Imports.
  */
 import * as React from "react";
-import { Component, useCallback, useEffect, useState } from "react";
+import { Component } from "react";
 import {
     SignInThemeResponse,
-    EmailPasswordProps,
+    SignInAndUpProps,
     User,
     SignUpThemeResponse,
     NormalisedDefaultStyles,
-    NormalisedPalette
+    NormalisedPalette,
+    onHandleSignInAndUpSuccessContext
 } from "../../types";
 import EmailPassword from "../../emailPassword";
 import { SignInAndUpTheme } from "../..";
 import { APIFormField, RequestJson } from "../../../../types";
-import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../../../constants";
+import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../constants";
 import FeatureWrapper from "../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import { getDefaultStyles } from "../../styles/styles";
+import { redirectTo } from "../../../../utils";
 
 /*
  * Component.
  */
 
-class SignInAndUp extends Component<EmailPasswordProps, { user?: User; responseJson: any }> {
+class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJson: any }> {
     /*
      * Constructor.
      */
-    constructor(props: EmailPasswordProps) {
+    constructor(props: SignInAndUpProps) {
         super(props);
 
         this.state = {
@@ -95,20 +97,6 @@ class SignInAndUp extends Component<EmailPasswordProps, { user?: User; responseJ
     };
 
     signInAPI = async (formFields: APIFormField[]): Promise<{ response: SignInThemeResponse; responseJson?: any }> => {
-        // Front end validation.
-        const validationErrors = await this.getRecipeInstanceOrThrow().signInValidate(formFields);
-
-        // If errors, return.
-        if (validationErrors.length > 0) {
-            return {
-                response: {
-                    status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    fields: validationErrors
-                }
-            };
-        }
-
-        // Otherwise, call API.
         try {
             const headers: HeadersInit = {
                 rid: this.getRecipeInstanceOrThrow().getRecipeId()
@@ -135,29 +123,44 @@ class SignInAndUp extends Component<EmailPasswordProps, { user?: User; responseJ
                 };
             }
 
-            // Otherwise, status === OK
-            return {
-                response: {
-                    status: API_RESPONSE_STATUS.OK
-                },
-                responseJson
-            };
-        } catch (e) {
+            // Otherwise, if success.
+            if (responseJson.status === API_RESPONSE_STATUS.OK) {
+                return {
+                    response: {
+                        status: API_RESPONSE_STATUS.OK
+                    },
+                    responseJson
+                };
+            }
+
+            // Otherwise, something went wrong.
             return {
                 response: {
                     status: API_RESPONSE_STATUS.GENERAL_ERROR,
                     message: "Something went wrong. Please try again"
                 }
             };
+        } catch (e) {
+            return {
+                response: {
+                    status: API_RESPONSE_STATUS.OK
+                    // message: "Something went wrong. Please try again"
+                }
+            };
         }
     };
 
     onSignInSuccess = async () => {
-        await this.onHandleSuccess(
-            { action: SUCCESS_ACTION.SIGN_IN_COMPLETE },
-            this.state.user,
-            this.state.responseJson
-        );
+        // if (this.state.user === undefined) {
+        //     throw Error("Something went wrong. Please try again");
+        // }
+
+        await this.onHandleSuccess({
+            action: SUCCESS_ACTION.SIGN_IN_COMPLETE,
+            user: { id: "1", email: "lol@ile.co" },
+            // user: this.state.user,
+            responseJson: this.state.responseJson
+        });
     };
 
     signUp = async (formFields: APIFormField[]): Promise<SignUpThemeResponse> => {
@@ -203,17 +206,22 @@ class SignInAndUp extends Component<EmailPasswordProps, { user?: User; responseJ
                 };
             }
 
-            // Otherwise, status === OK, update state with user and responseJSON.
-            const user: User = {
-                id: responseJson.user.id,
-                email: responseJson.user.email
-            };
+            // Otherwise, if success.
+            if (responseJson.status === API_RESPONSE_STATUS.OK) {
+                return {
+                    response: {
+                        status: API_RESPONSE_STATUS.OK
+                    },
+                    responseJson
+                };
+            }
 
+            // Otherwise, something went wrong.
             return {
                 response: {
-                    status: API_RESPONSE_STATUS.OK
-                },
-                responseJson
+                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
+                    message: "Something went wrong. Please try again"
+                }
             };
         } catch (e) {
             return {
@@ -226,11 +234,15 @@ class SignInAndUp extends Component<EmailPasswordProps, { user?: User; responseJ
     };
 
     onSignUpSuccess = async () => {
-        await this.onHandleSuccess(
-            { action: SUCCESS_ACTION.SIGN_UP_COMPLETE },
-            this.state.user,
-            this.state.responseJson
-        );
+        if (this.state.user === undefined) {
+            throw Error("Something went wrong. Please try again");
+        }
+
+        await this.onHandleSuccess({
+            action: SUCCESS_ACTION.SIGN_UP_COMPLETE,
+            user: this.state.user,
+            responseJson: this.state.responseJson
+        });
     };
 
     doesSessionExist = async (): Promise<boolean> => {
@@ -263,10 +275,10 @@ class SignInAndUp extends Component<EmailPasswordProps, { user?: User; responseJ
         window.history.pushState(null, "", resetPasswordUrl.getAsStringDangerous());
     };
 
-    onHandleSuccess = async (context: any, user?: any, responseJson?: any) => {
+    onHandleSuccess = async (context: onHandleSignInAndUpSuccessContext) => {
         // If props provided by user, and successfully handled.
         if (this.props.onHandleSuccess) {
-            const isHandledByUser = await this.props.onHandleSuccess(context, user, responseJson);
+            const isHandledByUser = await this.props.onHandleSuccess(context);
             if (isHandledByUser) {
                 return;
             }
@@ -275,7 +287,8 @@ class SignInAndUp extends Component<EmailPasswordProps, { user?: User; responseJ
         // Otherwise, use default, redirect to onSuccessRedirectURL
         const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature
             .onSuccessRedirectURL;
-        window.history.pushState(null, "", onSuccessRedirectURL.getAsStringDangerous());
+
+        redirectTo(onSuccessRedirectURL);
     };
 
     onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
@@ -304,7 +317,7 @@ class SignInAndUp extends Component<EmailPasswordProps, { user?: User; responseJ
     componentDidMount = async () => {
         const sessionExists = await this.doesSessionExist();
         if (sessionExists) {
-            await this.onHandleSuccess({ action: "SESSION_ALREADY_EXISTS" });
+            await this.onHandleSuccess({ action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS });
         }
     };
 

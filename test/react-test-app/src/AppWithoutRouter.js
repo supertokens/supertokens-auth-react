@@ -34,14 +34,14 @@ function Routing () {
 
 function Nav () {
   return (
-    <div class="header__menu menu">
-    <div class="menu__icon icon-menu">
+    <div className="header__menu menu">
+    <div className="menu__icon icon-menu">
       <span></span>
       <span></span>
       <span></span>
     </div>
-    <nav class="menu__body">
-      <ul class="menu__list">
+    <nav className="menu__body">
+      <ul className="menu__list">
         <li><a  className="menu__link" href="/home?router=no-router">Home</a></li>
         <li><a  className="menu__link"  href="/auth?router=no-router">Auth</a></li>
       </ul>
