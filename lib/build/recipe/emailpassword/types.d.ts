@@ -1,10 +1,9 @@
-import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson, RouteToFeatureComponentMap, Styles } from "../../types";
+import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson, Styles } from "../../types";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
-import RecipeModule from "../recipeModule";
 import { History } from "history";
 export declare type EmailPasswordUserInput = {
     palette?: PaletteUserInput;
@@ -178,18 +177,6 @@ export declare type EnterEmailThemeState = {
 export declare type SubmitNewPasswordThemeState = {
     hasNewPassword?: boolean;
     formFields: FormFieldState[];
-};
-export declare type EmailPasswordFeature = RecipeModule & {
-    getConfig: () => NormalisedEmailPasswordConfig;
-    getFeatures: () => RouteToFeatureComponentMap;
-    signUpAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
-    signInAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
-    submitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
-    enterEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
-    signUpValidate(input: APIFormField[]): Promise<FormFieldError[]>;
-    signInValidate(input: APIFormField[]): Promise<FormFieldError[]>;
-    submitNewPasswordValidate(input: APIFormField[]): Promise<FormFieldError[]>;
-    enterEmailValidate(input: APIFormField[]): Promise<FormFieldError[]>;
 };
 declare enum paletteColorOptions {
     BACKGROUND = "background",

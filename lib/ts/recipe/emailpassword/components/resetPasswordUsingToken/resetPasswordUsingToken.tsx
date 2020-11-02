@@ -25,8 +25,7 @@ import {
     SubmitNewPasswordThemeProps,
     ResetPasswordUsingTokenProps,
     onHandleResetPasswordUsingTokenSuccessContext,
-    SubmitNewPasswordThemeResponse,
-    EmailPasswordFeature
+    SubmitNewPasswordThemeResponse
 } from "../../types";
 import EmailPassword from "../../emailPassword";
 import { ResetPasswordUsingTokenTheme } from "../..";
@@ -64,7 +63,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
     /*
      * Methods.
      */
-    getRecipeInstanceOrThrow = (): EmailPasswordFeature => {
+    getRecipeInstanceOrThrow = (): EmailPassword => {
         let instance;
         if (this.props.__internal !== undefined && this.props.__internal.instance !== undefined) {
             instance = this.props.__internal.instance;

@@ -25,8 +25,7 @@ import {
     SignUpThemeResponse,
     NormalisedDefaultStyles,
     NormalisedPalette,
-    onHandleSignInAndUpSuccessContext,
-    EmailPasswordFeature
+    onHandleSignInAndUpSuccessContext
 } from "../../types";
 import EmailPassword from "../../emailPassword";
 import { SignInAndUpTheme } from "../..";
@@ -59,7 +58,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
     /*
      * Methods.
      */
-    getRecipeInstanceOrThrow = (): EmailPasswordFeature => {
+    getRecipeInstanceOrThrow = (): EmailPassword => {
         let instance;
         if (this.props.__internal !== undefined && this.props.__internal.instance !== undefined) {
             instance = this.props.__internal.instance;

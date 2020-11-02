@@ -73,14 +73,20 @@ then
    git stash drop >/dev/null 2>/dev/null
 fi
 
-if [ $compiles -eq 0 ] && [ $formatted -eq 0 ]
+if [ $compiles -eq 0 ] && [ $formatted -eq 0 ] && [ $linted -eq 0 ]
 then
    echo "$(tput setaf 2)... done. Proceeding with commit.$(tput sgr 0)"
    echo ""
-elif [ $compiles -eq 0 ]
+elif [ $compiles -eq 0 ] && [ $linted -eq 0 ]
 then
    echo "$(tput setaf 1)... done.$(tput sgr 0)"
    echo "$(tput setaf 1)CANCELLING commit due to NON-FORMATTED CODE.$(tput sgr 0)"
+   echo ""
+   exit 1
+elif [ $compiles -eq 0 ] && [ $formatted -eq 0 ]
+then
+   echo "$(tput setaf 1)... done.$(tput sgr 0)"
+   echo "$(tput setaf 1)CANCELLING commit due to NON-LINTED CODE.$(tput sgr 0)"
    echo ""
    exit 1
 else
