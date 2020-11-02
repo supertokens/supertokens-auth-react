@@ -230,7 +230,9 @@ export function normaliseSignInFormFeatureConfig(
     if (config.resetPasswordURL) {
         resetPasswordURL = new NormalisedURLPath(config.resetPasswordURL);
     } else {
-        resetPasswordURL = new NormalisedURLPath(`${appInfo.websiteBasePath}${DEFAULT_RESET_PASSWORD_PATH}`);
+        resetPasswordURL = new NormalisedURLPath(
+            `${appInfo.websiteBasePath.getAsStringDangerous()}${DEFAULT_RESET_PASSWORD_PATH}`
+        );
     }
 
     const style = config.style || {};

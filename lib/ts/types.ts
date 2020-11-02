@@ -110,9 +110,7 @@ export type RecipeModuleConfig = {
 /*
  * Routing manipulation types.
  */
-export type RouteToFeatureComponentMap = {
-    [route: string]: ReactComponentClass;
-};
+export type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
 
 export type RouteWithPathAndRecipeId = {
     /*
@@ -138,9 +136,7 @@ export type ComponentWithRecipeId = {
     component: ReactComponentClass;
 };
 
-export type PathToComponentWithRecipeIdMap = {
-    [path: string]: ComponentWithRecipeId[];
-};
+export type PathToComponentWithRecipeIdMap = Record<string, ComponentWithRecipeId[]>;
 
 /*
  * Features Config Types.

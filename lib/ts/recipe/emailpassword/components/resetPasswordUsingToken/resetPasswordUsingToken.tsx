@@ -37,7 +37,7 @@ import FeatureWrapper from "../../../components/featureWrapper";
 import { jsx } from "@emotion/core";
 import { getDefaultStyles } from "../../styles/styles";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../constants";
-import { redirectTo } from "../../../../utils";
+import { redirectToWithReload } from "../../../../utils";
 
 /*
  * Component.
@@ -218,7 +218,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         // Otherwise, use default, redirect to onSuccessRedirectURL
         const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
             .onSuccessRedirectURL;
-        redirectTo(onSuccessRedirectURL);
+        redirectToWithReload(onSuccessRedirectURL);
     };
 
     onCallEnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect , useState} from 'react';
 import {BaseComponent, Home} from './App';
 import {canHandleRoute, getRoutingComponent} from 'supertokens-auth-react';
 
@@ -15,6 +15,16 @@ function AppWithoutRouter() {
 }
 
 function Routing () {
+  const [, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const onLocationChange = () => {
+      setCurrentPath(window.location.pathname);
+    }
+
+    window.addEventListener('popstate', onLocationChange);
+  }, [setCurrentPath]);
+
   if (canHandleRoute()) {
     const SuperTokensComponent = getRoutingComponent();
 

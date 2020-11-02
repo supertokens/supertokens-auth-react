@@ -31,6 +31,7 @@ import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
 import RecipeModule from "../recipeModule";
+import { History } from "history";
 
 /*
  * EmailPassword User InputsConfig Types.
@@ -244,9 +245,14 @@ export type BaseProps = {
     __internal?: { instance: EmailPassword };
 
     /*
-     * Children elemnt
+     * Children element
      */
     children?: JSX.Element;
+
+    /*
+     * History provided by react-router
+     */
+    history?: History;
 };
 
 export type SignInAndUpProps = BaseProps & {

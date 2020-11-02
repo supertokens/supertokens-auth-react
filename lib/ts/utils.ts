@@ -18,7 +18,8 @@ import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { MANDATORY_FORM_FIELDS_ID } from "./recipe/emailpassword/constants";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField, ReactComponentClass } from "./types";
+import { History, LocationState } from "history";
 
 /*
  * getRecipeIdFromPath
@@ -140,9 +141,9 @@ export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
 }
 
 /*
- * redirectTo
+ * redirectToWithReload
  */
-export function redirectTo(path: NormalisedURLPath): void {
+export function redirectToWithReload(path: NormalisedURLPath): void {
     let newPath: string = path.getAsStringDangerous();
 
     if (newPath.length === 0) {
@@ -150,4 +151,42 @@ export function redirectTo(path: NormalisedURLPath): void {
     }
 
     window.location.href = newPath;
+}
+
+/*
+ * WithRouter
+ */
+export function WithRouter(Component: ReactComponentClass): ReactComponentClass {
+    try {
+        const WithRouter = require("react-router").WithRouter;
+        return WithRouter(Component);
+    } catch (e) {
+        return Component;
+    }
+}
+
+/*
+ * redirectToInApp
+ */
+export function redirectToInApp(path: NormalisedURLPath, title?: string, history?: History<LocationState>): void {
+    let strPath = path.getAsStringDangerous();
+    if (strPath.length === 0) {
+        strPath = "/";
+    }
+    if (title === undefined) {
+        title = "";
+    }
+
+    // If history was provided, use.
+    if (history !== undefined) {
+        history.push(strPath, {
+            title
+        });
+        return;
+    }
+
+    // Otherwise, use window history to push new State and dispatch event for react to catch.
+    window.history.pushState(null, title, strPath);
+    const event = new PopStateEvent("popstate");
+    window.dispatchEvent(event);
 }

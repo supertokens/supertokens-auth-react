@@ -30,9 +30,7 @@ export declare type RecipeModuleConfig = {
      */
     appInfo: NormalisedAppInfo;
 };
-export declare type RouteToFeatureComponentMap = {
-    [route: string]: ReactComponentClass;
-};
+export declare type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
 export declare type RouteWithPathAndRecipeId = {
     path: NormalisedURLPath;
     recipeId: string | null;
@@ -41,9 +39,7 @@ export declare type ComponentWithRecipeId = {
     rid: string;
     component: ReactComponentClass;
 };
-export declare type PathToComponentWithRecipeIdMap = {
-    [path: string]: ComponentWithRecipeId[];
-};
+export declare type PathToComponentWithRecipeIdMap = Record<string, ComponentWithRecipeId[]>;
 export declare type FeatureBaseConfig = {
     style?: Styles;
 };

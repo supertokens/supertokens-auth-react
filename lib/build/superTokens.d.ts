@@ -21,7 +21,7 @@ export default class SuperTokens {
     getAppInfo: () => NormalisedAppInfo;
     canHandleRoute: () => boolean;
     getRoutingComponent: () => React.ComponentClass<{}, any> | (<T>(props: T) => JSX.Element) | undefined;
-    getPathsToComponentWithRecipeIdMap: () => PathToComponentWithRecipeIdMap;
+    getPathsToComponentWithRecipeIdMap: () => Record<string, import("./types").ComponentWithRecipeId[]>;
     getMatchingComponentForRouteAndRecipeId: (normalisedUrl: NormalisedURLPath, recipeId: string | null) => React.ComponentClass<{}, any> | (<T>(props: T) => JSX.Element) | undefined;
     getRecipeList: () => RecipeModule[];
     static reset(): void;

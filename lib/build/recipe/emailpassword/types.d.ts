@@ -5,6 +5,7 @@ import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
 import RecipeModule from "../recipeModule";
+import { History } from "history";
 export declare type EmailPasswordUserInput = {
     palette?: PaletteUserInput;
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
@@ -71,6 +72,7 @@ export declare type BaseProps = {
         instance: EmailPassword;
     };
     children?: JSX.Element;
+    history?: History;
 };
 export declare type SignInAndUpProps = BaseProps & {
     onHandleForgotPasswordClicked?: () => Promise<boolean>;

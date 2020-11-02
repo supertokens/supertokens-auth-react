@@ -37,7 +37,7 @@ import FeatureWrapper from "../../../components/featureWrapper";
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import { getDefaultStyles } from "../../styles/styles";
-import { redirectTo } from "../../../../utils";
+import { redirectToInApp, redirectToWithReload, WithRouter } from "../../../../utils";
 
 /*
  * Component.
@@ -272,7 +272,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
             return;
         }
 
-        window.history.pushState(null, "", resetPasswordUrl.getAsStringDangerous());
+        redirectToInApp(resetPasswordUrl, "Reset password", this.props.history);
     };
 
     onHandleSuccess = async (context: onHandleSignInAndUpSuccessContext): Promise<void> => {
@@ -288,7 +288,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature
             .onSuccessRedirectURL;
 
-        redirectTo(onSuccessRedirectURL);
+        redirectToWithReload(onSuccessRedirectURL);
     };
 
     onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
@@ -375,4 +375,4 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
     };
 }
 
-export default SignInAndUp;
+export default WithRouter(SignInAndUp);

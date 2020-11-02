@@ -1,5 +1,5 @@
 import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, RouteToFeatureComponentMap, RequestJson, APIFormField } from "../../types";
+import { CreateRecipeFunction, RequestJson, APIFormField } from "../../types";
 import { EmailPasswordConfig, EmailPasswordUserInput, FormFieldError, NormalisedEmailPasswordConfig } from "./types";
 export default class EmailPassword extends RecipeModule {
     static instance?: EmailPassword;
@@ -7,7 +7,7 @@ export default class EmailPassword extends RecipeModule {
     private httpRequest;
     constructor(config: EmailPasswordConfig);
     getConfig: () => NormalisedEmailPasswordConfig;
-    getFeatures: () => RouteToFeatureComponentMap;
+    getFeatures: () => Record<string, import("../../types").ReactComponentClass>;
     signUpAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
     signInAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
     submitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
