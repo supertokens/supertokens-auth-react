@@ -47,6 +47,21 @@ else
     echo ""
 fi
 
+
+npm run lint >/dev/null 2>/dev/null
+linted=$?
+
+echo "$(tput setaf 3)* Properly linted?$(tput sgr 0)"
+
+if [ $linted -eq 0 ]
+then
+   echo "$(tput setaf 2)* Yes$(tput sgr 0)"
+else
+   echo "$(tput setaf 1)* No$(tput sgr 0)"
+    echo "$(tput setaf 1)Please run 'npm run lint' to lint the code.$(tput sgr 0)"
+    echo ""
+fi
+
 if [ $no_of_files_to_stash -ne 0 ]
 then
    echo "$(tput setaf 3)* Undoing stashing$(tput sgr 0)"

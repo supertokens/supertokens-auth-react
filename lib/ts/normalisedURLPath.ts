@@ -20,15 +20,15 @@ export default class NormalisedURLPath {
         this.value = normaliseURLPathOrThrowError(url);
     }
 
-    startsWith = (other: NormalisedURLPath) => {
+    startsWith = (other: NormalisedURLPath): boolean => {
         return this.value.startsWith(other.value);
     };
 
-    appendPath = (other: NormalisedURLPath) => {
+    appendPath = (other: NormalisedURLPath): NormalisedURLPath => {
         return new NormalisedURLPath(this.value + other.value);
     };
 
-    getAsStringDangerous = () => {
+    getAsStringDangerous = (): string => {
         return this.value;
     };
 }
@@ -40,7 +40,7 @@ export function normaliseURLPathOrThrowError(input: string): string {
         if (!input.startsWith("http://") && !input.startsWith("https://")) {
             throw new Error("converting to proper URL");
         }
-        let urlObj = new URL(input);
+        const urlObj: URL = new URL(input);
         input = urlObj.pathname;
 
         if (input.charAt(input.length - 1) === "/") {
@@ -48,6 +48,7 @@ export function normaliseURLPathOrThrowError(input: string): string {
         }
 
         return input;
+        // eslint-disable-next-line no-empty
     } catch (err) {}
     // not a valid URL
 

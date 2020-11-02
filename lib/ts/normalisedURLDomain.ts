@@ -20,7 +20,7 @@ export default class NormalisedURLDomain {
         this.value = normaliseURLDomainOrThrowError(url);
     }
 
-    getAsStringDangerous = () => {
+    getAsStringDangerous = (): string => {
         return this.value;
     };
 }
@@ -36,7 +36,7 @@ export function normaliseURLDomainOrThrowError(input: string, ignoreProtocol = f
         if (!input.startsWith("http://") && !input.startsWith("https://")) {
             throw new Error("converting to proper URL");
         }
-        let urlObj = new URL(input);
+        const urlObj: URL = new URL(input);
         if (ignoreProtocol) {
             if (urlObj.hostname.startsWith("localhost") || isAnIpAddress(urlObj.hostname)) {
                 input = "http://" + urlObj.host;
@@ -47,7 +47,9 @@ export function normaliseURLDomainOrThrowError(input: string, ignoreProtocol = f
             input = urlObj.protocol + "//" + urlObj.host;
         }
         return input;
+        // eslint-disable-next-line no-empty
     } catch (err) {}
+
     // not a valid URL
     if (input.indexOf(".") === 0) {
         input = input.substr(1);
@@ -64,6 +66,8 @@ export function normaliseURLDomainOrThrowError(input: string, ignoreProtocol = f
         try {
             new URL(input);
             return normaliseURLDomainOrThrowError(input, true);
+
+            // eslint-disable-next-line no-empty
         } catch (err) {}
     }
     throw new Error("Please provide a valid domain name");

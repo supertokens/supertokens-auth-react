@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { SuperTokensConfig } from "./types";
+import { ReactComponentClass, SuperTokensConfig } from "./types";
 import SuperTokens from "./superTokens";
 
 /*
@@ -24,7 +24,7 @@ import SuperTokens from "./superTokens";
  */
 
 export default class SuperTokensAPIWrapper {
-    static init(config: SuperTokensConfig) {
+    static init(config: SuperTokensConfig): void {
         SuperTokens.init(config);
     }
 
@@ -32,11 +32,11 @@ export default class SuperTokensAPIWrapper {
         return SuperTokens.canHandleRoute();
     }
 
-    static getRoutingComponent() {
+    static getRoutingComponent(): ReactComponentClass | undefined {
         return SuperTokens.getRoutingComponent();
     }
 
-    static getSuperTokensRoutesForReactRouterDom() {
+    static getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
         return SuperTokens.getSuperTokensRoutesForReactRouterDom();
     }
 }

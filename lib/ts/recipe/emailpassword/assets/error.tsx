@@ -36,13 +36,13 @@ export default function Error({ color }: { color: string }): JSX.Element {
                         transform="translate(-789 -316) translate(789 316)"
                     />
                     <path
-                        fill="#ff6a6a"
+                        fill="pink"
                         d="M9.5 2.785c-.566 0-1.062.299-1.327.8L1.99 15.3c-.247.469-.231 1.02.042 1.475.274.454.755.725 1.285.725h12.366c.53 0 1.01-.271 1.285-.725.273-.455.29-1.006.042-1.475L10.827 3.585c-.265-.501-.76-.8-1.327-.8m0-.5c.697 0 1.394.355 1.769 1.066l6.183 11.715c.703 1.332-.263 2.934-1.769 2.934H3.317c-1.506 0-2.472-1.602-1.769-2.934L7.731 3.351c.375-.71 1.072-1.066 1.769-1.066z"
                         transform="translate(-789 -316) translate(789 316)"
                     />
                 </g>
                 <text
-                    fill="#fff"
+                    fill={color}
                     fontFamily="Rubik-Bold, Rubik"
                     fontSize="12px"
                     fontWeight="700"

@@ -33,7 +33,7 @@ export default function Checked({ color }: { color: string }): JSX.Element {
                 id="checked"
                 fill={color}
                 d="M10 0a10 10 0 1 0 10 10A10 10 0 0 0 10 0zM8.166 15.137l-4.4-4.4L5.23 9.266 8.166 12.2l6.6-6.6 1.468 1.468z"
-                data-name="checked (3)"
+                data-name="checked"
             />
         </svg>
     );

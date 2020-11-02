@@ -258,14 +258,6 @@ export type SignInAndUpProps = BaseProps & {
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
 };
 
-export type onHandleSignInAndUpSuccessContext =
-    | { action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS }
-    | {
-          action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
-          user: { id: string; email: string };
-          responseJson: any;
-      };
-
 export type ResetPasswordUsingTokenProps = BaseProps & {
     onHandleSuccess(context: {
         action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
@@ -384,6 +376,7 @@ export type FormFieldError = {
     error: string;
 };
 
+// es-lint / prettier clash regarding | indentation.
 /*eslint-disable */
 export type BaseResponse =
     | {
@@ -442,6 +435,24 @@ export type SubmitNewPasswordThemeResponse =
           status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
       };
 
+export type onHandleSignInAndUpSuccessContext =
+    | { action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS }
+    | {
+          /*
+           * Sign In / Sign Up success.
+           */
+          action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
+          /*
+           * User returned from API.
+           */
+          user: { id: string; email: string };
+
+          /*
+           * Response body from API.
+           */
+          responseJson: any;
+      };
+
 /*eslint-enabled */
 
 export type User = {
@@ -486,6 +497,9 @@ export type SubmitNewPasswordThemeProps = ThemeBaseProps & {
      */
     callAPI: (fields: APIFormField[]) => Promise<SubmitNewPasswordThemeResponse>;
 
+    /*
+     * Click on Sign In button after reset password form.
+     */
     onSignInClicked: () => void;
 };
 

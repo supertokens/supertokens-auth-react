@@ -2,10 +2,10 @@ import { NormalisedAppInfo } from "./types";
 export default class HttpRequest {
     private appInfo;
     constructor(appInfo: NormalisedAppInfo);
-    get: (path: string, config: RequestInit) => Promise<any>;
-    post: (path: string, config: RequestInit) => Promise<any>;
-    delete: (path: string, config: RequestInit) => Promise<any>;
-    put: (path: string, config: RequestInit) => Promise<any>;
-    fetch: (url: RequestInfo, config: RequestInit) => Promise<any>;
+    get: <T>(path: string, config: RequestInit) => Promise<T>;
+    post: <T>(path: string, config: RequestInit) => Promise<T>;
+    delete: <T>(path: string, config: RequestInit) => Promise<T>;
+    put: <T>(path: string, config: RequestInit) => Promise<T>;
+    fetch: <T>(url: RequestInfo, config: RequestInit) => Promise<T>;
     getFullUrl: (pathStr: string) => string;
 }

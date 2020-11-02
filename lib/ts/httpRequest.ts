@@ -32,35 +32,35 @@ export default class HttpRequest {
     /*
      * Instance Methods.
      */
-    get = async (path: string, config: RequestInit) => {
+    get = async <T>(path: string, config: RequestInit): Promise<T> => {
         return await this.fetch(this.getFullUrl(path), {
             method: "GET",
             ...config
         });
     };
 
-    post = async (path: string, config: RequestInit) => {
+    post = async <T>(path: string, config: RequestInit): Promise<T> => {
         return await this.fetch(this.getFullUrl(path), {
             method: "POST",
             ...config
         });
     };
 
-    delete = async (path: string, config: RequestInit) => {
+    delete = async <T>(path: string, config: RequestInit): Promise<T> => {
         return await this.fetch(this.getFullUrl(path), {
             method: "DELETE",
             ...config
         });
     };
 
-    put = async (path: string, config: RequestInit) => {
+    put = async <T>(path: string, config: RequestInit): Promise<T> => {
         return await this.fetch(this.getFullUrl(path), {
             method: "PUT",
             ...config
         });
     };
 
-    fetch = async (url: RequestInfo, config: RequestInit): Promise<any> => {
+    fetch = async <T>(url: RequestInfo, config: RequestInit): Promise<T> => {
         try {
             let headers;
             if (config === undefined) {
@@ -87,7 +87,7 @@ export default class HttpRequest {
         }
     };
 
-    getFullUrl = (pathStr: string) => {
+    getFullUrl = (pathStr: string): string => {
         const path = new NormalisedURLPath(pathStr);
         return `${this.appInfo.apiDomain.getAsStringDangerous()}${this.appInfo.apiBasePath.getAsStringDangerous()}${path.getAsStringDangerous()}`;
     };

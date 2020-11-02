@@ -78,16 +78,6 @@ export declare type SignInAndUpProps = BaseProps & {
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
 };
-export declare type onHandleSignInAndUpSuccessContext = {
-    action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS;
-} | {
-    action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
-    user: {
-        id: string;
-        email: string;
-    };
-    responseJson: any;
-};
 export declare type ResetPasswordUsingTokenProps = BaseProps & {
     onHandleSuccess(context: {
         action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
@@ -148,6 +138,16 @@ export declare type SignInThemeResponse = BaseResponse | {
 export declare type EnterEmailThemeResponse = BaseResponse;
 export declare type SubmitNewPasswordThemeResponse = BaseResponse | {
     status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
+};
+export declare type onHandleSignInAndUpSuccessContext = {
+    action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS;
+} | {
+    action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
+    user: {
+        id: string;
+        email: string;
+    };
+    responseJson: any;
 };
 export declare type User = {
     id: string;
