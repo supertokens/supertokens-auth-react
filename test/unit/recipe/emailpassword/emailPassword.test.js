@@ -243,4 +243,106 @@ describe("EmailPassword", function() {
             .validate("foo");
         assert.strictEqual(signInEmailValidateError, "Custom Email Error");
     });
+
+    it("Validate SignIn EmailPassword fields validation", async function() {
+        EmailPassword.init()(SuperTokens.getAppInfo());
+        const inputErrors = await EmailPassword.getInstanceOrThrow().signInValidate([{
+            id: "email",
+            value: "test@supertokens.io"
+        }, {
+            id: "password",
+            value: "test123E"
+        }]);
+        assert.deepStrictEqual(inputErrors, []);
+    });
+
+    it("Validate SignIn EmailPassword fields validation with spaces in email should trim and return no errors", async function() {
+        EmailPassword.init()(SuperTokens.getAppInfo());
+        const inputErrors = await EmailPassword.getInstanceOrThrow().signInValidate([{
+            id: "email",
+            value: "  test@supertokens.io    "
+        }, {
+            id: "password",
+            value: "test123E"
+        }]);
+        assert.deepStrictEqual(inputErrors, []);
+    });
+
+    it("Validate SignIn EmailPassword fields validation with invalid email should return error", async function() {
+        EmailPassword.init()(SuperTokens.getAppInfo());
+        const inputErrors = await EmailPassword.getInstanceOrThrow().signInValidate([{
+            id: "email",
+            value: "123"
+        }, {
+            id: "password",
+            value: "test123E"
+        }]);
+        assert.deepStrictEqual(inputErrors, [{
+            error: "Email is invalid",
+            id: "email"
+        }]);
+    });
+
+
+    it("Validate SignUp EmailPassword fields validation with non optional custom fields empty should return error", async function() {
+        const companyCustomField = {
+            id: "company",
+            label: "Company",
+            placeholder: "Your company name",
+            optional: false
+        };
+
+        EmailPassword.init({
+            signInAndUpFeature: {
+                signUpForm: {
+                    formFields: [companyCustomField]
+                }
+            }
+        })(SuperTokens.getAppInfo());
+
+        
+        const inputErrors = await EmailPassword.getInstanceOrThrow().signUpValidate([{
+            id: "email",
+            value: "test@supertokens.io"
+        }, {
+            id: "password",
+            value: "test123E"
+        }, {
+            id: "company",
+            value: ""
+        }]);
+        assert.deepStrictEqual(inputErrors, [
+            {
+                error: "This field can not be empty",
+                id: "company"
+            }
+        ]);
+    });
+
+
+    it("Validate SignUp EmailPassword fields validation with custom fields not provided should throw", async function() {
+        const companyCustomField = {
+            id: "company",
+            label: "Company",
+            placeholder: "Your company name",
+            optional: true
+        };
+
+        EmailPassword.init({
+            signInAndUpFeature: {
+                signUpForm: {
+                    formFields: [companyCustomField]
+                }
+            }
+        })(SuperTokens.getAppInfo());
+
+        assert.rejects(EmailPassword.getInstanceOrThrow().signUpValidate([{
+            id: "email",
+            value: "test@supertokens.io"
+        }, {
+            id: "password",
+            value: "test123E"
+        }]), Error("Are you sending too many / too few formFields?"))
+                
+    });
 });
