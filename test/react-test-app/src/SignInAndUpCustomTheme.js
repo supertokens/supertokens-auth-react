@@ -46,8 +46,7 @@ export default function SignInTheme(props) {
         });
 
         // Do nothing. login directly.
-        const result = await callAPI(fields);
-        console.log(result);
+        await callAPI(fields);
         // Call onSuccess if exist.
         if (onSuccess !== undefined) {
             onSuccess();
