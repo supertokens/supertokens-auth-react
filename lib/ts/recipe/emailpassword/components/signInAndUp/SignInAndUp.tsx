@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { Component } from "react";
+import { Component, Fragment } from "react";
 import {
     SignInThemeResponse,
     SignInAndUpProps,
@@ -358,7 +358,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
          */
         return (
             <FeatureWrapper defaultStyles={defaultStyles}>
-                <>
+                <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <SignInAndUpTheme signInForm={signInForm} signUpForm={signUpForm} />
@@ -369,7 +369,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
                             signInForm,
                             signUpForm
                         })}
-                </>
+                </Fragment>
             </FeatureWrapper>
         );
     };

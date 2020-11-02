@@ -1,6 +1,5 @@
 import React from "react";
-import { ReactNode } from "react";
-import { ErrorInfo } from "react";
+import { ErrorInfo, ReactNode } from "react";
 declare type ErrorBoundaryState = {
     hasError: boolean;
 };

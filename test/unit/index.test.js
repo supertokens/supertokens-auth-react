@@ -20,11 +20,11 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import SuperTokens from "../../lib/build/superTokens";
-import EmailPassword, { SignInAndUp } from "../../lib/build/recipe/emailpassword";
+import EmailPassword, { SignInAndUp, ResetPasswordUsingToken } from "../../lib/build/recipe/emailpassword";
 import { DEFAULT_WEBSITE_BASE_PATH, DEFAULT_API_BASE_PATH } from "../../lib/build/constants";
 import assert from "assert";
 import { mockWindowLocation } from "../helpers";
-
+import * as React from "react";
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
@@ -194,15 +194,21 @@ describe("SuperTokens", function() {
         mockWindowLocation(`${randomWebsitePath}/auth/404`);
         assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
         mockWindowLocation(`${randomWebsitePath}/auth`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
+        const signInAndUpJSXElement = <SignInAndUp />;
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
         mockWindowLocation(`${randomWebsitePath}/auth/`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
         mockWindowLocation(`${randomWebsitePath}/auth/.`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
         mockWindowLocation(`${randomWebsitePath}/auth?rid=email-password`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
-        // returns first component if rid=unknownd.
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
+        // returns first component if rid=unknown.
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
+        const resetPasswordUsingTokenJSXElement = <ResetPasswordUsingToken />;
+        mockWindowLocation(`${randomWebsitePath}/auth/reset-password`);
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, resetPasswordUsingTokenJSXElement.type);
+        mockWindowLocation(`${randomWebsitePath}/auth/reset-password?rid=unknown-id`);
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, resetPasswordUsingTokenJSXElement.type);
     });
 });

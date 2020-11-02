@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { Component } from "react";
+import { Component, Fragment } from "react";
 import {
     EnterEmailThemeResponse,
     NormalisedDefaultStyles,
@@ -37,7 +37,7 @@ import FeatureWrapper from "../../../components/featureWrapper";
 import { jsx } from "@emotion/core";
 import { getDefaultStyles } from "../../styles/styles";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../constants";
-import { redirectToWithReload } from "../../../../utils";
+import { redirectToInApp } from "../../../../utils";
 
 /*
  * Component.
@@ -218,7 +218,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         // Otherwise, use default, redirect to onSuccessRedirectURL
         const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
             .onSuccessRedirectURL;
-        redirectToWithReload(onSuccessRedirectURL);
+        redirectToInApp(onSuccessRedirectURL, "Sign In", this.props.history);
     };
 
     onCallEnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
@@ -279,7 +279,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
          */
         return (
             <FeatureWrapper defaultStyles={defaultStyles}>
-                <>
+                <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <ResetPasswordUsingTokenTheme
@@ -295,7 +295,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
                             enterEmailForm,
                             hasToken
                         })}
-                </>
+                </Fragment>
             </FeatureWrapper>
         );
     };

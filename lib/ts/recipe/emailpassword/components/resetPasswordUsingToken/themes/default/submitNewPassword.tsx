@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { Component, createRef } from "react";
+import { Component, createRef, Fragment } from "react";
 import { NormalisedPalette, SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../../types";
 
 import { CSSInterpolation } from "@emotion/serialize/types";
@@ -112,7 +112,7 @@ export default class SubmitNewPasswordTheme extends Component<
                             Success!
                         </div>
                         <FormRow style={styleFromInit.formRow} key="form-button" defaultStyles={defaultStyles}>
-                            <>
+                            <Fragment>
                                 <div
                                     className="primaryText successMessage"
                                     css={[
@@ -132,7 +132,7 @@ export default class SubmitNewPasswordTheme extends Component<
                                     onClick={onSignInClicked}
                                     label={"SIGN IN"}
                                 />
-                            </>
+                            </Fragment>
                         </FormRow>
                     </div>
                 </div>
@@ -148,7 +148,7 @@ export default class SubmitNewPasswordTheme extends Component<
                 callAPI={callAPI}
                 showLabels={false}
                 header={
-                    <>
+                    <Fragment>
                         <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
                             Change your password
                         </div>
@@ -159,7 +159,7 @@ export default class SubmitNewPasswordTheme extends Component<
                                 Enter a new password below to change your password
                             </div>
                         </div>
-                    </>
+                    </Fragment>
                 }
             />
         );

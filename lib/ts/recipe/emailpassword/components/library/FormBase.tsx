@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { Component, FormEvent } from "react";
+import { Component, FormEvent, Fragment } from "react";
 import { FormBaseState, FormBaseProps } from "../../types";
 import { Button, FormRow, Input, InputError, Label } from ".";
 import { APIFormField } from "../../../../types";
@@ -169,7 +169,7 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
 
                             return (
                                 <FormRow style={styleFromInit.formRow} key={field.id} defaultStyles={defaultStyles}>
-                                    <>
+                                    <Fragment>
                                         {showLabels && (
                                             <Label
                                                 style={styleFromInit.label}
@@ -201,13 +201,13 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
                                                 defaultStyles={defaultStyles}
                                             />
                                         )}
-                                    </>
+                                    </Fragment>
                                 </FormRow>
                             );
                         })}
 
                         <FormRow style={styleFromInit.formRow} key="form-button" defaultStyles={defaultStyles}>
-                            <>
+                            <Fragment>
                                 <Button
                                     defaultStyles={defaultStyles}
                                     style={styleFromInit.button}
@@ -217,7 +217,7 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
                                     label={buttonLabel}
                                 />
                                 {footer}
-                            </>
+                            </Fragment>
                         </FormRow>
                     </form>
                 </div>

@@ -13,14 +13,14 @@ export default class SuperTokens {
     private static getInstanceOrThrow;
     static getAppInfo(): NormalisedAppInfo;
     static canHandleRoute(): boolean;
-    static getRoutingComponent(): ReactComponentClass | undefined;
+    static getRoutingComponent(): JSX.Element | undefined;
     static getRecipeList(): RecipeModule[];
     static getPathsToComponentWithRecipeIdMap(): PathToComponentWithRecipeIdMap;
     static getMatchingComponentForRouteAndRecipeId(path: string, recipeId: string | null): ReactComponentClass | undefined;
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[];
     getAppInfo: () => NormalisedAppInfo;
     canHandleRoute: () => boolean;
-    getRoutingComponent: () => React.ComponentClass<{}, any> | (<T>(props: T) => JSX.Element) | undefined;
+    getRoutingComponent: () => JSX.Element | undefined;
     getPathsToComponentWithRecipeIdMap: () => Record<string, import("./types").ComponentWithRecipeId[]>;
     getMatchingComponentForRouteAndRecipeId: (normalisedUrl: NormalisedURLPath, recipeId: string | null) => React.ComponentClass<{}, any> | (<T>(props: T) => JSX.Element) | undefined;
     getRecipeList: () => RecipeModule[];

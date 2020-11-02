@@ -17,8 +17,7 @@
  * Imports.
  */
 import React from "react";
-import { ReactNode } from "react";
-import { ErrorInfo } from "react";
+import { ErrorInfo, ReactNode, Fragment } from "react";
 
 type ErrorBoundaryState = { hasError: boolean };
 /*
@@ -40,7 +39,7 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
 
     render(): JSX.Element | ReactNode | undefined {
         if (this.state.hasError) {
-            return <></>;
+            return <Fragment></Fragment>;
         }
 
         return this.props.children;

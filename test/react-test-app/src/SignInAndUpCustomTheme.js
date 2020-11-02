@@ -2,6 +2,8 @@
  * Imports.
  */
 import * as React from "react";
+import {Fragment} from "react";
+
 import { useCallback, useRef, useState } from "react";
 
 /*
@@ -104,7 +106,7 @@ export default function SignInTheme(props) {
                             let type = "text";
                             return (
                                 <div key={field.id}>
-                                    <>
+                                    <Fragment>
                                      {field.id === 'password' && "Yes, the french theme has cleartext password input."}
                                         <label  >
                                             {field.label}
@@ -117,7 +119,7 @@ export default function SignInTheme(props) {
                                             onChange={handleInputChange}
                                         /> 
                                         {field.error && <div style={styleFromInit.inputErrorMessage} />}
-                                    </>
+                                    </Fragment>
                                 </div>
                             )
                         })

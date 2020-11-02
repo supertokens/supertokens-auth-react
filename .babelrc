@@ -1,10 +1,17 @@
 {
     "presets": [
       [
-        "@babel/preset-env"
+        "@babel/preset-env", {},
+        "@babel/preset-react"
       ]
     ],
     "plugins": [
-      "inline-react-svg"
+      "inline-react-svg",
+      [
+        "@babel/plugin-transform-react-jsx",
+        {
+          "pragmaFrag": "React.Fragment"
+        }
+      ]
     ]
   }

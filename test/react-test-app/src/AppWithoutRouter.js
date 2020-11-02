@@ -26,10 +26,8 @@ function Routing () {
   }, [setCurrentPath]);
 
   if (canHandleRoute()) {
-    const SuperTokensComponent = getRoutingComponent();
-
     return (<BaseComponent>
-        <SuperTokensComponent />
+        {getRoutingComponent()}
       </BaseComponent>
     );
   }

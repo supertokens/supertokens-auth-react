@@ -1,10 +1,10 @@
 /// <reference types="react" />
-import { ReactComponentClass, SuperTokensConfig } from "./types";
+import { SuperTokensConfig } from "./types";
 import SuperTokens from "./superTokens";
 export default class SuperTokensAPIWrapper {
     static init(config: SuperTokensConfig): void;
     static canHandleRoute(): boolean;
-    static getRoutingComponent(): ReactComponentClass | undefined;
+    static getRoutingComponent(): JSX.Element | undefined;
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[];
 }
 export declare const canHandleRoute: typeof SuperTokensAPIWrapper.canHandleRoute;

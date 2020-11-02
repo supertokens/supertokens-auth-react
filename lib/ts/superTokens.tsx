@@ -83,7 +83,7 @@ export default class SuperTokens {
         return SuperTokens.getInstanceOrThrow().canHandleRoute();
     }
 
-    static getRoutingComponent(): ReactComponentClass | undefined {
+    static getRoutingComponent(): JSX.Element | undefined {
         return SuperTokens.getInstanceOrThrow().getRoutingComponent();
     }
 
@@ -118,10 +118,15 @@ export default class SuperTokens {
         return this.getRoutingComponent() !== undefined;
     };
 
-    getRoutingComponent = (): ReactComponentClass | undefined => {
+    getRoutingComponent = (): JSX.Element | undefined => {
         const normalisedPath = getCurrentNormalisedUrlPath();
         const recipeId = getRecipeIdFromSearch(window.location.search);
-        return this.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
+        const Component = this.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
+        if (Component === undefined) {
+            return undefined;
+        }
+
+        return <Component />;
     };
 
     getPathsToComponentWithRecipeIdMap = (): PathToComponentWithRecipeIdMap => {

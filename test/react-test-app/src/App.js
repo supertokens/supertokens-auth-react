@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import './App.css';
 import './App.css';
 import AppWithoutRouter from './AppWithoutRouter';
@@ -113,12 +113,12 @@ export default App;
 
 export function BaseComponent ({children}) {
   return (
-       <>
+       <Fragment>
        <div className="page">
           {children}
        </div>
         <Footer/>
-      </>
+      </Fragment>
   )
 }
 

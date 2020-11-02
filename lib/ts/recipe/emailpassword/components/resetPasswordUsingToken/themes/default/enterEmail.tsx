@@ -16,7 +16,7 @@
  * Imports.
  */
 import * as React from "react";
-import { Component, createRef } from "react";
+import { Component, createRef, Fragment } from "react";
 import { NormalisedPalette, EnterEmailThemeProps, EnterEmailThemeState } from "../../../../types";
 import { CSSInterpolation } from "@emotion/serialize/types";
 
@@ -136,7 +136,7 @@ export default class EnterEmailTheme extends Component<EnterEmailThemeProps, Ent
                 callAPI={callAPI}
                 showLabels={false}
                 header={
-                    <>
+                    <Fragment>
                         <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
                             Reset your password
                         </div>
@@ -147,7 +147,7 @@ export default class EnterEmailTheme extends Component<EnterEmailThemeProps, Ent
                                 We will send you an email to reset your password
                             </div>
                         </div>
-                    </>
+                    </Fragment>
                 }
             />
         );

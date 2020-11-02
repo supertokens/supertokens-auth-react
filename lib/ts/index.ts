@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { ReactComponentClass, SuperTokensConfig } from "./types";
+import { SuperTokensConfig } from "./types";
 import SuperTokens from "./superTokens";
 
 /*
@@ -32,7 +32,7 @@ export default class SuperTokensAPIWrapper {
         return SuperTokens.canHandleRoute();
     }
 
-    static getRoutingComponent(): ReactComponentClass | undefined {
+    static getRoutingComponent(): JSX.Element | undefined {
         return SuperTokens.getRoutingComponent();
     }
 

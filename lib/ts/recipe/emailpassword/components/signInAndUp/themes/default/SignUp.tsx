@@ -16,7 +16,7 @@
  * Imports.
  */
 import * as React from "react";
-import { Component, createRef } from "react";
+import { Component, createRef, Fragment } from "react";
 import { FormFieldState, NormalisedPalette, SignUpThemeProps } from "../../../../types";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 
@@ -109,7 +109,7 @@ export default class SignUpTheme extends Component<SignUpThemeProps, { formField
                 callAPI={callAPI}
                 showLabels={true}
                 header={
-                    <>
+                    <Fragment>
                         <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
                             Sign Up
                         </div>
@@ -127,7 +127,7 @@ export default class SignUpTheme extends Component<SignUpThemeProps, { formField
                             </div>
                         </div>
                         <div className="divider" css={[defaultStyles.divider, styleFromInit.divider]}></div>
-                    </>
+                    </Fragment>
                 }
                 footer={
                     <div
