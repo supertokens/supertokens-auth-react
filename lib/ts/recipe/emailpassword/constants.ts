@@ -38,6 +38,8 @@ export enum MANDATORY_FORM_FIELDS_ID {
     PASSWORD = "password"
 }
 
-export const MANDATORY_FORM_FIELDS_ID_ARRAY = (<any>Object).values(MANDATORY_FORM_FIELDS_ID);
+export const MANDATORY_FORM_FIELDS_ID_ARRAY = Object.values(MANDATORY_FORM_FIELDS_ID).filter(
+    x => typeof x === "string"
+);
 
 export const DEFAULT_RESET_PASSWORD_PATH = "/reset-password";

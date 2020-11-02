@@ -17,26 +17,28 @@
  * Imports.
  */
 import React from "react";
+import { ReactNode } from "react";
 import { ErrorInfo } from "react";
 
+type ErrorBoundaryState = { hasError: boolean };
 /*
  * Component.
  */
-export default class ErrorBoundary extends React.Component<{}, { hasError: boolean }> {
+export default class ErrorBoundary extends React.Component<unknown, ErrorBoundaryState> {
     constructor(props: { hasError: boolean }) {
         super(props);
         this.state = { hasError: false };
     }
 
-    static getDerivedStateFromError(error: Error) {
+    static getDerivedStateFromError(): ErrorBoundaryState {
         return { hasError: true };
     }
 
-    componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
         console.log(error, errorInfo);
     }
 
-    render() {
+    render(): JSX.Element | ReactNode | undefined {
         if (this.state.hasError) {
             return <></>;
         }

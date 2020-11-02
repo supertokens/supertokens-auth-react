@@ -8,8 +8,8 @@ export default class EmailPassword extends RecipeModule {
     constructor(config: EmailPasswordConfig);
     getConfig: () => NormalisedEmailPasswordConfig;
     getFeatures: () => RouteToFeatureComponentMap;
-    signUpApi: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
-    signInApi: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+    signUpAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+    signInAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
     submitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
     enterEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
     signUpValidate(input: APIFormField[]): Promise<FormFieldError[]>;

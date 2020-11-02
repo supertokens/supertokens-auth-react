@@ -19,14 +19,14 @@
 import * as React from "react";
 import { Component } from "react";
 import {
-    User,
     EnterEmailThemeResponse,
     NormalisedDefaultStyles,
     NormalisedPalette,
     SubmitNewPasswordThemeProps,
     ResetPasswordUsingTokenProps,
     onHandleResetPasswordUsingTokenSuccessContext,
-    SubmitNewPasswordThemeResponse
+    SubmitNewPasswordThemeResponse,
+    EmailPasswordFeature
 } from "../../types";
 import EmailPassword from "../../emailPassword";
 import { ResetPasswordUsingTokenTheme } from "../..";
@@ -64,7 +64,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
     /*
      * Methods.
      */
-    getRecipeInstanceOrThrow = () => {
+    getRecipeInstanceOrThrow = (): EmailPasswordFeature => {
         let instance;
         if (this.props.__internal !== undefined && this.props.__internal.instance !== undefined) {
             instance = this.props.__internal.instance;
@@ -143,7 +143,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         }
     };
 
-    onSubmitNewPasswordFormSuccess = async () => {
+    onSubmitNewPasswordFormSuccess = async (): Promise<void> => {
         await this.onHandleSuccess({
             action: SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL
         });
@@ -199,13 +199,13 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         }
     };
 
-    onEnterEmailFormSuccess = async () => {
+    onEnterEmailFormSuccess = async (): Promise<void> => {
         await this.onHandleSuccess({
             action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT
         });
     };
 
-    onHandleSuccess = async (context: onHandleResetPasswordUsingTokenSuccessContext) => {
+    onHandleSuccess = async (context: onHandleResetPasswordUsingTokenSuccessContext): Promise<void> => {
         // If props provided by user, and successfully handled.
         if (this.props.onHandleSuccess) {
             await this.props.onHandleSuccess(context);
@@ -214,7 +214,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         // Otherwise, do nothing.
     };
 
-    onSignInClicked = () => {
+    onSignInClicked = (): void => {
         // Otherwise, use default, redirect to onSuccessRedirectURL
         const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
             .onSuccessRedirectURL;
@@ -241,7 +241,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         return this.getRecipeInstanceOrThrow().submitNewPasswordAPI(requestJson, headers);
     };
 
-    render = () => {
+    render = (): JSX.Element => {
         const enterEmailFormFeature = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
             .enterEmailForm;
 

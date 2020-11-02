@@ -78,7 +78,7 @@ export async function validateFormOrThrow(
     inputs: APIFormField[],
     configFormFields: NormalisedFormField[]
 ): Promise<FormFieldError[]> {
-    let validationErrors: FormFieldError[] = [];
+    const validationErrors: FormFieldError[] = [];
 
     if (configFormFields.length !== inputs.length) {
         throw Error("Are you sending too many / too few formFields?");
@@ -117,7 +117,7 @@ export async function validateFormOrThrow(
 /*
  * openExternalLink
  */
-export function openExternalLink(link?: string) {
+export function openExternalLink(link?: string): void {
     if (link === undefined) {
         return;
     }
@@ -128,14 +128,14 @@ export function openExternalLink(link?: string) {
 /*
  * getCurrentNormalisedUrlPath
  */
-export function getCurrentNormalisedUrlPath() {
+export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
     return new NormalisedURLPath(window.location.pathname);
 }
 
 /*
  * redirectTo
  */
-export function redirectTo(path: NormalisedURLPath) {
+export function redirectTo(path: NormalisedURLPath): void {
     let newPath: string = path.getAsStringDangerous();
 
     if (newPath.length === 0) {

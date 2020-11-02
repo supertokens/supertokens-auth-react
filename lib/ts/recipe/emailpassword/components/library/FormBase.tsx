@@ -24,7 +24,7 @@ import { APIFormField } from "../../../../types";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
+import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 
 /*
  * Component.
@@ -48,7 +48,7 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
      * Methods.
      */
 
-    handleInputChange = async (field: APIFormField) => {
+    handleInputChange = async (field: APIFormField): Promise<void> => {
         const formFields = this.state.formFields;
         for (let i = 0; i < formFields.length; i++) {
             if (field.id === formFields[i].id) {
@@ -68,7 +68,7 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
         );
     };
 
-    onFormSubmit = async (e: FormEvent) => {
+    onFormSubmit = async (e: FormEvent): Promise<void> => {
         // Prevent default event propagation.
         e.preventDefault();
 
@@ -139,9 +139,9 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
     /*
      * Render.
      */
-    render() {
+    render(): JSX.Element {
         const { defaultStyles, palette, header, footer, buttonLabel, showLabels } = this.props;
-        let styleFromInit = this.props.styleFromInit || {};
+        const styleFromInit = this.props.styleFromInit || {};
         const { generalError, formFields, isLoading } = this.state;
 
         return (
@@ -158,7 +158,9 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
                         {formFields.map(field => {
                             let type = "text";
                             // If email or password, replace field type.
-                            if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
+                            if (
+                                MANDATORY_FORM_FIELDS_ID_ARRAY.includes((field as { id: MANDATORY_FORM_FIELDS_ID }).id)
+                            ) {
                                 type = field.id;
                             }
                             if (field.id === "confirm-password") {

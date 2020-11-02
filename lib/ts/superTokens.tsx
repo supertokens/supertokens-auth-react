@@ -129,7 +129,7 @@ export default class SuperTokens {
             return this.pathsToComponentWithRecipeIdMap;
         }
 
-        let pathsToComponentWithRecipeIdMap: PathToComponentWithRecipeIdMap = {};
+        const pathsToComponentWithRecipeIdMap: PathToComponentWithRecipeIdMap = {};
         for (let i = 0; i < this.getRecipeList().length; i++) {
             const recipe = this.getRecipeList()[i];
             const features = recipe.getFeatures();

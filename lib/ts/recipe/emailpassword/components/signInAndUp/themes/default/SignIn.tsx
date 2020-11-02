@@ -18,19 +18,20 @@
  */
 import * as React from "react";
 import { Component, createRef } from "react";
-import { NormalisedPalette, FormBaseState, SignInThemeProps, FormFieldState } from "../../../../types";
+import { NormalisedPalette, SignInThemeProps, FormFieldState } from "../../../../types";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
+
 import FormBase from "../../../library/FormBase";
-import { FormField } from "../../../../../../types";
+import { Styles } from "../../../../../../types";
 
 /*
  * Styles.
  */
 
-function getStyles(palette: NormalisedPalette): any {
+function getStyles(palette: NormalisedPalette): Styles {
     return {
         headerTitle: {
             fontSize: palette.fonts.size[2],
@@ -79,9 +80,9 @@ export default class SignInTheme extends Component<SignInThemeProps, { formField
      * Render.
      */
 
-    render() {
+    render(): JSX.Element {
         const { signUpClicked, forgotPasswordClick, defaultStyles, palette, onSuccess, callAPI } = this.props;
-        let styleFromInit = this.props.styleFromInit || {};
+        const styleFromInit = this.props.styleFromInit || {};
         const { formFields } = this.state;
         const styles = getStyles(palette);
 

@@ -1,14 +1,15 @@
 import React from "react";
+import { ReactNode } from "react";
 import { ErrorInfo } from "react";
-export default class ErrorBoundary extends React.Component<{}, {
+declare type ErrorBoundaryState = {
     hasError: boolean;
-}> {
+};
+export default class ErrorBoundary extends React.Component<unknown, ErrorBoundaryState> {
     constructor(props: {
         hasError: boolean;
     });
-    static getDerivedStateFromError(error: Error): {
-        hasError: boolean;
-    };
+    static getDerivedStateFromError(): ErrorBoundaryState;
     componentDidCatch(error: Error, errorInfo: ErrorInfo): void;
-    render(): {} | null | undefined;
+    render(): JSX.Element | ReactNode | undefined;
 }
+export {};

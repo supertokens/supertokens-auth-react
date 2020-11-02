@@ -19,6 +19,7 @@
 
 import * as React from "react";
 import SuperTokens from "../superTokens";
+import { ReactComponentClass } from "../types";
 import { getRecipeIdFromSearch } from "../utils";
 
 /*
@@ -49,7 +50,7 @@ function SuperTokensRouteWithRecipeId({
     Route
 }: {
     path: string;
-    Route: new () => React.Component<any>;
+    Route: new () => React.Component<{ exact: unknown; path: string; component?: ReactComponentClass }>;
 }): JSX.Element {
     const recipeId = getRecipeIdFromSearch(window.location.search);
     const component = SuperTokens.getMatchingComponentForRouteAndRecipeId(path, recipeId);

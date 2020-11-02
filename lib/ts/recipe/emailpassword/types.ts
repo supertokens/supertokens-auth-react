@@ -21,13 +21,16 @@ import {
     NormalisedBaseConfig,
     NormalisedFormField,
     RecipeModuleConfig,
-    RequestJson
+    RequestJson,
+    RouteToFeatureComponentMap,
+    Styles
 } from "../../types";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
+import RecipeModule from "../recipeModule";
 
 /*
  * EmailPassword User InputsConfig Types.
@@ -263,9 +266,9 @@ export type ResetPasswordUsingTokenProps = BaseProps & {
         action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
     }): Promise<boolean>;
 
-    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<any>;
+    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordThemeResponse>;
 
-    onCallEnterEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<any>;
+    onCallEnterEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailThemeResponse>;
 };
 
 export type onHandleResetPasswordUsingTokenSuccessContext = {
@@ -276,7 +279,7 @@ type ThemeBaseProps = {
     /*
      * Custom styling from user.
      */
-    styleFromInit?: { [key: string]: CSSInterpolation };
+    styleFromInit?: Styles;
 
     /*
      * Form fields to use in the signin form.
@@ -376,8 +379,6 @@ export type FormFieldError = {
     error: string;
 };
 
-// es-lint / prettier clash regarding | indentation.
-/*eslint-disable */
 export type BaseResponse =
     | {
           /*
@@ -453,8 +454,6 @@ export type onHandleSignInAndUpSuccessContext =
           responseJson: any;
       };
 
-/*eslint-enabled */
-
 export type User = {
     /*
      * User id.
@@ -522,6 +521,55 @@ export type FormFieldState = FormFieldThemeProps & {
      * Has the value already been submitted to its validator.
      */
     showIsRequired?: boolean;
+};
+
+export type EnterEmailThemeState = {
+    /*
+     * Has the email been sent already.
+     */
+    emailSent?: boolean;
+
+    /*
+     * Email FormField only.
+     */
+    formFields: FormFieldState[];
+};
+
+export type SubmitNewPasswordThemeState = {
+    /*
+     * Has new password been set successfully.
+     */
+    hasNewPassword?: boolean;
+
+    /*
+     * Password and new password FormFields.
+     */
+    formFields: FormFieldState[];
+};
+
+/*
+ * Class type.
+ */
+export type EmailPasswordFeature = RecipeModule & {
+    getConfig: () => NormalisedEmailPasswordConfig;
+
+    getFeatures: () => RouteToFeatureComponentMap;
+
+    signUpAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+
+    signInAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+
+    submitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+
+    enterEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+
+    signUpValidate(input: APIFormField[]): Promise<FormFieldError[]>;
+
+    signInValidate(input: APIFormField[]): Promise<FormFieldError[]>;
+
+    submitNewPasswordValidate(input: APIFormField[]): Promise<FormFieldError[]>;
+
+    enterEmailValidate(input: APIFormField[]): Promise<FormFieldError[]>;
 };
 
 enum paletteColorOptions {
@@ -606,5 +654,5 @@ export type FormBaseProps = {
 
     palette: NormalisedPalette;
 
-    styleFromInit?: { [key: string]: CSSInterpolation };
+    styleFromInit?: Styles;
 };

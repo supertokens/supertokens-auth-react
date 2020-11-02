@@ -17,17 +17,18 @@
  */
 import * as React from "react";
 import { Component, createRef } from "react";
-import { NormalisedPalette, EnterEmailThemeProps, FormFieldState } from "../../../../types";
+import { NormalisedPalette, EnterEmailThemeProps, EnterEmailThemeState } from "../../../../types";
 import { CSSInterpolation } from "@emotion/serialize/types";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import FormBase from "../../../library/FormBase";
+import { Styles } from "../../../../../../types";
 
 /*
  * Styles.
  */
-function getStyles(palette: NormalisedPalette): any {
+function getStyles(palette: NormalisedPalette): Styles {
     return {
         headerTitle: {
             fontSize: palette.fonts.size[2],
@@ -52,10 +53,7 @@ function getStyles(palette: NormalisedPalette): any {
  * Component.
  */
 
-export default class EnterEmailTheme extends Component<
-    EnterEmailThemeProps,
-    { emailSent?: boolean; formFields: FormFieldState[] }
-> {
+export default class EnterEmailTheme extends Component<EnterEmailThemeProps, EnterEmailThemeState> {
     /*
      * Constructor.
      */
@@ -79,7 +77,7 @@ export default class EnterEmailTheme extends Component<
      * Methods.
      */
 
-    onSuccess = () => {
+    onSuccess = (): void => {
         this.setState({
             emailSent: true
         });
@@ -88,7 +86,7 @@ export default class EnterEmailTheme extends Component<
         }
     };
 
-    resend = () => {
+    resend = (): void => {
         this.setState({
             emailSent: false
         });
@@ -97,10 +95,10 @@ export default class EnterEmailTheme extends Component<
     /*
      * Render.
      */
-    render() {
+    render(): JSX.Element {
         const { defaultStyles, palette, callAPI } = this.props;
         const { formFields, emailSent } = this.state;
-        let styleFromInit = this.props.styleFromInit || {};
+        const styleFromInit = this.props.styleFromInit || {};
         const styles = getStyles(palette);
 
         // If email sent, show succes UI.

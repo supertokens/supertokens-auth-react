@@ -25,7 +25,8 @@ import {
     SignUpThemeResponse,
     NormalisedDefaultStyles,
     NormalisedPalette,
-    onHandleSignInAndUpSuccessContext
+    onHandleSignInAndUpSuccessContext,
+    EmailPasswordFeature
 } from "../../types";
 import EmailPassword from "../../emailPassword";
 import { SignInAndUpTheme } from "../..";
@@ -58,7 +59,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
     /*
      * Methods.
      */
-    getRecipeInstanceOrThrow = () => {
+    getRecipeInstanceOrThrow = (): EmailPasswordFeature => {
         let instance;
         if (this.props.__internal !== undefined && this.props.__internal.instance !== undefined) {
             instance = this.props.__internal.instance;
@@ -143,22 +144,21 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         } catch (e) {
             return {
                 response: {
-                    status: API_RESPONSE_STATUS.OK
-                    // message: "Something went wrong. Please try again"
+                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
+                    message: "Something went wrong. Please try again"
                 }
             };
         }
     };
 
-    onSignInSuccess = async () => {
-        // if (this.state.user === undefined) {
-        //     throw Error("Something went wrong. Please try again");
-        // }
+    onSignInSuccess = async (): Promise<void> => {
+        if (this.state.user === undefined) {
+            throw Error("Something went wrong. Please try again");
+        }
 
         await this.onHandleSuccess({
             action: SUCCESS_ACTION.SIGN_IN_COMPLETE,
-            user: { id: "1", email: "lol@ile.co" },
-            // user: this.state.user,
+            user: this.state.user,
             responseJson: this.state.responseJson
         });
     };
@@ -233,12 +233,12 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         }
     };
 
-    onSignUpSuccess = async () => {
+    onSignUpSuccess = async (): Promise<void> => {
         if (this.state.user === undefined) {
             throw Error("Something went wrong. Please try again");
         }
 
-        await this.onHandleSuccess({
+        return await this.onHandleSuccess({
             action: SUCCESS_ACTION.SIGN_UP_COMPLETE,
             user: this.state.user,
             responseJson: this.state.responseJson
@@ -255,7 +255,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         return false;
     };
 
-    onHandleForgotPasswordClicked = async () => {
+    onHandleForgotPasswordClicked = async (): Promise<void> => {
         // If props provided by user, and successfully handled.
         if (this.props.onHandleForgotPasswordClicked) {
             const isHandledByUser: boolean = await this.props.onHandleForgotPasswordClicked();
@@ -275,7 +275,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         window.history.pushState(null, "", resetPasswordUrl.getAsStringDangerous());
     };
 
-    onHandleSuccess = async (context: onHandleSignInAndUpSuccessContext) => {
+    onHandleSuccess = async (context: onHandleSignInAndUpSuccessContext): Promise<void> => {
         // If props provided by user, and successfully handled.
         if (this.props.onHandleSuccess) {
             const isHandledByUser = await this.props.onHandleSuccess(context);
@@ -298,7 +298,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         }
 
         // Otherwise, use default.
-        return this.getRecipeInstanceOrThrow().signUpApi(requestJson, headers);
+        return this.getRecipeInstanceOrThrow().signUpAPI(requestJson, headers);
     };
 
     onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
@@ -308,20 +308,20 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         }
 
         // Otherwise, use default.
-        return this.getRecipeInstanceOrThrow().signInApi(requestJson, headers);
+        return this.getRecipeInstanceOrThrow().signInAPI(requestJson, headers);
     };
 
     /*
      * Init.
      */
-    componentDidMount = async () => {
+    componentDidMount = async (): Promise<void> => {
         const sessionExists = await this.doesSessionExist();
         if (sessionExists) {
             await this.onHandleSuccess({ action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS });
         }
     };
 
-    render = () => {
+    render = (): JSX.Element => {
         const signUpFeature = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signUpForm;
 
         const signInFeature = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm;

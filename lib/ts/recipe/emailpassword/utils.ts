@@ -37,16 +37,14 @@ import {
  * defaultEmailValidator.
  */
 
-export async function defaultEmailValidator(value: string) {
+export async function defaultEmailValidator(value: string): Promise<string | undefined> {
+    // eslint-disable-next-line no-useless-escape
+    const defaultEmailValidatorRegexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     // We check if the email syntax is correct
     // As per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
     // Regex from https://stackoverflow.com/a/46181/3867175
 
-    if (
-        value.match(
-            /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        ) === null
-    ) {
+    if (value.match(defaultEmailValidatorRegexp) === null) {
         return "Email is invalid";
     }
 
@@ -59,7 +57,7 @@ export async function defaultEmailValidator(value: string) {
  * Contains lowercase, uppercase, and numbers.
  */
 
-export async function defaultPasswordValidator(value: string) {
+export async function defaultPasswordValidator(value: string): Promise<string | undefined> {
     // length >= 8 && < 100
     // must have a number and a character
     // as per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
@@ -88,7 +86,7 @@ export async function defaultPasswordValidator(value: string) {
  * min 1 characters.
  */
 
-export async function defaultLoginPasswordValidator(value: string) {
+export async function defaultLoginPasswordValidator(value: string): Promise<string | undefined> {
     // length = 0
     if (value.length === 0) {
         return "Password must not be empty";
@@ -105,7 +103,7 @@ export function normaliseEmailPasswordConfigOrThrow(config: EmailPasswordConfig)
         config.resetPasswordUsingTokenFeature
     );
 
-    let palette: NormalisedPalette = defaultPalette;
+    const palette: NormalisedPalette = defaultPalette;
     if (config.palette !== undefined) {
         if (config.palette.colors !== undefined) {
             palette.colors = {
@@ -214,7 +212,7 @@ export function normaliseSignInFormFeatureConfig(
     if (config.formFields !== undefined) {
         userFormFields = config.formFields.reduce((acc: FormField[], field: FormFieldBaseConfig) => {
             // Filter on email and password only.
-            if (!MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
+            if (!MANDATORY_FORM_FIELDS_ID_ARRAY.includes(<MANDATORY_FORM_FIELDS_ID>field.id)) {
                 return acc;
             }
             return [
@@ -338,7 +336,7 @@ export function mergeFormFields(
     // Loop through user provided fields.
     for (let i = 0; i < userFormFields.length; i++) {
         const userField = userFormFields[i];
-        let isNewField: boolean = true;
+        let isNewField = true;
 
         // Loop through the merged fields array.
         for (let j = 0; j < mergedFormFields.length; j++) {
@@ -354,7 +352,7 @@ export function mergeFormFields(
                 }
 
                 // If "email" or "password", always mandatory.
-                if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(userField.id)) {
+                if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(<MANDATORY_FORM_FIELDS_ID>userField.id)) {
                     optional = false;
                 }
 
@@ -394,6 +392,7 @@ export function capitalize(value: string): string {
 /*
  * defaultValidate
  */
-export async function defaultValidate(value: string): Promise<string | undefined> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function defaultValidate(_: string): Promise<string | undefined> {
     return undefined;
 }

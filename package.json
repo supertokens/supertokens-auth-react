@@ -52,7 +52,7 @@
     "watch": "cd lib && babel --watch ./ts/ --out-dir ./build/ --extensions '.ts,.tsx'",
     "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"ts/**/*.tsx\" \"build/**/*.js\" \"ts/**/*.tsx\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\"",
     "build-pretty": "npm run build && npm run pretty",
-    "lint": "cd lib && eslint ./ts --ext .ts",
+    "lint": "cd lib && eslint ./ts --ext .ts,.tsx",
     "pretty-check": "cd lib && npx prettier --check --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\"",
     "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
   },

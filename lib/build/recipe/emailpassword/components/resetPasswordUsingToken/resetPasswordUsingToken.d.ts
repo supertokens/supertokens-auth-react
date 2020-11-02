@@ -1,12 +1,11 @@
 import { Component } from "react";
-import { ResetPasswordUsingTokenProps, onHandleResetPasswordUsingTokenSuccessContext, SubmitNewPasswordThemeResponse } from "../../types";
-import EmailPassword from "../../emailPassword";
+import { ResetPasswordUsingTokenProps, onHandleResetPasswordUsingTokenSuccessContext, SubmitNewPasswordThemeResponse, EmailPasswordFeature } from "../../types";
 import { APIFormField, RequestJson } from "../../../../types";
 declare class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, {
     token: string;
 }> {
     constructor(props: ResetPasswordUsingTokenProps);
-    getRecipeInstanceOrThrow: () => EmailPassword;
+    getRecipeInstanceOrThrow: () => EmailPasswordFeature;
     submitNewPassword: (formFields: APIFormField[]) => Promise<SubmitNewPasswordThemeResponse>;
     submitNewPasswordAPI: (formFields: APIFormField[]) => Promise<SubmitNewPasswordThemeResponse>;
     onSubmitNewPasswordFormSuccess: () => Promise<void>;

@@ -1,13 +1,12 @@
 import { Component } from "react";
-import { SignInThemeResponse, SignInAndUpProps, User, onHandleSignInAndUpSuccessContext } from "../../types";
-import EmailPassword from "../../emailPassword";
+import { SignInThemeResponse, SignInAndUpProps, User, onHandleSignInAndUpSuccessContext, EmailPasswordFeature } from "../../types";
 import { APIFormField, RequestJson } from "../../../../types";
 declare class SignInAndUp extends Component<SignInAndUpProps, {
     user?: User;
     responseJson: any;
 }> {
     constructor(props: SignInAndUpProps);
-    getRecipeInstanceOrThrow: () => EmailPassword;
+    getRecipeInstanceOrThrow: () => EmailPasswordFeature;
     signIn: (formFields: APIFormField[]) => Promise<SignInThemeResponse>;
     signInAPI: (formFields: APIFormField[]) => Promise<{
         response: SignInThemeResponse;

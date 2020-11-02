@@ -17,7 +17,7 @@
  */
 import * as React from "react";
 import { Component, createRef } from "react";
-import { FormBaseState, FormFieldState, NormalisedPalette, SignUpThemeProps } from "../../../../types";
+import { FormFieldState, NormalisedPalette, SignUpThemeProps } from "../../../../types";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 
 /** @jsx jsx */
@@ -85,7 +85,7 @@ export default class SignUpTheme extends Component<SignUpThemeProps, { formField
     /*
      * Render.
      */
-    render() {
+    render(): JSX.Element {
         const {
             privacyPolicyLink,
             termsAndConditionsLink,
@@ -96,7 +96,7 @@ export default class SignUpTheme extends Component<SignUpThemeProps, { formField
             callAPI
         } = this.props;
         const { formFields } = this.state;
-        let styleFromInit = this.props.styleFromInit || {};
+        const styleFromInit = this.props.styleFromInit || {};
         const styles = getStyles(palette);
 
         return (

@@ -18,7 +18,7 @@
  */
 import * as React from "react";
 import { Component, createRef } from "react";
-import { NormalisedPalette, SubmitNewPasswordThemeProps, FormFieldState } from "../../../../types";
+import { NormalisedPalette, SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../../types";
 
 import { CSSInterpolation } from "@emotion/serialize/types";
 
@@ -26,12 +26,13 @@ import { CSSInterpolation } from "@emotion/serialize/types";
 import { jsx } from "@emotion/core";
 import FormBase from "../../../library/FormBase";
 import { FormRow, Button } from "../../../library";
+import { Styles } from "../../../../../../types";
 
 /*
  * Styles.
  */
 
-function getStyles(palette: NormalisedPalette): any {
+function getStyles(palette: NormalisedPalette): Styles {
     return {
         headerTitle: {
             fontSize: palette.fonts.size[2],
@@ -63,10 +64,7 @@ function getStyles(palette: NormalisedPalette): any {
 
 export default class SubmitNewPasswordTheme extends Component<
     SubmitNewPasswordThemeProps,
-    {
-        hasNewPassword?: boolean;
-        formFields: FormFieldState[];
-    }
+    SubmitNewPasswordThemeState
 > {
     /*
      * Constructor.
@@ -87,7 +85,7 @@ export default class SubmitNewPasswordTheme extends Component<
         };
     }
 
-    onSuccess = () => {
+    onSuccess = (): void => {
         this.setState({
             hasNewPassword: true
         });
@@ -100,9 +98,9 @@ export default class SubmitNewPasswordTheme extends Component<
      * Render.
      */
 
-    render() {
+    render(): JSX.Element {
         const { defaultStyles, palette, callAPI, onSignInClicked } = this.props;
-        let styleFromInit = this.props.styleFromInit || {};
+        const styleFromInit = this.props.styleFromInit || {};
         const { formFields, hasNewPassword } = this.state;
         const styles = getStyles(palette);
 

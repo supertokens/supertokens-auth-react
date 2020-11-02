@@ -45,14 +45,10 @@ export declare type PathToComponentWithRecipeIdMap = {
     [path: string]: ComponentWithRecipeId[];
 };
 export declare type FeatureBaseConfig = {
-    style?: {
-        [key: string]: CSSInterpolation;
-    };
+    style?: Styles;
 };
 export declare type NormalisedBaseConfig = {
-    style: {
-        [key: string]: CSSInterpolation;
-    };
+    style: Styles;
 };
 export declare type FormFieldBaseConfig = {
     id: string;
@@ -79,3 +75,4 @@ export declare type NormalisedFormField = {
     optional: boolean;
 };
 export declare type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);
+export declare type Styles = Record<string, CSSInterpolation>;

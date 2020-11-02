@@ -1,8 +1,8 @@
 import { FormField, NormalisedAppInfo, NormalisedFormField } from "../../types";
 import { EmailPasswordConfig, NormalisedEmailPasswordConfig, NormalisedResetPasswordUsingTokenFeatureConfig, NormalisedSignInAndUpFeatureConfig, NormalisedSignInFormFeatureConfig, NormalisedSignUpFormFeatureConfig, ResetPasswordUsingTokenUserInput, SignInAndUpFeatureUserInput, SignInFormFeatureUserInput, SignUpFormFeatureUserInput } from "./types";
-export declare function defaultEmailValidator(value: string): Promise<"Email is invalid" | undefined>;
-export declare function defaultPasswordValidator(value: string): Promise<"Password must contain at least 8 characters, including a number" | "Password's length must be lesser than 100 characters" | "Password must contain at least one alphabet" | "Password must contain at least one number" | undefined>;
-export declare function defaultLoginPasswordValidator(value: string): Promise<"Password must not be empty" | undefined>;
+export declare function defaultEmailValidator(value: string): Promise<string | undefined>;
+export declare function defaultPasswordValidator(value: string): Promise<string | undefined>;
+export declare function defaultLoginPasswordValidator(value: string): Promise<string | undefined>;
 export declare function normaliseEmailPasswordConfigOrThrow(config: EmailPasswordConfig): NormalisedEmailPasswordConfig;
 export declare function normaliseSignInAndUpFeature(appInfo: NormalisedAppInfo, config?: SignInAndUpFeatureUserInput): NormalisedSignInAndUpFeatureConfig;
 export declare function normaliseSignUpFormFeatureConfig(config?: SignUpFormFeatureUserInput): NormalisedSignUpFormFeatureConfig;
@@ -11,4 +11,4 @@ export declare function getDefaultFormFields(): NormalisedFormField[];
 export declare function normaliseResetPasswordUsingTokenFeature(config?: ResetPasswordUsingTokenUserInput): NormalisedResetPasswordUsingTokenFeatureConfig;
 export declare function mergeFormFields(defaultFormFields: NormalisedFormField[], userFormFields: FormField[]): NormalisedFormField[];
 export declare function capitalize(value: string): string;
-export declare function defaultValidate(value: string): Promise<string | undefined>;
+export declare function defaultValidate(_: string): Promise<string | undefined>;

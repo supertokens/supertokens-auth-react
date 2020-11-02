@@ -16,7 +16,7 @@ import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
-import { Component, ComponentClass } from "react";
+import { ComponentClass } from "react";
 
 /*
  * Recipe Module Manager Config Types.
@@ -150,14 +150,14 @@ export type FeatureBaseConfig = {
     /*
      * Additional styles to override themes.
      */
-    style?: { [key: string]: CSSInterpolation };
+    style?: Styles;
 };
 
 export type NormalisedBaseConfig = {
     /*
      * Additional styles to override themes.
      */
-    style: { [key: string]: CSSInterpolation };
+    style: Styles;
 };
 
 export type FormFieldBaseConfig = {
@@ -244,3 +244,5 @@ export type NormalisedFormField = {
 };
 
 export type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);
+
+export type Styles = Record<string, CSSInterpolation>;

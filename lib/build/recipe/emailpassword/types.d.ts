@@ -1,9 +1,10 @@
-import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson } from "../../types";
+import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson, RouteToFeatureComponentMap, Styles } from "../../types";
 import EmailPassword from "./emailPassword";
 import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
+import RecipeModule from "../recipeModule";
 export declare type EmailPasswordUserInput = {
     palette?: PaletteUserInput;
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
@@ -82,16 +83,14 @@ export declare type ResetPasswordUsingTokenProps = BaseProps & {
     onHandleSuccess(context: {
         action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
     }): Promise<boolean>;
-    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<any>;
-    onCallEnterEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<any>;
+    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordThemeResponse>;
+    onCallEnterEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailThemeResponse>;
 };
 export declare type onHandleResetPasswordUsingTokenSuccessContext = {
     action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
 };
 declare type ThemeBaseProps = {
-    styleFromInit?: {
-        [key: string]: CSSInterpolation;
-    };
+    styleFromInit?: Styles;
     formFields: FormFieldThemeProps[];
     defaultStyles: NormalisedDefaultStyles;
     palette: NormalisedPalette;
@@ -170,6 +169,26 @@ export declare type FormFieldState = FormFieldThemeProps & {
     ref: RefObject<HTMLInputElement>;
     showIsRequired?: boolean;
 };
+export declare type EnterEmailThemeState = {
+    emailSent?: boolean;
+    formFields: FormFieldState[];
+};
+export declare type SubmitNewPasswordThemeState = {
+    hasNewPassword?: boolean;
+    formFields: FormFieldState[];
+};
+export declare type EmailPasswordFeature = RecipeModule & {
+    getConfig: () => NormalisedEmailPasswordConfig;
+    getFeatures: () => RouteToFeatureComponentMap;
+    signUpAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+    signInAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+    submitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+    enterEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+    signUpValidate(input: APIFormField[]): Promise<FormFieldError[]>;
+    signInValidate(input: APIFormField[]): Promise<FormFieldError[]>;
+    submitNewPasswordValidate(input: APIFormField[]): Promise<FormFieldError[]>;
+    enterEmailValidate(input: APIFormField[]): Promise<FormFieldError[]>;
+};
 declare enum paletteColorOptions {
     BACKGROUND = "background",
     INPUTBACKGROUND = "inputBackground",
@@ -232,8 +251,6 @@ export declare type FormBaseProps = {
     callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse | SignUpThemeResponse | SubmitNewPasswordThemeResponse | EnterEmailThemeResponse>;
     defaultStyles: NormalisedDefaultStyles;
     palette: NormalisedPalette;
-    styleFromInit?: {
-        [key: string]: CSSInterpolation;
-    };
+    styleFromInit?: Styles;
 };
 export {};
