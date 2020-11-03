@@ -70,15 +70,15 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
 
     signIn = async (formFields: APIFormField[]): Promise<SignInThemeResponse> => {
         // Front end validation.
-        // const validationErrors = await this.getRecipeInstanceOrThrow().signInValidate(formFields);
+        const validationErrors = await this.getRecipeInstanceOrThrow().signInValidate(formFields);
 
         // If errors, return.
-        // if (validationErrors.length > 0) {
-        //     return {
-        //         status: API_RESPONSE_STATUS.FIELD_ERROR,
-        //         fields: validationErrors
-        //     };
-        // }
+        if (validationErrors.length > 0) {
+            return {
+                status: API_RESPONSE_STATUS.FIELD_ERROR,
+                formFields: validationErrors
+            };
+        }
 
         const { response, responseJson } = await this.signInAPI(formFields);
 

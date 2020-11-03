@@ -50,6 +50,7 @@ export default class EmailPassword extends RecipeModule {
      * Static Attributes.
      */
     static instance?: EmailPassword;
+    static RECIPE_ID = "email-password";
 
     /*
      * Instance Attributes.
@@ -174,7 +175,7 @@ export default class EmailPassword extends RecipeModule {
             EmailPassword.instance = new EmailPassword({
                 ...config,
                 appInfo,
-                recipeId: "email-password"
+                recipeId: EmailPassword.RECIPE_ID
             });
             return EmailPassword.instance;
         };

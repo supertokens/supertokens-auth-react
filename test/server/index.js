@@ -41,7 +41,22 @@ SuperTokens.init({
         apiDomain: "http://localhost:9000"
     },
      recipeList: [
-        EmailPassword.init(),
+        EmailPassword.init({
+            signUpFeature: {
+                privacyPolicyLink: "http://localhost:3031/privacy",
+                termsAndConditionsLink: "http://localhost:3031/terms",
+                formFields: [{
+                  id: "company"
+                }, {
+                  id: "First Name"
+                }, {
+                  id: "Last Name"
+                },  {
+                  id: "City",
+                  optional: true
+                }]
+            }
+        }),
         Session.init({
             hosts: "http://localhost:8080",
             cookieSameSite: "lax"

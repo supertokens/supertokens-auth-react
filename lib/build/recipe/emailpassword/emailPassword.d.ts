@@ -3,6 +3,7 @@ import { CreateRecipeFunction, RequestJson, APIFormField } from "../../types";
 import { EmailPasswordConfig, EmailPasswordUserInput, FormFieldError, NormalisedEmailPasswordConfig, SignInThemeResponse, SubmitNewPasswordThemeResponse } from "./types";
 export default class EmailPassword extends RecipeModule {
     static instance?: EmailPassword;
+    static RECIPE_ID: string;
     private config;
     private httpRequest;
     constructor(config: EmailPasswordConfig);

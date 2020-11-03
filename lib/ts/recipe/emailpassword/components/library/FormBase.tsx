@@ -113,8 +113,17 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
                     if (field.id === errorFields[i].id) {
                         field.error = errorFields[i].error;
                     }
-                    // Indicate to inputs that the value was submitted for validation, adding the input adornment icon.
-                    field.validated = true;
+                    // Indicate to inputs that the value was submitted for validation, adding the input adornment icon
+                    // Skip empty optional fields.
+                    if (
+                        field.ref.current !== null &&
+                        field.ref.current.value.length !== 0 &&
+                        field.error === undefined
+                    ) {
+                        field.validated = true;
+                    } else if (field.error !== undefined) {
+                        field.validated = true;
+                    }
                 }
                 return field;
             });
