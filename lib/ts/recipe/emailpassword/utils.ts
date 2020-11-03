@@ -94,7 +94,7 @@ export async function defaultLoginPasswordValidator(value: string): Promise<stri
     return undefined;
 }
 
-export function normaliseEmailPasswordConfigOrThrow(config: EmailPasswordConfig): NormalisedEmailPasswordConfig {
+export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): NormalisedEmailPasswordConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
         config.appInfo,
         config.signInAndUpFeature

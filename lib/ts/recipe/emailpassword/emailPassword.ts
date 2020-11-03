@@ -36,7 +36,7 @@ import {
 } from "./types";
 import { isTest, validateFormOrThrow } from "../../utils";
 import HttpRequest from "../../httpRequest";
-import { normaliseEmailPasswordConfigOrThrow } from "./utils";
+import { normaliseEmailPasswordConfig } from "./utils";
 import { SignInAndUp } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
 import ResetPasswordUsingToken from "./components/resetPasswordUsingToken/resetPasswordUsingToken";
@@ -64,7 +64,7 @@ export default class EmailPassword extends RecipeModule {
      */
     constructor(config: EmailPasswordConfig) {
         super(config);
-        this.config = normaliseEmailPasswordConfigOrThrow(config);
+        this.config = normaliseEmailPasswordConfig(config);
         this.httpRequest = new HttpRequest(config.appInfo);
     }
 

@@ -3,7 +3,7 @@ import { EmailPasswordConfig, NormalisedEmailPasswordConfig, NormalisedResetPass
 export declare function defaultEmailValidator(value: string): Promise<string | undefined>;
 export declare function defaultPasswordValidator(value: string): Promise<string | undefined>;
 export declare function defaultLoginPasswordValidator(value: string): Promise<string | undefined>;
-export declare function normaliseEmailPasswordConfigOrThrow(config: EmailPasswordConfig): NormalisedEmailPasswordConfig;
+export declare function normaliseEmailPasswordConfig(config: EmailPasswordConfig): NormalisedEmailPasswordConfig;
 export declare function normaliseSignInAndUpFeature(appInfo: NormalisedAppInfo, config?: SignInAndUpFeatureUserInput): NormalisedSignInAndUpFeatureConfig;
 export declare function normaliseSignUpFormFeatureConfig(config?: SignUpFormFeatureUserInput): NormalisedSignUpFormFeatureConfig;
 export declare function normaliseSignInFormFeatureConfig(appInfo: NormalisedAppInfo, defaultFormFields: NormalisedFormField[], config?: SignInFormFeatureUserInput): NormalisedSignInFormFeatureConfig;
