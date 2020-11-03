@@ -77,8 +77,8 @@ export declare type SignInAndUpProps = BaseProps & {
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
     doesSessionExist?: () => Promise<boolean>;
     onHandleSuccess?: (context: onHandleSignInAndUpSuccessContext) => Promise<boolean>;
-    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
-    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpThemeResponse>;
+    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInThemeResponse>;
 };
 export declare type ResetPasswordUsingTokenProps = BaseProps & {
     onHandleSuccess(context: {
@@ -128,7 +128,7 @@ export declare type BaseResponse = {
     message: string;
 } | {
     status: API_RESPONSE_STATUS.FIELD_ERROR;
-    fields: FormFieldError[];
+    formFields: FormFieldError[];
 };
 export declare type SignUpThemeResponse = BaseResponse;
 export declare type SignInThemeResponse = BaseResponse | {

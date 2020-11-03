@@ -88,7 +88,6 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
 
         // Call Sign In API.
         const result = await this.props.callAPI(fields);
-
         // Set isLoading to false.
         this.setState({
             isLoading: false
@@ -106,7 +105,7 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
 
         // If field error.
         if (result.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-            const errorFields = result.fields;
+            const errorFields = result.formFields;
 
             // Update formFields state with errors.
             const formFields = this.state.formFields.map(field => {

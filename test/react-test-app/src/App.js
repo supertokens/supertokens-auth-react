@@ -13,7 +13,7 @@ if (!hasDisabledDefaultImplementationFromLocationQueryParams()) {
     appInfo: {
       appName: "SuperTokens",
       websiteDomain: "localhost:3031",
-      apiDomain: "localhost:9090"
+      apiDomain: "localhost:8082"
     },
     recipeList: [
       EmailPassword.init({
@@ -51,7 +51,7 @@ if (!hasDisabledDefaultImplementationFromLocationQueryParams()) {
     appInfo: {
       appName: "SuperTokens",
       websiteDomain: "localhost:3031",
-      apiDomain: "localhost:9090"
+      apiDomain: "localhost:8082"
     },
     recipeList: [
       EmailPassword.init({

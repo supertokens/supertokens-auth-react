@@ -78,7 +78,7 @@ export default class HttpRequest {
                 }
             });
             if (result.status >= 300) {
-                throw Error();
+                throw Error("Something went wrong. Please try again");
             }
 
             return await result.json();

@@ -70,15 +70,15 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
 
     signIn = async (formFields: APIFormField[]): Promise<SignInThemeResponse> => {
         // Front end validation.
-        const validationErrors = await this.getRecipeInstanceOrThrow().signInValidate(formFields);
+        // const validationErrors = await this.getRecipeInstanceOrThrow().signInValidate(formFields);
 
         // If errors, return.
-        if (validationErrors.length > 0) {
-            return {
-                status: API_RESPONSE_STATUS.FIELD_ERROR,
-                fields: validationErrors
-            };
-        }
+        // if (validationErrors.length > 0) {
+        //     return {
+        //         status: API_RESPONSE_STATUS.FIELD_ERROR,
+        //         fields: validationErrors
+        //     };
+        // }
 
         const { response, responseJson } = await this.signInAPI(formFields);
 
@@ -108,7 +108,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
                 return {
                     response: {
                         status: API_RESPONSE_STATUS.FIELD_ERROR,
-                        fields: responseJson.fields
+                        formFields: responseJson.formFields
                     }
                 };
             }
@@ -170,7 +170,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         if (validationErrors.length > 0) {
             return {
                 status: API_RESPONSE_STATUS.FIELD_ERROR,
-                fields: validationErrors
+                formFields: validationErrors
             };
         }
 
@@ -200,7 +200,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
                 return {
                     response: {
                         status: API_RESPONSE_STATUS.FIELD_ERROR,
-                        fields: responseJson.fields
+                        formFields: responseJson.formFields
                     }
                 };
             }
@@ -290,7 +290,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         redirectToWithReload(onSuccessRedirectURL);
     };
 
-    onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
+    onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpThemeResponse> => {
         // If props provided by user.
         if (this.props.onCallSignUpAPI) {
             return this.props.onCallSignUpAPI(requestJson, headers);
@@ -300,7 +300,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         return this.getRecipeInstanceOrThrow().signUpAPI(requestJson, headers);
     };
 
-    onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
+    onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignInThemeResponse> => {
         // If props provided by user.
         if (this.props.onCallSignInAPI) {
             return this.props.onCallSignInAPI(requestJson, headers);

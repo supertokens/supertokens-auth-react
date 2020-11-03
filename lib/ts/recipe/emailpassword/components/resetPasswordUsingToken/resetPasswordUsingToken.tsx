@@ -81,7 +81,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         if (validationErrors.length > 0) {
             return {
                 status: API_RESPONSE_STATUS.FIELD_ERROR,
-                fields: validationErrors
+                formFields: validationErrors
             };
         }
 
@@ -89,7 +89,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         if (formFields[0].value !== formFields[1].value) {
             return {
                 status: API_RESPONSE_STATUS.FIELD_ERROR,
-                fields: [
+                formFields: [
                     {
                         id: "confirm-password",
                         error: "Confirmation password doesn't match"
@@ -119,7 +119,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
             if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
                 return {
                     status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    fields: responseJson.fields
+                    formFields: responseJson.formFields
                 };
             }
 
@@ -156,7 +156,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         if (validationErrors.length > 0) {
             return {
                 status: API_RESPONSE_STATUS.FIELD_ERROR,
-                fields: validationErrors
+                formFields: validationErrors
             };
         }
 
@@ -174,7 +174,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
             if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
                 return {
                     status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    fields: responseJson.fields
+                    formFields: responseJson.formFields
                 };
             }
 

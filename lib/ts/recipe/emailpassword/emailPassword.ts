@@ -24,7 +24,16 @@ import {
     NormalisedAppInfo,
     APIFormField
 } from "../../types";
-import { EmailPasswordConfig, EmailPasswordUserInput, FormFieldError, NormalisedEmailPasswordConfig } from "./types";
+import {
+    EmailPasswordConfig,
+    EmailPasswordUserInput,
+    EnterEmailThemeResponse,
+    FormFieldError,
+    NormalisedEmailPasswordConfig,
+    SignInThemeResponse,
+    SignUpThemeResponse,
+    SubmitNewPasswordThemeResponse
+} from "./types";
 import { isTest, validateFormOrThrow } from "../../utils";
 import HttpRequest from "../../httpRequest";
 import { normaliseEmailPasswordConfigOrThrow } from "./utils";
@@ -90,14 +99,14 @@ export default class EmailPassword extends RecipeModule {
      * SignIn/SignUp
      */
 
-    signUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+    signUpAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpThemeResponse> => {
         return this.httpRequest.post("/signup", {
             body: JSON.stringify(requestJson),
             headers
         });
     };
 
-    signInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+    signInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInThemeResponse> => {
         return this.httpRequest.post("/signin", {
             body: JSON.stringify(requestJson),
             headers
@@ -108,14 +117,17 @@ export default class EmailPassword extends RecipeModule {
      * Reset Password
      */
 
-    submitNewPasswordAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+    submitNewPasswordAPI = async (
+        requestJson: RequestJson,
+        headers: HeadersInit
+    ): Promise<SubmitNewPasswordThemeResponse> => {
         return this.httpRequest.post("/user/password/reset", {
             body: JSON.stringify(requestJson),
             headers
         });
     };
 
-    enterEmailAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<Response> => {
+    enterEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailThemeResponse> => {
         return this.httpRequest.post("/user/password/reset/token", {
             body: JSON.stringify(requestJson),
             headers

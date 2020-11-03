@@ -260,9 +260,9 @@ export type SignInAndUpProps = BaseProps & {
 
     onHandleSuccess?: (context: onHandleSignInAndUpSuccessContext) => Promise<boolean>;
 
-    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpThemeResponse>;
 
-    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<Response>;
+    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInThemeResponse>;
 };
 
 export type ResetPasswordUsingTokenProps = BaseProps & {
@@ -410,7 +410,7 @@ export type BaseResponse =
           /*
            * Array of Field Id and their corresponding error.
            */
-          fields: FormFieldError[];
+          formFields: FormFieldError[];
       };
 
 export type SignUpThemeResponse = BaseResponse;
