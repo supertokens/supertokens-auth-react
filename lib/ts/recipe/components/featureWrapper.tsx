@@ -25,6 +25,7 @@ import ErrorBoundary from "./errorBoundary";
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import { NormalisedDefaultStyles } from "../emailpassword/types";
+import { Fragment } from "react";
 
 /*
  * Props.
@@ -33,25 +34,46 @@ import { NormalisedDefaultStyles } from "../emailpassword/types";
 type FeatureWrapperProps = {
     defaultStyles: NormalisedDefaultStyles;
     children: JSX.Element;
+    useShadowDom?: boolean;
 };
 
 /*
  * Component.
  */
 
-export default function FeatureWrapper({ children, defaultStyles }: FeatureWrapperProps): JSX.Element {
+export default function FeatureWrapper({ children, defaultStyles, useShadowDom }: FeatureWrapperProps): JSX.Element {
     /*
      * Render.
      */
     return (
         <ErrorBoundary>
-            <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
-                {children}
-                <link
-                    href="//fonts.googleapis.com/css?family=Rubik:wght@300;400;500;700"
-                    rel="stylesheet"
-                    type="text/css"></link>
-            </root.div>
+            <WithOrWithoutShadowDom defaultStyles={defaultStyles} useShadowDom={useShadowDom}>
+                <Fragment>
+                    {children}
+                    <link
+                        href="//fonts.googleapis.com/css?family=Rubik:wght@300;400;500;700"
+                        rel="stylesheet"
+                        type="text/css"></link>
+                </Fragment>
+            </WithOrWithoutShadowDom>
         </ErrorBoundary>
+    );
+}
+
+function WithOrWithoutShadowDom({ children, defaultStyles, useShadowDom }: FeatureWrapperProps): JSX.Element {
+    // If explicitely specified to not use shadow dom.
+    if (useShadowDom === false) {
+        return (
+            <div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
+                {children}
+            </div>
+        );
+    }
+
+    // Otherwise, use shadow dom.
+    return (
+        <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
+            {children}
+        </root.div>
     );
 }

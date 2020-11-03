@@ -352,11 +352,13 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
             palette
         };
 
+        const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
+
         /*
          * Render.
          */
         return (
-            <FeatureWrapper defaultStyles={defaultStyles}>
+            <FeatureWrapper useShadowDom={useShadowDom} defaultStyles={defaultStyles}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (

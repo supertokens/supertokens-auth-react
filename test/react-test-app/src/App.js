@@ -17,6 +17,7 @@ if (!hasDisabledDefaultImplementationFromLocationQueryParams()) {
     },
     recipeList: [
       EmailPassword.init({
+        useShadowDom: true,
         signInAndUpFeature: {
           signUpForm: {
             privacyPolicyLink: "http://localhost:3031/privacy",

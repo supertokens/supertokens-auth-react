@@ -42,6 +42,11 @@ export type EmailPasswordUserInput = {
     palette?: PaletteUserInput;
 
     /*
+     * Use shadow Dom root.
+     */
+    useShadowDom?: boolean;
+
+    /*
      * Sign In and Sign Up feature.
      */
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
@@ -59,6 +64,11 @@ export type NormalisedEmailPasswordConfig = {
      * Styling palette.
      */
     palette: NormalisedPalette;
+
+    /*
+     * Use shadow Dom root.
+     */
+    useShadowDom: boolean;
 
     /*
      * Sign In and Sign Up feature.

@@ -270,6 +270,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
             defaultStyles,
             palette
         };
+        const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
 
         const hasToken = this.state.token.length !== 0;
 
@@ -277,7 +278,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
          * Render.
          */
         return (
-            <FeatureWrapper defaultStyles={defaultStyles}>
+            <FeatureWrapper useShadowDom={useShadowDom} defaultStyles={defaultStyles}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (

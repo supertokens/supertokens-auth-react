@@ -113,8 +113,11 @@ export function normaliseEmailPasswordConfigOrThrow(config: EmailPasswordConfig)
         }
     }
 
+    const useShadowDom = config.useShadowDom !== undefined ? config.useShadowDom === true : true;
+
     return {
         palette,
+        useShadowDom,
         signInAndUpFeature,
         resetPasswordUsingTokenFeature
     };

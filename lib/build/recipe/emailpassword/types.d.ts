@@ -7,12 +7,14 @@ import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
 import { History } from "history";
 export declare type EmailPasswordUserInput = {
     palette?: PaletteUserInput;
+    useShadowDom?: boolean;
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
 };
 export declare type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUserInput;
 export declare type NormalisedEmailPasswordConfig = {
     palette: NormalisedPalette;
+    useShadowDom: boolean;
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
 };
