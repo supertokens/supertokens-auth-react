@@ -20,7 +20,6 @@ import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RouteToFeatureComponentMap } from "../../types";
 import { SessionUserInput, NormalisedSessionConfig, SessionConfig } from "./types";
 import { isTest } from "../../utils";
-import HttpRequest from "../../httpRequest";
 import { normaliseSessionConfigOrThrow } from "./utils";
 
 /*
@@ -37,15 +36,12 @@ export default class Session extends RecipeModule {
      */
     private config: NormalisedSessionConfig;
 
-    private httpRequest: HttpRequest;
-
     /*
      * Constructor.
      */
     constructor(config: SessionConfig) {
         super(config);
         this.config = normaliseSessionConfigOrThrow(config);
-        this.httpRequest = new HttpRequest(config.appInfo);
     }
 
     /*

@@ -17,7 +17,9 @@ import { SessionConfig, NormalisedSessionConfig } from "./types";
 
 export function normaliseSessionConfigOrThrow(config: SessionConfig): NormalisedSessionConfig {
     const sessionScope = config.sessionScope !== undefined ? config.sessionScope : getDefaultSessionScope();
+
     const autoAddCredentials = config.autoAddCredentials ? config.autoAddCredentials : true;
+    const refreshAPICustomHeaders = config.refreshAPICustomHeaders !== undefined ? config.refreshAPICustomHeaders : {};
 
     let sessionExpiredStatusCode = 401;
     if (config.sessionExpiredStatusCode === undefined) {
@@ -30,12 +32,12 @@ export function normaliseSessionConfigOrThrow(config: SessionConfig): Normalised
 
     return {
         sessionScope,
-        refreshAPICustomHeaders: {},
+        refreshAPICustomHeaders,
         autoAddCredentials,
         sessionExpiredStatusCode
     };
 }
 
 function getDefaultSessionScope() {
-    return window.location.host;
+    return window.location.hostname;
 }

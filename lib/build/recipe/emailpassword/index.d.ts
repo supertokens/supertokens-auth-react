@@ -10,4 +10,4 @@ export default class EmailPasswordAPIWrapper {
 }
 declare const init: typeof EmailPasswordAPIWrapper.init;
 declare const SignOut: typeof EmailPasswordAPIWrapper.signOut;
-export { EmailPasswordAPIWrapper, init, SignInAndUp, SignInAndUpTheme, SignOut, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, };
+export { EmailPasswordAPIWrapper, init, SignInAndUp, SignInAndUpTheme, SignOut, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme };
