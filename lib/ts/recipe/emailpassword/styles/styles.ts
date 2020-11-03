@@ -46,6 +46,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         container: {
+            fontFamily: "'Rubik', sans-serif",
             maxWidth: "524px",
             width: "60vw",
             margin: "0 auto",
@@ -80,17 +81,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
 
         inputWrapper: {
             float: "left",
-            display: "flex",
-            flexDirection: "row",
-            backgroundColor: palette.colors.inputBackground,
-            borderRadius: "12px",
-            border: "1px solid #dddddd",
-            width: "100%",
-            "&:focus-within": {
-                border: `1px solid ${palette.colors.primary}`,
-                outline: "none"
-            },
-            height: "42px"
+            width: "100%"
         },
 
         inputError: {
@@ -98,22 +89,32 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         input: {
-            letterSpacing: "1.2px",
-            backgroundColor: `${palette.colors.inputBackground} !important`,
+            width: "94%",
+            backgroundColor: palette.colors.inputBackground,
             borderRadius: "12px",
-            "&:focus": {
-                outline: "none",
-                border: "none"
-            },
-            width: "90%",
-            border: "none",
+            border: "1px solid #dddddd",
             fontSize: palette.fonts.size[0],
-            paddingLeft: "20px"
+            paddingLeft: "20px",
+            letterSpacing: "1.2px",
+            "&:focus": {
+                border: `1px solid ${palette.colors.primary}`,
+                outline: "none"
+            },
+            height: "42px",
+            backgroundPosition: "90% 50% !important", // Password manager backgrounds.
+            "@media (max-width: 800px)": {
+                backgroundPosition: "87% 50% !important"
+            },
+            "@media (max-width: 440px)": {
+                backgroundPosition: "84% 50% !important"
+            }
         },
 
         inputAdornment: {
             float: "right",
-            width: "10%",
+            left: "-2%",
+            top: "-33px",
+            position: "relative",
             borderRadius: "12px",
             display: "flex",
             alignItems: "center"
@@ -123,8 +124,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             color: palette.colors.error,
             lineHeight: "24px",
             fontWeight: 400,
-            textAlign: "left",
-            paddingTop: "5px"
+            textAlign: "left"
         },
 
         button: {
@@ -147,7 +147,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
 
         label: {
             textAlign: "left",
-            fontWeight: 600,
+            fontWeight: 500,
             fontSize: palette.fonts.size[1],
             lineHeight: "24px",
             paddingBottom: "10px",
@@ -170,7 +170,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
 
         secondaryText: {
             fontSize: palette.fonts.size[1],
-            fontWeight: 400,
+            fontWeight: 300,
             letterSpacing: "0.4px",
             color: palette.colors.textSecondary
         },

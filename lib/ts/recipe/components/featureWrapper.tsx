@@ -47,7 +47,10 @@ export default function FeatureWrapper({ children, defaultStyles }: FeatureWrapp
         <ErrorBoundary>
             <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
                 {children}
-                <link href="//fonts.googleapis.com/css?family=Rubik" rel="stylesheet" type="text/css"></link>
+                <link
+                    href="//fonts.googleapis.com/css?family=Rubik:wght@300;400;500;700"
+                    rel="stylesheet"
+                    type="text/css"></link>
             </root.div>
         </ErrorBoundary>
     );

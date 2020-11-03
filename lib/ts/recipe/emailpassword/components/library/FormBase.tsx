@@ -162,7 +162,7 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
                         </div>
                     )}
 
-                    <form autoComplete="off" noValidate onSubmit={this.onFormSubmit}>
+                    <form autoComplete="on" noValidate onSubmit={this.onFormSubmit}>
                         {formFields.map(field => {
                             let type = "text";
                             // If email or password, replace field type.

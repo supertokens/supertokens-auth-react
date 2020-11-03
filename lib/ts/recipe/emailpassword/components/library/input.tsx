@@ -96,9 +96,10 @@ function Input(
      * Render.
      */
     return (
-        <div className="inputWrapper inputError" css={[defaultStyles.inputWrapper, style, errorStyle]}>
+        <div className="inputWrapper" css={[defaultStyles.inputWrapper]}>
             <input
-                css={defaultStyles.input}
+                className="input inputError"
+                css={[defaultStyles.input, style, errorStyle]}
                 onFocus={handleChange}
                 type={type}
                 name={name}
