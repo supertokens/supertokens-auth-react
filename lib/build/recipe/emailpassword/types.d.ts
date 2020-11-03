@@ -121,6 +121,9 @@ export declare type FormFieldError = {
     id: string;
     error: string;
 };
+export declare type SignOutResponse = {
+    status: API_RESPONSE_STATUS.OK;
+};
 export declare type BaseResponse = {
     status: API_RESPONSE_STATUS.OK;
 } | {

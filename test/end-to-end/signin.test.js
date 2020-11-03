@@ -105,5 +105,7 @@ describe("SuperTokens SignIn feature/theme", function() {
         it("Call onCallSignUpAPI callback on signup if provided (TODO)", async function() {});
 
         it("Call onHandleForgotPasswordClicked callback on forgotPassword clicked if provided (TODO)", async function() {});
+
+        it("Calling signOut should sign out properly (TODO)", async function() {});
     });
 });

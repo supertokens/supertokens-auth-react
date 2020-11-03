@@ -383,6 +383,13 @@ export type FormFieldError = {
     error: string;
 };
 
+export type SignOutResponse = {
+    /*
+     * Success.
+     */
+    status: API_RESPONSE_STATUS.OK;
+};
+
 export type BaseResponse =
     | {
           /*

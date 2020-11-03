@@ -17,7 +17,7 @@
  * Imports.
  */
 import { CreateRecipeFunction } from "../../types";
-import { EmailPasswordConfig } from "./types";
+import { EmailPasswordConfig, SignOutResponse } from "./types";
 
 import EmailPassword from "./emailPassword";
 import SignInAndUp from "./components/signInAndUp/SignInAndUp";
@@ -32,13 +32,21 @@ export default class EmailPasswordAPIWrapper {
     static init(config: EmailPasswordConfig): CreateRecipeFunction {
         return EmailPassword.init(config);
     }
+
+    static async signOut(): Promise<SignOutResponse> {
+        return EmailPassword.signOut();
+    }
 }
-export const init = EmailPasswordAPIWrapper.init;
+const init = EmailPasswordAPIWrapper.init;
+
+const SignOut = EmailPasswordAPIWrapper.signOut;
 
 export {
+    EmailPasswordAPIWrapper,
+    init,
     SignInAndUp,
     SignInAndUpTheme,
+    SignOut,
     ResetPasswordUsingToken,
-    ResetPasswordUsingTokenTheme,
-    EmailPasswordAPIWrapper
+    ResetPasswordUsingTokenTheme
 };

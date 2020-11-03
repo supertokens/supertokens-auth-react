@@ -31,6 +31,7 @@ import {
     FormFieldError,
     NormalisedEmailPasswordConfig,
     SignInThemeResponse,
+    SignOutResponse,
     SignUpThemeResponse,
     SubmitNewPasswordThemeResponse
 } from "./types";
@@ -136,6 +137,19 @@ export default class EmailPassword extends RecipeModule {
     };
 
     /*
+     * SignOut
+     */
+
+    signOut = (): Promise<SignOutResponse> => {
+        return this.httpRequest.post("/signout", {
+            body: JSON.stringify({}),
+            headers: {
+                rid: EmailPassword.RECIPE_ID
+            }
+        });
+    };
+
+    /*
      * Validate
      */
 
@@ -179,6 +193,10 @@ export default class EmailPassword extends RecipeModule {
             });
             return EmailPassword.instance;
         };
+    }
+
+    static signOut(): Promise<SignOutResponse> {
+        return EmailPassword.getInstanceOrThrow().signOut();
     }
 
     static getInstanceOrThrow(): EmailPassword {
