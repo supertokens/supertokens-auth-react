@@ -14,7 +14,7 @@
  */
 
 /*
- * Enums.
+ * Consts.
  */
 export const RECIPE_ID_QUERY_PARAM = "rid";
 

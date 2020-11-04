@@ -48,7 +48,6 @@ export default function SignInTheme(props) {
 
             try {
                 const result = await callAPI(fields);
-                console.log(result);
                 // Call onSuccess if exist.
                 if (result.status === "OK" && onSuccess !== undefined) {
                     return onSuccess();

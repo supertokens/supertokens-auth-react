@@ -257,9 +257,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user
         }
 
         const sessionRecipe = this.getSessionRecipe();
-        console.log(sessionRecipe);
         if (sessionRecipe !== undefined) {
-            console.log(sessionRecipe.doesSessionExist());
             return sessionRecipe.doesSessionExist();
         }
 

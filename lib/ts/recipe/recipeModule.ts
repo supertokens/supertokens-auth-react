@@ -22,14 +22,24 @@ import { RouteToFeatureComponentMap, RecipeModuleConfig, NormalisedAppInfo } fro
  * Class.
  */
 export default abstract class RecipeModule {
+    /*
+     * Instance attributes.
+     */
+
     private recipeId: string;
     private appInfo: NormalisedAppInfo;
 
+    /*
+     * Constructor.
+     */
     constructor(config: RecipeModuleConfig) {
         this.recipeId = config.recipeId;
         this.appInfo = config.appInfo;
     }
 
+    /*
+     * Instance Methods.
+     */
     getRecipeId = (): string => {
         return this.recipeId;
     };
