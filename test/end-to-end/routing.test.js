@@ -27,7 +27,8 @@ import { ST_ROOT_CONTAINER } from "../../lib/build/constants";
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
-const TEST_APP_BASE_URL = "http://localhost:3031";
+import { TEST_CLIENT_BASE_URL } from "../constants";
+
 /*
  * Tests.
  */
@@ -37,7 +38,7 @@ describe("SuperTokens Routing in Test App", function() {
     const signInLabel = "SIGN IN";
 
     before(async function() {
-        testAppChildProcess = spawn("./test/startTestApp.sh", ["--test"]);
+        testAppChildProcess = spawn("./test/startTestApp.sh", ["--no-build"]);
 
         testAppChildProcess.stderr.on("data", function(data) {
             console.log("stderr:" + data);
@@ -65,14 +66,14 @@ describe("SuperTokens Routing in Test App", function() {
     describe("using react-router-dom", function() {
         it("/about should not load any SuperTokens components", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/about`);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/about`);
             const superTokensComponent = await page.$(`.${ST_ROOT_CONTAINER}`);
             assert.strictEqual(superTokensComponent, null);
         });
 
         it("/auth should load SignInUp components", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
             assert.strictEqual(signInButton._remoteObject.value, signInLabel);
@@ -80,7 +81,7 @@ describe("SuperTokens Routing in Test App", function() {
 
         it("/auth?rid=email-password should load SignInUp components", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth?rid=email-password`, { waitUntil: "domcontentloaded" });
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?rid=email-password`, { waitUntil: "domcontentloaded" });
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
             assert.strictEqual(signInButton._remoteObject.value, signInLabel);
@@ -88,7 +89,7 @@ describe("SuperTokens Routing in Test App", function() {
 
         it("/auth?rid=unknown-rid should load first components.", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth?rid=unknown`);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?rid=unknown`);
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
             assert.strictEqual(signInButton._remoteObject.value, signInLabel);
@@ -98,14 +99,14 @@ describe("SuperTokens Routing in Test App", function() {
     describe("without react-router-dom", function() {
         it("/about should not load any SuperTokens components", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/about?router=no-router`, { waitUntil: "domcontentloaded" });
+            await page.goto(`${TEST_CLIENT_BASE_URL}/about?router=no-router`, { waitUntil: "domcontentloaded" });
             const superTokensComponent = await page.$(`.${ST_ROOT_CONTAINER}`);
             assert.strictEqual(superTokensComponent, null);
         });
 
         it("/auth should load SignInUp components", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router`, { waitUntil: "domcontentloaded" });
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?router=no-router`, { waitUntil: "domcontentloaded" });
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
             assert.strictEqual(signInButton._remoteObject.value, signInLabel);
@@ -113,7 +114,7 @@ describe("SuperTokens Routing in Test App", function() {
 
         it("/auth?rid=email-password should load SignInUp components", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router&rid=email-password`, {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?router=no-router&rid=email-password`, {
                 waitUntil: "domcontentloaded"
             });
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
@@ -123,7 +124,7 @@ describe("SuperTokens Routing in Test App", function() {
 
         it("/auth?rid=unknown-rid should load first SuperTokens components that matches", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth?router=no-router&rid=unknown`, {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?router=no-router&rid=unknown`, {
                 waitUntil: "domcontentloaded"
             });
             const superTokensComponent = await page.$(`#${ST_ROOT_CONTAINER}`);
@@ -135,7 +136,7 @@ describe("SuperTokens Routing in Test App", function() {
 
         it("/custom-supertokens-login should load SignIn SuperTokens components", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/custom-supertokens-login`, {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/custom-supertokens-login`, {
                 waitUntil: "domcontentloaded"
             });
             const superTokensComponent = await page.$(`#${ST_ROOT_CONTAINER}`);

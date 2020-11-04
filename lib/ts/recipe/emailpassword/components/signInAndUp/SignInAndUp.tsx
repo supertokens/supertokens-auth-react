@@ -37,12 +37,13 @@ import FeatureWrapper from "../../../components/featureWrapper";
 import { jsx } from "@emotion/core";
 import { getDefaultStyles } from "../../styles/styles";
 import { redirectToInApp, redirectToWithReload, WithRouter } from "../../../../utils";
+import SuperTokens from "../../../../superTokens";
 
 /*
  * Component.
  */
 
-class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJson: any }> {
+class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user?: User; responseJson: any }> {
     /*
      * Constructor.
      */
@@ -50,6 +51,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         super(props);
 
         this.state = {
+            isLoading: true,
             user: undefined,
             responseJson: undefined
         };
@@ -67,6 +69,10 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         }
         return instance;
     };
+
+    getSessionRecipe() {
+        return SuperTokens.getDefaultSessionRecipe();
+    }
 
     signIn = async (formFields: APIFormField[]): Promise<SignInThemeResponse> => {
         // Front end validation.
@@ -250,7 +256,14 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
             return await this.props.doesSessionExist();
         }
 
-        // TODO Otherwise, use supertokens session management.
+        const sessionRecipe = this.getSessionRecipe();
+        console.log(sessionRecipe);
+        if (sessionRecipe !== undefined) {
+            console.log(sessionRecipe.doesSessionExist());
+            return sessionRecipe.doesSessionExist();
+        }
+
+        // Otherwise, return false.
         return false;
     };
 
@@ -316,8 +329,12 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
     componentDidMount = async (): Promise<void> => {
         const sessionExists = await this.doesSessionExist();
         if (sessionExists) {
-            await this.onHandleSuccess({ action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS });
+            return await this.onHandleSuccess({ action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS });
         }
+
+        this.setState({
+            isLoading: false
+        });
     };
 
     render = (): JSX.Element => {
@@ -353,6 +370,12 @@ class SignInAndUp extends Component<SignInAndUpProps, { user?: User; responseJso
         };
 
         const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
+        const { isLoading } = this.state;
+
+        // Before session is verified, return empty fragment, prevent UI glitch.
+        if (isLoading) {
+            return <Fragment />;
+        }
 
         /*
          * Render.

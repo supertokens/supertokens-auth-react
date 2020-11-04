@@ -101,7 +101,7 @@ export default class EnterEmailTheme extends Component<EnterEmailThemeProps, Ent
         const styleFromInit = this.props.styleFromInit || {};
         const styles = getStyles(palette);
 
-        // If email sent, show succes UI.
+        // If email sent, show success UI.
         if (emailSent === true) {
             return (
                 <div className="container" css={[defaultStyles.container, styleFromInit.container]}>
@@ -114,8 +114,7 @@ export default class EnterEmailTheme extends Component<EnterEmailThemeProps, Ent
                                 styles.successMessage,
                                 styleFromInit.successMessage
                             ]}>
-                            If that email address exists, you will receive a password recovery link within a few
-                            minutes.
+                            You will receive a password recovery link at your email address in a few minutes.{" "}
                             <span className="link" css={[defaultStyles.link, styleFromInit.link]} onClick={this.resend}>
                                 Resend
                             </span>

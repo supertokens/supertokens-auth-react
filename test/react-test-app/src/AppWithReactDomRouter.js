@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import {getSuperTokensRoutesForReactRouterDom} from 'supertokens-auth-react';
 import {SignInAndUp} from 'supertokens-auth-react/recipe/emailpassword';
-import {BaseComponent, Home, About, Contact} from './App';
+import {BaseComponent, Home, About, Contact, Dashboard} from './App';
 import SignInAndUpCustomTheme from './SignInAndUpCustomTheme';
 function AppWithReactDomRouter() {
   return (
@@ -24,6 +24,9 @@ function AppWithReactDomRouter() {
             </Route>
             <Route path="/about">
               <About />
+            </Route>
+            <Route path="/dashboard">
+              <Dashboard />
             </Route>
             <Route path="/contact">
               <Contact />
@@ -87,11 +90,11 @@ function Nav () {
         <li key="contact"><Link className="menu__link" style={{ textDecoration: 'none' }} to="/contact">Contact</Link></li>
         <li key="auth"><Link className="menu__link" style={{ textDecoration: 'none' }} to="/auth">Auth</Link></li>
         <li key="custom"><Link className="menu__link" style={{ textDecoration: 'none' }} to="/custom-supertokens-login">Custom route</Link></li>
-        <li key="custom2"><a className="menu__link" style={{ textDecoration: 'none' }} href="/custom-supertokens-login?disableDefault=1">Blue style</a></li>
+        <li key="custom2"><a className="menu__link" style={{ textDecoration: 'none' }} href="/dashboard">Dashboard (Logged In)</a></li>
+        <li key="custom6"><a className="menu__link" style={{ textDecoration: 'none' }} href="/auth/reset-password">Reset Password</a></li>
         <li key="custom3"><a className="menu__link" style={{ textDecoration: 'none' }} href="/custom-props">Custom login with props methods</a></li>
         <li key="custom4"><a className="menu__link" style={{ textDecoration: 'none' }} href="/custom-theme">Custom theme</a></li>
         <li key="custom5"><a className="menu__link" style={{ textDecoration: 'none' }} href="/session-exist">Session already exist.</a></li>
-        <li key="custom6"><a className="menu__link" style={{ textDecoration: 'none' }} href="/auth/reset-password">Reset Password</a></li>
       </ul>
     </nav>
   </div>

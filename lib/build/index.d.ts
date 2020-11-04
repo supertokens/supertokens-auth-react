@@ -1,6 +1,6 @@
 /// <reference types="react" />
-import { SuperTokensConfig } from "./types";
 import SuperTokens from "./superTokens";
+import { SuperTokensConfig } from "./types";
 export default class SuperTokensAPIWrapper {
     static init(config: SuperTokensConfig): void;
     static canHandleRoute(): boolean;

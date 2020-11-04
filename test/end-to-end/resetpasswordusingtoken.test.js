@@ -23,11 +23,10 @@ import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
 import { ST_ROOT_CONTAINER } from "../../lib/build/constants";
-
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
-const TEST_APP_BASE_URL = "http://localhost:3031";
 /*
  * Tests.
  */
@@ -35,7 +34,7 @@ describe("SuperTokens Reset password feature/theme", function() {
     let testAppChildProcess, browser;
 
     before(async function() {
-        testAppChildProcess = spawn("./test/startTestApp.sh", ["--test"]);
+        testAppChildProcess = spawn("./test/startTestApp.sh", ["--no-build"]);
 
         testAppChildProcess.stderr.on("data", function(data) {
             console.log("stderr:" + data);
@@ -70,5 +69,7 @@ describe("SuperTokens Reset password feature/theme", function() {
     describe("Reset password new password form test", function() {
         it("Should return error form fields if password is in incorrect format", async function() {});
         it("Should return error form fields if password does not match", async function() {});
+        it("Should return general error if token is undefined", async function() {});
+        it("Should reset password successfully and show Login button if token is defined", async function() {});
     });
 });

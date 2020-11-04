@@ -16,8 +16,8 @@
 /*
  * Imports.
  */
-import { SuperTokensConfig } from "./types";
 import SuperTokens from "./superTokens";
+import { SuperTokensConfig } from "./types";
 
 /*
  * API Wrapper exposed to user.

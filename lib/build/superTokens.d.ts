@@ -3,6 +3,7 @@ import RecipeModule from "./recipe/recipeModule";
 import { NormalisedAppInfo, ReactComponentClass, SuperTokensConfig } from "./types";
 import NormalisedURLPath from "./normalisedURLPath";
 import { PathToComponentWithRecipeIdMap } from "./types";
+import Session from "./recipe/session/session";
 export default class SuperTokens {
     private static instance?;
     private appInfo;
@@ -16,6 +17,7 @@ export default class SuperTokens {
     static getRoutingComponent(): JSX.Element | undefined;
     static getRecipeList(): RecipeModule[];
     static getPathsToComponentWithRecipeIdMap(): PathToComponentWithRecipeIdMap;
+    static getDefaultSessionRecipe(): Session | undefined;
     static getMatchingComponentForRouteAndRecipeId(path: string, recipeId: string | null): ReactComponentClass | undefined;
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[];
     getAppInfo: () => NormalisedAppInfo;
@@ -24,5 +26,6 @@ export default class SuperTokens {
     getPathsToComponentWithRecipeIdMap: () => Record<string, import("./types").ComponentWithRecipeId[]>;
     getMatchingComponentForRouteAndRecipeId: (normalisedUrl: NormalisedURLPath, recipeId: string | null) => React.ComponentClass<{}, any> | (<T>(props: T) => JSX.Element) | undefined;
     getRecipeList: () => RecipeModule[];
+    getDefaultSessionRecipe: () => Session | undefined;
     static reset(): void;
 }
