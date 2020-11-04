@@ -28,7 +28,32 @@ export default class SessionAPIWrapper {
     static init(config: SessionUserInput): CreateRecipeFunction {
         return Session.init(config);
     }
+
+    static getRefreshURLDomain(): string {
+        return Session.getRefreshURLDomain();
+    }
+
+    static getUserId(): string {
+        return Session.getUserId();
+    }
+
+    static async getJWTPayloadSecurely(): Promise<any> {
+        return Session.getJWTPayloadSecurely();
+    }
+
+    static async attemptRefreshingSession(): Promise<boolean> {
+        return Session.attemptRefreshingSession();
+    }
+
+    static doesSessionExist(): boolean {
+        return Session.doesSessionExist();
+    }
 }
 export const init = SessionAPIWrapper.init;
+export const getRefreshURLDomain = SessionAPIWrapper.getRefreshURLDomain;
+export const getUserId = SessionAPIWrapper.getUserId;
+export const getJWTPayloadSecurely = SessionAPIWrapper.getJWTPayloadSecurely;
+export const attemptRefreshingSession = SessionAPIWrapper.attemptRefreshingSession;
+export const doesSessionExist = SessionAPIWrapper.doesSessionExist;
 
 export { SessionAPIWrapper };

@@ -23,11 +23,13 @@ import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
 import { ST_ROOT_CONTAINER } from "../../lib/build/constants";
+import fetch from "isomorphic-fetch";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
-const TEST_APP_BASE_URL = "http://localhost:3031";
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+
 /*
  * Tests.
  */
@@ -36,8 +38,15 @@ describe("SuperTokens SignIn feature/theme", function() {
     const SignInButtonQuerySelector = `document.querySelector('#${ST_ROOT_CONTAINER}').shadowRoot.querySelector('button').innerText`;
 
     before(async function() {
-        testAppChildProcess = spawn("./test/startTestApp.sh", ["--test"]);
+        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+            method: "POST"
+        }).catch(console.error);
 
+        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+            method: "POST"
+        }).catch(console.error);
+
+        testAppChildProcess = spawn("./test/startTestApp.sh", ["--no-build"]);
         testAppChildProcess.stderr.on("data", function(data) {
             console.log("stderr:" + data);
         });
@@ -59,12 +68,20 @@ describe("SuperTokens SignIn feature/theme", function() {
     after(async function() {
         await browser.close();
         testAppChildProcess.kill();
+
+        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+            method: "POST"
+        }).catch(console.error);
+
+        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+            method: "POST"
+        }).catch(console.error);
     });
 
     describe("SignIn test (default)", function() {
         it("Should contain email and password fields only (TODO)", async function() {
             const page = await browser.newPage();
-            await page.goto(`${TEST_APP_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
             const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
             assert.notStrictEqual(signInButton, null);
             assert.strictEqual(signInButton._remoteObject.value, "SIGN IN");

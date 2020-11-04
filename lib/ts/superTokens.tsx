@@ -23,6 +23,7 @@ import { getCurrentNormalisedUrlPath, getRecipeIdFromSearch, isTest, normaliseIn
 import NormalisedURLPath from "./normalisedURLPath";
 const { getSuperTokensRoutesForReactRouterDom } = require("./components/superTokensRoute");
 import { PathToComponentWithRecipeIdMap } from "./types";
+import Session from "./recipe/session/session";
 
 /*
  * Class.
@@ -93,6 +94,10 @@ export default class SuperTokens {
 
     static getPathsToComponentWithRecipeIdMap(): PathToComponentWithRecipeIdMap {
         return SuperTokens.getInstanceOrThrow().getPathsToComponentWithRecipeIdMap();
+    }
+
+    static getDefaultSessionRecipe(): Session | undefined {
+        return SuperTokens.getInstanceOrThrow().getDefaultSessionRecipe();
     }
 
     static getMatchingComponentForRouteAndRecipeId(
@@ -182,6 +187,12 @@ export default class SuperTokens {
 
     getRecipeList = (): RecipeModule[] => {
         return this.recipeList;
+    };
+
+    getDefaultSessionRecipe = (): Session | undefined => {
+        return this.getRecipeList().find(recipe => {
+            return recipe.getRecipeId() === Session.RECIPE_ID;
+        }) as Session;
     };
 
     /*

@@ -55,23 +55,30 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 3. In a new terminal, navigate to the `supertokens-auth-react` repository.
 
 
-4. Start a node server required for testing
+4. Setup node server for testing.
 
    ```
    cd ./test/server/
    npm i -d
    npm i git+https://github.com:supertokens/supertokens-node.git
-   TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .
    ```
 
-5. Open a new terminal in `supertokens-auth-react` and run all tests
+5. Start server for testing
 
    ```
-   INSTALL_PATH=../supertokens-root npm run test
+   npm run test-server
+   ```
+
+6. Open a new terminal in `supertokens-auth-react` and run all tests
+
+   ```
+   npm run test
    ```
 
 ## Run the test application.
-1. `npm run testapp`
+
+1. `npm run start`
+2. `npm run server` // if server interactions required.
 
 
 ## Pull Request

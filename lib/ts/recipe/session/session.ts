@@ -18,9 +18,8 @@
  */
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RouteToFeatureComponentMap } from "../../types";
-import { SessionUserInput, NormalisedSessionConfig, SessionConfig } from "./types";
+import { SessionUserInput, SessionConfig } from "./types";
 import { isTest } from "../../utils";
-import { normaliseSessionConfigOrThrow } from "./utils";
 
 /*
  * Class.
@@ -30,30 +29,57 @@ export default class Session extends RecipeModule {
      * Static Attributes.
      */
     static instance?: Session;
+    static RECIPE_ID = "session";
 
     /*
      * Instance Attributes.
      */
-    private config: NormalisedSessionConfig;
+    private sessionSdk: any;
 
     /*
      * Constructor.
      */
     constructor(config: SessionConfig) {
         super(config);
-        this.config = normaliseSessionConfigOrThrow(config);
+        const SuperTokensRequest = require("supertokens-website");
+        SuperTokensRequest.init({
+            sessionScope: config.sessionScope,
+            refreshAPICustomHeaders: config.refreshAPICustomHeaders,
+            autoAddCredentials: config.autoAddCredentials,
+            sessionExpiredStatusCode: config.sessionExpiredStatusCode,
+            apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),
+            apiBasePath: config.appInfo.apiBasePath.getAsStringDangerous()
+        });
+
+        this.sessionSdk = SuperTokensRequest;
     }
 
     /*
      * Instance methods.
      */
 
-    getConfig = (): NormalisedSessionConfig => {
-        return this.config;
-    };
-
     getFeatures = (): RouteToFeatureComponentMap => {
         return {};
+    };
+
+    getRefreshURLDomain = (): string => {
+        return this.sessionSdk.getRefreshURLDomain();
+    };
+
+    getUserId = (): string => {
+        return this.sessionSdk.getUserId();
+    };
+
+    getJWTPayloadSecurely = async (): Promise<any> => {
+        return this.sessionSdk.getJWTPayloadSecurely();
+    };
+
+    attemptRefreshingSession = async (): Promise<boolean> => {
+        return this.sessionSdk.attemptRefreshingSession();
+    };
+
+    doesSessionExist = (): boolean => {
+        return this.sessionSdk.doesSessionExist();
     };
 
     /*
@@ -65,7 +91,7 @@ export default class Session extends RecipeModule {
             Session.instance = new Session({
                 ...config,
                 appInfo,
-                recipeId: "email-password"
+                recipeId: Session.RECIPE_ID
             });
             return Session.instance;
         };
@@ -77,6 +103,26 @@ export default class Session extends RecipeModule {
         }
 
         return Session.instance;
+    }
+
+    static getRefreshURLDomain(): string {
+        return Session.getInstanceOrThrow().getRefreshURLDomain();
+    }
+
+    static getUserId(): string {
+        return Session.getInstanceOrThrow().getUserId();
+    }
+
+    static async getJWTPayloadSecurely(): Promise<any> {
+        return Session.getInstanceOrThrow().getJWTPayloadSecurely();
+    }
+
+    static async attemptRefreshingSession(): Promise<boolean> {
+        return Session.getInstanceOrThrow().attemptRefreshingSession();
+    }
+
+    static doesSessionExist(): boolean {
+        return Session.getInstanceOrThrow().doesSessionExist();
     }
 
     /*

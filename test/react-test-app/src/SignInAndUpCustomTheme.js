@@ -4,7 +4,7 @@
 import * as React from "react";
 import {Fragment} from "react";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, createRef, useState } from "react";
 
 /*
  * Component.
@@ -19,12 +19,10 @@ export default function SignInTheme(props) {
     /*
      * States.
      */
-    let fieldsRef = useRef([]);
-
     const _formFieldsWithRef = signInForm.formFields.map(field => {
       return {
           ...field,
-          ref: fieldsRef.current[field.id]
+          ref: createRef()
       }
   })
     const [formFields, setFormFields] = useState(_formFieldsWithRef);
@@ -34,27 +32,49 @@ export default function SignInTheme(props) {
     /*
      * Methods.
      */
-    const onSignIn = async () => {
+    const onSignIn = useCallback(
+        async () => {
 
-        // Set isLoading to true.
-        setIsLoading(true);
+            // Set isLoading to true.
+            setIsLoading(true);
 
-        // Get the fields values from form.
-        const fields = formFields.map(field => {
-            return {
-                id: field.id,
-                value: (field.ref.current !== null) ? field.ref.current.value : ""
+            // Get the fields values from form.
+            const fields = formFields.map(field => {
+                return {
+                    id: field.id,
+                    value: (field.ref.current !== null) ? field.ref.current.value : ""
+                }
+            });
+
+            try {
+                const result = await callAPI(fields);
+                console.log(result);
+                // Call onSuccess if exist.
+                if (result.status === "OK" && onSuccess !== undefined) {
+                    return onSuccess();
+                }
+
+                if (result.status === "GENERAL_ERROR") {
+                    alert(result.message);
+                }
+
+
+                if (result.status === "WRONG_CREDENTIALS_ERROR") {
+                    alert(result.message);
+                }
+                
+                if (result.status === "FIELD_ERRORS") {
+                    alert(result.errors[0].error);
+                }
+
+            } catch (e) {
+                alert(e);
             }
-        });
+ 
 
-        // Do nothing. login directly.
-        await callAPI(fields);
-        // Call onSuccess if exist.
-        if (onSuccess !== undefined) {
-            onSuccess();
-        }
-
-    }
+        },
+        [formFields, onSuccess, callAPI]
+    );
 
     const handleInputChange = useCallback(
         async (field) => {

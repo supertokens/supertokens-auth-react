@@ -13,33 +13,10 @@
  * under the License.
  */
 
-import { RecipeModuleConfig } from "../../types";
-
 /*
- * Session User InputsConfig Types.
+ * Consts.
  */
 
-export type SessionUserInput = {
-    /*
-     * Session scope defines the domain's range of the session.
-     * Example: example.com, .example.com, api.example.com etc...
-     */
-    sessionScope?: string;
 
-    /*
-     * refreshAPICustomHeaders
-     */
-    refreshAPICustomHeaders?: any;
-
-    /*
-     * sessionExpiredStatusCode
-     */
-    sessionExpiredStatusCode?: number;
-
-    /*
-     * autoAddCredentials
-     */
-    autoAddCredentials?: boolean;
-};
-
-export type SessionConfig = RecipeModuleConfig & SessionUserInput;
+export const TEST_CLIENT_BASE_URL = "http://localhost:3031";
+export const TEST_SERVER_BASE_URL = "http://localhost:8082";

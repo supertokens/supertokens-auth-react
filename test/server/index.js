@@ -19,9 +19,8 @@ let express = require("express");
 let cookieParser = require("cookie-parser");
 let bodyParser = require("body-parser");
 let http = require("http");
-let { startST, stopST, killAllST, setupST, cleanST, setKeyValueInConfig } = require("./utils");
-let { package_version } = require("../../lib/build/version");
 let cors = require("cors");
+let { startST, killAllST, setupST, cleanST } = require("./utils");
 
 let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
 let jsonParser = bodyParser.json({ limit: "20mb" });
@@ -32,15 +31,15 @@ app.use(jsonParser);
 app.use(cookieParser());
 
 SuperTokens.init({
-    supertokens: {
-        connectionURI: "http://localhost:8080"
-    },
     appInfo: {
         appName: "SuperTokens",
-        websiteDomain: "http://localhost:3031",
-        apiDomain: "http://localhost:9000"
+        apiDomain: "0.0.0.0:" + (process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT),
+        websiteDomain: "http://localhost:3031"
     },
-     recipeList: [
+    supertokens: {
+        connectionURI: "http://localhost:9000"
+    },
+    recipeList: [
         EmailPassword.init({
             signUpFeature: {
                 privacyPolicyLink: "http://localhost:3031/privacy",
@@ -58,17 +57,13 @@ SuperTokens.init({
             }
         }),
         Session.init({
-            hosts: "http://localhost:8080",
-            cookieSameSite: "lax"
         })
-     ]
-
+    ]
 });
-
 
 app.use(
     cors({
-        origin: "http://localhost.org:3031",
+        origin: "http://localhost:3031",
         allowedHeaders: ["content-type", ...SuperTokens.getAllCORSHeaders()],
         methods: ["GET", "PUT", "POST", "DELETE"],
         credentials: true
@@ -77,31 +72,23 @@ app.use(
 
 app.use(SuperTokens.middleware());
 
-app.post("/login", async (req, res) => {
-    let userId = req.body.userId;
-    let session = await SuperTokens.createNewSession(res, userId);
-    res.header("Access-Control-Allow-Origin", "http://localhost.org:3031");
-    res.header("Access-Control-Allow-Credentials", true);
-    res.send(session.userId);
+app.get("/ping", async (req, res) => {
+    res.send("success");
 });
 
+app.use("*", async (req, res, next) => {
+    res.status(404).send();
+});
+
+
 app.post("/startst", async (req, res) => {
-    let accessTokenValidity = req.body.accessTokenValidity === undefined ? 1 : req.body.accessTokenValidity;
-    let enableAntiCsrf = req.body.enableAntiCsrf === undefined ? true : req.body.enableAntiCsrf;
-    await setKeyValueInConfig("access_token_validity", accessTokenValidity);
-    await setKeyValueInConfig("enable_anti_csrf", enableAntiCsrf);
     let pid = await startST();
     res.send(pid + "");
 });
 
 app.post("/beforeeach", async (req, res) => {
-    noOfTimesRefreshCalledDuringTest = 0;
-    noOfTimesGetSessionCalledDuringTest = 0;
     await killAllST();
     await setupST();
-    await setKeyValueInConfig("cookie_domain", '"localhost.org"');
-    await setKeyValueInConfig("cookie_secure", "false");
-    await setKeyValueInConfig("refresh_api_path", "/refresh");
     res.send();
 });
 
@@ -116,40 +103,7 @@ app.post("/stopst", async (req, res) => {
     res.send("");
 });
 
-app.get("/", SuperTokens.middleware(true), async (req, res) => {
-    noOfTimesGetSessionCalledDuringTest += 1;
-    res.header("Access-Control-Allow-Origin", "http://localhost.org:3031");
-    res.header("Access-Control-Allow-Credentials", true);
-    res.send(req.session.getUserId());
-});
-
-
-app.get("/ping", async (req, res) => {
-    res.send("success");
-});
-
-app.get("/stop", async (req, res) => {
-    process.exit();
-});
-
-app.use("*", async (req, res, next) => {
-    res.status(404).send();
-});
-
-app.use(
-    SuperTokens.errorHandler({
-        onTryRefreshToken: (err, req, res) => {
-            res.header("Access-Control-Allow-Origin", "http://localhost.org:3031");
-            res.header("Access-Control-Allow-Credentials", true);
-            res.status(401).send();
-        },
-        onUnauthorised: (err, req, res) => {
-            res.header("Access-Control-Allow-Origin", "http://localhost.org:3031");
-            res.header("Access-Control-Allow-Credentials", true);
-            res.status(401).send();
-        }
-    })
-);
+app.use(SuperTokens.errorHandler());
 
 app.use(async (err, req, res, next) => {
     console.log(err);
@@ -157,4 +111,23 @@ app.use(async (err, req, res, next) => {
 });
 
 let server = http.createServer(app);
-server.listen(process.env.NODE_PORT === undefined ? 8082 : process.env.NODE_PORT, "0.0.0.0");
+server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT, "0.0.0.0");
+
+/*
+ * Setup and start the core when running the test application when running with  the following command:
+ * SPIN_UP=true TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .
+ * or
+ * npm run server
+ */
+(
+    async function (shouldSpinUp) {
+        if (shouldSpinUp) {
+            console.log(`Spin up supertokens for test app`);
+            await killAllST();
+            await cleanST();
+            await setupST();
+            const pid = await startST();
+            console.log(`Application started on http://localhost:${process.env.NODE_PORT | 8080}`)
+            console.log(`processId: ${pid}`)
+        }
+})(process.env.SPIN_UP === "true");

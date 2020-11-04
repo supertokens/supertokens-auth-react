@@ -39,14 +39,14 @@ export default class EmailPasswordAPIWrapper {
 }
 const init = EmailPasswordAPIWrapper.init;
 
-const SignOut = EmailPasswordAPIWrapper.signOut;
+const signOut = EmailPasswordAPIWrapper.signOut;
 
 export {
     EmailPasswordAPIWrapper,
     init,
     SignInAndUp,
     SignInAndUpTheme,
-    SignOut,
+    signOut,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme
 };

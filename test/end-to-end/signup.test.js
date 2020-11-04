@@ -27,6 +27,8 @@ import { ST_ROOT_CONTAINER } from "../../lib/build/constants";
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+
 /*
  * Tests.
  */
@@ -35,7 +37,7 @@ describe("SuperTokens SignUp feature/theme", function() {
     const SignInButtonQuerySelector = `document.querySelector('#${ST_ROOT_CONTAINER}').shadowRoot.querySelector('button').innerText`;
 
     before(async function() {
-        testAppChildProcess = spawn("./test/startTestApp.sh", ["--test"]);
+        testAppChildProcess = spawn("./test/startTestApp.sh", ["--no-build"]);
 
         testAppChildProcess.stderr.on("data", function(data) {
             console.log("stderr:" + data);
@@ -47,7 +49,15 @@ describe("SuperTokens SignUp feature/theme", function() {
             }
         });
 
-        await new Promise(r => setTimeout(r, 3000));
+        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+            method: "POST"
+        }).catch(console.error);
+
+        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+            method: "POST"
+        }).catch(console.error);
+
+        await new Promise(r => setTimeout(r, 4000));
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -58,24 +68,31 @@ describe("SuperTokens SignUp feature/theme", function() {
     after(async function() {
         await browser.close();
         testAppChildProcess.kill();
+
+        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+            method: "POST"
+        }).catch(console.error);
+
+        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+            method: "POST"
+        }).catch(console.error);
     });
 
     describe("SignUp test (default)", function() {
-        it("Should contain email and password fields + privacy/terms checkbox only (TODO)", async function() {});
-
         it('Should switch to signin when "Sign In" is clicked (TODO)', async function() {});
-
-        it("Should disable clicking on signin when email and password are empty (TODO)", async function() {});
 
         it("Should show error message when email is not correct (TODO)", async function() {});
 
         it("Should show error message when password is too short (TODO)", async function() {});
 
-        it("Should redirect to '/' on successful signup (TODO)", async function() {});
+        it("Should redirect to '/' on successful signup (TODO)", async function() {
+            const page = await browser.newPage();
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
+        });
 
         it("Signup without filling all required fields shows error (TODO)", async function() {});
 
-        it("Server error shows general error (TODO)", async function() {});
+        it("Server error shows general error banner (TODO)", async function() {});
 
         it("Optional fields are not required (TODO)", async function() {});
 
