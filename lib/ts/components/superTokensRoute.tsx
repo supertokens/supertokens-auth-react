@@ -19,59 +19,40 @@
 
 import * as React from "react";
 import SuperTokens from "../superTokens";
-import { ComponentWithRecipeId, PathToComponentWithRecipeIdMap } from "../types";
-import SuperTokensUrl from '../superTokensUrl';
-import NormalisedURLPath from '../normalisedURLPath';
+import { ReactComponentClass } from "../types";
+import { getRecipeIdFromSearch } from "../utils";
 
 /*
-* SuperTokensRouteWithRecipeId
-* Using react-router-dom, we can only match based on the route and not on the combination of path and query params.
-* having one route per component would lead to clashes when two components have the same route but different recipeId,
-* the first one would always take precedence.
-* Hence, the component rendered in the Route is an abstraction that decides which Feature to render based
-* on the rId.
-* See SuperTokensRouteWithRecipeId below.
-*/
+ * Component.
+ */
+
 export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
-	try {
-		let pathsToComponentWithRecipeIdMap: PathToComponentWithRecipeIdMap = {};
-		SuperTokens.getRecipeList().map(recipe => {
-			const features = recipe.getFeatures();
-			return Object.keys(features).map(featurePath => {
-
-				// If no components yet for this route, initialize empty array.
-				if (pathsToComponentWithRecipeIdMap[featurePath] === undefined) {
-					pathsToComponentWithRecipeIdMap[featurePath] = []
-				}
-
-				pathsToComponentWithRecipeIdMap[featurePath].push({
-					rid: recipe.getRecipeId(),
-					component: features[featurePath]
-				})
-
-			})
-		});
-		return Object.keys(pathsToComponentWithRecipeIdMap).map(path => SuperTokensRouteWithRecipeId(path, pathsToComponentWithRecipeIdMap[path]));
-	} catch (e) {
-		return [];
-	}
+    try {
+        const Route = require("react-router-dom").Route;
+        const pathsToComponentWithRecipeIdMap = SuperTokens.getPathsToComponentWithRecipeIdMap();
+        return (
+            Object.keys(pathsToComponentWithRecipeIdMap)
+                /*
+                 *  Sort by path length to make sure a shorter path doesn't take precedence
+                 * i.e. /auth/reset-password comes before /auth/
+                 */
+                .sort(path => -path.length)
+                .map(path => <SuperTokensRouteWithRecipeId Route={Route} key={`st-${path}`} path={path} />)
+        );
+    } catch (e) {
+        // If react-router-dom is absent from dependencies, return [];
+        return [];
+    }
 }
 
-
-function SuperTokensRouteWithRecipeId(path: string, routeComponents: ComponentWithRecipeId[]): JSX.Element {
-	const Route = require('react-router-dom').Route;
-	const recipeId = new SuperTokensUrl().recipeId
-
-	// If recipeId provided, try to find a match.
-	if (recipeId !== null) {
-		for (let i = 0; i < routeComponents.length; i++) {
-			if (recipeId === routeComponents[i].rid) {
-				return <Route exact key={`st-${path}`} path={path} component={routeComponents[i].component} />;
-			}
-		}
-	}
-
-	// Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
-	return <Route exact key={`st-${path}`} path={path} component={routeComponents[0].component} />
-
+function SuperTokensRouteWithRecipeId({
+    path,
+    Route
+}: {
+    path: string;
+    Route: new () => React.Component<{ exact: unknown; path: string; component?: ReactComponentClass }>;
+}): JSX.Element {
+    const recipeId = getRecipeIdFromSearch(window.location.search);
+    const component = SuperTokens.getMatchingComponentForRouteAndRecipeId(path, recipeId);
+    return <Route exact key={`st-${path}`} path={path} component={component} />;
 }

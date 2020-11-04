@@ -4,7 +4,7 @@ import SuperTokens from "./superTokens";
 export default class SuperTokensAPIWrapper {
     static init(config: SuperTokensConfig): void;
     static canHandleRoute(): boolean;
-    static getRoutingComponent(): import("react").ComponentClass<{}, any> | undefined;
+    static getRoutingComponent(): JSX.Element | undefined;
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[];
 }
 export declare const canHandleRoute: typeof SuperTokensAPIWrapper.canHandleRoute;

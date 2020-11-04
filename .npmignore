@@ -9,6 +9,8 @@ lib/tsconfig.json
 lib/babel.config.json
 .mocharc.yml
 lib/.prettierrc
+lib/.eslintrc.js
+lib/.eslintignore
 lib/tslint.json
 addDevTag
 addReleaseTag
@@ -16,4 +18,3 @@ frontendDriverInterfaceSupported.json
 .github/
 .babelrc
 .gitattributes
-testApp.sh

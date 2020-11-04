@@ -16,44 +16,29 @@
 /*
  * Imports.
  */
-import RecipeModule from "../recipeModule";
+import { CreateRecipeFunction } from "../../types";
 import { EmailPasswordConfig } from "./types";
-import SignInAndUp from "./SignInAndUp";
-import SignInAndUpTheme from "./SignInAndUpTheme";
-import { AppInfo, CreateRecipeFunction } from "../../types";
+
+import EmailPassword from "./emailPassword";
+import SignInAndUp from "./components/signInAndUp/SignInAndUp";
+import SignInAndUpTheme from "./components/signInAndUp/themes/default";
+import ResetPasswordUsingToken from "./components/resetPasswordUsingToken/resetPasswordUsingToken";
+import ResetPasswordUsingTokenTheme from "./components/resetPasswordUsingToken/themes/default";
+
 /*
  * Class.
  */
-export default class EmailPassword extends RecipeModule {
-    static instance?: EmailPassword;
-
-    constructor(config: EmailPasswordConfig) {
-        super({
-            ...config,
-            recipeId: "email-password",
-            features: {
-                "/": SignInAndUp
-            }
-        });
-    }
-
+export default class EmailPasswordAPIWrapper {
     static init(config: EmailPasswordConfig): CreateRecipeFunction {
-        return (appInfo: AppInfo): RecipeModule => {
-            EmailPassword.instance = new EmailPassword({
-                ...config,
-                appInfo
-            });
-            return EmailPassword.instance;
-        };
-    }
-
-    static getInstanceOrThrowError(): EmailPassword {
-        if (EmailPassword.instance === undefined) {
-            throw Error(`No instance of ${EmailPassword.constructor.name} found. Make sure to call the "init" method.`); // TODO Add relevant doc.
-        }
-
-        return EmailPassword.instance;
+        return EmailPassword.init(config);
     }
 }
+export const init = EmailPasswordAPIWrapper.init;
 
-export { SignInAndUp, SignInAndUpTheme };
+export {
+    SignInAndUp,
+    SignInAndUpTheme,
+    ResetPasswordUsingToken,
+    ResetPasswordUsingTokenTheme,
+    EmailPasswordAPIWrapper
+};

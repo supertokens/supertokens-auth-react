@@ -1,12 +1,13 @@
-import { ComponentClass } from "react";
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
+import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { ComponentClass } from "react";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction[];
 };
-export declare type CreateRecipeFunction = (appInfo: AppInfo) => RecipeModule;
+export declare type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule;
 export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;
@@ -14,46 +15,60 @@ export declare type AppInfoUserInput = {
     apiBasePath?: string;
     websiteBasePath?: string;
 };
-export declare type AppInfo = {
+export declare type NormalisedAppInfo = {
     appName: string;
     apiDomain: NormalisedURLDomain;
     websiteDomain: NormalisedURLDomain;
     apiBasePath: NormalisedURLPath;
     websiteBasePath: NormalisedURLPath;
 };
-export declare type RouteToFeatureComponentMap = {
-    [route: string]: ComponentClass;
-};
 export declare type RecipeModuleConfig = {
-    features: RouteToFeatureComponentMap;
     recipeId: string;
     /**
      *
      * AppInfo as present in the recipe module manager
      */
-    appInfo: AppInfo;
+    appInfo: NormalisedAppInfo;
+};
+export declare type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
+export declare type RouteWithPathAndRecipeId = {
+    path: NormalisedURLPath;
+    recipeId: string | null;
 };
 export declare type ComponentWithRecipeId = {
     rid: string;
-    component: ComponentClass;
+    component: ReactComponentClass;
 };
-export declare type PathToComponentWithRecipeIdMap = {
-    [path: string]: ComponentWithRecipeId[];
+export declare type PathToComponentWithRecipeIdMap = Record<string, ComponentWithRecipeId[]>;
+export declare type FeatureBaseConfig = {
+    style?: Styles;
 };
-export declare type RecipeModuleProps = {
-    __internal?: InternalRecipeModuleProps;
+export declare type NormalisedBaseConfig = {
+    style: Styles;
 };
-declare type InternalRecipeModuleProps = {
-    instance: RecipeModule;
-};
-export declare type ThemeProps = {
-    formFields: FormFieldsProps[];
-};
-export declare type FormFieldsProps = {
+export declare type FormFieldBaseConfig = {
     id: string;
     label: string;
     placeholder?: string;
-    validate?: (value: string) => Promise<boolean | undefined>;
+};
+export declare type FormField = FormFieldBaseConfig & {
+    validate?: (value: string) => Promise<string | undefined>;
     optional?: boolean;
 };
-export {};
+export declare type APIFormField = {
+    id: string;
+    value: string;
+};
+export declare type RequestJson = {
+    formFields: APIFormField[];
+    token?: string;
+};
+export declare type NormalisedFormField = {
+    id: string;
+    label: string;
+    placeholder: string;
+    validate: (value: string) => Promise<string | undefined>;
+    optional: boolean;
+};
+export declare type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);
+export declare type Styles = Record<string, CSSInterpolation>;

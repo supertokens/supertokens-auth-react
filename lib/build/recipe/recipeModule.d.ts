@@ -1,13 +1,9 @@
-import { RouteToFeatureComponentMap, RecipeModuleConfig } from "../types";
-import { ComponentClass } from "react";
-import SuperTokensUrl from "../superTokensUrl";
+import { RouteToFeatureComponentMap, RecipeModuleConfig, NormalisedAppInfo } from "../types";
 export default abstract class RecipeModule {
-    private features;
     private recipeId;
     private appInfo;
     constructor(config: RecipeModuleConfig);
     getRecipeId: () => string;
-    getFeatures: () => RouteToFeatureComponentMap;
-    canHandleRoute: (url: SuperTokensUrl) => boolean;
-    getRoutingComponent: (url: SuperTokensUrl) => ComponentClass<{}, any> | undefined;
+    getAppInfo: () => NormalisedAppInfo;
+    abstract getFeatures(): RouteToFeatureComponentMap;
 }

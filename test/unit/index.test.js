@@ -20,11 +20,11 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import SuperTokens from "../../lib/build/superTokens";
-import EmailPassword, { SignInAndUp } from "../../lib/build/recipe/emailpassword";
+import EmailPassword, { SignInAndUp, ResetPasswordUsingToken } from "../../lib/build/recipe/emailpassword";
 import { DEFAULT_WEBSITE_BASE_PATH, DEFAULT_API_BASE_PATH } from "../../lib/build/constants";
 import assert from "assert";
 import { mockWindowLocation } from "../helpers";
-
+import * as React from "react";
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
@@ -37,7 +37,7 @@ const defaultConfigs = {
         websiteDomain: "supertokens.io",
         apiDomain: "api.supertokens.io"
     },
-    recipeList: []
+    recipeList: [EmailPassword.init()]
 };
 
 /*
@@ -65,42 +65,42 @@ describe("SuperTokens", function() {
 
     it("Initializing SuperTokens twice should throw", async function() {
         SuperTokens.init(defaultConfigs);
-        assert.throws(
-            () => {
-                SuperTokens.init(defaultConfigs);
-            },
-            Error,
-            "SuperTokens was already initialized"
-        );
+        assert.throws(() => {
+            SuperTokens.init(defaultConfigs);
+        }, new Error("SuperTokens was already initialized"));
+    });
+
+    it("Initializing SuperTokens without appInfo name should throw", async function() {
+        assert.throws(() => {
+            SuperTokens.init({
+                ...defaultConfigs,
+                appInfo: {
+                    ...defaultConfigs.appInfo,
+                    appName: undefined
+                }
+            });
+        }, new Error("Please provide your appName inside the appInfo object when calling supertokens.init"));
     });
 
     it("Initializing SuperTokens with corrupted URL should throw", async function() {
-        assert.throws(
-            () => {
-                SuperTokens.init({
-                    ...defaultConfigs,
-                    appInfo: {
-                        ...defaultConfigs.appInfo,
-                        apiDomain: ":"
-                    }
-                });
-            },
-            Error,
-            "There was an error parsing the url you provided: (:). Please make sure it is correct."
-        );
-        assert.throws(
-            () => {
-                SuperTokens.init({
-                    ...defaultConfigs,
-                    appInfo: {
-                        ...defaultConfigs.appInfo,
-                        websiteDomain: "http:://malformed.url"
-                    }
-                });
-            },
-            Error,
-            "There was an error parsing the url you provided: (http:://malformed.url). Please make sure it is correct."
-        );
+        assert.throws(() => {
+            SuperTokens.init({
+                ...defaultConfigs,
+                appInfo: {
+                    ...defaultConfigs.appInfo,
+                    apiDomain: ":"
+                }
+            });
+        }, Error("Please provide a valid domain name"));
+        assert.throws(() => {
+            SuperTokens.init({
+                ...defaultConfigs,
+                appInfo: {
+                    ...defaultConfigs.appInfo,
+                    websiteDomain: "http:://malformed.url"
+                }
+            });
+        }, Error("Please provide a valid domain name"));
     });
 
     it("Initializing SuperTokens with localhost and unsecure protocol", async function() {
@@ -126,7 +126,7 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.getRecipeList().length, 1);
     });
 
-    it("SuperTokens canHandleRoute should work approriately", async function() {
+    it("SuperTokens canHandleRoute should work appropriately", async function() {
         SuperTokens.init({
             ...defaultConfigs,
             recipeList: [EmailPassword.init()]
@@ -151,6 +151,29 @@ describe("SuperTokens", function() {
         mockWindowLocation(`${randomWebsitePath}/auth?rid=email-password`);
         assert.strictEqual(SuperTokens.canHandleRoute(), true);
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
+        // returns first component if rid=unknownd.
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
+    });
+
+    it("SuperTokens disable default Implementation should disable default routes for Email Password", async function() {
+        SuperTokens.init({
+            ...defaultConfigs,
+            recipeList: [
+                EmailPassword.init({
+                    signInAndUpFeature: {
+                        disableDefaultImplementation: true
+                    }
+                })
+            ]
+        });
+
+        const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous();
+
+        mockWindowLocation(`${randomWebsitePath}/auth`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
+        mockWindowLocation(`${randomWebsitePath}/auth/`);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
+        mockWindowLocation(`${randomWebsitePath}/auth/.`);
         assert.strictEqual(SuperTokens.canHandleRoute(), false);
     });
 
@@ -171,14 +194,21 @@ describe("SuperTokens", function() {
         mockWindowLocation(`${randomWebsitePath}/auth/404`);
         assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
         mockWindowLocation(`${randomWebsitePath}/auth`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
+        const signInAndUpJSXElement = <SignInAndUp />;
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
         mockWindowLocation(`${randomWebsitePath}/auth/`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
         mockWindowLocation(`${randomWebsitePath}/auth/.`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
         mockWindowLocation(`${randomWebsitePath}/auth?rid=email-password`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), SignInAndUp);
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
+        // returns first component if rid=unknown.
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
+        const resetPasswordUsingTokenJSXElement = <ResetPasswordUsingToken />;
+        mockWindowLocation(`${randomWebsitePath}/auth/reset-password`);
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, resetPasswordUsingTokenJSXElement.type);
+        mockWindowLocation(`${randomWebsitePath}/auth/reset-password?rid=unknown-id`);
+        assert.strictEqual(SuperTokens.getRoutingComponent().type, resetPasswordUsingTokenJSXElement.type);
     });
 });

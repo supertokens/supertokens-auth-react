@@ -13,6 +13,9 @@
  * under the License.
  */
 
+/*
+ * Enums.
+ */
 export const RECIPE_ID_QUERY_PARAM = "rid";
 
 export const DEFAULT_API_BASE_PATH = "/auth";

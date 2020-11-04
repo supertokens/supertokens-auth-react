@@ -12,13 +12,14 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { ComponentClass } from "react";
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
+import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { ComponentClass } from "react";
 
 /*
- * Config Types.
+ * Recipe Module Manager Config Types.
  */
 
 export type SuperTokensConfig = {
@@ -33,7 +34,7 @@ export type SuperTokensConfig = {
     recipeList: CreateRecipeFunction[];
 };
 
-export type CreateRecipeFunction = (appInfo: AppInfo) => RecipeModule;
+export type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule;
 
 export type AppInfoUserInput = {
     /*
@@ -64,7 +65,7 @@ export type AppInfoUserInput = {
     websiteBasePath?: string;
 };
 
-export type AppInfo = {
+export type NormalisedAppInfo = {
     /*
      * The name of your application.
      */
@@ -93,19 +94,7 @@ export type AppInfo = {
     websiteBasePath: NormalisedURLPath;
 };
 
-/*
- * Routing manipulation types.
- */
-export type RouteToFeatureComponentMap = {
-    [route: string]: ComponentClass;
-};
-
 export type RecipeModuleConfig = {
-    /*
-     * Features that the module responds to.
-     */
-    features: RouteToFeatureComponentMap;
-
     /*
      * Unique Identifier of a module.
      */
@@ -115,7 +104,24 @@ export type RecipeModuleConfig = {
      *
      * AppInfo as present in the recipe module manager
      */
-    appInfo: AppInfo;
+    appInfo: NormalisedAppInfo;
+};
+
+/*
+ * Routing manipulation types.
+ */
+export type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
+
+export type RouteWithPathAndRecipeId = {
+    /*
+     * Normalised path.
+     */
+    path: NormalisedURLPath;
+
+    /*
+     * Unique Identifier of a module.
+     */
+    recipeId: string | null;
 };
 
 export type ComponentWithRecipeId = {
@@ -127,32 +133,112 @@ export type ComponentWithRecipeId = {
     /*
      * Component.
      */
-    component: ComponentClass;
+    component: ReactComponentClass;
 };
 
-export type PathToComponentWithRecipeIdMap = {
-    [path: string]: ComponentWithRecipeId[];
-};
+export type PathToComponentWithRecipeIdMap = Record<string, ComponentWithRecipeId[]>;
 
 /*
- * Props Types.
+ * Features Config Types.
  */
-export type RecipeModuleProps = {
-    __internal?: InternalRecipeModuleProps;
+
+export type FeatureBaseConfig = {
+    /*
+     * Additional styles to override themes.
+     */
+    style?: Styles;
 };
 
-type InternalRecipeModuleProps = {
-    instance: RecipeModule;
+export type NormalisedBaseConfig = {
+    /*
+     * Additional styles to override themes.
+     */
+    style: Styles;
 };
 
-export type ThemeProps = {
-    formFields: FormFieldsProps[];
-};
-
-export type FormFieldsProps = {
+export type FormFieldBaseConfig = {
+    /*
+     * name of the input field.
+     */
     id: string;
+
+    /*
+     * Label of the input field.
+     */
     label: string;
+
+    /*
+     * placeholder of the input field.
+     */
     placeholder?: string;
-    validate?: (value: string) => Promise<boolean | undefined>;
+};
+
+export type FormField = FormFieldBaseConfig & {
+    /*
+     * Validation function of the input field. Returns an error as a string, or undefined.
+     */
+    validate?: (value: string) => Promise<string | undefined>;
+
+    /*
+     * Whether the field is optional or not.
+     */
     optional?: boolean;
 };
+
+export type APIFormField = {
+    /*
+     * Id, or name of the input.
+     */
+
+    id: string;
+
+    /*
+     * Value of the corresponding id.
+     */
+
+    value: string;
+};
+
+export type RequestJson = {
+    /*
+     * Standard form fields passed to the API.
+     */
+
+    formFields: APIFormField[];
+
+    /*
+     * Reset password token.
+     */
+    token?: string;
+};
+
+export type NormalisedFormField = {
+    /*
+     * name of the input field.
+     */
+    id: string;
+
+    /*
+     * Label of the input field.
+     */
+    label: string;
+
+    /*
+     * placeholder of the input field.
+     */
+    placeholder: string;
+
+    /*
+     * Validation function of the input field. Returns an error as a string, or undefined.
+     */
+    validate: (value: string) => Promise<string | undefined>;
+
+    /*
+     * Whether the field is optional or not.
+     */
+    optional: boolean;
+};
+
+export type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);
+
+export type Styles = Record<string, CSSInterpolation>;

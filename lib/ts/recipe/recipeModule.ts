@@ -16,49 +16,27 @@
 /*
  * Imports.
  */
-import { RouteToFeatureComponentMap, RecipeModuleConfig, AppInfo } from "../types";
-import { ComponentClass } from "react";
-import SuperTokensUrl from "../superTokensUrl";
-import NormalisedURLPath from "../normalisedURLPath";
-import SuperTokens from "../superTokens";
+import { RouteToFeatureComponentMap, RecipeModuleConfig, NormalisedAppInfo } from "../types";
 
 /*
  * Class.
  */
 export default abstract class RecipeModule {
-    private features: RouteToFeatureComponentMap;
     private recipeId: string;
-    private appInfo: AppInfo;
+    private appInfo: NormalisedAppInfo;
 
     constructor(config: RecipeModuleConfig) {
         this.recipeId = config.recipeId;
         this.appInfo = config.appInfo;
-        this.features = {};
-
-        // we store the normalised version of the path here.
-        Object.keys(config.features).forEach(path => {
-            let normalisedFullPath = this.appInfo.websiteBasePath.appendPath(new NormalisedURLPath(path));
-            this.features[normalisedFullPath.getAsStringDangerous()] = config.features[path];
-        });
     }
 
     getRecipeId = (): string => {
         return this.recipeId;
     };
 
-    getFeatures = (): RouteToFeatureComponentMap => {
-        return this.features;
+    getAppInfo = (): NormalisedAppInfo => {
+        return this.appInfo;
     };
 
-    canHandleRoute = (url: SuperTokensUrl): boolean => {
-        return this.getRoutingComponent(url) !== undefined;
-    };
-
-    getRoutingComponent = (url: SuperTokensUrl): ComponentClass | undefined => {
-        // If rId from URL exists and doesn't match, or if route path doesn't start with return undefined.
-        if (url.recipeId !== null && url.recipeId !== this.recipeId) {
-            return undefined;
-        }
-        return this.features[url.pathname.getAsStringDangerous()];
-    };
+    abstract getFeatures(): RouteToFeatureComponentMap;
 }
