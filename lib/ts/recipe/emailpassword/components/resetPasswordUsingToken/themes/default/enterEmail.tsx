@@ -35,7 +35,7 @@ function getStyles(palette: NormalisedPalette): Styles {
             lineHeight: "40px",
             letterSpacing: "0.58px",
             fontWeight: 600,
-            color: palette.colors.textPrimary
+            color: palette.colors.textTitle
         } as CSSObject,
 
         headerSubTitle: {

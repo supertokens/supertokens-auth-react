@@ -19,41 +19,40 @@ SuperTokens.init({
   },
   recipeList: [
     EmailPassword.init({
-      // palette: {
-      //   colors: {
-      //     primary: '#1d1d50',
-      //     background: '#2f4566',
-      //     textPrimary: "white",
-      //     textSecondary: "#fff",
-      //     textLink: 'red'
-      //   }
-      // },
+      palette: {
+        colors: {
+          background: '#333333',
+          textPrimary: "white",
+          textSecondary: "white",
+          textLink: 'red'
+        }
+      },
       signInAndUpFeature: {
         onSuccessRedirectURL: '/dashboard',
-        signUpForm: {
-          privacyPolicyLink: "http://localhost:3031/privacy",
-          termsAndConditionsLink: "http://localhost:3031/terms",
-          formFields: [{
-            id: "company",
-            label: "Company",
-            placeholder: "Your company name"
-          }, {
-            id: "First Name",
-            label: "First Name",
-            placeholder: "First Name",
-            optional: false
-          }, {
-            id: "Last Name",
-            label: "Last Name",
-            placeholder: "Last Name",
-            optional: false
-          },  {
-            id: "City",
-            label: "City",
-            placeholder: "City",
-            optional: true
-          }]
-        }
+        // signUpForm: {
+        //   privacyPolicyLink: "http://localhost:3031/privacy",
+        //   termsAndConditionsLink: "http://localhost:3031/terms",
+        //   formFields: [{
+        //     id: "company",
+        //     label: "Company",
+        //     placeholder: "Your company name"
+        //   }, {
+        //     id: "First Name",
+        //     label: "First Name",
+        //     placeholder: "First Name",
+        //     optional: false
+        //   }, {
+        //     id: "Last Name",
+        //     label: "Last Name",
+        //     placeholder: "Last Name",
+        //     optional: false
+        //   },  {
+        //     id: "City",
+        //     label: "City",
+        //     placeholder: "City",
+        //     optional: true
+        //   }]
+        // }
       }
     }),
     Session.init()
