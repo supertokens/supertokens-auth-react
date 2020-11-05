@@ -42,7 +42,10 @@ export const defaultPalette: NormalisedPalette = {
 export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     return {
         root: {
-            margin: "26px"
+            margin: "26px",
+            "@media (max-width: 440px)": {
+                margin: "12px"
+            }
         },
 
         container: {
@@ -57,6 +60,12 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             backgroundColor: palette.colors.background,
             "@media (max-width: 440px)": {
                 minWidth: "320px"
+            },
+            "@media (max-width: 340px)": {
+                minWidth: "260px"
+            },
+            "@media (max-width: 300px)": {
+                minWidth: "220px"
             }
         },
 

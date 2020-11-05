@@ -99,7 +99,14 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
         config.appInfo,
         config.signInAndUpFeature
     );
+
+    const signUpPasswordField: NormalisedFormField = <NormalisedFormField>signInAndUpFeature.signUpForm.formFields.find(
+        (field: NormalisedFormField) => {
+            return <MANDATORY_FORM_FIELDS_ID>field.id === MANDATORY_FORM_FIELDS_ID.PASSWORD;
+        }
+    );
     const resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig = normaliseResetPasswordUsingTokenFeature(
+        signUpPasswordField.validate,
         config.resetPasswordUsingTokenFeature
     );
 
@@ -132,16 +139,14 @@ export function normaliseSignInAndUpFeature(
     }
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
-    const onSuccessRedirectURL =
-        config.onSuccessRedirectURL !== undefined
-            ? new NormalisedURLPath(config.onSuccessRedirectURL)
-            : new NormalisedURLPath("/");
+    const onSuccessRedirectURL = config.onSuccessRedirectURL !== undefined ? config.onSuccessRedirectURL : "/";
     const signUpForm: NormalisedSignUpFormFeatureConfig = normaliseSignUpFormFeatureConfig(config.signUpForm);
 
     /*
      * Default Sign In corresponds to computed Sign Up fields filtered by email and password only.
      * i.e. If the user overrides sign Up fields, that is propagated to default sign In fields.
-     * Exception made of the password validator which only verifies that the value is not empty for login.
+     * Exception made of the password validator which only verifies that the value is not empty for login
+     * https://github.com/supertokens/supertokens-auth-react/issues/21
      */
     const defaultSignInFields: NormalisedFormField[] = signUpForm.formFields.reduce(
         (signInFieldsAccumulator, field) => {
@@ -192,7 +197,7 @@ export function normaliseSignUpFormFeatureConfig(
     const formFields = mergeFormFields(defaultFormFields, userFormFields);
     const privacyPolicyLink = config.privacyPolicyLink;
     const termsAndConditionsLink = config.termsAndConditionsLink;
-    const style = config.style || {};
+    const style = config.style !== undefined ? config.style : {};
 
     return {
         style,
@@ -213,24 +218,19 @@ export function normaliseSignInFormFeatureConfig(
 
     let userFormFields: FormField[] = [];
     if (config.formFields !== undefined) {
-        userFormFields = config.formFields.reduce((acc: FormField[], field: FormFieldBaseConfig) => {
+        userFormFields = config.formFields
             // Filter on email and password only.
-            if (!MANDATORY_FORM_FIELDS_ID_ARRAY.includes(<MANDATORY_FORM_FIELDS_ID>field.id)) {
-                return acc;
-            }
-            return [
-                ...acc,
-                {
-                    ...field,
-                    optional: false // Sign In fields are never optional.
-                }
-            ];
-        }, []);
+            .filter(field => MANDATORY_FORM_FIELDS_ID_ARRAY.includes(<MANDATORY_FORM_FIELDS_ID>field.id))
+            // Sign In fields are never optional.
+            .map((field: FormFieldBaseConfig) => ({
+                ...field,
+                optional: false
+            }));
     }
     const formFields = mergeFormFields(defaultFormFields, userFormFields);
 
     let resetPasswordURL: NormalisedURLPath;
-    if (config.resetPasswordURL) {
+    if (config.resetPasswordURL !== undefined) {
         resetPasswordURL = new NormalisedURLPath(config.resetPasswordURL);
     } else {
         resetPasswordURL = new NormalisedURLPath(
@@ -238,7 +238,7 @@ export function normaliseSignInFormFeatureConfig(
         );
     }
 
-    const style = config.style || {};
+    const style = config.style !== undefined ? config.style : {};
 
     return {
         style,
@@ -272,6 +272,7 @@ function getDefaultPasswordFormField(): NormalisedFormField {
 }
 
 export function normaliseResetPasswordUsingTokenFeature(
+    signUpPasswordFieldValidate: (value: string) => Promise<string | undefined>,
     config?: ResetPasswordUsingTokenUserInput
 ): NormalisedResetPasswordUsingTokenFeatureConfig {
     if (config === undefined) {
@@ -279,10 +280,7 @@ export function normaliseResetPasswordUsingTokenFeature(
     }
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
-    const onSuccessRedirectURL =
-        config.onSuccessRedirectURL !== undefined
-            ? new NormalisedURLPath(config.onSuccessRedirectURL)
-            : new NormalisedURLPath("/");
+    const onSuccessRedirectURL = config.onSuccessRedirectURL !== undefined ? config.onSuccessRedirectURL : "/";
 
     const submitNewPasswordFormStyle =
         config.submitNewPasswordForm !== undefined && config.submitNewPasswordForm.style !== undefined
@@ -292,18 +290,18 @@ export function normaliseResetPasswordUsingTokenFeature(
     const submitNewPasswordForm: NormalisedSubmitNewPasswordForm = {
         style: submitNewPasswordFormStyle,
         formFields: [
-            Object.assign(
-                {
-                    label: "New password",
-                    placeholder: "New password"
-                },
-                getDefaultPasswordFormField()
-            ),
+            {
+                id: "password",
+                label: "New password",
+                placeholder: "New password",
+                validate: signUpPasswordFieldValidate,
+                optional: false
+            },
             {
                 id: "confirm-password",
                 label: "Confirm password",
                 placeholder: "Confirm your password",
-                validate: defaultPasswordValidator,
+                validate: signUpPasswordFieldValidate,
                 optional: false
             }
         ]

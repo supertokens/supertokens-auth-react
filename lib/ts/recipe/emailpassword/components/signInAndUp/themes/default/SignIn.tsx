@@ -17,9 +17,9 @@
  * Imports.
  */
 import * as React from "react";
-import { Component, createRef, Fragment } from "react";
+import { PureComponent, createRef, Fragment } from "react";
 import { NormalisedPalette, SignInThemeProps, FormFieldState } from "../../../../types";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
@@ -39,16 +39,16 @@ function getStyles(palette: NormalisedPalette): Styles {
             letterSpacing: "0.58px",
             fontWeight: 800,
             color: palette.colors.textPrimary
-        } as CSSInterpolation,
+        } as CSSObject,
 
         headerSubTitle: {
             marginTop: "9px",
             marginBottom: "21px"
-        } as CSSInterpolation,
+        } as CSSObject,
 
         forgotPasswordLink: {
             marginTop: "10px"
-        } as CSSInterpolation
+        } as CSSObject
     };
 }
 
@@ -56,7 +56,7 @@ function getStyles(palette: NormalisedPalette): Styles {
  * Component.
  */
 
-export default class SignInTheme extends Component<SignInThemeProps, { formFields: FormFieldState[] }> {
+export default class SignInTheme extends PureComponent<SignInThemeProps, { formFields: FormFieldState[] }> {
     /*
      * Constructor.
      */
@@ -82,7 +82,7 @@ export default class SignInTheme extends Component<SignInThemeProps, { formField
 
     render(): JSX.Element {
         const { signUpClicked, forgotPasswordClick, defaultStyles, palette, onSuccess, callAPI } = this.props;
-        const styleFromInit = this.props.styleFromInit || {};
+        const styleFromInit = this.props.styleFromInit !== undefined ? this.props.styleFromInit : {};
         const { formFields } = this.state;
         const styles = getStyles(palette);
 

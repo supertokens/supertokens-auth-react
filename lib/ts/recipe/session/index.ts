@@ -55,5 +55,3 @@ export const getUserId = SessionAPIWrapper.getUserId;
 export const getJWTPayloadSecurely = SessionAPIWrapper.getJWTPayloadSecurely;
 export const attemptRefreshingSession = SessionAPIWrapper.attemptRefreshingSession;
 export const doesSessionExist = SessionAPIWrapper.doesSessionExist;
-
-export { SessionAPIWrapper };

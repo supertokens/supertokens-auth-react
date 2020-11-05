@@ -20,6 +20,7 @@ import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RouteToFeatureComponentMap } from "../../types";
 import { SessionUserInput, SessionConfig } from "./types";
 import { isTest } from "../../utils";
+import SuperTokensRequest from "supertokens-website";
 
 /*
  * Class.
@@ -41,7 +42,6 @@ export default class Session extends RecipeModule {
      */
     constructor(config: SessionConfig) {
         super(config);
-        const SuperTokensRequest = require("supertokens-website");
         SuperTokensRequest.init({
             sessionScope: config.sessionScope,
             refreshAPICustomHeaders: config.refreshAPICustomHeaders,
@@ -80,6 +80,18 @@ export default class Session extends RecipeModule {
 
     doesSessionExist = (): boolean => {
         return this.sessionSdk.doesSessionExist();
+    };
+
+    addAxiosInterceptors = (): boolean => {
+        return this.sessionSdk.addAxiosInterceptors();
+    };
+
+    setAuth0API = (): boolean => {
+        return this.sessionSdk.setAuth0API();
+    };
+
+    getAuth0API = (): boolean => {
+        return this.sessionSdk.getAuth0API();
     };
 
     /*
@@ -123,6 +135,18 @@ export default class Session extends RecipeModule {
 
     static doesSessionExist(): boolean {
         return Session.getInstanceOrThrow().doesSessionExist();
+    }
+
+    static addAxiosInterceptors(): boolean {
+        return Session.getInstanceOrThrow().addAxiosInterceptors();
+    }
+
+    static setAuth0API(): boolean {
+        return Session.getInstanceOrThrow().setAuth0API();
+    }
+
+    static getAuth0API(): boolean {
+        return Session.getInstanceOrThrow().getAuth0API();
     }
 
     /*

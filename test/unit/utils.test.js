@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { getRecipeIdFromSearch, validateFormOrThrow } from "../../lib/build/utils";
+import { getRecipeIdFromSearch, validateForm } from "../../lib/build/utils";
 
 import { normaliseURLPathOrThrowError } from "../../lib/build/normalisedURLPath";
 import { normaliseURLDomainOrThrowError } from "../../lib/build/normalisedURLDomain";
@@ -123,7 +123,7 @@ describe("Config tests", function() {
         assert.strictEqual(getRecipeIdFromSearch("?rId=blue&foo=bar"), null);
     });
 
-    it("validateFormOrThrow (TODO)", async function() {
+    it("validateForm (TODO)", async function() {
         /*
          * TODO
          * - Test that no error return empty array [].
@@ -164,7 +164,7 @@ describe("Config tests", function() {
                 value: "anything will throw"
             }
         ];
-        const errors = await validateFormOrThrow(input, formFields);
+        const errors = await validateForm(input, formFields);
         assert.deepStrictEqual(errors, [
             {
                 id: "password",

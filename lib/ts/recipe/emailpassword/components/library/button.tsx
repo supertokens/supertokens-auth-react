@@ -21,7 +21,7 @@
 import { jsx } from "@emotion/core";
 
 import * as React from "react";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 import { NormalisedDefaultStyles } from "../../types";
 
 /*
@@ -29,7 +29,7 @@ import { NormalisedDefaultStyles } from "../../types";
  */
 
 type ButtonProps = {
-    style: CSSInterpolation;
+    style: CSSObject;
     label: string;
     isLoading: boolean;
     disabled?: boolean;

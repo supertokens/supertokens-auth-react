@@ -1,9 +1,9 @@
 /// <reference types="react" />
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 import { NormalisedDefaultStyles, NormalisedPalette } from "../../types";
 export declare type AdornmentType = "success" | "error" | undefined;
 declare type InputAdornmentProps = {
-    style?: CSSInterpolation;
+    style?: CSSObject;
     type: AdornmentType;
     defaultStyles: NormalisedDefaultStyles;
     palette: NormalisedPalette;

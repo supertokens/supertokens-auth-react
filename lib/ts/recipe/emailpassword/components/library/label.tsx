@@ -21,7 +21,7 @@
 import { jsx } from "@emotion/core";
 
 import * as React from "react";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 import { NormalisedDefaultStyles } from "../../types";
 
 /*
@@ -29,7 +29,7 @@ import { NormalisedDefaultStyles } from "../../types";
  */
 
 type LabelProps = {
-    style: CSSInterpolation;
+    style: CSSObject;
     value: string;
     showIsRequired?: boolean;
     defaultStyles: NormalisedDefaultStyles;

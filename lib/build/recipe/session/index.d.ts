@@ -14,4 +14,3 @@ export declare const getUserId: typeof SessionAPIWrapper.getUserId;
 export declare const getJWTPayloadSecurely: typeof SessionAPIWrapper.getJWTPayloadSecurely;
 export declare const attemptRefreshingSession: typeof SessionAPIWrapper.attemptRefreshingSession;
 export declare const doesSessionExist: typeof SessionAPIWrapper.doesSessionExist;
-export { SessionAPIWrapper };

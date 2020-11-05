@@ -25,7 +25,7 @@ import {
     Styles
 } from "../../types";
 import EmailPassword from "./emailPassword";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
@@ -114,7 +114,7 @@ export type NormalisedSignInAndUpFeatureConfig = {
     /*
      * URL to redirect to in case disableDefaultImplemention is true
      */
-    onSuccessRedirectURL: NormalisedURLPath;
+    onSuccessRedirectURL: string;
 
     /*
      * SignUp form config.
@@ -222,7 +222,7 @@ export type NormalisedResetPasswordUsingTokenFeatureConfig = {
     /*
      * URL to redirect to in case disableDefaultImplemention is true
      */
-    onSuccessRedirectURL: NormalisedURLPath;
+    onSuccessRedirectURL: string;
 
     /*
      * submitNewPasswordForm config.
@@ -568,6 +568,25 @@ export type SubmitNewPasswordThemeState = {
     formFields: FormFieldState[];
 };
 
+export enum SignInAndUpStateStatus {
+    LOADING = "LOADING",
+    NOT_SUBMITTED = "NOT_SUBMITTED",
+    SUBMITTED = "SUBMITTED"
+}
+
+export type SignInAndUpState =
+    | {
+          status: SignInAndUpStateStatus.LOADING;
+      }
+    | {
+          status: SignInAndUpStateStatus.NOT_SUBMITTED;
+      }
+    | {
+          status: SignInAndUpStateStatus.SUBMITTED;
+          user: User;
+          responseJson: any;
+      };
+
 enum paletteColorOptions {
     BACKGROUND = "background",
     INPUTBACKGROUND = "inputBackground",
@@ -614,11 +633,11 @@ enum defaultStylesOptions {
 }
 
 export type DefaultStylesUserInput = {
-    [key in defaultStylesOptions]?: CSSInterpolation;
+    [key in defaultStylesOptions]?: CSSObject;
 };
 
 export type NormalisedDefaultStyles = {
-    [key in defaultStylesOptions]: CSSInterpolation;
+    [key in defaultStylesOptions]: CSSObject;
 };
 
 export type FormBaseState = {
@@ -652,3 +671,11 @@ export type FormBaseProps = {
 
     styleFromInit?: Styles;
 };
+
+export type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpThemeResponse>;
+export type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInThemeResponse>;
+export type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailThemeResponse>;
+export type SubmitNewPasswordAPI = (
+    requestJson: RequestJson,
+    headers: HeadersInit
+) => Promise<SubmitNewPasswordThemeResponse>;

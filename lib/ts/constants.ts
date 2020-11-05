@@ -23,3 +23,5 @@ export const DEFAULT_API_BASE_PATH = "/auth";
 export const DEFAULT_WEBSITE_BASE_PATH = "/auth";
 
 export const ST_ROOT_CONTAINER = "supertokens-root";
+
+export const SOMETHING_WENT_WRONG_ERROR = "Something went wrong. Please try again";

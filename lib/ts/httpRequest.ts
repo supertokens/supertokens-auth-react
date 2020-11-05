@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+import { SOMETHING_WENT_WRONG_ERROR } from "./constants";
 import NormalisedURLPath from "./normalisedURLPath";
 import { NormalisedAppInfo } from "./types";
 import { supported_fdi } from "./version";
@@ -78,12 +79,12 @@ export default class HttpRequest {
                 }
             });
             if (result.status >= 300) {
-                throw Error("Something went wrong. Please try again");
+                throw Error(SOMETHING_WENT_WRONG_ERROR);
             }
 
             return await result.json();
         } catch (e) {
-            throw Error("Something went wrong. Please try again");
+            throw Error(SOMETHING_WENT_WRONG_ERROR);
         }
     };
 

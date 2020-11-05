@@ -35,7 +35,7 @@ import {
     SignUpThemeResponse,
     SubmitNewPasswordThemeResponse
 } from "./types";
-import { isTest, validateFormOrThrow } from "../../utils";
+import { isTest, validateForm } from "../../utils";
 import HttpRequest from "../../httpRequest";
 import { normaliseEmailPasswordConfig } from "./utils";
 import { SignInAndUp } from ".";
@@ -158,11 +158,11 @@ export default class EmailPassword extends RecipeModule {
      */
 
     async signUpValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateFormOrThrow(input, this.config.signInAndUpFeature.signUpForm.formFields);
+        return await validateForm(input, this.config.signInAndUpFeature.signUpForm.formFields);
     }
 
     async signInValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateFormOrThrow(input, this.config.signInAndUpFeature.signInForm.formFields);
+        return await validateForm(input, this.config.signInAndUpFeature.signInForm.formFields);
     }
 
     /*
@@ -170,14 +170,11 @@ export default class EmailPassword extends RecipeModule {
      */
 
     async submitNewPasswordValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateFormOrThrow(
-            input,
-            this.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
-        );
+        return await validateForm(input, this.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields);
     }
 
     async enterEmailValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateFormOrThrow(input, this.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields);
+        return await validateForm(input, this.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields);
     }
 
     /*

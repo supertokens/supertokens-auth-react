@@ -1,6 +1,6 @@
 import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson, Styles } from "../../types";
 import EmailPassword from "./emailPassword";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
@@ -26,7 +26,7 @@ export declare type SignInAndUpFeatureUserInput = {
 };
 export declare type NormalisedSignInAndUpFeatureConfig = {
     disableDefaultImplementation: boolean;
-    onSuccessRedirectURL: NormalisedURLPath;
+    onSuccessRedirectURL: string;
     signUpForm: NormalisedSignUpFormFeatureConfig;
     signInForm: NormalisedSignInFormFeatureConfig;
 };
@@ -58,7 +58,7 @@ export declare type ResetPasswordUsingTokenUserInput = {
 };
 export declare type NormalisedResetPasswordUsingTokenFeatureConfig = {
     disableDefaultImplementation: boolean;
-    onSuccessRedirectURL: NormalisedURLPath;
+    onSuccessRedirectURL: string;
     submitNewPasswordForm: NormalisedSubmitNewPasswordForm;
     enterEmailForm: NormalisedEnterEmailForm;
 };
@@ -183,6 +183,20 @@ export declare type SubmitNewPasswordThemeState = {
     hasNewPassword?: boolean;
     formFields: FormFieldState[];
 };
+export declare enum SignInAndUpStateStatus {
+    LOADING = "LOADING",
+    NOT_SUBMITTED = "NOT_SUBMITTED",
+    SUBMITTED = "SUBMITTED"
+}
+export declare type SignInAndUpState = {
+    status: SignInAndUpStateStatus.LOADING;
+} | {
+    status: SignInAndUpStateStatus.NOT_SUBMITTED;
+} | {
+    status: SignInAndUpStateStatus.SUBMITTED;
+    user: User;
+    responseJson: any;
+};
 declare enum paletteColorOptions {
     BACKGROUND = "background",
     INPUTBACKGROUND = "inputBackground",
@@ -225,10 +239,10 @@ declare enum defaultStylesOptions {
     DIVIDER = "divider"
 }
 export declare type DefaultStylesUserInput = {
-    [key in defaultStylesOptions]?: CSSInterpolation;
+    [key in defaultStylesOptions]?: CSSObject;
 };
 export declare type NormalisedDefaultStyles = {
-    [key in defaultStylesOptions]: CSSInterpolation;
+    [key in defaultStylesOptions]: CSSObject;
 };
 export declare type FormBaseState = {
     formFields: FormFieldState[];
@@ -247,4 +261,8 @@ export declare type FormBaseProps = {
     palette: NormalisedPalette;
     styleFromInit?: Styles;
 };
+export declare type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpThemeResponse>;
+export declare type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInThemeResponse>;
+export declare type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailThemeResponse>;
+export declare type SubmitNewPasswordAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordThemeResponse>;
 export {};

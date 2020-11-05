@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { Component, FormEvent, Fragment } from "react";
+import { FormEvent, Fragment, PureComponent } from "react";
 import { FormBaseState, FormBaseProps } from "../../types";
 import { Button, FormRow, Input, InputError, Label } from ".";
 import { APIFormField } from "../../../../types";
@@ -30,7 +30,7 @@ import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID, MANDATORY_FORM_FIELDS_ID
  * Component.
  */
 
-export default class FormBase extends Component<FormBaseProps, FormBaseState> {
+export default class FormBase extends PureComponent<FormBaseProps, FormBaseState> {
     /*
      * Constructor.
      */
@@ -61,9 +61,9 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
         // Slightly delay the error update to prevent UI glitches.
         setTimeout(
             () =>
-                this.setState({
+                this.setState(() => ({
                     formFields: [...formFields]
-                }),
+                })),
             300
         );
     };
@@ -73,10 +73,10 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
         e.preventDefault();
 
         // Set isLoading to true.
-        this.setState({
+        this.setState(() => ({
             generalError: undefined,
             isLoading: true
-        });
+        }));
 
         // Get the fields values from form.
         const fields = this.state.formFields.map(field => {
@@ -89,9 +89,9 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
         // Call Sign In API.
         const result = await this.props.callAPI(fields);
         // Set isLoading to false.
-        this.setState({
+        this.setState(() => ({
             isLoading: false
-        });
+        }));
 
         // If successfully logged in.
         if (result.status === API_RESPONSE_STATUS.OK) {
@@ -127,9 +127,9 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
                 }
                 return field;
             });
-            this.setState({
+            this.setState(() => ({
                 formFields: formFields
-            });
+            }));
             return;
         }
 
@@ -138,9 +138,9 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
             result.status === API_RESPONSE_STATUS.GENERAL_ERROR ||
             result.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
         ) {
-            this.setState({
+            this.setState(() => ({
                 generalError: result.message
-            });
+            }));
         }
     };
 
@@ -149,7 +149,7 @@ export default class FormBase extends Component<FormBaseProps, FormBaseState> {
      */
     render(): JSX.Element {
         const { defaultStyles, palette, header, footer, buttonLabel, showLabels } = this.props;
-        const styleFromInit = this.props.styleFromInit || {};
+        const styleFromInit = this.props.styleFromInit !== undefined ? this.props.styleFromInit : {};
         const { generalError, formFields, isLoading } = this.state;
 
         return (

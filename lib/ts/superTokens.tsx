@@ -101,11 +101,10 @@ export default class SuperTokens {
     }
 
     static getMatchingComponentForRouteAndRecipeId(
-        path: string,
+        path: NormalisedURLPath,
         recipeId: string | null
     ): ReactComponentClass | undefined {
-        const normalisedUrl = new NormalisedURLPath(path);
-        return SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(normalisedUrl, recipeId);
+        return SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(path, recipeId);
     }
 
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {

@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { Component, Fragment } from "react";
+import { PureComponent, Fragment } from "react";
 import {
     EnterEmailThemeResponse,
     NormalisedDefaultStyles,
@@ -37,12 +37,13 @@ import { jsx } from "@emotion/core";
 import { getDefaultStyles } from "../../styles/styles";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../constants";
 import { redirectToInApp } from "../../../../utils";
+import { handleEnterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 
 /*
  * Component.
  */
 
-class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { token: string }> {
+class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps, { token: string }> {
     /*
      * Constructor.
      */
@@ -99,47 +100,12 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         }
 
         // Call API, only send first password.
-        return await this.submitNewPasswordAPI([formFields[0]]);
-    };
-
-    submitNewPasswordAPI = async (formFields: APIFormField[]): Promise<SubmitNewPasswordThemeResponse> => {
-        try {
-            const headers: HeadersInit = {
-                rid: this.getRecipeInstanceOrThrow().getRecipeId()
-            };
-            const responseJson = await this.onCallSubmitNewPasswordAPI(
-                {
-                    formFields,
-                    token: this.state.token
-                },
-                headers
-            );
-
-            // Otherwise, if field errors.
-            if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-                return {
-                    status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    formFields: responseJson.formFields
-                };
-            }
-
-            // Otherwise, if wrong credentials error.
-            if (responseJson.status === API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR) {
-                return {
-                    status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR
-                };
-            }
-
-            // Otherwise, status === OK
-            return {
-                status: API_RESPONSE_STATUS.OK
-            };
-        } catch (e) {
-            return {
-                status: API_RESPONSE_STATUS.OK
-                // message: "Something went wrong. Please try again"
-            };
-        }
+        return await handleSubmitNewPasswordAPI(
+            [formFields[0]],
+            this.getRecipeInstanceOrThrow().getRecipeId(),
+            this.onCallSubmitNewPasswordAPI,
+            this.state.token
+        );
     };
 
     onSubmitNewPasswordFormSuccess = async (): Promise<void> => {
@@ -160,42 +126,11 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
             };
         }
 
-        return await this.enterEmailAPI(formFields);
-    };
-
-    enterEmailAPI = async (formFields: APIFormField[]): Promise<EnterEmailThemeResponse> => {
-        try {
-            const headers: HeadersInit = {
-                rid: this.getRecipeInstanceOrThrow().getRecipeId()
-            };
-            const responseJson = await this.onCallEnterEmailAPI({ formFields }, headers);
-
-            // Otherwise, if field errors.
-            if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-                return {
-                    status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    formFields: responseJson.formFields
-                };
-            }
-
-            // Otherwise, if success.
-            if (responseJson.status === API_RESPONSE_STATUS.OK) {
-                return {
-                    status: API_RESPONSE_STATUS.OK
-                };
-            }
-
-            // Otherwise, something went wrong.
-            return {
-                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: "Something went wrong. Please try again"
-            };
-        } catch (e) {
-            return {
-                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: "Something went wrong. Please try again"
-            };
-        }
+        return await handleEnterEmailAPI(
+            formFields,
+            this.getRecipeInstanceOrThrow().getRecipeId(),
+            this.onCallEnterEmailAPI
+        );
     };
 
     onEnterEmailFormSuccess = async (): Promise<void> => {
