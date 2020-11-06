@@ -13,7 +13,7 @@
  * under the License.
  */
 import assert from "assert";
-import {mergeFormFields, capitalize} from "../../../../lib/build/recipe/emailpassword/utils";
+import {mergeFormFields} from "../../../../lib/build/recipe/emailpassword/utils";
 import {defaultValidate} from "../../../../lib/build/recipe/emailpassword/validators";
 
 describe("Email password utils tests", function() {
@@ -159,7 +159,7 @@ describe("Email password utils tests", function() {
         );
         assert(
             mergedRandomWithoutValidateNorOptional[2].placeholder ===
-                capitalize(randomCustomFormFieldWithoutOptionalProperties.id)
+                randomCustomFormFieldWithoutOptionalProperties.label
         );
         assert(mergedRandomWithoutValidateNorOptional[2].validate === defaultValidate);
         assert(mergedRandomWithoutValidateNorOptional[2].optional === false);

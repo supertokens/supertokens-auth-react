@@ -320,7 +320,7 @@ export function mergeFormFields(
         if (isNewField) {
             mergedFormFields.push({
                 optional: false,
-                placeholder: capitalize(userField.id),
+                placeholder: userField.label,
                 validate: defaultValidate,
                 ...userField
             });
@@ -328,11 +328,4 @@ export function mergeFormFields(
     }
 
     return mergedFormFields;
-}
-
-/*
- * capitalize
- */
-export function capitalize(value: string): string {
-    return value.charAt(0).toUpperCase() + value.slice(1);
 }

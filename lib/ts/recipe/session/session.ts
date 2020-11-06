@@ -50,7 +50,7 @@ export default class Session extends RecipeModule {
             sessionScope: config.sessionScope,
             refreshAPICustomHeaders: {
                 rid: this.getRecipeId(),
-                usersHeaders
+                ...usersHeaders
             },
             autoAddCredentials: config.autoAddCredentials,
             sessionExpiredStatusCode: config.sessionExpiredStatusCode,

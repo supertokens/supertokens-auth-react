@@ -7,4 +7,3 @@ export declare function normaliseSignInFormFeatureConfig(appInfo: NormalisedAppI
 export declare function getDefaultFormFields(): NormalisedFormField[];
 export declare function normaliseResetPasswordUsingTokenFeature(signUpPasswordFieldValidate: (value: string) => Promise<string | undefined>, config?: ResetPasswordUsingTokenUserInput): NormalisedResetPasswordUsingTokenFeatureConfig;
 export declare function mergeFormFields(defaultFormFields: NormalisedFormField[], userFormFields: FormField[]): NormalisedFormField[];
-export declare function capitalize(value: string): string;
