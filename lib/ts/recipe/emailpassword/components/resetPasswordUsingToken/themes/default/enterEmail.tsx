@@ -129,6 +129,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
             <FormBase
                 formFields={formFields}
                 defaultStyles={defaultStyles}
+                styleFromInit={styleFromInit}
                 palette={palette}
                 buttonLabel={"Email me"}
                 onSuccess={this.onSuccess}

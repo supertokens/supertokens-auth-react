@@ -42,14 +42,18 @@ SuperTokens.init({
     recipeList: [
         EmailPassword.init({
             signUpFeature: {
-                privacyPolicyLink: "http://localhost:3031/privacy",
-                termsAndConditionsLink: "http://localhost:3031/terms",
                 formFields: [{
-                  id: "company"
+                  id: "name"
                 }, {
-                  id: "First Name"
-                }, {
-                  id: "Last Name"
+                  id: "age",
+                  validate: async (value) => {
+                    if (parseInt(value) < 18) {
+                        return "You must be over 18 to register";
+                    }
+  
+                    // If no error, return undefined.
+                    return undefined;
+                  }
                 },  {
                   id: "City",
                   optional: true

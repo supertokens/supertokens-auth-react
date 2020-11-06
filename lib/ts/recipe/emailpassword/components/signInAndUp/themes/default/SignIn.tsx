@@ -90,6 +90,7 @@ export default class SignInTheme extends PureComponent<SignInThemeProps, { formF
             <FormBase
                 formFields={formFields}
                 defaultStyles={defaultStyles}
+                styleFromInit={styleFromInit}
                 palette={palette}
                 buttonLabel={"SIGN IN"}
                 onSuccess={onSuccess}

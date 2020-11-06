@@ -103,6 +103,7 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formF
             <FormBase
                 formFields={formFields}
                 defaultStyles={defaultStyles}
+                styleFromInit={styleFromInit}
                 palette={palette}
                 buttonLabel={"SIGN UP"}
                 onSuccess={onSuccess}

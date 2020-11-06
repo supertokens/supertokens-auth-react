@@ -142,6 +142,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
             <FormBase
                 formFields={formFields}
                 defaultStyles={defaultStyles}
+                styleFromInit={styleFromInit}
                 palette={palette}
                 buttonLabel={"Change password"}
                 onSuccess={this.onSuccess}

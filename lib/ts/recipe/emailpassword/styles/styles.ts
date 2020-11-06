@@ -25,8 +25,8 @@ export const defaultPalette: NormalisedPalette = {
         primary: "#ff9b33",
         error: "#ff1717",
         textTitle: "#222222",
-        textPrimary: "#222222",
-        textSecondary: "#656565",
+        textLabel: "#222222",
+        textPrimary: "#656565",
         textLink: "#0076ff"
     },
 
@@ -160,7 +160,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             fontSize: palette.fonts.size[1],
             lineHeight: "24px",
             paddingBottom: "10px",
-            color: palette.colors.textPrimary
+            color: palette.colors.textLabel
         },
 
         formRow: {
@@ -174,14 +174,14 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             fontSize: palette.fonts.size[1],
             fontWeight: 400,
             letterSpacing: "0.4px",
-            color: palette.colors.textPrimary
+            color: palette.colors.textLabel
         },
 
         secondaryText: {
             fontSize: palette.fonts.size[1],
             fontWeight: 300,
             letterSpacing: "0.4px",
-            color: palette.colors.textSecondary
+            color: palette.colors.textPrimary
         },
 
         link: {

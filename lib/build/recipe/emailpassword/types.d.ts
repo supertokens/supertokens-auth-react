@@ -203,8 +203,8 @@ declare enum paletteColorOptions {
     PRIMARY = "primary",
     ERROR = "error",
     TEXTTITLE = "textTitle",
+    TEXTLABEL = "textLabel",
     TEXTPRIMARY = "textPrimary",
-    TEXTSECONDARY = "textSecondary",
     TEXTLINK = "textLink"
 }
 export declare type PaletteUserInput = {
