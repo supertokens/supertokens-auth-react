@@ -73,7 +73,7 @@ describe("EmailPassword", function() {
         );
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] !== undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] !== undefined);
-        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getRecipeId(), "email-password");
+        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getRecipeId(), "emailpassword");
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL, "/");
     });
 

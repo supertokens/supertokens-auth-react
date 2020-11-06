@@ -148,7 +148,7 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.canHandleRoute(), true);
         mockWindowLocation(`${randomWebsitePath}/auth/.`);
         assert.strictEqual(SuperTokens.canHandleRoute(), true);
-        mockWindowLocation(`${randomWebsitePath}/auth?rid=email-password`);
+        mockWindowLocation(`${randomWebsitePath}/auth?rid=emailpassword`);
         assert.strictEqual(SuperTokens.canHandleRoute(), true);
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
         // returns first component if rid=unknownd.
@@ -200,7 +200,7 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
         mockWindowLocation(`${randomWebsitePath}/auth/.`);
         assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
-        mockWindowLocation(`${randomWebsitePath}/auth?rid=email-password`);
+        mockWindowLocation(`${randomWebsitePath}/auth?rid=emailpassword`);
         assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
         // returns first component if rid=unknown.
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
