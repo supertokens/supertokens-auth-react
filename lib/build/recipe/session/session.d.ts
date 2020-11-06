@@ -1,12 +1,12 @@
 import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, RouteToFeatureComponentMap } from "../../types";
+import { CreateRecipeFunction } from "../../types";
 import { SessionUserInput, SessionConfig } from "./types";
 export default class Session extends RecipeModule {
     static instance?: Session;
     static RECIPE_ID: string;
     private sessionSdk;
     constructor(config: SessionConfig);
-    getFeatures: () => RouteToFeatureComponentMap;
+    getFeatures: () => Record<string, import("../../types").ReactComponentClass>;
     getRefreshURLDomain: () => string;
     getUserId: () => string;
     getJWTPayloadSecurely: () => Promise<any>;

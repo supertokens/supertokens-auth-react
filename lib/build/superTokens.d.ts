@@ -1,4 +1,4 @@
-/// <reference types="react" />
+import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
 import { NormalisedAppInfo, ReactComponentClass, SuperTokensConfig } from "./types";
 import NormalisedURLPath from "./normalisedURLPath";
@@ -23,8 +23,8 @@ export default class SuperTokens {
     getAppInfo: () => NormalisedAppInfo;
     canHandleRoute: () => boolean;
     getRoutingComponent: () => JSX.Element | undefined;
-    getPathsToComponentWithRecipeIdMap: () => PathToComponentWithRecipeIdMap;
-    getMatchingComponentForRouteAndRecipeId: (normalisedUrl: NormalisedURLPath, recipeId: string | null) => ReactComponentClass | undefined;
+    getPathsToComponentWithRecipeIdMap: () => Record<string, import("./types").ComponentWithRecipeId[]>;
+    getMatchingComponentForRouteAndRecipeId: (normalisedUrl: NormalisedURLPath, recipeId: string | null) => React.ComponentClass<{}, any> | (<T>(props: T) => JSX.Element) | undefined;
     getRecipeList: () => RecipeModule[];
     getDefaultSessionRecipe: () => Session | undefined;
     static reset(): void;

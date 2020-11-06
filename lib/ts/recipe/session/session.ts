@@ -42,9 +42,16 @@ export default class Session extends RecipeModule {
      */
     constructor(config: SessionConfig) {
         super(config);
+        let usersHeaders = {};
+        if (config.refreshAPICustomHeaders !== undefined) {
+            usersHeaders = config.refreshAPICustomHeaders;
+        }
         SuperTokensRequest.init({
             sessionScope: config.sessionScope,
-            refreshAPICustomHeaders: config.refreshAPICustomHeaders,
+            refreshAPICustomHeaders: {
+                rid: this.getRecipeId(),
+                usersHeaders
+            },
             autoAddCredentials: config.autoAddCredentials,
             sessionExpiredStatusCode: config.sessionExpiredStatusCode,
             apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),

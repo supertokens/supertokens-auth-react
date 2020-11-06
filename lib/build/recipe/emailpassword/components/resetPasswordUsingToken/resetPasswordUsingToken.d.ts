@@ -1,5 +1,5 @@
 import { PureComponent } from "react";
-import { EnterEmailThemeResponse, ResetPasswordUsingTokenProps, onHandleResetPasswordUsingTokenSuccessContext, SubmitNewPasswordThemeResponse } from "../../types";
+import { ResetPasswordUsingTokenProps, onHandleResetPasswordUsingTokenSuccessContext, SubmitNewPasswordThemeResponse } from "../../types";
 import EmailPassword from "../../emailPassword";
 import { APIFormField, RequestJson } from "../../../../types";
 declare class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps, {
@@ -9,7 +9,7 @@ declare class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTo
     getRecipeInstanceOrThrow: () => EmailPassword;
     submitNewPassword: (formFields: APIFormField[]) => Promise<SubmitNewPasswordThemeResponse>;
     onSubmitNewPasswordFormSuccess: () => Promise<void>;
-    enterEmail: (formFields: APIFormField[]) => Promise<EnterEmailThemeResponse>;
+    enterEmail: (formFields: APIFormField[]) => Promise<import("../../types").BaseResponse>;
     onEnterEmailFormSuccess: () => Promise<void>;
     onHandleSuccess: (context: onHandleResetPasswordUsingTokenSuccessContext) => Promise<void>;
     onSignInClicked: () => void;

@@ -18,5 +18,5 @@ declare type InputProps = {
     ref: RefObject<any>;
     onChange?: (field: APIFormField) => void;
 };
-declare const _default: React.ForwardRefExoticComponent<Pick<InputProps, "style" | "hasError" | "defaultStyles" | "name" | "placeholder" | "type" | "onChange" | "palette" | "adornmentStyle" | "validated" | "errorStyle"> & React.RefAttributes<any>>;
+declare const _default: React.ForwardRefExoticComponent<Pick<InputProps, "style" | "name" | "type" | "onChange" | "placeholder" | "hasError" | "defaultStyles" | "palette" | "adornmentStyle" | "validated" | "errorStyle"> & React.RefAttributes<any>>;
 export default _default;
