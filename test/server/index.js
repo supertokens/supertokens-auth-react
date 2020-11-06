@@ -74,6 +74,10 @@ app.use(
     })
 );
 
+app.use("*", async (req, res, next) => {
+    res.status(404).send();
+});
+
 app.use(SuperTokens.middleware());
 
 app.get("/ping", async (req, res) => {
@@ -81,7 +85,7 @@ app.get("/ping", async (req, res) => {
 });
 
 app.use("*", async (req, res, next) => {
-    res.status(404).send();
+    res.status(300).send();
 });
 
 
