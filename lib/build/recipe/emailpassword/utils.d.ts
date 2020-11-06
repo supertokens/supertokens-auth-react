@@ -1,8 +1,5 @@
 import { FormField, NormalisedAppInfo, NormalisedFormField } from "../../types";
 import { EmailPasswordConfig, NormalisedEmailPasswordConfig, NormalisedResetPasswordUsingTokenFeatureConfig, NormalisedSignInAndUpFeatureConfig, NormalisedSignInFormFeatureConfig, NormalisedSignUpFormFeatureConfig, ResetPasswordUsingTokenUserInput, SignInAndUpFeatureUserInput, SignInFormFeatureUserInput, SignUpFormFeatureUserInput } from "./types";
-export declare function defaultEmailValidator(value: string): Promise<string | undefined>;
-export declare function defaultPasswordValidator(value: string): Promise<string | undefined>;
-export declare function defaultLoginPasswordValidator(value: string): Promise<string | undefined>;
 export declare function normaliseEmailPasswordConfig(config: EmailPasswordConfig): NormalisedEmailPasswordConfig;
 export declare function normaliseSignInAndUpFeature(appInfo: NormalisedAppInfo, config?: SignInAndUpFeatureUserInput): NormalisedSignInAndUpFeatureConfig;
 export declare function normaliseSignUpFormFeatureConfig(config?: SignUpFormFeatureUserInput): NormalisedSignUpFormFeatureConfig;
@@ -11,4 +8,3 @@ export declare function getDefaultFormFields(): NormalisedFormField[];
 export declare function normaliseResetPasswordUsingTokenFeature(signUpPasswordFieldValidate: (value: string) => Promise<string | undefined>, config?: ResetPasswordUsingTokenUserInput): NormalisedResetPasswordUsingTokenFeatureConfig;
 export declare function mergeFormFields(defaultFormFields: NormalisedFormField[], userFormFields: FormField[]): NormalisedFormField[];
 export declare function capitalize(value: string): string;
-export declare function defaultValidate(_: string): Promise<string | undefined>;

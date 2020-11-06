@@ -52,7 +52,7 @@ export declare type FormFieldBaseConfig = {
     placeholder?: string;
 };
 export declare type FormField = FormFieldBaseConfig & {
-    validate?: (value: string) => Promise<string | undefined>;
+    validate?: (value: any) => Promise<string | undefined>;
     optional?: boolean;
 };
 export declare type APIFormField = {
@@ -67,7 +67,7 @@ export declare type NormalisedFormField = {
     id: string;
     label: string;
     placeholder: string;
-    validate: (value: string) => Promise<string | undefined>;
+    validate: (value: any) => Promise<string | undefined>;
     optional: boolean;
 };
 export declare type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);

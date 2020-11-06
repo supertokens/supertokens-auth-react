@@ -177,7 +177,7 @@ export type FormField = FormFieldBaseConfig & {
     /*
      * Validation function of the input field. Returns an error as a string, or undefined.
      */
-    validate?: (value: string) => Promise<string | undefined>;
+    validate?: (value: any) => Promise<string | undefined>;
 
     /*
      * Whether the field is optional or not.
@@ -231,7 +231,7 @@ export type NormalisedFormField = {
     /*
      * Validation function of the input field. Returns an error as a string, or undefined.
      */
-    validate: (value: string) => Promise<string | undefined>;
+    validate: (value: any) => Promise<string | undefined>;
 
     /*
      * Whether the field is optional or not.

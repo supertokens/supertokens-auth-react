@@ -32,67 +32,12 @@ import {
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput
 } from "./types";
-
-/*
- * defaultEmailValidator.
- */
-
-export async function defaultEmailValidator(value: string): Promise<string | undefined> {
-    // eslint-disable-next-line no-useless-escape
-    const defaultEmailValidatorRegexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    // We check if the email syntax is correct
-    // As per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
-    // Regex from https://stackoverflow.com/a/46181/3867175
-
-    if (value.match(defaultEmailValidatorRegexp) === null) {
-        return "Email is invalid";
-    }
-
-    return undefined;
-}
-
-/*
- * defaultPasswordValidator.
- * min 8 characters.
- * Contains lowercase, uppercase, and numbers.
- */
-
-export async function defaultPasswordValidator(value: string): Promise<string | undefined> {
-    // length >= 8 && < 100
-    // must have a number and a character
-    // as per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
-
-    if (value.length < 8) {
-        return "Password must contain at least 8 characters, including a number";
-    }
-
-    if (value.length >= 100) {
-        return "Password's length must be lesser than 100 characters";
-    }
-
-    if (value.match(/^.*[A-Za-z]+.*$/) === null) {
-        return "Password must contain at least one alphabet";
-    }
-
-    if (value.match(/^.*[0-9]+.*$/) === null) {
-        return "Password must contain at least one number";
-    }
-
-    return undefined;
-}
-
-/*
- * defaultLoginPasswordValidator.
- * min 1 characters.
- */
-
-export async function defaultLoginPasswordValidator(value: string): Promise<string | undefined> {
-    // length = 0
-    if (value.length === 0) {
-        return "Password must not be empty";
-    }
-    return undefined;
-}
+import {
+    defaultLoginPasswordValidator,
+    defaultEmailValidator,
+    defaultPasswordValidator,
+    defaultValidate
+} from "./validators";
 
 export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): NormalisedEmailPasswordConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
@@ -390,12 +335,4 @@ export function mergeFormFields(
  */
 export function capitalize(value: string): string {
     return value.charAt(0).toUpperCase() + value.slice(1);
-}
-
-/*
- * defaultValidate
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function defaultValidate(_: string): Promise<string | undefined> {
-    return undefined;
 }
