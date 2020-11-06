@@ -48,8 +48,7 @@
   "scripts": {
     "start": "./test/startTestApp.sh",
     "server": "cd test/server/ && TEST_MODE=testing SPIN_UP=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
-    "test": "TEST_MODE=testing mocha --require @babel/register --timeout 500000",
-    "server-test": "cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
+    "test": "./test/startTestApp.sh --test",
     "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
     "tsc": "cd lib && npx tsc -p tsconfig.json",
     "build": "cd lib && rm -r ./build 2> /dev/null && mkdir -p ./build && npx tsc -p tsconfig.json --emitDeclarationOnly && cd ../ && npm run compile",

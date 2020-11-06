@@ -78,7 +78,8 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
      */
 
     onSuccess = (): void => {
-        this.setState(() => ({
+        this.setState(oldState => ({
+            ...oldState,
             emailSent: true
         }));
         if (this.props.onSuccess) {
@@ -87,7 +88,8 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
     };
 
     resend = (): void => {
-        this.setState(() => ({
+        this.setState(oldState => ({
+            ...oldState,
             emailSent: false
         }));
     };

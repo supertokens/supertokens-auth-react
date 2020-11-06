@@ -61,7 +61,8 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         // Slightly delay the error update to prevent UI glitches.
         setTimeout(
             () =>
-                this.setState(() => ({
+                this.setState(oldState => ({
+                    ...oldState,
                     formFields: [...formFields]
                 })),
             300
@@ -73,7 +74,8 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         e.preventDefault();
 
         // Set isLoading to true.
-        this.setState(() => ({
+        this.setState(oldState => ({
+            ...oldState,
             generalError: undefined,
             isLoading: true
         }));
@@ -89,7 +91,8 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         // Call Sign In API.
         const result = await this.props.callAPI(fields);
         // Set isLoading to false.
-        this.setState(() => ({
+        this.setState(oldState => ({
+            ...oldState,
             isLoading: false
         }));
 
@@ -127,7 +130,8 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                 }
                 return field;
             });
-            this.setState(() => ({
+            this.setState(oldState => ({
+                ...oldState,
                 formFields: formFields
             }));
             return;
@@ -138,7 +142,8 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             result.status === API_RESPONSE_STATUS.GENERAL_ERROR ||
             result.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
         ) {
-            this.setState(() => ({
+            this.setState(oldState => ({
+                ...oldState,
                 generalError: result.message
             }));
         }

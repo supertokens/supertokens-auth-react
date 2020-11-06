@@ -244,7 +244,8 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             return await this.onHandleSuccess({ action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS });
         }
 
-        this.setState(() => ({
+        this.setState(oldState => ({
+            ...oldState,
             status: SignInAndUpStateStatus.NOT_SUBMITTED
         }));
     };

@@ -86,7 +86,8 @@ export default class SubmitNewPasswordTheme extends PureComponent<
     }
 
     onSuccess = (): void => {
-        this.setState(() => ({
+        this.setState(oldState => ({
+            ...oldState,
             hasNewPassword: true
         }));
         if (this.props.onSuccess) {
