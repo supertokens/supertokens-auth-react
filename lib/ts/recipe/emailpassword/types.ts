@@ -407,7 +407,7 @@ export type BaseResponse =
            */
           status: API_RESPONSE_STATUS.OK;
 
-          responseJson?: any;
+          user?: any;
       }
     | {
           /*

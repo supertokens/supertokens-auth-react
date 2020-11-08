@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import { SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
+import { INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR, SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
 import { APIFormField } from "../../../../types";
 import { API_RESPONSE_STATUS } from "../../constants";
 import { SignInThemeResponse, SignUpAPI, SignInAPI, SignUpThemeResponse } from "../../types";
@@ -35,20 +35,20 @@ export async function handleSignUpAPI(
         const headers: HeadersInit = {
             rid
         };
-        const responseJson = await signUpAPI({ formFields }, headers);
+        const response = await signUpAPI({ formFields }, headers);
 
         // Otherwise, if field errors.
-        if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+        if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
             return {
                 status: API_RESPONSE_STATUS.FIELD_ERROR,
-                formFields: responseJson.formFields
+                formFields: response.formFields
             };
         }
 
         // Otherwise, if success.
-        if (responseJson.status === API_RESPONSE_STATUS.OK) {
+        if (response.status === API_RESPONSE_STATUS.OK) {
             return {
-                ...responseJson
+                ...response
             };
         }
 
@@ -74,28 +74,28 @@ export async function handleSignInAPI(
         const headers: HeadersInit = {
             rid
         };
-        const responseJson = await signInAPI({ formFields }, headers);
+        const response = await signInAPI({ formFields }, headers);
 
         // Otherwise, if field errors.
-        if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+        if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
             return {
                 status: API_RESPONSE_STATUS.FIELD_ERROR,
-                formFields: responseJson.formFields
+                formFields: response.formFields
             };
         }
 
         // Otherwise, if wrong credentials error.
-        if (responseJson.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
+        if (response.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
             return {
                 status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR,
-                message: "Incorrect email and password combination"
+                message: INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR
             };
         }
 
         // Otherwise, if success.
-        if (responseJson.status === API_RESPONSE_STATUS.OK) {
+        if (response.status === API_RESPONSE_STATUS.OK) {
             return {
-                ...responseJson
+                ...response
             };
         }
 

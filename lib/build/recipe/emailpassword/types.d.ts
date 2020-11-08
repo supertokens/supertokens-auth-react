@@ -128,7 +128,7 @@ export declare type SignOutResponse = {
 };
 export declare type BaseResponse = {
     status: API_RESPONSE_STATUS.OK;
-    responseJson?: any;
+    user?: any;
 } | {
     status: API_RESPONSE_STATUS.GENERAL_ERROR;
     message: string;

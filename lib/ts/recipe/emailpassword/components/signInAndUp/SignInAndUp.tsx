@@ -135,18 +135,16 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
 
     setStateOnSuccessfulAPICall(normalisedAPIResponse: SignInThemeResponse | SignUpThemeResponse): void {
         let user: User;
-        let responseJson: any;
-        if (normalisedAPIResponse.status === API_RESPONSE_STATUS.OK && normalisedAPIResponse.responseJson) {
+        if (normalisedAPIResponse.status === API_RESPONSE_STATUS.OK && normalisedAPIResponse.user) {
             user = {
-                id: normalisedAPIResponse.responseJson.user.id,
-                email: normalisedAPIResponse.responseJson.user.email
+                id: normalisedAPIResponse.user.id,
+                email: normalisedAPIResponse.user.email
             };
-            responseJson = normalisedAPIResponse.responseJson;
         }
 
         this.setState(() => ({
             status: SignInAndUpStateStatus.SUBMITTED,
-            responseJson,
+            responseJson: normalisedAPIResponse,
             user
         }));
     }

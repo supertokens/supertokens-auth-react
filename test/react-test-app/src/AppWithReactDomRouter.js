@@ -56,11 +56,9 @@ function AppWithReactDomRouter() {
                 onCallSignUpAPI={async (requestJson, headers) => {
                   return {
                     status: "OK",
-                    responseJson: {
-                      user: {
-                        id: "1",
-                        email: "john.doe@supertokens.io"
-                      }
+                    user: {
+                      id: "1",
+                      email: "john.doe@supertokens.io"
                     }
                   }
                 }}
