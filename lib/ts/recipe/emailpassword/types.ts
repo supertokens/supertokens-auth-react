@@ -268,7 +268,7 @@ export type SignInAndUpProps = BaseProps & {
 
     doesSessionExist?: () => Promise<boolean>;
 
-    onHandleSuccess?: (context: onHandleSignInAndUpSuccessContext) => Promise<boolean>;
+    onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
 
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpThemeResponse>;
 
@@ -406,6 +406,8 @@ export type BaseResponse =
            * Success.
            */
           status: API_RESPONSE_STATUS.OK;
+
+          responseJson?: any;
       }
     | {
           /*
@@ -457,7 +459,7 @@ export type SubmitNewPasswordThemeResponse =
           status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
       };
 
-export type onHandleSignInAndUpSuccessContext =
+export type OnHandleSignInAndUpSuccessContext =
     | { action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS }
     | {
           /*

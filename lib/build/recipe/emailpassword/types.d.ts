@@ -78,7 +78,7 @@ export declare type BaseProps = {
 export declare type SignInAndUpProps = BaseProps & {
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
     doesSessionExist?: () => Promise<boolean>;
-    onHandleSuccess?: (context: onHandleSignInAndUpSuccessContext) => Promise<boolean>;
+    onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpThemeResponse>;
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInThemeResponse>;
 };
@@ -128,6 +128,7 @@ export declare type SignOutResponse = {
 };
 export declare type BaseResponse = {
     status: API_RESPONSE_STATUS.OK;
+    responseJson?: any;
 } | {
     status: API_RESPONSE_STATUS.GENERAL_ERROR;
     message: string;
@@ -144,7 +145,7 @@ export declare type EnterEmailThemeResponse = BaseResponse;
 export declare type SubmitNewPasswordThemeResponse = BaseResponse | {
     status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
 };
-export declare type onHandleSignInAndUpSuccessContext = {
+export declare type OnHandleSignInAndUpSuccessContext = {
     action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS;
 } | {
     action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;

@@ -55,7 +55,7 @@ SuperTokens.init({
                     return undefined;
                   }
                 },  {
-                  id: "City",
+                  id: "country",
                   optional: true
                 }]
             }
@@ -73,10 +73,6 @@ app.use(
         credentials: true
     })
 );
-
-app.use("*", async (req, res, next) => {
-    res.status(404).send();
-});
 
 app.use(SuperTokens.middleware());
 
@@ -123,14 +119,14 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
 
 /*
  * Setup and start the core when running the test application when running with  the following command:
- * SPIN_UP=true TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .
+ * START=true TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .
  * or
  * npm run server
  */
 (
     async function (shouldSpinUp) {
         if (shouldSpinUp) {
-            console.log(`Spin up supertokens for test app`);
+            console.log(`Start supertokens for test app`);
             await killAllST();
             await cleanST();
             await setupST();
@@ -138,4 +134,4 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
             console.log(`Application started on http://localhost:${process.env.NODE_PORT | 8080}`)
             console.log(`processId: ${pid}`)
         }
-})(process.env.SPIN_UP === "true");
+})(process.env.START === "true");

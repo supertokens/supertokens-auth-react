@@ -47,7 +47,7 @@
   },
   "scripts": {
     "start": "./test/startTestApp.sh",
-    "server": "cd test/server/ && TEST_MODE=testing SPIN_UP=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
+    "server": "cd test/server/ && TEST_MODE=testing START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
     "test": "./test/startTestApp.sh --test",
     "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
     "tsc": "cd lib && npx tsc -p tsconfig.json",

@@ -25,7 +25,7 @@ import {
     SignUpThemeResponse,
     NormalisedDefaultStyles,
     NormalisedPalette,
-    onHandleSignInAndUpSuccessContext,
+    OnHandleSignInAndUpSuccessContext,
     SignInAndUpState,
     SignInAndUpStateStatus
 } from "../../types";
@@ -88,23 +88,13 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             };
         }
 
-        const { normalisedAPIResponse, responseJson } = await handleSignInAPI(
+        const normalisedAPIResponse = await handleSignInAPI(
             formFields,
             this.getRecipeInstanceOrThrow().getRecipeId(),
             this.onCallSignInAPI
         );
 
-        if (responseJson !== undefined && responseJson.user !== undefined) {
-            const user: User = {
-                id: responseJson.user.id,
-                email: responseJson.user.email
-            };
-            this.setState(() => ({
-                status: SignInAndUpStateStatus.SUBMITTED,
-                user,
-                responseJson
-            }));
-        }
+        this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
 
         return normalisedAPIResponse;
     };
@@ -133,24 +123,33 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             };
         }
 
-        const { normalisedAPIResponse, responseJson } = await handleSignUpAPI(
+        const normalisedAPIResponse = await handleSignUpAPI(
             formFields,
             this.getRecipeInstanceOrThrow().getRecipeId(),
             this.onCallSignUpAPI
         );
-        if (responseJson !== undefined && responseJson.user !== undefined) {
-            const user: User = {
-                id: responseJson.user.id,
-                email: responseJson.user.email
-            };
-            this.setState(() => ({
-                status: SignInAndUpStateStatus.SUBMITTED,
-                user,
-                responseJson
-            }));
-        }
+
+        this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
         return normalisedAPIResponse;
     };
+
+    setStateOnSuccessfulAPICall(normalisedAPIResponse: SignInThemeResponse | SignUpThemeResponse): void {
+        let user: User;
+        let responseJson: any;
+        if (normalisedAPIResponse.status === API_RESPONSE_STATUS.OK && normalisedAPIResponse.responseJson) {
+            user = {
+                id: normalisedAPIResponse.responseJson.user.id,
+                email: normalisedAPIResponse.responseJson.user.email
+            };
+            responseJson = normalisedAPIResponse.responseJson;
+        }
+
+        this.setState(() => ({
+            status: SignInAndUpStateStatus.SUBMITTED,
+            responseJson,
+            user
+        }));
+    }
 
     onSignUpSuccess = async (): Promise<void> => {
         if (this.state.status !== SignInAndUpStateStatus.SUBMITTED) {
@@ -199,7 +198,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         redirectToInApp(resetPasswordUrl.getAsStringDangerous(), "Reset password", this.props.history);
     };
 
-    onHandleSuccess = async (context: onHandleSignInAndUpSuccessContext): Promise<void> => {
+    onHandleSuccess = async (context: OnHandleSignInAndUpSuccessContext): Promise<void> => {
         // If props provided by user, and successfully handled.
         if (this.props.onHandleSuccess) {
             const isHandledByUser = await this.props.onHandleSuccess(context);

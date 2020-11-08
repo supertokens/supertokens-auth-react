@@ -30,7 +30,7 @@ export async function handleSignUpAPI(
     formFields: APIFormField[],
     rid: string,
     signUpAPI: SignUpAPI
-): Promise<{ normalisedAPIResponse: SignUpThemeResponse; responseJson?: any }> {
+): Promise<SignUpThemeResponse> {
     try {
         const headers: HeadersInit = {
             rid
@@ -40,36 +40,27 @@ export async function handleSignUpAPI(
         // Otherwise, if field errors.
         if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
             return {
-                normalisedAPIResponse: {
-                    status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    formFields: responseJson.formFields
-                }
+                status: API_RESPONSE_STATUS.FIELD_ERROR,
+                formFields: responseJson.formFields
             };
         }
 
         // Otherwise, if success.
         if (responseJson.status === API_RESPONSE_STATUS.OK) {
             return {
-                normalisedAPIResponse: {
-                    status: API_RESPONSE_STATUS.OK
-                },
-                responseJson
+                ...responseJson
             };
         }
 
         // Otherwise, something went wrong.
         return {
-            normalisedAPIResponse: {
-                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: SOMETHING_WENT_WRONG_ERROR
-            }
+            status: API_RESPONSE_STATUS.GENERAL_ERROR,
+            message: SOMETHING_WENT_WRONG_ERROR
         };
     } catch (e) {
         return {
-            normalisedAPIResponse: {
-                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: SOMETHING_WENT_WRONG_ERROR
-            }
+            status: API_RESPONSE_STATUS.GENERAL_ERROR,
+            message: SOMETHING_WENT_WRONG_ERROR
         };
     }
 }
@@ -78,7 +69,7 @@ export async function handleSignInAPI(
     formFields: APIFormField[],
     rid: string,
     signInAPI: SignInAPI
-): Promise<{ normalisedAPIResponse: SignInThemeResponse; responseJson?: any }> {
+): Promise<SignInThemeResponse> {
     try {
         const headers: HeadersInit = {
             rid
@@ -88,46 +79,35 @@ export async function handleSignInAPI(
         // Otherwise, if field errors.
         if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
             return {
-                normalisedAPIResponse: {
-                    status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    formFields: responseJson.formFields
-                }
+                status: API_RESPONSE_STATUS.FIELD_ERROR,
+                formFields: responseJson.formFields
             };
         }
 
         // Otherwise, if wrong credentials error.
         if (responseJson.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
             return {
-                normalisedAPIResponse: {
-                    status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR,
-                    message: "Incorrect email and password combination"
-                }
+                status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR,
+                message: "Incorrect email and password combination"
             };
         }
 
         // Otherwise, if success.
         if (responseJson.status === API_RESPONSE_STATUS.OK) {
             return {
-                normalisedAPIResponse: {
-                    status: API_RESPONSE_STATUS.OK
-                },
-                responseJson
+                ...responseJson
             };
         }
 
         // Otherwise, something went wrong.
         return {
-            normalisedAPIResponse: {
-                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: SOMETHING_WENT_WRONG_ERROR
-            }
+            status: API_RESPONSE_STATUS.GENERAL_ERROR,
+            message: SOMETHING_WENT_WRONG_ERROR
         };
     } catch (e) {
         return {
-            normalisedAPIResponse: {
-                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: SOMETHING_WENT_WRONG_ERROR
-            }
+            status: API_RESPONSE_STATUS.GENERAL_ERROR,
+            message: SOMETHING_WENT_WRONG_ERROR
         };
     }
 }

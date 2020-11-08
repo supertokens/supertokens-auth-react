@@ -42,12 +42,11 @@ SuperTokens.init({
                 label: "Your age",
                 placeholder: "How old are you?",
                 validate: async (value) => {
-                  if (parseInt(value) < 18) {
-                      return "You must be over 18 to register";
+                  if (parseInt(value) > 18) {
+                      return undefined;
                   }
 
-                  // If no error, return undefined.
-                  return undefined;
+                  return "You must be over 18 to register";;
                 }
               }, {
                 id: "country",

@@ -62,30 +62,26 @@ export default class HttpRequest {
     };
 
     fetch = async <T>(url: RequestInfo, config: RequestInit): Promise<T> => {
-        try {
-            let headers;
-            if (config === undefined) {
-                headers = {};
-            } else {
-                headers = config.headers;
-            }
+        let headers;
+        if (config === undefined) {
+            headers = {};
+        } else {
+            headers = config.headers;
+        }
 
-            const result = await fetch(url, {
-                ...config,
-                headers: {
-                    ...headers,
-                    "fdi-version": supported_fdi.join(","),
-                    "Content-Type": "application/json"
-                }
-            });
-            if (result.status >= 300) {
-                throw Error(SOMETHING_WENT_WRONG_ERROR);
+        const result = await fetch(url, {
+            ...config,
+            headers: {
+                ...headers,
+                "fdi-version": supported_fdi.join(","),
+                "Content-Type": "application/json"
             }
-
-            return await result.json();
-        } catch (e) {
+        });
+        if (result.status >= 300) {
             throw Error(SOMETHING_WENT_WRONG_ERROR);
         }
+
+        return await result.json();
     };
 
     getFullUrl = (pathStr: string): string => {
