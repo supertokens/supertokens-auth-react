@@ -90,7 +90,8 @@ export default class SubmitNewPasswordTheme extends PureComponent<
             ...oldState,
             hasNewPassword: true
         }));
-        if (this.props.onSuccess) {
+
+        if (this.props.onSuccess !== undefined) {
             this.props.onSuccess();
         }
     };

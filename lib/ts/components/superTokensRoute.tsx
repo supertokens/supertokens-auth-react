@@ -60,5 +60,5 @@ function SuperTokensRouteWithRecipeId({
     const recipeId = getRecipeIdFromSearch(window.location.search);
     const normalisedPath = new NormalisedURLPath(path);
     const component = SuperTokens.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
-    return <Route exact key={`st-${path}`} path={path} component={component} />;
+    return <Route exact key={`st-${path}`} path={normalisedPath.getAsStringDangerous()} component={component} />;
 }

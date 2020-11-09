@@ -34,7 +34,7 @@ import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
  * Tests.
  */
 describe("SuperTokens SignIn feature/theme", function() {
-    let testAppChildProcess, browser;
+    let browser;
     const SignInButtonQuerySelector = `document.querySelector('#${ST_ROOT_CONTAINER}').shadowRoot.querySelector('button').innerText`;
 
     before(async function() {

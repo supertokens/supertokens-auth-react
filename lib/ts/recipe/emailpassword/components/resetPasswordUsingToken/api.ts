@@ -92,17 +92,9 @@ export async function handleEnterEmailAPI(
             };
         }
 
-        // Otherwise, if success.
-        if (responseJson.status === API_RESPONSE_STATUS.OK) {
-            return {
-                status: API_RESPONSE_STATUS.OK
-            };
-        }
-
-        // Otherwise, something went wrong.
+        // Otherwise, success.
         return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
+            status: API_RESPONSE_STATUS.OK
         };
     } catch (e) {
         return {

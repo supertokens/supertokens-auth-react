@@ -25,7 +25,9 @@ import {
     SubmitNewPasswordThemeProps,
     ResetPasswordUsingTokenProps,
     onHandleResetPasswordUsingTokenSuccessContext,
-    SubmitNewPasswordThemeResponse
+    SubmitNewPasswordThemeResponse,
+    SubmitNewPasswordAPIResponse,
+    EnterEmailAPIResponse
 } from "../../types";
 import EmailPassword from "../../emailPassword";
 import { ResetPasswordUsingTokenTheme } from "../..";
@@ -141,7 +143,7 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
 
     onHandleSuccess = async (context: onHandleResetPasswordUsingTokenSuccessContext): Promise<void> => {
         // If props provided by user, and successfully handled.
-        if (this.props.onHandleSuccess) {
+        if (this.props.onHandleSuccess !== undefined) {
             await this.props.onHandleSuccess(context);
         }
 
@@ -155,9 +157,9 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
         redirectToInApp(onSuccessRedirectURL, "Sign In", this.props.history);
     };
 
-    onCallSendResetEmailAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailThemeResponse> => {
+    onCallSendResetEmailAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse> => {
         // If props provided by user.
-        if (this.props.onCallSendResetEmailAPI) {
+        if (this.props.onCallSendResetEmailAPI !== undefined) {
             return this.props.onCallSendResetEmailAPI(requestJson, headers);
         }
 
@@ -168,9 +170,9 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
     onCallSubmitNewPasswordAPI = (
         requestJson: RequestJson,
         headers: HeadersInit
-    ): Promise<SubmitNewPasswordThemeResponse> => {
+    ): Promise<SubmitNewPasswordAPIResponse> => {
         // If props provided by user.
-        if (this.props.onCallSubmitNewPasswordAPI) {
+        if (this.props.onCallSubmitNewPasswordAPI !== undefined) {
             return this.props.onCallSubmitNewPasswordAPI(requestJson, headers);
         }
 

@@ -33,7 +33,7 @@ import { TEST_CLIENT_BASE_URL } from "../constants";
  * Tests.
  */
 describe("SuperTokens Routing in Test App", function() {
-    let testAppChildProcess, browser;
+    let browser;
     const SignInButtonQuerySelector = `document.querySelector('#${ST_ROOT_CONTAINER}').shadowRoot.querySelector('button').innerText`;
     const signInLabel = "SIGN IN";
 

@@ -5,5 +5,5 @@ export declare function normaliseSignInAndUpFeature(appInfo: NormalisedAppInfo, 
 export declare function normaliseSignUpFormFeatureConfig(config?: SignUpFormFeatureUserInput): NormalisedSignUpFormFeatureConfig;
 export declare function normaliseSignInFormFeatureConfig(appInfo: NormalisedAppInfo, defaultFormFields: NormalisedFormField[], config?: SignInFormFeatureUserInput): NormalisedSignInFormFeatureConfig;
 export declare function getDefaultFormFields(): NormalisedFormField[];
-export declare function normaliseResetPasswordUsingTokenFeature(signUpPasswordFieldValidate: (value: string) => Promise<string | undefined>, config?: ResetPasswordUsingTokenUserInput): NormalisedResetPasswordUsingTokenFeatureConfig;
+export declare function normaliseResetPasswordUsingTokenFeature(signUpPasswordFieldValidate: (value: any) => Promise<string | undefined>, signUpEmailFieldValidate: (value: any) => Promise<string | undefined>, config?: ResetPasswordUsingTokenUserInput): NormalisedResetPasswordUsingTokenFeatureConfig;
 export declare function mergeFormFields(defaultFormFields: NormalisedFormField[], userFormFields: FormField[]): NormalisedFormField[];

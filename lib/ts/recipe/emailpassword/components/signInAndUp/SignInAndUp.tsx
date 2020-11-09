@@ -27,7 +27,9 @@ import {
     NormalisedPalette,
     OnHandleSignInAndUpSuccessContext,
     SignInAndUpState,
-    SignInAndUpStateStatus
+    SignInAndUpStateStatus,
+    SignInAPIResponse,
+    SignUpAPIResponse
 } from "../../types";
 import EmailPassword from "../../emailPassword";
 import { SignInAndUpTheme } from "../..";
@@ -130,6 +132,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         );
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
+
         return normalisedAPIResponse;
     };
 
@@ -142,11 +145,17 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             };
         }
 
-        this.setState(() => ({
-            status: SignInAndUpStateStatus.SUBMITTED,
-            responseJson: normalisedAPIResponse,
-            user
-        }));
+        this.setState(oldState => {
+            if (oldState.status !== SignInAndUpStateStatus.NOT_SUBMITTED) {
+                return oldState;
+            }
+
+            return {
+                status: SignInAndUpStateStatus.SUBMITTED,
+                responseJson: normalisedAPIResponse,
+                user
+            };
+        });
     }
 
     onSignUpSuccess = async (): Promise<void> => {
@@ -163,7 +172,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
 
     doesSessionExist = async (): Promise<boolean> => {
         // If props provided by user.
-        if (this.props.doesSessionExist) {
+        if (this.props.doesSessionExist !== undefined) {
             return await this.props.doesSessionExist();
         }
 
@@ -178,7 +187,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
 
     onHandleForgotPasswordClicked = async (): Promise<void> => {
         // If props provided by user, and successfully handled.
-        if (this.props.onHandleForgotPasswordClicked) {
+        if (this.props.onHandleForgotPasswordClicked !== undefined) {
             const isHandledByUser: boolean = await this.props.onHandleForgotPasswordClicked();
             if (isHandledByUser) {
                 return;
@@ -198,7 +207,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
 
     onHandleSuccess = async (context: OnHandleSignInAndUpSuccessContext): Promise<void> => {
         // If props provided by user, and successfully handled.
-        if (this.props.onHandleSuccess) {
+        if (this.props.onHandleSuccess !== undefined) {
             const isHandledByUser = await this.props.onHandleSuccess(context);
             if (isHandledByUser) {
                 return;
@@ -212,9 +221,9 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         redirectToWithReload(onSuccessRedirectURL);
     };
 
-    onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpThemeResponse> => {
+    onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpAPIResponse> => {
         // If props provided by user.
-        if (this.props.onCallSignUpAPI) {
+        if (this.props.onCallSignUpAPI !== undefined) {
             return this.props.onCallSignUpAPI(requestJson, headers);
         }
 
@@ -222,9 +231,9 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         return this.getRecipeInstanceOrThrow().signUpAPI(requestJson, headers);
     };
 
-    onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignInThemeResponse> => {
+    onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
         // If props provided by user.
-        if (this.props.onCallSignInAPI) {
+        if (this.props.onCallSignInAPI !== undefined) {
             return this.props.onCallSignInAPI(requestJson, headers);
         }
 
@@ -241,10 +250,16 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             return await this.onHandleSuccess({ action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS });
         }
 
-        this.setState(oldState => ({
-            ...oldState,
-            status: SignInAndUpStateStatus.NOT_SUBMITTED
-        }));
+        this.setState(oldState => {
+            if (oldState.status !== SignInAndUpStateStatus.LOADING) {
+                return oldState;
+            }
+
+            return {
+                ...oldState,
+                status: SignInAndUpStateStatus.NOT_SUBMITTED
+            };
+        });
     };
 
     render = (): JSX.Element => {

@@ -45,18 +45,8 @@ export async function handleSignUpAPI(
             };
         }
 
-        // Otherwise, if success.
-        if (response.status === API_RESPONSE_STATUS.OK) {
-            return {
-                ...response
-            };
-        }
-
-        // Otherwise, something went wrong.
-        return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
-        };
+        // Otherwise, success.
+        return response;
     } catch (e) {
         return {
             status: API_RESPONSE_STATUS.GENERAL_ERROR,

@@ -82,7 +82,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
             ...oldState,
             emailSent: true
         }));
-        if (this.props.onSuccess) {
+        if (this.props.onSuccess !== undefined) {
             this.props.onSuccess();
         }
     };

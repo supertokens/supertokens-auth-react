@@ -33,10 +33,10 @@ export default class EmailPasswordAPIWrapper {
      * Static attributes.
      */
 
-    SignInAndUp = SignInAndUp;
-    SignInAndUpTheme = SignInAndUpTheme;
-    ResetPasswordUsingToken = ResetPasswordUsingToken;
-    ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
+    static SignInAndUp = SignInAndUp;
+    static SignInAndUpTheme = SignInAndUpTheme;
+    static ResetPasswordUsingToken = ResetPasswordUsingToken;
+    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
 
     static init(config: EmailPasswordConfig): CreateRecipeFunction {
         return EmailPassword.init(config);
@@ -46,8 +46,8 @@ export default class EmailPasswordAPIWrapper {
         return EmailPassword.signOut();
     }
 }
-const init = EmailPasswordAPIWrapper.init;
 
+const init = EmailPasswordAPIWrapper.init;
 const signOut = EmailPasswordAPIWrapper.signOut;
 
 export {

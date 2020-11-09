@@ -5,10 +5,10 @@ import SignInAndUpTheme from "./components/signInAndUp/themes/default";
 import ResetPasswordUsingTokenTheme from "./components/resetPasswordUsingToken/themes/default";
 import ResetPasswordUsingToken from "./components/resetPasswordUsingToken/resetPasswordUsingToken";
 export default class EmailPasswordAPIWrapper {
-    SignInAndUp: import("../../types").ReactComponentClass;
-    SignInAndUpTheme: typeof SignInAndUpTheme;
-    ResetPasswordUsingToken: typeof ResetPasswordUsingToken;
-    ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
+    static SignInAndUp: import("../../types").ReactComponentClass;
+    static SignInAndUpTheme: typeof SignInAndUpTheme;
+    static ResetPasswordUsingToken: typeof ResetPasswordUsingToken;
+    static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static init(config: EmailPasswordConfig): CreateRecipeFunction;
     static signOut(): Promise<SignOutResponse>;
 }

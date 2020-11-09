@@ -71,7 +71,7 @@ export async function defaultPasswordValidator(value: any): Promise<string | und
 
 /*
  * defaultLoginPasswordValidator.
- * min 1 characters.
+ * type string
  */
 
 export async function defaultLoginPasswordValidator(value: any): Promise<string | undefined> {
@@ -79,10 +79,6 @@ export async function defaultLoginPasswordValidator(value: any): Promise<string 
         return "Password must be of type string";
     }
 
-    // length = 0
-    if (value.length === 0) {
-        return "Password must not be empty";
-    }
     return undefined;
 }
 

@@ -143,12 +143,12 @@ export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
 /*
  * redirectToWithReload
  */
-export function redirectToWithReload(path: string): void {
-    if (path.length === 0) {
-        path = "/";
+export function redirectToWithReload(url: string): void {
+    if (url.length === 0) {
+        url = "/";
     }
 
-    window.location.href = path;
+    window.location.href = url;
 }
 
 /*

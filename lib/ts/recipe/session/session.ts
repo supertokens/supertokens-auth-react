@@ -89,15 +89,16 @@ export default class Session extends RecipeModule {
         return this.sessionSdk.doesSessionExist();
     };
 
-    addAxiosInterceptors = (): boolean => {
-        return this.sessionSdk.addAxiosInterceptors();
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    addAxiosInterceptors = (axiosInstance: any): void => {
+        return this.sessionSdk.addAxiosInterceptors(axiosInstance);
     };
 
-    setAuth0API = (): boolean => {
-        return this.sessionSdk.setAuth0API();
+    setAuth0API = (apiPath: string): void => {
+        return this.sessionSdk.setAuth0API(apiPath);
     };
 
-    getAuth0API = (): boolean => {
+    getAuth0API = (): { apiPath: string } => {
         return this.sessionSdk.getAuth0API();
     };
 
@@ -144,15 +145,16 @@ export default class Session extends RecipeModule {
         return Session.getInstanceOrThrow().doesSessionExist();
     }
 
-    static addAxiosInterceptors(): boolean {
-        return Session.getInstanceOrThrow().addAxiosInterceptors();
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    static addAxiosInterceptors(axiosInstance: any): void {
+        return Session.getInstanceOrThrow().addAxiosInterceptors(axiosInstance);
     }
 
-    static setAuth0API(): boolean {
-        return Session.getInstanceOrThrow().setAuth0API();
+    static setAuth0API(apiPath: string): void {
+        return Session.getInstanceOrThrow().setAuth0API(apiPath);
     }
 
-    static getAuth0API(): boolean {
+    static getAuth0API(): { apiPath: string } {
         return Session.getInstanceOrThrow().getAuth0API();
     }
 

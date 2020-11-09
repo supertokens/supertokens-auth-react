@@ -50,8 +50,16 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
             return <MANDATORY_FORM_FIELDS_ID>field.id === MANDATORY_FORM_FIELDS_ID.PASSWORD;
         }
     );
+
+    const signUpEmailField: NormalisedFormField = <NormalisedFormField>signInAndUpFeature.signUpForm.formFields.find(
+        (field: NormalisedFormField) => {
+            return <MANDATORY_FORM_FIELDS_ID>field.id === MANDATORY_FORM_FIELDS_ID.EMAIL;
+        }
+    );
+
     const resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig = normaliseResetPasswordUsingTokenFeature(
         signUpPasswordField.validate,
+        signUpEmailField.validate,
         config.resetPasswordUsingTokenFeature
     );
 
@@ -65,7 +73,7 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
         }
     }
 
-    const useShadowDom = config.useShadowDom !== undefined ? config.useShadowDom === true : true;
+    const useShadowDom = config.useShadowDom !== undefined ? config.useShadowDom : true;
 
     return {
         palette,
@@ -217,7 +225,8 @@ function getDefaultPasswordFormField(): NormalisedFormField {
 }
 
 export function normaliseResetPasswordUsingTokenFeature(
-    signUpPasswordFieldValidate: (value: string) => Promise<string | undefined>,
+    signUpPasswordFieldValidate: (value: any) => Promise<string | undefined>,
+    signUpEmailFieldValidate: (value: any) => Promise<string | undefined>,
     config?: ResetPasswordUsingTokenUserInput
 ): NormalisedResetPasswordUsingTokenFeatureConfig {
     if (config === undefined) {
@@ -259,7 +268,15 @@ export function normaliseResetPasswordUsingTokenFeature(
 
     const enterEmailForm: NormalisedEnterEmailForm = {
         style: enterEmailFormStyle,
-        formFields: [getDefaultEmailFormField()]
+        formFields: [
+            {
+                id: "email",
+                label: "Email",
+                placeholder: "Email address",
+                validate: signUpEmailFieldValidate,
+                optional: false
+            }
+        ]
     };
 
     return {

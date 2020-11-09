@@ -146,7 +146,7 @@ describe("EmailPassword", function() {
             id: "email",
             label: "Custom Email Label",
             placeholder: "Your custom email",
-            validate: async email => "Custom Email",
+            validate: async email => "Custom Email Error",
             optional: false
         };
         EmailPassword.init({
@@ -169,7 +169,7 @@ describe("EmailPassword", function() {
             .getConfig().signInAndUpFeature.signUpForm
             .formFields[0]
             .validate("foo");
-        assert.strictEqual(signUpEmailValidateError, "Custom Email");
+        assert.strictEqual(signUpEmailValidateError, "Custom Email Error");
 
         // Sign In fields changed.
         assert.deepStrictEqual(
@@ -188,7 +188,7 @@ describe("EmailPassword", function() {
             .getConfig().signInAndUpFeature.signInForm
             .formFields[0]
             .validate("foo");
-        assert.strictEqual(signInEmailValidateError, "Custom Email");
+        assert.strictEqual(signInEmailValidateError, "Custom Email Error");
     });
 
     it("Initializing EmailPassword with custom Email for Sign In only", async function() {
@@ -291,7 +291,7 @@ describe("EmailPassword", function() {
             id: "email",
             label: "Custom Email Label",
             placeholder: "Your custom email",
-            validate: async email => "Custom Email",
+            validate: async email => "Custom Email Error",
             optional: false
         };
         EmailPassword.init({
@@ -314,7 +314,7 @@ describe("EmailPassword", function() {
             .getConfig().signInAndUpFeature.signUpForm
             .formFields[0]
             .validate("foo");
-        assert.strictEqual(signUpEmailValidateError, "Custom Email");
+        assert.strictEqual(signUpEmailValidateError, "Custom Email Error");
 
         // Sign In fields changed.
         assert.deepStrictEqual(
@@ -333,7 +333,13 @@ describe("EmailPassword", function() {
             .getConfig().signInAndUpFeature.signInForm
             .formFields[0]
             .validate("foo");
-        assert.strictEqual(signInEmailValidateError, "Custom Email");
+        assert.strictEqual(signInEmailValidateError, "Custom Email Error");
+
+        const enterEmailPasswordResetEmailValidateError = await EmailPassword.getInstanceOrThrow()
+            .getConfig().resetPasswordUsingTokenFeature.enterEmailForm
+            .formFields[0]
+            .validate("foo");
+        assert.strictEqual(enterEmailPasswordResetEmailValidateError, "Custom Email Error");
     });
 
     it("Initializing EmailPassword with custom password validator for signup propagates to reset password", async function() {

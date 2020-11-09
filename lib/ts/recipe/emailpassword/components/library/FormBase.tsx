@@ -98,8 +98,6 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
 
         // If successfully logged in.
         if (result.status === API_RESPONSE_STATUS.OK) {
-            // TODO: Show result in UI?
-
             if (this.props.onSuccess !== undefined) {
                 this.props.onSuccess();
             }

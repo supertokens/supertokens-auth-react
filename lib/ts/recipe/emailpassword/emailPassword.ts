@@ -27,13 +27,13 @@ import {
 import {
     EmailPasswordConfig,
     EmailPasswordUserInput,
-    EnterEmailThemeResponse,
+    EnterEmailAPIResponse,
     FormFieldError,
     NormalisedEmailPasswordConfig,
-    SignInThemeResponse,
+    SignInAPIResponse,
     SignOutResponse,
-    SignUpThemeResponse,
-    SubmitNewPasswordThemeResponse
+    SignUpAPIResponse,
+    SubmitNewPasswordAPIResponse
 } from "./types";
 import { isTest, validateForm } from "../../utils";
 import HttpRequest from "../../httpRequest";
@@ -101,14 +101,14 @@ export default class EmailPassword extends RecipeModule {
      * SignIn/SignUp
      */
 
-    signUpAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpThemeResponse> => {
+    signUpAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpAPIResponse> => {
         return this.httpRequest.post("/signup", {
             body: JSON.stringify(requestJson),
             headers
         });
     };
 
-    signInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInThemeResponse> => {
+    signInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
         return this.httpRequest.post("/signin", {
             body: JSON.stringify(requestJson),
             headers
@@ -122,14 +122,14 @@ export default class EmailPassword extends RecipeModule {
     submitNewPasswordAPI = async (
         requestJson: RequestJson,
         headers: HeadersInit
-    ): Promise<SubmitNewPasswordThemeResponse> => {
+    ): Promise<SubmitNewPasswordAPIResponse> => {
         return this.httpRequest.post("/user/password/reset", {
             body: JSON.stringify(requestJson),
             headers
         });
     };
 
-    enterEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailThemeResponse> => {
+    enterEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse> => {
         return this.httpRequest.post("/user/password/reset/token", {
             body: JSON.stringify(requestJson),
             headers
