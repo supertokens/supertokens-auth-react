@@ -26,4 +26,6 @@ export const ST_ROOT_CONTAINER = "supertokens-root";
 
 export const SOMETHING_WENT_WRONG_ERROR = "Something went wrong. Please try again";
 
+export const RESET_PASSWORD_INVALID_TOKEN_ERROR = "Invalid password reset token";
+
 export const INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR = "Incorrect email and password combination";

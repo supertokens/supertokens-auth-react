@@ -53,7 +53,6 @@ function SuperTokensRouteWithRecipeId({
     path: string;
     Route: new () => React.Component<{
         exact: unknown;
-        strict: unknown;
         path: string;
         component?: ReactComponentClass;
     }>;
@@ -61,5 +60,5 @@ function SuperTokensRouteWithRecipeId({
     const recipeId = getRecipeIdFromSearch(window.location.search);
     const normalisedPath = new NormalisedURLPath(path);
     const component = SuperTokens.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
-    return <Route exact strict key={`st-${path}`} path={path} component={component} />;
+    return <Route exact key={`st-${path}`} path={path} component={component} />;
 }

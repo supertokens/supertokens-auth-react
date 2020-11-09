@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
+import { RESET_PASSWORD_INVALID_TOKEN_ERROR, SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
 import { APIFormField } from "../../../../types";
 import { API_RESPONSE_STATUS } from "../../constants";
 import {
@@ -53,10 +53,11 @@ export async function handleSubmitNewPasswordAPI(
             };
         }
 
-        // Otherwise, if wrong credentials error.
+        // Otherwise, if reset password invalid token error.
         if (responseJson.status === API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR) {
             return {
-                status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR
+                status: API_RESPONSE_STATUS.GENERAL_ERROR,
+                message: RESET_PASSWORD_INVALID_TOKEN_ERROR
             };
         }
 
