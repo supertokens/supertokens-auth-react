@@ -13,7 +13,7 @@ declare class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTo
     onEnterEmailFormSuccess: () => Promise<void>;
     onHandleSuccess: (context: onHandleResetPasswordUsingTokenSuccessContext) => Promise<void>;
     onSignInClicked: () => void;
-    onCallEnterEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<any>;
+    onCallSendResetEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<any>;
     onCallSubmitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<any>;
     render: () => JSX.Element;
 }

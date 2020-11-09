@@ -282,7 +282,7 @@ export type ResetPasswordUsingTokenProps = BaseProps & {
 
     onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordThemeResponse>;
 
-    onCallEnterEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailThemeResponse>;
+    onCallSendResetEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailThemeResponse>;
 };
 
 export type onHandleResetPasswordUsingTokenSuccessContext = {
