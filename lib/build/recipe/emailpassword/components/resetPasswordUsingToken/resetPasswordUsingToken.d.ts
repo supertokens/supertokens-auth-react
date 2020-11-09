@@ -13,8 +13,8 @@ declare class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTo
     onEnterEmailFormSuccess: () => Promise<void>;
     onHandleSuccess: (context: onHandleResetPasswordUsingTokenSuccessContext) => Promise<void>;
     onSignInClicked: () => void;
-    onCallSendResetEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<any>;
-    onCallSubmitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<any>;
+    onCallSendResetEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<import("../../types").BaseResponse>;
+    onCallSubmitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordThemeResponse>;
     render: () => JSX.Element;
 }
 export default ResetPasswordUsingToken;
