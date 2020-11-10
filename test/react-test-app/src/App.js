@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import './App.css';
-import './App.css';
+
 import AppWithoutRouter from './AppWithoutRouter';
 import AppWithReactDomRouter from './AppWithReactDomRouter';
 import Footer from "./Footer";
@@ -33,6 +33,8 @@ SuperTokens.init({
       signInAndUpFeature: {
         onSuccessRedirectURL: '/dashboard',
         signUpForm: {
+          privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+          termsAndConditionsLink: "https://supertokens.io/legal/terms-and-conditions",
           formFields: [{
                 id: "name",
                 label: "Full name",

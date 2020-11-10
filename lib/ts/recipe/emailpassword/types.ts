@@ -355,7 +355,7 @@ export type SignUpThemeProps = ThemeBaseProps & {
     termsAndConditionsLink?: string;
 
     /*
-     * Call Sign In API.
+     * Call Sign Up API.
      */
     callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
 };
