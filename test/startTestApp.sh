@@ -53,6 +53,7 @@ function startEndToEnd () {
         echo "Waiting for front end test application to start..."
         sleep 5
     done
+    sleep 5 # Because the server is responding does not mean the app is ready. Let's wait another 5secs to make sure the app is up.
     moveBackNodeModules
     echo "Start mocha testing"
     TEST_MODE=testing mocha --require @babel/register --timeout 500000

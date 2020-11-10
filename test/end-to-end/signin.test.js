@@ -46,8 +46,6 @@ describe("SuperTokens SignIn feature/theme", function() {
             method: "POST"
         }).catch(console.error);
 
-        await new Promise(r => setTimeout(r, 4000));
-
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true

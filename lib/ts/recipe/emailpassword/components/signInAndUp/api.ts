@@ -46,7 +46,17 @@ export async function handleSignUpAPI(
         }
 
         // Otherwise, success.
-        return response;
+        if (response.status === API_RESPONSE_STATUS.OK) {
+            return response;
+        }
+
+        console.error(
+            "There was an error handling the output format of onCallSignUpAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks//sign-in-up#output"
+        );
+        return {
+            status: API_RESPONSE_STATUS.GENERAL_ERROR,
+            message: SOMETHING_WENT_WRONG_ERROR
+        };
     } catch (e) {
         return {
             status: API_RESPONSE_STATUS.GENERAL_ERROR,
@@ -84,12 +94,13 @@ export async function handleSignInAPI(
 
         // Otherwise, if success.
         if (response.status === API_RESPONSE_STATUS.OK) {
-            return {
-                ...response
-            };
+            return response;
         }
 
         // Otherwise, something went wrong.
+        console.error(
+            "There was an error handling the output format of onCallSignInAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks//sign-in-up#output-1"
+        );
         return {
             status: API_RESPONSE_STATUS.GENERAL_ERROR,
             message: SOMETHING_WENT_WRONG_ERROR

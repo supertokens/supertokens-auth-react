@@ -137,7 +137,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
     };
 
     setStateOnSuccessfulAPICall(normalisedAPIResponse: SignInThemeResponse | SignUpThemeResponse): void {
-        let user: User;
+        let user: User | undefined;
         if (normalisedAPIResponse.status === API_RESPONSE_STATUS.OK && normalisedAPIResponse.user) {
             user = {
                 id: normalisedAPIResponse.user.id,
@@ -194,7 +194,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             }
         }
 
-        // Otherwise, redirect to resetPasswordURL if defined.
+        // Otherwise, redirect to resetPasswordURL, if defined.
         const resetPasswordUrl = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm
             .resetPasswordURL;
 
