@@ -21,7 +21,6 @@ import { PureComponent, Fragment } from "react";
 import {
     SignInThemeResponse,
     SignInAndUpProps,
-    User,
     SignUpThemeResponse,
     NormalisedDefaultStyles,
     NormalisedPalette,
@@ -102,7 +101,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
     };
 
     onSignInSuccess = async (): Promise<void> => {
-        if (this.state.status !== SignInAndUpStateStatus.SUBMITTED) {
+        if (this.state.status !== SignInAndUpStateStatus.SUCCESSFUL) {
             throw Error(SOMETHING_WENT_WRONG_ERROR);
         }
 
@@ -137,29 +136,27 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
     };
 
     setStateOnSuccessfulAPICall(normalisedAPIResponse: SignInThemeResponse | SignUpThemeResponse): void {
-        let user: User | undefined;
-        if (normalisedAPIResponse.status === API_RESPONSE_STATUS.OK && normalisedAPIResponse.user) {
-            user = {
-                id: normalisedAPIResponse.user.id,
-                email: normalisedAPIResponse.user.email
-            };
-        }
-
         this.setState(oldState => {
-            if (oldState.status !== SignInAndUpStateStatus.NOT_SUBMITTED) {
+            if (
+                oldState.status !== SignInAndUpStateStatus.READY ||
+                normalisedAPIResponse.status !== API_RESPONSE_STATUS.OK
+            ) {
                 return oldState;
             }
 
             return {
-                status: SignInAndUpStateStatus.SUBMITTED,
+                status: SignInAndUpStateStatus.SUCCESSFUL,
                 responseJson: normalisedAPIResponse,
-                user
+                user: {
+                    id: normalisedAPIResponse.user.id,
+                    email: normalisedAPIResponse.user.email
+                }
             };
         });
     }
 
     onSignUpSuccess = async (): Promise<void> => {
-        if (this.state.status !== SignInAndUpStateStatus.SUBMITTED) {
+        if (this.state.status !== SignInAndUpStateStatus.SUCCESSFUL) {
             throw Error(SOMETHING_WENT_WRONG_ERROR);
         }
 
@@ -257,7 +254,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
 
             return {
                 ...oldState,
-                status: SignInAndUpStateStatus.NOT_SUBMITTED
+                status: SignInAndUpStateStatus.READY
             };
         });
     };
