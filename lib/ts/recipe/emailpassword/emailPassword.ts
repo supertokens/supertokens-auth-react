@@ -27,15 +27,15 @@ import {
 import {
     EmailPasswordConfig,
     EmailPasswordUserInput,
-    EnterEmailThemeResponse,
+    EnterEmailAPIResponse,
     FormFieldError,
     NormalisedEmailPasswordConfig,
-    SignInThemeResponse,
+    SignInAPIResponse,
     SignOutResponse,
-    SignUpThemeResponse,
-    SubmitNewPasswordThemeResponse
+    SignUpAPIResponse,
+    SubmitNewPasswordAPIResponse
 } from "./types";
-import { isTest, validateFormOrThrow } from "../../utils";
+import { isTest, validateForm } from "../../utils";
 import HttpRequest from "../../httpRequest";
 import { normaliseEmailPasswordConfig } from "./utils";
 import { SignInAndUp } from ".";
@@ -51,7 +51,7 @@ export default class EmailPassword extends RecipeModule {
      * Static Attributes.
      */
     static instance?: EmailPassword;
-    static RECIPE_ID = "email-password";
+    static RECIPE_ID = "emailpassword";
 
     /*
      * Instance Attributes.
@@ -101,14 +101,14 @@ export default class EmailPassword extends RecipeModule {
      * SignIn/SignUp
      */
 
-    signUpAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpThemeResponse> => {
+    signUpAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpAPIResponse> => {
         return this.httpRequest.post("/signup", {
             body: JSON.stringify(requestJson),
             headers
         });
     };
 
-    signInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInThemeResponse> => {
+    signInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
         return this.httpRequest.post("/signin", {
             body: JSON.stringify(requestJson),
             headers
@@ -122,14 +122,14 @@ export default class EmailPassword extends RecipeModule {
     submitNewPasswordAPI = async (
         requestJson: RequestJson,
         headers: HeadersInit
-    ): Promise<SubmitNewPasswordThemeResponse> => {
+    ): Promise<SubmitNewPasswordAPIResponse> => {
         return this.httpRequest.post("/user/password/reset", {
             body: JSON.stringify(requestJson),
             headers
         });
     };
 
-    enterEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailThemeResponse> => {
+    enterEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse> => {
         return this.httpRequest.post("/user/password/reset/token", {
             body: JSON.stringify(requestJson),
             headers
@@ -158,11 +158,11 @@ export default class EmailPassword extends RecipeModule {
      */
 
     async signUpValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateFormOrThrow(input, this.config.signInAndUpFeature.signUpForm.formFields);
+        return await validateForm(input, this.config.signInAndUpFeature.signUpForm.formFields);
     }
 
     async signInValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateFormOrThrow(input, this.config.signInAndUpFeature.signInForm.formFields);
+        return await validateForm(input, this.config.signInAndUpFeature.signInForm.formFields);
     }
 
     /*
@@ -170,14 +170,11 @@ export default class EmailPassword extends RecipeModule {
      */
 
     async submitNewPasswordValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateFormOrThrow(
-            input,
-            this.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
-        );
+        return await validateForm(input, this.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields);
     }
 
     async enterEmailValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateFormOrThrow(input, this.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields);
+        return await validateForm(input, this.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields);
     }
 
     /*

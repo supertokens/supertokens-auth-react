@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { Component, Fragment } from "react";
+import { PureComponent, Fragment } from "react";
 import {
     EnterEmailThemeResponse,
     NormalisedDefaultStyles,
@@ -25,7 +25,9 @@ import {
     SubmitNewPasswordThemeProps,
     ResetPasswordUsingTokenProps,
     onHandleResetPasswordUsingTokenSuccessContext,
-    SubmitNewPasswordThemeResponse
+    SubmitNewPasswordThemeResponse,
+    SubmitNewPasswordAPIResponse,
+    EnterEmailAPIResponse
 } from "../../types";
 import EmailPassword from "../../emailPassword";
 import { ResetPasswordUsingTokenTheme } from "../..";
@@ -37,12 +39,13 @@ import { jsx } from "@emotion/core";
 import { getDefaultStyles } from "../../styles/styles";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../constants";
 import { redirectToInApp } from "../../../../utils";
+import { handleEnterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 
 /*
  * Component.
  */
 
-class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { token: string }> {
+class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps, { token: string }> {
     /*
      * Constructor.
      */
@@ -99,47 +102,12 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         }
 
         // Call API, only send first password.
-        return await this.submitNewPasswordAPI([formFields[0]]);
-    };
-
-    submitNewPasswordAPI = async (formFields: APIFormField[]): Promise<SubmitNewPasswordThemeResponse> => {
-        try {
-            const headers: HeadersInit = {
-                rid: this.getRecipeInstanceOrThrow().getRecipeId()
-            };
-            const responseJson = await this.onCallSubmitNewPasswordAPI(
-                {
-                    formFields,
-                    token: this.state.token
-                },
-                headers
-            );
-
-            // Otherwise, if field errors.
-            if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-                return {
-                    status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    formFields: responseJson.formFields
-                };
-            }
-
-            // Otherwise, if wrong credentials error.
-            if (responseJson.status === API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR) {
-                return {
-                    status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR
-                };
-            }
-
-            // Otherwise, status === OK
-            return {
-                status: API_RESPONSE_STATUS.OK
-            };
-        } catch (e) {
-            return {
-                status: API_RESPONSE_STATUS.OK
-                // message: "Something went wrong. Please try again"
-            };
-        }
+        return await handleSubmitNewPasswordAPI(
+            [formFields[0]],
+            this.getRecipeInstanceOrThrow().getRecipeId(),
+            this.onCallSubmitNewPasswordAPI,
+            this.state.token
+        );
     };
 
     onSubmitNewPasswordFormSuccess = async (): Promise<void> => {
@@ -160,42 +128,11 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
             };
         }
 
-        return await this.enterEmailAPI(formFields);
-    };
-
-    enterEmailAPI = async (formFields: APIFormField[]): Promise<EnterEmailThemeResponse> => {
-        try {
-            const headers: HeadersInit = {
-                rid: this.getRecipeInstanceOrThrow().getRecipeId()
-            };
-            const responseJson = await this.onCallEnterEmailAPI({ formFields }, headers);
-
-            // Otherwise, if field errors.
-            if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-                return {
-                    status: API_RESPONSE_STATUS.FIELD_ERROR,
-                    formFields: responseJson.formFields
-                };
-            }
-
-            // Otherwise, if success.
-            if (responseJson.status === API_RESPONSE_STATUS.OK) {
-                return {
-                    status: API_RESPONSE_STATUS.OK
-                };
-            }
-
-            // Otherwise, something went wrong.
-            return {
-                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: "Something went wrong. Please try again"
-            };
-        } catch (e) {
-            return {
-                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: "Something went wrong. Please try again"
-            };
-        }
+        return await handleEnterEmailAPI(
+            formFields,
+            this.getRecipeInstanceOrThrow().getRecipeId(),
+            this.onCallSendResetEmailAPI
+        );
     };
 
     onEnterEmailFormSuccess = async (): Promise<void> => {
@@ -206,7 +143,7 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
 
     onHandleSuccess = async (context: onHandleResetPasswordUsingTokenSuccessContext): Promise<void> => {
         // If props provided by user, and successfully handled.
-        if (this.props.onHandleSuccess) {
+        if (this.props.onHandleSuccess !== undefined) {
             await this.props.onHandleSuccess(context);
         }
 
@@ -220,19 +157,22 @@ class ResetPasswordUsingToken extends Component<ResetPasswordUsingTokenProps, { 
         redirectToInApp(onSuccessRedirectURL, "Sign In", this.props.history);
     };
 
-    onCallEnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
+    onCallSendResetEmailAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse> => {
         // If props provided by user.
-        if (this.props.onCallEnterEmailAPI) {
-            return this.props.onCallEnterEmailAPI(requestJson, headers);
+        if (this.props.onCallSendResetEmailAPI !== undefined) {
+            return this.props.onCallSendResetEmailAPI(requestJson, headers);
         }
 
         // Otherwise, use default.
         return this.getRecipeInstanceOrThrow().enterEmailAPI(requestJson, headers);
     };
 
-    onCallSubmitNewPasswordAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<any> => {
+    onCallSubmitNewPasswordAPI = (
+        requestJson: RequestJson,
+        headers: HeadersInit
+    ): Promise<SubmitNewPasswordAPIResponse> => {
         // If props provided by user.
-        if (this.props.onCallSubmitNewPasswordAPI) {
+        if (this.props.onCallSubmitNewPasswordAPI !== undefined) {
             return this.props.onCallSubmitNewPasswordAPI(requestJson, headers);
         }
 

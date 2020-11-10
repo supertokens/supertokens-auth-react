@@ -11,6 +11,14 @@ import EmailPassword, {signOut} from 'supertokens-auth-react/recipe/emailpasswor
 import Session, {doesSessionExist} from 'supertokens-auth-react/recipe/session';
 
 
+const colors = getQueryParams('theme') === 'dark' ? {
+  background: '#333',
+  textTitle: "white",
+  textLabel: "white",
+  textPrimary: "white",
+  textLink: '#c31e1e'
+} : {};
+
 SuperTokens.init({
   appInfo: {
     appName: "SuperTokens",
@@ -19,41 +27,34 @@ SuperTokens.init({
   },
   recipeList: [
     EmailPassword.init({
-      // palette: {
-      //   colors: {
-      //     primary: '#1d1d50',
-      //     background: '#2f4566',
-      //     textPrimary: "white",
-      //     textSecondary: "#fff",
-      //     textLink: 'red'
-      //   }
-      // },
+      palette: {
+        colors
+      },
       signInAndUpFeature: {
         onSuccessRedirectURL: '/dashboard',
         signUpForm: {
-          privacyPolicyLink: "http://localhost:3031/privacy",
-          termsAndConditionsLink: "http://localhost:3031/terms",
           formFields: [{
-            id: "company",
-            label: "Company",
-            placeholder: "Your company name"
-          }, {
-            id: "First Name",
-            label: "First Name",
-            placeholder: "First Name",
-            optional: false
-          }, {
-            id: "Last Name",
-            label: "Last Name",
-            placeholder: "Last Name",
-            optional: false
-          },  {
-            id: "City",
-            label: "City",
-            placeholder: "City",
-            optional: true
-          }]
-        }
+                id: "name",
+                label: "Full name",
+                placeholder: "First name and last name"
+            },{
+                id: "age",
+                label: "Your age",
+                placeholder: "How old are you?",
+                validate: async (value) => {
+                  if (parseInt(value) > 18) {
+                      return undefined;
+                  }
+
+                  return "You must be over 18 to register";;
+                }
+              }, {
+                id: "country",
+                label: "Your Country",
+                placeholder: "Where do you live?",
+                optional: true
+            }]
+          }
       }
     }),
     Session.init()
@@ -62,7 +63,7 @@ SuperTokens.init({
 
 /* App */
 function App() {
-  const router = getRouterFromLocationQueryParams();
+  const router = getQueryParams('router');
 
   if (router === 'no-router') {
     return <AppWithoutRouter />
@@ -71,9 +72,10 @@ function App() {
   return <AppWithReactDomRouter/>
 }
 
-function getRouterFromLocationQueryParams() {
+
+function getQueryParams(param) {
   const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get('router');
+  return urlParams.get(param);
 }
 
 export default App;

@@ -15,7 +15,7 @@
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 import { ComponentClass } from "react";
 
 /*
@@ -177,7 +177,7 @@ export type FormField = FormFieldBaseConfig & {
     /*
      * Validation function of the input field. Returns an error as a string, or undefined.
      */
-    validate?: (value: string) => Promise<string | undefined>;
+    validate?: (value: any) => Promise<string | undefined>;
 
     /*
      * Whether the field is optional or not.
@@ -231,7 +231,7 @@ export type NormalisedFormField = {
     /*
      * Validation function of the input field. Returns an error as a string, or undefined.
      */
-    validate: (value: string) => Promise<string | undefined>;
+    validate: (value: any) => Promise<string | undefined>;
 
     /*
      * Whether the field is optional or not.
@@ -241,4 +241,4 @@ export type NormalisedFormField = {
 
 export type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);
 
-export type Styles = Record<string, CSSInterpolation>;
+export type Styles = Record<string, CSSObject>;

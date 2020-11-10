@@ -31,23 +31,9 @@ require("jsdom-global")();
  * Tests.
  */
 describe("SuperTokens Reset password feature/theme", function() {
-    let testAppChildProcess, browser;
+    let browser;
 
     before(async function() {
-        testAppChildProcess = spawn("./test/startTestApp.sh", ["--no-build"]);
-
-        testAppChildProcess.stderr.on("data", function(data) {
-            console.log("stderr:" + data);
-        });
-
-        testAppChildProcess.stdout.on("data", function(data) {
-            if (data.toString().startsWith("LOGS:")) {
-                console.log(data.toString());
-            }
-        });
-
-        await new Promise(r => setTimeout(r, 3000));
-
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true
@@ -56,7 +42,6 @@ describe("SuperTokens Reset password feature/theme", function() {
 
     after(async function() {
         await browser.close();
-        testAppChildProcess.kill();
     });
 
     describe("Reset password enter email form test", function() {

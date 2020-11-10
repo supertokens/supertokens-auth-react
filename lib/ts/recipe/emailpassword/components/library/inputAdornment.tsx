@@ -22,7 +22,7 @@ import { jsx } from "@emotion/core";
 import Checked from "../../assets/checked";
 import Error from "../../assets/error";
 import * as React from "react";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 import { NormalisedDefaultStyles, NormalisedPalette } from "../../types";
 
 export type AdornmentType = "success" | "error" | undefined;
@@ -32,7 +32,7 @@ export type AdornmentType = "success" | "error" | undefined;
  */
 
 type InputAdornmentProps = {
-    style?: CSSInterpolation;
+    style?: CSSObject;
     type: AdornmentType;
     defaultStyles: NormalisedDefaultStyles;
     palette: NormalisedPalette;

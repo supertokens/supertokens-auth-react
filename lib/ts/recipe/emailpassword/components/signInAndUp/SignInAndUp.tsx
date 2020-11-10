@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { Component, Fragment } from "react";
+import { PureComponent, Fragment } from "react";
 import {
     SignInThemeResponse,
     SignInAndUpProps,
@@ -25,7 +25,11 @@ import {
     SignUpThemeResponse,
     NormalisedDefaultStyles,
     NormalisedPalette,
-    onHandleSignInAndUpSuccessContext
+    OnHandleSignInAndUpSuccessContext,
+    SignInAndUpState,
+    SignInAndUpStateStatus,
+    SignInAPIResponse,
+    SignUpAPIResponse
 } from "../../types";
 import EmailPassword from "../../emailPassword";
 import { SignInAndUpTheme } from "../..";
@@ -38,12 +42,14 @@ import { jsx } from "@emotion/core";
 import { getDefaultStyles } from "../../styles/styles";
 import { redirectToInApp, redirectToWithReload, WithRouter } from "../../../../utils";
 import SuperTokens from "../../../../superTokens";
+import { handleSignInAPI, handleSignUpAPI } from "./api";
+import { SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
 
 /*
  * Component.
  */
 
-class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user?: User; responseJson: any }> {
+class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
     /*
      * Constructor.
      */
@@ -51,9 +57,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user
         super(props);
 
         this.state = {
-            isLoading: true,
-            user: undefined,
-            responseJson: undefined
+            status: SignInAndUpStateStatus.LOADING
         };
     }
 
@@ -86,79 +90,20 @@ class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user
             };
         }
 
-        const { response, responseJson } = await this.signInAPI(formFields);
+        const normalisedAPIResponse = await handleSignInAPI(
+            formFields,
+            this.getRecipeInstanceOrThrow().getRecipeId(),
+            this.onCallSignInAPI
+        );
 
-        if (responseJson !== undefined && responseJson.user !== undefined) {
-            const user: User = {
-                id: responseJson.user.id,
-                email: responseJson.user.email
-            };
-            this.setState({
-                user,
-                responseJson
-            });
-        }
+        this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
 
-        return response;
-    };
-
-    signInAPI = async (formFields: APIFormField[]): Promise<{ response: SignInThemeResponse; responseJson?: any }> => {
-        try {
-            const headers: HeadersInit = {
-                rid: this.getRecipeInstanceOrThrow().getRecipeId()
-            };
-            const responseJson = await this.onCallSignInAPI({ formFields }, headers);
-
-            // Otherwise, if field errors.
-            if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-                return {
-                    response: {
-                        status: API_RESPONSE_STATUS.FIELD_ERROR,
-                        formFields: responseJson.formFields
-                    }
-                };
-            }
-
-            // Otherwise, if wrong credentials error.
-            if (responseJson.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
-                return {
-                    response: {
-                        status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR,
-                        message: "Incorrect email & password combination"
-                    }
-                };
-            }
-
-            // Otherwise, if success.
-            if (responseJson.status === API_RESPONSE_STATUS.OK) {
-                return {
-                    response: {
-                        status: API_RESPONSE_STATUS.OK
-                    },
-                    responseJson
-                };
-            }
-
-            // Otherwise, something went wrong.
-            return {
-                response: {
-                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                    message: "Something went wrong. Please try again"
-                }
-            };
-        } catch (e) {
-            return {
-                response: {
-                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                    message: "Something went wrong. Please try again"
-                }
-            };
-        }
+        return normalisedAPIResponse;
     };
 
     onSignInSuccess = async (): Promise<void> => {
-        if (this.state.user === undefined) {
-            throw Error("Something went wrong. Please try again");
+        if (this.state.status !== SignInAndUpStateStatus.SUBMITTED) {
+            throw Error(SOMETHING_WENT_WRONG_ERROR);
         }
 
         await this.onHandleSuccess({
@@ -180,67 +125,42 @@ class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user
             };
         }
 
-        const { response, responseJson } = await this.signUpAPI(formFields);
-        if (responseJson !== undefined && responseJson.user !== undefined) {
-            const user: User = {
-                id: responseJson.user.id,
-                email: responseJson.user.email
-            };
-            this.setState({
-                user,
-                responseJson
-            });
-        }
-        return response;
+        const normalisedAPIResponse = await handleSignUpAPI(
+            formFields,
+            this.getRecipeInstanceOrThrow().getRecipeId(),
+            this.onCallSignUpAPI
+        );
+
+        this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
+
+        return normalisedAPIResponse;
     };
 
-    signUpAPI = async (formFields: APIFormField[]): Promise<{ response: SignUpThemeResponse; responseJson?: any }> => {
-        try {
-            const headers: HeadersInit = {
-                rid: this.getRecipeInstanceOrThrow().getRecipeId()
-            };
-            const responseJson = await this.onCallSignUpAPI({ formFields }, headers);
-
-            // Otherwise, if field errors.
-            if (responseJson.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-                return {
-                    response: {
-                        status: API_RESPONSE_STATUS.FIELD_ERROR,
-                        formFields: responseJson.formFields
-                    }
-                };
-            }
-
-            // Otherwise, if success.
-            if (responseJson.status === API_RESPONSE_STATUS.OK) {
-                return {
-                    response: {
-                        status: API_RESPONSE_STATUS.OK
-                    },
-                    responseJson
-                };
-            }
-
-            // Otherwise, something went wrong.
-            return {
-                response: {
-                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                    message: "Something went wrong. Please try again"
-                }
-            };
-        } catch (e) {
-            return {
-                response: {
-                    status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                    message: "Something went wrong. Please try again"
-                }
+    setStateOnSuccessfulAPICall(normalisedAPIResponse: SignInThemeResponse | SignUpThemeResponse): void {
+        let user: User | undefined;
+        if (normalisedAPIResponse.status === API_RESPONSE_STATUS.OK && normalisedAPIResponse.user) {
+            user = {
+                id: normalisedAPIResponse.user.id,
+                email: normalisedAPIResponse.user.email
             };
         }
-    };
+
+        this.setState(oldState => {
+            if (oldState.status !== SignInAndUpStateStatus.NOT_SUBMITTED) {
+                return oldState;
+            }
+
+            return {
+                status: SignInAndUpStateStatus.SUBMITTED,
+                responseJson: normalisedAPIResponse,
+                user
+            };
+        });
+    }
 
     onSignUpSuccess = async (): Promise<void> => {
-        if (this.state.user === undefined) {
-            throw Error("Something went wrong. Please try again");
+        if (this.state.status !== SignInAndUpStateStatus.SUBMITTED) {
+            throw Error(SOMETHING_WENT_WRONG_ERROR);
         }
 
         return await this.onHandleSuccess({
@@ -252,7 +172,7 @@ class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user
 
     doesSessionExist = async (): Promise<boolean> => {
         // If props provided by user.
-        if (this.props.doesSessionExist) {
+        if (this.props.doesSessionExist !== undefined) {
             return await this.props.doesSessionExist();
         }
 
@@ -267,14 +187,14 @@ class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user
 
     onHandleForgotPasswordClicked = async (): Promise<void> => {
         // If props provided by user, and successfully handled.
-        if (this.props.onHandleForgotPasswordClicked) {
+        if (this.props.onHandleForgotPasswordClicked !== undefined) {
             const isHandledByUser: boolean = await this.props.onHandleForgotPasswordClicked();
             if (isHandledByUser) {
                 return;
             }
         }
 
-        // Otherwise, redirect to resetPasswordURL if defined.
+        // Otherwise, redirect to resetPasswordURL, if defined.
         const resetPasswordUrl = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm
             .resetPasswordURL;
 
@@ -282,12 +202,12 @@ class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user
             return;
         }
 
-        redirectToInApp(resetPasswordUrl, "Reset password", this.props.history);
+        redirectToInApp(resetPasswordUrl.getAsStringDangerous(), "Reset password", this.props.history);
     };
 
-    onHandleSuccess = async (context: onHandleSignInAndUpSuccessContext): Promise<void> => {
+    onHandleSuccess = async (context: OnHandleSignInAndUpSuccessContext): Promise<void> => {
         // If props provided by user, and successfully handled.
-        if (this.props.onHandleSuccess) {
+        if (this.props.onHandleSuccess !== undefined) {
             const isHandledByUser = await this.props.onHandleSuccess(context);
             if (isHandledByUser) {
                 return;
@@ -301,9 +221,9 @@ class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user
         redirectToWithReload(onSuccessRedirectURL);
     };
 
-    onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpThemeResponse> => {
+    onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpAPIResponse> => {
         // If props provided by user.
-        if (this.props.onCallSignUpAPI) {
+        if (this.props.onCallSignUpAPI !== undefined) {
             return this.props.onCallSignUpAPI(requestJson, headers);
         }
 
@@ -311,9 +231,9 @@ class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user
         return this.getRecipeInstanceOrThrow().signUpAPI(requestJson, headers);
     };
 
-    onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignInThemeResponse> => {
+    onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
         // If props provided by user.
-        if (this.props.onCallSignInAPI) {
+        if (this.props.onCallSignInAPI !== undefined) {
             return this.props.onCallSignInAPI(requestJson, headers);
         }
 
@@ -330,8 +250,15 @@ class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user
             return await this.onHandleSuccess({ action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS });
         }
 
-        this.setState({
-            isLoading: false
+        this.setState(oldState => {
+            if (oldState.status !== SignInAndUpStateStatus.LOADING) {
+                return oldState;
+            }
+
+            return {
+                ...oldState,
+                status: SignInAndUpStateStatus.NOT_SUBMITTED
+            };
         });
     };
 
@@ -368,10 +295,9 @@ class SignInAndUp extends Component<SignInAndUpProps, { isLoading: boolean; user
         };
 
         const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
-        const { isLoading } = this.state;
 
         // Before session is verified, return empty fragment, prevent UI glitch.
-        if (isLoading) {
+        if (this.state.status === SignInAndUpStateStatus.LOADING) {
             return <Fragment />;
         }
 

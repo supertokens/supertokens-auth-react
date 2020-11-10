@@ -18,6 +18,7 @@
  */
 
 import * as React from "react";
+import NormalisedURLPath from "../normalisedURLPath";
 import SuperTokens from "../superTokens";
 import { ReactComponentClass } from "../types";
 import { getRecipeIdFromSearch } from "../utils";
@@ -36,7 +37,7 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
                  *  Sort by path length to make sure a shorter path doesn't take precedence
                  * i.e. /auth/reset-password comes before /auth/
                  */
-                .sort(path => -path.length)
+                .sort((a, b) => b.length - a.length)
                 .map(path => <SuperTokensRouteWithRecipeId Route={Route} key={`st-${path}`} path={path} />)
         );
     } catch (e) {
@@ -50,9 +51,14 @@ function SuperTokensRouteWithRecipeId({
     Route
 }: {
     path: string;
-    Route: new () => React.Component<{ exact: unknown; path: string; component?: ReactComponentClass }>;
+    Route: new () => React.Component<{
+        exact: unknown;
+        path: string;
+        component?: ReactComponentClass;
+    }>;
 }): JSX.Element {
     const recipeId = getRecipeIdFromSearch(window.location.search);
-    const component = SuperTokens.getMatchingComponentForRouteAndRecipeId(path, recipeId);
-    return <Route exact key={`st-${path}`} path={path} component={component} />;
+    const normalisedPath = new NormalisedURLPath(path);
+    const component = SuperTokens.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
+    return <Route exact key={`st-${path}`} path={normalisedPath.getAsStringDangerous()} component={component} />;
 }

@@ -1,6 +1,6 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, RequestJson, APIFormField } from "../../types";
-import { EmailPasswordConfig, EmailPasswordUserInput, FormFieldError, NormalisedEmailPasswordConfig, SignInThemeResponse, SignOutResponse, SubmitNewPasswordThemeResponse } from "./types";
+import { EmailPasswordConfig, EmailPasswordUserInput, FormFieldError, NormalisedEmailPasswordConfig, SignInAPIResponse, SignOutResponse, SubmitNewPasswordAPIResponse } from "./types";
 export default class EmailPassword extends RecipeModule {
     static instance?: EmailPassword;
     static RECIPE_ID: string;
@@ -9,10 +9,10 @@ export default class EmailPassword extends RecipeModule {
     constructor(config: EmailPasswordConfig);
     getConfig: () => NormalisedEmailPasswordConfig;
     getFeatures: () => Record<string, import("../../types").ReactComponentClass>;
-    signUpAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<import("./types").BaseResponse>;
-    signInAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInThemeResponse>;
-    submitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordThemeResponse>;
-    enterEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<import("./types").BaseResponse>;
+    signUpAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<import("./types").BaseAPIResponse>;
+    signInAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
+    submitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordAPIResponse>;
+    enterEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<import("./types").BaseAPIResponse>;
     signOut: () => Promise<SignOutResponse>;
     signUpValidate(input: APIFormField[]): Promise<FormFieldError[]>;
     signInValidate(input: APIFormField[]): Promise<FormFieldError[]>;

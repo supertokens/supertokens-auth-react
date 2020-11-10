@@ -1,12 +1,13 @@
+/** @jsx jsx */
+import { CSSObject } from "@emotion/core";
 import * as React from "react";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
 import { APIFormField } from "../../../../types";
 import { NormalisedDefaultStyles, NormalisedPalette } from "../../types";
 declare type InputProps = {
-    style?: CSSInterpolation;
-    errorStyle?: CSSInterpolation;
-    adornmentStyle?: CSSInterpolation;
+    style?: CSSObject;
+    errorStyle?: CSSObject;
+    adornmentStyle?: CSSObject;
     validated: boolean;
     type: string;
     name: string;

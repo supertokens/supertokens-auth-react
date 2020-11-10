@@ -20,10 +20,10 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import EmailPassword from "../../../../lib/build/recipe/emailpassword/emailPassword";
-import {getDefaultFormFields, defaultLoginPasswordValidator, defaultValidate} from "../../../../lib/build/recipe/emailpassword/utils"
+import {getDefaultFormFields} from "../../../../lib/build/recipe/emailpassword/utils";
+import {defaultLoginPasswordValidator, defaultValidate} from "../../../../lib/build/recipe/emailpassword/validators";
 import assert from "assert";
 import SuperTokens from "../../../../lib/build/SuperTokens";
-import NormalisedURLPath from "../../../../lib/build/normalisedURLPath";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -73,8 +73,8 @@ describe("EmailPassword", function() {
         );
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] !== undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] !== undefined);
-        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getRecipeId(), "email-password");
-        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL.getAsStringDangerous(), new NormalisedURLPath("/").getAsStringDangerous());
+        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getRecipeId(), "emailpassword");
+        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL, "/");
     });
 
     it("Initializing EmailPassword with onSuccessRedirectURL and disable default implementation for signInAndUp", async function() {
@@ -96,8 +96,7 @@ describe("EmailPassword", function() {
         })(SuperTokens.getAppInfo());
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] === undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] === undefined);
-        const normalisedOnSuccessRedirectURL = new NormalisedURLPath(onSuccessRedirectURL);
-        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL.getAsStringDangerous(), normalisedOnSuccessRedirectURL.getAsStringDangerous());
+        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL, onSuccessRedirectURL);
     });
 
     it("Initializing EmailPassword with optional custom Fields for SignUp", async function() {
@@ -147,7 +146,7 @@ describe("EmailPassword", function() {
             id: "email",
             label: "Custom Email Label",
             placeholder: "Your custom email",
-            validate: async email => "Custom Email",
+            validate: async email => "Custom Email Error",
             optional: false
         };
         EmailPassword.init({
@@ -170,7 +169,7 @@ describe("EmailPassword", function() {
             .getConfig().signInAndUpFeature.signUpForm
             .formFields[0]
             .validate("foo");
-        assert.strictEqual(signUpEmailValidateError, "Custom Email");
+        assert.strictEqual(signUpEmailValidateError, "Custom Email Error");
 
         // Sign In fields changed.
         assert.deepStrictEqual(
@@ -189,7 +188,7 @@ describe("EmailPassword", function() {
             .getConfig().signInAndUpFeature.signInForm
             .formFields[0]
             .validate("foo");
-        assert.strictEqual(signInEmailValidateError, "Custom Email");
+        assert.strictEqual(signInEmailValidateError, "Custom Email Error");
     });
 
     it("Initializing EmailPassword with custom Email for Sign In only", async function() {
@@ -243,6 +242,156 @@ describe("EmailPassword", function() {
             .validate("foo");
         assert.strictEqual(signInEmailValidateError, "Custom Email Error");
     });
+
+
+    it("Initializing EmailPassword with optional custom Fields for SignUp", async function() {
+        const companyCustomField = {
+            id: "company",
+            label: "Company",
+            placeholder: "Your company name",
+            optional: true
+        };
+        EmailPassword.init({
+            signInAndUpFeature: {
+                signUpForm: {
+                    formFields: [companyCustomField]
+                }
+            }
+        })(SuperTokens.getAppInfo());
+        // Default Sign Up fields + Custom fields.
+        assert.deepStrictEqual(
+            EmailPassword.getInstanceOrThrow()
+                .getConfig().signInAndUpFeature.signUpForm.formFields,
+            [
+                getDefaultFormFields()[0],
+                getDefaultFormFields()[1],
+                {
+                    validate: defaultValidate,
+                    ...companyCustomField
+                }
+            ]
+        );
+        // Sign In fields unchanged.
+        assert.deepStrictEqual(
+            EmailPassword.getInstanceOrThrow()
+                .getConfig().signInAndUpFeature.signInForm
+                .formFields,
+            [
+                getDefaultFormFields()[0],
+                {
+                    ...getDefaultFormFields()[1],
+                    validate: defaultLoginPasswordValidator
+                }
+            ]
+        );
+    });
+
+    it("Initializing EmailPassword with custom Email for SignUp", async function() {
+        const companyEmailField = {
+            id: "email",
+            label: "Custom Email Label",
+            placeholder: "Your custom email",
+            validate: async email => "Custom Email Error",
+            optional: false
+        };
+        EmailPassword.init({
+            signInAndUpFeature: {
+                signUpForm: {
+                    formFields: [companyEmailField]
+                }
+            }
+        })(SuperTokens.getAppInfo());
+        // Default Sign Up fields + Custom fields.
+        assert.deepStrictEqual(
+            EmailPassword.getInstanceOrThrow()
+                .getConfig().signInAndUpFeature.signUpForm.formFields,
+            [
+                companyEmailField,
+                getDefaultFormFields()[1]
+            ]
+        );
+        const signUpEmailValidateError = await EmailPassword.getInstanceOrThrow()
+            .getConfig().signInAndUpFeature.signUpForm
+            .formFields[0]
+            .validate("foo");
+        assert.strictEqual(signUpEmailValidateError, "Custom Email Error");
+
+        // Sign In fields changed.
+        assert.deepStrictEqual(
+            EmailPassword.getInstanceOrThrow()
+                .getConfig().signInAndUpFeature.signInForm
+                .formFields,
+            [
+                companyEmailField,
+                {
+                    ...getDefaultFormFields()[1],
+                    validate: defaultLoginPasswordValidator
+                }
+            ]
+        );
+        const signInEmailValidateError = await EmailPassword.getInstanceOrThrow()
+            .getConfig().signInAndUpFeature.signInForm
+            .formFields[0]
+            .validate("foo");
+        assert.strictEqual(signInEmailValidateError, "Custom Email Error");
+
+        const enterEmailPasswordResetEmailValidateError = await EmailPassword.getInstanceOrThrow()
+            .getConfig().resetPasswordUsingTokenFeature.enterEmailForm
+            .formFields[0]
+            .validate("foo");
+        assert.strictEqual(enterEmailPasswordResetEmailValidateError, "Custom Email Error");
+    });
+
+    it("Initializing EmailPassword with custom password validator for signup propagates to reset password", async function() {
+        const customPasswordValidate = async (password) => "Custom Password Error";
+        const customPasswordField = {
+            id: "password",
+            label: "Custom Password Label",
+            placeholder: "Your custom password",
+            validate: customPasswordValidate,
+            optional: false
+        };
+
+        EmailPassword.init({
+            signInAndUpFeature: {
+                signUpForm: {
+                    formFields: [customPasswordField]
+                }
+            }
+        })(SuperTokens.getAppInfo());
+
+        // Sign Up fields changed
+        assert.deepStrictEqual(
+            EmailPassword.getInstanceOrThrow()
+                .getConfig().signInAndUpFeature.signUpForm.formFields,
+            [
+                getDefaultFormFields()[0],
+                customPasswordField
+            ]
+        );
+
+        // Sign In fields changed
+        assert.deepStrictEqual(
+            EmailPassword.getInstanceOrThrow()
+                .getConfig().signInAndUpFeature.signInForm.formFields,
+            [
+                getDefaultFormFields()[0],
+                {
+                    ...customPasswordField,
+                    validate: defaultLoginPasswordValidator
+                }
+            ]
+        );
+
+        // Reset password fields gets custom password field.
+        assert.deepStrictEqual(
+            EmailPassword.getInstanceOrThrow()
+                .getConfig().resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields[0].validate,
+            customPasswordValidate
+        );
+
+    });
+
 
     it("Validate SignIn EmailPassword fields validation", async function() {
         EmailPassword.init()(SuperTokens.getAppInfo());
@@ -345,4 +494,5 @@ describe("EmailPassword", function() {
         }]), Error("Are you sending too many / too few formFields?"))
                 
     });
+
 });

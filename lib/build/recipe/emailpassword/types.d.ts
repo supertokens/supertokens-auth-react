@@ -1,6 +1,6 @@
 import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson, Styles } from "../../types";
 import EmailPassword from "./emailPassword";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
@@ -26,7 +26,7 @@ export declare type SignInAndUpFeatureUserInput = {
 };
 export declare type NormalisedSignInAndUpFeatureConfig = {
     disableDefaultImplementation: boolean;
-    onSuccessRedirectURL: NormalisedURLPath;
+    onSuccessRedirectURL: string;
     signUpForm: NormalisedSignUpFormFeatureConfig;
     signInForm: NormalisedSignInFormFeatureConfig;
 };
@@ -58,7 +58,7 @@ export declare type ResetPasswordUsingTokenUserInput = {
 };
 export declare type NormalisedResetPasswordUsingTokenFeatureConfig = {
     disableDefaultImplementation: boolean;
-    onSuccessRedirectURL: NormalisedURLPath;
+    onSuccessRedirectURL: string;
     submitNewPasswordForm: NormalisedSubmitNewPasswordForm;
     enterEmailForm: NormalisedEnterEmailForm;
 };
@@ -78,16 +78,16 @@ export declare type BaseProps = {
 export declare type SignInAndUpProps = BaseProps & {
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
     doesSessionExist?: () => Promise<boolean>;
-    onHandleSuccess?: (context: onHandleSignInAndUpSuccessContext) => Promise<boolean>;
-    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpThemeResponse>;
-    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInThemeResponse>;
+    onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
+    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
+    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
 };
 export declare type ResetPasswordUsingTokenProps = BaseProps & {
     onHandleSuccess(context: {
         action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
     }): Promise<boolean>;
-    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordThemeResponse>;
-    onCallEnterEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailThemeResponse>;
+    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordAPIResponse>;
+    onCallSendResetEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse>;
 };
 export declare type onHandleResetPasswordUsingTokenSuccessContext = {
     action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
@@ -126,25 +126,31 @@ export declare type FormFieldError = {
 export declare type SignOutResponse = {
     status: API_RESPONSE_STATUS.OK;
 };
-export declare type BaseResponse = {
+export declare type BaseAPIResponse = {
     status: API_RESPONSE_STATUS.OK;
-} | {
-    status: API_RESPONSE_STATUS.GENERAL_ERROR;
-    message: string;
+    user?: User;
 } | {
     status: API_RESPONSE_STATUS.FIELD_ERROR;
     formFields: FormFieldError[];
 };
-export declare type SignUpThemeResponse = BaseResponse;
-export declare type SignInThemeResponse = BaseResponse | {
+export declare type ThemeResponseGeneralError = {
+    status: API_RESPONSE_STATUS.GENERAL_ERROR;
+    message: string;
+};
+export declare type SignUpAPIResponse = BaseAPIResponse;
+export declare type SignUpThemeResponse = SignUpAPIResponse | ThemeResponseGeneralError;
+export declare type SignInAPIResponse = BaseAPIResponse | {
     status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR;
     message: string;
 };
-export declare type EnterEmailThemeResponse = BaseResponse;
-export declare type SubmitNewPasswordThemeResponse = BaseResponse | {
+export declare type SignInThemeResponse = SignInAPIResponse | ThemeResponseGeneralError;
+export declare type EnterEmailAPIResponse = BaseAPIResponse;
+export declare type EnterEmailThemeResponse = EnterEmailAPIResponse | ThemeResponseGeneralError;
+export declare type SubmitNewPasswordAPIResponse = BaseAPIResponse | {
     status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
 };
-export declare type onHandleSignInAndUpSuccessContext = {
+export declare type SubmitNewPasswordThemeResponse = SubmitNewPasswordAPIResponse | ThemeResponseGeneralError;
+export declare type OnHandleSignInAndUpSuccessContext = {
     action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS;
 } | {
     action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
@@ -183,14 +189,28 @@ export declare type SubmitNewPasswordThemeState = {
     hasNewPassword?: boolean;
     formFields: FormFieldState[];
 };
+export declare enum SignInAndUpStateStatus {
+    LOADING = "LOADING",
+    NOT_SUBMITTED = "NOT_SUBMITTED",
+    SUBMITTED = "SUBMITTED"
+}
+export declare type SignInAndUpState = {
+    status: SignInAndUpStateStatus.LOADING;
+} | {
+    status: SignInAndUpStateStatus.NOT_SUBMITTED;
+} | {
+    status: SignInAndUpStateStatus.SUBMITTED;
+    user: User;
+    responseJson: any;
+};
 declare enum paletteColorOptions {
     BACKGROUND = "background",
     INPUTBACKGROUND = "inputBackground",
     PRIMARY = "primary",
     ERROR = "error",
     TEXTTITLE = "textTitle",
+    TEXTLABEL = "textLabel",
     TEXTPRIMARY = "textPrimary",
-    TEXTSECONDARY = "textSecondary",
     TEXTLINK = "textLink"
 }
 export declare type PaletteUserInput = {
@@ -225,10 +245,10 @@ declare enum defaultStylesOptions {
     DIVIDER = "divider"
 }
 export declare type DefaultStylesUserInput = {
-    [key in defaultStylesOptions]?: CSSInterpolation;
+    [key in defaultStylesOptions]?: CSSObject;
 };
 export declare type NormalisedDefaultStyles = {
-    [key in defaultStylesOptions]: CSSInterpolation;
+    [key in defaultStylesOptions]: CSSObject;
 };
 export declare type FormBaseState = {
     formFields: FormFieldState[];
@@ -247,4 +267,8 @@ export declare type FormBaseProps = {
     palette: NormalisedPalette;
     styleFromInit?: Styles;
 };
+export declare type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
+export declare type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
+export declare type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
+export declare type SubmitNewPasswordAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordAPIResponse>;
 export {};

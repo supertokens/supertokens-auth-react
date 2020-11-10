@@ -15,7 +15,7 @@ export default function SignInTheme(props) {
      */
     const {signInForm} = props;
     const {callAPI, onSuccess, signUpClicked, forgotPasswordClick} = signInForm;
-    let styleFromInit = signInForm.styleFromInit || {};
+    let styleFromInit = signInForm.styleFromInit !== undefined ? signInForm.styleFromInit : {};
     /*
      * States.
      */

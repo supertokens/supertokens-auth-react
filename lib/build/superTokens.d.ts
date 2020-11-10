@@ -18,7 +18,7 @@ export default class SuperTokens {
     static getRecipeList(): RecipeModule[];
     static getPathsToComponentWithRecipeIdMap(): PathToComponentWithRecipeIdMap;
     static getDefaultSessionRecipe(): Session | undefined;
-    static getMatchingComponentForRouteAndRecipeId(path: string, recipeId: string | null): ReactComponentClass | undefined;
+    static getMatchingComponentForRouteAndRecipeId(path: NormalisedURLPath, recipeId: string | null): ReactComponentClass | undefined;
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[];
     getAppInfo: () => NormalisedAppInfo;
     canHandleRoute: () => boolean;

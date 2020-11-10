@@ -20,7 +20,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import * as React from "react";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 import { NormalisedDefaultStyles } from "../../types";
 
 /*
@@ -28,7 +28,7 @@ import { NormalisedDefaultStyles } from "../../types";
  */
 
 type InputErrorProps = {
-    style: CSSInterpolation;
+    style: CSSObject;
     error: string;
     defaultStyles: NormalisedDefaultStyles;
 };

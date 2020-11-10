@@ -32,74 +32,34 @@ import {
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput
 } from "./types";
-
-/*
- * defaultEmailValidator.
- */
-
-export async function defaultEmailValidator(value: string): Promise<string | undefined> {
-    // eslint-disable-next-line no-useless-escape
-    const defaultEmailValidatorRegexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    // We check if the email syntax is correct
-    // As per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
-    // Regex from https://stackoverflow.com/a/46181/3867175
-
-    if (value.match(defaultEmailValidatorRegexp) === null) {
-        return "Email is invalid";
-    }
-
-    return undefined;
-}
-
-/*
- * defaultPasswordValidator.
- * min 8 characters.
- * Contains lowercase, uppercase, and numbers.
- */
-
-export async function defaultPasswordValidator(value: string): Promise<string | undefined> {
-    // length >= 8 && < 100
-    // must have a number and a character
-    // as per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
-
-    if (value.length < 8) {
-        return "Password must contain at least 8 characters, including a number";
-    }
-
-    if (value.length >= 100) {
-        return "Password's length must be lesser than 100 characters";
-    }
-
-    if (value.match(/^.*[A-Za-z]+.*$/) === null) {
-        return "Password must contain at least one alphabet";
-    }
-
-    if (value.match(/^.*[0-9]+.*$/) === null) {
-        return "Password must contain at least one number";
-    }
-
-    return undefined;
-}
-
-/*
- * defaultLoginPasswordValidator.
- * min 1 characters.
- */
-
-export async function defaultLoginPasswordValidator(value: string): Promise<string | undefined> {
-    // length = 0
-    if (value.length === 0) {
-        return "Password must not be empty";
-    }
-    return undefined;
-}
+import {
+    defaultLoginPasswordValidator,
+    defaultEmailValidator,
+    defaultPasswordValidator,
+    defaultValidate
+} from "./validators";
 
 export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): NormalisedEmailPasswordConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
         config.appInfo,
         config.signInAndUpFeature
     );
+
+    const signUpPasswordField: NormalisedFormField = <NormalisedFormField>signInAndUpFeature.signUpForm.formFields.find(
+        (field: NormalisedFormField) => {
+            return <MANDATORY_FORM_FIELDS_ID>field.id === MANDATORY_FORM_FIELDS_ID.PASSWORD;
+        }
+    );
+
+    const signUpEmailField: NormalisedFormField = <NormalisedFormField>signInAndUpFeature.signUpForm.formFields.find(
+        (field: NormalisedFormField) => {
+            return <MANDATORY_FORM_FIELDS_ID>field.id === MANDATORY_FORM_FIELDS_ID.EMAIL;
+        }
+    );
+
     const resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig = normaliseResetPasswordUsingTokenFeature(
+        signUpPasswordField.validate,
+        signUpEmailField.validate,
         config.resetPasswordUsingTokenFeature
     );
 
@@ -113,7 +73,7 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
         }
     }
 
-    const useShadowDom = config.useShadowDom !== undefined ? config.useShadowDom === true : true;
+    const useShadowDom = config.useShadowDom !== undefined ? config.useShadowDom : true;
 
     return {
         palette,
@@ -132,16 +92,14 @@ export function normaliseSignInAndUpFeature(
     }
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
-    const onSuccessRedirectURL =
-        config.onSuccessRedirectURL !== undefined
-            ? new NormalisedURLPath(config.onSuccessRedirectURL)
-            : new NormalisedURLPath("/");
+    const onSuccessRedirectURL = config.onSuccessRedirectURL !== undefined ? config.onSuccessRedirectURL : "/";
     const signUpForm: NormalisedSignUpFormFeatureConfig = normaliseSignUpFormFeatureConfig(config.signUpForm);
 
     /*
      * Default Sign In corresponds to computed Sign Up fields filtered by email and password only.
      * i.e. If the user overrides sign Up fields, that is propagated to default sign In fields.
-     * Exception made of the password validator which only verifies that the value is not empty for login.
+     * Exception made of the password validator which only verifies that the value is not empty for login
+     * https://github.com/supertokens/supertokens-auth-react/issues/21
      */
     const defaultSignInFields: NormalisedFormField[] = signUpForm.formFields.reduce(
         (signInFieldsAccumulator, field) => {
@@ -192,7 +150,7 @@ export function normaliseSignUpFormFeatureConfig(
     const formFields = mergeFormFields(defaultFormFields, userFormFields);
     const privacyPolicyLink = config.privacyPolicyLink;
     const termsAndConditionsLink = config.termsAndConditionsLink;
-    const style = config.style || {};
+    const style = config.style !== undefined ? config.style : {};
 
     return {
         style,
@@ -213,24 +171,19 @@ export function normaliseSignInFormFeatureConfig(
 
     let userFormFields: FormField[] = [];
     if (config.formFields !== undefined) {
-        userFormFields = config.formFields.reduce((acc: FormField[], field: FormFieldBaseConfig) => {
+        userFormFields = config.formFields
             // Filter on email and password only.
-            if (!MANDATORY_FORM_FIELDS_ID_ARRAY.includes(<MANDATORY_FORM_FIELDS_ID>field.id)) {
-                return acc;
-            }
-            return [
-                ...acc,
-                {
-                    ...field,
-                    optional: false // Sign In fields are never optional.
-                }
-            ];
-        }, []);
+            .filter(field => MANDATORY_FORM_FIELDS_ID_ARRAY.includes(<MANDATORY_FORM_FIELDS_ID>field.id))
+            // Sign In fields are never optional.
+            .map((field: FormFieldBaseConfig) => ({
+                ...field,
+                optional: false
+            }));
     }
     const formFields = mergeFormFields(defaultFormFields, userFormFields);
 
     let resetPasswordURL: NormalisedURLPath;
-    if (config.resetPasswordURL) {
+    if (config.resetPasswordURL !== undefined) {
         resetPasswordURL = new NormalisedURLPath(config.resetPasswordURL);
     } else {
         resetPasswordURL = new NormalisedURLPath(
@@ -238,7 +191,7 @@ export function normaliseSignInFormFeatureConfig(
         );
     }
 
-    const style = config.style || {};
+    const style = config.style !== undefined ? config.style : {};
 
     return {
         style,
@@ -272,6 +225,8 @@ function getDefaultPasswordFormField(): NormalisedFormField {
 }
 
 export function normaliseResetPasswordUsingTokenFeature(
+    signUpPasswordFieldValidate: (value: any) => Promise<string | undefined>,
+    signUpEmailFieldValidate: (value: any) => Promise<string | undefined>,
     config?: ResetPasswordUsingTokenUserInput
 ): NormalisedResetPasswordUsingTokenFeatureConfig {
     if (config === undefined) {
@@ -279,10 +234,7 @@ export function normaliseResetPasswordUsingTokenFeature(
     }
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
-    const onSuccessRedirectURL =
-        config.onSuccessRedirectURL !== undefined
-            ? new NormalisedURLPath(config.onSuccessRedirectURL)
-            : new NormalisedURLPath("/");
+    const onSuccessRedirectURL = config.onSuccessRedirectURL !== undefined ? config.onSuccessRedirectURL : "/";
 
     const submitNewPasswordFormStyle =
         config.submitNewPasswordForm !== undefined && config.submitNewPasswordForm.style !== undefined
@@ -292,18 +244,18 @@ export function normaliseResetPasswordUsingTokenFeature(
     const submitNewPasswordForm: NormalisedSubmitNewPasswordForm = {
         style: submitNewPasswordFormStyle,
         formFields: [
-            Object.assign(
-                {
-                    label: "New password",
-                    placeholder: "New password"
-                },
-                getDefaultPasswordFormField()
-            ),
+            {
+                id: "password",
+                label: "New password",
+                placeholder: "New password",
+                validate: signUpPasswordFieldValidate,
+                optional: false
+            },
             {
                 id: "confirm-password",
                 label: "Confirm password",
                 placeholder: "Confirm your password",
-                validate: defaultPasswordValidator,
+                validate: signUpPasswordFieldValidate,
                 optional: false
             }
         ]
@@ -316,7 +268,15 @@ export function normaliseResetPasswordUsingTokenFeature(
 
     const enterEmailForm: NormalisedEnterEmailForm = {
         style: enterEmailFormStyle,
-        formFields: [getDefaultEmailFormField()]
+        formFields: [
+            {
+                id: "email",
+                label: "Email",
+                placeholder: "Email address",
+                validate: signUpEmailFieldValidate,
+                optional: false
+            }
+        ]
     };
 
     return {
@@ -377,7 +337,7 @@ export function mergeFormFields(
         if (isNewField) {
             mergedFormFields.push({
                 optional: false,
-                placeholder: capitalize(userField.id),
+                placeholder: userField.label,
                 validate: defaultValidate,
                 ...userField
             });
@@ -385,19 +345,4 @@ export function mergeFormFields(
     }
 
     return mergedFormFields;
-}
-
-/*
- * capitalize
- */
-export function capitalize(value: string): string {
-    return value.charAt(0).toUpperCase() + value.slice(1);
-}
-
-/*
- * defaultValidate
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function defaultValidate(_: string): Promise<string | undefined> {
-    return undefined;
 }

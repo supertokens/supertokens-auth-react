@@ -25,7 +25,7 @@ import {
     Styles
 } from "../../types";
 import EmailPassword from "./emailPassword";
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
@@ -114,7 +114,7 @@ export type NormalisedSignInAndUpFeatureConfig = {
     /*
      * URL to redirect to in case disableDefaultImplemention is true
      */
-    onSuccessRedirectURL: NormalisedURLPath;
+    onSuccessRedirectURL: string;
 
     /*
      * SignUp form config.
@@ -222,7 +222,7 @@ export type NormalisedResetPasswordUsingTokenFeatureConfig = {
     /*
      * URL to redirect to in case disableDefaultImplemention is true
      */
-    onSuccessRedirectURL: NormalisedURLPath;
+    onSuccessRedirectURL: string;
 
     /*
      * submitNewPasswordForm config.
@@ -268,11 +268,11 @@ export type SignInAndUpProps = BaseProps & {
 
     doesSessionExist?: () => Promise<boolean>;
 
-    onHandleSuccess?: (context: onHandleSignInAndUpSuccessContext) => Promise<boolean>;
+    onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
 
-    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpThemeResponse>;
+    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 
-    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInThemeResponse>;
+    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
 };
 
 export type ResetPasswordUsingTokenProps = BaseProps & {
@@ -280,9 +280,9 @@ export type ResetPasswordUsingTokenProps = BaseProps & {
         action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
     }): Promise<boolean>;
 
-    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordThemeResponse>;
+    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordAPIResponse>;
 
-    onCallEnterEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailThemeResponse>;
+    onCallSendResetEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse>;
 };
 
 export type onHandleResetPasswordUsingTokenSuccessContext = {
@@ -400,23 +400,14 @@ export type SignOutResponse = {
     status: API_RESPONSE_STATUS.OK;
 };
 
-export type BaseResponse =
+export type BaseAPIResponse =
     | {
           /*
            * Success.
            */
           status: API_RESPONSE_STATUS.OK;
-      }
-    | {
-          /*
-           * General error.
-           */
-          status: API_RESPONSE_STATUS.GENERAL_ERROR;
 
-          /*
-           * General error message.
-           */
-          message: string;
+          user?: User;
       }
     | {
           /*
@@ -430,10 +421,24 @@ export type BaseResponse =
           formFields: FormFieldError[];
       };
 
-export type SignUpThemeResponse = BaseResponse;
+export type ThemeResponseGeneralError = {
+    /*
+     * General error.
+     */
+    status: API_RESPONSE_STATUS.GENERAL_ERROR;
 
-export type SignInThemeResponse =
-    | BaseResponse
+    /*
+     * General error message.
+     */
+    message: string;
+};
+
+export type SignUpAPIResponse = BaseAPIResponse;
+
+export type SignUpThemeResponse = SignUpAPIResponse | ThemeResponseGeneralError;
+
+export type SignInAPIResponse =
+    | BaseAPIResponse
     | {
           /*
            * Wrong credentials error.
@@ -446,10 +451,13 @@ export type SignInThemeResponse =
           message: string;
       };
 
-export type EnterEmailThemeResponse = BaseResponse;
+export type SignInThemeResponse = SignInAPIResponse | ThemeResponseGeneralError;
 
-export type SubmitNewPasswordThemeResponse =
-    | BaseResponse
+export type EnterEmailAPIResponse = BaseAPIResponse;
+export type EnterEmailThemeResponse = EnterEmailAPIResponse | ThemeResponseGeneralError;
+
+export type SubmitNewPasswordAPIResponse =
+    | BaseAPIResponse
     | {
           /*
            * Wrong credentials error.
@@ -457,7 +465,9 @@ export type SubmitNewPasswordThemeResponse =
           status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
       };
 
-export type onHandleSignInAndUpSuccessContext =
+export type SubmitNewPasswordThemeResponse = SubmitNewPasswordAPIResponse | ThemeResponseGeneralError;
+
+export type OnHandleSignInAndUpSuccessContext =
     | { action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS }
     | {
           /*
@@ -568,14 +578,33 @@ export type SubmitNewPasswordThemeState = {
     formFields: FormFieldState[];
 };
 
+export enum SignInAndUpStateStatus {
+    LOADING = "LOADING",
+    NOT_SUBMITTED = "NOT_SUBMITTED",
+    SUBMITTED = "SUBMITTED"
+}
+
+export type SignInAndUpState =
+    | {
+          status: SignInAndUpStateStatus.LOADING;
+      }
+    | {
+          status: SignInAndUpStateStatus.NOT_SUBMITTED;
+      }
+    | {
+          status: SignInAndUpStateStatus.SUBMITTED;
+          user: User;
+          responseJson: any;
+      };
+
 enum paletteColorOptions {
     BACKGROUND = "background",
     INPUTBACKGROUND = "inputBackground",
     PRIMARY = "primary",
     ERROR = "error",
     TEXTTITLE = "textTitle",
+    TEXTLABEL = "textLabel",
     TEXTPRIMARY = "textPrimary",
-    TEXTSECONDARY = "textSecondary",
     TEXTLINK = "textLink"
 }
 
@@ -614,11 +643,11 @@ enum defaultStylesOptions {
 }
 
 export type DefaultStylesUserInput = {
-    [key in defaultStylesOptions]?: CSSInterpolation;
+    [key in defaultStylesOptions]?: CSSObject;
 };
 
 export type NormalisedDefaultStyles = {
-    [key in defaultStylesOptions]: CSSInterpolation;
+    [key in defaultStylesOptions]: CSSObject;
 };
 
 export type FormBaseState = {
@@ -652,3 +681,11 @@ export type FormBaseProps = {
 
     styleFromInit?: Styles;
 };
+
+export type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
+export type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
+export type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
+export type SubmitNewPasswordAPI = (
+    requestJson: RequestJson,
+    headers: HeadersInit
+) => Promise<SubmitNewPasswordAPIResponse>;

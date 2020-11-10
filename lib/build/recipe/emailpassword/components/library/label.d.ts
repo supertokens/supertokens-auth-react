@@ -1,8 +1,8 @@
 /// <reference types="react" />
-import { CSSInterpolation } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/serialize/types/index";
 import { NormalisedDefaultStyles } from "../../types";
 declare type LabelProps = {
-    style: CSSInterpolation;
+    style: CSSObject;
     value: string;
     showIsRequired?: boolean;
     defaultStyles: NormalisedDefaultStyles;

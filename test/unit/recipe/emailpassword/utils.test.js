@@ -13,52 +13,10 @@
  * under the License.
  */
 import assert from "assert";
-import {defaultEmailValidator, defaultValidate, defaultPasswordValidator, mergeFormFields, capitalize} from "../../../../lib/build/recipe/emailpassword/utils";
+import {mergeFormFields} from "../../../../lib/build/recipe/emailpassword/utils";
+import {defaultValidate} from "../../../../lib/build/recipe/emailpassword/validators";
 
 describe("Email password utils tests", function() {
-    it("checking email validator", async function () {
-        assert.strictEqual(await defaultEmailValidator("test@supertokens.io"), undefined);
-        assert.strictEqual(await defaultEmailValidator("nsdafa@gmail.com"), undefined);
-        assert.strictEqual(await defaultEmailValidator("fewf3r_fdkj@gmaildsfa.co.uk"), undefined);
-        assert.strictEqual(await defaultEmailValidator("dafk.adfa@gmail.com"), undefined);
-        assert.strictEqual(await defaultEmailValidator("skjlblc3f3@fnldsks.co"), undefined);
-        assert.strictEqual(await defaultEmailValidator("skjlbl+c3f3@fnldsks.co"), undefined);
-        assert.strictEqual(await defaultEmailValidator("a@d.cp"), undefined);
-        assert.strictEqual(await defaultEmailValidator("a@d.c"), "Email is invalid");
-        assert.strictEqual(await defaultEmailValidator("sdkjfnas34@gmail.com.c"), "Email is invalid");
-        assert.strictEqual(await defaultEmailValidator("d@c"), "Email is invalid");
-        assert.strictEqual(await defaultEmailValidator("fasd"), "Email is invalid");
-        assert.strictEqual(await defaultEmailValidator("dfa@@@abc.com"), "Email is invalid");
-        assert.strictEqual(await defaultEmailValidator(""), "Email is invalid");
-    });
-
-    it("checking password validator", async function () {
-        assert.strictEqual(await defaultPasswordValidator("dsknfkf38H"), undefined);
-        assert.strictEqual(await defaultPasswordValidator("lasdkf*787~sdfskj"), undefined);
-        assert.strictEqual(await defaultPasswordValidator("L0493434505"), undefined);
-        assert.strictEqual(await defaultPasswordValidator("3453342422L"), undefined);
-        assert.strictEqual(await defaultPasswordValidator("1sdfsdfsdfsd"), undefined);
-        assert.strictEqual(await defaultPasswordValidator("dksjnlvsnl2"), undefined);
-        assert.strictEqual(await defaultPasswordValidator("abcgftr8"), undefined);
-        assert.strictEqual(await defaultPasswordValidator("abc!@#$%^&*()gftr8"), undefined);
-        assert.strictEqual(await defaultPasswordValidator("    dskj3"), undefined);
-        assert.strictEqual(await defaultPasswordValidator("    dsk  3"), undefined);
-        assert.strictEqual(await defaultPasswordValidator("  d3    "), undefined);
-
-        assert(
-            (await defaultPasswordValidator("asd")) ===
-                "Password must contain at least 8 characters, including a number"
-        );
-        assert(
-            (await defaultPasswordValidator(
-                "asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4"
-            )) === "Password's length must be lesser than 100 characters"
-        );
-        assert.strictEqual(await defaultPasswordValidator("ascdvsdfvsIUOO"), "Password must contain at least one number");
-        assert.strictEqual(await defaultPasswordValidator("234235234523"),"Password must contain at least one alphabet");
-    });
-
-
     it("merge form fields", async function() {
         const defaultEmailFormField = {
             id: "email",
@@ -201,7 +159,7 @@ describe("Email password utils tests", function() {
         );
         assert(
             mergedRandomWithoutValidateNorOptional[2].placeholder ===
-                capitalize(randomCustomFormFieldWithoutOptionalProperties.id)
+                randomCustomFormFieldWithoutOptionalProperties.label
         );
         assert(mergedRandomWithoutValidateNorOptional[2].validate === defaultValidate);
         assert(mergedRandomWithoutValidateNorOptional[2].optional === false);

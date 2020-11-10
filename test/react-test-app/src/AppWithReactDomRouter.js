@@ -53,12 +53,32 @@ function AppWithReactDomRouter() {
                   return false;
                 }}
             
-                onCallSignUpAPI={(requestJson, headers) => {
+                onCallSignUpAPI={async (requestJson, headers) => {
+                  return {
+                    status: "OK",
+                    user: {
+                      id: "1",
+                      email: "john.doe@supertokens.io"
+                    }
+                  }
+                }}
+
+                            
+                onHandleSuccess={async (context) => {
+                  console.log("onHandleSuccess", context);
 
                 }}
             
-                onCallSignInAPI={(requestJson, headers) => {
-
+                onCallSignInAPI={async (requestJson, headers) => {
+                  return {
+                    status: "OK",
+                    responseJson: {
+                      user: {
+                        id: "1",
+                        email: "john.doe@supertokens.io"
+                      }
+                    }
+                  }
                 }}
 
               />

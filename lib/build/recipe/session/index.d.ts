@@ -7,6 +7,11 @@ export default class SessionAPIWrapper {
     static getJWTPayloadSecurely(): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
     static doesSessionExist(): boolean;
+    static addAxiosInterceptors: (axiosInstance: any) => void;
+    static setAuth0API: (apiPath: string) => void;
+    static getAuth0API: () => {
+        apiPath: string;
+    };
 }
 export declare const init: typeof SessionAPIWrapper.init;
 export declare const getRefreshURLDomain: typeof SessionAPIWrapper.getRefreshURLDomain;
@@ -14,4 +19,8 @@ export declare const getUserId: typeof SessionAPIWrapper.getUserId;
 export declare const getJWTPayloadSecurely: typeof SessionAPIWrapper.getJWTPayloadSecurely;
 export declare const attemptRefreshingSession: typeof SessionAPIWrapper.attemptRefreshingSession;
 export declare const doesSessionExist: typeof SessionAPIWrapper.doesSessionExist;
-export { SessionAPIWrapper };
+export declare const addAxiosInterceptors: (axiosInstance: any) => void;
+export declare const setAuth0API: (apiPath: string) => void;
+export declare const getAuth0API: () => {
+    apiPath: string;
+};

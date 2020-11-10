@@ -71,12 +71,12 @@ function getNormalisedURLPathOrDefault(defaultPath: string, path?: string): Norm
 }
 
 /*
- * validateFormOrThrow
+ * validateForm
  */
 
 // We check that the number of fields in input and config form field is the same.
 // We check that each item in the config form field is also present in the input form field
-export async function validateFormOrThrow(
+export async function validateForm(
     inputs: APIFormField[],
     configFormFields: NormalisedFormField[]
 ): Promise<FormFieldError[]> {
@@ -143,14 +143,12 @@ export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
 /*
  * redirectToWithReload
  */
-export function redirectToWithReload(path: NormalisedURLPath): void {
-    let newPath: string = path.getAsStringDangerous();
-
-    if (newPath.length === 0) {
-        newPath = "/";
+export function redirectToWithReload(url: string): void {
+    if (url.length === 0) {
+        url = "/";
     }
 
-    window.location.href = newPath;
+    window.location.href = url;
 }
 
 /*
@@ -168,10 +166,9 @@ export function WithRouter(Component: ReactComponentClass): ReactComponentClass 
 /*
  * redirectToInApp
  */
-export function redirectToInApp(path: NormalisedURLPath, title?: string, history?: History<LocationState>): void {
-    let strPath = path.getAsStringDangerous();
-    if (strPath.length === 0) {
-        strPath = "/";
+export function redirectToInApp(path: string, title?: string, history?: History<LocationState>): void {
+    if (path.length === 0) {
+        path = "/";
     }
     if (title === undefined) {
         title = "";
@@ -179,14 +176,14 @@ export function redirectToInApp(path: NormalisedURLPath, title?: string, history
 
     // If history was provided, use.
     if (history !== undefined) {
-        history.push(strPath, {
+        history.push(path, {
             title
         });
         return;
     }
 
     // Otherwise, use window history to push new State and dispatch event for react to catch.
-    window.history.pushState(null, title, strPath);
+    window.history.pushState(null, title, path);
     const event = new PopStateEvent("popstate");
     window.dispatchEvent(event);
 }

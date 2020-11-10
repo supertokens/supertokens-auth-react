@@ -33,22 +33,10 @@ import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
  * Tests.
  */
 describe("SuperTokens SignUp feature/theme", function() {
-    let testAppChildProcess, browser;
+    let browser;
     const SignInButtonQuerySelector = `document.querySelector('#${ST_ROOT_CONTAINER}').shadowRoot.querySelector('button').innerText`;
 
     before(async function() {
-        testAppChildProcess = spawn("./test/startTestApp.sh", ["--no-build"]);
-
-        testAppChildProcess.stderr.on("data", function(data) {
-            console.log("stderr:" + data);
-        });
-
-        testAppChildProcess.stdout.on("data", function(data) {
-            if (data.toString().startsWith("LOGS:")) {
-                console.log(data.toString());
-            }
-        });
-
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
             method: "POST"
         }).catch(console.error);
@@ -56,8 +44,6 @@ describe("SuperTokens SignUp feature/theme", function() {
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST"
         }).catch(console.error);
-
-        await new Promise(r => setTimeout(r, 4000));
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -67,8 +53,6 @@ describe("SuperTokens SignUp feature/theme", function() {
 
     after(async function() {
         await browser.close();
-        testAppChildProcess.kill();
-
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST"
         }).catch(console.error);

@@ -48,12 +48,27 @@ export default class SessionAPIWrapper {
     static doesSessionExist(): boolean {
         return Session.doesSessionExist();
     }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    static addAxiosInterceptors = (axiosInstance: any): void => {
+        return Session.addAxiosInterceptors(axiosInstance);
+    };
+
+    static setAuth0API = (apiPath: string): void => {
+        return Session.setAuth0API(apiPath);
+    };
+
+    static getAuth0API = (): { apiPath: string } => {
+        return Session.getAuth0API();
+    };
 }
+
 export const init = SessionAPIWrapper.init;
 export const getRefreshURLDomain = SessionAPIWrapper.getRefreshURLDomain;
 export const getUserId = SessionAPIWrapper.getUserId;
 export const getJWTPayloadSecurely = SessionAPIWrapper.getJWTPayloadSecurely;
 export const attemptRefreshingSession = SessionAPIWrapper.attemptRefreshingSession;
 export const doesSessionExist = SessionAPIWrapper.doesSessionExist;
-
-export { SessionAPIWrapper };
+export const addAxiosInterceptors = SessionAPIWrapper.addAxiosInterceptors;
+export const setAuth0API = SessionAPIWrapper.setAuth0API;
+export const getAuth0API = SessionAPIWrapper.getAuth0API;

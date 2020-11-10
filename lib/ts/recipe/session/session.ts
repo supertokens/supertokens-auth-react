@@ -20,6 +20,7 @@ import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RouteToFeatureComponentMap } from "../../types";
 import { SessionUserInput, SessionConfig } from "./types";
 import { isTest } from "../../utils";
+import SuperTokensRequest from "supertokens-website";
 
 /*
  * Class.
@@ -41,10 +42,16 @@ export default class Session extends RecipeModule {
      */
     constructor(config: SessionConfig) {
         super(config);
-        const SuperTokensRequest = require("supertokens-website");
+        let usersHeaders = {};
+        if (config.refreshAPICustomHeaders !== undefined) {
+            usersHeaders = config.refreshAPICustomHeaders;
+        }
         SuperTokensRequest.init({
             sessionScope: config.sessionScope,
-            refreshAPICustomHeaders: config.refreshAPICustomHeaders,
+            refreshAPICustomHeaders: {
+                rid: this.getRecipeId(),
+                ...usersHeaders
+            },
             autoAddCredentials: config.autoAddCredentials,
             sessionExpiredStatusCode: config.sessionExpiredStatusCode,
             apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),
@@ -80,6 +87,19 @@ export default class Session extends RecipeModule {
 
     doesSessionExist = (): boolean => {
         return this.sessionSdk.doesSessionExist();
+    };
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    addAxiosInterceptors = (axiosInstance: any): void => {
+        return this.sessionSdk.addAxiosInterceptors(axiosInstance);
+    };
+
+    setAuth0API = (apiPath: string): void => {
+        return this.sessionSdk.setAuth0API(apiPath);
+    };
+
+    getAuth0API = (): { apiPath: string } => {
+        return this.sessionSdk.getAuth0API();
     };
 
     /*
@@ -123,6 +143,19 @@ export default class Session extends RecipeModule {
 
     static doesSessionExist(): boolean {
         return Session.getInstanceOrThrow().doesSessionExist();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    static addAxiosInterceptors(axiosInstance: any): void {
+        return Session.getInstanceOrThrow().addAxiosInterceptors(axiosInstance);
+    }
+
+    static setAuth0API(apiPath: string): void {
+        return Session.getInstanceOrThrow().setAuth0API(apiPath);
+    }
+
+    static getAuth0API(): { apiPath: string } {
+        return Session.getInstanceOrThrow().getAuth0API();
     }
 
     /*

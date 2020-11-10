@@ -16,9 +16,9 @@
  * Imports.
  */
 import * as React from "react";
-import { Component, createRef, Fragment } from "react";
+import { PureComponent, createRef, Fragment } from "react";
 import { NormalisedPalette, EnterEmailThemeProps, EnterEmailThemeState } from "../../../../types";
-import { CSSInterpolation } from "@emotion/serialize/types";
+import { CSSObject } from "@emotion/serialize/types";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
@@ -35,17 +35,17 @@ function getStyles(palette: NormalisedPalette): Styles {
             lineHeight: "40px",
             letterSpacing: "0.58px",
             fontWeight: 600,
-            color: palette.colors.textPrimary
-        } as CSSInterpolation,
+            color: palette.colors.textTitle
+        } as CSSObject,
 
         headerSubTitle: {
             marginTop: "9px",
             marginBottom: "21px"
-        } as CSSInterpolation,
+        } as CSSObject,
 
         successMessage: {
             marginBottom: "15px"
-        } as CSSInterpolation
+        } as CSSObject
     };
 }
 
@@ -53,7 +53,7 @@ function getStyles(palette: NormalisedPalette): Styles {
  * Component.
  */
 
-export default class EnterEmailTheme extends Component<EnterEmailThemeProps, EnterEmailThemeState> {
+export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps, EnterEmailThemeState> {
     /*
      * Constructor.
      */
@@ -78,18 +78,20 @@ export default class EnterEmailTheme extends Component<EnterEmailThemeProps, Ent
      */
 
     onSuccess = (): void => {
-        this.setState({
+        this.setState(oldState => ({
+            ...oldState,
             emailSent: true
-        });
-        if (this.props.onSuccess) {
+        }));
+        if (this.props.onSuccess !== undefined) {
             this.props.onSuccess();
         }
     };
 
     resend = (): void => {
-        this.setState({
+        this.setState(oldState => ({
+            ...oldState,
             emailSent: false
-        });
+        }));
     };
 
     /*
@@ -98,7 +100,7 @@ export default class EnterEmailTheme extends Component<EnterEmailThemeProps, Ent
     render(): JSX.Element {
         const { defaultStyles, palette, callAPI } = this.props;
         const { formFields, emailSent } = this.state;
-        const styleFromInit = this.props.styleFromInit || {};
+        const styleFromInit = this.props.styleFromInit !== undefined ? this.props.styleFromInit : {};
         const styles = getStyles(palette);
 
         // If email sent, show success UI.
@@ -129,6 +131,7 @@ export default class EnterEmailTheme extends Component<EnterEmailThemeProps, Ent
             <FormBase
                 formFields={formFields}
                 defaultStyles={defaultStyles}
+                styleFromInit={styleFromInit}
                 palette={palette}
                 buttonLabel={"Email me"}
                 onSuccess={this.onSuccess}
