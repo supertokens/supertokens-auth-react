@@ -400,26 +400,37 @@ export type SignOutResponse = {
     status: API_RESPONSE_STATUS.OK;
 };
 
-export type BaseAPIResponse =
+export type FormFieldAPIResponse = {
+    /*
+     * Field validation errors.
+     */
+    status: API_RESPONSE_STATUS.FIELD_ERROR;
+
+    /*
+     * Array of Field Id and their corresponding error.
+     */
+    formFields: FormFieldError[];
+};
+
+export type BaseSignInUpAPIResponse =
     | {
           /*
            * Success.
            */
           status: API_RESPONSE_STATUS.OK;
 
-          user?: User;
+          user: User;
       }
+    | FormFieldAPIResponse;
+
+export type BaseResetPasswordAPIResponse =
     | {
           /*
-           * Field validation errors.
+           * Success.
            */
-          status: API_RESPONSE_STATUS.FIELD_ERROR;
-
-          /*
-           * Array of Field Id and their corresponding error.
-           */
-          formFields: FormFieldError[];
-      };
+          status: API_RESPONSE_STATUS.OK;
+      }
+    | FormFieldAPIResponse;
 
 export type ThemeResponseGeneralError = {
     /*
@@ -433,12 +444,12 @@ export type ThemeResponseGeneralError = {
     message: string;
 };
 
-export type SignUpAPIResponse = BaseAPIResponse;
+export type SignUpAPIResponse = BaseSignInUpAPIResponse;
 
 export type SignUpThemeResponse = SignUpAPIResponse | ThemeResponseGeneralError;
 
 export type SignInAPIResponse =
-    | BaseAPIResponse
+    | BaseSignInUpAPIResponse
     | {
           /*
            * Wrong credentials error.
@@ -453,11 +464,11 @@ export type SignInAPIResponse =
 
 export type SignInThemeResponse = SignInAPIResponse | ThemeResponseGeneralError;
 
-export type EnterEmailAPIResponse = BaseAPIResponse;
+export type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
 export type EnterEmailThemeResponse = EnterEmailAPIResponse | ThemeResponseGeneralError;
 
 export type SubmitNewPasswordAPIResponse =
-    | BaseAPIResponse
+    | BaseResetPasswordAPIResponse
     | {
           /*
            * Wrong credentials error.
@@ -580,8 +591,8 @@ export type SubmitNewPasswordThemeState = {
 
 export enum SignInAndUpStateStatus {
     LOADING = "LOADING",
-    NOT_SUBMITTED = "NOT_SUBMITTED",
-    SUBMITTED = "SUBMITTED"
+    READY = "READY",
+    SUCCESSFUL = "SUCCESSFUL"
 }
 
 export type SignInAndUpState =
@@ -589,10 +600,10 @@ export type SignInAndUpState =
           status: SignInAndUpStateStatus.LOADING;
       }
     | {
-          status: SignInAndUpStateStatus.NOT_SUBMITTED;
+          status: SignInAndUpStateStatus.READY;
       }
     | {
-          status: SignInAndUpStateStatus.SUBMITTED;
+          status: SignInAndUpStateStatus.SUCCESSFUL;
           user: User;
           responseJson: any;
       };

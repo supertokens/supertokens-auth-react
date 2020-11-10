@@ -126,27 +126,31 @@ export declare type FormFieldError = {
 export declare type SignOutResponse = {
     status: API_RESPONSE_STATUS.OK;
 };
-export declare type BaseAPIResponse = {
-    status: API_RESPONSE_STATUS.OK;
-    user?: User;
-} | {
+export declare type FormFieldAPIResponse = {
     status: API_RESPONSE_STATUS.FIELD_ERROR;
     formFields: FormFieldError[];
 };
+export declare type BaseSignInUpAPIResponse = {
+    status: API_RESPONSE_STATUS.OK;
+    user: User;
+} | FormFieldAPIResponse;
+export declare type BaseResetPasswordAPIResponse = {
+    status: API_RESPONSE_STATUS.OK;
+} | FormFieldAPIResponse;
 export declare type ThemeResponseGeneralError = {
     status: API_RESPONSE_STATUS.GENERAL_ERROR;
     message: string;
 };
-export declare type SignUpAPIResponse = BaseAPIResponse;
+export declare type SignUpAPIResponse = BaseSignInUpAPIResponse;
 export declare type SignUpThemeResponse = SignUpAPIResponse | ThemeResponseGeneralError;
-export declare type SignInAPIResponse = BaseAPIResponse | {
+export declare type SignInAPIResponse = BaseSignInUpAPIResponse | {
     status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR;
     message: string;
 };
 export declare type SignInThemeResponse = SignInAPIResponse | ThemeResponseGeneralError;
-export declare type EnterEmailAPIResponse = BaseAPIResponse;
+export declare type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
 export declare type EnterEmailThemeResponse = EnterEmailAPIResponse | ThemeResponseGeneralError;
-export declare type SubmitNewPasswordAPIResponse = BaseAPIResponse | {
+export declare type SubmitNewPasswordAPIResponse = BaseResetPasswordAPIResponse | {
     status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
 };
 export declare type SubmitNewPasswordThemeResponse = SubmitNewPasswordAPIResponse | ThemeResponseGeneralError;
@@ -191,15 +195,15 @@ export declare type SubmitNewPasswordThemeState = {
 };
 export declare enum SignInAndUpStateStatus {
     LOADING = "LOADING",
-    NOT_SUBMITTED = "NOT_SUBMITTED",
-    SUBMITTED = "SUBMITTED"
+    READY = "READY",
+    SUCCESSFUL = "SUCCESSFUL"
 }
 export declare type SignInAndUpState = {
     status: SignInAndUpStateStatus.LOADING;
 } | {
-    status: SignInAndUpStateStatus.NOT_SUBMITTED;
+    status: SignInAndUpStateStatus.READY;
 } | {
-    status: SignInAndUpStateStatus.SUBMITTED;
+    status: SignInAndUpStateStatus.SUCCESSFUL;
     user: User;
     responseJson: any;
 };
