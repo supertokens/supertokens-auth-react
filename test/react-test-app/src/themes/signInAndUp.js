@@ -5,8 +5,9 @@ import {StyleConsumer, StyleProvider} from "supertokens-auth-react/lib/build/rec
 /*
  * SignInAndUpTheme
  * props given from SignInAndUp feature component:
-   SignInForm: https://github.com/supertokens/supertokens-auth-react/blob/0.0/lib/ts/recipe/emailpassword/types.ts#L319
-   SignUpForm: https://github.com/supertokens/supertokens-auth-react/blob/0.0/lib/ts/recipe/emailpassword/types.ts#L341
+ * https://github.com/supertokens/supertokens-auth-react/blob/b24e2c885ba11c46d868e4564da555deb9fbab71/lib/ts/recipe/emailpassword/types.ts#L353
+ * SignInForm: https://github.com/supertokens/supertokens-auth-react/blob/b24e2c885ba11c46d868e4564da555deb9fbab71/lib/ts/recipe/emailpassword/types.ts#L309
+ * SignUpForm: https://github.com/supertokens/supertokens-auth-react/blob/b24e2c885ba11c46d868e4564da555deb9fbab71/lib/ts/recipe/emailpassword/types.ts#L331
  */
 
 export default function SignInAndUp(props){
@@ -68,9 +69,7 @@ function SignIn (props) {
         resetPasswordURL,
         forgotPasswordClick,
         formFields,
-        callAPI,
-        // defaultStyles,
-        // palette
+        callAPI
     } = props;
 
     /*
@@ -110,7 +109,6 @@ function SignIn (props) {
         if (forgotPasswordClick) {
             forgotPasswordClick();
         } else {
-            console.log(resetPasswordURL);
             window.location.href = resetPasswordURL;
         }
     }
@@ -168,9 +166,7 @@ function SignUp (props) {
         termsAndConditionsLink,
         onSuccess,
         formFields,
-        callAPI,
-        // defaultStyles,
-        // palette
+        callAPI
     } = props;
     /*
     * Inputs ref
