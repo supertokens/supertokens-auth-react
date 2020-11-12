@@ -122,14 +122,16 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         inputAdornment: {
             float: "right",
             left: "-2%",
-            top: "-33px",
+            top: "-24px",
             position: "relative",
             borderRadius: "12px",
             display: "flex",
-            alignItems: "center"
+            alignItems: "center",
+            height: "0px"
         },
 
         inputErrorMessage: {
+            paddingTop: "10px",
             color: palette.colors.error,
             lineHeight: "24px",
             fontWeight: 400,

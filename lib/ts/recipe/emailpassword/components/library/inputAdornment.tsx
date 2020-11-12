@@ -22,8 +22,7 @@ import { jsx } from "@emotion/core";
 import Checked from "../../assets/checked";
 import Error from "../../assets/error";
 import * as React from "react";
-import { CSSObject } from "@emotion/serialize/types/index";
-import { NormalisedDefaultStyles, NormalisedPalette } from "../../types";
+import { StyleConsumer } from "../../styles/styleContext";
 
 export type AdornmentType = "success" | "error" | undefined;
 
@@ -32,25 +31,25 @@ export type AdornmentType = "success" | "error" | undefined;
  */
 
 type InputAdornmentProps = {
-    style?: CSSObject;
     type: AdornmentType;
-    defaultStyles: NormalisedDefaultStyles;
-    palette: NormalisedPalette;
 };
 
 /*
  * Component.
  */
 
-export default function InputAdornment({ type, style, defaultStyles, palette }: InputAdornmentProps): JSX.Element {
+export default function InputAdornment({ type }: InputAdornmentProps): JSX.Element {
     /*
      * Render.
      */
-
     return (
-        <div className="inputAdornment" css={[defaultStyles.inputAdornment, style]}>
-            {type === "success" && <Checked color={palette.colors.primary} />}
-            {type === "error" && <Error color={palette.colors.error} />}
-        </div>
+        <StyleConsumer>
+            {styles => (
+                <div className="inputAdornment" css={styles.inputAdornment}>
+                    {type === "success" && <Checked color={styles.palette.colors.primary} />}
+                    {type === "error" && <Error color={styles.palette.colors.error} />}
+                </div>
+            )}
+        </StyleConsumer>
     );
 }

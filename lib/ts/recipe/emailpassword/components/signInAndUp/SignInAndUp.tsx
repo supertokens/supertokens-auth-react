@@ -22,8 +22,6 @@ import {
     SignInThemeResponse,
     SignInAndUpProps,
     SignUpThemeResponse,
-    NormalisedDefaultStyles,
-    NormalisedPalette,
     OnHandleSignInAndUpSuccessContext,
     SignInAndUpState,
     SignInAndUpStateStatus,
@@ -38,11 +36,11 @@ import FeatureWrapper from "../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { getDefaultStyles } from "../../styles/styles";
 import { redirectToInApp, redirectToWithReload, WithRouter } from "../../../../utils";
 import SuperTokens from "../../../../superTokens";
 import { handleSignInAPI, handleSignUpAPI } from "./api";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
+import { StyleProvider } from "../../styles/styleContext";
 
 /*
  * Component.
@@ -264,20 +262,13 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
 
         const signInFeature = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm;
 
-        const defaultStyles: NormalisedDefaultStyles = getDefaultStyles(
-            this.getRecipeInstanceOrThrow().getConfig().palette
-        );
-        const palette: NormalisedPalette = this.getRecipeInstanceOrThrow().getConfig().palette;
-
         const signInForm = {
             styleFromInit: signInFeature.style,
             formFields: signInFeature.formFields,
             resetPasswordURL: signInFeature.resetPasswordURL,
             callAPI: this.signIn,
             onSuccess: this.onSignInSuccess,
-            forgotPasswordClick: this.onHandleForgotPasswordClicked,
-            defaultStyles,
-            palette
+            forgotPasswordClick: this.onHandleForgotPasswordClicked
         };
 
         const signUpForm = {
@@ -286,9 +277,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             privacyPolicyLink: signUpFeature.privacyPolicyLink,
             termsAndConditionsLink: signUpFeature.termsAndConditionsLink,
             onSuccess: this.onSignUpSuccess,
-            callAPI: this.signUp,
-            defaultStyles,
-            palette
+            callAPI: this.signUp
         };
 
         const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
@@ -302,20 +291,22 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={useShadowDom} defaultStyles={defaultStyles}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {this.props.children === undefined && (
-                        <SignInAndUpTheme signInForm={signInForm} signUpForm={signUpForm} />
-                    )}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children &&
-                        React.cloneElement(this.props.children, {
-                            signInForm,
-                            signUpForm
-                        })}
-                </Fragment>
-            </FeatureWrapper>
+            <StyleProvider>
+                <FeatureWrapper useShadowDom={useShadowDom}>
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {this.props.children === undefined && (
+                            <SignInAndUpTheme signInForm={signInForm} signUpForm={signUpForm} />
+                        )}
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {this.props.children &&
+                            React.cloneElement(this.props.children, {
+                                signInForm,
+                                signUpForm
+                            })}
+                    </Fragment>
+                </FeatureWrapper>
+            </StyleProvider>
         );
     };
 }

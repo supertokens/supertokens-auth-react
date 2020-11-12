@@ -25,6 +25,7 @@ import { APIFormField } from "../../../../types";
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID, MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
+import { StyleConsumer } from "../../styles/styleContext";
 
 /*
  * Component.
@@ -151,88 +152,75 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
      * Render.
      */
     render(): JSX.Element {
-        const { defaultStyles, palette, header, footer, buttonLabel, showLabels } = this.props;
-        const styleFromInit = this.props.styleFromInit !== undefined ? this.props.styleFromInit : {};
+        const { header, footer, buttonLabel, showLabels } = this.props;
         const { generalError, formFields, isLoading } = this.state;
 
         return (
-            <div className="container" css={[defaultStyles.container, styleFromInit.container]}>
-                <div className="row" css={[defaultStyles.row, styleFromInit.row]}>
-                    {header}
-                    {generalError && (
-                        <div className="generalError" css={[defaultStyles.generalError, styleFromInit.generalError]}>
-                            {generalError}
-                        </div>
-                    )}
+            <StyleConsumer>
+                {styles => (
+                    <div className="container" css={styles.container}>
+                        <div className="row" css={styles.row}>
+                            {header}
+                            {generalError && (
+                                <div className="generalError" css={styles.generalError}>
+                                    {generalError}
+                                </div>
+                            )}
 
-                    <form autoComplete="on" noValidate onSubmit={this.onFormSubmit}>
-                        {formFields.map(field => {
-                            let type = "text";
-                            // If email or password, replace field type.
-                            if (
-                                MANDATORY_FORM_FIELDS_ID_ARRAY.includes((field as { id: MANDATORY_FORM_FIELDS_ID }).id)
-                            ) {
-                                type = field.id;
-                            }
-                            if (field.id === "confirm-password") {
-                                type = "password";
-                            }
+                            <form autoComplete="on" noValidate onSubmit={this.onFormSubmit}>
+                                {formFields.map(field => {
+                                    let type = "text";
+                                    // If email or password, replace field type.
+                                    if (
+                                        MANDATORY_FORM_FIELDS_ID_ARRAY.includes(
+                                            (field as { id: MANDATORY_FORM_FIELDS_ID }).id
+                                        )
+                                    ) {
+                                        type = field.id;
+                                    }
+                                    if (field.id === "confirm-password") {
+                                        type = "password";
+                                    }
 
-                            return (
-                                <FormRow style={styleFromInit.formRow} key={field.id} defaultStyles={defaultStyles}>
+                                    return (
+                                        <FormRow key={field.id}>
+                                            <Fragment>
+                                                {showLabels && (
+                                                    <Label value={field.label} showIsRequired={field.showIsRequired} />
+                                                )}
+
+                                                <Input
+                                                    type={type}
+                                                    name={field.id}
+                                                    placeholder={field.placeholder}
+                                                    ref={field.ref}
+                                                    onChange={this.handleInputChange}
+                                                    hasError={field.error !== undefined}
+                                                    validated={field.validated}
+                                                />
+
+                                                {field.error && <InputError error={field.error} />}
+                                            </Fragment>
+                                        </FormRow>
+                                    );
+                                })}
+
+                                <FormRow key="form-button">
                                     <Fragment>
-                                        {showLabels && (
-                                            <Label
-                                                style={styleFromInit.label}
-                                                value={field.label}
-                                                showIsRequired={field.showIsRequired}
-                                                defaultStyles={defaultStyles}
-                                            />
-                                        )}
-
-                                        <Input
-                                            style={styleFromInit.input}
-                                            errorStyle={styleFromInit.inputError}
-                                            adornmentStyle={styleFromInit.inputAdornment}
-                                            type={type}
-                                            name={field.id}
-                                            placeholder={field.placeholder}
-                                            ref={field.ref}
-                                            onChange={this.handleInputChange}
-                                            hasError={field.error !== undefined}
-                                            validated={field.validated}
-                                            defaultStyles={defaultStyles}
-                                            palette={palette}
+                                        <Button
+                                            disabled={isLoading}
+                                            isLoading={isLoading}
+                                            type="submit"
+                                            label={buttonLabel}
                                         />
-
-                                        {field.error && (
-                                            <InputError
-                                                style={styleFromInit.inputErrorMessage}
-                                                error={field.error}
-                                                defaultStyles={defaultStyles}
-                                            />
-                                        )}
+                                        {footer}
                                     </Fragment>
                                 </FormRow>
-                            );
-                        })}
-
-                        <FormRow style={styleFromInit.formRow} key="form-button" defaultStyles={defaultStyles}>
-                            <Fragment>
-                                <Button
-                                    defaultStyles={defaultStyles}
-                                    style={styleFromInit.button}
-                                    disabled={isLoading}
-                                    isLoading={isLoading}
-                                    type="submit"
-                                    label={buttonLabel}
-                                />
-                                {footer}
-                            </Fragment>
-                        </FormRow>
-                    </form>
-                </div>
-            </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+            </StyleConsumer>
         );
     }
 }

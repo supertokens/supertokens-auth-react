@@ -95,8 +95,6 @@ export declare type onHandleResetPasswordUsingTokenSuccessContext = {
 declare type ThemeBaseProps = {
     styleFromInit?: Styles;
     formFields: FormFieldThemeProps[];
-    defaultStyles: NormalisedDefaultStyles;
-    palette: NormalisedPalette;
     onSuccess?: () => void;
 };
 export declare type SignInThemeProps = ThemeBaseProps & {
@@ -267,9 +265,6 @@ export declare type FormBaseProps = {
     buttonLabel: string;
     onSuccess?: () => void;
     callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse | SignUpThemeResponse | SubmitNewPasswordThemeResponse | EnterEmailThemeResponse>;
-    defaultStyles: NormalisedDefaultStyles;
-    palette: NormalisedPalette;
-    styleFromInit?: Styles;
 };
 export declare type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 export declare type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;

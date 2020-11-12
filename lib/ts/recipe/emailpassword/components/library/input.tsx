@@ -25,7 +25,7 @@ import { forwardRef, RefObject } from "react";
 import { APIFormField } from "../../../../types";
 import { InputAdornment } from ".";
 import { AdornmentType } from "./inputAdornment";
-import { NormalisedDefaultStyles, NormalisedPalette } from "../../types";
+import { StyleConsumer } from "../../styles/styleContext";
 
 /*
  * Props.
@@ -40,8 +40,6 @@ type InputProps = {
     name: string;
     hasError: boolean;
     placeholder: string;
-    defaultStyles: NormalisedDefaultStyles;
-    palette: NormalisedPalette;
     ref: RefObject<any>;
     onChange?: (field: APIFormField) => void;
 };
@@ -51,36 +49,9 @@ type InputProps = {
  */
 
 function Input(
-    {
-        style,
-        type,
-        name,
-        hasError,
-        adornmentStyle,
-        onChange,
-        placeholder,
-        validated,
-        defaultStyles,
-        palette,
-        errorStyle
-    }: InputProps,
+    { type, name, hasError, onChange, placeholder, validated }: InputProps,
     ref: RefObject<any>
 ): JSX.Element {
-    if (hasError !== true) {
-        errorStyle = undefined;
-    } else {
-        errorStyle = {
-            ...defaultStyles.inputError,
-            ...errorStyle
-        };
-    }
-
-    let adornmentType: AdornmentType = undefined;
-
-    if (validated) {
-        adornmentType = hasError ? "error" : "success";
-    }
-
     /*
      * Method.
      */
@@ -98,23 +69,31 @@ function Input(
      * Render.
      */
     return (
-        <div className="inputWrapper" css={[defaultStyles.inputWrapper]}>
-            <input
-                className="input inputError"
-                css={[defaultStyles.input, style, errorStyle]}
-                onFocus={handleChange}
-                type={type}
-                name={name}
-                placeholder={placeholder}
-                ref={ref}
-            />
-            <InputAdornment
-                defaultStyles={defaultStyles}
-                palette={palette}
-                style={adornmentStyle}
-                type={adornmentType}
-            />
-        </div>
+        <StyleConsumer>
+            {styles => {
+                const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
+                let adornmentType: AdornmentType = undefined;
+
+                if (validated) {
+                    adornmentType = hasError ? "error" : "success";
+                }
+
+                return (
+                    <div className="inputWrapper" css={[styles.inputWrapper]}>
+                        <input
+                            className="input inputError"
+                            css={[styles.input, errorStyle]}
+                            onFocus={handleChange}
+                            type={type}
+                            name={name}
+                            placeholder={placeholder}
+                            ref={ref}
+                        />
+                        <InputAdornment type={adornmentType} />
+                    </div>
+                );
+            }}
+        </StyleConsumer>
     );
 }
 

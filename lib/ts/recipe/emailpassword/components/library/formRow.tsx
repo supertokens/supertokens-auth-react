@@ -20,27 +20,28 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import * as React from "react";
-import { CSSObject } from "@emotion/serialize/types/index";
-import { NormalisedDefaultStyles } from "../../types";
+import { StyleConsumer } from "../../styles/styleContext";
 
 /*
  * Props.
  */
 
 type FormRowProps = {
-    style: CSSObject;
     children: JSX.Element;
-    defaultStyles: NormalisedDefaultStyles;
 };
 
 /*
  * Component.
  */
 
-export default function FormRow({ style, children, defaultStyles }: FormRowProps): JSX.Element {
+export default function FormRow({ children }: FormRowProps): JSX.Element {
     return (
-        <div className="formRow" css={[defaultStyles.formRow, style]}>
-            {children}
-        </div>
+        <StyleConsumer>
+            {styles => (
+                <div className="formRow" css={styles.formRow}>
+                    {children}
+                </div>
+            )}
+        </StyleConsumer>
     );
 }

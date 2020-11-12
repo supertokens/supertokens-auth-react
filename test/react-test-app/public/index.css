@@ -40,35 +40,35 @@ a {
   margin: 0 auto;
 }
 
-.headings {
+.headingTitle {
   position: relative;
   margin: 90px auto 70px;
   cursor: pointer;
 }
 
-.headings > span {
+.headingTitle > span {
   color: rgba(255, 255, 255, 0.7);
   padding-bottom: 10px;
   border-bottom: solid 2px rgba(17, 97, 237, 0);
   display: inline-block;
 }
 
-.headings > span:first-child {
+.headingTitle > span:first-child {
   margin-left: 20px;
   margin-right: 45px;
 }
 
-.headings > span:hover {
+.headingTitle > span:hover {
   color: rgba(255, 255, 255, 1);
 }
 
-.headings > span.active {
+.headingTitle > span.active {
   color: rgba(255, 255, 255, 1);
   border-bottom: solid 4px #aaf0d1;
   box-shadow: 0 5px 5px -5px #1d2124;
 }
 
-.headings > a span {
+.headingTitle > a span {
   font-size: 1.4rem;
   letter-spacing: 1px;
 }
@@ -233,4 +233,21 @@ footer .fp a:hover {
 
 .terms {
   color: #b7b7b7;
+}
+
+.progress {
+  width: 100%;
+  height: 20px;
+  margin-top: 10px;
+  border-radius: 8px;
+  background-color: #828282
+}
+
+.progress-bar {
+  color: #fff;
+  border-radius: 8px;
+  height: 20px;
+  float: left;
+  text-align: center;
+  justify-content: center;
 }

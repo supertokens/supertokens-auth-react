@@ -20,31 +20,32 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import * as React from "react";
-import { CSSObject } from "@emotion/serialize/types/index";
-import { NormalisedDefaultStyles } from "../../types";
+import { StyleConsumer } from "../../styles/styleContext";
 
 /*
  * Props.
  */
 
 type InputErrorProps = {
-    style: CSSObject;
     error: string;
-    defaultStyles: NormalisedDefaultStyles;
 };
 
 /*
  * Component.
  */
 
-export default function InputError({ style, error, defaultStyles }: InputErrorProps): JSX.Element {
+export default function InputError({ error }: InputErrorProps): JSX.Element {
     /*
      * Render.
      */
 
     return (
-        <div className="inputErrorMessage" css={[defaultStyles.inputErrorMessage, style]}>
-            {error}
-        </div>
+        <StyleConsumer>
+            {styles => (
+                <div className="inputErrorMessage" css={styles.inputErrorMessage}>
+                    {error}
+                </div>
+            )}
+        </StyleConsumer>
     );
 }
