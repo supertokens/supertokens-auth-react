@@ -153,19 +153,16 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
      */
     render(): JSX.Element {
         const { header, footer, buttonLabel, showLabels } = this.props;
-        const styleFromInit = this.props.styleFromInit !== undefined ? this.props.styleFromInit : {};
         const { generalError, formFields, isLoading } = this.state;
 
         return (
             <StyleConsumer>
-                {({ defaultStyles }) => (
-                    <div className="container" css={[defaultStyles.container, styleFromInit.container]}>
-                        <div className="row" css={[defaultStyles.row, styleFromInit.row]}>
+                {styles => (
+                    <div className="container" css={styles.container}>
+                        <div className="row" css={styles.row}>
                             {header}
                             {generalError && (
-                                <div
-                                    className="generalError"
-                                    css={[defaultStyles.generalError, styleFromInit.generalError]}>
+                                <div className="generalError" css={styles.generalError}>
                                     {generalError}
                                 </div>
                             )}
@@ -186,20 +183,13 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                                     }
 
                                     return (
-                                        <FormRow style={styleFromInit.formRow} key={field.id}>
+                                        <FormRow key={field.id}>
                                             <Fragment>
                                                 {showLabels && (
-                                                    <Label
-                                                        style={styleFromInit.label}
-                                                        value={field.label}
-                                                        showIsRequired={field.showIsRequired}
-                                                    />
+                                                    <Label value={field.label} showIsRequired={field.showIsRequired} />
                                                 )}
 
                                                 <Input
-                                                    style={styleFromInit.input}
-                                                    errorStyle={styleFromInit.inputError}
-                                                    adornmentStyle={styleFromInit.inputAdornment}
                                                     type={type}
                                                     name={field.id}
                                                     placeholder={field.placeholder}
@@ -209,21 +199,15 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                                                     validated={field.validated}
                                                 />
 
-                                                {field.error && (
-                                                    <InputError
-                                                        style={styleFromInit.inputErrorMessage}
-                                                        error={field.error}
-                                                    />
-                                                )}
+                                                {field.error && <InputError error={field.error} />}
                                             </Fragment>
                                         </FormRow>
                                     );
                                 })}
 
-                                <FormRow style={styleFromInit.formRow} key="form-button">
+                                <FormRow key="form-button">
                                     <Fragment>
                                         <Button
-                                            style={styleFromInit.button}
                                             disabled={isLoading}
                                             isLoading={isLoading}
                                             type="submit"

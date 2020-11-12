@@ -49,7 +49,7 @@ type InputProps = {
  */
 
 function Input(
-    { style, type, name, hasError, adornmentStyle, onChange, placeholder, validated, errorStyle }: InputProps,
+    { type, name, hasError, onChange, placeholder, validated }: InputProps,
     ref: RefObject<any>
 ): JSX.Element {
     /*
@@ -70,16 +70,8 @@ function Input(
      */
     return (
         <StyleConsumer>
-            {({ defaultStyles }) => {
-                if (hasError !== true) {
-                    errorStyle = undefined;
-                } else {
-                    errorStyle = {
-                        ...defaultStyles.inputError,
-                        ...errorStyle
-                    };
-                }
-
+            {styles => {
+                const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
                 let adornmentType: AdornmentType = undefined;
 
                 if (validated) {
@@ -87,17 +79,17 @@ function Input(
                 }
 
                 return (
-                    <div className="inputWrapper" css={[defaultStyles.inputWrapper]}>
+                    <div className="inputWrapper" css={[styles.inputWrapper]}>
                         <input
                             className="input inputError"
-                            css={[defaultStyles.input, style, errorStyle]}
+                            css={[styles.input, errorStyle]}
                             onFocus={handleChange}
                             type={type}
                             name={name}
                             placeholder={placeholder}
                             ref={ref}
                         />
-                        <InputAdornment style={adornmentStyle} type={adornmentType} />
+                        <InputAdornment type={adornmentType} />
                     </div>
                 );
             }}

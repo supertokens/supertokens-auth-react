@@ -27,7 +27,7 @@ import { jsx } from "@emotion/core";
 import FormBase from "../../../library/FormBase";
 import { FormRow, Button } from "../../../library";
 import { Styles } from "../../../../../../types";
-import { StyleConsumer } from "../../../../styles/styleContext";
+import { StyleConsumer, StyleProvider } from "../../../../styles/styleContext";
 
 /*
  * Styles.
@@ -107,71 +107,70 @@ export default class SubmitNewPasswordTheme extends PureComponent<
         const { formFields, hasNewPassword } = this.state;
 
         return (
-            <StyleConsumer>
-                {({ defaultStyles, palette }) => {
-                    const styles = getStyles(palette);
+            <StyleProvider styleFromInit={styleFromInit}>
+                <StyleConsumer>
+                    {styles => {
+                        const componentStyles = getStyles(styles.palette);
 
-                    if (hasNewPassword === true) {
-                        return (
-                            <div className="container" css={[defaultStyles.container, styleFromInit.container]}>
-                                <div className="row" css={[defaultStyles.row, styleFromInit.row]}>
-                                    <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
-                                        Success!
-                                    </div>
-                                    <FormRow style={styleFromInit.formRow} key="form-button">
-                                        <Fragment>
-                                            <div
-                                                className="primaryText successMessage"
-                                                css={[
-                                                    defaultStyles.primaryText,
-                                                    styleFromInit.primaryText,
-                                                    styles.successMessage,
-                                                    styleFromInit.successMessage
-                                                ]}>
-                                                Your password has been updated successfully
-                                            </div>
-                                            <Button
-                                                style={styleFromInit.button}
-                                                disabled={false}
-                                                isLoading={false}
-                                                type="button"
-                                                onClick={onSignInClicked}
-                                                label={"SIGN IN"}
-                                            />
-                                        </Fragment>
-                                    </FormRow>
-                                </div>
-                            </div>
-                        );
-                    }
-                    return (
-                        <FormBase
-                            formFields={formFields}
-                            styleFromInit={styleFromInit}
-                            buttonLabel={"Change password"}
-                            onSuccess={this.onSuccess}
-                            callAPI={callAPI}
-                            showLabels={false}
-                            header={
-                                <Fragment>
-                                    <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
-                                        Change your password
-                                    </div>
-                                    <div
-                                        className="headerSubtitle"
-                                        css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
+                        if (hasNewPassword === true) {
+                            return (
+                                <div className="container" css={styles.container}>
+                                    <div className="row" css={styles.row}>
                                         <div
-                                            className="secondaryText"
-                                            css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
-                                            Enter a new password below to change your password
+                                            className="headerTitle"
+                                            css={[styles.headerTitle, styleFromInit.headerTitle]}>
+                                            Success!
                                         </div>
+                                        <FormRow key="form-button">
+                                            <Fragment>
+                                                <div
+                                                    className="primaryText successMessage"
+                                                    css={[
+                                                        styles.primaryText,
+                                                        componentStyles.successMessage,
+                                                        styles.successMessage
+                                                    ]}>
+                                                    Your password has been updated successfully
+                                                </div>
+                                                <Button
+                                                    disabled={false}
+                                                    isLoading={false}
+                                                    type="button"
+                                                    onClick={onSignInClicked}
+                                                    label={"SIGN IN"}
+                                                />
+                                            </Fragment>
+                                        </FormRow>
                                     </div>
-                                </Fragment>
-                            }
-                        />
-                    );
-                }}
-            </StyleConsumer>
+                                </div>
+                            );
+                        }
+                        return (
+                            <FormBase
+                                formFields={formFields}
+                                buttonLabel={"Change password"}
+                                onSuccess={this.onSuccess}
+                                callAPI={callAPI}
+                                showLabels={false}
+                                header={
+                                    <Fragment>
+                                        <div
+                                            className="headerTitle"
+                                            css={[componentStyles.headerTitle, styles.headerTitle]}>
+                                            Change your password
+                                        </div>
+                                        <div className="headerSubtitle" css={styles.headerSubTitle}>
+                                            <div className="secondaryText" css={styles.secondaryText}>
+                                                Enter a new password below to change your password
+                                            </div>
+                                        </div>
+                                    </Fragment>
+                                }
+                            />
+                        );
+                    }}
+                </StyleConsumer>
+            </StyleProvider>
         );
     }
 }

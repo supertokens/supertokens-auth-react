@@ -1,6 +1,6 @@
 import React from "react";
 import {useState, useRef} from "react";
-import {StyleConsumer} from "supertokens-auth-react/lib/build/recipe/emailpassword/styles/styleContext"
+import {StyleConsumer, StyleProvider} from "supertokens-auth-react/lib/build/recipe/emailpassword/styles/styleContext"
 
 /*
  * SignInAndUpTheme
@@ -28,14 +28,14 @@ export default function SignInAndUp(props){
           * if you would like to create a generic SuperTokens theme.
           */
          <StyleConsumer>
-             {({defaultStyles, palette}) => (
-                <div className="root" style={defaultStyles.root} >
+             {styles => (
+                <div className="root" style={styles.root} >
                     <div className="container-shadow"></div>
                     <div className="container">
-                        <div className="wrap" style={defaultStyles.wrap}>
+                        <div className="wrap" style={styles.wrap}>
                             <div className="headingTitle">
-                                <span id="sign-up" style={{color: palette.colors.textPrimary}} className={!isSignIn ? 'active' : ''} onClick={() => setSignIn(false)}>SIGN UP</span>
-                                <span id="sign-in" style={{color: palette.colors.textPrimary}} className={isSignIn ? 'active' : ''} onClick={() => setSignIn(true)}>SIGN IN</span>
+                                <span id="sign-up" style={{color: styles.palette.colors.textPrimary}} className={!isSignIn ? 'active' : ''} onClick={() => setSignIn(false)}>SIGN UP</span>
+                                <span id="sign-in" style={{color: styles.palette.colors.textPrimary}} className={isSignIn ? 'active' : ''} onClick={() => setSignIn(true)}>SIGN IN</span>
                             </div>
 
                             {isSignIn && <SignIn {...signInForm} />}
@@ -116,50 +116,47 @@ function SignIn (props) {
     }
 
     return (
-        <StyleConsumer>
-            {({defaultStyles, palette}) => (
-                <div>
-                    <form onSubmit={signIn}>
-                        <label>{formFields[0].label}</label>
-                        <input 
-                            /*
-                             * Allow the user to overwrite default styles for input.
-                             * If you are going to provide a generic SuperTokens theme,
-                             * you should use this pattern everywhere.
-                             */
-                            style={{
-                                ...defaultStyles.input,
-                                color: palette.colors.textPrimary,
-                                ...styleFromInit.input}
-                            }
-                            ref={emailRef}  type="text" name="email" placeholder={formFields[0].placeholder}
-                        />
-                        <label>{formFields[1].label}</label>
-                        <input 
-                            
-                            style={{
-                                ...defaultStyles.input,
-                                color: palette.colors.textPrimary,
-                                ...styleFromInit.input,
+        <StyleProvider styleFromInit={styleFromInit}>
+            <StyleConsumer>
+                {styles => (
+                    <div>
+                        <form onSubmit={signIn}>
+                            <label>{formFields[0].label}</label>
+                            <input 
+                                /*
+                                * Allow the user to overwrite default styles for input.
+                                * If you are going to provide a generic SuperTokens theme,
+                                * you should use this pattern everywhere.
+                                */
+                                style={{
+                                    color: styles.palette.colors.textPrimary,
+                                    ...styles.input}
                                 }
-                            }
-                            ref={passwordRef} id="password" type="password" name="password"  placeholder={formFields[1].placeholder}
-                        />
-                        <input 
-                            style={{
-                                ...defaultStyles.button,
-                                ...styleFromInit.button}
-                            }
-                            type="submit" name="submit" value="Log In"/>
-                    </form>
-            
-                    <footer>
-                        <div className="hr"></div>
-                        <div className="fp"><span className="link" onClick={onResetPassword}>Forgot Password?</span></div>
-                    </footer>
-                </div>
-            )}
-        </StyleConsumer>
+                                ref={emailRef}  type="text" name="email" placeholder={formFields[0].placeholder}
+                            />
+                            <label>{formFields[1].label}</label>
+                            <input 
+                                
+                                style={{
+                                    color: styles.palette.colors.textPrimary,
+                                    ...styles.input,
+                                    }
+                                }
+                                ref={passwordRef} id="password" type="password" name="password"  placeholder={formFields[1].placeholder}
+                            />
+                            <input 
+                                style={styles.button}
+                                type="submit" name="submit" value="Log In"/>
+                        </form>
+                
+                        <footer>
+                            <div className="hr"></div>
+                            <div className="fp"><span className="link" onClick={onResetPassword}>Forgot Password?</span></div>
+                        </footer>
+                    </div>
+                )}
+            </StyleConsumer>
+        </StyleProvider>
     )
 }
 

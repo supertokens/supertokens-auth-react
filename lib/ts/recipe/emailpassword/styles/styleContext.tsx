@@ -12,27 +12,48 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+import { CSSObject } from "@emotion/core";
 import React from "react";
+import { Styles } from "../../../types";
 import EmailPassword from "../emailPassword";
+import { NormalisedPalette } from "../types";
 import { defaultPalette, getDefaultStyles } from "./styles";
 
-const StyleContext = React.createContext({
+type NormalisedStyle = {
+    palette: NormalisedPalette;
+    [x: string]: CSSObject;
+};
+
+const StyleContext = React.createContext<NormalisedStyle>({
     palette: defaultPalette,
-    defaultStyles: getDefaultStyles(defaultPalette)
+    ...getDefaultStyles(defaultPalette)
 });
 
-export function StyleProvider({ children }: { children: JSX.Element }): JSX.Element {
+export function StyleProvider({
+    children,
+    styleFromInit
+}: {
+    children: JSX.Element;
+    styleFromInit?: Styles;
+}): JSX.Element {
     const palette = EmailPassword.getInstanceOrThrow().getConfig().palette;
+    const styles: NormalisedStyle = {
+        palette,
+        ...getDefaultStyles(palette)
+    };
+    if (styleFromInit !== undefined) {
+        // Palette is a reserved word, delete it if exists.
+        delete styleFromInit.palette;
 
-    return (
-        <StyleContext.Provider
-            value={{
-                palette,
-                defaultStyles: getDefaultStyles(palette)
-            }}>
-            {children}
-        </StyleContext.Provider>
-    );
+        Object.keys(styleFromInit).forEach(key => [
+            (styles[key] = {
+                ...styles[key],
+                ...styleFromInit[key]
+            })
+        ]);
+    }
+
+    return <StyleContext.Provider value={styles}>{children}</StyleContext.Provider>;
 }
 
 export const StyleConsumer = StyleContext.Consumer;

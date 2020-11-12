@@ -24,7 +24,7 @@ import { CSSObject } from "@emotion/serialize/types/index";
 import { jsx } from "@emotion/core";
 import { openExternalLink } from "../../../../../../utils";
 import FormBase from "../../../library/FormBase";
-import { StyleConsumer } from "../../../../styles/styleContext";
+import { StyleConsumer, StyleProvider } from "../../../../styles/styleContext";
 
 /*
  * Styles.
@@ -87,75 +87,78 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formF
      * Render.
      */
     render(): JSX.Element {
-        const { privacyPolicyLink, termsAndConditionsLink, signInClicked, onSuccess, callAPI } = this.props;
+        const {
+            privacyPolicyLink,
+            termsAndConditionsLink,
+            styleFromInit,
+            signInClicked,
+            onSuccess,
+            callAPI
+        } = this.props;
         const { formFields } = this.state;
-        const styleFromInit = this.props.styleFromInit !== undefined ? this.props.styleFromInit : {};
-
+        console.log(styleFromInit);
         return (
-            <StyleConsumer>
-                {({ defaultStyles, palette }) => {
-                    const styles = getStyles(palette);
+            <StyleProvider styleFromInit={styleFromInit}>
+                <StyleConsumer>
+                    {styles => {
+                        const componentStyles = getStyles(styles.palette as NormalisedPalette);
 
-                    return (
-                        <FormBase
-                            formFields={formFields}
-                            styleFromInit={styleFromInit}
-                            buttonLabel={"SIGN UP"}
-                            onSuccess={onSuccess}
-                            callAPI={callAPI}
-                            showLabels={true}
-                            header={
-                                <Fragment>
-                                    <div className="headerTitle" css={[styles.headerTitle, styleFromInit.headerTitle]}>
-                                        Sign Up
-                                    </div>
-                                    <div
-                                        className="headerSubtitle"
-                                        css={[styles.headerSubTitle, styleFromInit.headerSubtitle]}>
+                        return (
+                            <FormBase
+                                formFields={formFields}
+                                buttonLabel={"SIGN UP"}
+                                onSuccess={onSuccess}
+                                callAPI={callAPI}
+                                showLabels={true}
+                                header={
+                                    <Fragment>
                                         <div
-                                            className="secondaryText"
-                                            css={[defaultStyles.secondaryText, styleFromInit.secondaryText]}>
-                                            Already have an account?
-                                            <span
-                                                className="link"
-                                                onClick={signInClicked}
-                                                css={[defaultStyles.link, styleFromInit.link]}>
-                                                Sign In
-                                            </span>
+                                            className="headerTitle"
+                                            css={[componentStyles.headerTitle, styles.headerTitle]}>
+                                            Sign Up
                                         </div>
+                                        <div
+                                            className="headerSubtitle"
+                                            css={[componentStyles.headerSubTitle, styles.headerSubtitle]}>
+                                            <div className="secondaryText" css={styles.secondaryText}>
+                                                Already have an account?
+                                                <span className="link" onClick={signInClicked} css={styles.link}>
+                                                    Sign In
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="divider" css={styles.divider}></div>
+                                    </Fragment>
+                                }
+                                footer={
+                                    <div
+                                        className="secondaryText privacyPolicyAndTermsAndConditions"
+                                        css={[
+                                            componentStyles.privacyPolicyAndTermsAndConditions,
+                                            styles.secondaryText,
+                                            styles.privacyPolicyAndTermsAndConditions
+                                        ]}>
+                                        By signin up, you agree to our
+                                        <span
+                                            className="link"
+                                            css={styles.link}
+                                            onClick={() => openExternalLink(termsAndConditionsLink)}>
+                                            Terms of Service
+                                        </span>
+                                        and
+                                        <span
+                                            className="link"
+                                            css={styles.link}
+                                            onClick={() => openExternalLink(privacyPolicyLink)}>
+                                            Privacy Policy
+                                        </span>
                                     </div>
-                                    <div className="divider" css={[defaultStyles.divider, styleFromInit.divider]}></div>
-                                </Fragment>
-                            }
-                            footer={
-                                <div
-                                    className="privacyPolicyAndTermsAndConditions secondaryText"
-                                    css={[
-                                        defaultStyles.secondaryText,
-                                        styles.privacyPolicyAndTermsAndConditions,
-                                        styleFromInit.secondaryText,
-                                        styleFromInit.privacyPolicyAndTermsAndConditions
-                                    ]}>
-                                    By signin up, you agree to our
-                                    <span
-                                        className="link"
-                                        css={[defaultStyles.link, styleFromInit.link]}
-                                        onClick={() => openExternalLink(termsAndConditionsLink)}>
-                                        Terms of Service
-                                    </span>
-                                    and
-                                    <span
-                                        className="link"
-                                        css={[defaultStyles.link, styleFromInit.link]}
-                                        onClick={() => openExternalLink(privacyPolicyLink)}>
-                                        Privacy Policy
-                                    </span>
-                                </div>
-                            }
-                        />
-                    );
-                }}
-            </StyleConsumer>
+                                }
+                            />
+                        );
+                    }}
+                </StyleConsumer>
+            </StyleProvider>
         );
     }
 }

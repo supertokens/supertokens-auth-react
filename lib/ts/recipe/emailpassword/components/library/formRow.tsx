@@ -20,7 +20,6 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import * as React from "react";
-import { CSSObject } from "@emotion/serialize/types/index";
 import { StyleConsumer } from "../../styles/styleContext";
 
 /*
@@ -28,7 +27,6 @@ import { StyleConsumer } from "../../styles/styleContext";
  */
 
 type FormRowProps = {
-    style: CSSObject;
     children: JSX.Element;
 };
 
@@ -36,11 +34,11 @@ type FormRowProps = {
  * Component.
  */
 
-export default function FormRow({ style, children }: FormRowProps): JSX.Element {
+export default function FormRow({ children }: FormRowProps): JSX.Element {
     return (
         <StyleConsumer>
-            {({ defaultStyles }) => (
-                <div className="formRow" css={[defaultStyles.formRow, style]}>
+            {styles => (
+                <div className="formRow" css={styles.formRow}>
                     {children}
                 </div>
             )}

@@ -64,8 +64,8 @@ function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps)
     if (useShadowDom === false) {
         return (
             <StyleConsumer>
-                {({ defaultStyles }) => (
-                    <div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
+                {styles => (
+                    <div css={styles.root} id={ST_ROOT_CONTAINER}>
                         {children}
                     </div>
                 )}
@@ -76,8 +76,8 @@ function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps)
     // Otherwise, use shadow dom.
     return (
         <StyleConsumer>
-            {({ defaultStyles }) => (
-                <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
+            {styles => (
+                <root.div css={styles.root} id={ST_ROOT_CONTAINER}>
                     {children}
                 </root.div>
             )}

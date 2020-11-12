@@ -675,8 +675,6 @@ export type FormBaseProps = {
     callAPI: (
         fields: APIFormField[]
     ) => Promise<SignInThemeResponse | SignUpThemeResponse | SubmitNewPasswordThemeResponse | EnterEmailThemeResponse>;
-
-    styleFromInit?: Styles;
 };
 
 export type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;

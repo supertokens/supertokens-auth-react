@@ -21,7 +21,6 @@
 import { jsx } from "@emotion/core";
 
 import * as React from "react";
-import { CSSObject } from "@emotion/serialize/types/index";
 import { StyleConsumer } from "../../styles/styleContext";
 
 /*
@@ -29,7 +28,6 @@ import { StyleConsumer } from "../../styles/styleContext";
  */
 
 type ButtonProps = {
-    style: CSSObject;
     label: string;
     isLoading: boolean;
     disabled?: boolean;
@@ -41,19 +39,14 @@ type ButtonProps = {
  * Component.
  */
 
-export default function Button({ style, type, label, disabled, isLoading, onClick }: ButtonProps): JSX.Element {
+export default function Button({ type, label, disabled, isLoading, onClick }: ButtonProps): JSX.Element {
     if (disabled === undefined) {
         disabled = false;
     }
     return (
         <StyleConsumer>
-            {({ defaultStyles }) => (
-                <button
-                    type={type}
-                    disabled={disabled}
-                    onClick={onClick}
-                    css={[defaultStyles.button, style]}
-                    className="button">
+            {styles => (
+                <button type={type} disabled={disabled} onClick={onClick} css={styles.button} className="button">
                     {label}
                     {isLoading && "..."}
                 </button>

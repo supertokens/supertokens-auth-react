@@ -1,8 +1,14 @@
+import { CSSObject } from "@emotion/core";
 import React from "react";
-export declare function StyleProvider({ children }: {
+import { Styles } from "../../../types";
+import { NormalisedPalette } from "../types";
+declare type NormalisedStyle = {
+    palette: NormalisedPalette;
+    [x: string]: CSSObject;
+};
+export declare function StyleProvider({ children, styleFromInit }: {
     children: JSX.Element;
+    styleFromInit?: Styles;
 }): JSX.Element;
-export declare const StyleConsumer: React.ExoticComponent<React.ConsumerProps<{
-    palette: import("../types").NormalisedPalette;
-    defaultStyles: import("../types").NormalisedDefaultStyles;
-}>>;
+export declare const StyleConsumer: React.ExoticComponent<React.ConsumerProps<NormalisedStyle>>;
+export {};

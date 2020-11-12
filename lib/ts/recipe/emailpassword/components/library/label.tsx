@@ -21,7 +21,6 @@
 import { jsx } from "@emotion/core";
 
 import * as React from "react";
-import { CSSObject } from "@emotion/serialize/types/index";
 import { StyleConsumer } from "../../styles/styleContext";
 
 /*
@@ -29,7 +28,6 @@ import { StyleConsumer } from "../../styles/styleContext";
  */
 
 type LabelProps = {
-    style: CSSObject;
     value: string;
     showIsRequired?: boolean;
 };
@@ -38,15 +36,15 @@ type LabelProps = {
  * Component.
  */
 
-export default function Label({ style, value, showIsRequired }: LabelProps): JSX.Element {
+export default function Label({ value, showIsRequired }: LabelProps): JSX.Element {
     /*
      * Render.
      */
 
     return (
         <StyleConsumer>
-            {({ defaultStyles }) => (
-                <div className="label" css={[defaultStyles.label, style]}>
+            {styles => (
+                <div className="label" css={styles.label}>
                     {value}
                     {":"}
                     {showIsRequired && " *"}
