@@ -84,7 +84,7 @@ function AppWithReactDomRouter() {
 
               />
             </Route>
-            <Route path="/custom">
+            <Route path="/custom-theme">
               <SignInAndUp >
                 <SignInAndUpCustom/>
               </SignInAndUp >
