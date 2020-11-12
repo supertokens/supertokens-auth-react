@@ -96,7 +96,6 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formF
             callAPI
         } = this.props;
         const { formFields } = this.state;
-        console.log(styleFromInit);
         return (
             <StyleProvider styleFromInit={styleFromInit}>
                 <StyleConsumer>
