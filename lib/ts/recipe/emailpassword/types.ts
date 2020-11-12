@@ -301,16 +301,6 @@ type ThemeBaseProps = {
     formFields: FormFieldThemeProps[];
 
     /*
-     * Sign up form props.
-     */
-    defaultStyles: NormalisedDefaultStyles;
-
-    /*
-     * Sign up form props.
-     */
-    palette: NormalisedPalette;
-
-    /*
      * Called on successful signin/signup/resetpassword.
      */
     onSuccess?: () => void;
@@ -685,10 +675,6 @@ export type FormBaseProps = {
     callAPI: (
         fields: APIFormField[]
     ) => Promise<SignInThemeResponse | SignUpThemeResponse | SubmitNewPasswordThemeResponse | EnterEmailThemeResponse>;
-
-    defaultStyles: NormalisedDefaultStyles;
-
-    palette: NormalisedPalette;
 
     styleFromInit?: Styles;
 };

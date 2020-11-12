@@ -20,8 +20,6 @@ import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import {
     EnterEmailThemeResponse,
-    NormalisedDefaultStyles,
-    NormalisedPalette,
     SubmitNewPasswordThemeProps,
     ResetPasswordUsingTokenProps,
     onHandleResetPasswordUsingTokenSuccessContext,
@@ -36,10 +34,10 @@ import FeatureWrapper from "../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { getDefaultStyles } from "../../styles/styles";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../constants";
 import { redirectToInApp } from "../../../../utils";
 import { handleEnterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
+import { StyleProvider } from "../../styles/styleContext";
 
 /*
  * Component.
@@ -187,18 +185,11 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
         const submitNewPasswordFormFeature = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
             .submitNewPasswordForm;
 
-        const defaultStyles: NormalisedDefaultStyles = getDefaultStyles(
-            this.getRecipeInstanceOrThrow().getConfig().palette
-        );
-        const palette: NormalisedPalette = this.getRecipeInstanceOrThrow().getConfig().palette;
-
         const submitNewPasswordForm: SubmitNewPasswordThemeProps = {
             styleFromInit: submitNewPasswordFormFeature.style,
             formFields: submitNewPasswordFormFeature.formFields,
             callAPI: this.submitNewPassword,
             onSuccess: this.onSubmitNewPasswordFormSuccess,
-            defaultStyles,
-            palette,
             onSignInClicked: this.onSignInClicked
         };
 
@@ -206,9 +197,7 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
             styleFromInit: enterEmailFormFeature.style,
             formFields: enterEmailFormFeature.formFields,
             onSuccess: this.onEnterEmailFormSuccess,
-            callAPI: this.enterEmail,
-            defaultStyles,
-            palette
+            callAPI: this.enterEmail
         };
         const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
 
@@ -218,25 +207,27 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={useShadowDom} defaultStyles={defaultStyles}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {this.props.children === undefined && (
-                        <ResetPasswordUsingTokenTheme
-                            submitNewPassword={submitNewPasswordForm}
-                            enterEmail={enterEmailForm}
-                            hasToken={hasToken}
-                        />
-                    )}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children &&
-                        React.cloneElement(this.props.children, {
-                            submitNewPasswordForm,
-                            enterEmailForm,
-                            hasToken
-                        })}
-                </Fragment>
-            </FeatureWrapper>
+            <StyleProvider>
+                <FeatureWrapper useShadowDom={useShadowDom}>
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {this.props.children === undefined && (
+                            <ResetPasswordUsingTokenTheme
+                                submitNewPassword={submitNewPasswordForm}
+                                enterEmail={enterEmailForm}
+                                hasToken={hasToken}
+                            />
+                        )}
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {this.props.children &&
+                            React.cloneElement(this.props.children, {
+                                submitNewPasswordForm,
+                                enterEmailForm,
+                                hasToken
+                            })}
+                    </Fragment>
+                </FeatureWrapper>
+            </StyleProvider>
         );
     };
 }

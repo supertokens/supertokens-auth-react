@@ -12,42 +12,27 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+import React from "react";
+import EmailPassword from "../emailPassword";
+import { defaultPalette, getDefaultStyles } from "./styles";
 
-/*
- * Imports.
- */
+const StyleContext = React.createContext({
+    palette: defaultPalette,
+    defaultStyles: getDefaultStyles(defaultPalette)
+});
 
-/** @jsx jsx */
-import { jsx } from "@emotion/core";
-import * as React from "react";
-import { CSSObject } from "@emotion/serialize/types/index";
-import { StyleConsumer } from "../../styles/styleContext";
-
-/*
- * Props.
- */
-
-type InputErrorProps = {
-    style: CSSObject;
-    error: string;
-};
-
-/*
- * Component.
- */
-
-export default function InputError({ style, error }: InputErrorProps): JSX.Element {
-    /*
-     * Render.
-     */
+export function StyleProvider({ children }: { children: JSX.Element }): JSX.Element {
+    const palette = EmailPassword.getInstanceOrThrow().getConfig().palette;
 
     return (
-        <StyleConsumer>
-            {({ defaultStyles }) => (
-                <div className="inputErrorMessage" css={[defaultStyles.inputErrorMessage, style]}>
-                    {error}
-                </div>
-            )}
-        </StyleConsumer>
+        <StyleContext.Provider
+            value={{
+                palette,
+                defaultStyles: getDefaultStyles(palette)
+            }}>
+            {children}
+        </StyleContext.Provider>
     );
 }
+
+export const StyleConsumer = StyleContext.Consumer;

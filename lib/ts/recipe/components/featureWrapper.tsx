@@ -24,15 +24,14 @@ import ErrorBoundary from "./errorBoundary";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { NormalisedDefaultStyles } from "../emailpassword/types";
 import { Fragment } from "react";
+import { StyleConsumer } from "../emailpassword/styles/styleContext";
 
 /*
  * Props.
  */
 
 type FeatureWrapperProps = {
-    defaultStyles: NormalisedDefaultStyles;
     children: JSX.Element;
     useShadowDom?: boolean;
 };
@@ -41,13 +40,13 @@ type FeatureWrapperProps = {
  * Component.
  */
 
-export default function FeatureWrapper({ children, defaultStyles, useShadowDom }: FeatureWrapperProps): JSX.Element {
+export default function FeatureWrapper({ children, useShadowDom }: FeatureWrapperProps): JSX.Element {
     /*
      * Render.
      */
     return (
         <ErrorBoundary>
-            <WithOrWithoutShadowDom defaultStyles={defaultStyles} useShadowDom={useShadowDom}>
+            <WithOrWithoutShadowDom useShadowDom={useShadowDom}>
                 <Fragment>
                     {children}
                     <link
@@ -60,20 +59,28 @@ export default function FeatureWrapper({ children, defaultStyles, useShadowDom }
     );
 }
 
-function WithOrWithoutShadowDom({ children, defaultStyles, useShadowDom }: FeatureWrapperProps): JSX.Element {
+function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps): JSX.Element {
     // If explicitely specified to not use shadow dom.
     if (useShadowDom === false) {
         return (
-            <div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
-                {children}
-            </div>
+            <StyleConsumer>
+                {({ defaultStyles }) => (
+                    <div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
+                        {children}
+                    </div>
+                )}
+            </StyleConsumer>
         );
     }
 
     // Otherwise, use shadow dom.
     return (
-        <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
-            {children}
-        </root.div>
+        <StyleConsumer>
+            {({ defaultStyles }) => (
+                <root.div css={defaultStyles.root} id={ST_ROOT_CONTAINER}>
+                    {children}
+                </root.div>
+            )}
+        </StyleConsumer>
     );
 }

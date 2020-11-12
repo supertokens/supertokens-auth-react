@@ -22,7 +22,7 @@ import { jsx } from "@emotion/core";
 
 import * as React from "react";
 import { CSSObject } from "@emotion/serialize/types/index";
-import { NormalisedDefaultStyles } from "../../types";
+import { StyleConsumer } from "../../styles/styleContext";
 
 /*
  * Props.
@@ -34,7 +34,6 @@ type ButtonProps = {
     isLoading: boolean;
     disabled?: boolean;
     type: "submit" | "button" | "reset" | undefined;
-    defaultStyles: NormalisedDefaultStyles;
     onClick?: () => void;
 };
 
@@ -42,27 +41,23 @@ type ButtonProps = {
  * Component.
  */
 
-export default function Button({
-    style,
-    type,
-    label,
-    disabled,
-    isLoading,
-    defaultStyles,
-    onClick
-}: ButtonProps): JSX.Element {
+export default function Button({ style, type, label, disabled, isLoading, onClick }: ButtonProps): JSX.Element {
     if (disabled === undefined) {
         disabled = false;
     }
     return (
-        <button
-            type={type}
-            disabled={disabled}
-            onClick={onClick}
-            css={[defaultStyles.button, style]}
-            className="button">
-            {label}
-            {isLoading && "..."}
-        </button>
+        <StyleConsumer>
+            {({ defaultStyles }) => (
+                <button
+                    type={type}
+                    disabled={disabled}
+                    onClick={onClick}
+                    css={[defaultStyles.button, style]}
+                    className="button">
+                    {label}
+                    {isLoading && "..."}
+                </button>
+            )}
+        </StyleConsumer>
     );
 }

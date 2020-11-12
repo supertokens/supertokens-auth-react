@@ -3,7 +3,6 @@ import { CSSObject } from "@emotion/core";
 import * as React from "react";
 import { RefObject } from "react";
 import { APIFormField } from "../../../../types";
-import { NormalisedDefaultStyles, NormalisedPalette } from "../../types";
 declare type InputProps = {
     style?: CSSObject;
     errorStyle?: CSSObject;
@@ -13,10 +12,8 @@ declare type InputProps = {
     name: string;
     hasError: boolean;
     placeholder: string;
-    defaultStyles: NormalisedDefaultStyles;
-    palette: NormalisedPalette;
     ref: RefObject<any>;
     onChange?: (field: APIFormField) => void;
 };
-declare const _default: React.ForwardRefExoticComponent<Pick<InputProps, "style" | "name" | "type" | "onChange" | "placeholder" | "hasError" | "defaultStyles" | "palette" | "adornmentStyle" | "validated" | "errorStyle"> & React.RefAttributes<any>>;
+declare const _default: React.ForwardRefExoticComponent<Pick<InputProps, "style" | "name" | "type" | "onChange" | "placeholder" | "hasError" | "adornmentStyle" | "validated" | "errorStyle"> & React.RefAttributes<any>>;
 export default _default;
