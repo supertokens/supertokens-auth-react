@@ -49,7 +49,9 @@ export default class SuperTokens {
         this.appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
 
         if (config.recipeList === undefined || config.recipeList.length === 0) {
-            throw new Error("Please provide at least one recipe to the supertokens.init function call"); // TODO Add link to appropriate docs.
+            throw new Error(
+                "Please provide at least one recipe to the supertokens.init function call. See https://supertokens.io/docs/emailpassword/starter-guide/frontend"
+            );
         }
 
         this.recipeList = config.recipeList.map(recipe => {

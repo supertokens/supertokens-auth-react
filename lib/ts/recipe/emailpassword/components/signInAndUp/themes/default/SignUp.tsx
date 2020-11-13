@@ -87,14 +87,7 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formF
      * Render.
      */
     render(): JSX.Element {
-        const {
-            privacyPolicyLink,
-            termsAndConditionsLink,
-            styleFromInit,
-            signInClicked,
-            onSuccess,
-            callAPI
-        } = this.props;
+        const { privacyPolicyLink, termsOfServiceLink, styleFromInit, signInClicked, onSuccess, callAPI } = this.props;
         const { formFields } = this.state;
         return (
             <StyleProvider styleFromInit={styleFromInit}>
@@ -133,7 +126,7 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formF
                                     <SignUpFooter
                                         componentStyles={componentStyles}
                                         privacyPolicyLink={privacyPolicyLink}
-                                        termsAndConditionsLink={termsAndConditionsLink}
+                                        termsOfServiceLink={termsOfServiceLink}
                                     />
                                 }
                             />

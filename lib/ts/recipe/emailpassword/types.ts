@@ -143,7 +143,7 @@ export type SignUpFormFeatureUserInput = FeatureBaseConfig & {
     /*
      * Terms and conditions link for sign up form.
      */
-    termsAndConditionsLink?: string;
+    termsOfServiceLink?: string;
 };
 
 export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
@@ -160,7 +160,7 @@ export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
     /*
      * Terms and conditions link for sign up form.
      */
-    termsAndConditionsLink?: string;
+    termsOfServiceLink?: string;
 };
 
 export type SignInFormFeatureUserInput = FeatureBaseConfig & {
@@ -342,7 +342,7 @@ export type SignUpThemeProps = ThemeBaseProps & {
     /*
      * Terms and conditions link.
      */
-    termsAndConditionsLink?: string;
+    termsOfServiceLink?: string;
 
     /*
      * Call Sign Up API.

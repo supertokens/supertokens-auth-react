@@ -163,7 +163,7 @@ function SignUp (props) {
     const {
         // styleFromInit,
         privacyPolicyLink,
-        termsAndConditionsLink,
+        termsOfServiceLink,
         onSuccess,
         formFields,
         callAPI
@@ -221,7 +221,7 @@ function SignUp (props) {
                 <PasswordStrengthMeter password={password} />
                 <input type="submit" className="button" name="submit" value="Create account"/>
             </form>
-            <div className="terms">By signing up, you agree to our <a target="_blank" rel="noopener noreferrer" href={termsAndConditionsLink}>terms and conditions</a> and <a target="_blank" rel="noopener noreferrer" href={privacyPolicyLink}>privacy policies</a></div>
+            <div className="terms">By signing up, you agree to our <a target="_blank" rel="noopener noreferrer" href={termsOfServiceLink}>terms and conditions</a> and <a target="_blank" rel="noopener noreferrer" href={privacyPolicyLink}>privacy policies</a></div>
         </div>
     )
 }

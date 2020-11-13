@@ -275,7 +275,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             styleFromInit: signUpFeature.style,
             formFields: signUpFeature.formFields,
             privacyPolicyLink: signUpFeature.privacyPolicyLink,
-            termsAndConditionsLink: signUpFeature.termsAndConditionsLink,
+            termsOfServiceLink: signUpFeature.termsOfServiceLink,
             onSuccess: this.onSignUpSuccess,
             callAPI: this.signUp
         };

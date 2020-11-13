@@ -33,12 +33,12 @@ export declare type NormalisedSignInAndUpFeatureConfig = {
 export declare type SignUpFormFeatureUserInput = FeatureBaseConfig & {
     formFields?: FormFieldSignUpConfig[];
     privacyPolicyLink?: string;
-    termsAndConditionsLink?: string;
+    termsOfServiceLink?: string;
 };
 export declare type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
     formFields: NormalisedFormField[];
     privacyPolicyLink?: string;
-    termsAndConditionsLink?: string;
+    termsOfServiceLink?: string;
 };
 export declare type SignInFormFeatureUserInput = FeatureBaseConfig & {
     formFields?: FormFieldSignInConfig[];
@@ -106,7 +106,7 @@ export declare type SignInThemeProps = ThemeBaseProps & {
 export declare type SignUpThemeProps = ThemeBaseProps & {
     signInClicked?: () => void;
     privacyPolicyLink?: string;
-    termsAndConditionsLink?: string;
+    termsOfServiceLink?: string;
     callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
 };
 export declare type SignInAndUpThemeProps = {
