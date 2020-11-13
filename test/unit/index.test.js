@@ -63,11 +63,16 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.getAppInfo().websiteBasePath.getAsStringDangerous(), DEFAULT_WEBSITE_BASE_PATH);
     });
 
-    it("Initializing SuperTokens twice should throw", async function() {
+    it("Initializing SuperTokens twice should ignore new config", async function() {
         SuperTokens.init(defaultConfigs);
-        assert.throws(() => {
-            SuperTokens.init(defaultConfigs);
-        }, new Error("SuperTokens was already initialized"));
+        SuperTokens.init({
+            ...defaultConfigs,
+            appInfo: {
+                ...defaultConfigs.appInfo,
+                appName: "NewAppName"
+            }
+        });
+        assert.strictEqual(SuperTokens.getAppInfo().appName, defaultConfigs.appInfo.appName);
     });
 
     it("Initializing SuperTokens without appInfo name should throw", async function() {
