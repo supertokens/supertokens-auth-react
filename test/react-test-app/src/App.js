@@ -34,7 +34,7 @@ SuperTokens.init({
         onSuccessRedirectURL: '/dashboard',
         signUpForm: {
           privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-          // termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+          termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
           formFields: [{
                 id: "name",
                 label: "Full name",
