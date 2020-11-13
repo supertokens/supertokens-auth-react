@@ -158,7 +158,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
 
         label: {
             textAlign: "left",
-            fontWeight: 700,
+            fontWeight: 500,
             fontSize: palette.fonts.size[1],
             lineHeight: "24px",
             paddingBottom: "10px",

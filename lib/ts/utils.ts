@@ -123,17 +123,6 @@ export async function validateForm(
 }
 
 /*
- * openExternalLink
- */
-export function openExternalLink(link?: string): void {
-    if (link === undefined) {
-        return;
-    }
-
-    window.open(link, "_blank");
-}
-
-/*
  * getCurrentNormalisedUrlPath
  */
 export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
