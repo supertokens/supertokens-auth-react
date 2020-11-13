@@ -96,7 +96,7 @@ export async function validateForm(
         // Absent or not optional empty field
         if (input === undefined || (input.value === "" && field.optional === false)) {
             validationErrors.push({
-                error: "This field can not be empty",
+                error: "Field is not optional",
                 id: field.id
             });
         } else {
@@ -172,8 +172,6 @@ export function redirectToInApp(path: string, title?: string, history?: History<
         return;
     }
 
-    // Otherwise, use window history to push new State and dispatch event for react to catch.
-    window.history.pushState(null, title, path);
-    const event = new PopStateEvent("popstate");
-    window.dispatchEvent(event);
+    // Otherwise, reload the page.
+    window.location.href = path;
 }

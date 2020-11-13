@@ -196,8 +196,8 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         if (resetPasswordUrl === undefined) {
             return;
         }
-
-        redirectToInApp(resetPasswordUrl.getAsStringDangerous(), "Reset password", this.props.history);
+        const rid = this.getRecipeInstanceOrThrow().getRecipeId();
+        redirectToInApp(`${resetPasswordUrl.getAsStringDangerous()}?rid=${rid}`, "Reset password", this.props.history);
     };
 
     onHandleSuccess = async (context: OnHandleSignInAndUpSuccessContext): Promise<void> => {
