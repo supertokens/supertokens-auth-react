@@ -156,6 +156,7 @@ export function redirectToWithReload(url: string): void {
  */
 export function WithRouter(Component: ReactComponentClass): ReactComponentClass {
     try {
+        // eslint-disable-next-line
         const WithRouter = require("react-router").WithRouter;
         return WithRouter(Component);
     } catch (e) {

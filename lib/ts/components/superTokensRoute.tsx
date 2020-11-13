@@ -29,6 +29,7 @@ import { getRecipeIdFromSearch } from "../utils";
 
 export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
     try {
+        // eslint-disable-next-line
         const Route = require("react-router-dom").Route;
         const pathsToComponentWithRecipeIdMap = SuperTokens.getPathsToComponentWithRecipeIdMap();
         return (

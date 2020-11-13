@@ -62,7 +62,8 @@ export default class SuperTokens {
      */
     static init(config: SuperTokensConfig): void {
         if (SuperTokens.instance !== undefined) {
-            throw new Error("SuperTokens was already initialized");
+            console.warn("SuperTokens was already initialized");
+            return;
         }
 
         SuperTokens.instance = new SuperTokens(config);
