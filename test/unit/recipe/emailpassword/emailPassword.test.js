@@ -34,7 +34,7 @@ require("jsdom-global")();
 describe("EmailPassword", function() {
     const onSuccessRedirectURL = "https://example.com/login";
     const privacyPolicyLink = "https://example.com/privacy";
-    const termsAndConditionsLink = "https://example.com/terms";
+    const termsOfServiceLink = "https://example.com/terms";
     const resetPasswordURL = "https://example.com/reset";
 
     before(async function() {
@@ -84,7 +84,7 @@ describe("EmailPassword", function() {
                 disableDefaultImplementation: true,
                 signUpForm: {
                     privacyPolicyLink,
-                    termsAndConditionsLink
+                    termsOfServiceLink
                 },
                 signInForm: {
                     resetPasswordURL

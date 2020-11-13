@@ -1,7 +1,7 @@
 /// <reference types="react" />
 import { Styles } from "../../../../../../types";
-export default function SignUpFooter({ componentStyles, termsAndConditionsLink, privacyPolicyLink }: {
+export default function SignUpFooter({ componentStyles, termsOfServiceLink, privacyPolicyLink }: {
     componentStyles: Styles;
     privacyPolicyLink?: string;
-    termsAndConditionsLink?: string;
+    termsOfServiceLink?: string;
 }): JSX.Element | null;

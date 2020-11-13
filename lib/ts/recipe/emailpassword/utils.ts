@@ -149,14 +149,14 @@ export function normaliseSignUpFormFeatureConfig(
     }
     const formFields = mergeFormFields(defaultFormFields, userFormFields);
     const privacyPolicyLink = config.privacyPolicyLink;
-    const termsAndConditionsLink = config.termsAndConditionsLink;
+    const termsOfServiceLink = config.termsOfServiceLink;
     const style = config.style !== undefined ? config.style : {};
 
     return {
         style,
         formFields,
         privacyPolicyLink,
-        termsAndConditionsLink
+        termsOfServiceLink
     };
 }
 

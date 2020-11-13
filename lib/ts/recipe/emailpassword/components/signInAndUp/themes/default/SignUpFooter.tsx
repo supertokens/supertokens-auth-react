@@ -26,14 +26,14 @@ import { jsx } from "@emotion/core";
 
 export default function SignUpFooter({
     componentStyles,
-    termsAndConditionsLink,
+    termsOfServiceLink,
     privacyPolicyLink
 }: {
     componentStyles: Styles;
     privacyPolicyLink?: string;
-    termsAndConditionsLink?: string;
+    termsOfServiceLink?: string;
 }): JSX.Element | null {
-    if (termsAndConditionsLink === undefined && privacyPolicyLink === undefined) {
+    if (termsOfServiceLink === undefined && privacyPolicyLink === undefined) {
         return null;
     }
 
@@ -48,12 +48,12 @@ export default function SignUpFooter({
                         styles.privacyPolicyAndTermsAndConditions
                     ]}>
                     By signing up, you agree to our
-                    {termsAndConditionsLink !== undefined && (
-                        <a className="link" css={styles.link} target="_blank" href={termsAndConditionsLink}>
+                    {termsOfServiceLink !== undefined && (
+                        <a className="link" css={styles.link} target="_blank" href={termsOfServiceLink}>
                             Terms of Service
                         </a>
                     )}
-                    {termsAndConditionsLink !== undefined && privacyPolicyLink !== undefined && "and"}
+                    {termsOfServiceLink !== undefined && privacyPolicyLink !== undefined && "and"}
                     {privacyPolicyLink !== undefined && (
                         <a className="link" css={styles.link} href={privacyPolicyLink} target="_blank">
                             Privacy Policy
