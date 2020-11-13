@@ -22,9 +22,9 @@ import { CSSObject } from "@emotion/serialize/types/index";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { openExternalLink } from "../../../../../../utils";
 import FormBase from "../../../library/FormBase";
 import { StyleConsumer, StyleProvider } from "../../../../styles/styleContext";
+import SignUpFooter from "./SignUpFooter";
 
 /*
  * Styles.
@@ -130,28 +130,11 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formF
                                     </Fragment>
                                 }
                                 footer={
-                                    <div
-                                        className="secondaryText privacyPolicyAndTermsAndConditions"
-                                        css={[
-                                            componentStyles.privacyPolicyAndTermsAndConditions,
-                                            styles.secondaryText,
-                                            styles.privacyPolicyAndTermsAndConditions
-                                        ]}>
-                                        By signin up, you agree to our
-                                        <span
-                                            className="link"
-                                            css={styles.link}
-                                            onClick={() => openExternalLink(termsAndConditionsLink)}>
-                                            Terms of Service
-                                        </span>
-                                        and
-                                        <span
-                                            className="link"
-                                            css={styles.link}
-                                            onClick={() => openExternalLink(privacyPolicyLink)}>
-                                            Privacy Policy
-                                        </span>
-                                    </div>
+                                    <SignUpFooter
+                                        componentStyles={componentStyles}
+                                        privacyPolicyLink={privacyPolicyLink}
+                                        termsAndConditionsLink={termsAndConditionsLink}
+                                    />
                                 }
                             />
                         );
