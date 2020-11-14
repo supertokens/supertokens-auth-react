@@ -20,7 +20,7 @@ import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RouteToFeatureComponentMap } from "../../types";
 import { SessionUserInput, SessionConfig } from "./types";
 import { isTest } from "../../utils";
-import SuperTokensRequest from "supertokens-website";
+import sessionSdk from "supertokens-website";
 
 /*
  * Class.
@@ -33,11 +33,6 @@ export default class Session extends RecipeModule {
     static RECIPE_ID = "session";
 
     /*
-     * Instance Attributes.
-     */
-    private sessionSdk: any;
-
-    /*
      * Constructor.
      */
     constructor(config: SessionConfig) {
@@ -46,7 +41,7 @@ export default class Session extends RecipeModule {
         if (config.refreshAPICustomHeaders !== undefined) {
             usersHeaders = config.refreshAPICustomHeaders;
         }
-        SuperTokensRequest.init({
+        sessionSdk.init({
             sessionScope: config.sessionScope,
             refreshAPICustomHeaders: {
                 rid: this.getRecipeId(),
@@ -57,8 +52,6 @@ export default class Session extends RecipeModule {
             apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),
             apiBasePath: config.appInfo.apiBasePath.getAsStringDangerous()
         });
-
-        this.sessionSdk = SuperTokensRequest;
     }
 
     /*
@@ -69,37 +62,32 @@ export default class Session extends RecipeModule {
         return {};
     };
 
-    getRefreshURLDomain = (): string => {
-        return this.sessionSdk.getRefreshURLDomain();
+    getRefreshURLDomain = (): string | undefined => {
+        return sessionSdk.getRefreshURLDomain();
     };
 
     getUserId = (): string => {
-        return this.sessionSdk.getUserId();
+        return sessionSdk.getUserId();
     };
 
     getJWTPayloadSecurely = async (): Promise<any> => {
-        return this.sessionSdk.getJWTPayloadSecurely();
+        return sessionSdk.getJWTPayloadSecurely();
     };
 
     attemptRefreshingSession = async (): Promise<boolean> => {
-        return this.sessionSdk.attemptRefreshingSession();
+        return sessionSdk.attemptRefreshingSession();
     };
 
     doesSessionExist = (): boolean => {
-        return this.sessionSdk.doesSessionExist();
-    };
-
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    addAxiosInterceptors = (axiosInstance: any): void => {
-        return this.sessionSdk.addAxiosInterceptors(axiosInstance);
+        return sessionSdk.doesSessionExist();
     };
 
     setAuth0API = (apiPath: string): void => {
-        return this.sessionSdk.setAuth0API(apiPath);
+        return sessionSdk.setAuth0API(apiPath);
     };
 
-    getAuth0API = (): { apiPath: string } => {
-        return this.sessionSdk.getAuth0API();
+    getAuth0API = (): { apiPath: string | undefined } => {
+        return sessionSdk.getAuth0API();
     };
 
     /*
@@ -127,7 +115,7 @@ export default class Session extends RecipeModule {
         return Session.instance;
     }
 
-    static getRefreshURLDomain(): string {
+    static getRefreshURLDomain(): string | undefined {
         return Session.getInstanceOrThrow().getRefreshURLDomain();
     }
 
@@ -149,14 +137,14 @@ export default class Session extends RecipeModule {
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     static addAxiosInterceptors(axiosInstance: any): void {
-        return Session.getInstanceOrThrow().addAxiosInterceptors(axiosInstance);
+        return sessionSdk.addAxiosInterceptors(axiosInstance);
     }
 
     static setAuth0API(apiPath: string): void {
         return Session.getInstanceOrThrow().setAuth0API(apiPath);
     }
 
-    static getAuth0API(): { apiPath: string } {
+    static getAuth0API(): { apiPath: string | undefined } {
         return Session.getInstanceOrThrow().getAuth0API();
     }
 
