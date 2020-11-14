@@ -4,22 +4,20 @@ import { SessionUserInput, SessionConfig } from "./types";
 export default class Session extends RecipeModule {
     static instance?: Session;
     static RECIPE_ID: string;
-    private sessionSdk;
     constructor(config: SessionConfig);
     getFeatures: () => Record<string, import("../../types").ReactComponentClass>;
-    getRefreshURLDomain: () => string;
+    getRefreshURLDomain: () => string | undefined;
     getUserId: () => string;
     getJWTPayloadSecurely: () => Promise<any>;
     attemptRefreshingSession: () => Promise<boolean>;
     doesSessionExist: () => boolean;
-    addAxiosInterceptors: (axiosInstance: any) => void;
     setAuth0API: (apiPath: string) => void;
     getAuth0API: () => {
-        apiPath: string;
+        apiPath: string | undefined;
     };
     static init(config?: SessionUserInput): CreateRecipeFunction;
     static getInstanceOrThrow(): Session;
-    static getRefreshURLDomain(): string;
+    static getRefreshURLDomain(): string | undefined;
     static getUserId(): string;
     static getJWTPayloadSecurely(): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
@@ -27,7 +25,7 @@ export default class Session extends RecipeModule {
     static addAxiosInterceptors(axiosInstance: any): void;
     static setAuth0API(apiPath: string): void;
     static getAuth0API(): {
-        apiPath: string;
+        apiPath: string | undefined;
     };
     static reset(): void;
 }

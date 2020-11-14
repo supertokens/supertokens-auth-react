@@ -2,7 +2,7 @@ import { CreateRecipeFunction } from "../../types";
 import { SessionUserInput } from "./types";
 export default class SessionAPIWrapper {
     static init(config: SessionUserInput): CreateRecipeFunction;
-    static getRefreshURLDomain(): string;
+    static getRefreshURLDomain(): string | undefined;
     static getUserId(): string;
     static getJWTPayloadSecurely(): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
@@ -10,7 +10,7 @@ export default class SessionAPIWrapper {
     static addAxiosInterceptors: (axiosInstance: any) => void;
     static setAuth0API: (apiPath: string) => void;
     static getAuth0API: () => {
-        apiPath: string;
+        apiPath: string | undefined;
     };
 }
 export declare const init: typeof SessionAPIWrapper.init;
@@ -22,5 +22,5 @@ export declare const doesSessionExist: typeof SessionAPIWrapper.doesSessionExist
 export declare const addAxiosInterceptors: (axiosInstance: any) => void;
 export declare const setAuth0API: (apiPath: string) => void;
 export declare const getAuth0API: () => {
-    apiPath: string;
+    apiPath: string | undefined;
 };

@@ -29,7 +29,7 @@ export default class SessionAPIWrapper {
         return Session.init(config);
     }
 
-    static getRefreshURLDomain(): string {
+    static getRefreshURLDomain(): string | undefined {
         return Session.getRefreshURLDomain();
     }
 
@@ -58,7 +58,7 @@ export default class SessionAPIWrapper {
         return Session.setAuth0API(apiPath);
     };
 
-    static getAuth0API = (): { apiPath: string } => {
+    static getAuth0API = (): { apiPath: string | undefined } => {
         return Session.getAuth0API();
     };
 }
