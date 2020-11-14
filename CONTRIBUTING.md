@@ -63,13 +63,7 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
    npm i git+https://github.com:supertokens/supertokens-node.git
    ```
 
-5. Start server for testing
-
-   ```
-   npm run server
-   ```
-
-6. Open a new terminal in `supertokens-auth-react` and run all tests
+5. Open a new terminal in `supertokens-auth-react` and run all tests
 
    ```
    npm run test

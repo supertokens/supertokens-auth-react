@@ -462,7 +462,7 @@ describe("EmailPassword", function() {
         }]);
         assert.deepStrictEqual(inputErrors, [
             {
-                error: "This field can not be empty",
+                error: "Field is not optional",
                 id: "company"
             }
         ]);
