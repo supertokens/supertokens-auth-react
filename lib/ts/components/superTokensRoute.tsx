@@ -20,8 +20,7 @@
 import * as React from "react";
 import NormalisedURLPath from "../normalisedURLPath";
 import SuperTokens from "../superTokens";
-import { ReactComponentClass } from "../types";
-import { getRecipeIdFromSearch } from "../utils";
+import { getRecipeIdFromSearch, redirectToInApp } from "../utils";
 
 /*
  * Component.
@@ -32,34 +31,49 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
         // eslint-disable-next-line
         const Route = require("react-router-dom").Route;
         const pathsToComponentWithRecipeIdMap = SuperTokens.getPathsToComponentWithRecipeIdMap();
-        return (
-            Object.keys(pathsToComponentWithRecipeIdMap)
-                /*
-                 *  Sort by path length to make sure a shorter path doesn't take precedence
-                 * i.e. /auth/reset-password comes before /auth/
-                 */
-                .sort((a, b) => b.length - a.length)
-                .map(path => <SuperTokensRouteWithRecipeId Route={Route} key={`st-${path}`} path={path} />)
+
+        const matchingRoutes = Object.keys(pathsToComponentWithRecipeIdMap)
+            .map(path => {
+                return (
+                    <Route exact key={`st-${path}`} path={path}>
+                        <SuperTokensRouteWithRecipeId path={path} />
+                    </Route>
+                );
+            });
+
+        const basePath = SuperTokens.getAppInfo().websiteBasePath.getAsStringDangerous();
+        const catchUnknownBasePathRoute = (
+            <Route path={basePath} key={"st-basepath"}>
+                <CatchUnknownBasePathComponent />
+            </Route>
         );
+
+        return [...matchingRoutes, catchUnknownBasePathRoute];
     } catch (e) {
         // If react-router-dom is absent from dependencies, return [];
         return [];
     }
 }
 
-function SuperTokensRouteWithRecipeId({
-    path,
-    Route
-}: {
-    path: string;
-    Route: new () => React.Component<{
-        exact: unknown;
-        path: string;
-        component?: ReactComponentClass;
-    }>;
-}): JSX.Element {
+function SuperTokensRouteWithRecipeId({ path }: { path: string }): JSX.Element | null {
     const recipeId = getRecipeIdFromSearch(window.location.search);
     const normalisedPath = new NormalisedURLPath(path);
-    const component = SuperTokens.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
-    return <Route exact key={`st-${path}`} path={normalisedPath.getAsStringDangerous()} component={component} />;
+
+    const Component = SuperTokens.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
+    if (Component === undefined) {
+        return null;
+    }
+
+    return <Component />;
+}
+
+function CatchUnknownBasePathComponent(): null {
+    const redirectToBasePath = SuperTokens.getAppInfo().websiteBasePath.getAsStringDangerous();
+    try {
+        const history = require("react-router-dom").useHistory();
+        redirectToInApp(redirectToBasePath, "", history);
+    } catch (e) {
+        redirectToInApp(redirectToBasePath, "", undefined);
+    }
+    return null;
 }
