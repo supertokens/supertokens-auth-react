@@ -16,6 +16,8 @@
 /*
  * Helpers.
  */
+import assert from "assert";
+import { ST_ROOT_CONTAINER } from "../lib/build/constants";
 
 export function mockWindowLocation(url) {
     try {
@@ -26,5 +28,33 @@ export function mockWindowLocation(url) {
         });
     } catch (e) {
         throw Error(`Failed to mock window location object with ${url}`, e);
+    }
+}
+
+export async function assertShouldShowSignInAndUpWidget(page, isWidgetPresent) {
+    const SignInButtonQuerySelector = `document.querySelector('#${ST_ROOT_CONTAINER}').shadowRoot.querySelector('button').innerText`;
+    const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
+
+    if (isWidgetPresent) {
+        assert.notStrictEqual(signInButton, null);
+        assert.strictEqual(signInButton._remoteObject.value, "SIGN IN");
+    } else {
+        assert.strictEqual(signInButton, null);
+    }
+}
+
+export async function assertShouldShowResetPasswordWidget(page, isWidgetPresent, isEnterEmail) {
+    const SignInButtonQuerySelector = `document.querySelector('#${ST_ROOT_CONTAINER}').shadowRoot.querySelector('button').innerText`;
+    const signInButton = await page.evaluateHandle(SignInButtonQuerySelector);
+
+    if (isWidgetPresent === true) {
+        assert.notStrictEqual(signInButton, null);
+        if (isEnterEmail === true) {
+            assert.strictEqual(signInButton._remoteObject.value, "Email me");
+        } else {
+            assert.strictEqual(signInButton._remoteObject.value, "Change password");
+        }
+    } else {
+        assert.strictEqual(signInButton, null);
     }
 }

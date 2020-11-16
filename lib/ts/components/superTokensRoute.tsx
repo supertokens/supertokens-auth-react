@@ -32,14 +32,13 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
         const Route = require("react-router-dom").Route;
         const pathsToComponentWithRecipeIdMap = SuperTokens.getPathsToComponentWithRecipeIdMap();
 
-        const matchingRoutes = Object.keys(pathsToComponentWithRecipeIdMap)
-            .map(path => {
-                return (
-                    <Route exact key={`st-${path}`} path={path}>
-                        <SuperTokensRouteWithRecipeId path={path} />
-                    </Route>
-                );
-            });
+        const matchingRoutes = Object.keys(pathsToComponentWithRecipeIdMap).map(path => {
+            return (
+                <Route exact key={`st-${path}`} path={path}>
+                    <SuperTokensRouteWithRecipeId path={path} />
+                </Route>
+            );
+        });
 
         const basePath = SuperTokens.getAppInfo().websiteBasePath.getAsStringDangerous();
         const catchUnknownBasePathRoute = (
