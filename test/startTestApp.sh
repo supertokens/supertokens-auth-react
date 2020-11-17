@@ -24,18 +24,18 @@ function startFrontEnd () {
 function mvClashingNodeModulesToTmp () {
     # Prevent clashes on react-router-dom, and react.
     echo "Move clashing node_modules to tmp."
-    mv node_modules/react-dom node_modules/react-dom-tmp
-    mv node_modules/react-router-dom node_modules/react-router-dom-tmp
-    mv node_modules/react node_modules/react-tmp
-    mv node_modules/eslint node_modules/eslint-tmp
+    mv node_modules/react-dom node_modules/react-dom-tmp > /dev/null 2>&1
+    mv node_modules/react-router-dom node_modules/react-router-dom-tmp > /dev/null 2>&1
+    mv node_modules/react node_modules/react-tmp > /dev/null 2>&1
+    mv node_modules/eslint node_modules/eslint-tmp > /dev/null 2>&1
 }
 
 function moveBackNodeModules () {
     echo "Adding back node_modules"
-    mv node_modules/react-router-dom-tmp node_modules/react-router-dom
-    mv node_modules/react-dom-tmp node_modules/react-dom
-    mv node_modules/react-tmp node_modules/react
-    mv node_modules/eslint-tmp node_modules/eslint
+    mv node_modules/react-router-dom-tmp node_modules/react-router-dom > /dev/null 2>&1
+    mv node_modules/react-dom-tmp node_modules/react-dom > /dev/null 2>&1
+    mv node_modules/react-tmp node_modules/react > /dev/null 2>&1
+    mv node_modules/eslint-tmp node_modules/eslint > /dev/null 2>&1
 }
 
 function cleanUp () {
@@ -43,8 +43,8 @@ function cleanUp () {
     moveBackNodeModules
     if [[ $mode == "--test" ]]; then
         echo "Kill servers."
-        lsof -i tcp:8082 | grep node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {}
-        lsof -i tcp:3031 | grep node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {}
+        lsof -i tcp:8082 | grep node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {} > /dev/null 2>&1
+        lsof -i tcp:3031 | grep node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {} > /dev/null 2>&1
     fi
 }
 
@@ -58,7 +58,7 @@ function startEndToEnd () {
     sleep 5 # Because the server is responding does not mean the app is ready. Let's wait another 5secs to make sure the app is up.
     moveBackNodeModules
     echo "Start mocha testing"
-    TEST_MODE=testing mocha --require @babel/register --timeout 500000
+    TEST_MODE=testing mocha --require @babel/register --timeout 20000
     echo "Finish mocha testing"
     cleanUp
 }
@@ -74,6 +74,9 @@ if [[ $mode == "--clean-up" ]]; then
     exit 1
 fi
 
+trap "cleanUp" EXIT # Trap to execute on script shutdown
+
+
 if [[ $mode == "--test" ]]; then
     # Start by killing any servers up on 8082 and 3031 if any.
     cleanUp
@@ -87,7 +90,6 @@ if [[ $mode == "--test" ]]; then
     startFrontEnd > /dev/null 2>&1
     exit 0
 else
-    trap "cleanUp" EXIT # Trap to execute on script shutdown
     mvClashingNodeModulesToTmp
     startFrontEnd # Start Front end.
 fi

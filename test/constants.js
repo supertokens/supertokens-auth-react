@@ -16,7 +16,9 @@
 /*
  * Consts.
  */
+import { ST_ROOT_ID } from "../lib/build/constants";
 
 
 export const TEST_CLIENT_BASE_URL = "http://localhost:3031";
 export const TEST_SERVER_BASE_URL = "http://localhost:8082";
+export const ST_ROOT_SELECTOR = `#${ST_ROOT_ID}`;

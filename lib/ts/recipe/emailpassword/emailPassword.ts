@@ -199,7 +199,7 @@ export default class EmailPassword extends RecipeModule {
     static getInstanceOrThrow(): EmailPassword {
         if (EmailPassword.instance === undefined) {
             throw Error(
-                `No instance of ${EmailPassword.constructor.name} found. Make sure to call the "init" method.  See https://supertokens.io/docs/emailpassword/starter-guide/frontend`
+                "No instance of EmailPassword found. Make sure to call the EmailPassword.init method.  See https://supertokens.io/docs/emailpassword/starter-guide/frontend"
             );
         }
 

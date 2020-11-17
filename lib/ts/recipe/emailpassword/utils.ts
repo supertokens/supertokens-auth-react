@@ -59,7 +59,8 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
 
     const resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig = normaliseResetPasswordUsingTokenFeature(
         signUpPasswordField.validate,
-        signUpEmailField.validate,
+        signUpEmailField,
+        config.appInfo.websiteBasePath,
         config.resetPasswordUsingTokenFeature
     );
 
@@ -226,7 +227,8 @@ function getDefaultPasswordFormField(): NormalisedFormField {
 
 export function normaliseResetPasswordUsingTokenFeature(
     signUpPasswordFieldValidate: (value: any) => Promise<string | undefined>,
-    signUpEmailFieldValidate: (value: any) => Promise<string | undefined>,
+    signUpEmailField: NormalisedFormField,
+    websiteBasePath: NormalisedURLPath,
     config?: ResetPasswordUsingTokenUserInput
 ): NormalisedResetPasswordUsingTokenFeatureConfig {
     if (config === undefined) {
@@ -234,7 +236,10 @@ export function normaliseResetPasswordUsingTokenFeature(
     }
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
-    const onSuccessRedirectURL = config.onSuccessRedirectURL !== undefined ? config.onSuccessRedirectURL : "/";
+    const onSuccessRedirectURL =
+        config.onSuccessRedirectURL !== undefined
+            ? config.onSuccessRedirectURL
+            : websiteBasePath.getAsStringDangerous();
 
     const submitNewPasswordFormStyle =
         config.submitNewPasswordForm !== undefined && config.submitNewPasswordForm.style !== undefined
@@ -268,15 +273,7 @@ export function normaliseResetPasswordUsingTokenFeature(
 
     const enterEmailForm: NormalisedEnterEmailForm = {
         style: enterEmailFormStyle,
-        formFields: [
-            {
-                id: "email",
-                label: "Email",
-                placeholder: "Email address",
-                validate: signUpEmailFieldValidate,
-                optional: false
-            }
-        ]
+        formFields: [signUpEmailField]
     };
 
     return {

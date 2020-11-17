@@ -75,7 +75,6 @@ export async function handleSignInAPI(
             rid
         };
         const response = await signInAPI({ formFields }, headers);
-
         // Otherwise, if field errors.
         if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
             return {

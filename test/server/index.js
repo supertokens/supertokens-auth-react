@@ -80,11 +80,6 @@ app.get("/ping", async (req, res) => {
     res.send("success");
 });
 
-app.use("*", async (req, res, next) => {
-    res.status(300).send();
-});
-
-
 app.post("/startst", async (req, res) => {
     let pid = await startST();
     res.send(pid + "");
@@ -107,6 +102,17 @@ app.post("/stopst", async (req, res) => {
     res.send("");
 });
 
+// custom API that requires session verification
+app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
+    let session = req.session;
+    res.send({
+        sessionHandle: session.getHandle(),
+        userId: session.getUserId(),
+        jwtPayload: session.getJWTPayload(),
+        sessionData: await session.getSessionData(),
+    });
+});
+
 app.use(SuperTokens.errorHandler());
 
 app.use(async (err, req, res, next) => {
@@ -127,8 +133,11 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
     async function (shouldSpinUp) {
         if (shouldSpinUp) {
             console.log(`Start supertokens for test app`);
-            await killAllST();
-            await cleanST();
+            try {
+                await killAllST();
+                await cleanST();
+            } catch (e) {};
+
             await setupST();
             const pid = await startST();
             console.log(`Application started on http://localhost:${process.env.NODE_PORT | 8080}`)

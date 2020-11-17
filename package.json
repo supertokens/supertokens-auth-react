@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@emotion/core": "10.0.35",
+    "axios": "^0.21.0",
     "emotion": "10.0.27",
     "emotion-server": "10.0.27",
     "react-shadow": "18.4.2",

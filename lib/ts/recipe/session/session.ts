@@ -108,7 +108,7 @@ export default class Session extends RecipeModule {
     static getInstanceOrThrow(): Session {
         if (Session.instance === undefined) {
             throw Error(
-                `No instance of ${Session.constructor.name} found. Make sure to call the "init" method. See https://supertokens.io/docs/emailpassword/starter-guide/frontend`
+                "No instance of Session found. Make sure to call the Session.init method. See https://supertokens.io/docs/emailpassword/starter-guide/frontend"
             );
         }
 
