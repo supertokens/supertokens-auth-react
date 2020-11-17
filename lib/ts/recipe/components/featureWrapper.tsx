@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import root from "react-shadow/emotion";
-import { ST_ROOT_CONTAINER } from "../../constants";
+import { ST_ROOT_ID } from "../../constants";
 import ErrorBoundary from "./errorBoundary";
 
 /** @jsx jsx */
@@ -65,7 +65,7 @@ function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps)
         return (
             <StyleConsumer>
                 {styles => (
-                    <div css={styles.root} id={ST_ROOT_CONTAINER}>
+                    <div css={styles.root} id={ST_ROOT_ID}>
                         {children}
                     </div>
                 )}
@@ -77,7 +77,7 @@ function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps)
     return (
         <StyleConsumer>
             {styles => (
-                <root.div css={styles.root} id={ST_ROOT_CONTAINER}>
+                <root.div css={styles.root} id={ST_ROOT_ID}>
                     {children}
                 </root.div>
             )}

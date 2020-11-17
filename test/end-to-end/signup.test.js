@@ -22,19 +22,32 @@ import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
-import { ST_ROOT_CONTAINER } from "../../lib/build/constants";
+import {
+    clearBrowserCookies,
+    getPlaceholders,
+    getLabelsText,
+    setInputValue,
+    getFieldErrors,
+    toggleSignInSignUp,
+    getInputNames,
+    submitForm
+} from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+
+/*
+ * Consts.
+ */
+const SIGN_UP_API = `${TEST_SERVER_BASE_URL}/auth/signup`;
 
 /*
  * Tests.
  */
 describe("SuperTokens SignUp feature/theme", function() {
     let browser;
-    const SignInButtonQuerySelector = `document.querySelector('#${ST_ROOT_CONTAINER}').shadowRoot.querySelector('button').innerText`;
+    let page;
 
     before(async function() {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
@@ -62,24 +75,131 @@ describe("SuperTokens SignUp feature/theme", function() {
         }).catch(console.error);
     });
 
+    beforeEach(async function() {
+        page = await browser.newPage();
+        clearBrowserCookies(page);
+        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
+
+        await toggleSignInSignUp(page);
+    });
+
     describe("SignUp test (default)", function() {
-        it('Should switch to signin when "Sign In" is clicked (TODO)', async function() {});
+        it("Should contain form fields as defined in SuperTokens.init call", async function() {
+            const inputNames = await getInputNames(page);
+            assert.deepStrictEqual(inputNames, ["email", "password", "name", "age", "country"]);
 
-        it("Should show error message when email is not correct (TODO)", async function() {});
+            const labelNames = await getLabelsText(page);
+            assert.deepStrictEqual(labelNames, [
+                "Your Email: *",
+                "Password: *",
+                "Full name: *",
+                "Your age: *",
+                "Your Country:"
+            ]);
 
-        it("Should show error message when password is too short (TODO)", async function() {});
-
-        it("Should redirect to '/' on successful signup (TODO)", async function() {
-            const page = await browser.newPage();
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
+            const placeholders = await getPlaceholders(page);
+            assert.deepStrictEqual(placeholders, [
+                "Your work email",
+                "Password",
+                "First name and last name",
+                "How old are you?",
+                "Where do you live?"
+            ]);
         });
 
-        it("Signup without filling all required fields shows error (TODO)", async function() {});
+        it("Should return fields are not optional error fields when sign up without filling the form", async function() {
+            await submitForm(page);
 
-        it("Server error shows general error banner (TODO)", async function() {});
+            // Assert.
+            const formFieldErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldErrors, [
+                "Field is not optional",
+                "Field is not optional",
+                "Field is not optional",
+                "Field is not optional"
+            ]);
+        });
 
-        it("Optional fields are not required (TODO)", async function() {});
+        it("Should show error messages", async function() {
+            // Set values.
+            await setInputValue(page, "email", "john@doe");
+            await setInputValue(page, "password", "test123");
+            await setInputValue(page, "name", "John Doe");
+            await setInputValue(page, "age", "17");
 
-        it("Wrong email format shows field error (TODO)", async function() {});
+            await submitForm(page);
+
+            // // Assert.
+            let formFieldErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldErrors, [
+                "Email is invalid",
+                "Password must contain at least 8 characters, including a number",
+                "You must be over 18 to register"
+            ]);
+
+            // Remove error on focus
+            await setInputValue(page, "age", "15");
+            // Wait 500ms because the form fields  clean after 500ms to prevent UI glitches.
+            await new Promise(r => setTimeout(r, 500));
+
+            // // Assert.
+            formFieldErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldErrors, [
+                "Email is invalid",
+                "Password must contain at least 8 characters, including a number"
+            ]);
+
+            await setInputValue(page, "password", "Str0ngP@ssw0rd");
+
+            await submitForm(page);
+
+            // // Assert.
+            formFieldErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldErrors, ["Email is invalid", "You must be over 18 to register"]);
+        });
+
+        it("Successful signup", async function() {
+            await successfulSignUp(page);
+
+            const cookies = await page.cookies();
+            assert.deepStrictEqual(cookies.map(c => c.name), ["sIRTFrontend", "sIdRefreshToken", "sAccessToken"]);
+
+            // deosSessionExist return true, hence, redirecting to onSuccessFulRedirectUrl
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            const onSuccessFulRedirectUrl = "/dashboard";
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.strictEqual(pathname, onSuccessFulRedirectUrl);
+        });
     });
 });
+
+export async function successfulSignUp(page) {
+    // Set values.
+    await setInputValue(page, "email", "john.doe@supertokens.io");
+    await setInputValue(page, "password", "Str0ngP@ssw0rd");
+    await setInputValue(page, "name", "John Doe");
+    await setInputValue(page, "age", "20");
+
+    await submitForm(page);
+
+    // Assert Request.
+    const signUpRequest = await page.waitForRequest(SIGN_UP_API, { request: "POST" });
+    assert.strictEqual(signUpRequest.headers()["rid"], "emailpassword");
+    assert.strictEqual(
+        signUpRequest.postData(),
+        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}'
+    );
+
+    // Assert Response.
+    const signUpResponse = await page.waitForResponse(response => {
+        return response.url() === SIGN_UP_API && response.status() === 200;
+    });
+
+    const responseData = await signUpResponse.json();
+    assert.strictEqual(responseData.status, "OK");
+    await page.waitForNavigation();
+
+    const onSuccessFulRedirectUrl = "/dashboard";
+    const pathname = await page.evaluate(() => window.location.pathname);
+    assert.deepStrictEqual(pathname, onSuccessFulRedirectUrl);
+}

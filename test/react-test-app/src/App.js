@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import './App.css';
 
 import AppWithoutRouter from './AppWithoutRouter';
@@ -7,8 +7,10 @@ import Footer from "./Footer";
 /* SuperTokens imports */
 import SuperTokens from 'supertokens-auth-react';
 import EmailPassword, {signOut} from 'supertokens-auth-react/recipe/emailpassword';
+import axios from "axios";
 
 import Session, {doesSessionExist} from 'supertokens-auth-react/recipe/session';
+Session.addAxiosInterceptors(axios);
 
 
 const colors = getQueryParams('theme') === 'dark' ? {
@@ -16,7 +18,8 @@ const colors = getQueryParams('theme') === 'dark' ? {
   textTitle: "white",
   textLabel: "white",
   textPrimary: "white",
-  textLink: '#c31e1e'
+  error: '#ad2e2e',
+  textLink: '#a9a9a9'
 } : {};
 
 SuperTokens.init({
@@ -36,6 +39,10 @@ SuperTokens.init({
           privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
           termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
           formFields: [{
+                id: "email",
+                label: "Your Email",
+                placeholder: "Your work email"
+            },{
                 id: "name",
                 label: "Full name",
                 placeholder: "First name and last name"
@@ -115,6 +122,10 @@ export function Contact () {
 }
 
 export function Dashboard () {
+
+  const [sessionInfoUsingAxios, setSessionInfoUsingAxios] = useState(undefined);
+  const [sessionInfoUsingFetch, setSessionInfoUsingFetch] = useState(undefined);
+
   if (!doesSessionExist()) {
     window.location.href = "/auth";
   }
@@ -122,12 +133,50 @@ export function Dashboard () {
   async function logout() {
     await signOut();
     window.location.href = "/auth";
-
   }
 
+  async function fetchSessionInfoUsingAxios() {
+    return (await axios.get('http://localhost:8082/sessionInfo')).data;
+  }
+
+  async function fetchSessionInfoUsingFetch() {
+    const res = await fetch('http://localhost:8082/sessionInfo');
+    return await res.json();
+  }
+
+  useEffect(() => {
+    async function fetchData() {
+      const sessionInfoUsingAxios = await fetchSessionInfoUsingAxios();
+      setSessionInfoUsingAxios(sessionInfoUsingAxios);
+      const sessionInfoUsingFetch = await fetchSessionInfoUsingFetch();
+      setSessionInfoUsingFetch(sessionInfoUsingFetch);
+    }
+    fetchData();
+  }, []);
+
   return (
-    <>
+    <div>
       <h2>/Dashboard</h2>
-      <span onClick={logout} >Logout</span>
-    </>)
+      <button className="logout" onClick={logout} >Logout</button>
+      <div className="axios">
+          <SessionInfoTable sessionInfo={sessionInfoUsingAxios} />
+      </div>
+      <div className="fetch">
+        <SessionInfoTable sessionInfo={sessionInfoUsingFetch} />
+      </div>
+    </div>
+    )
+}
+
+function SessionInfoTable({sessionInfo}) {
+
+  if (sessionInfo === undefined) {
+    return <div className="sessionInfo" />
+  }
+  return (
+    <ul>
+        <li className={`sessionInfo-user-id`} >{sessionInfo['userId']}</li>
+        <li className={`sessionInfo-session-handle`} >{sessionInfo['sessionHandle']}</li>
+    </ul>
+  )
 }

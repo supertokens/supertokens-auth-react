@@ -25,6 +25,7 @@ import { DEFAULT_WEBSITE_BASE_PATH, DEFAULT_API_BASE_PATH } from "../../lib/buil
 import assert from "assert";
 import { mockWindowLocation } from "../helpers";
 import * as React from "react";
+import { Fragment } from "react";
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
@@ -156,11 +157,11 @@ describe("SuperTokens", function() {
         mockWindowLocation(`${randomWebsitePath}/auth?rid=emailpassword`);
         assert.strictEqual(SuperTokens.canHandleRoute(), true);
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
-        // returns first component if rid=unknownd.
+        // returns first component if rid=unknown-id.
         assert.strictEqual(SuperTokens.canHandleRoute(), true);
     });
 
-    it("SuperTokens disable default Implementation should disable default routes for Email Password", async function() {
+    it("SuperTokens disable default Implementation should disable default routes for Sign In and Up", async function() {
         SuperTokens.init({
             ...defaultConfigs,
             recipeList: [
@@ -190,17 +191,19 @@ describe("SuperTokens", function() {
 
         const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous();
 
+        const signInAndUpJSXElement = <SignInAndUp />;
+        const resetPasswordUsingTokenJSXElement = <ResetPasswordUsingToken />;
+
         mockWindowLocation(`${randomWebsitePath}/blog/`);
         assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
         mockWindowLocation(`${randomWebsitePath}/blog/.`);
         assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
         mockWindowLocation(`${randomWebsitePath}/blog/auth`);
         assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
-        mockWindowLocation(`${randomWebsitePath}/auth/404`);
         assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
         mockWindowLocation(`${randomWebsitePath}/auth`);
-        const signInAndUpJSXElement = <SignInAndUp />;
-        assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
+        mockWindowLocation(`${randomWebsitePath}/auth/404`);
+        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
         mockWindowLocation(`${randomWebsitePath}/auth/`);
         assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
         mockWindowLocation(`${randomWebsitePath}/auth/.`);
@@ -210,7 +213,6 @@ describe("SuperTokens", function() {
         // returns first component if rid=unknown.
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
         assert.strictEqual(SuperTokens.getRoutingComponent().type, signInAndUpJSXElement.type);
-        const resetPasswordUsingTokenJSXElement = <ResetPasswordUsingToken />;
         mockWindowLocation(`${randomWebsitePath}/auth/reset-password`);
         assert.strictEqual(SuperTokens.getRoutingComponent().type, resetPasswordUsingTokenJSXElement.type);
         mockWindowLocation(`${randomWebsitePath}/auth/reset-password?rid=unknown-id`);

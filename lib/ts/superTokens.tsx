@@ -19,18 +19,11 @@
 import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
 import { NormalisedAppInfo, ReactComponentClass, SuperTokensConfig } from "./types";
-import {
-    getCurrentNormalisedUrlPath,
-    getRecipeIdFromSearch,
-    isTest,
-    normaliseInputAppInfoOrThrowError,
-    redirectToInApp
-} from "./utils";
+import { getCurrentNormalisedUrlPath, getRecipeIdFromSearch, isTest, normaliseInputAppInfoOrThrowError } from "./utils";
 import NormalisedURLPath from "./normalisedURLPath";
 const { getSuperTokensRoutesForReactRouterDom } = require("./components/superTokensRoute");
 import { PathToComponentWithRecipeIdMap } from "./types";
 import Session from "./recipe/session/session";
-import { Fragment } from "react";
 
 /*
  * Class.
@@ -129,23 +122,14 @@ export default class SuperTokens {
     };
 
     canHandleRoute = (): boolean => {
-        return this.getRoutingComponent(true) !== undefined;
+        return this.getRoutingComponent() !== undefined;
     };
 
-    getRoutingComponent = (noRedirect?: boolean): JSX.Element | undefined => {
+    getRoutingComponent = (): JSX.Element | undefined => {
         const normalisedPath = getCurrentNormalisedUrlPath();
         const recipeId = getRecipeIdFromSearch(window.location.search);
         const Component = this.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
         if (Component === undefined) {
-            const basePath = this.getAppInfo().websiteBasePath.getAsStringDangerous();
-            if (normalisedPath.getAsStringDangerous().startsWith(basePath)) {
-                if (noRedirect !== true) {
-                    redirectToInApp(basePath);
-                }
-
-                return <Fragment />;
-            }
-
             return undefined;
         }
 
