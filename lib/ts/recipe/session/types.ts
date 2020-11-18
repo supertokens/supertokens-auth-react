@@ -43,10 +43,3 @@ export type SessionUserInput = {
 };
 
 export type SessionConfig = RecipeModuleConfig & SessionUserInput;
-
-export type NormalisedSessionConfig = {
-    /*
-     * sessionExpiredStatusCode
-     */
-    sessionExpiredStatusCode: number;
-};

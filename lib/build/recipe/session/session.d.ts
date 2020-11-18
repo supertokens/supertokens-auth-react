@@ -1,13 +1,11 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction } from "../../types";
-import { SessionUserInput, SessionConfig, NormalisedSessionConfig } from "./types";
+import { SessionUserInput, SessionConfig } from "./types";
 export default class Session extends RecipeModule {
     static instance?: Session;
     static RECIPE_ID: string;
-    config: NormalisedSessionConfig;
     constructor(config: SessionConfig);
     getFeatures: () => Record<string, import("../../types").ReactComponentClass>;
-    getConfig: () => NormalisedSessionConfig;
     getRefreshURLDomain: () => string | undefined;
     getUserId: () => string;
     getJWTPayloadSecurely: () => Promise<any>;
@@ -21,7 +19,6 @@ export default class Session extends RecipeModule {
     static getInstanceOrThrow(): Session;
     static getRefreshURLDomain(): string | undefined;
     static getUserId(): string;
-    static getConfig(): NormalisedSessionConfig;
     static getJWTPayloadSecurely(): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
     static doesSessionExist(): boolean;

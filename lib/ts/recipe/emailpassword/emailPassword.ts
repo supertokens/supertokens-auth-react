@@ -16,6 +16,8 @@
 /*
  * Imports.
  */
+import sessionSdk from "supertokens-website/lib/build/fetch";
+
 import RecipeModule from "../recipeModule";
 import {
     CreateRecipeFunction,
@@ -42,7 +44,6 @@ import { ResetPasswordUsingToken, SignInAndUp } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../constants";
-import Session from "../session/session";
 
 /*
  * Class.
@@ -162,7 +163,7 @@ export default class EmailPassword extends RecipeModule {
             }
         });
 
-        const sessionExpiredStatusCode = Session.getConfig().sessionExpiredStatusCode;
+        const sessionExpiredStatusCode = sessionSdk.sessionExpiredStatusCode;
         if (result.status === sessionExpiredStatusCode) {
             return {
                 status: API_RESPONSE_STATUS.OK
