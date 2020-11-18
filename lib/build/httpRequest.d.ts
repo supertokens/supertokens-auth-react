@@ -6,6 +6,7 @@ export default class HttpRequest {
     post: <T>(path: string, config: RequestInit) => Promise<T>;
     delete: <T>(path: string, config: RequestInit) => Promise<T>;
     put: <T>(path: string, config: RequestInit) => Promise<T>;
-    fetch: <T>(url: RequestInfo, config: RequestInit) => Promise<T>;
+    fetch: (url: RequestInfo, config: RequestInit) => Promise<Response>;
+    fetchResponseJsonOrThrowAbove300: <T>(url: RequestInfo, config: RequestInit) => Promise<T>;
     getFullUrl: (pathStr: string) => string;
 }

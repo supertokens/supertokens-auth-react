@@ -16,6 +16,8 @@
 /*
  * Imports.
  */
+import sessionSdk from "supertokens-website/lib/build/fetch";
+
 import RecipeModule from "../recipeModule";
 import {
     CreateRecipeFunction,
@@ -40,7 +42,8 @@ import HttpRequest from "../../httpRequest";
 import { normaliseEmailPasswordConfig } from "./utils";
 import { ResetPasswordUsingToken, SignInAndUp } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
+import { API_RESPONSE_STATUS, DEFAULT_RESET_PASSWORD_PATH } from "./constants";
+import { SOMETHING_WENT_WRONG_ERROR } from "../../constants";
 
 /*
  * Class.
@@ -103,14 +106,20 @@ export default class EmailPassword extends RecipeModule {
     signUpAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpAPIResponse> => {
         return this.httpRequest.post("/signup", {
             body: JSON.stringify(requestJson),
-            headers
+            headers: {
+                ...headers,
+                rid: this.getRecipeId()
+            }
         });
     };
 
     signInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
         return this.httpRequest.post("/signin", {
             body: JSON.stringify(requestJson),
-            headers
+            headers: {
+                ...headers,
+                rid: this.getRecipeId()
+            }
         });
     };
 
@@ -124,14 +133,20 @@ export default class EmailPassword extends RecipeModule {
     ): Promise<SubmitNewPasswordAPIResponse> => {
         return this.httpRequest.post("/user/password/reset", {
             body: JSON.stringify(requestJson),
-            headers
+            headers: {
+                ...headers,
+                rid: this.getRecipeId()
+            }
         });
     };
 
     enterEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse> => {
         return this.httpRequest.post("/user/password/reset/token", {
             body: JSON.stringify(requestJson),
-            headers
+            headers: {
+                ...headers,
+                rid: this.getRecipeId()
+            }
         });
     };
 
@@ -139,13 +154,26 @@ export default class EmailPassword extends RecipeModule {
      * SignOut
      */
 
-    signOut = (): Promise<SignOutResponse> => {
-        return this.httpRequest.post("/signout", {
+    signOut = async (): Promise<SignOutResponse> => {
+        const result = await this.httpRequest.fetch(this.httpRequest.getFullUrl("/signout"), {
+            method: "POST",
             body: JSON.stringify({}),
             headers: {
-                rid: EmailPassword.RECIPE_ID
+                rid: this.getRecipeId()
             }
         });
+
+        const sessionExpiredStatusCode = sessionSdk.sessionExpiredStatusCode;
+        if (result.status === sessionExpiredStatusCode) {
+            return {
+                status: API_RESPONSE_STATUS.OK
+            };
+        }
+        if (result.status >= 300) {
+            throw Error(SOMETHING_WENT_WRONG_ERROR);
+        }
+
+        return await result.json();
     };
 
     /*

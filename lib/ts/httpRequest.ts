@@ -34,34 +34,34 @@ export default class HttpRequest {
      * Instance Methods.
      */
     get = async <T>(path: string, config: RequestInit): Promise<T> => {
-        return await this.fetch(this.getFullUrl(path), {
+        return await this.fetchResponseJsonOrThrowAbove300(this.getFullUrl(path), {
             method: "GET",
             ...config
         });
     };
 
     post = async <T>(path: string, config: RequestInit): Promise<T> => {
-        return await this.fetch(this.getFullUrl(path), {
+        return await this.fetchResponseJsonOrThrowAbove300(this.getFullUrl(path), {
             method: "POST",
             ...config
         });
     };
 
     delete = async <T>(path: string, config: RequestInit): Promise<T> => {
-        return await this.fetch(this.getFullUrl(path), {
+        return await this.fetchResponseJsonOrThrowAbove300(this.getFullUrl(path), {
             method: "DELETE",
             ...config
         });
     };
 
     put = async <T>(path: string, config: RequestInit): Promise<T> => {
-        return await this.fetch(this.getFullUrl(path), {
+        return await this.fetchResponseJsonOrThrowAbove300(this.getFullUrl(path), {
             method: "PUT",
             ...config
         });
     };
 
-    fetch = async <T>(url: RequestInfo, config: RequestInit): Promise<T> => {
+    fetch = async (url: RequestInfo, config: RequestInit): Promise<Response> => {
         let headers;
         if (config === undefined) {
             headers = {};
@@ -69,7 +69,7 @@ export default class HttpRequest {
             headers = config.headers;
         }
 
-        const result = await fetch(url, {
+        return await fetch(url, {
             ...config,
             headers: {
                 ...headers,
@@ -77,6 +77,10 @@ export default class HttpRequest {
                 "Content-Type": "application/json"
             }
         });
+    };
+
+    fetchResponseJsonOrThrowAbove300 = async <T>(url: RequestInfo, config: RequestInit): Promise<T> => {
+        const result = await this.fetch(url, config);
         if (result.status >= 300) {
             throw Error(SOMETHING_WENT_WRONG_ERROR);
         }

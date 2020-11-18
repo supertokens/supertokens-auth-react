@@ -34,7 +34,7 @@ export default class ErrorBoundary extends React.Component<unknown, ErrorBoundar
     }
 
     componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-        console.log(error, errorInfo);
+        console.info(error, errorInfo);
     }
 
     render(): JSX.Element | ReactNode | undefined {

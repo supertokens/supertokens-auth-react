@@ -73,7 +73,6 @@ SuperTokens.init({
 /* App */
 function App() {
   const router = getQueryParams('router');
-
   if (router === 'no-router') {
     return <AppWithoutRouter />
   }
