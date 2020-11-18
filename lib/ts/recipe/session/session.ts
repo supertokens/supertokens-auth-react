@@ -18,7 +18,7 @@
  */
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RouteToFeatureComponentMap } from "../../types";
-import { SessionUserInput, SessionConfig } from "./types";
+import { SessionUserInput, SessionConfig, NormalisedSessionConfig } from "./types";
 import { isTest } from "../../utils";
 import sessionSdk from "supertokens-website";
 
@@ -31,6 +31,11 @@ export default class Session extends RecipeModule {
      */
     static instance?: Session;
     static RECIPE_ID = "session";
+
+    /*
+     * Static Attributes.
+     */
+    config: NormalisedSessionConfig;
 
     /*
      * Constructor.
@@ -52,6 +57,13 @@ export default class Session extends RecipeModule {
             apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),
             apiBasePath: config.appInfo.apiBasePath.getAsStringDangerous()
         });
+
+        /* Add sessionExpiredStatusCode to config for use with SignOut */
+        const sessionExpiredStatusCode =
+            config.sessionExpiredStatusCode !== undefined ? config.sessionExpiredStatusCode : 401;
+        this.config = {
+            sessionExpiredStatusCode
+        };
     }
 
     /*
@@ -60,6 +72,10 @@ export default class Session extends RecipeModule {
 
     getFeatures = (): RouteToFeatureComponentMap => {
         return {};
+    };
+
+    getConfig = (): NormalisedSessionConfig => {
+        return this.config;
     };
 
     getRefreshURLDomain = (): string | undefined => {
@@ -121,6 +137,10 @@ export default class Session extends RecipeModule {
 
     static getUserId(): string {
         return Session.getInstanceOrThrow().getUserId();
+    }
+
+    static getConfig(): NormalisedSessionConfig {
+        return Session.getInstanceOrThrow().getConfig();
     }
 
     static async getJWTPayloadSecurely(): Promise<any> {

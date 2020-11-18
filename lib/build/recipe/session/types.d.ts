@@ -6,3 +6,6 @@ export declare type SessionUserInput = {
     autoAddCredentials?: boolean;
 };
 export declare type SessionConfig = RecipeModuleConfig & SessionUserInput;
+export declare type NormalisedSessionConfig = {
+    sessionExpiredStatusCode: number;
+};
