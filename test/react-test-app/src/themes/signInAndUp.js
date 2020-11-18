@@ -1,7 +1,6 @@
 import React from "react";
 import {useState, useRef} from "react";
-import {StyleConsumer, StyleProvider} from "supertokens-auth-react/lib/build/recipe/emailpassword/styles/styleContext"
-
+import EmailPassword from "supertokens-auth-react/lib/build/recipe/emailpassword/emailPassword";
 /*
  * SignInAndUpTheme
  * props given from SignInAndUp feature component:
@@ -17,47 +16,41 @@ export default function SignInAndUp(props){
      */
     const [isSignIn, setSignIn] = useState(false);
 
+    const palette = EmailPassword.getInstanceOrThrow().getConfig().palette;
     /*
      * Render.
      */
      return (
          /*
-          * Use StyleConsumer to access user defined styling.
-          * React does not support media queries as defined by the defaultStyles
-          * as well as mouse event specific css.
           * For a more complete integration, we encourage you to use emotion.sh to define your styling
           * if you would like to create a generic SuperTokens theme.
           */
-         <StyleConsumer>
-             {styles => (
-                <div className="root" style={styles.root} >
-                    <div className="container-shadow"></div>
-                    <div className="container">
-                        <div className="wrap" style={styles.wrap}>
-                            <div className="headingTitle">
-                                <span id="sign-up" style={{color: styles.palette.colors.textPrimary}} className={!isSignIn ? 'active' : ''} onClick={() => setSignIn(false)}>SIGN UP</span>
-                                <span id="sign-in" style={{color: styles.palette.colors.textPrimary}} className={isSignIn ? 'active' : ''} onClick={() => setSignIn(true)}>SIGN IN</span>
-                            </div>
-
-                            {isSignIn && <SignIn {...signInForm} />}
-                            {!isSignIn && <SignUp {...signUpForm}  />}
-                        </div>
+        <div className="root" style={{height: "600px", margin: "26px"}} >
+            <div className="container-shadow"></div>
+            <div className="container">
+                <div className="wrap">
+                    <div className="headingTitle">
+                        <span id="sign-up" style={{color: palette.textPrimary}} className={!isSignIn ? 'active' : ''} onClick={() => setSignIn(false)}>SIGN UP</span>
+                        <span id="sign-in" style={{color: palette.textPrimary}} className={isSignIn ? 'active' : ''} onClick={() => setSignIn(true)}>SIGN IN</span>
                     </div>
 
-                    {
-                    /* Because this component is rendered in a Shadow DOM
-                    * https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM
-                    * you must use the <link> html tag to include your styling in encapsulation.
-                    */
-                    }
-                    <link
-                        href="./index.css"
-                        rel="stylesheet"
-                        type="text/css"
-                    />
+                    {isSignIn && <SignIn {...signInForm} />}
+                    {!isSignIn && <SignUp {...signUpForm}  />}
                 </div>
-             )}
-         </StyleConsumer>
+            </div>
+
+            {
+            /* Because this component is rendered in a Shadow DOM
+            * https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM
+            * you must use the <link> html tag to include your styling in encapsulation.
+            */
+            }
+            <link
+                href="./index.css"
+                rel="stylesheet"
+                type="text/css"
+            />
+        </div>
     )
 }
 
@@ -113,48 +106,39 @@ function SignIn (props) {
         }
     }
 
+
+    /*
+     * Render.
+     */
+
+    const palette = EmailPassword.getInstanceOrThrow().getConfig().palette;
     return (
-        <StyleProvider styleFromInit={styleFromInit}>
-            <StyleConsumer>
-                {styles => (
-                    <div>
-                        <form onSubmit={signIn}>
-                            <label>{formFields[0].label}</label>
-                            <input 
-                                /*
-                                * Allow the user to overwrite default styles for input.
-                                * If you are going to provide a generic SuperTokens theme,
-                                * you should use this pattern everywhere.
-                                */
-                                style={{
-                                    color: styles.palette.colors.textPrimary,
-                                    ...styles.input}
-                                }
-                                ref={emailRef}  type="text" name="email" placeholder={formFields[0].placeholder}
-                            />
-                            <label>{formFields[1].label}</label>
-                            <input 
-                                
-                                style={{
-                                    color: styles.palette.colors.textPrimary,
-                                    ...styles.input,
-                                    }
-                                }
-                                ref={passwordRef} id="password" type="password" name="password"  placeholder={formFields[1].placeholder}
-                            />
-                            <input 
-                                style={styles.button}
-                                type="submit" name="submit" value="Log In"/>
-                        </form>
-                
-                        <footer>
-                            <div className="hr"></div>
-                            <div className="fp"><span className="link" onClick={onResetPassword}>Forgot Password?</span></div>
-                        </footer>
-                    </div>
-                )}
-            </StyleConsumer>
-        </StyleProvider>
+        <div>
+            <form onSubmit={signIn}>
+                <label>{formFields[0].label}</label>
+                <input 
+                    /*
+                    * Allow the user to overwrite default styles for input.
+                    * If you are going to provide a generic SuperTokens theme,
+                    * you should use this pattern everywhere.
+                    */
+                    style={{
+                        color: palette.colors.textPrimary,
+                        ...styleFromInit.input}
+                    }
+                    ref={emailRef}  type="text" name="email" placeholder={formFields[0].placeholder}
+                />
+                <label>{formFields[1].label}</label>
+                <input ref={passwordRef} id="password" type="password" name="password"  placeholder={formFields[1].placeholder}
+                />
+                <input type="submit" className="button" name="submit" value="Log In"/>
+            </form>
+    
+            <footer>
+                <div className="hr"></div>
+                <div className="fp"><span className="link" onClick={onResetPassword}>Forgot Password?</span></div>
+            </footer>
+        </div>
     )
 }
 
@@ -235,7 +219,7 @@ function PasswordStrengthMeter ({password}) {
         if (passwordStrength === undefined) {
             progressBar = <div/>;
         } else {
-            progressBar = <div class="progress-bar" style={{
+            progressBar = <div className="progress-bar" style={{
                 width: passwordStrength.width,
                 backgroundColor: passwordStrength.backgroundColor
                 }}
@@ -247,7 +231,7 @@ function PasswordStrengthMeter ({password}) {
 
 
     return (
-        <div class="progress">
+        <div className="progress">
             {progressBar}
         </div>
     );

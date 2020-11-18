@@ -2,7 +2,11 @@
   text-align: center;
   background-color: #fafafa;
   /* background-color: #292929; */
-  min-height: 130vh;
+  min-height: 100vh;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content: space-between;
 }
 
 .App-logo {
@@ -43,10 +47,13 @@ h1 {
   }
 }
 
-.page {
-  min-height: 100vh;
+.routing-header {
+  flex: 1 0 auto
 }
 
+.page {
+    flex: 3 0 auto
+}
 
 /* Navbar */
 .menu__icon {

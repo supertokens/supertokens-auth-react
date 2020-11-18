@@ -13,7 +13,7 @@ export declare type EmailPasswordUserInput = {
 };
 export declare type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUserInput;
 export declare type NormalisedEmailPasswordConfig = {
-    palette: NormalisedPalette;
+    palette: PaletteUserInput;
     useShadowDom: boolean;
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
@@ -205,53 +205,8 @@ export declare type SignInAndUpState = {
     user: User;
     responseJson: any;
 };
-declare enum paletteColorOptions {
-    BACKGROUND = "background",
-    INPUTBACKGROUND = "inputBackground",
-    PRIMARY = "primary",
-    ERROR = "error",
-    TEXTTITLE = "textTitle",
-    TEXTLABEL = "textLabel",
-    TEXTPRIMARY = "textPrimary",
-    TEXTLINK = "textLink"
-}
-export declare type PaletteUserInput = {
-    colors?: {
-        [key in paletteColorOptions]: string;
-    };
-};
-export declare type NormalisedPalette = {
-    colors: {
-        [key in paletteColorOptions]: string;
-    };
-    fonts: {
-        size: string[];
-    };
-};
-declare enum defaultStylesOptions {
-    ROOT = "root",
-    CONTAINER = "container",
-    ROW = "row",
-    GENERALERROR = "generalError",
-    INPUTWRAPPER = "inputWrapper",
-    INPUT = "input",
-    INPUTERROR = "inputError",
-    INPUTADORNMENT = "inputAdornment",
-    INPUTERRORMESSAGE = "inputErrorMessage",
-    BUTTON = "button",
-    LABEL = "label",
-    FORMROW = "formRow",
-    PRIMARYTEXT = "primaryText",
-    SECONDARYTEXT = "secondaryText",
-    LINK = "link",
-    DIVIDER = "divider"
-}
-export declare type DefaultStylesUserInput = {
-    [key in defaultStylesOptions]?: CSSObject;
-};
-export declare type NormalisedDefaultStyles = {
-    [key in defaultStylesOptions]: CSSObject;
-};
+export declare type PaletteUserInput = Record<string, string>;
+export declare type DefaultStylesUserInput = Record<string, CSSObject>;
 export declare type FormBaseState = {
     formFields: FormFieldState[];
     generalError: string | undefined;

@@ -38,9 +38,9 @@ import FeatureWrapper from "../../../components/featureWrapper";
 import { jsx } from "@emotion/core";
 import { redirectToInApp, redirectToWithReload, WithRouter } from "../../../../utils";
 import SuperTokens from "../../../../superTokens";
-import { handleSignInAPI, handleSignUpAPI } from "./api";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
-import { StyleProvider } from "../../styles/styleContext";
+import { StyleProvider } from "../themes/default/styles/styleContext";
+import { handleSignInAPI, handleSignUpAPI } from "../features/signInAndUp/api";
 
 /*
  * Component.
