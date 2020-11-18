@@ -86,7 +86,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
     return {
         container: {
             fontFamily: "'Rubik', sans-serif",
-            maxWidth: "480px",
+            maxWidth: "524px",
             width: "50vw",
             margin: "0 auto",
             minWidth: "420px",
