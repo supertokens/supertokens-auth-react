@@ -157,7 +157,7 @@ input[type="checkbox"] + span {
 
 .button:hover {
   background: #aaf0d1;
-  box-shadow: 0 0 10px #aaf0d1, 0 0 30px #aaf0d1, 0 0 50px #aaf0d1;
+  box-shadow: 0 0 2px #aaf0d1, 0 0 5px #aaf0d1, 0 0 5px #aaf0d1;
 }
 
 #sign-up-form input[type="submit"] {

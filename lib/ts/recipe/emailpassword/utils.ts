@@ -16,12 +16,10 @@
 import NormalisedURLPath from "../../normalisedURLPath";
 import { FormField, FormFieldBaseConfig, NormalisedAppInfo, NormalisedFormField } from "../../types";
 import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID, MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
-import { defaultPalette } from "./styles/styles";
 import {
     EmailPasswordConfig,
     NormalisedEmailPasswordConfig,
     NormalisedEnterEmailForm,
-    NormalisedPalette,
     NormalisedResetPasswordUsingTokenFeatureConfig,
     NormalisedSignInAndUpFeatureConfig,
     NormalisedSignInFormFeatureConfig,
@@ -64,15 +62,7 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
         config.resetPasswordUsingTokenFeature
     );
 
-    const palette: NormalisedPalette = defaultPalette;
-    if (config.palette !== undefined) {
-        if (config.palette.colors !== undefined) {
-            palette.colors = {
-                ...defaultPalette.colors,
-                ...config.palette.colors
-            };
-        }
-    }
+    const palette = config.palette !== undefined ? config.palette : {};
 
     const useShadowDom = config.useShadowDom !== undefined ? config.useShadowDom : true;
 

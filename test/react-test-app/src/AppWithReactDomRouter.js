@@ -16,8 +16,10 @@ function AppWithReactDomRouter() {
     <div className="App">
       <Router>
         <Nav/> 
-        <h1>With Routing</h1>
-        <a href="/home?router=no-router">Switch</a><br/>
+        <div className="routing-header">
+          <h3>With Routing</h3>
+          <a href="/home?router=no-router">Switch</a>
+        </div>
         <BaseComponent>
           <Switch>
             {getSuperTokensRoutesForReactRouterDom()}

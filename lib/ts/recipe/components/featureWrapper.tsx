@@ -25,7 +25,6 @@ import ErrorBoundary from "./errorBoundary";
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import { Fragment } from "react";
-import { StyleConsumer } from "../emailpassword/styles/styleContext";
 
 /*
  * Props.
@@ -34,6 +33,13 @@ import { StyleConsumer } from "../emailpassword/styles/styleContext";
 type FeatureWrapperProps = {
     children: JSX.Element;
     useShadowDom?: boolean;
+};
+
+const rootStyles = {
+    margin: "26px",
+    "@media (max-width: 440px)": {
+        margin: "12px"
+    }
 };
 
 /*
@@ -63,24 +69,16 @@ function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps)
     // If explicitely specified to not use shadow dom.
     if (useShadowDom === false) {
         return (
-            <StyleConsumer>
-                {styles => (
-                    <div css={styles.root} id={ST_ROOT_ID}>
-                        {children}
-                    </div>
-                )}
-            </StyleConsumer>
+            <div css={rootStyles} id={ST_ROOT_ID}>
+                {children}
+            </div>
         );
     }
 
     // Otherwise, use shadow dom.
     return (
-        <StyleConsumer>
-            {styles => (
-                <root.div css={styles.root} id={ST_ROOT_ID}>
-                    {children}
-                </root.div>
-            )}
-        </StyleConsumer>
+        <root.div css={rootStyles} id={ST_ROOT_ID}>
+            {children}
+        </root.div>
     );
 }

@@ -20,10 +20,10 @@ import { CreateRecipeFunction } from "../../types";
 import { EmailPasswordConfig, SignOutResponse } from "./types";
 
 import EmailPassword from "./emailPassword";
-import SignInAndUp from "./components/signInAndUp/SignInAndUp";
-import SignInAndUpTheme from "./components/signInAndUp/themes/default";
-import ResetPasswordUsingTokenTheme from "./components/resetPasswordUsingToken/themes/default";
-import ResetPasswordUsingToken from "./components/resetPasswordUsingToken/resetPasswordUsingToken";
+import SignInAndUpTheme from "./components/themes/default/signInAndUp";
+import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/resetPasswordUsingToken";
+import { ResetPasswordUsingTokenTheme } from "./components/themes/default/resetPasswordUsingToken";
+import SignInAndUp from "./components/features/signInAndUp/SignInAndUp";
 
 /*
  * Class.

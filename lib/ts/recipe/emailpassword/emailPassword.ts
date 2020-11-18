@@ -38,9 +38,8 @@ import {
 import { isTest, validateForm } from "../../utils";
 import HttpRequest from "../../httpRequest";
 import { normaliseEmailPasswordConfig } from "./utils";
-import { SignInAndUp } from ".";
+import { ResetPasswordUsingToken, SignInAndUp } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
-import ResetPasswordUsingToken from "./components/resetPasswordUsingToken/resetPasswordUsingToken";
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 
 /*
