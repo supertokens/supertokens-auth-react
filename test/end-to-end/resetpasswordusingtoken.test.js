@@ -125,10 +125,7 @@ describe("SuperTokens Reset password feature/theme", function() {
             // Assert success page.
             const successMessage = await sendEmailResetPasswordSuccessMessage(page);
 
-            assert.deepStrictEqual(
-                successMessage,
-                "You will receive a password recovery link at your email address in a few minutes. Resend"
-            );
+            assert.deepStrictEqual(successMessage, "Please check your email for the password recovery link. Resend");
 
             // Click on "resend => go back to form.
             const resendResetPasswordEmailLink = await getResendResetPasswordEmailLink(page);

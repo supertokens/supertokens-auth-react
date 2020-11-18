@@ -122,8 +122,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
                                                 componentStyles.successMessage,
                                                 styles.successMessage
                                             ]}>
-                                            You will receive a password recovery link at your email address in a few
-                                            minutes.{" "}
+                                            Please check your email for the password recovery link.{" "}
                                             <span className="link" css={styles.link} onClick={this.resend}>
                                                 Resend
                                             </span>
