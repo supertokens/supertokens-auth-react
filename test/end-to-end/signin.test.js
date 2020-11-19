@@ -144,8 +144,10 @@ describe("SuperTokens SignIn feature/theme", function() {
             await submitForm(page);
 
             // Assert Request.
-            const signInRequest = await page.waitForRequest(SIGN_IN_API, { method: "POST" });
-            // assert.strictEqual(signInRequest.headers().rid, "emailpassword");
+            const signInRequest = await page.waitForRequest(
+                request => request.url() === SIGN_IN_API && request.method() === "POST"
+            );
+            assert.strictEqual(signInRequest.headers().rid, "emailpassword");
             assert.strictEqual(
                 signInRequest.postData(),
                 '{"formFields":[{"id":"email","value":"john@gmail.com"},{"id":"password","value":"********"}]}'
@@ -183,8 +185,10 @@ describe("SuperTokens SignIn feature/theme", function() {
             await submitForm(page);
 
             // Assert Request.
-            const signInRequest = await page.waitForRequest(SIGN_IN_API, { method: "POST" });
-            // assert.strictEqual(signInRequest.headers().rid, "emailpassword");
+            const signInRequest = await page.waitForRequest(
+                request => request.url() === SIGN_IN_API && request.method() === "POST"
+            );
+            assert.strictEqual(signInRequest.headers().rid, "emailpassword");
             assert.strictEqual(
                 signInRequest.postData(),
                 '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}]}'

@@ -106,10 +106,10 @@ describe("SuperTokens Reset password feature/theme", function() {
             await submitForm(page);
 
             // Assert Request.
-            const sendEmailResetPasswordRequest = await page.waitForRequest(RESET_PASSWORD_TOKEN_API, {
-                request: "POST"
-            });
-            // assert.strictEqual(sendEmailResetPasswordRequest.headers().rid, "emailpassword");
+            const sendEmailResetPasswordRequest = await page.waitForRequest(
+                request => request.url() === RESET_PASSWORD_TOKEN_API && request.method() === "POST"
+            );
+            assert.strictEqual(sendEmailResetPasswordRequest.headers().rid, "emailpassword");
             assert.strictEqual(
                 sendEmailResetPasswordRequest.postData(),
                 '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"}]}'
@@ -183,8 +183,10 @@ describe("SuperTokens Reset password feature/theme", function() {
             await submitForm(page);
 
             // Assert Request.
-            const newPasswordResetPasswordRequest = await page.waitForRequest(RESET_PASSWORD_API, { method: "POST" });
-            // assert.strictEqual(newPasswordResetPasswordRequest.headers().rid, "emailpassword");
+            const newPasswordResetPasswordRequest = await page.waitForRequest(
+                request => request.url() === RESET_PASSWORD_API && request.method() === "POST"
+            );
+            assert.strictEqual(newPasswordResetPasswordRequest.headers().rid, "emailpassword");
             assert.deepStrictEqual(
                 newPasswordResetPasswordRequest.postData(),
                 '{"formFields":[{"id":"password","value":"Str0ngP@ssw0rd"}],"token":"TOKEN"}'
@@ -237,7 +239,7 @@ describe("SuperTokens ResetPassword feature/theme callbacks", function() {
     beforeEach(async function() {
         consoleLogs = [];
         clearBrowserCookies(page);
-        await page.goto(`${TEST_CLIENT_BASE_URL}/custom/auth/reset-password`);
+        await page.goto(`${TEST_CLIENT_BASE_URL}/custom/auth/reset-password`, { waitUntil: "domcontentloaded" });
     });
 
     it("Should use custom callback props", async function() {

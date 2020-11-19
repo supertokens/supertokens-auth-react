@@ -189,7 +189,9 @@ export async function successfulSignUp(page) {
     await submitForm(page);
 
     // Assert Request.
-    const signUpRequest = await page.waitForRequest(SIGN_UP_API, { method: "POST" });
+    const signUpRequest = await page.waitForRequest(
+        request => request.url() === SIGN_UP_API && request.method() === "POST"
+    );
     assert.strictEqual(signUpRequest.headers().rid, "emailpassword");
     assert.strictEqual(
         signUpRequest.postData(),
