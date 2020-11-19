@@ -140,12 +140,11 @@ describe("SuperTokens SignIn feature/theme", function() {
             // Set values.
             await setInputValue(page, "email", "john@gmail.com");
             await setInputValue(page, "password", "********");
-            await setInputValue(page, "password", "********");
 
             await submitForm(page);
 
             // Assert Request.
-            const signInRequest = await page.waitForRequest(SIGN_IN_API, { request: "POST" });
+            const signInRequest = await page.waitForRequest(SIGN_IN_API, { method: "POST" });
             // assert.strictEqual(signInRequest.headers().rid, "emailpassword");
             assert.strictEqual(
                 signInRequest.postData(),
@@ -184,7 +183,7 @@ describe("SuperTokens SignIn feature/theme", function() {
             await submitForm(page);
 
             // Assert Request.
-            const signInRequest = await page.waitForRequest(SIGN_IN_API, { request: "POST" });
+            const signInRequest = await page.waitForRequest(SIGN_IN_API, { method: "POST" });
             // assert.strictEqual(signInRequest.headers().rid, "emailpassword");
             assert.strictEqual(
                 signInRequest.postData(),
@@ -208,6 +207,7 @@ describe("SuperTokens SignIn feature/theme", function() {
                 "sAccessToken"
             ]);
 
+            await new Promise(r => setTimeout(r, 500)); // Make sure to wait for navigation. TODO Make more robust.
             // Redirected to onSuccessFulRedirectUrl
             const onSuccessFulRedirectUrl = "/dashboard";
             let pathname = await page.evaluate(() => window.location.pathname);

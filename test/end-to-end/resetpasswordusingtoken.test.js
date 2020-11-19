@@ -183,7 +183,7 @@ describe("SuperTokens Reset password feature/theme", function() {
             await submitForm(page);
 
             // Assert Request.
-            const newPasswordResetPasswordRequest = await page.waitForRequest(RESET_PASSWORD_API, { request: "POST" });
+            const newPasswordResetPasswordRequest = await page.waitForRequest(RESET_PASSWORD_API, { method: "POST" });
             // assert.strictEqual(newPasswordResetPasswordRequest.headers().rid, "emailpassword");
             assert.deepStrictEqual(
                 newPasswordResetPasswordRequest.postData(),

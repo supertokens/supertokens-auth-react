@@ -78,7 +78,7 @@ describe("SuperTokens SignUp feature/theme", function() {
     beforeEach(async function() {
         page = await browser.newPage();
         clearBrowserCookies(page);
-        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
+        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
 
         await toggleSignInSignUp(page);
     });
@@ -169,9 +169,9 @@ describe("SuperTokens SignUp feature/theme", function() {
                 "sIdRefreshToken",
                 "sAccessToken"
             ]);
+            // doesSessionExist return true, hence, redirecting to onSuccessFulRedirectUrl
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
 
-            // deosSessionExist return true, hence, redirecting to onSuccessFulRedirectUrl
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             const onSuccessFulRedirectUrl = "/dashboard";
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.strictEqual(pathname, onSuccessFulRedirectUrl);
@@ -189,8 +189,8 @@ export async function successfulSignUp(page) {
     await submitForm(page);
 
     // Assert Request.
-    const signUpRequest = await page.waitForRequest(SIGN_UP_API, { request: "POST" });
-    // assert.strictEqual(signUpRequest.headers().rid, "emailpassword");
+    const signUpRequest = await page.waitForRequest(SIGN_UP_API, { method: "POST" });
+    assert.strictEqual(signUpRequest.headers().rid, "emailpassword");
     assert.strictEqual(
         signUpRequest.postData(),
         '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}'
@@ -203,8 +203,8 @@ export async function successfulSignUp(page) {
 
     const responseData = await signUpResponse.json();
     assert.strictEqual(responseData.status, "OK");
-    await page.waitForNavigation();
 
+    await new Promise(r => setTimeout(r, 500)); // Make sure to wait for navigation. TODO Make more robust.
     const onSuccessFulRedirectUrl = "/dashboard";
     const pathname = await page.evaluate(() => window.location.pathname);
     assert.deepStrictEqual(pathname, onSuccessFulRedirectUrl);
