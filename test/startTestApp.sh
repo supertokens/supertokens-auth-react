@@ -12,6 +12,10 @@
 # Methods.
 #
 
+# Exit script from startEndToEnd func.
+trap "exit 1" TERM
+export EXIT_PID=$$
+
 function startFrontEnd () {
     (
         echo "Starting test example app"
@@ -56,12 +60,19 @@ function startEndToEnd () {
         echo "Waiting for front end test application to start..."
         sleep 5
     done
-    sleep 5 # Because the server is responding does not mean the app is ready. Let's wait another 5secs to make sure the app is up.
+    sleep 2 # Because the server is responding does not mean the app is ready. Let's wait another 5secs to make sure the app is up.
     moveBackNodeModules
     echo "Start mocha testing"
     TEST_MODE=testing mocha --require @babel/register --timeout 20000
-    echo "Finish mocha testing"
+    testPassed=$?;
+    echo "testPassed $testPassed"
     cleanUp
+    if [[ $testPassed -ne 0 ]]
+    then
+        kill -s TERM $EXIT_PID
+        return;
+    fi
+
 }
 
 #
@@ -72,7 +83,7 @@ mode=$1
 
 if [[ $mode == "--clean-up" ]]; then
     cleanUp
-    exit 1
+    exit 0
 fi
 
 trap "cleanUp" EXIT # Trap to execute on script shutdown

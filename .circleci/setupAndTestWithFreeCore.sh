@@ -47,6 +47,6 @@ cd ../../
 npm run test
 if [[ $? -ne 0 ]]
 then
-    echo "test failed... exiting!"
+    echo "test failed Main script... exiting!"
     exit 1
 fi

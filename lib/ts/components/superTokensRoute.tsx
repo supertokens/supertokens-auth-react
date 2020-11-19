@@ -20,6 +20,7 @@
 import * as React from "react";
 import NormalisedURLPath from "../normalisedURLPath";
 import SuperTokens from "../superTokens";
+import { WithRouterType } from "../types";
 import { getRecipeIdFromSearch } from "../utils";
 
 /*
@@ -30,12 +31,13 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
     try {
         // eslint-disable-next-line
         const Route = require("react-router-dom").Route;
+        const withRouter: WithRouterType = require("react-router-dom").withRouter;
         const pathsToComponentWithRecipeIdMap = SuperTokens.getPathsToComponentWithRecipeIdMap();
 
         return Object.keys(pathsToComponentWithRecipeIdMap).map(path => {
             return (
                 <Route exact key={`st-${path}`} path={path}>
-                    <SuperTokensRouteWithRecipeId path={path} />
+                    <SuperTokensRouteWithRecipeId withRouter={withRouter} path={path} />
                 </Route>
             );
         });
@@ -45,7 +47,13 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
     }
 }
 
-function SuperTokensRouteWithRecipeId({ path }: { path: string }): JSX.Element | null {
+function SuperTokensRouteWithRecipeId({
+    path,
+    withRouter
+}: {
+    path: string;
+    withRouter: WithRouterType;
+}): JSX.Element | null {
     const recipeId = getRecipeIdFromSearch(window.location.search);
     const normalisedPath = new NormalisedURLPath(path);
 
@@ -54,5 +62,7 @@ function SuperTokensRouteWithRecipeId({ path }: { path: string }): JSX.Element |
         return null;
     }
 
-    return <Component />;
+    const WithRouterComponent = withRouter(Component);
+
+    return <WithRouterComponent />;
 }

@@ -71,4 +71,5 @@ export declare type NormalisedFormField = {
     optional: boolean;
 };
 export declare type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);
+export declare type WithRouterType = (Component: ReactComponentClass) => ReactComponentClass;
 export declare type Styles = Record<string, CSSObject>;

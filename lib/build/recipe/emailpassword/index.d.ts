@@ -5,7 +5,7 @@ import ResetPasswordUsingToken from "./components/features/resetPasswordUsingTok
 import { ResetPasswordUsingTokenTheme } from "./components/themes/default/resetPasswordUsingToken";
 import SignInAndUp from "./components/features/signInAndUp/SignInAndUp";
 export default class EmailPasswordAPIWrapper {
-    static SignInAndUp: import("../../types").ReactComponentClass;
+    static SignInAndUp: typeof SignInAndUp;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ResetPasswordUsingToken: typeof ResetPasswordUsingToken;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;

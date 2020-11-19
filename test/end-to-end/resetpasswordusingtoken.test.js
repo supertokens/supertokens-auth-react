@@ -109,7 +109,7 @@ describe("SuperTokens Reset password feature/theme", function() {
             const sendEmailResetPasswordRequest = await page.waitForRequest(RESET_PASSWORD_TOKEN_API, {
                 request: "POST"
             });
-            assert.strictEqual(sendEmailResetPasswordRequest.headers().rid, "emailpassword");
+            // assert.strictEqual(sendEmailResetPasswordRequest.headers().rid, "emailpassword");
             assert.strictEqual(
                 sendEmailResetPasswordRequest.postData(),
                 '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"}]}'
@@ -184,7 +184,7 @@ describe("SuperTokens Reset password feature/theme", function() {
 
             // Assert Request.
             const newPasswordResetPasswordRequest = await page.waitForRequest(RESET_PASSWORD_API, { request: "POST" });
-            assert.strictEqual(newPasswordResetPasswordRequest.headers().rid, "emailpassword");
+            // assert.strictEqual(newPasswordResetPasswordRequest.headers().rid, "emailpassword");
             assert.deepStrictEqual(
                 newPasswordResetPasswordRequest.postData(),
                 '{"formFields":[{"id":"password","value":"Str0ngP@ssw0rd"}],"token":"TOKEN"}'

@@ -36,10 +36,11 @@ import {
 import { SignInAndUpTheme } from "../../..";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import { APIFormField, RequestJson } from "../../../../../types";
-import { redirectToInApp, redirectToWithReload, WithRouter } from "../../../../../utils";
+import { redirectToInApp, redirectToWithReload } from "../../../../../utils";
 import FeatureWrapper from "../../../../components/featureWrapper";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../../constants";
 import SuperTokens from "../../../../../superTokens";
+import Session from "../../../../session/session";
 
 /*
  * Component.
@@ -70,7 +71,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         return instance;
     };
 
-    getSessionRecipe() {
+    getSessionRecipe(): Session | undefined {
         return SuperTokens.getDefaultSessionRecipe();
     }
 
@@ -308,4 +309,4 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
     };
 }
 
-export default WithRouter(SignInAndUp);
+export default SignInAndUp;

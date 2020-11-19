@@ -190,7 +190,7 @@ export async function successfulSignUp(page) {
 
     // Assert Request.
     const signUpRequest = await page.waitForRequest(SIGN_UP_API, { request: "POST" });
-    assert.strictEqual(signUpRequest.headers().rid, "emailpassword");
+    // assert.strictEqual(signUpRequest.headers().rid, "emailpassword");
     assert.strictEqual(
         signUpRequest.postData(),
         '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}'
