@@ -162,7 +162,13 @@ describe("SuperTokens SignUp feature/theme", function() {
             await successfulSignUp(page);
 
             const cookies = await page.cookies();
-            assert.deepStrictEqual(cookies.map(c => c.name), ["sIRTFrontend", "sIdRefreshToken", "sAccessToken"]);
+
+            assert.deepStrictEqual(cookies.map(c => c.name), [
+                "sIRTFrontend",
+                "sFrontToken",
+                "sIdRefreshToken",
+                "sAccessToken"
+            ]);
 
             // deosSessionExist return true, hence, redirecting to onSuccessFulRedirectUrl
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
@@ -184,7 +190,7 @@ export async function successfulSignUp(page) {
 
     // Assert Request.
     const signUpRequest = await page.waitForRequest(SIGN_UP_API, { request: "POST" });
-    assert.strictEqual(signUpRequest.headers()["rid"], "emailpassword");
+    assert.strictEqual(signUpRequest.headers().rid, "emailpassword");
     assert.strictEqual(
         signUpRequest.postData(),
         '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}'

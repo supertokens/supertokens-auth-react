@@ -33,7 +33,7 @@ app.use(cookieParser());
 SuperTokens.init({
     appInfo: {
         appName: "SuperTokens",
-        apiDomain: "0.0.0.0:" + (process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT),
+        apiDomain: "localhost:" + (process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT),
         websiteDomain: "http://localhost:3031"
     },
     supertokens: {

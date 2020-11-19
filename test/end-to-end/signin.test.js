@@ -146,7 +146,7 @@ describe("SuperTokens SignIn feature/theme", function() {
 
             // Assert Request.
             const signInRequest = await page.waitForRequest(SIGN_IN_API, { request: "POST" });
-            assert.strictEqual(signInRequest.headers()["rid"], "emailpassword");
+            assert.strictEqual(signInRequest.headers().rid, "emailpassword");
             assert.strictEqual(
                 signInRequest.postData(),
                 '{"formFields":[{"id":"email","value":"john@gmail.com"},{"id":"password","value":"********"}]}'
@@ -185,7 +185,7 @@ describe("SuperTokens SignIn feature/theme", function() {
 
             // Assert Request.
             const signInRequest = await page.waitForRequest(SIGN_IN_API, { request: "POST" });
-            assert.strictEqual(signInRequest.headers()["rid"], "emailpassword");
+            assert.strictEqual(signInRequest.headers().rid, "emailpassword");
             assert.strictEqual(
                 signInRequest.postData(),
                 '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}]}'
@@ -198,6 +198,15 @@ describe("SuperTokens SignIn feature/theme", function() {
             const responseData = await signInResponse.json();
             assert.strictEqual(responseData.status, "OK");
             await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+            // Verify cookies were set.
+            cookies = await page.cookies();
+            assert.deepStrictEqual(cookies.map(c => c.name), [
+                "sIRTFrontend",
+                "sFrontToken",
+                "sIdRefreshToken",
+                "sAccessToken"
+            ]);
 
             // Redirected to onSuccessFulRedirectUrl
             const onSuccessFulRedirectUrl = "/dashboard";

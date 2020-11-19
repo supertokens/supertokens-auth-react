@@ -1,3 +1,4 @@
+#!/bin/bash
 
 #
 # Use.
@@ -50,7 +51,7 @@ function cleanUp () {
 
 function startEndToEnd () {
     # Wait for the test app to be up before running tests.
-    while ! nc -vz 0.0.0.0 3031 -o ConnectTimeout=7 > /dev/null 2>&1 true
+    while ! curl -s localhost:3031 > /dev/null 2>&1
     do
         echo "Waiting for front end test application to start..."
         sleep 5
@@ -81,7 +82,7 @@ if [[ $mode == "--test" ]]; then
     # Start by killing any servers up on 8082 and 3031 if any.
     cleanUp
 
-    # Run node server in back.
+    # Run node server in background.
     (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . > /dev/null 2>&1 &)  
 
     # Start front end test app and run tests.

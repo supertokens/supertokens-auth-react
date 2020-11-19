@@ -23,7 +23,7 @@ import EmailPassword from "../../../../lib/build/recipe/emailpassword/emailPassw
 import {getDefaultFormFields} from "../../../../lib/build/recipe/emailpassword/utils";
 import {defaultLoginPasswordValidator, defaultValidate} from "../../../../lib/build/recipe/emailpassword/validators";
 import assert from "assert";
-import SuperTokens from "../../../../lib/build/SuperTokens";
+import SuperTokens from "../../../../lib/build/superTokens";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();

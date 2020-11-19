@@ -15,6 +15,7 @@ jobs:
       - image: rishabhpoddar/supertokens_website_sdk_testing
     steps:
       - checkout
+      - run: apt-get install lsof
       - run: npm i -d
       - run: cd ./test/react-test-app && npm i -d
       - run: (cd .circleci/ && ./doTests.sh)
