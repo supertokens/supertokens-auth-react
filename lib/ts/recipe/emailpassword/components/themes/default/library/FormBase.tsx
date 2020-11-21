@@ -194,6 +194,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                                                     name={field.id}
                                                     placeholder={field.placeholder}
                                                     ref={field.ref}
+                                                    autoComplete={field.autoComplete}
                                                     onChange={this.handleInputChange}
                                                     hasError={field.error !== undefined}
                                                     validated={field.validated}

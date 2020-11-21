@@ -69,6 +69,7 @@ export declare type NormalisedFormField = {
     placeholder: string;
     validate: (value: any) => Promise<string | undefined>;
     optional: boolean;
+    autoComplete?: string;
 };
 export declare type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);
 export declare type WithRouterType = (Component: ReactComponentClass) => ReactComponentClass;

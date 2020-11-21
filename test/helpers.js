@@ -147,10 +147,13 @@ export async function clearBrowserCookies (page) {
 }
 
 export async function clickForgotPasswordLink (page) {
-        // Click on Forgot Password Link.
-        const forgotPasswordLink = await getForgotPasswordLink(page);
-        await forgotPasswordLink.click();
-        await page.waitForNavigation({ waitUntil: "networkidle0" });
+    // Click on Forgot Password Link.
+    const forgotPasswordLink = await getForgotPasswordLink(page);
+    await Promise.all([
+        page.waitForNavigation(),
+        forgotPasswordLink.click()
+    ]);
+
 }
 
 export async function toggleSignInSignUp(page) {

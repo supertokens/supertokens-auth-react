@@ -182,6 +182,7 @@ export declare type FormFieldState = FormFieldThemeProps & {
     validated: boolean;
     ref: RefObject<HTMLInputElement>;
     showIsRequired?: boolean;
+    autoComplete?: string;
 };
 export declare type EnterEmailThemeState = {
     emailSent?: boolean;

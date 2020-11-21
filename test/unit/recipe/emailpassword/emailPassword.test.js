@@ -66,6 +66,7 @@ describe("EmailPassword", function() {
                 getDefaultFormFields()[0],
                 {
                     ...getDefaultFormFields()[1],
+                    autoComplete: "current-password",
                     validate: defaultLoginPasswordValidator
                 }
             ]
@@ -135,6 +136,7 @@ describe("EmailPassword", function() {
                 getDefaultFormFields()[0],
                 {
                     ...getDefaultFormFields()[1],
+                    autoComplete: "current-password",
                     validate: defaultLoginPasswordValidator
                 }
             ]
@@ -142,7 +144,7 @@ describe("EmailPassword", function() {
     });
 
     it("Initializing EmailPassword with custom Email for SignUp", async function() {
-        const companyEmailField = {
+        const customEmailField = {
             id: "email",
             label: "Custom Email Label",
             placeholder: "Your custom email",
@@ -152,7 +154,7 @@ describe("EmailPassword", function() {
         EmailPassword.init({
             signInAndUpFeature: {
                 signUpForm: {
-                    formFields: [companyEmailField]
+                    formFields: [customEmailField]
                 }
             }
         })(SuperTokens.getAppInfo());
@@ -161,7 +163,10 @@ describe("EmailPassword", function() {
             EmailPassword.getInstanceOrThrow()
                 .getConfig().signInAndUpFeature.signUpForm.formFields,
             [
-                companyEmailField,
+                {
+                    ...customEmailField,
+                    autoComplete: "email"
+                },
                 getDefaultFormFields()[1]
             ]
         );
@@ -177,9 +182,13 @@ describe("EmailPassword", function() {
                 .getConfig().signInAndUpFeature.signInForm
                 .formFields,
             [
-                companyEmailField,
+                {
+                    ...customEmailField,
+                    autoComplete: "email"
+                },
                 {
                     ...getDefaultFormFields()[1],
+                    autoComplete: "current-password",
                     validate: defaultLoginPasswordValidator
                 }
             ]
@@ -228,9 +237,13 @@ describe("EmailPassword", function() {
                 .getConfig().signInAndUpFeature.signInForm
                 .formFields,
             [
-                customEmailField,
+                {
+                    ...customEmailField,
+                    autoComplete: "email"
+                },
                 {
                     ...getDefaultFormFields()[1],
+                    autoComplete: "current-password",
                     validate: defaultLoginPasswordValidator
                 }
             ]
@@ -280,6 +293,7 @@ describe("EmailPassword", function() {
                 getDefaultFormFields()[0],
                 {
                     ...getDefaultFormFields()[1],
+                    autoComplete: "current-password",
                     validate: defaultLoginPasswordValidator
                 }
             ]
@@ -287,7 +301,7 @@ describe("EmailPassword", function() {
     });
 
     it("Initializing EmailPassword with custom Email for SignUp", async function() {
-        const companyEmailField = {
+        const customEmailField = {
             id: "email",
             label: "Custom Email Label",
             placeholder: "Your custom email",
@@ -297,7 +311,7 @@ describe("EmailPassword", function() {
         EmailPassword.init({
             signInAndUpFeature: {
                 signUpForm: {
-                    formFields: [companyEmailField]
+                    formFields: [customEmailField]
                 }
             }
         })(SuperTokens.getAppInfo());
@@ -306,7 +320,10 @@ describe("EmailPassword", function() {
             EmailPassword.getInstanceOrThrow()
                 .getConfig().signInAndUpFeature.signUpForm.formFields,
             [
-                companyEmailField,
+                {
+                    ...customEmailField,
+                    autoComplete: "email"
+                },
                 getDefaultFormFields()[1]
             ]
         );
@@ -322,9 +339,13 @@ describe("EmailPassword", function() {
                 .getConfig().signInAndUpFeature.signInForm
                 .formFields,
             [
-                companyEmailField,
+                {
+                    ...customEmailField,
+                    autoComplete: "email"
+                },
                 {
                     ...getDefaultFormFields()[1],
+                    autoComplete: "current-password",
                     validate: defaultLoginPasswordValidator
                 }
             ]
@@ -366,7 +387,10 @@ describe("EmailPassword", function() {
                 .getConfig().signInAndUpFeature.signUpForm.formFields,
             [
                 getDefaultFormFields()[0],
-                customPasswordField
+                {
+                    ...customPasswordField,
+                    autoComplete: "new-password"
+                }
             ]
         );
 
@@ -378,6 +402,7 @@ describe("EmailPassword", function() {
                 getDefaultFormFields()[0],
                 {
                     ...customPasswordField,
+                    autoComplete: "current-password",
                     validate: defaultLoginPasswordValidator
                 }
             ]
