@@ -237,6 +237,11 @@ export type NormalisedFormField = {
      * Whether the field is optional or not.
      */
     optional: boolean;
+
+    /*
+     * Autocomplete input.
+     */
+    autoComplete?: string;
 };
 
 export type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);

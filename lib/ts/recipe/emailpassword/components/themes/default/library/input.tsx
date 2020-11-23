@@ -38,6 +38,7 @@ type InputProps = {
     validated: boolean;
     type: string;
     name: string;
+    autoComplete?: string;
     hasError: boolean;
     placeholder: string;
     ref: RefObject<any>;
@@ -49,7 +50,7 @@ type InputProps = {
  */
 
 function Input(
-    { type, name, hasError, onChange, placeholder, validated }: InputProps,
+    { type, name, hasError, autoComplete, onChange, placeholder, validated }: InputProps,
     ref: RefObject<any>
 ): JSX.Element {
     /*
@@ -78,9 +79,14 @@ function Input(
                     adornmentType = hasError ? "error" : "success";
                 }
 
+                if (autoComplete === undefined) {
+                    autoComplete = "off";
+                }
+
                 return (
                     <div className="inputWrapper" css={[styles.inputWrapper]}>
                         <input
+                            autoComplete={autoComplete}
                             className="input inputError"
                             css={[styles.input, errorStyle]}
                             onFocus={handleChange}

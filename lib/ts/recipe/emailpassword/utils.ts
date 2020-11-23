@@ -102,6 +102,7 @@ export function normaliseSignInAndUpFeature(
                     ...signInFieldsAccumulator,
                     {
                         ...field,
+                        autoComplete: "current-password",
                         validate: defaultLoginPasswordValidator
                     }
                 ];
@@ -201,7 +202,8 @@ function getDefaultEmailFormField(): NormalisedFormField {
         label: "Email",
         placeholder: "Email address",
         validate: defaultEmailValidator,
-        optional: false
+        optional: false,
+        autoComplete: "email"
     };
 }
 
@@ -211,7 +213,8 @@ function getDefaultPasswordFormField(): NormalisedFormField {
         label: "Password",
         placeholder: "Password",
         validate: defaultPasswordValidator,
-        optional: false
+        optional: false,
+        autoComplete: "new-password"
     };
 }
 
@@ -244,14 +247,16 @@ export function normaliseResetPasswordUsingTokenFeature(
                 label: "New password",
                 placeholder: "New password",
                 validate: signUpPasswordFieldValidate,
-                optional: false
+                optional: false,
+                autoComplete: "new-password"
             },
             {
                 id: "confirm-password",
                 label: "Confirm password",
                 placeholder: "Confirm your password",
                 validate: signUpPasswordFieldValidate,
-                optional: false
+                optional: false,
+                autoComplete: "new-password"
             }
         ]
     };

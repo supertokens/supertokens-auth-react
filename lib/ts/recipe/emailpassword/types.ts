@@ -553,6 +553,11 @@ export type FormFieldState = FormFieldThemeProps & {
      * Has the value already been submitted to its validator.
      */
     showIsRequired?: boolean;
+
+    /*
+     * Autocomplete
+     */
+    autoComplete?: string;
 };
 
 export type EnterEmailThemeState = {

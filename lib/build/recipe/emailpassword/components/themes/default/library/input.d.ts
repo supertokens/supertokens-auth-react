@@ -10,10 +10,11 @@ declare type InputProps = {
     validated: boolean;
     type: string;
     name: string;
+    autoComplete?: string;
     hasError: boolean;
     placeholder: string;
     ref: RefObject<any>;
     onChange?: (field: APIFormField) => void;
 };
-declare const _default: React.ForwardRefExoticComponent<Pick<InputProps, "style" | "name" | "type" | "onChange" | "placeholder" | "hasError" | "validated" | "errorStyle" | "adornmentStyle"> & React.RefAttributes<any>>;
+declare const _default: React.ForwardRefExoticComponent<Pick<InputProps, "style" | "name" | "type" | "onChange" | "placeholder" | "autoComplete" | "hasError" | "validated" | "errorStyle" | "adornmentStyle"> & React.RefAttributes<any>>;
 export default _default;
