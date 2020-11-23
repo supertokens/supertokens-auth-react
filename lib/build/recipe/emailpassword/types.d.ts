@@ -167,8 +167,8 @@ export declare type User = {
     email: string;
 };
 export declare type ResetPasswordUsingTokenThemeProps = {
-    enterEmail: EnterEmailThemeProps;
-    submitNewPassword: SubmitNewPasswordThemeProps;
+    enterEmailForm: EnterEmailThemeProps;
+    submitNewPasswordForm: SubmitNewPasswordThemeProps;
     hasToken: boolean;
 };
 export declare type EnterEmailThemeProps = ThemeBaseProps & {

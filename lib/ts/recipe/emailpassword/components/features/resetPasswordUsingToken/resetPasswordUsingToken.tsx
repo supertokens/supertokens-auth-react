@@ -211,8 +211,8 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <ResetPasswordUsingTokenTheme
-                            submitNewPassword={submitNewPasswordForm}
-                            enterEmail={enterEmailForm}
+                            submitNewPasswordForm={submitNewPasswordForm}
+                            enterEmailForm={enterEmailForm}
                             hasToken={hasToken}
                         />
                     )}
