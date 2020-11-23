@@ -33,11 +33,11 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
 
     // If no token, return SubmitNewPassword.
     if (props.hasToken) {
-        return <SubmitNewPassword {...props.submitNewPassword} />;
+        return <SubmitNewPassword {...props.submitNewPasswordForm} />;
     }
 
     // Otherwise, return EnterEmail.
-    return <EnterEmail {...props.enterEmail} />;
+    return <EnterEmail {...props.enterEmailForm} />;
 }
 
 export default ResetPasswordUsingTokenTheme;

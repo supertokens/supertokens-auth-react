@@ -502,12 +502,12 @@ export type ResetPasswordUsingTokenThemeProps = {
     /*
      * Enter email form props.
      */
-    enterEmail: EnterEmailThemeProps;
+    enterEmailForm: EnterEmailThemeProps;
 
     /*
      * Submit new password form props.
      */
-    submitNewPassword: SubmitNewPasswordThemeProps;
+    submitNewPasswordForm: SubmitNewPasswordThemeProps;
 
     /*
      * A token is present in the query params or not.
