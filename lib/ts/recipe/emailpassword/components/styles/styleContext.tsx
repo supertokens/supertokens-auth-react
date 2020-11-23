@@ -17,9 +17,7 @@ import React from "react";
 import { Styles } from "../../../../types";
 import EmailPassword from "../../emailPassword";
 import { PaletteUserInput } from "../../types";
-import { PALETTE_COLORS_OPTIONS_ARRAY } from "../themes/default/constants";
-import { defaultPalette } from "../themes/default/styles/styles";
-import { NormalisedPalette, paletteColorOptions, NormalisedDefaultStyles } from "../themes/default/types";
+import { NormalisedPalette, NormalisedDefaultStyles } from "../themes/default/types";
 
 type NormalisedStyle = {
     palette: NormalisedPalette;
@@ -28,7 +26,7 @@ type NormalisedStyle = {
 
 const StyleContext = React.createContext<NormalisedStyle>({
     palette: {
-        colors: {} as Record<paletteColorOptions, string>,
+        colors: {} as Record<string, string>,
         fonts: {
             size: []
         }
@@ -38,14 +36,16 @@ const StyleContext = React.createContext<NormalisedStyle>({
 export function StyleProvider({
     children,
     styleFromInit,
-    getDefaultStyles
+    getDefaultStyles,
+    defaultPalette
 }: {
     children: JSX.Element;
     styleFromInit?: Styles;
     getDefaultStyles: (palette: NormalisedPalette) => NormalisedDefaultStyles;
+    defaultPalette: NormalisedPalette;
 }): JSX.Element {
     const rawPalette = EmailPassword.getInstanceOrThrow().getConfig().palette;
-    const palette = getMergedPalette(rawPalette);
+    const palette = getMergedPalette(defaultPalette, rawPalette);
 
     const styles: NormalisedStyle = {
         palette,
@@ -71,11 +71,11 @@ export const StyleConsumer = StyleContext.Consumer;
 /*
  * Helpers
  */
-function getMergedPalette(rawPalette: PaletteUserInput): NormalisedPalette {
+function getMergedPalette(defaultPalette: NormalisedPalette, rawPalette: PaletteUserInput): NormalisedPalette {
     const palette = defaultPalette;
-    for (const key in PALETTE_COLORS_OPTIONS_ARRAY) {
+    for (const key in palette.colors) {
         if (rawPalette[key] !== undefined) {
-            palette.colors[key as paletteColorOptions] = rawPalette[key];
+            palette.colors[key] = rawPalette[key];
         }
     }
     return palette;

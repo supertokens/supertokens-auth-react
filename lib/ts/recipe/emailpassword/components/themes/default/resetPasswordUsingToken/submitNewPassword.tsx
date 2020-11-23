@@ -29,7 +29,7 @@ import { FormRow, Button } from "../../../library";
 import FormBase from "../../../library/FormBase";
 import { StyleProvider, StyleConsumer } from "../../../styles/styleContext";
 import { NormalisedPalette } from "../types";
-import { getDefaultStyles } from "../styles/styles";
+import { getDefaultStyles, defaultPalette } from "../styles/styles";
 
 /*
  * Styles.
@@ -109,7 +109,10 @@ export default class SubmitNewPasswordTheme extends PureComponent<
         const { formFields, hasNewPassword } = this.state;
 
         return (
-            <StyleProvider styleFromInit={styleFromInit} getDefaultStyles={getDefaultStyles}>
+            <StyleProvider
+                defaultPalette={defaultPalette}
+                styleFromInit={styleFromInit}
+                getDefaultStyles={getDefaultStyles}>
                 <StyleConsumer>
                     {styles => {
                         const componentStyles = getStyles(styles.palette);
