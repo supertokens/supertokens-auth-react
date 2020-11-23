@@ -13,13 +13,13 @@
  * under the License.
  */
 
-/*
- * Palette
- */
 /** @jsx jsx */
 import { jsx, keyframes } from "@emotion/core";
 import { NormalisedDefaultStyles, NormalisedPalette } from "../types";
 
+/*
+ * Palette
+ */
 export const defaultPalette: NormalisedPalette = {
     colors: {
         background: "white",
@@ -88,13 +88,14 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             fontFamily: "'Rubik', sans-serif",
             maxWidth: "524px",
             width: "50vw",
-            margin: "0 auto",
+            margin: "26px auto",
             minWidth: "420px",
             textAlign: "center",
             borderRadius: "8px",
             boxShadow: "1px 1px 10px rgba(0,0,0,0.16)",
             backgroundColor: palette.colors.background,
             "@media (max-width: 440px)": {
+                margin: "12px auto",
                 minWidth: "320px"
             },
             "@media (max-width: 340px)": {

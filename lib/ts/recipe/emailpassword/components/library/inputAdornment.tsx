@@ -19,8 +19,8 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import Checked from "../../../../assets/checked";
-import Error from "../../../../assets/error";
+import Checked from "../../assets/checked";
+import Error from "../../assets/error";
 import * as React from "react";
 import { StyleConsumer } from "../styles/styleContext";
 

@@ -22,10 +22,11 @@ import { CSSObject } from "@emotion/serialize/types";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import FormBase from "../library/FormBase";
+import FormBase from "../../../library/FormBase";
 import { Styles } from "../../../../../../types";
-import { StyleConsumer, StyleProvider } from "../styles/styleContext";
+import { StyleConsumer, StyleProvider } from "../../../styles/styleContext";
 import { NormalisedPalette } from "../types";
+import { getDefaultStyles } from "../styles/styles";
 
 /*
  * Styles.
@@ -105,7 +106,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
         const styleFromInit = this.props.styleFromInit !== undefined ? this.props.styleFromInit : {};
 
         return (
-            <StyleProvider styleFromInit={styleFromInit}>
+            <StyleProvider styleFromInit={styleFromInit} getDefaultStyles={getDefaultStyles}>
                 <StyleConsumer>
                     {styles => {
                         const componentStyles = getStyles(styles.palette);

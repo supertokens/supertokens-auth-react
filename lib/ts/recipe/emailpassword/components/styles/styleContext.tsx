@@ -14,12 +14,12 @@
  */
 import { CSSObject } from "@emotion/core";
 import React from "react";
-import { Styles } from "../../../../../../types";
-import EmailPassword from "../../../../emailPassword";
-import { PaletteUserInput } from "../../../../types";
-import { PALETTE_COLORS_OPTIONS_ARRAY } from "../constants";
-import { NormalisedPalette, paletteColorOptions } from "../types";
-import { defaultPalette, getDefaultStyles } from "./styles";
+import { Styles } from "../../../../types";
+import EmailPassword from "../../emailPassword";
+import { PaletteUserInput } from "../../types";
+import { PALETTE_COLORS_OPTIONS_ARRAY } from "../themes/default/constants";
+import { defaultPalette } from "../themes/default/styles/styles";
+import { NormalisedPalette, paletteColorOptions, NormalisedDefaultStyles } from "../themes/default/types";
 
 type NormalisedStyle = {
     palette: NormalisedPalette;
@@ -27,16 +27,22 @@ type NormalisedStyle = {
 };
 
 const StyleContext = React.createContext<NormalisedStyle>({
-    palette: defaultPalette,
-    ...getDefaultStyles(defaultPalette)
+    palette: {
+        colors: {} as Record<paletteColorOptions, string>,
+        fonts: {
+            size: []
+        }
+    }
 });
 
 export function StyleProvider({
     children,
-    styleFromInit
+    styleFromInit,
+    getDefaultStyles
 }: {
     children: JSX.Element;
     styleFromInit?: Styles;
+    getDefaultStyles: (palette: NormalisedPalette) => NormalisedDefaultStyles;
 }): JSX.Element {
     const rawPalette = EmailPassword.getInstanceOrThrow().getConfig().palette;
     const palette = getMergedPalette(rawPalette);

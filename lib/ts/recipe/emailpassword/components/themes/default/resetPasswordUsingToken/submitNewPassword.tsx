@@ -25,10 +25,11 @@ import { CSSObject } from "@emotion/serialize/types";
 import { jsx } from "@emotion/core";
 import { Styles } from "../../../../../../types";
 import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../../types";
-import { FormRow, Button } from "../library";
-import FormBase from "../library/FormBase";
-import { StyleProvider, StyleConsumer } from "../styles/styleContext";
+import { FormRow, Button } from "../../../library";
+import FormBase from "../../../library/FormBase";
+import { StyleProvider, StyleConsumer } from "../../../styles/styleContext";
 import { NormalisedPalette } from "../types";
+import { getDefaultStyles } from "../styles/styles";
 
 /*
  * Styles.
@@ -108,7 +109,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
         const { formFields, hasNewPassword } = this.state;
 
         return (
-            <StyleProvider styleFromInit={styleFromInit}>
+            <StyleProvider styleFromInit={styleFromInit} getDefaultStyles={getDefaultStyles}>
                 <StyleConsumer>
                     {styles => {
                         const componentStyles = getStyles(styles.palette);
