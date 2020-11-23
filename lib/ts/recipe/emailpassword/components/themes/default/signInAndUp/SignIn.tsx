@@ -28,7 +28,7 @@ import FormBase from "../../../library/FormBase";
 import { Styles } from "../../../../../../types";
 import { StyleConsumer, StyleProvider } from "../../../styles/styleContext";
 import { NormalisedPalette } from "../types";
-import { getDefaultStyles } from "../styles/styles";
+import { defaultPalette, getDefaultStyles } from "../styles/styles";
 
 /*
  * Styles.
@@ -88,7 +88,10 @@ export default class SignInTheme extends PureComponent<SignInThemeProps, { formF
         const { formFields } = this.state;
 
         return (
-            <StyleProvider styleFromInit={styleFromInit} getDefaultStyles={getDefaultStyles}>
+            <StyleProvider
+                defaultPalette={defaultPalette}
+                styleFromInit={styleFromInit}
+                getDefaultStyles={getDefaultStyles}>
                 <StyleConsumer>
                     {styles => {
                         const componentStyle = getStyles(styles.palette as NormalisedPalette);

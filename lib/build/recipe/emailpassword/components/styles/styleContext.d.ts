@@ -6,10 +6,11 @@ declare type NormalisedStyle = {
     palette: NormalisedPalette;
     [x: string]: CSSObject;
 };
-export declare function StyleProvider({ children, styleFromInit, getDefaultStyles }: {
+export declare function StyleProvider({ children, styleFromInit, getDefaultStyles, defaultPalette }: {
     children: JSX.Element;
     styleFromInit?: Styles;
     getDefaultStyles: (palette: NormalisedPalette) => NormalisedDefaultStyles;
+    defaultPalette: NormalisedPalette;
 }): JSX.Element;
 export declare const StyleConsumer: React.ExoticComponent<React.ConsumerProps<NormalisedStyle>>;
 export {};

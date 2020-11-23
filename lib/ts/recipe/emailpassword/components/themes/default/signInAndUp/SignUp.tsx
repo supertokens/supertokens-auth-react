@@ -26,7 +26,7 @@ import FormBase from "../../../library/FormBase";
 import { StyleConsumer, StyleProvider } from "../../../styles/styleContext";
 import SignUpFooter from "./SignUpFooter";
 import { NormalisedPalette } from "../types";
-import { getDefaultStyles } from "../styles/styles";
+import { defaultPalette, getDefaultStyles } from "../styles/styles";
 
 /*
  * Styles.
@@ -92,7 +92,10 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formF
         const { privacyPolicyLink, termsOfServiceLink, styleFromInit, signInClicked, onSuccess, callAPI } = this.props;
         const { formFields } = this.state;
         return (
-            <StyleProvider styleFromInit={styleFromInit} getDefaultStyles={getDefaultStyles}>
+            <StyleProvider
+                defaultPalette={defaultPalette}
+                styleFromInit={styleFromInit}
+                getDefaultStyles={getDefaultStyles}>
                 <StyleConsumer>
                     {styles => {
                         const componentStyles = getStyles(styles.palette as NormalisedPalette);
