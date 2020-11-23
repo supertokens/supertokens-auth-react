@@ -23,7 +23,7 @@ import { jsx, CSSObject } from "@emotion/core";
 import * as React from "react";
 import { forwardRef, RefObject } from "react";
 import { InputAdornment } from ".";
-import { APIFormField } from "../../../../../../types";
+import { APIFormField } from "../../../../types";
 import { StyleConsumer } from "../styles/styleContext";
 import { AdornmentType } from "./inputAdornment";
 

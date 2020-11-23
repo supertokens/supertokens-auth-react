@@ -22,8 +22,6 @@ import root from "react-shadow/emotion";
 import { ST_ROOT_ID } from "../../constants";
 import ErrorBoundary from "./errorBoundary";
 
-/** @jsx jsx */
-import { jsx } from "@emotion/core";
 import { Fragment } from "react";
 
 /*
@@ -33,13 +31,6 @@ import { Fragment } from "react";
 type FeatureWrapperProps = {
     children: JSX.Element;
     useShadowDom?: boolean;
-};
-
-const rootStyles = {
-    margin: "26px",
-    "@media (max-width: 440px)": {
-        margin: "12px"
-    }
 };
 
 /*
@@ -68,17 +59,9 @@ export default function FeatureWrapper({ children, useShadowDom }: FeatureWrappe
 function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps): JSX.Element {
     // If explicitely specified to not use shadow dom.
     if (useShadowDom === false) {
-        return (
-            <div css={rootStyles} id={ST_ROOT_ID}>
-                {children}
-            </div>
-        );
+        return <div id={ST_ROOT_ID}>{children}</div>;
     }
 
     // Otherwise, use shadow dom.
-    return (
-        <root.div css={rootStyles} id={ST_ROOT_ID}>
-            {children}
-        </root.div>
-    );
+    return <root.div id={ST_ROOT_ID}>{children}</root.div>;
 }

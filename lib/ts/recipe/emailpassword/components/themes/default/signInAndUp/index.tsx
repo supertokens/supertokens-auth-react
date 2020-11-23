@@ -22,6 +22,7 @@ import { SignInAndUpThemeProps } from "../../../../types";
 
 import SignUp from "./SignUp";
 import SignIn from "./SignIn";
+import { ThemeBase } from "../ThemeBase";
 
 /*
  * Component.
@@ -47,4 +48,12 @@ export function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
     return <SignUp {...props.signUpForm} signInClicked={() => setSignIn(true)} />;
 }
 
-export default SignInAndUpTheme;
+function SignInAndUpThemeWrapper(props: SignInAndUpThemeProps): JSX.Element {
+    return (
+        <ThemeBase>
+            <SignInAndUpTheme {...props} />
+        </ThemeBase>
+    );
+}
+
+export default SignInAndUpThemeWrapper;

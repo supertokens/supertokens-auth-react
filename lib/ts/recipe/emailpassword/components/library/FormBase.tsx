@@ -22,10 +22,10 @@ import { Button, FormRow, Input, InputError, Label } from ".";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { FormBaseProps, FormBaseState } from "../../../../types";
-import { APIFormField } from "../../../../../../types";
+import { APIFormField } from "../../../../types";
+import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY, MANDATORY_FORM_FIELDS_ID } from "../../constants";
+import { FormBaseProps, FormBaseState } from "../../types";
 import { StyleConsumer } from "../styles/styleContext";
-import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY, MANDATORY_FORM_FIELDS_ID } from "../../../../constants";
 
 /*
  * Component.

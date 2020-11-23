@@ -18,6 +18,7 @@
  */
 import * as React from "react";
 import { ResetPasswordUsingTokenThemeProps } from "../../../../types";
+import { ThemeBase } from "../ThemeBase";
 
 import EnterEmail from "./enterEmail";
 import SubmitNewPassword from "./submitNewPassword";
@@ -40,4 +41,12 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
     return <EnterEmail {...props.enterEmailForm} />;
 }
 
-export default ResetPasswordUsingTokenTheme;
+function ResetPasswordUsingTokenThemeWrapper(props: ResetPasswordUsingTokenThemeProps): JSX.Element {
+    return (
+        <ThemeBase>
+            <ResetPasswordUsingTokenTheme {...props} />
+        </ThemeBase>
+    );
+}
+
+export default ResetPasswordUsingTokenThemeWrapper;

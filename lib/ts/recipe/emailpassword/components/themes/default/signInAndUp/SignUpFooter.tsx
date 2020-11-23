@@ -19,10 +19,10 @@
 
 import React from "react";
 import { Styles } from "../../../../../../types";
-import { StyleConsumer } from "../../../themes/default/styles/styleContext";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
+import { StyleConsumer } from "../../../styles/styleContext";
 
 export default function SignUpFooter({
     componentStyles,
