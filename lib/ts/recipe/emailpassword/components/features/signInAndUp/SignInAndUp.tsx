@@ -258,9 +258,9 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
     };
 
     render = (): JSX.Element => {
-        const signUpFeature = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signUpForm;
-
-        const signInFeature = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm;
+        const signInAndUpFeature = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature;
+        const signUpFeature = signInAndUpFeature.signUpForm;
+        const signInFeature = signInAndUpFeature.signInForm;
 
         const signInForm = {
             styleFromInit: signInFeature.style,
@@ -295,7 +295,11 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
-                        <SignInAndUpTheme signInForm={signInForm} signUpForm={signUpForm} />
+                        <SignInAndUpTheme
+                            defaultToSignUp={signInAndUpFeature.defaultToSignUp}
+                            signInForm={signInForm}
+                            signUpForm={signUpForm}
+                        />
                     )}
                     {/* Otherwise, custom theme is provided, propagate props. */}
                     {this.props.children &&

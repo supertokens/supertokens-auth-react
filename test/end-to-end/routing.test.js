@@ -57,21 +57,21 @@ describe("SuperTokens Routing in Test App", function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`);
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
-            assert.strictEqual(signInButtonLabel, "SIGN IN");
+            assert.strictEqual(signInButtonLabel, "SIGN UP");
         });
 
         it("/auth?rid=emailpassword should load SignInUp components", async function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=emailpassword`);
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
-            assert.strictEqual(signInButtonLabel, "SIGN IN");
+            assert.strictEqual(signInButtonLabel, "SIGN UP");
         });
 
-        it("/auth?rid=unknown-rid should load first component (sign in widget)", async function() {
+        it("/auth?rid=unknown-rid should load first component (sign up widget)", async function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=unknown`);
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
-            assert.strictEqual(signInButtonLabel, "SIGN IN");
+            assert.strictEqual(signInButtonLabel, "SIGN UP");
         });
 
         it("/auth/reset-password should load reset-password SuperTokens component with Send Email", async function() {
@@ -106,7 +106,7 @@ describe("SuperTokens Routing in Test App", function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router`);
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
-            assert.strictEqual(signInButtonLabel, "SIGN IN");
+            assert.strictEqual(signInButtonLabel, "SIGN UP");
         });
 
         it("/auth/reset-password should load reset-password SuperTokens component with Send Email", async function() {
@@ -131,7 +131,7 @@ describe("SuperTokens Routing in Test App", function() {
                 `${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router&rid=emailpassword&router=no-router`
             );
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
-            assert.strictEqual(signInButtonLabel, "SIGN IN");
+            assert.strictEqual(signInButtonLabel, "SIGN UP");
         });
 
         it("/auth?rid=unknown-rid should load first SuperTokens components that matches", async function() {
@@ -140,7 +140,7 @@ describe("SuperTokens Routing in Test App", function() {
             const pathname = await page.evaluate(() => window.location.pathname);
             await assert.strictEqual(pathname, DEFAULT_WEBSITE_BASE_PATH);
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
-            assert.strictEqual(signInButtonLabel, "SIGN IN");
+            assert.strictEqual(signInButtonLabel, "SIGN UP");
         });
 
         it("/auth/unknown-path should not render any ST component", async function() {
@@ -153,7 +153,7 @@ describe("SuperTokens Routing in Test App", function() {
             const page = await browser.newPage();
             await page.goto(`${TEST_CLIENT_BASE_URL}/custom-supertokens-login`);
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
-            assert.strictEqual(signInButtonLabel, "SIGN IN");
+            assert.strictEqual(signInButtonLabel, "SIGN UP");
         });
     });
 });

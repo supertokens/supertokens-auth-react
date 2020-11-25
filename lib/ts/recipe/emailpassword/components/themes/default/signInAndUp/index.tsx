@@ -28,24 +28,24 @@ import { ThemeBase } from "../ThemeBase";
  * Component.
  */
 
-export function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
+export function SignInAndUpTheme({ signInForm, signUpForm, defaultToSignUp }: SignInAndUpThemeProps): JSX.Element {
     /*
      * State.
      */
 
-    const [isSignIn, setSignIn] = useState(true);
+    const [isSignUp, setSignUp] = useState(defaultToSignUp);
 
     /*
      * Render.
      */
 
-    // If isSignIn, return signIn.
-    if (isSignIn) {
-        return <SignIn {...props.signInForm} signUpClicked={() => setSignIn(false)} />;
+    // If isSignUp, return signUp.
+    if (isSignUp) {
+        return <SignUp {...signUpForm} signInClicked={() => setSignUp(false)} />;
     }
 
-    // Otherwise, return SignUp.
-    return <SignUp {...props.signUpForm} signInClicked={() => setSignIn(true)} />;
+    // Otherwise, return SignIn.
+    return <SignIn {...signInForm} signUpClicked={() => setSignUp(true)} />;
 }
 
 function SignInAndUpThemeWrapper(props: SignInAndUpThemeProps): JSX.Element {

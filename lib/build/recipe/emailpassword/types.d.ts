@@ -20,12 +20,14 @@ export declare type NormalisedEmailPasswordConfig = {
 };
 export declare type SignInAndUpFeatureUserInput = {
     disableDefaultImplementation?: boolean;
+    defaultToSignUp?: boolean;
     onSuccessRedirectURL?: string;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;
 };
 export declare type NormalisedSignInAndUpFeatureConfig = {
     disableDefaultImplementation: boolean;
+    defaultToSignUp: boolean;
     onSuccessRedirectURL: string;
     signUpForm: NormalisedSignUpFormFeatureConfig;
     signInForm: NormalisedSignInFormFeatureConfig;
@@ -110,6 +112,7 @@ export declare type SignUpThemeProps = ThemeBaseProps & {
     callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
 };
 export declare type SignInAndUpThemeProps = {
+    defaultToSignUp: boolean;
     signInForm: SignInThemeProps;
     signUpForm: SignUpThemeProps;
 };

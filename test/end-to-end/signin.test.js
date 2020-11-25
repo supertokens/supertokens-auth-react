@@ -87,6 +87,7 @@ describe("SuperTokens SignIn feature/theme", function() {
         page = await browser.newPage();
         await clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+        await toggleSignInSignUp(page);
     });
 
     describe("SignIn test (default)", function() {
@@ -168,15 +169,15 @@ describe("SuperTokens SignIn feature/theme", function() {
         });
 
         it("Successful Sign In", async function() {
-            await toggleSignInSignUp(page);
             await successfulSignUp(page);
+            await toggleSignInSignUp(page);
             await clearBrowserCookies(page);
 
             let cookies = await page.cookies();
             assert.deepStrictEqual(cookies, []); // Make sure cookies were removed.
 
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-
+            await toggleSignInSignUp(page);
             // Set correct values.
             await setInputValue(page, "email", "john.doe@supertokens.io");
             await setInputValue(page, "password", "Str0ngP@ssw0rd");
@@ -271,13 +272,17 @@ describe("SuperTokens SignIn feature/theme => Server Error", function() {
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true
         });
-
-        page = await browser.newPage();
-        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
     });
 
     after(async function() {
         await browser.close();
+    });
+
+    beforeEach(async function() {
+        page = await browser.newPage();
+        await clearBrowserCookies(page);
+        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+        await toggleSignInSignUp(page);
     });
 
     it("Server Error shows Something went wrong general error", async function() {
@@ -326,6 +331,7 @@ describe("SuperTokens SignIn feature/theme callbacks", function() {
         consoleLogs = [];
         clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/custom/auth`);
+        await toggleSignInSignUp(page);
     });
 
     it("Call doesSessionExist callback on load if provided", async function() {
@@ -374,7 +380,6 @@ describe("SuperTokens SignIn feature/theme callbacks", function() {
 
     it("Sign up using custom callbacks", async function() {
         await toggleSignInSignUp(page);
-
         // Set values.
         await setInputValue(page, "email", "john.doe@supertokens.io");
         await setInputValue(page, "password", "weakpassword");
