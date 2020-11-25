@@ -42,7 +42,8 @@ type InputProps = {
     hasError: boolean;
     placeholder: string;
     ref: RefObject<any>;
-    onChange?: (field: APIFormField) => void;
+    onInputBlur?: (field: APIFormField) => void;
+    onInputFocus?: (field: APIFormField) => void;
 };
 
 /*
@@ -50,16 +51,25 @@ type InputProps = {
  */
 
 function Input(
-    { type, name, hasError, autoComplete, onChange, placeholder, validated }: InputProps,
+    { type, name, hasError, autoComplete, onInputFocus, onInputBlur, placeholder, validated }: InputProps,
     ref: RefObject<any>
 ): JSX.Element {
     /*
      * Method.
      */
 
-    function handleChange() {
-        if (onChange) {
-            onChange({
+    function handleFocus() {
+        if (onInputFocus) {
+            onInputFocus({
+                id: ref.current.name,
+                value: ref.current.value
+            });
+        }
+    }
+
+    function handleBlur() {
+        if (onInputBlur) {
+            onInputBlur({
                 id: ref.current.name,
                 value: ref.current.value
             });
@@ -89,7 +99,8 @@ function Input(
                             autoComplete={autoComplete}
                             className="input inputError"
                             css={[styles.input, errorStyle]}
-                            onFocus={handleChange}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
                             type={type}
                             name={name}
                             placeholder={placeholder}

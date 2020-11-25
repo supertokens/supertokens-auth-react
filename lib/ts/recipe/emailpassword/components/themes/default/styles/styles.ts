@@ -177,6 +177,13 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             animation: `${slideTop} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`
         },
 
+        inputErrorSymbol: {
+            marginRight: "5px",
+            top: "1px",
+            position: "relative",
+            left: "2px"
+        },
+
         button: {
             width: "100%",
             height: "42px",
@@ -186,6 +193,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             borderWidth: "0px",
             borderRadius: "8px",
             "&:disabled": {
+                border: "none",
                 cursor: "no-drop"
             },
             "&:active": {
@@ -193,6 +201,11 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
                 border: "none"
             },
             cursor: "pointer"
+        },
+
+        buttonDisabled: {
+            border: "none",
+            cursor: "no-drop"
         },
 
         label: {

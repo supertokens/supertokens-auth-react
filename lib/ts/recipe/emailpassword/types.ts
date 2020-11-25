@@ -622,13 +622,17 @@ export type PaletteUserInput = Record<string, string>;
 
 export type DefaultStylesUserInput = Record<string, CSSObject>;
 
-export type FormBaseState = {
-    formFields: FormFieldState[];
-
-    generalError: string | undefined;
-
-    isLoading: boolean;
-};
+export type FormBaseStatus = "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
+export type FormBaseState =
+    | {
+          formFields: FormFieldState[];
+          status: FormBaseStatus;
+      }
+    | {
+          formFields: FormFieldState[];
+          status: "GENERAL_ERROR";
+          generalError: string;
+      };
 
 export type FormBaseProps = {
     header?: JSX.Element;

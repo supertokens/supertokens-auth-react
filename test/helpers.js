@@ -57,6 +57,11 @@ export async function submitForm(page) {
     await submitButton.click();
 }
 
+export async function isFormButtonDisabled(page) {
+    const disabledButton = await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("div > div > form > div > button:disabled")`);
+    return disabledButton._remoteObject.subtype === "node";
+}
+
 export async function getLogoutButton(page) {
     return await page.evaluateHandle("document.querySelector('button.logout')");
 }
@@ -132,12 +137,16 @@ export async function getGeneralError(page) {
      )
  }
 
- export async function setInputValue(page, name, value) {
-    return await page.evaluate(({name, value, ST_ROOT_SELECTOR}) => {
-        const inputNode = document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(`input[name=${name}]`);
-        inputNode.focus();
-        inputNode.value = value;
-    }, {name,value, ST_ROOT_SELECTOR});
+ export async function setInputValues(page, fields) {
+    await page.evaluate(({fields, ST_ROOT_SELECTOR}) => {
+        fields.forEach(field => {
+            const inputNode = document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(`input[name=${field.name}]`);
+            inputNode.focus();
+            inputNode.value = field.value;
+            inputNode.blur();
+        })
+    }, {fields, ST_ROOT_SELECTOR});
+    return await new Promise(r => setTimeout(r, 300)); // Make sure to wait for validators.
 }
 
 export async function clearBrowserCookies (page) {
@@ -153,11 +162,22 @@ export async function clickForgotPasswordLink (page) {
         page.waitForNavigation(),
         forgotPasswordLink.click()
     ]);
-
 }
 
 export async function toggleSignInSignUp(page) {
     // Click on Sign Up.
     const signUpLink = await getSignInOrSignUpSwitchLink(page);
     await signUpLink.click();
+}
+
+export async function submitFormReturnRequestAndResponse(page, URL) {
+    const [, request, response] = await Promise.all([
+        submitForm(page),
+        page.waitForRequest(request => request.url() === URL && request.method() === "POST"),
+        page.waitForResponse(response => response.url() === URL && response.status() === 200)
+    ]);
+    return {
+        request,
+        response
+    }
 }

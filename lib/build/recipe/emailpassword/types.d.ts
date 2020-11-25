@@ -211,10 +211,14 @@ export declare type SignInAndUpState = {
 };
 export declare type PaletteUserInput = Record<string, string>;
 export declare type DefaultStylesUserInput = Record<string, CSSObject>;
+export declare type FormBaseStatus = "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
 export declare type FormBaseState = {
     formFields: FormFieldState[];
-    generalError: string | undefined;
-    isLoading: boolean;
+    status: FormBaseStatus;
+} | {
+    formFields: FormFieldState[];
+    status: "GENERAL_ERROR";
+    generalError: string;
 };
 export declare type FormBaseProps = {
     header?: JSX.Element;
