@@ -147,14 +147,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
                 border: `1px solid ${palette.colors.primary}`,
                 outline: "none"
             },
-            height: "42px",
-            backgroundPosition: "90% 50% !important", // Password manager backgrounds.
-            "@media (max-width: 800px)": {
-                backgroundPosition: "87% 50% !important"
-            },
-            "@media (max-width: 440px)": {
-                backgroundPosition: "84% 50% !important"
-            }
+            height: "42px"
         },
 
         inputAdornment: {
