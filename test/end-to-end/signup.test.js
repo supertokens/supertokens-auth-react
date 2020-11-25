@@ -79,8 +79,6 @@ describe("SuperTokens SignUp feature/theme", function() {
         page = await browser.newPage();
         clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-
-        await toggleSignInSignUp(page);
     });
 
     describe("SignUp test (default)", function() {

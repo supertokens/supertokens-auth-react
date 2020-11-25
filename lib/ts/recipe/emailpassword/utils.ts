@@ -85,6 +85,7 @@ export function normaliseSignInAndUpFeature(
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
     const onSuccessRedirectURL = config.onSuccessRedirectURL !== undefined ? config.onSuccessRedirectURL : "/";
     const signUpForm: NormalisedSignUpFormFeatureConfig = normaliseSignUpFormFeatureConfig(config.signUpForm);
+    const defaultToSignUp = config.defaultToSignUp !== undefined ? config.defaultToSignUp : true;
 
     /*
      * Default Sign In corresponds to computed Sign Up fields filtered by email and password only.
@@ -121,6 +122,7 @@ export function normaliseSignInAndUpFeature(
     return {
         onSuccessRedirectURL,
         disableDefaultImplementation,
+        defaultToSignUp,
         signUpForm,
         signInForm
     };

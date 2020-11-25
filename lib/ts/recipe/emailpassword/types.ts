@@ -88,6 +88,11 @@ export type SignInAndUpFeatureUserInput = {
     disableDefaultImplementation?: boolean;
 
     /*
+     * Should default to Sign up form.
+     */
+    defaultToSignUp?: boolean;
+
+    /*
      * URL to redirect to in case disableDefaultImplemention is true
      */
     onSuccessRedirectURL?: string;
@@ -110,6 +115,11 @@ export type NormalisedSignInAndUpFeatureConfig = {
      * Disable default implementation with default routes.
      */
     disableDefaultImplementation: boolean;
+
+    /*
+     * Default to sign up form.
+     */
+    defaultToSignUp: boolean;
 
     /*
      * URL to redirect to in case disableDefaultImplemention is true
@@ -351,6 +361,11 @@ export type SignUpThemeProps = ThemeBaseProps & {
 };
 
 export type SignInAndUpThemeProps = {
+    /*
+     * Should default to Sign up form.
+     */
+    defaultToSignUp: boolean;
+
     /*
      * Sign in form props.
      */
