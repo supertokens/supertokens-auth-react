@@ -398,12 +398,15 @@ export type FormFieldError = {
     error: string;
 };
 
-export type SignOutResponse = {
+type SuccessAPIResponse = {
     /*
      * Success.
      */
     status: API_RESPONSE_STATUS.OK;
 };
+
+export type SignOutAPIResponse = SuccessAPIResponse;
+export type VerifyEmailAPIResponse = SuccessAPIResponse | FormFieldAPIResponse;
 
 export type FormFieldAPIResponse = {
     /*

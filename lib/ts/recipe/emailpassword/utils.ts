@@ -34,7 +34,8 @@ import {
     defaultLoginPasswordValidator,
     defaultEmailValidator,
     defaultPasswordValidator,
-    defaultValidate
+    defaultValidate,
+    defaultSignUpEmailValidator
 } from "./validators";
 
 export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): NormalisedEmailPasswordConfig {
@@ -96,7 +97,16 @@ export function normaliseSignInAndUpFeature(
     const defaultSignInFields: NormalisedFormField[] = signUpForm.formFields.reduce(
         (signInFieldsAccumulator, field) => {
             if (field.id === MANDATORY_FORM_FIELDS_ID.EMAIL) {
-                return [...signInFieldsAccumulator, field];
+                // If email validator is kept unchanged, use default validator without verifying if email exists, otherwise, use user provided validator.
+                const validate =
+                    field.validate !== defaultSignUpEmailValidator ? field.validate : defaultEmailValidator;
+                return [
+                    ...signInFieldsAccumulator,
+                    {
+                        ...field,
+                        validate
+                    }
+                ];
             }
             if (field.id === MANDATORY_FORM_FIELDS_ID.PASSWORD) {
                 return [
@@ -203,7 +213,7 @@ function getDefaultEmailFormField(): NormalisedFormField {
         id: "email",
         label: "Email",
         placeholder: "Email address",
-        validate: defaultEmailValidator,
+        validate: defaultSignUpEmailValidator,
         optional: false,
         autoComplete: "email"
     };
@@ -268,9 +278,18 @@ export function normaliseResetPasswordUsingTokenFeature(
             ? config.enterEmailForm.style
             : {};
 
+    // If email validator is kept unchanged, use default validator without verifying if email exists, otherwise, use user provided validator.
+    const validate =
+        signUpEmailField.validate !== defaultSignUpEmailValidator ? signUpEmailField.validate : defaultEmailValidator;
+
     const enterEmailForm: NormalisedEnterEmailForm = {
         style: enterEmailFormStyle,
-        formFields: [signUpEmailField]
+        formFields: [
+            {
+                ...signUpEmailField,
+                validate
+            }
+        ]
     };
 
     return {

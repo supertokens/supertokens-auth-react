@@ -33,7 +33,7 @@ import {
     FormFieldError,
     NormalisedEmailPasswordConfig,
     SignInAPIResponse,
-    SignOutResponse,
+    SignOutAPIResponse,
     SignUpAPIResponse,
     SubmitNewPasswordAPIResponse
 } from "./types";
@@ -113,6 +113,22 @@ export default class EmailPassword extends RecipeModule {
         });
     };
 
+    verifyEmailExists = async (value: string): Promise<EnterEmailAPIResponse> => {
+        return this.httpRequest.post("/email/exists", {
+            body: JSON.stringify({
+                formFields: [
+                    {
+                        name: "email",
+                        value
+                    }
+                ]
+            }),
+            headers: {
+                rid: this.getRecipeId()
+            }
+        });
+    };
+
     signInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
         return this.httpRequest.post("/signin", {
             body: JSON.stringify(requestJson),
@@ -154,7 +170,7 @@ export default class EmailPassword extends RecipeModule {
      * SignOut
      */
 
-    signOut = async (): Promise<SignOutResponse> => {
+    signOut = async (): Promise<SignOutAPIResponse> => {
         const result = await this.httpRequest.fetch(this.httpRequest.getFullUrl("/signout"), {
             method: "POST",
             body: JSON.stringify({}),
@@ -219,9 +235,23 @@ export default class EmailPassword extends RecipeModule {
         };
     }
 
-    static signOut(): Promise<SignOutResponse> {
+    static signOut(): Promise<SignOutAPIResponse> {
         return EmailPassword.getInstanceOrThrow().signOut();
     }
+
+    static verifyEmailExists = async (value: string): Promise<string | undefined> => {
+        try {
+            const result = await EmailPassword.getInstanceOrThrow().verifyEmailExists(value);
+            if (result.status === API_RESPONSE_STATUS.OK) {
+                return undefined;
+            } else {
+                return result.formFields[0].error;
+            }
+        } catch (e) {
+            // Return undefined in case of server failure. This will fail on form submit.
+            return undefined;
+        }
+    };
 
     static getInstanceOrThrow(): EmailPassword {
         if (EmailPassword.instance === undefined) {
