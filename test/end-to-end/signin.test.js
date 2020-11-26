@@ -135,7 +135,8 @@ describe("SuperTokens SignIn feature/theme", function() {
 
             // Form is disabled.
             disabled = await isFormButtonDisabled(page);
-            assert.strictEqual(disabled, true);
+            assert.strictEqual(disabled, false);
+            await submitForm(page);
             // // Assert.
             let formFieldsErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldsErrors, ["!\nEmail is invalid"]);

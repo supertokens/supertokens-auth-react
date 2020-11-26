@@ -643,6 +643,8 @@ export type FormBaseProps = {
 
     buttonLabel: string;
 
+    noValidateOnBlur?: boolean;
+
     onSuccess?: () => void;
 
     callAPI: (

@@ -203,8 +203,9 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
      * Render.
      */
     render(): JSX.Element {
-        const { header, footer, buttonLabel, showLabels } = this.props;
+        const { header, footer, buttonLabel, showLabels, noValidateOnBlur } = this.props;
         const { formFields } = this.state;
+        const onInputBlur = noValidateOnBlur === true ? undefined : this.handleInputBlur;
 
         return (
             <StyleConsumer>
@@ -247,7 +248,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                                                     ref={field.ref}
                                                     autoComplete={field.autoComplete}
                                                     onInputFocus={this.handleInputFocus}
-                                                    onInputBlur={this.handleInputBlur}
+                                                    onInputBlur={onInputBlur}
                                                     hasError={field.error !== undefined}
                                                 />
 

@@ -227,6 +227,7 @@ export declare type FormBaseProps = {
     formFields: FormFieldState[];
     showLabels: boolean;
     buttonLabel: string;
+    noValidateOnBlur?: boolean;
     onSuccess?: () => void;
     callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse | SignUpThemeResponse | SubmitNewPasswordThemeResponse | EnterEmailThemeResponse>;
 };

@@ -102,6 +102,7 @@ export default class SignInTheme extends PureComponent<SignInThemeProps, { formF
                                 onSuccess={onSuccess}
                                 callAPI={callAPI}
                                 showLabels={true}
+                                noValidateOnBlur={true}
                                 header={
                                     <Fragment>
                                         <div
