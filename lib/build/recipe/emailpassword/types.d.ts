@@ -182,7 +182,6 @@ export declare type SubmitNewPasswordThemeProps = ThemeBaseProps & {
     onSignInClicked: () => void;
 };
 export declare type FormFieldState = FormFieldThemeProps & {
-    validated: boolean;
     ref: RefObject<HTMLInputElement>;
     showIsRequired?: boolean;
     autoComplete?: string;

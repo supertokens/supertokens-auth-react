@@ -30,10 +30,12 @@ SuperTokens.init({
   },
   recipeList: [
     EmailPassword.init({
+      // useShadowDom: false,
       palette: {
         colors
       },
       signInAndUpFeature: {
+        // defaultToSignUp: false,
         onSuccessRedirectURL: '/dashboard',
         signUpForm: {
           privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",

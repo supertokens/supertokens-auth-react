@@ -557,11 +557,6 @@ export type FormFieldState = FormFieldThemeProps & {
     /*
      * Has the value already been submitted to its validator.
      */
-    validated: boolean;
-
-    /*
-     * Has the value already been submitted to its validator.
-     */
     ref: RefObject<HTMLInputElement>;
 
     /*

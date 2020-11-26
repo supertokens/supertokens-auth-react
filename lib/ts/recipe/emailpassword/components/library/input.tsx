@@ -22,10 +22,8 @@ import { jsx, CSSObject } from "@emotion/core";
 
 import * as React from "react";
 import { forwardRef, RefObject } from "react";
-import { InputAdornment } from ".";
 import { APIFormField } from "../../../../types";
 import { StyleConsumer } from "../styles/styleContext";
-import { AdornmentType } from "./inputAdornment";
 
 /*
  * Props.
@@ -34,8 +32,6 @@ import { AdornmentType } from "./inputAdornment";
 type InputProps = {
     style?: CSSObject;
     errorStyle?: CSSObject;
-    adornmentStyle?: CSSObject;
-    validated: boolean;
     type: string;
     name: string;
     autoComplete?: string;
@@ -51,7 +47,7 @@ type InputProps = {
  */
 
 function Input(
-    { type, name, hasError, autoComplete, onInputFocus, onInputBlur, placeholder, validated }: InputProps,
+    { type, name, hasError, autoComplete, onInputFocus, onInputBlur, placeholder }: InputProps,
     ref: RefObject<any>
 ): JSX.Element {
     /*
@@ -83,12 +79,6 @@ function Input(
         <StyleConsumer>
             {styles => {
                 const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
-                let adornmentType: AdornmentType = undefined;
-
-                if (validated) {
-                    adornmentType = hasError ? "error" : "success";
-                }
-
                 if (autoComplete === undefined) {
                     autoComplete = "off";
                 }
@@ -106,7 +96,6 @@ function Input(
                             placeholder={placeholder}
                             ref={ref}
                         />
-                        <InputAdornment type={adornmentType} />
                     </div>
                 );
             }}

@@ -54,7 +54,6 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             if (field.id === formFields[i].id) {
                 // remove error on input change.
                 formFields[i].error = undefined;
-                formFields[i].validated = false;
             }
         }
 
@@ -77,7 +76,6 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             if (field.id === formFields[i].id) {
                 // Validate.
                 formFields[i].error = await formFields[i].validate(field.value);
-                formFields[i].validated = true;
             }
         }
         const status = this.getNewStatus(formFields, "blur");
@@ -178,17 +176,6 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                     if (field.id === errorFields[i].id) {
                         field.error = errorFields[i].error;
                     }
-                    // Indicate to inputs that the value was submitted for validation, adding the input adornment icon
-                    // Skip empty optional fields.
-                    if (
-                        field.ref.current !== null &&
-                        field.ref.current.value.length !== 0 &&
-                        field.error === undefined
-                    ) {
-                        field.validated = true;
-                    } else if (field.error !== undefined) {
-                        field.validated = true;
-                    }
                 }
                 return field;
             });
@@ -262,7 +249,6 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                                                     onInputFocus={this.handleInputFocus}
                                                     onInputBlur={this.handleInputBlur}
                                                     hasError={field.error !== undefined}
-                                                    validated={field.validated}
                                                 />
 
                                                 {field.error && <InputError error={field.error} />}

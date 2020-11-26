@@ -118,7 +118,6 @@ describe("SuperTokens SignUp feature/theme", function() {
                 { name: "name", value: "John Doe" },
                 { name: "age", value: "17" }
             ]);
-            await page.screenshot({ path: "screenshot.jpeg" });
             disabled = await isFormButtonDisabled(page);
             assert.strictEqual(disabled, true);
 
