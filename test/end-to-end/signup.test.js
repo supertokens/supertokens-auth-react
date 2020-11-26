@@ -42,9 +42,15 @@ import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
  * Consts.
  */
 const SIGN_UP_API = `${TEST_SERVER_BASE_URL}/auth/signup`;
+const EMAIL_EXISTS_API = `${TEST_SERVER_BASE_URL}/email/exists`;
 
 /*
  * Tests.
+ * TODOs (inside current tests and not as new tests.)
+ *  - Test that a Verify Email Exist API call is made on blur for SignUp.
+ *  - Test that a Verify Email Exist API call is NOT made on blur for SignIn/ResetPassword.
+ *  - Test this call is not made on signup clicked.
+ *  - Try to register with same email after success should return error form field on blur.
  */
 describe("SuperTokens SignUp feature/theme", function() {
     let browser;

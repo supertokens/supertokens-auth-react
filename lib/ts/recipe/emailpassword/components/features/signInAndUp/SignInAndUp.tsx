@@ -21,7 +21,7 @@ import { PureComponent, Fragment } from "react";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { handleSignInAPI, handleSignUpAPI } from "./api";
+import { handleSignInAPI, handleSignUpAPI, handleVerifyEmailAPICall } from "./api";
 import EmailPassword from "../../../emailPassword";
 import {
     SignInAndUpProps,
@@ -31,7 +31,8 @@ import {
     SignUpThemeResponse,
     OnHandleSignInAndUpSuccessContext,
     SignUpAPIResponse,
-    SignInAPIResponse
+    SignInAPIResponse,
+    VerifyEmailAPIResponse
 } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
@@ -216,7 +217,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         redirectToWithReload(onSuccessRedirectURL);
     };
 
-    onCallSignUpAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpAPIResponse> => {
+    onCallSignUpAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpAPIResponse> => {
         // If props provided by user.
         if (this.props.onCallSignUpAPI !== undefined) {
             return this.props.onCallSignUpAPI(requestJson, headers);
@@ -226,7 +227,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         return this.getRecipeInstanceOrThrow().signUpAPI(requestJson, headers);
     };
 
-    onCallSignInAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
+    onCallSignInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
         // If props provided by user.
         if (this.props.onCallSignInAPI !== undefined) {
             return this.props.onCallSignInAPI(requestJson, headers);
@@ -234,6 +235,24 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
 
         // Otherwise, use default.
         return this.getRecipeInstanceOrThrow().signInAPI(requestJson, headers);
+    };
+
+    onCallEmailExistAPI = async (value: string, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
+        // If props provided by user.
+        if (this.props.verifyEmailExists !== undefined) {
+            return await this.props.verifyEmailExists(value, headers);
+        }
+
+        // Otherwise, use built in.
+        return await this.getRecipeInstanceOrThrow().verifyEmailExists(value, headers);
+    };
+
+    validateEmail = async (value: string): Promise<string | undefined> => {
+        return await handleVerifyEmailAPICall(
+            value,
+            this.getRecipeInstanceOrThrow().getRecipeId(),
+            this.onCallEmailExistAPI
+        );
     };
 
     /*
@@ -277,7 +296,8 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             privacyPolicyLink: signUpFeature.privacyPolicyLink,
             termsOfServiceLink: signUpFeature.termsOfServiceLink,
             onSuccess: this.onSignUpSuccess,
-            callAPI: this.signUp
+            callAPI: this.signUp,
+            validateEmail: this.validateEmail
         };
 
         const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;

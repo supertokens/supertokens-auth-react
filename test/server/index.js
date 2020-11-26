@@ -60,8 +60,7 @@ SuperTokens.init({
                 }]
             }
         }),
-        Session.init({
-        })
+        Session.init({})
     ]
 });
 

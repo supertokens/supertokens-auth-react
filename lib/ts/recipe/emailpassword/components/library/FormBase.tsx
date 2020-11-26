@@ -76,6 +76,11 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             if (field.id === formFields[i].id) {
                 // Validate.
                 formFields[i].error = await formFields[i].validate(field.value);
+                const validateOnBlurOnly = formFields[i].validateOnBlurOnly;
+
+                if (formFields[i].error === undefined && validateOnBlurOnly !== undefined) {
+                    formFields[i].error = await validateOnBlurOnly(field.value);
+                }
             }
         }
         const status = this.getNewStatus(formFields, "blur");

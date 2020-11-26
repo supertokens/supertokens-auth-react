@@ -33,8 +33,8 @@ export default class HttpRequest {
     /*
      * Instance Methods.
      */
-    get = async <T>(path: string, config: RequestInit): Promise<T> => {
-        return await this.fetchResponseJsonOrThrowAbove300(this.getFullUrl(path), {
+    get = async <T>(path: string, config: RequestInit, queryParams?: Record<string, string>): Promise<T> => {
+        return await this.fetchResponseJsonOrThrowAbove300(this.getFullUrl(path, queryParams), {
             method: "GET",
             ...config
         });
@@ -88,8 +88,15 @@ export default class HttpRequest {
         return await result.json();
     };
 
-    getFullUrl = (pathStr: string): string => {
+    getFullUrl = (pathStr: string, queryParams?: Record<string, string>): string => {
         const path = new NormalisedURLPath(pathStr);
-        return `${this.appInfo.apiDomain.getAsStringDangerous()}${this.appInfo.apiBasePath.getAsStringDangerous()}${path.getAsStringDangerous()}`;
+        const fullUrl = `${this.appInfo.apiDomain.getAsStringDangerous()}${this.appInfo.apiBasePath.getAsStringDangerous()}${path.getAsStringDangerous()}`;
+
+        if (queryParams === undefined) {
+            return fullUrl;
+        }
+
+        // If query params, add.
+        return fullUrl + "?" + new URLSearchParams(queryParams);
     };
 }

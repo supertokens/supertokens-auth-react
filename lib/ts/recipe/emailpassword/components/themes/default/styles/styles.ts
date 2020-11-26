@@ -196,11 +196,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             cursor: "pointer"
         },
 
-        buttonDisabled: {
-            border: "none",
-            cursor: "no-drop"
-        },
-
         label: {
             textAlign: "left",
             fontWeight: 500,

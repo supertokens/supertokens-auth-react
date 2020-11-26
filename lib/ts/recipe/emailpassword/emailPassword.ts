@@ -35,7 +35,8 @@ import {
     SignInAPIResponse,
     SignOutAPIResponse,
     SignUpAPIResponse,
-    SubmitNewPasswordAPIResponse
+    SubmitNewPasswordAPIResponse,
+    VerifyEmailAPIResponse
 } from "./types";
 import { isTest, validateForm } from "../../utils";
 import HttpRequest from "../../httpRequest";
@@ -113,20 +114,19 @@ export default class EmailPassword extends RecipeModule {
         });
     };
 
-    verifyEmailExists = async (value: string): Promise<EnterEmailAPIResponse> => {
-        return this.httpRequest.post("/email/exists", {
-            body: JSON.stringify({
-                formFields: [
-                    {
-                        name: "email",
-                        value
-                    }
-                ]
-            }),
-            headers: {
-                rid: this.getRecipeId()
+    verifyEmailExists = async (value: string, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
+        return this.httpRequest.get(
+            "/email/exists",
+            {
+                headers: {
+                    ...headers,
+                    rid: this.getRecipeId()
+                }
+            },
+            {
+                email: value
             }
-        });
+        );
     };
 
     signInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
@@ -238,20 +238,6 @@ export default class EmailPassword extends RecipeModule {
     static signOut(): Promise<SignOutAPIResponse> {
         return EmailPassword.getInstanceOrThrow().signOut();
     }
-
-    static verifyEmailExists = async (value: string): Promise<string | undefined> => {
-        try {
-            const result = await EmailPassword.getInstanceOrThrow().verifyEmailExists(value);
-            if (result.status === API_RESPONSE_STATUS.OK) {
-                return undefined;
-            } else {
-                return result.formFields[0].error;
-            }
-        } catch (e) {
-            // Return undefined in case of server failure. This will fail on form submit.
-            return undefined;
-        }
-    };
 
     static getInstanceOrThrow(): EmailPassword {
         if (EmailPassword.instance === undefined) {

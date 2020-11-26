@@ -82,6 +82,7 @@ export declare type SignInAndUpProps = BaseProps & {
     doesSessionExist?: () => Promise<boolean>;
     onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
+    verifyEmailExists?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
 };
 export declare type ResetPasswordUsingTokenProps = BaseProps & {
@@ -110,6 +111,7 @@ export declare type SignUpThemeProps = ThemeBaseProps & {
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
     callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
+    validateEmail: (value: string) => Promise<string | undefined>;
 };
 export declare type SignInAndUpThemeProps = {
     defaultToSignUp: boolean;
@@ -128,7 +130,9 @@ declare type SuccessAPIResponse = {
     status: API_RESPONSE_STATUS.OK;
 };
 export declare type SignOutAPIResponse = SuccessAPIResponse;
-export declare type VerifyEmailAPIResponse = SuccessAPIResponse | FormFieldAPIResponse;
+export declare type VerifyEmailAPIResponse = SuccessAPIResponse & {
+    exists: boolean;
+};
 export declare type FormFieldAPIResponse = {
     status: API_RESPONSE_STATUS.FIELD_ERROR;
     formFields: FormFieldError[];
@@ -186,6 +190,7 @@ export declare type SubmitNewPasswordThemeProps = ThemeBaseProps & {
 export declare type FormFieldState = FormFieldThemeProps & {
     ref: RefObject<HTMLInputElement>;
     showIsRequired?: boolean;
+    validateOnBlurOnly?: (value: string) => Promise<string | undefined>;
     autoComplete?: string;
 };
 export declare type EnterEmailThemeState = {
@@ -233,6 +238,7 @@ export declare type FormBaseProps = {
 };
 export declare type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 export declare type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
+export declare type VerifyEmailAPI = (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
 export declare type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
 export declare type SubmitNewPasswordAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordAPIResponse>;
 export {};

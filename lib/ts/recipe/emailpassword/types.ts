@@ -282,6 +282,8 @@ export type SignInAndUpProps = BaseProps & {
 
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 
+    verifyEmailExists?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
 };
 
@@ -358,6 +360,11 @@ export type SignUpThemeProps = ThemeBaseProps & {
      * Call Sign Up API.
      */
     callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
+
+    /*
+     * Verify if an email exist.
+     */
+    validateEmail: (value: string) => Promise<string | undefined>;
 };
 
 export type SignInAndUpThemeProps = {
@@ -406,7 +413,10 @@ type SuccessAPIResponse = {
 };
 
 export type SignOutAPIResponse = SuccessAPIResponse;
-export type VerifyEmailAPIResponse = SuccessAPIResponse | FormFieldAPIResponse;
+
+export type VerifyEmailAPIResponse = SuccessAPIResponse & {
+    exists: boolean;
+};
 
 export type FormFieldAPIResponse = {
     /*
@@ -568,6 +578,11 @@ export type FormFieldState = FormFieldThemeProps & {
     showIsRequired?: boolean;
 
     /*
+     * Validate on blur only.
+     */
+    validateOnBlurOnly?: (value: string) => Promise<string | undefined>;
+
+    /*
      * Autocomplete
      */
     autoComplete?: string;
@@ -654,6 +669,7 @@ export type FormBaseProps = {
 
 export type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 export type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
+export type VerifyEmailAPI = (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
 export type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
 export type SubmitNewPasswordAPI = (
     requestJson: RequestJson,

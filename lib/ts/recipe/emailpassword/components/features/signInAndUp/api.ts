@@ -19,7 +19,7 @@
 import { SOMETHING_WENT_WRONG_ERROR, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR } from "../../../../../constants";
 import { APIFormField } from "../../../../../types";
 import { API_RESPONSE_STATUS } from "../../../constants";
-import { SignUpAPI, SignUpThemeResponse, SignInAPI, SignInThemeResponse } from "../../../types";
+import { SignUpAPI, SignUpThemeResponse, SignInAPI, SignInThemeResponse, VerifyEmailAPI } from "../../../types";
 
 /*
  * Methods.
@@ -108,5 +108,39 @@ export async function handleSignInAPI(
             status: API_RESPONSE_STATUS.GENERAL_ERROR,
             message: SOMETHING_WENT_WRONG_ERROR
         };
+    }
+}
+
+export async function handleVerifyEmailAPICall(
+    value: string,
+    rid: string,
+    verifyEmailAPI: VerifyEmailAPI
+): Promise<string | undefined> {
+    try {
+        const headers: HeadersInit = {
+            rid
+        };
+        const response = await verifyEmailAPI(value, headers);
+
+        // If email already exists.
+        if (response.status === API_RESPONSE_STATUS.OK) {
+            // If email exists.
+            if (response.exists === true) {
+                return "Email already exists";
+            }
+
+            // Otherwise, no errors.
+            return undefined;
+        }
+
+        // Otherwise, something went wrong.
+        console.error(
+            "There was an error handling the output format of onCallSignInAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks//sign-in-up#output-1"
+        );
+        // Fail silently.
+        return undefined;
+    } catch (e) {
+        // Fail silently.
+        return undefined;
     }
 }

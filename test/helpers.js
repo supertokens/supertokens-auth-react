@@ -146,7 +146,7 @@ export async function getGeneralError(page) {
             inputNode.blur();
         })
     }, {fields, ST_ROOT_SELECTOR});
-    return await new Promise(r => setTimeout(r, 300)); // Make sure to wait for validators.
+    return await new Promise(r => setTimeout(r, 310)); // Make sure to wait for validators.
 }
 
 export async function clearBrowserCookies (page) {

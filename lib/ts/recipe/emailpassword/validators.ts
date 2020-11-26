@@ -13,8 +13,6 @@
  * under the License.
  */
 
-import EmailPassword from "./emailPassword";
-
 /*
  * defaultEmailValidator.
  */
@@ -37,18 +35,6 @@ export async function defaultEmailValidator(value: any): Promise<string | undefi
     return undefined;
 }
 
-export async function defaultSignUpEmailValidator(value: any): Promise<string | undefined> {
-    if (typeof value !== "string") {
-        return "Email must be of type string";
-    }
-
-    const defaultError = await defaultEmailValidator(value);
-    if (defaultError !== undefined) {
-        return defaultError;
-    }
-
-    return await EmailPassword.verifyEmailExists(value);
-}
 /*
  * defaultPasswordValidator.
  * min 8 characters.
