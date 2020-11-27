@@ -16,8 +16,8 @@
 /*
  * Imports.
  */
-import * as React from "react";
-import { FormEvent, Fragment, PureComponent } from "react";
+import React, { FormEvent, Fragment, PureComponent } from "react";
+import StyleContext from "../styles/styleContext";
 import { Button, FormRow, Input, InputError, Label } from ".";
 
 /** @jsx jsx */
@@ -25,13 +25,14 @@ import { jsx } from "@emotion/core";
 import { APIFormField } from "../../../../types";
 import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY, MANDATORY_FORM_FIELDS_ID } from "../../constants";
 import { FormBaseProps, FormBaseState, FormBaseStatus, FormFieldState } from "../../types";
-import { StyleConsumer } from "../styles/styleContext";
 
 /*
  * Component.
  */
 
 export default class FormBase extends PureComponent<FormBaseProps, FormBaseState> {
+    static contextType = StyleContext;
+
     /*
      * Constructor.
      */
@@ -208,77 +209,72 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
      * Render.
      */
     render(): JSX.Element {
+        const styles = this.context;
         const { header, footer, buttonLabel, showLabels, noValidateOnBlur } = this.props;
         const { formFields } = this.state;
         const onInputBlur = noValidateOnBlur === true ? undefined : this.handleInputBlur;
 
         return (
-            <StyleConsumer>
-                {styles => (
-                    <div className="container" css={styles.container}>
-                        <div className="row" css={styles.row}>
-                            {header}
-                            {this.state.status === "GENERAL_ERROR" && (
-                                <div className="generalError" css={styles.generalError}>
-                                    {this.state.generalError}
-                                </div>
-                            )}
+            <div className="container" css={styles.container}>
+                <div className="row" css={styles.row}>
+                    {header}
+                    {this.state.status === "GENERAL_ERROR" && (
+                        <div className="generalError" css={styles.generalError}>
+                            {this.state.generalError}
+                        </div>
+                    )}
 
-                            <form autoComplete="on" noValidate onSubmit={this.onFormSubmit}>
-                                {formFields.map(field => {
-                                    let type = "text";
-                                    // If email or password, replace field type.
-                                    if (
-                                        MANDATORY_FORM_FIELDS_ID_ARRAY.includes(
-                                            (field as { id: MANDATORY_FORM_FIELDS_ID }).id
-                                        )
-                                    ) {
-                                        type = field.id;
-                                    }
-                                    if (field.id === "confirm-password") {
-                                        type = "password";
-                                    }
+                    <form autoComplete="on" noValidate onSubmit={this.onFormSubmit}>
+                        {formFields.map(field => {
+                            let type = "text";
+                            // If email or password, replace field type.
+                            if (
+                                MANDATORY_FORM_FIELDS_ID_ARRAY.includes((field as { id: MANDATORY_FORM_FIELDS_ID }).id)
+                            ) {
+                                type = field.id;
+                            }
+                            if (field.id === "confirm-password") {
+                                type = "password";
+                            }
 
-                                    return (
-                                        <FormRow key={field.id} hasError={field.error !== undefined}>
-                                            <Fragment>
-                                                {showLabels && (
-                                                    <Label value={field.label} showIsRequired={field.showIsRequired} />
-                                                )}
-
-                                                <Input
-                                                    type={type}
-                                                    name={field.id}
-                                                    placeholder={field.placeholder}
-                                                    ref={field.ref}
-                                                    autoComplete={field.autoComplete}
-                                                    onInputFocus={this.handleInputFocus}
-                                                    onInputBlur={onInputBlur}
-                                                    hasError={field.error !== undefined}
-                                                />
-
-                                                {field.error && <InputError error={field.error} />}
-                                            </Fragment>
-                                        </FormRow>
-                                    );
-                                })}
-
-                                <FormRow key="form-button">
+                            return (
+                                <FormRow key={field.id} hasError={field.error !== undefined}>
                                     <Fragment>
-                                        <Button
-                                            disabled={["READY", "GENERAL_ERROR"].includes(this.state.status) !== true}
-                                            isLoading={this.state.status === "LOADING"}
-                                            type="submit"
-                                            label={buttonLabel}
+                                        {showLabels && (
+                                            <Label value={field.label} showIsRequired={field.showIsRequired} />
+                                        )}
+
+                                        <Input
+                                            type={type}
+                                            name={field.id}
+                                            placeholder={field.placeholder}
+                                            ref={field.ref}
+                                            autoComplete={field.autoComplete}
+                                            onInputFocus={this.handleInputFocus}
+                                            onInputBlur={onInputBlur}
+                                            hasError={field.error !== undefined}
                                         />
-                                        {footer}
+
+                                        {field.error && <InputError error={field.error} />}
                                     </Fragment>
                                 </FormRow>
-                            </form>
-                        </div>
-                    </div>
-                )}
-            </StyleConsumer>
+                            );
+                        })}
+
+                        <FormRow key="form-button">
+                            <Fragment>
+                                <Button
+                                    disabled={["READY", "GENERAL_ERROR"].includes(this.state.status) !== true}
+                                    isLoading={this.state.status === "LOADING"}
+                                    type="submit"
+                                    label={buttonLabel}
+                                />
+                                {footer}
+                            </Fragment>
+                        </FormRow>
+                    </form>
+                </div>
+            </div>
         );
     }
 }

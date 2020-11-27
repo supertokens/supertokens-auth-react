@@ -19,8 +19,8 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import * as React from "react";
-import { StyleConsumer } from "../styles/styleContext";
+import React, { useContext } from "react";
+import StyleContext from "../styles/styleContext";
 import Error from "../../assets/error";
 
 /*
@@ -39,17 +39,13 @@ export default function InputError({ error }: InputErrorProps): JSX.Element {
     /*
      * Render.
      */
-
+    const styles = useContext(StyleContext);
     return (
-        <StyleConsumer>
-            {styles => (
-                <div className="inputErrorMessage" css={styles.inputErrorMessage}>
-                    <span className="inputErrorSymbol" css={styles.inputErrorSymbol}>
-                        <Error color={styles.palette.colors.error} />
-                    </span>
-                    {error}
-                </div>
-            )}
-        </StyleConsumer>
+        <div className="inputErrorMessage" css={styles.inputErrorMessage}>
+            <span className="inputErrorSymbol" css={styles.inputErrorSymbol}>
+                <Error color={styles.palette.colors.error} />
+            </span>
+            {error}
+        </div>
     );
 }

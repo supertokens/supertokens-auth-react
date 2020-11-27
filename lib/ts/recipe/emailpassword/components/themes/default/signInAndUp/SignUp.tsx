@@ -15,18 +15,16 @@
 /*
  * Imports.
  */
-import * as React from "react";
-import { PureComponent, createRef, Fragment } from "react";
+import React, { PureComponent, createRef, Fragment } from "react";
+import StyleContext from "../../../styles/styleContext";
 import { FormFieldState, SignUpThemeProps } from "../../../../types";
 import { CSSObject } from "@emotion/serialize/types";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import FormBase from "../../../library/FormBase";
-import { StyleConsumer, StyleProvider } from "../../../styles/styleContext";
 import SignUpFooter from "./SignUpFooter";
 import { NormalisedPalette } from "../types";
-import { defaultPalette, getDefaultStyles } from "../styles/styles";
 
 /*
  * Styles.
@@ -57,6 +55,8 @@ function getStyles(palette: NormalisedPalette): any {
  */
 
 export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formFields: FormFieldState[] }> {
+    static contextType = StyleContext;
+
     /*
      * Constructor.
      */
@@ -95,55 +95,41 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formF
      * Render.
      */
     render(): JSX.Element {
-        const { privacyPolicyLink, termsOfServiceLink, styleFromInit, signInClicked, onSuccess, callAPI } = this.props;
+        const styles = this.context;
+        const componentStyles = getStyles(styles.palette as NormalisedPalette);
+        const { privacyPolicyLink, termsOfServiceLink, signInClicked, onSuccess, callAPI } = this.props;
         const { formFields } = this.state;
         return (
-            <StyleProvider
-                defaultPalette={defaultPalette}
-                styleFromInit={styleFromInit}
-                getDefaultStyles={getDefaultStyles}>
-                <StyleConsumer>
-                    {styles => {
-                        const componentStyles = getStyles(styles.palette as NormalisedPalette);
-                        return (
-                            <FormBase
-                                formFields={formFields}
-                                buttonLabel={"SIGN UP"}
-                                onSuccess={onSuccess}
-                                callAPI={callAPI}
-                                showLabels={true}
-                                header={
-                                    <Fragment>
-                                        <div
-                                            className="headerTitle"
-                                            css={[componentStyles.headerTitle, styles.headerTitle]}>
-                                            Sign Up
-                                        </div>
-                                        <div
-                                            className="headerSubtitle"
-                                            css={[componentStyles.headerSubTitle, styles.headerSubtitle]}>
-                                            <div className="secondaryText" css={styles.secondaryText}>
-                                                Already have an account?
-                                                <span className="link" onClick={signInClicked} css={styles.link}>
-                                                    Sign In
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="divider" css={styles.divider}></div>
-                                    </Fragment>
-                                }
-                                footer={
-                                    <SignUpFooter
-                                        componentStyles={componentStyles}
-                                        privacyPolicyLink={privacyPolicyLink}
-                                        termsOfServiceLink={termsOfServiceLink}
-                                    />
-                                }
-                            />
-                        );
-                    }}
-                </StyleConsumer>
-            </StyleProvider>
+            <FormBase
+                formFields={formFields}
+                buttonLabel={"SIGN UP"}
+                onSuccess={onSuccess}
+                callAPI={callAPI}
+                showLabels={true}
+                header={
+                    <Fragment>
+                        <div className="headerTitle" css={[componentStyles.headerTitle, styles.headerTitle]}>
+                            Sign Up
+                        </div>
+                        <div className="headerSubtitle" css={[componentStyles.headerSubTitle, styles.headerSubtitle]}>
+                            <div className="secondaryText" css={styles.secondaryText}>
+                                Already have an account?
+                                <span className="link" onClick={signInClicked} css={styles.link}>
+                                    Sign In
+                                </span>
+                            </div>
+                        </div>
+                        <div className="divider" css={styles.divider}></div>
+                    </Fragment>
+                }
+                footer={
+                    <SignUpFooter
+                        componentStyles={componentStyles}
+                        privacyPolicyLink={privacyPolicyLink}
+                        termsOfServiceLink={termsOfServiceLink}
+                    />
+                }
+            />
         );
     }
 }

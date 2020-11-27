@@ -20,8 +20,8 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 
-import * as React from "react";
-import { StyleConsumer } from "../styles/styleContext";
+import React, { useContext } from "react";
+import StyleContext from "../styles/styleContext";
 
 /*
  * Props.
@@ -40,16 +40,12 @@ export default function Label({ value, showIsRequired }: LabelProps): JSX.Elemen
     /*
      * Render.
      */
-
+    const styles = useContext(StyleContext);
     return (
-        <StyleConsumer>
-            {styles => (
-                <div className="label" css={styles.label}>
-                    {value}
-                    {":"}
-                    {showIsRequired && " *"}
-                </div>
-            )}
-        </StyleConsumer>
+        <div className="label" css={styles.label}>
+            {value}
+            {":"}
+            {showIsRequired && " *"}
+        </div>
     );
 }

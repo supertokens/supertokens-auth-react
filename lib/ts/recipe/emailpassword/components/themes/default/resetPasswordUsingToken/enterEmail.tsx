@@ -15,8 +15,9 @@
 /*
  * Imports.
  */
-import * as React from "react";
-import { PureComponent, createRef, Fragment } from "react";
+import React, { PureComponent, createRef, Fragment } from "react";
+import StyleContext from "../../../styles/styleContext";
+
 import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../../types";
 import { CSSObject } from "@emotion/serialize/types";
 
@@ -24,9 +25,7 @@ import { CSSObject } from "@emotion/serialize/types";
 import { jsx } from "@emotion/core";
 import FormBase from "../../../library/FormBase";
 import { Styles } from "../../../../../../types";
-import { StyleConsumer, StyleProvider } from "../../../styles/styleContext";
 import { NormalisedPalette } from "../types";
-import { defaultPalette, getDefaultStyles } from "../styles/styles";
 
 /*
  * Styles.
@@ -57,6 +56,8 @@ function getStyles(palette: NormalisedPalette): Styles {
  */
 
 export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps, EnterEmailThemeState> {
+    static contextType = StyleContext;
+
     /*
      * Constructor.
      */
@@ -101,70 +102,50 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
      * Render.
      */
     render(): JSX.Element {
+        const styles = this.context;
+        const componentStyles = getStyles(styles.palette);
         const { callAPI } = this.props;
         const { formFields, emailSent } = this.state;
-        const styleFromInit = this.props.styleFromInit !== undefined ? this.props.styleFromInit : {};
 
+        // If email sent, show success UI.
+        if (emailSent === true) {
+            return (
+                <div className="container" css={styles.container}>
+                    <div className="row" css={styles.row}>
+                        <div
+                            className="primaryText successMessage"
+                            css={[styles.primaryText, componentStyles.successMessage, styles.successMessage]}>
+                            Please check your email for the password recovery link.{" "}
+                            <span className="link" css={styles.link} onClick={this.resend}>
+                                Resend
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Otherwise, return Form.
         return (
-            <StyleProvider
-                defaultPalette={defaultPalette}
-                styleFromInit={styleFromInit}
-                getDefaultStyles={getDefaultStyles}>
-                <StyleConsumer>
-                    {styles => {
-                        const componentStyles = getStyles(styles.palette);
-
-                        // If email sent, show success UI.
-                        if (emailSent === true) {
-                            return (
-                                <div className="container" css={styles.container}>
-                                    <div className="row" css={styles.row}>
-                                        <div
-                                            className="primaryText successMessage"
-                                            css={[
-                                                styles.primaryText,
-                                                componentStyles.successMessage,
-                                                styles.successMessage
-                                            ]}>
-                                            Please check your email for the password recovery link.{" "}
-                                            <span className="link" css={styles.link} onClick={this.resend}>
-                                                Resend
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        }
-
-                        // Otherwise, return Form.
-                        return (
-                            <FormBase
-                                formFields={formFields}
-                                buttonLabel={"Email me"}
-                                onSuccess={this.onSuccess}
-                                callAPI={callAPI}
-                                showLabels={false}
-                                header={
-                                    <Fragment>
-                                        <div
-                                            className="headerTitle"
-                                            css={[componentStyles.headerTitle, styles.headerTitle]}>
-                                            Reset your password
-                                        </div>
-                                        <div
-                                            className="headerSubtitle"
-                                            css={[componentStyles.headerSubTitle, styles.headerSubtitle]}>
-                                            <div className="secondaryText" css={styles.secondaryText}>
-                                                We will send you an email to reset your password
-                                            </div>
-                                        </div>
-                                    </Fragment>
-                                }
-                            />
-                        );
-                    }}
-                </StyleConsumer>
-            </StyleProvider>
+            <FormBase
+                formFields={formFields}
+                buttonLabel={"Email me"}
+                onSuccess={this.onSuccess}
+                callAPI={callAPI}
+                showLabels={false}
+                header={
+                    <Fragment>
+                        <div className="headerTitle" css={[componentStyles.headerTitle, styles.headerTitle]}>
+                            Reset your password
+                        </div>
+                        <div className="headerSubtitle" css={[componentStyles.headerSubTitle, styles.headerSubtitle]}>
+                            <div className="secondaryText" css={styles.secondaryText}>
+                                We will send you an email to reset your password
+                            </div>
+                        </div>
+                    </Fragment>
+                }
+            />
         );
     }
 }

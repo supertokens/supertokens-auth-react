@@ -20,10 +20,11 @@
 /** @jsx jsx */
 import { jsx, CSSObject } from "@emotion/core";
 
-import * as React from "react";
+import React, { useContext } from "react";
+import StyleContext from "../styles/styleContext";
+
 import { forwardRef, RefObject } from "react";
 import { APIFormField } from "../../../../types";
-import { StyleConsumer } from "../styles/styleContext";
 
 /*
  * Props.
@@ -75,31 +76,26 @@ function Input(
     /*
      * Render.
      */
-    return (
-        <StyleConsumer>
-            {styles => {
-                const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
-                if (autoComplete === undefined) {
-                    autoComplete = "off";
-                }
+    const styles = useContext(StyleContext);
+    const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
+    if (autoComplete === undefined) {
+        autoComplete = "off";
+    }
 
-                return (
-                    <div className="inputWrapper" css={[styles.inputWrapper]}>
-                        <input
-                            autoComplete={autoComplete}
-                            className="input inputError"
-                            css={[styles.input, errorStyle]}
-                            onFocus={handleFocus}
-                            onBlur={handleBlur}
-                            type={type}
-                            name={name}
-                            placeholder={placeholder}
-                            ref={ref}
-                        />
-                    </div>
-                );
-            }}
-        </StyleConsumer>
+    return (
+        <div className="inputWrapper" css={[styles.inputWrapper]}>
+            <input
+                autoComplete={autoComplete}
+                className="input inputError"
+                css={[styles.input, errorStyle]}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                type={type}
+                name={name}
+                placeholder={placeholder}
+                ref={ref}
+            />
+        </div>
     );
 }
 

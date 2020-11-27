@@ -17,11 +17,13 @@
  * Imports.
  */
 import * as React from "react";
+import { StyleProvider } from "../../../styles/styleContext";
 import { ResetPasswordUsingTokenThemeProps } from "../../../../types";
 import { ThemeBase } from "../ThemeBase";
 
 import EnterEmail from "./enterEmail";
 import SubmitNewPassword from "./submitNewPassword";
+import { defaultPalette, getDefaultStyles } from "../styles/styles";
 
 /*
  * Component.
@@ -34,11 +36,25 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
 
     // If no token, return SubmitNewPassword.
     if (props.hasToken) {
-        return <SubmitNewPassword {...props.submitNewPasswordForm} />;
+        return (
+            <StyleProvider
+                defaultPalette={defaultPalette}
+                styleFromInit={props.submitNewPasswordForm.styleFromInit}
+                getDefaultStyles={getDefaultStyles}>
+                <SubmitNewPassword {...props.submitNewPasswordForm} />
+            </StyleProvider>
+        );
     }
 
     // Otherwise, return EnterEmail.
-    return <EnterEmail {...props.enterEmailForm} />;
+    return (
+        <StyleProvider
+            defaultPalette={defaultPalette}
+            styleFromInit={props.enterEmailForm.styleFromInit}
+            getDefaultStyles={getDefaultStyles}>
+            <EnterEmail {...props.enterEmailForm} />
+        </StyleProvider>
+    );
 }
 
 function ResetPasswordUsingTokenThemeWrapper(props: ResetPasswordUsingTokenThemeProps): JSX.Element {
