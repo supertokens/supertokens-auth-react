@@ -324,6 +324,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
                     {/* Otherwise, custom theme is provided, propagate props. */}
                     {this.props.children &&
                         React.cloneElement(this.props.children, {
+                            defaultToSignUp: signInAndUpFeature.defaultToSignUp,
                             signInForm,
                             signUpForm
                         })}

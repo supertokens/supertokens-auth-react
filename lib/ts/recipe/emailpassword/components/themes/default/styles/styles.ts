@@ -150,17 +150,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             height: "42px"
         },
 
-        inputAdornment: {
-            float: "right",
-            left: "-2%",
-            top: "-24px",
-            position: "relative",
-            borderRadius: "12px",
-            display: "flex",
-            alignItems: "center",
-            height: "0px"
-        },
-
         inputErrorMessage: {
             paddingTop: "5px",
             paddingBottom: "5px",
