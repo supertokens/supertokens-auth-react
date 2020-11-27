@@ -194,6 +194,10 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
                 outline: "none",
                 border: "none"
             },
+            "&:focus": {
+                outline: "none",
+                border: "none"
+            },
             cursor: "pointer"
         },
 
