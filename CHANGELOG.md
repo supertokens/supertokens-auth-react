@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fix
  - Remove all styles from feature wrapper
+
 ## [0.1.0] - 2020-11-18
 ### Added
 - Email and password implementation
