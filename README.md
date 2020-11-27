@@ -13,7 +13,7 @@ ReactJS SDK that provides login functionality with SuperTokens.
 Learn more at https://supertokens.io
 
 ## Documentation
-To see documentation, please click [here](https://supertokens.io/docs/supertokens-auth-react/installation).
+To see documentation, please click [here](https://supertokens.io/docs/auth-react/installation).
 
 ## Contributing
 Please refer to the [CONTRIBUTING.md](https://github.com/supertokens/supertokens-auth-react/blob/master/CONTRIBUTING.md) file in this repo.
