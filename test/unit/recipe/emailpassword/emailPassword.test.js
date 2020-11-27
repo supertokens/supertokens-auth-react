@@ -21,7 +21,7 @@
 import regeneratorRuntime from "regenerator-runtime";
 import EmailPassword from "../../../../lib/build/recipe/emailpassword/emailPassword";
 import {getDefaultFormFields} from "../../../../lib/build/recipe/emailpassword/utils";
-import {defaultLoginPasswordValidator, defaultEmailValidator, defaultValidate} from "../../../../lib/build/recipe/emailpassword/validators";
+import {defaultLoginPasswordValidator, defaultValidate} from "../../../../lib/build/recipe/emailpassword/validators";
 import assert from "assert";
 import SuperTokens from "../../../../lib/build/superTokens";
 
@@ -63,10 +63,7 @@ describe("EmailPassword", function() {
             EmailPassword.getInstanceOrThrow()
                 .getConfig().signInAndUpFeature.signInForm.formFields,
             [
-                {
-                    ...getDefaultFormFields()[0],
-                    validate: defaultEmailValidator
-                },
+                getDefaultFormFields()[0],
                 {
                     ...getDefaultFormFields()[1],
                     autoComplete: "current-password",
@@ -136,10 +133,7 @@ describe("EmailPassword", function() {
                 .getConfig().signInAndUpFeature.signInForm
                 .formFields,
             [
-                {
-                    ...getDefaultFormFields()[0],
-                    validate: defaultEmailValidator
-                },
+                getDefaultFormFields()[0],
                 {
                     ...getDefaultFormFields()[1],
                     autoComplete: "current-password",
@@ -296,10 +290,7 @@ describe("EmailPassword", function() {
                 .getConfig().signInAndUpFeature.signInForm
                 .formFields,
             [
-                {
-                    ...getDefaultFormFields()[0],
-                    validate: defaultEmailValidator
-                },
+                getDefaultFormFields()[0],
                 {
                     ...getDefaultFormFields()[1],
                     autoComplete: "current-password",
@@ -408,10 +399,7 @@ describe("EmailPassword", function() {
             EmailPassword.getInstanceOrThrow()
                 .getConfig().signInAndUpFeature.signInForm.formFields,
             [
-                {
-                    ...getDefaultFormFields()[0],
-                    validate: defaultEmailValidator
-                },
+                getDefaultFormFields()[0],
                 {
                     ...customPasswordField,
                     autoComplete: "current-password",

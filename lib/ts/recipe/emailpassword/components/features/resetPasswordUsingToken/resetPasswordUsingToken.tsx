@@ -154,7 +154,10 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
         redirectToInApp(onSuccessRedirectURL, "Sign In", this.props.history);
     };
 
-    onCallSendResetEmailAPI = (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse> => {
+    onCallSendResetEmailAPI = async (
+        requestJson: RequestJson,
+        headers: HeadersInit
+    ): Promise<EnterEmailAPIResponse> => {
         // If props provided by user.
         if (this.props.onCallSendResetEmailAPI !== undefined) {
             return this.props.onCallSendResetEmailAPI(requestJson, headers);
@@ -164,7 +167,7 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
         return this.getRecipeInstanceOrThrow().enterEmailAPI(requestJson, headers);
     };
 
-    onCallSubmitNewPasswordAPI = (
+    onCallSubmitNewPasswordAPI = async (
         requestJson: RequestJson,
         headers: HeadersInit
     ): Promise<SubmitNewPasswordAPIResponse> => {
