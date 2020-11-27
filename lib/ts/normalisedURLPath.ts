@@ -77,19 +77,20 @@ export function normaliseURLPathOrThrowError(input: string): string {
 }
 
 function domainGiven(input: string): boolean {
-    const indexOfDot = input.indexOf(".");
-
     // If no dot, return false.
-    if (indexOfDot === -1) {
+    if (input.indexOf(".") === -1) {
         return false;
     }
 
-    const indexOfSlash = input.indexOf("/");
-    // If no slash and a dot, return true.
-    if (indexOfSlash === -1) {
-        return true;
-    }
+    try {
+        const url = new URL(input);
+        return url.hostname.indexOf(".") !== -1;
+    } catch (e) {}
 
-    // Otherwise, return true only if index of dot is before index of slash.
-    return indexOfDot < indexOfSlash;
+    try {
+        const url = new URL("http://" + input);
+        return url.hostname.indexOf(".") !== -1;
+    } catch (e) {}
+
+    return false;
 }

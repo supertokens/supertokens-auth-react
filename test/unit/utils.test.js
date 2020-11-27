@@ -27,10 +27,14 @@ describe("Config tests", function() {
     });
 
     it("testing URL path normalisation", async function() {
+        assert.strictEqual(normaliseURLPathOrThrowError("exists?email=john.doe%40gmail.com"), "/exists");
         assert.strictEqual(
             normaliseURLPathOrThrowError("/auth/email/exists?email=john.doe%40gmail.com"),
             "/auth/email/exists"
         );
+        assert.strictEqual(normaliseURLPathOrThrowError("exists"), "/exists");
+        assert.strictEqual(normaliseURLPathOrThrowError("/exists"), "/exists");
+        assert.strictEqual(normaliseURLPathOrThrowError("/exists?email=john.doe%40gmail.com"), "/exists");
         assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com"), "");
         assert.strictEqual(normaliseURLPathOrThrowError("https://api.example.com"), "");
         assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com?hello=1"), "");

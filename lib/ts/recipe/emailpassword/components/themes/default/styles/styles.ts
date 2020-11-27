@@ -162,7 +162,8 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         inputErrorMessage: {
-            paddingTop: "10px",
+            paddingTop: "5px",
+            paddingBottom: "5px",
             color: palette.colors.error,
             lineHeight: "24px",
             fontWeight: 400,
@@ -208,8 +209,8 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         formRow: {
             display: "flex",
             flexDirection: "column",
-            paddingTop: "5px",
-            paddingBottom: "24px"
+            paddingTop: "0px",
+            paddingBottom: "35px"
         },
 
         primaryText: {
@@ -241,7 +242,8 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             marginBottom: "1em",
             borderBottom: "0.3px solid #dddddd",
             display: "flex",
-            alignItems: "center"
+            alignItems: "center",
+            paddingBottom: "5px"
         }
     };
 }

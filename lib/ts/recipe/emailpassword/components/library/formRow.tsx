@@ -28,17 +28,24 @@ import { StyleConsumer } from "../styles/styleContext";
 
 type FormRowProps = {
     children: JSX.Element;
+    hasError?: boolean;
 };
 
 /*
  * Component.
  */
 
-export default function FormRow({ children }: FormRowProps): JSX.Element {
+export default function FormRow({ children, hasError }: FormRowProps): JSX.Element {
+    const errorStyle =
+        hasError === true
+            ? {
+                  paddingBottom: "0px"
+              }
+            : {};
     return (
         <StyleConsumer>
             {styles => (
-                <div className="formRow" css={styles.formRow}>
+                <div className="formRow" css={[styles.formRow, errorStyle]}>
                     {children}
                 </div>
             )}

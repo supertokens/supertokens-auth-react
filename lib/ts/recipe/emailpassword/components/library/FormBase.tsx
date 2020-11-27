@@ -240,7 +240,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                                     }
 
                                     return (
-                                        <FormRow key={field.id}>
+                                        <FormRow key={field.id} hasError={field.error !== undefined}>
                                             <Fragment>
                                                 {showLabels && (
                                                     <Label value={field.label} showIsRequired={field.showIsRequired} />
