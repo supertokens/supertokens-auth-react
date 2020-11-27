@@ -26,11 +26,12 @@ import {
     clearBrowserCookies,
     getPlaceholders,
     getLabelsText,
-    setInputValue,
+    setInputValues,
     getFieldErrors,
-    toggleSignInSignUp,
+    submitFormReturnRequestAndResponse,
     getInputNames,
-    submitForm
+    submitForm,
+    isFormButtonDisabled
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -41,9 +42,15 @@ import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
  * Consts.
  */
 const SIGN_UP_API = `${TEST_SERVER_BASE_URL}/auth/signup`;
+const EMAIL_EXISTS_API = `${TEST_SERVER_BASE_URL}/email/exists`;
 
 /*
  * Tests.
+ * TODOs (inside current tests and not as new tests.)
+ *  - Test that a Verify Email Exist API call is made on blur for SignUp.
+ *  - Test that a Verify Email Exist API call is NOT made on blur for SignIn/ResetPassword.
+ *  - Test this call is not made on signup clicked.
+ *  - Try to register with same email after success should return error form field on blur.
  */
 describe("SuperTokens SignUp feature/theme", function() {
     let browser;
@@ -105,55 +112,36 @@ describe("SuperTokens SignUp feature/theme", function() {
             ]);
         });
 
-        it("Should return fields are not optional error fields when sign up without filling the form", async function() {
-            await submitForm(page);
-
-            // Assert.
-            const formFieldErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldErrors, [
-                "Field is not optional",
-                "Field is not optional",
-                "Field is not optional",
-                "Field is not optional"
-            ]);
-        });
-
         it("Should show error messages", async function() {
-            // Set values.
-            await setInputValue(page, "email", "john@doe");
-            await setInputValue(page, "password", "test123");
-            await setInputValue(page, "name", "John Doe");
-            await setInputValue(page, "age", "17");
+            // Form is disabled on init.
+            let disabled = await isFormButtonDisabled(page);
+            assert.strictEqual(disabled, true);
 
-            await submitForm(page);
+            // Set values with errors.
+            await setInputValues(page, [
+                { name: "email", value: "john@doe" },
+                { name: "password", value: "test123" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "17" }
+            ]);
+            disabled = await isFormButtonDisabled(page);
+            assert.strictEqual(disabled, true);
 
             // // Assert.
             let formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, [
-                "Email is invalid",
-                "Password must contain at least 8 characters, including a number",
-                "You must be over 18 to register"
+                "!\nEmail is invalid",
+                "!\nPassword must contain at least 8 characters, including a number",
+                "!\nYou must be over 18 to register"
             ]);
 
-            // Remove error on focus
-            await setInputValue(page, "age", "15");
-            // Wait 500ms because the form fields  clean after 500ms to prevent UI glitches.
-            await new Promise(r => setTimeout(r, 500));
-
-            // // Assert.
-            formFieldErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldErrors, [
-                "Email is invalid",
-                "Password must contain at least 8 characters, including a number"
-            ]);
-
-            await setInputValue(page, "password", "Str0ngP@ssw0rd");
+            await setInputValues(page, [{ name: "password", value: "Str0ngP@ssw0rd" }]);
 
             await submitForm(page);
 
             // // Assert.
             formFieldErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldErrors, ["Email is invalid", "You must be over 18 to register"]);
+            assert.deepStrictEqual(formFieldErrors, ["!\nEmail is invalid", "!\nYou must be over 18 to register"]);
         });
 
         it("Successful signup", async function() {
@@ -179,29 +167,22 @@ describe("SuperTokens SignUp feature/theme", function() {
 
 export async function successfulSignUp(page) {
     // Set values.
-    await setInputValue(page, "email", "john.doe@supertokens.io");
-    await setInputValue(page, "password", "Str0ngP@ssw0rd");
-    await setInputValue(page, "name", "John Doe");
-    await setInputValue(page, "age", "20");
+    await setInputValues(page, [
+        { name: "email", value: "john.doe@supertokens.io" },
+        { name: "password", value: "Str0ngP@ssw0rd" },
+        { name: "name", value: "John Doe" },
+        { name: "age", value: "20" }
+    ]);
 
-    await submitForm(page);
+    const { request, response } = await submitFormReturnRequestAndResponse(page, SIGN_UP_API);
 
-    // Assert Request.
-    const signUpRequest = await page.waitForRequest(
-        request => request.url() === SIGN_UP_API && request.method() === "POST"
-    );
-    assert.strictEqual(signUpRequest.headers().rid, "emailpassword");
+    assert.strictEqual(request.headers().rid, "emailpassword");
     assert.strictEqual(
-        signUpRequest.postData(),
+        request.postData(),
         '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}'
     );
 
-    // Assert Response.
-    const signUpResponse = await page.waitForResponse(response => {
-        return response.url() === SIGN_UP_API && response.status() === 200;
-    });
-
-    const responseData = await signUpResponse.json();
+    const responseData = await response.json();
     assert.strictEqual(responseData.status, "OK");
 
     await new Promise(r => setTimeout(r, 500)); // Make sure to wait for navigation. TODO Make more robust.

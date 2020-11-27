@@ -147,14 +147,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
                 border: `1px solid ${palette.colors.primary}`,
                 outline: "none"
             },
-            height: "42px",
-            backgroundPosition: "90% 50% !important", // Password manager backgrounds.
-            "@media (max-width: 800px)": {
-                backgroundPosition: "87% 50% !important"
-            },
-            "@media (max-width: 440px)": {
-                backgroundPosition: "84% 50% !important"
-            }
+            height: "42px"
         },
 
         inputAdornment: {
@@ -169,12 +162,20 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         inputErrorMessage: {
-            paddingTop: "10px",
+            paddingTop: "5px",
+            paddingBottom: "5px",
             color: palette.colors.error,
             lineHeight: "24px",
             fontWeight: 400,
             textAlign: "left",
             animation: `${slideTop} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`
+        },
+
+        inputErrorSymbol: {
+            marginRight: "5px",
+            top: "1px",
+            position: "relative",
+            left: "2px"
         },
 
         button: {
@@ -186,9 +187,14 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             borderWidth: "0px",
             borderRadius: "8px",
             "&:disabled": {
+                border: "none",
                 cursor: "no-drop"
             },
             "&:active": {
+                outline: "none",
+                border: "none"
+            },
+            "&:focus": {
                 outline: "none",
                 border: "none"
             },
@@ -207,8 +213,8 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         formRow: {
             display: "flex",
             flexDirection: "column",
-            paddingTop: "5px",
-            paddingBottom: "24px"
+            paddingTop: "0px",
+            paddingBottom: "35px"
         },
 
         primaryText: {
@@ -240,7 +246,8 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             marginBottom: "1em",
             borderBottom: "0.3px solid #dddddd",
             display: "flex",
-            alignItems: "center"
+            alignItems: "center",
+            paddingBottom: "5px"
         }
     };
 }

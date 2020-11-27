@@ -33,9 +33,10 @@ import {
     FormFieldError,
     NormalisedEmailPasswordConfig,
     SignInAPIResponse,
-    SignOutResponse,
+    SignOutAPIResponse,
     SignUpAPIResponse,
-    SubmitNewPasswordAPIResponse
+    SubmitNewPasswordAPIResponse,
+    VerifyEmailAPIResponse
 } from "./types";
 import { isTest, validateForm } from "../../utils";
 import HttpRequest from "../../httpRequest";
@@ -113,6 +114,21 @@ export default class EmailPassword extends RecipeModule {
         });
     };
 
+    verifyEmailExists = async (value: string, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
+        return this.httpRequest.get(
+            "/signup/email/exists",
+            {
+                headers: {
+                    ...headers,
+                    rid: this.getRecipeId()
+                }
+            },
+            {
+                email: value
+            }
+        );
+    };
+
     signInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
         return this.httpRequest.post("/signin", {
             body: JSON.stringify(requestJson),
@@ -154,7 +170,7 @@ export default class EmailPassword extends RecipeModule {
      * SignOut
      */
 
-    signOut = async (): Promise<SignOutResponse> => {
+    signOut = async (): Promise<SignOutAPIResponse> => {
         const result = await this.httpRequest.fetch(this.httpRequest.getFullUrl("/signout"), {
             method: "POST",
             body: JSON.stringify({}),
@@ -219,7 +235,7 @@ export default class EmailPassword extends RecipeModule {
         };
     }
 
-    static signOut(): Promise<SignOutResponse> {
+    static signOut(): Promise<SignOutAPIResponse> {
         return EmailPassword.getInstanceOrThrow().signOut();
     }
 

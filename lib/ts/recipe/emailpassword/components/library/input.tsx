@@ -22,10 +22,8 @@ import { jsx, CSSObject } from "@emotion/core";
 
 import * as React from "react";
 import { forwardRef, RefObject } from "react";
-import { InputAdornment } from ".";
 import { APIFormField } from "../../../../types";
 import { StyleConsumer } from "../styles/styleContext";
-import { AdornmentType } from "./inputAdornment";
 
 /*
  * Props.
@@ -34,15 +32,14 @@ import { AdornmentType } from "./inputAdornment";
 type InputProps = {
     style?: CSSObject;
     errorStyle?: CSSObject;
-    adornmentStyle?: CSSObject;
-    validated: boolean;
     type: string;
     name: string;
     autoComplete?: string;
     hasError: boolean;
     placeholder: string;
     ref: RefObject<any>;
-    onChange?: (field: APIFormField) => void;
+    onInputBlur?: (field: APIFormField) => void;
+    onInputFocus?: (field: APIFormField) => void;
 };
 
 /*
@@ -50,16 +47,25 @@ type InputProps = {
  */
 
 function Input(
-    { type, name, hasError, autoComplete, onChange, placeholder, validated }: InputProps,
+    { type, name, hasError, autoComplete, onInputFocus, onInputBlur, placeholder }: InputProps,
     ref: RefObject<any>
 ): JSX.Element {
     /*
      * Method.
      */
 
-    function handleChange() {
-        if (onChange) {
-            onChange({
+    function handleFocus() {
+        if (onInputFocus) {
+            onInputFocus({
+                id: ref.current.name,
+                value: ref.current.value
+            });
+        }
+    }
+
+    function handleBlur() {
+        if (onInputBlur) {
+            onInputBlur({
                 id: ref.current.name,
                 value: ref.current.value
             });
@@ -73,12 +79,6 @@ function Input(
         <StyleConsumer>
             {styles => {
                 const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
-                let adornmentType: AdornmentType = undefined;
-
-                if (validated) {
-                    adornmentType = hasError ? "error" : "success";
-                }
-
                 if (autoComplete === undefined) {
                     autoComplete = "off";
                 }
@@ -89,13 +89,13 @@ function Input(
                             autoComplete={autoComplete}
                             className="input inputError"
                             css={[styles.input, errorStyle]}
-                            onFocus={handleChange}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
                             type={type}
                             name={name}
                             placeholder={placeholder}
                             ref={ref}
                         />
-                        <InputAdornment type={adornmentType} />
                     </div>
                 );
             }}

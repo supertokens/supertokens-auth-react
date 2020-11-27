@@ -30,8 +30,9 @@ import {
     sendEmailResetPasswordSuccessMessage,
     getPlaceholders,
     getLabelsText,
-    setInputValue,
+    setInputValues,
     getGeneralError,
+    submitFormReturnRequestAndResponse,
     submitForm,
     getFieldErrors,
     getSubmitFormButtonLabel,
@@ -100,26 +101,17 @@ describe("SuperTokens Reset password feature/theme", function() {
             assert.deepStrictEqual(placeholders, ["Your work email"]); // Email placeholder as defined in signUpForm.formFields.
 
             // Set values.
-            await setInputValue(page, "email", "john.doe@supertokens.io");
+            await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
 
             // Submit.
-            await submitForm(page);
+            const { request, response } = await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API);
 
             // Assert Request.
-            const sendEmailResetPasswordRequest = await page.waitForRequest(
-                request => request.url() === RESET_PASSWORD_TOKEN_API && request.method() === "POST"
-            );
-            assert.strictEqual(sendEmailResetPasswordRequest.headers().rid, "emailpassword");
-            assert.strictEqual(
-                sendEmailResetPasswordRequest.postData(),
-                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"}]}'
-            );
+            assert.strictEqual(request.headers().rid, "emailpassword");
+            assert.strictEqual(request.postData(), '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"}]}');
 
             // Assert Response.
-            const sendEmailResetPasswordResponse = await page.waitForResponse(response => {
-                return response.url() === RESET_PASSWORD_TOKEN_API && response.status() === 200;
-            });
-            const responseData = await sendEmailResetPasswordResponse.json();
+            const responseData = await response.json();
             assert.strictEqual(responseData.status, "OK");
 
             // Assert success page.
@@ -153,8 +145,10 @@ describe("SuperTokens Reset password feature/theme", function() {
             assert.deepStrictEqual(placeholders, ["New password", "Confirm your password"]); // Email placeholder as defined in signUpForm.formFields.
 
             // Set incorrect values.
-            await setInputValue(page, "password", "password");
-            await setInputValue(page, "confirm-password", "password");
+            await setInputValues(page, [
+                { name: "password", value: "password" },
+                { name: "confirm-password", value: "password" }
+            ]);
 
             // Submit.
             await submitForm(page);
@@ -162,43 +156,40 @@ describe("SuperTokens Reset password feature/theme", function() {
             // Front end validation
             let formFieldsErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldsErrors, [
-                "Password must contain at least one number",
-                "Password must contain at least one number"
+                "!\nPassword must contain at least one number",
+                "!\nPassword must contain at least one number"
             ]);
 
             // Set password mismatch
-            await setInputValue(page, "password", "Str0ngP@ssw0rd");
-            await setInputValue(page, "confirm-password", "Str0ngP@ssw0rdButMismatch");
+            await setInputValues(page, [
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "confirm-password", value: "Str0ngP@ssw0rdButMismatch" }
+            ]);
 
             // Submit.
             await submitForm(page);
 
             formFieldsErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldsErrors, ["Confirmation password doesn't match"]);
+            assert.deepStrictEqual(formFieldsErrors, ["!\nConfirmation password doesn't match"]);
 
             // Set correct values.
-            await setInputValue(page, "confirm-password", "Str0ngP@ssw0rd");
+            await setInputValues(page, [
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "confirm-password", value: "Str0ngP@ssw0rd" }
+            ]);
 
             // Submit.
-            await submitForm(page);
+            const { request, response } = await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
 
             // Assert Request.
-            const newPasswordResetPasswordRequest = await page.waitForRequest(
-                request => request.url() === RESET_PASSWORD_API && request.method() === "POST"
-            );
-            assert.strictEqual(newPasswordResetPasswordRequest.headers().rid, "emailpassword");
+            assert.strictEqual(request.headers().rid, "emailpassword");
             assert.deepStrictEqual(
-                newPasswordResetPasswordRequest.postData(),
+                request.postData(),
                 '{"formFields":[{"id":"password","value":"Str0ngP@ssw0rd"}],"token":"TOKEN"}'
             );
 
-            // Assert Response.
-            const sendEmailResetPasswordResponse = await page.waitForResponse(response => {
-                return response.url() === RESET_PASSWORD_API && response.status() === 200;
-            });
-
             // Assert Invalid token response.
-            const responseData = await sendEmailResetPasswordResponse.json();
+            const responseData = await response.json();
             assert.strictEqual(responseData.status, "RESET_PASSWORD_INVALID_TOKEN_ERROR");
             const generalError = await getGeneralError(page);
             assert.strictEqual(generalError, RESET_PASSWORD_INVALID_TOKEN_ERROR);
@@ -244,9 +235,8 @@ describe("SuperTokens ResetPassword feature/theme callbacks", function() {
 
     it("Should use custom callback props", async function() {
         // Send Email.
-        await setInputValue(page, "email", "john.doe@supertokens.io");
-        await submitForm(page);
-        await page.waitForNavigation({ waitUntil: "networkidle0" });
+        await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
+        await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
         assert.deepStrictEqual(consoleLogs, [
             "ST_CALLBACKS onCallSendResetEmailAPI,  email:john.doe@supertokens.io",
@@ -260,20 +250,20 @@ describe("SuperTokens ResetPassword feature/theme callbacks", function() {
         await page.goto(`${TEST_CLIENT_BASE_URL}/custom/auth/reset-password?token=TOKEN`);
 
         // Set password mismatch
-        await setInputValue(page, "password", "Str0ngP@ssw0rd");
-        await setInputValue(page, "confirm-password", "Str0ngP@ssw0rdButMismatch");
+        await setInputValues(page, [
+            { name: "password", value: "Str0ngP@ssw0rd" },
+            { name: "confirm-password", value: "Str0ngP@ssw0rdButMismatch" }
+        ]);
 
         // Submit.
         await submitForm(page);
 
         // Use front end validators before calling API.
         const formFieldsErrors = await getFieldErrors(page);
-        assert.deepStrictEqual(formFieldsErrors, ["Confirmation password doesn't match"]);
+        assert.deepStrictEqual(formFieldsErrors, ["!\nConfirmation password doesn't match"]);
 
-        await setInputValue(page, "confirm-password", "Str0ngP@ssw0rd");
-        await submitForm(page);
-
-        await page.waitForNavigation({ waitUntil: "networkidle0" });
+        await setInputValues(page, [{ name: "confirm-password", value: "Str0ngP@ssw0rd" }]);
+        await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
         assert.deepStrictEqual(consoleLogs, [
             "ST_CALLBACKS onCallSubmitNewPasswordAPI, password:Str0ngP@ssw0rd token:TOKEN",

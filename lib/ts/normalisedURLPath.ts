@@ -51,11 +51,10 @@ export function normaliseURLPathOrThrowError(input: string): string {
         // eslint-disable-next-line no-empty
     } catch (err) {}
     // not a valid URL
-
     // If the input contains a . it means they have given a domain name.
     // So we try assuming that they have given a domain name + path
     if (
-        (input.indexOf(".") !== -1 || input.startsWith("localhost")) &&
+        (domainGiven(input) || input.startsWith("localhost")) &&
         !input.startsWith("http://") &&
         !input.startsWith("https://")
     ) {
@@ -71,9 +70,27 @@ export function normaliseURLPathOrThrowError(input: string): string {
     try {
         // test that we can convert this to prevent an infinite loop
         new URL("http://example.com" + input);
-
         return normaliseURLPathOrThrowError("http://example.com" + input);
     } catch (err) {
         throw new Error("Please provide a valid URL path");
     }
+}
+
+function domainGiven(input: string): boolean {
+    // If no dot, return false.
+    if (input.indexOf(".") === -1) {
+        return false;
+    }
+
+    try {
+        const url = new URL(input);
+        return url.hostname.indexOf(".") !== -1;
+    } catch (e) {}
+
+    try {
+        const url = new URL("http://" + input);
+        return url.hostname.indexOf(".") !== -1;
+    } catch (e) {}
+
+    return false;
 }

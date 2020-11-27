@@ -45,12 +45,14 @@ export default function Button({ type, label, disabled, isLoading, onClick }: Bu
     }
     return (
         <StyleConsumer>
-            {styles => (
-                <button type={type} disabled={disabled} onClick={onClick} css={styles.button} className="button">
-                    {label}
-                    {isLoading && "..."}
-                </button>
-            )}
+            {styles => {
+                return (
+                    <button type={type} disabled={disabled} onClick={onClick} css={styles.button} className="button">
+                        {label}
+                        {isLoading && "..."}
+                    </button>
+                );
+            }}
         </StyleConsumer>
     );
 }

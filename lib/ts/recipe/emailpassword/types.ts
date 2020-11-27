@@ -282,6 +282,8 @@ export type SignInAndUpProps = BaseProps & {
 
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 
+    verifyEmailExists?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
 };
 
@@ -358,6 +360,11 @@ export type SignUpThemeProps = ThemeBaseProps & {
      * Call Sign Up API.
      */
     callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
+
+    /*
+     * Verify if an email exist.
+     */
+    validateEmail: (value: string) => Promise<string | undefined>;
 };
 
 export type SignInAndUpThemeProps = {
@@ -398,11 +405,17 @@ export type FormFieldError = {
     error: string;
 };
 
-export type SignOutResponse = {
+type SuccessAPIResponse = {
     /*
      * Success.
      */
     status: API_RESPONSE_STATUS.OK;
+};
+
+export type SignOutAPIResponse = SuccessAPIResponse;
+
+export type VerifyEmailAPIResponse = SuccessAPIResponse & {
+    exists: boolean;
 };
 
 export type FormFieldAPIResponse = {
@@ -557,17 +570,17 @@ export type FormFieldState = FormFieldThemeProps & {
     /*
      * Has the value already been submitted to its validator.
      */
-    validated: boolean;
-
-    /*
-     * Has the value already been submitted to its validator.
-     */
     ref: RefObject<HTMLInputElement>;
 
     /*
      * Has the value already been submitted to its validator.
      */
     showIsRequired?: boolean;
+
+    /*
+     * Validate on blur only.
+     */
+    validateOnBlurOnly?: (value: string) => Promise<string | undefined>;
 
     /*
      * Autocomplete
@@ -622,13 +635,17 @@ export type PaletteUserInput = Record<string, string>;
 
 export type DefaultStylesUserInput = Record<string, CSSObject>;
 
-export type FormBaseState = {
-    formFields: FormFieldState[];
-
-    generalError: string | undefined;
-
-    isLoading: boolean;
-};
+export type FormBaseStatus = "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
+export type FormBaseState =
+    | {
+          formFields: FormFieldState[];
+          status: FormBaseStatus;
+      }
+    | {
+          formFields: FormFieldState[];
+          status: "GENERAL_ERROR";
+          generalError: string;
+      };
 
 export type FormBaseProps = {
     header?: JSX.Element;
@@ -641,6 +658,8 @@ export type FormBaseProps = {
 
     buttonLabel: string;
 
+    noValidateOnBlur?: boolean;
+
     onSuccess?: () => void;
 
     callAPI: (
@@ -650,6 +669,7 @@ export type FormBaseProps = {
 
 export type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 export type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
+export type VerifyEmailAPI = (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
 export type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
 export type SubmitNewPasswordAPI = (
     requestJson: RequestJson,

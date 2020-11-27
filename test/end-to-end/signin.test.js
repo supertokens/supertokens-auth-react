@@ -27,13 +27,15 @@ import {
     getSubmitFormButtonLabel,
     getPlaceholders,
     getLabelsText,
-    setInputValue,
+    setInputValues,
     getGeneralError,
     getFieldErrors,
     clickForgotPasswordLink,
     submitForm,
     getInputNames,
-    toggleSignInSignUp
+    toggleSignInSignUp,
+    isFormButtonDisabled,
+    submitFormReturnRequestAndResponse
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { successfulSignUp } from "./signup.test";
@@ -120,45 +122,45 @@ describe("SuperTokens SignIn feature/theme", function() {
             assert.strictEqual(buttonLabel, "Email me");
         });
 
-        it("Should return fields are not optional error fields when sign in without filling the form", async function() {
-            await submitForm(page);
-
-            // Assert.
-            const formFieldsErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldsErrors, ["Field is not optional", "Field is not optional"]);
-        });
-
         it("Should show error messages with incorrect inputs", async function() {
-            // Set values.
-            await setInputValue(page, "email", "invalid_email");
+            // Form is disabled on init.
+            let disabled = await isFormButtonDisabled(page);
+            assert.strictEqual(disabled, true);
+
+            // Set incorrect values.
+            await setInputValues(page, [
+                { name: "email", value: "invalid_email" },
+                { name: "password", value: "********" }
+            ]);
+
+            // Form is disabled.
+            disabled = await isFormButtonDisabled(page);
+            assert.strictEqual(disabled, false);
 
             await submitForm(page);
-
             // // Assert.
             let formFieldsErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldsErrors, ["Email is invalid", "Field is not optional"]);
+            assert.deepStrictEqual(formFieldsErrors, ["!\nEmail is invalid"]);
 
             // Set values.
-            await setInputValue(page, "email", "john@gmail.com");
-            await setInputValue(page, "password", "********");
+            await setInputValues(page, [
+                { name: "email", value: "john@gmail.com" },
+                { name: "password", value: "********" }
+            ]);
+            // Form is now enabled
+            disabled = await isFormButtonDisabled(page);
+            assert.strictEqual(disabled, false);
 
-            await submitForm(page);
+            // Submit.
+            const { request, response } = await submitFormReturnRequestAndResponse(page, SIGN_IN_API);
 
-            // Assert Request.
-            const signInRequest = await page.waitForRequest(
-                request => request.url() === SIGN_IN_API && request.method() === "POST"
-            );
-            assert.strictEqual(signInRequest.headers().rid, "emailpassword");
+            assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
-                signInRequest.postData(),
+                request.postData(),
                 '{"formFields":[{"id":"email","value":"john@gmail.com"},{"id":"password","value":"********"}]}'
             );
 
-            // Assert Response.
-            const signInResponse = await page.waitForResponse(response => {
-                return response.url() === SIGN_IN_API && response.status() === 200;
-            });
-            const responseData = await signInResponse.json();
+            const responseData = await response.json();
             assert.strictEqual(responseData.status, "WRONG_CREDENTIALS_ERROR");
 
             // Assert wrong credentials
@@ -169,8 +171,8 @@ describe("SuperTokens SignIn feature/theme", function() {
         });
 
         it("Successful Sign In", async function() {
-            await successfulSignUp(page);
             await toggleSignInSignUp(page);
+            await successfulSignUp(page);
             await clearBrowserCookies(page);
 
             let cookies = await page.cookies();
@@ -178,28 +180,23 @@ describe("SuperTokens SignIn feature/theme", function() {
 
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await toggleSignInSignUp(page);
+
             // Set correct values.
-            await setInputValue(page, "email", "john.doe@supertokens.io");
-            await setInputValue(page, "password", "Str0ngP@ssw0rd");
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" }
+            ]);
 
             // Submit.
-            await submitForm(page);
+            const { request, response } = await submitFormReturnRequestAndResponse(page, SIGN_IN_API);
 
-            // Assert Request.
-            const signInRequest = await page.waitForRequest(
-                request => request.url() === SIGN_IN_API && request.method() === "POST"
-            );
-            assert.strictEqual(signInRequest.headers().rid, "emailpassword");
+            assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
-                signInRequest.postData(),
+                request.postData(),
                 '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}]}'
             );
 
-            // Assert Response.
-            const signInResponse = await page.waitForResponse(response => {
-                return response.url() === SIGN_IN_API && response.status() === 200;
-            });
-            const responseData = await signInResponse.json();
+            const responseData = await response.json();
             assert.strictEqual(responseData.status, "OK");
             await page.waitForNavigation({ waitUntil: "networkidle0" });
 
@@ -286,8 +283,10 @@ describe("SuperTokens SignIn feature/theme => Server Error", function() {
     });
 
     it("Server Error shows Something went wrong general error", async function() {
-        await setInputValue(page, "email", "john.doe@supertokens.io");
-        await setInputValue(page, "password", "Str0ngP@ssw0rd");
+        await setInputValues(page, [
+            { name: "email", value: "john.doe@supertokens.io" },
+            { name: "password", value: "Str0ngP@ssw0rd" }
+        ]);
 
         await submitForm(page);
 
@@ -340,17 +339,22 @@ describe("SuperTokens SignIn feature/theme callbacks", function() {
 
     it("Sign In using custom callbacks", async function() {
         // Set values.
-        await setInputValue(page, "email", "john.doe");
-        await setInputValue(page, "password", "Str0ngP@ssw0rd");
+        await setInputValues(page, [
+            { name: "email", value: "john.doe" },
+            { name: "password", value: "Str0ngP@ssw0rd" }
+        ]);
 
         await submitForm(page);
 
         // Use front end validation first before calling custom API.
         const formFieldsErrors = await getFieldErrors(page);
-        assert.deepStrictEqual(formFieldsErrors, ["Email is invalid"]);
+        assert.deepStrictEqual(formFieldsErrors, ["!\nEmail is invalid"]);
 
         // Update email and retry.
-        await setInputValue(page, "email", "john.doe@supertokens.io");
+        await setInputValues(page, [
+            { name: "email", value: "john.doe@supertokens.io" },
+            { name: "password", value: "Str0ngP@ssw0rd" }
+        ]);
         await submitForm(page);
         await page.waitForNavigation({ waitUntil: "networkidle0" });
 
@@ -381,18 +385,20 @@ describe("SuperTokens SignIn feature/theme callbacks", function() {
     it("Sign up using custom callbacks", async function() {
         await toggleSignInSignUp(page);
         // Set values.
-        await setInputValue(page, "email", "john.doe@supertokens.io");
-        await setInputValue(page, "password", "weakpassword");
-        await setInputValue(page, "name", "John Doe");
-        await setInputValue(page, "age", "20");
+        await setInputValues(page, [
+            { name: "email", value: "john.doe@supertokens.io" },
+            { name: "password", value: "weakpassword" },
+            { name: "name", value: "John Doe" },
+            { name: "age", value: "20" }
+        ]);
 
         await submitForm(page);
 
         // Use front end validation first before calling custom API.
         const formFieldsErrors = await getFieldErrors(page);
-        assert.deepStrictEqual(formFieldsErrors, ["Password must contain at least one number"]);
+        assert.deepStrictEqual(formFieldsErrors, ["!\nPassword must contain at least one number"]);
 
-        await setInputValue(page, "password", "Str0ngP@ssw0rd");
+        await setInputValues(page, [{ name: "password", value: "Str0ngP@ssw0rd" }]);
         await submitForm(page);
 
         await page.waitForNavigation({ waitUntil: "networkidle0" });

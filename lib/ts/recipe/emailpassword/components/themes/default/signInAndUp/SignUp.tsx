@@ -76,6 +76,12 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formF
                     }
                     // Otherwise, show for all non optional fields (including email and password).
                     return field.optional === false;
+                })(),
+                validateOnBlurOnly: (() => {
+                    if (field.id === "email") {
+                        return props.validateEmail;
+                    }
+                    return undefined;
                 })()
             };
         });
@@ -99,7 +105,6 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formF
                 <StyleConsumer>
                     {styles => {
                         const componentStyles = getStyles(styles.palette as NormalisedPalette);
-
                         return (
                             <FormBase
                                 formFields={formFields}

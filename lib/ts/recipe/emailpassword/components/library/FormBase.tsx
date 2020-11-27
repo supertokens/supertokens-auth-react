@@ -24,7 +24,7 @@ import { Button, FormRow, Input, InputError, Label } from ".";
 import { jsx } from "@emotion/core";
 import { APIFormField } from "../../../../types";
 import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY, MANDATORY_FORM_FIELDS_ID } from "../../constants";
-import { FormBaseProps, FormBaseState } from "../../types";
+import { FormBaseProps, FormBaseState, FormBaseStatus, FormFieldState } from "../../types";
 import { StyleConsumer } from "../styles/styleContext";
 
 /*
@@ -40,8 +40,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
 
         this.state = {
             formFields: props.formFields,
-            generalError: undefined,
-            isLoading: false
+            status: "IN_PROGRESS"
         };
     }
 
@@ -49,36 +48,103 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
      * Methods.
      */
 
-    handleInputChange = async (field: APIFormField): Promise<void> => {
+    handleInputFocus = async (field: APIFormField): Promise<void> => {
         const formFields = this.state.formFields;
         for (let i = 0; i < formFields.length; i++) {
             if (field.id === formFields[i].id) {
                 // remove error on input change.
                 formFields[i].error = undefined;
-                formFields[i].validated = false;
             }
         }
+
+        const status = this.getNewStatus(formFields, "focus");
 
         // Slightly delay the error update to prevent UI glitches.
         setTimeout(
             () =>
-                this.setState(oldState => ({
-                    ...oldState,
+                this.setState(() => ({
+                    status,
                     formFields: [...formFields]
                 })),
             300
         );
     };
 
+    handleInputBlur = async (field: APIFormField): Promise<void> => {
+        const formFields = this.state.formFields;
+        for (let i = 0; i < formFields.length; i++) {
+            if (field.id === formFields[i].id) {
+                // Validate.
+                formFields[i].error = await formFields[i].validate(field.value);
+                const validateOnBlurOnly = formFields[i].validateOnBlurOnly;
+
+                if (formFields[i].error === undefined && validateOnBlurOnly !== undefined) {
+                    formFields[i].error = await validateOnBlurOnly(field.value);
+                }
+            }
+        }
+        const status = this.getNewStatus(formFields, "blur");
+
+        // Slightly delay the update to prevent UI glitches.
+        setTimeout(
+            () =>
+                this.setState(oldState => {
+                    // Do not update status asynchronously on blur if backend error already came in.
+                    if (oldState.status === "GENERAL_ERROR") {
+                        return oldState;
+                    }
+                    return {
+                        status,
+                        formFields: [...formFields]
+                    };
+                }),
+            300
+        );
+    };
+
+    getNewStatus(formFields: FormFieldState[], type: "focus" | "blur"): FormBaseStatus {
+        let newStatus: FormBaseStatus = "READY";
+        let isNotLastRequiredFieldEmpty = false;
+        for (const i in formFields) {
+            const field = formFields[i];
+            if (field.error !== undefined) {
+                newStatus = "FIELD_ERRORS";
+                break;
+            }
+            if (field.optional === false) {
+                const value = field.ref.current !== null ? field.ref.current.value : "";
+
+                if (value.length === 0) {
+                    if (type === "blur") {
+                        newStatus = "IN_PROGRESS";
+                    } else {
+                        /*
+                         * In case of input focus event type,
+                         * Leave the benefice of the doubt if last empty field to re-enable Submit button even if input is still focused.
+                         */
+                        if (isNotLastRequiredFieldEmpty === false) {
+                            // On empty value, do not update status ot in progress if it is the only empty field on focus.
+                            isNotLastRequiredFieldEmpty = true;
+                        } else {
+                            // If is not last required field empty, then set status to in progress.
+                            newStatus = "IN_PROGRESS";
+                        }
+                    }
+                }
+            }
+        }
+
+        return newStatus;
+    }
+
     onFormSubmit = async (e: FormEvent): Promise<void> => {
         // Prevent default event propagation.
         e.preventDefault();
 
-        // Set isLoading to true.
+        // Set loading state.
         this.setState(oldState => ({
             ...oldState,
-            generalError: undefined,
-            isLoading: true
+            status: "LOADING"
         }));
 
         // Get the fields values from form.
@@ -89,19 +155,19 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             };
         });
 
-        // Call Sign In API.
+        // Call API.
         const result = await this.props.callAPI(fields);
-        // Set isLoading to false.
-        this.setState(oldState => ({
-            ...oldState,
-            isLoading: false
-        }));
 
-        // If successfully logged in.
+        // If successful
         if (result.status === API_RESPONSE_STATUS.OK) {
             if (this.props.onSuccess !== undefined) {
                 this.props.onSuccess();
             }
+            // Set Success state.
+            this.setState(oldState => ({
+                ...oldState,
+                status: "SUCCESS"
+            }));
             return;
         }
 
@@ -115,22 +181,11 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                     if (field.id === errorFields[i].id) {
                         field.error = errorFields[i].error;
                     }
-                    // Indicate to inputs that the value was submitted for validation, adding the input adornment icon
-                    // Skip empty optional fields.
-                    if (
-                        field.ref.current !== null &&
-                        field.ref.current.value.length !== 0 &&
-                        field.error === undefined
-                    ) {
-                        field.validated = true;
-                    } else if (field.error !== undefined) {
-                        field.validated = true;
-                    }
                 }
                 return field;
             });
-            this.setState(oldState => ({
-                ...oldState,
+            this.setState(() => ({
+                status: "FIELD_ERRORS",
                 formFields: formFields
             }));
             return;
@@ -143,6 +198,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         ) {
             this.setState(oldState => ({
                 ...oldState,
+                status: "GENERAL_ERROR",
                 generalError: result.message
             }));
         }
@@ -152,8 +208,9 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
      * Render.
      */
     render(): JSX.Element {
-        const { header, footer, buttonLabel, showLabels } = this.props;
-        const { generalError, formFields, isLoading } = this.state;
+        const { header, footer, buttonLabel, showLabels, noValidateOnBlur } = this.props;
+        const { formFields } = this.state;
+        const onInputBlur = noValidateOnBlur === true ? undefined : this.handleInputBlur;
 
         return (
             <StyleConsumer>
@@ -161,9 +218,9 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                     <div className="container" css={styles.container}>
                         <div className="row" css={styles.row}>
                             {header}
-                            {generalError && (
+                            {this.state.status === "GENERAL_ERROR" && (
                                 <div className="generalError" css={styles.generalError}>
-                                    {generalError}
+                                    {this.state.generalError}
                                 </div>
                             )}
 
@@ -183,7 +240,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                                     }
 
                                     return (
-                                        <FormRow key={field.id}>
+                                        <FormRow key={field.id} hasError={field.error !== undefined}>
                                             <Fragment>
                                                 {showLabels && (
                                                     <Label value={field.label} showIsRequired={field.showIsRequired} />
@@ -195,9 +252,9 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                                                     placeholder={field.placeholder}
                                                     ref={field.ref}
                                                     autoComplete={field.autoComplete}
-                                                    onChange={this.handleInputChange}
+                                                    onInputFocus={this.handleInputFocus}
+                                                    onInputBlur={onInputBlur}
                                                     hasError={field.error !== undefined}
-                                                    validated={field.validated}
                                                 />
 
                                                 {field.error && <InputError error={field.error} />}
@@ -209,8 +266,8 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                                 <FormRow key="form-button">
                                     <Fragment>
                                         <Button
-                                            disabled={isLoading}
-                                            isLoading={isLoading}
+                                            disabled={["READY", "GENERAL_ERROR"].includes(this.state.status) !== true}
+                                            isLoading={this.state.status === "LOADING"}
                                             type="submit"
                                             label={buttonLabel}
                                         />

@@ -82,6 +82,7 @@ export declare type SignInAndUpProps = BaseProps & {
     doesSessionExist?: () => Promise<boolean>;
     onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
+    verifyEmailExists?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
 };
 export declare type ResetPasswordUsingTokenProps = BaseProps & {
@@ -110,6 +111,7 @@ export declare type SignUpThemeProps = ThemeBaseProps & {
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
     callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
+    validateEmail: (value: string) => Promise<string | undefined>;
 };
 export declare type SignInAndUpThemeProps = {
     defaultToSignUp: boolean;
@@ -124,8 +126,12 @@ export declare type FormFieldError = {
     id: string;
     error: string;
 };
-export declare type SignOutResponse = {
+declare type SuccessAPIResponse = {
     status: API_RESPONSE_STATUS.OK;
+};
+export declare type SignOutAPIResponse = SuccessAPIResponse;
+export declare type VerifyEmailAPIResponse = SuccessAPIResponse & {
+    exists: boolean;
 };
 export declare type FormFieldAPIResponse = {
     status: API_RESPONSE_STATUS.FIELD_ERROR;
@@ -182,9 +188,9 @@ export declare type SubmitNewPasswordThemeProps = ThemeBaseProps & {
     onSignInClicked: () => void;
 };
 export declare type FormFieldState = FormFieldThemeProps & {
-    validated: boolean;
     ref: RefObject<HTMLInputElement>;
     showIsRequired?: boolean;
+    validateOnBlurOnly?: (value: string) => Promise<string | undefined>;
     autoComplete?: string;
 };
 export declare type EnterEmailThemeState = {
@@ -211,10 +217,14 @@ export declare type SignInAndUpState = {
 };
 export declare type PaletteUserInput = Record<string, string>;
 export declare type DefaultStylesUserInput = Record<string, CSSObject>;
+export declare type FormBaseStatus = "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
 export declare type FormBaseState = {
     formFields: FormFieldState[];
-    generalError: string | undefined;
-    isLoading: boolean;
+    status: FormBaseStatus;
+} | {
+    formFields: FormFieldState[];
+    status: "GENERAL_ERROR";
+    generalError: string;
 };
 export declare type FormBaseProps = {
     header?: JSX.Element;
@@ -222,11 +232,13 @@ export declare type FormBaseProps = {
     formFields: FormFieldState[];
     showLabels: boolean;
     buttonLabel: string;
+    noValidateOnBlur?: boolean;
     onSuccess?: () => void;
     callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse | SignUpThemeResponse | SubmitNewPasswordThemeResponse | EnterEmailThemeResponse>;
 };
 export declare type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 export declare type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
+export declare type VerifyEmailAPI = (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
 export declare type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
 export declare type SubmitNewPasswordAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordAPIResponse>;
 export {};
