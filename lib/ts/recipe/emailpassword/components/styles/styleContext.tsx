@@ -80,3 +80,5 @@ function getMergedPalette(defaultPalette: NormalisedPalette, rawPalette: Palette
     }
     return palette;
 }
+
+export default StyleContext;

@@ -19,8 +19,8 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import * as React from "react";
-import { StyleConsumer } from "../styles/styleContext";
+import React, { useContext } from "react";
+import StyleContext from "../styles/styleContext";
 
 /*
  * Props.
@@ -36,6 +36,10 @@ type FormRowProps = {
  */
 
 export default function FormRow({ children, hasError }: FormRowProps): JSX.Element {
+    /*
+     * Render.
+     */
+    const styles = useContext(StyleContext);
     const errorStyle =
         hasError === true
             ? {
@@ -43,12 +47,8 @@ export default function FormRow({ children, hasError }: FormRowProps): JSX.Eleme
               }
             : {};
     return (
-        <StyleConsumer>
-            {styles => (
-                <div className="formRow" css={[styles.formRow, errorStyle]}>
-                    {children}
-                </div>
-            )}
-        </StyleConsumer>
+        <div className="formRow" css={[styles.formRow, errorStyle]}>
+            {children}
+        </div>
     );
 }

@@ -16,8 +16,9 @@
 /*
  * Imports.
  */
-import * as React from "react";
-import { PureComponent, createRef, Fragment } from "react";
+import React, { PureComponent, createRef, Fragment } from "react";
+import StyleContext from "../../../styles/styleContext";
+
 import { SignInThemeProps, FormFieldState } from "../../../../types";
 import { CSSObject } from "@emotion/serialize/types";
 
@@ -26,9 +27,7 @@ import { jsx } from "@emotion/core";
 
 import FormBase from "../../../library/FormBase";
 import { Styles } from "../../../../../../types";
-import { StyleConsumer, StyleProvider } from "../../../styles/styleContext";
 import { NormalisedPalette } from "../types";
-import { defaultPalette, getDefaultStyles } from "../styles/styles";
 
 /*
  * Styles.
@@ -60,6 +59,8 @@ function getStyles(palette: NormalisedPalette): Styles {
  */
 
 export default class SignInTheme extends PureComponent<SignInThemeProps, { formFields: FormFieldState[] }> {
+    static contextType = StyleContext;
+
     /*
      * Constructor.
      */
@@ -84,63 +85,50 @@ export default class SignInTheme extends PureComponent<SignInThemeProps, { formF
      */
 
     render(): JSX.Element {
-        const { signUpClicked, forgotPasswordClick, styleFromInit, onSuccess, callAPI } = this.props;
+        const styles = this.context;
+        const componentStyle = getStyles(styles.palette as NormalisedPalette);
+
+        const { signUpClicked, forgotPasswordClick, onSuccess, callAPI } = this.props;
         const { formFields } = this.state;
 
         return (
-            <StyleProvider
-                defaultPalette={defaultPalette}
-                styleFromInit={styleFromInit}
-                getDefaultStyles={getDefaultStyles}>
-                <StyleConsumer>
-                    {styles => {
-                        const componentStyle = getStyles(styles.palette as NormalisedPalette);
-                        return (
-                            <FormBase
-                                formFields={formFields}
-                                buttonLabel={"SIGN IN"}
-                                onSuccess={onSuccess}
-                                callAPI={callAPI}
-                                showLabels={true}
-                                noValidateOnBlur={true}
-                                header={
-                                    <Fragment>
-                                        <div
-                                            className="headerTitle"
-                                            css={[componentStyle.headerTitle, styles.headerTitle]}>
-                                            Sign In
-                                        </div>
-                                        <div
-                                            className="headerSubtitle"
-                                            css={[componentStyle.headerSubTitle, styles.headerSubtitle]}>
-                                            <div className="secondaryText" css={styles.secondaryText}>
-                                                Not registered yet?
-                                                <span className="link" onClick={signUpClicked} css={styles.link}>
-                                                    Sign Up
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="divider" css={styles.divider}></div>
-                                    </Fragment>
-                                }
-                                footer={
-                                    <div
-                                        className="link secondaryText forgotPasswordLink"
-                                        css={[
-                                            styles.link,
-                                            styles.secondaryText,
-                                            componentStyle.forgotPasswordLink,
-                                            styles.forgotPasswordLink
-                                        ]}
-                                        onClick={forgotPasswordClick}>
-                                        Forgot password?
-                                    </div>
-                                }
-                            />
-                        );
-                    }}
-                </StyleConsumer>
-            </StyleProvider>
+            <FormBase
+                formFields={formFields}
+                buttonLabel={"SIGN IN"}
+                onSuccess={onSuccess}
+                callAPI={callAPI}
+                showLabels={true}
+                noValidateOnBlur={true}
+                header={
+                    <Fragment>
+                        <div className="headerTitle" css={[componentStyle.headerTitle, styles.headerTitle]}>
+                            Sign In
+                        </div>
+                        <div className="headerSubtitle" css={[componentStyle.headerSubTitle, styles.headerSubtitle]}>
+                            <div className="secondaryText" css={styles.secondaryText}>
+                                Not registered yet?
+                                <span className="link" onClick={signUpClicked} css={styles.link}>
+                                    Sign Up
+                                </span>
+                            </div>
+                        </div>
+                        <div className="divider" css={styles.divider}></div>
+                    </Fragment>
+                }
+                footer={
+                    <div
+                        className="link secondaryText forgotPasswordLink"
+                        css={[
+                            styles.link,
+                            styles.secondaryText,
+                            componentStyle.forgotPasswordLink,
+                            styles.forgotPasswordLink
+                        ]}
+                        onClick={forgotPasswordClick}>
+                        Forgot password?
+                    </div>
+                }
+            />
         );
     }
 }

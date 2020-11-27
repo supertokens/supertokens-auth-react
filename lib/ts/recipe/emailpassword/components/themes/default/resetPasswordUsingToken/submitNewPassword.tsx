@@ -16,8 +16,8 @@
 /*
  * Imports.
  */
-import * as React from "react";
-import { PureComponent, createRef, Fragment } from "react";
+import React, { PureComponent, createRef, Fragment } from "react";
+import StyleContext from "../../../styles/styleContext";
 
 import { CSSObject } from "@emotion/serialize/types";
 
@@ -27,9 +27,7 @@ import { Styles } from "../../../../../../types";
 import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../../types";
 import { FormRow, Button } from "../../../library";
 import FormBase from "../../../library/FormBase";
-import { StyleProvider, StyleConsumer } from "../../../styles/styleContext";
 import { NormalisedPalette } from "../types";
-import { getDefaultStyles, defaultPalette } from "../styles/styles";
 
 /*
  * Styles.
@@ -69,6 +67,8 @@ export default class SubmitNewPasswordTheme extends PureComponent<
     SubmitNewPasswordThemeProps,
     SubmitNewPasswordThemeState
 > {
+    static contextType = StyleContext;
+
     /*
      * Constructor.
      */
@@ -104,78 +104,59 @@ export default class SubmitNewPasswordTheme extends PureComponent<
      */
 
     render(): JSX.Element {
+        const styles = this.context;
+        const componentStyles = getStyles(styles.palette);
         const { callAPI, onSignInClicked } = this.props;
-        const styleFromInit = this.props.styleFromInit !== undefined ? this.props.styleFromInit : {};
         const { formFields, hasNewPassword } = this.state;
 
-        return (
-            <StyleProvider
-                defaultPalette={defaultPalette}
-                styleFromInit={styleFromInit}
-                getDefaultStyles={getDefaultStyles}>
-                <StyleConsumer>
-                    {styles => {
-                        const componentStyles = getStyles(styles.palette);
-
-                        if (hasNewPassword === true) {
-                            return (
-                                <div className="container" css={styles.container}>
-                                    <div className="row" css={styles.row}>
-                                        <div
-                                            className="headerTitle"
-                                            css={[styles.headerTitle, styleFromInit.headerTitle]}>
-                                            Success!
-                                        </div>
-                                        <FormRow key="form-button">
-                                            <Fragment>
-                                                <div
-                                                    className="primaryText successMessage"
-                                                    css={[
-                                                        styles.primaryText,
-                                                        componentStyles.successMessage,
-                                                        styles.successMessage
-                                                    ]}>
-                                                    Your password has been updated successfully
-                                                </div>
-                                                <Button
-                                                    disabled={false}
-                                                    isLoading={false}
-                                                    type="button"
-                                                    onClick={onSignInClicked}
-                                                    label={"SIGN IN"}
-                                                />
-                                            </Fragment>
-                                        </FormRow>
-                                    </div>
+        if (hasNewPassword === true) {
+            return (
+                <div className="container" css={styles.container}>
+                    <div className="row" css={styles.row}>
+                        <div className="headerTitle" css={styles.headerTitle}>
+                            Success!
+                        </div>
+                        <FormRow key="form-button">
+                            <Fragment>
+                                <div
+                                    className="primaryText successMessage"
+                                    css={[styles.primaryText, componentStyles.successMessage, styles.successMessage]}>
+                                    Your password has been updated successfully
                                 </div>
-                            );
-                        }
-                        return (
-                            <FormBase
-                                formFields={formFields}
-                                buttonLabel={"Change password"}
-                                onSuccess={this.onSuccess}
-                                callAPI={callAPI}
-                                showLabels={false}
-                                header={
-                                    <Fragment>
-                                        <div
-                                            className="headerTitle"
-                                            css={[componentStyles.headerTitle, styles.headerTitle]}>
-                                            Change your password
-                                        </div>
-                                        <div className="headerSubtitle" css={styles.headerSubTitle}>
-                                            <div className="secondaryText" css={styles.secondaryText}>
-                                                Enter a new password below to change your password
-                                            </div>
-                                        </div>
-                                    </Fragment>
-                                }
-                            />
-                        );
-                    }}
-                </StyleConsumer>
-            </StyleProvider>
+                                <Button
+                                    disabled={false}
+                                    isLoading={false}
+                                    type="button"
+                                    onClick={onSignInClicked}
+                                    label={"SIGN IN"}
+                                />
+                            </Fragment>
+                        </FormRow>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <FormBase
+                formFields={formFields}
+                buttonLabel={"Change password"}
+                onSuccess={this.onSuccess}
+                callAPI={callAPI}
+                showLabels={false}
+                header={
+                    <Fragment>
+                        <div className="headerTitle" css={[componentStyles.headerTitle, styles.headerTitle]}>
+                            Change your password
+                        </div>
+                        <div className="headerSubtitle" css={styles.headerSubTitle}>
+                            <div className="secondaryText" css={styles.secondaryText}>
+                                Enter a new password below to change your password
+                            </div>
+                        </div>
+                    </Fragment>
+                }
+            />
         );
     }
 }

@@ -20,8 +20,8 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 
-import * as React from "react";
-import { StyleConsumer } from "../styles/styleContext";
+import React, { useContext } from "react";
+import StyleContext from "../styles/styleContext";
 
 /*
  * Props.
@@ -40,19 +40,17 @@ type ButtonProps = {
  */
 
 export default function Button({ type, label, disabled, isLoading, onClick }: ButtonProps): JSX.Element {
+    /*
+     * Render.
+     */
+    const styles = useContext(StyleContext);
     if (disabled === undefined) {
         disabled = false;
     }
     return (
-        <StyleConsumer>
-            {styles => {
-                return (
-                    <button type={type} disabled={disabled} onClick={onClick} css={styles.button} className="button">
-                        {label}
-                        {isLoading && "..."}
-                    </button>
-                );
-            }}
-        </StyleConsumer>
+        <button type={type} disabled={disabled} onClick={onClick} css={styles.button} className="button">
+            {label}
+            {isLoading && "..."}
+        </button>
     );
 }

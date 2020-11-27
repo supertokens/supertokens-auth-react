@@ -17,12 +17,12 @@
  * Imports.
  */
 
-import React from "react";
+import React, { useContext } from "react";
+import StyleContext from "../../../styles/styleContext";
 import { Styles } from "../../../../../../types";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { StyleConsumer } from "../../../styles/styleContext";
 
 export default function SignUpFooter({
     componentStyles,
@@ -33,34 +33,32 @@ export default function SignUpFooter({
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
 }): JSX.Element | null {
+    const styles = useContext(StyleContext);
+
     if (termsOfServiceLink === undefined && privacyPolicyLink === undefined) {
         return null;
     }
 
     return (
-        <StyleConsumer>
-            {styles => (
-                <div
-                    className="secondaryText privacyPolicyAndTermsAndConditions"
-                    css={[
-                        componentStyles.privacyPolicyAndTermsAndConditions,
-                        styles.secondaryText,
-                        styles.privacyPolicyAndTermsAndConditions
-                    ]}>
-                    By signing up, you agree to our
-                    {termsOfServiceLink !== undefined && (
-                        <a className="link" css={styles.link} target="_blank" href={termsOfServiceLink}>
-                            Terms of Service
-                        </a>
-                    )}
-                    {termsOfServiceLink !== undefined && privacyPolicyLink !== undefined && "and"}
-                    {privacyPolicyLink !== undefined && (
-                        <a className="link" css={styles.link} href={privacyPolicyLink} target="_blank">
-                            Privacy Policy
-                        </a>
-                    )}
-                </div>
+        <div
+            className="secondaryText privacyPolicyAndTermsAndConditions"
+            css={[
+                componentStyles.privacyPolicyAndTermsAndConditions,
+                styles.secondaryText,
+                styles.privacyPolicyAndTermsAndConditions
+            ]}>
+            By signing up, you agree to our
+            {termsOfServiceLink !== undefined && (
+                <a className="link" css={styles.link} target="_blank" href={termsOfServiceLink}>
+                    Terms of Service
+                </a>
             )}
-        </StyleConsumer>
+            {termsOfServiceLink !== undefined && privacyPolicyLink !== undefined && "and"}
+            {privacyPolicyLink !== undefined && (
+                <a className="link" css={styles.link} href={privacyPolicyLink} target="_blank">
+                    Privacy Policy
+                </a>
+            )}
+        </div>
     );
 }
