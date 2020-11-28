@@ -15,9 +15,9 @@
 /*
  * Imports.
  */
-import React, { PureComponent, createRef, Fragment } from "react";
+import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
-import { FormFieldState, SignUpThemeProps } from "../../../../types";
+import { SignUpThemeProps } from "../../../../types";
 import { CSSObject } from "@emotion/serialize/types";
 
 /** @jsx jsx */
@@ -54,42 +54,8 @@ function getStyles(palette: NormalisedPalette): any {
  * Component.
  */
 
-export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formFields: FormFieldState[] }> {
+export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
     static contextType = StyleContext;
-
-    /*
-     * Constructor.
-     */
-    constructor(props: SignUpThemeProps) {
-        super(props);
-
-        const emailPasswordOnly = props.formFields.length === 2;
-        const formFields = props.formFields.map(field => {
-            return {
-                ...field,
-                ref: createRef<HTMLInputElement>(),
-                validated: false,
-                showIsRequired: (() => {
-                    // If email and password only, do not show required indicator (*).
-                    if (emailPasswordOnly) {
-                        return false;
-                    }
-                    // Otherwise, show for all non optional fields (including email and password).
-                    return field.optional === false;
-                })(),
-                validateOnBlurOnly: (() => {
-                    if (field.id === "email") {
-                        return props.validateEmail;
-                    }
-                    return undefined;
-                })()
-            };
-        });
-
-        this.state = {
-            formFields
-        };
-    }
 
     /*
      * Render.
@@ -98,7 +64,7 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps, { formF
         const styles = this.context;
         const componentStyles = getStyles(styles.palette as NormalisedPalette);
         const { privacyPolicyLink, termsOfServiceLink, signInClicked, onSuccess, callAPI } = this.props;
-        const { formFields } = this.state;
+        const { formFields } = this.props;
         return (
             <FormBase
                 formFields={formFields}

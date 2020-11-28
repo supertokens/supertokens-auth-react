@@ -82,7 +82,7 @@ export declare type SignInAndUpProps = BaseProps & {
     doesSessionExist?: () => Promise<boolean>;
     onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
-    verifyEmailExists?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
 };
 export declare type ResetPasswordUsingTokenProps = BaseProps & {
@@ -111,7 +111,6 @@ export declare type SignUpThemeProps = ThemeBaseProps & {
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
     callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
-    validateEmail: (value: string) => Promise<string | undefined>;
 };
 export declare type SignInAndUpThemeProps = {
     defaultToSignUp: boolean;
@@ -121,7 +120,14 @@ export declare type SignInAndUpThemeProps = {
 export declare type NormalisedFormFieldWithError = NormalisedFormField & {
     error?: string;
 };
-export declare type FormFieldThemeProps = NormalisedFormFieldWithError;
+export declare type FormFieldThemeProps = NormalisedFormFieldWithError & {
+    showIsRequired?: boolean;
+    validateOnBlurOnly?: (value: string) => Promise<string | undefined>;
+    autoComplete?: string;
+};
+export declare type FormFieldState = FormFieldThemeProps & {
+    ref: RefObject<HTMLInputElement>;
+};
 export declare type FormFieldError = {
     id: string;
     error: string;
@@ -187,19 +193,11 @@ export declare type SubmitNewPasswordThemeProps = ThemeBaseProps & {
     callAPI: (fields: APIFormField[]) => Promise<SubmitNewPasswordThemeResponse>;
     onSignInClicked: () => void;
 };
-export declare type FormFieldState = FormFieldThemeProps & {
-    ref: RefObject<HTMLInputElement>;
-    showIsRequired?: boolean;
-    validateOnBlurOnly?: (value: string) => Promise<string | undefined>;
-    autoComplete?: string;
-};
 export declare type EnterEmailThemeState = {
     emailSent?: boolean;
-    formFields: FormFieldState[];
 };
 export declare type SubmitNewPasswordThemeState = {
     hasNewPassword?: boolean;
-    formFields: FormFieldState[];
 };
 export declare enum SignInAndUpStateStatus {
     LOADING = "LOADING",
@@ -229,7 +227,7 @@ export declare type FormBaseState = {
 export declare type FormBaseProps = {
     header?: JSX.Element;
     footer?: JSX.Element;
-    formFields: FormFieldState[];
+    formFields: FormFieldThemeProps[];
     showLabels: boolean;
     buttonLabel: string;
     noValidateOnBlur?: boolean;

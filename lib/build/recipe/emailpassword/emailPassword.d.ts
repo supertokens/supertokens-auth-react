@@ -11,7 +11,7 @@ export default class EmailPassword extends RecipeModule {
     getConfig: () => NormalisedEmailPasswordConfig;
     getFeatures: () => Record<string, import("../../types").ReactComponentClass>;
     signUpAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<import("./types").BaseSignInUpAPIResponse>;
-    verifyEmailExists: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+    emailExistsAPI: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
     signInAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
     submitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordAPIResponse>;
     enterEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<import("./types").BaseResetPasswordAPIResponse>;

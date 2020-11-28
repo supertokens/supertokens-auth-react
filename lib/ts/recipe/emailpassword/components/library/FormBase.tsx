@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import React, { FormEvent, Fragment, PureComponent } from "react";
+import React, { createRef, FormEvent, Fragment, PureComponent } from "react";
 import StyleContext from "../styles/styleContext";
 import { Button, FormRow, Input, InputError, Label } from ".";
 
@@ -40,7 +40,10 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         super(props);
 
         this.state = {
-            formFields: props.formFields,
+            formFields: props.formFields.map(field => ({
+                ...field,
+                ref: createRef<HTMLInputElement>()
+            })),
             status: "IN_PROGRESS"
         };
     }

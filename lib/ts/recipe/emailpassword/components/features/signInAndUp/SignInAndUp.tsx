@@ -21,7 +21,7 @@ import { PureComponent, Fragment } from "react";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { handleSignInAPI, handleSignUpAPI, handleVerifyEmailAPICall } from "./api";
+import { handleSignInAPI, handleSignUpAPI, handleEmailExistsAPICall } from "./api";
 import EmailPassword from "../../../emailPassword";
 import {
     SignInAndUpProps,
@@ -32,11 +32,12 @@ import {
     OnHandleSignInAndUpSuccessContext,
     SignUpAPIResponse,
     SignInAPIResponse,
-    VerifyEmailAPIResponse
+    VerifyEmailAPIResponse,
+    FormFieldThemeProps
 } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
-import { APIFormField, RequestJson } from "../../../../../types";
+import { APIFormField, NormalisedFormField, RequestJson } from "../../../../../types";
 import { redirectToInApp, redirectToWithReload } from "../../../../../utils";
 import FeatureWrapper from "../../../../components/featureWrapper";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../../constants";
@@ -239,21 +240,42 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
 
     onCallEmailExistAPI = async (value: string, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
         // If props provided by user.
-        if (this.props.verifyEmailExists !== undefined) {
-            return await this.props.verifyEmailExists(value, headers);
+        if (this.props.onCallEmailExistsAPI !== undefined) {
+            return await this.props.onCallEmailExistsAPI(value, headers);
         }
 
         // Otherwise, use built in.
-        return await this.getRecipeInstanceOrThrow().verifyEmailExists(value, headers);
+        return await this.getRecipeInstanceOrThrow().emailExistsAPI(value, headers);
     };
 
     validateEmail = async (value: string): Promise<string | undefined> => {
-        return await handleVerifyEmailAPICall(
+        return await handleEmailExistsAPICall(
             value,
             this.getRecipeInstanceOrThrow().getRecipeId(),
             this.onCallEmailExistAPI
         );
     };
+
+    getSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {
+        const emailPasswordOnly = formFields.length === 2;
+        return formFields.map(field => ({
+            ...field,
+            showIsRequired: (() => {
+                // If email and password only, do not show required indicator (*).
+                if (emailPasswordOnly) {
+                    return false;
+                }
+                // Otherwise, show for all non optional fields (including email and password).
+                return field.optional === false;
+            })(),
+            validateOnBlurOnly: (() => {
+                if (field.id === "email") {
+                    return this.validateEmail;
+                }
+                return undefined;
+            })()
+        }));
+    }
 
     /*
      * Init.
@@ -292,12 +314,11 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
 
         const signUpForm = {
             styleFromInit: signUpFeature.style,
-            formFields: signUpFeature.formFields,
+            formFields: this.getSignUpFeatureFormFields(signUpFeature.formFields),
             privacyPolicyLink: signUpFeature.privacyPolicyLink,
             termsOfServiceLink: signUpFeature.termsOfServiceLink,
             onSuccess: this.onSignUpSuccess,
-            callAPI: this.signUp,
-            validateEmail: this.validateEmail
+            callAPI: this.signUp
         };
 
         const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;

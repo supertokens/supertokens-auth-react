@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import React, { PureComponent, createRef, Fragment } from "react";
+import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
 
 import { CSSObject } from "@emotion/serialize/types";
@@ -48,10 +48,6 @@ function getStyles(palette: NormalisedPalette): Styles {
             marginBottom: "21px"
         } as CSSObject,
 
-        forgotPasswordLink: {
-            marginTop: "10px"
-        } as CSSObject,
-
         successMessage: {
             marginTop: "15px",
             marginBottom: "15px"
@@ -74,23 +70,13 @@ export default class SubmitNewPasswordTheme extends PureComponent<
      */
     constructor(props: SubmitNewPasswordThemeProps) {
         super(props);
-
-        const formFields = props.formFields.map(field => {
-            return {
-                ...field,
-                ref: createRef<HTMLInputElement>(),
-                validated: false
-            };
-        });
-
         this.state = {
-            formFields
+            hasNewPassword: false
         };
     }
 
     onSuccess = (): void => {
-        this.setState(oldState => ({
-            ...oldState,
+        this.setState(() => ({
             hasNewPassword: true
         }));
 
@@ -106,8 +92,8 @@ export default class SubmitNewPasswordTheme extends PureComponent<
     render(): JSX.Element {
         const styles = this.context;
         const componentStyles = getStyles(styles.palette);
-        const { callAPI, onSignInClicked } = this.props;
-        const { formFields, hasNewPassword } = this.state;
+        const { callAPI, formFields, onSignInClicked } = this.props;
+        const { hasNewPassword } = this.state;
 
         if (hasNewPassword === true) {
             return (

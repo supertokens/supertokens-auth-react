@@ -1,14 +1,11 @@
 import React, { PureComponent } from "react";
-import { FormFieldState, SignUpThemeProps } from "../../../../types";
+import { SignUpThemeProps } from "../../../../types";
 import { CSSObject } from "@emotion/serialize/types";
 import { NormalisedPalette } from "../types";
-export default class SignUpTheme extends PureComponent<SignUpThemeProps, {
-    formFields: FormFieldState[];
-}> {
+export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
     static contextType: React.Context<{
         [x: string]: CSSObject;
         palette: NormalisedPalette;
     }>;
-    constructor(props: SignUpThemeProps);
     render(): JSX.Element;
 }
