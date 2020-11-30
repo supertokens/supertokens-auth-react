@@ -121,7 +121,7 @@ describe("SuperTokens SignUp feature/theme", function() {
             await setInputValues(page, [
                 { name: "email", value: "john@doe" },
                 { name: "password", value: "test123" },
-                { name: "name", value: "John Doe" },
+                { name: "name", value: "" },
                 { name: "age", value: "17" }
             ]);
             disabled = await isFormButtonDisabled(page);
@@ -132,10 +132,14 @@ describe("SuperTokens SignUp feature/theme", function() {
             assert.deepStrictEqual(formFieldErrors, [
                 "!\nEmail is invalid",
                 "!\nPassword must contain at least 8 characters, including a number",
+                "!\nField is not optional",
                 "!\nYou must be over 18 to register"
             ]);
 
-            await setInputValues(page, [{ name: "password", value: "Str0ngP@ssw0rd" }]);
+            await setInputValues(page, [
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" }
+            ]);
 
             await submitForm(page);
 

@@ -78,8 +78,14 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         const formFields = this.state.formFields;
         for (let i = 0; i < formFields.length; i++) {
             if (field.id === formFields[i].id) {
+                // Not empty for non optional field.
+                if (field.value === "" && formFields[i].optional === false) {
+                    formFields[i].error = "Field is not optional";
+                    break;
+                }
                 // Validate.
                 formFields[i].error = await formFields[i].validate(field.value);
+                break;
             }
         }
         const status = this.getNewStatus(formFields, "blur");
