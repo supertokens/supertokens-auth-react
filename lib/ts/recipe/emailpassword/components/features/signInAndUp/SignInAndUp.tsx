@@ -248,7 +248,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         return await this.getRecipeInstanceOrThrow().emailExistsAPI(value, headers);
     };
 
-    validateEmail = async (value: string): Promise<string | undefined> => {
+    doesEmailExist = async (value: string): Promise<string | undefined> => {
         return await handleEmailExistsAPICall(
             value,
             this.getRecipeInstanceOrThrow().getRecipeId(),
@@ -285,7 +285,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
                         return "Email must be of type string";
                     }
 
-                    return this.validateEmail(value);
+                    return this.doesEmailExist(value);
                 };
             })()
         }));

@@ -18,7 +18,7 @@ declare class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpSta
     onCallSignUpAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<import("../../../types").BaseSignInUpAPIResponse>;
     onCallSignInAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
     onCallEmailExistAPI: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
-    validateEmail: (value: string) => Promise<string | undefined>;
+    doesEmailExist: (value: string) => Promise<string | undefined>;
     getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[];
     componentDidMount: () => Promise<void>;
     render: () => JSX.Element;
