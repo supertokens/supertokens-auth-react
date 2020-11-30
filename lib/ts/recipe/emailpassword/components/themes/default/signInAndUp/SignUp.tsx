@@ -71,6 +71,7 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
                 buttonLabel={"SIGN UP"}
                 onSuccess={onSuccess}
                 callAPI={callAPI}
+                validateOnBlur={true}
                 showLabels={true}
                 header={
                     <Fragment>

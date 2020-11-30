@@ -393,11 +393,6 @@ export type FormFieldThemeProps = NormalisedFormFieldWithError & {
     showIsRequired?: boolean;
 
     /*
-     * Validate on blur only.
-     */
-    validateOnBlurOnly?: (value: string) => Promise<string | undefined>;
-
-    /*
      * Autocomplete
      */
     autoComplete?: string;
@@ -639,7 +634,7 @@ export type FormBaseProps = {
 
     buttonLabel: string;
 
-    noValidateOnBlur?: boolean;
+    validateOnBlur?: boolean;
 
     onSuccess?: () => void;
 

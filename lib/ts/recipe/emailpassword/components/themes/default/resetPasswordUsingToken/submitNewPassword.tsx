@@ -99,7 +99,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
             return (
                 <div className="container" css={styles.container}>
                     <div className="row" css={styles.row}>
-                        <div className="headerTitle" css={styles.headerTitle}>
+                        <div className="headerTitle" css={[componentStyles.headerTitle, styles.headerTitle]}>
                             Success!
                         </div>
                         <FormRow key="form-button">
@@ -128,6 +128,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                 formFields={formFields}
                 buttonLabel={"Change password"}
                 onSuccess={this.onSuccess}
+                validateOnBlur={true}
                 callAPI={callAPI}
                 showLabels={false}
                 header={
@@ -135,7 +136,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                         <div className="headerTitle" css={[componentStyles.headerTitle, styles.headerTitle]}>
                             Change your password
                         </div>
-                        <div className="headerSubtitle" css={styles.headerSubTitle}>
+                        <div className="headerSubtitle" css={[componentStyles.headerSubTitle, styles.headerSubTitle]}>
                             <div className="secondaryText" css={styles.secondaryText}>
                                 Enter a new password below to change your password
                             </div>
