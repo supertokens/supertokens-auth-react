@@ -114,7 +114,7 @@ export default class EmailPassword extends RecipeModule {
         });
     };
 
-    verifyEmailExists = async (value: string, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
+    emailExistsAPI = async (value: string, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
         return this.httpRequest.get(
             "/signup/email/exists",
             {

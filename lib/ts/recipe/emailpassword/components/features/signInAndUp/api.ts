@@ -111,16 +111,16 @@ export async function handleSignInAPI(
     }
 }
 
-export async function handleVerifyEmailAPICall(
+export async function handleEmailExistsAPICall(
     value: string,
     rid: string,
-    verifyEmailAPI: VerifyEmailAPI
+    onCallEmailExistsAPI: VerifyEmailAPI
 ): Promise<string | undefined> {
     try {
         const headers: HeadersInit = {
             rid
         };
-        const response = await verifyEmailAPI(value, headers);
+        const response = await onCallEmailExistsAPI(value, headers);
 
         // If email already exists.
         if (response.status === API_RESPONSE_STATUS.OK) {
@@ -135,7 +135,7 @@ export async function handleVerifyEmailAPICall(
 
         // Otherwise, something went wrong.
         console.error(
-            "There was an error handling the output format of onCallSignInAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks//sign-in-up#output-1"
+            "There was an error handling the output format of onCallEmailExistsAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks//sign-in-up#output-1"
         );
         // Fail silently.
         return undefined;

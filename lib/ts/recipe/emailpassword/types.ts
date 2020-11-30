@@ -282,7 +282,7 @@ export type SignInAndUpProps = BaseProps & {
 
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 
-    verifyEmailExists?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
 
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
 };
@@ -360,11 +360,6 @@ export type SignUpThemeProps = ThemeBaseProps & {
      * Call Sign Up API.
      */
     callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
-
-    /*
-     * Verify if an email exist.
-     */
-    validateEmail: (value: string) => Promise<string | undefined>;
 };
 
 export type SignInAndUpThemeProps = {
@@ -391,7 +386,29 @@ export type NormalisedFormFieldWithError = NormalisedFormField & {
     error?: string;
 };
 
-export type FormFieldThemeProps = NormalisedFormFieldWithError;
+export type FormFieldThemeProps = NormalisedFormFieldWithError & {
+    /*
+     * Has the value already been submitted to its validator.
+     */
+    showIsRequired?: boolean;
+
+    /*
+     * Validate on blur only.
+     */
+    validateOnBlurOnly?: (value: string) => Promise<string | undefined>;
+
+    /*
+     * Autocomplete
+     */
+    autoComplete?: string;
+};
+
+export type FormFieldState = FormFieldThemeProps & {
+    /*
+     * Has the value already been submitted to its validator.
+     */
+    ref: RefObject<HTMLInputElement>;
+};
 
 export type FormFieldError = {
     /*
@@ -562,42 +579,11 @@ export type SubmitNewPasswordThemeProps = ThemeBaseProps & {
     onSignInClicked: () => void;
 };
 
-/*
- * State type.
- */
-
-export type FormFieldState = FormFieldThemeProps & {
-    /*
-     * Has the value already been submitted to its validator.
-     */
-    ref: RefObject<HTMLInputElement>;
-
-    /*
-     * Has the value already been submitted to its validator.
-     */
-    showIsRequired?: boolean;
-
-    /*
-     * Validate on blur only.
-     */
-    validateOnBlurOnly?: (value: string) => Promise<string | undefined>;
-
-    /*
-     * Autocomplete
-     */
-    autoComplete?: string;
-};
-
 export type EnterEmailThemeState = {
     /*
      * Has the email been sent already.
      */
     emailSent?: boolean;
-
-    /*
-     * Email FormField only.
-     */
-    formFields: FormFieldState[];
 };
 
 export type SubmitNewPasswordThemeState = {
@@ -605,11 +591,6 @@ export type SubmitNewPasswordThemeState = {
      * Has new password been set successfully.
      */
     hasNewPassword?: boolean;
-
-    /*
-     * Password and new password FormFields.
-     */
-    formFields: FormFieldState[];
 };
 
 export enum SignInAndUpStateStatus {
@@ -652,7 +633,7 @@ export type FormBaseProps = {
 
     footer?: JSX.Element;
 
-    formFields: FormFieldState[];
+    formFields: FormFieldThemeProps[];
 
     showLabels: boolean;
 

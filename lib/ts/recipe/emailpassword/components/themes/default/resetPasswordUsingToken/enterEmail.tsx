@@ -15,7 +15,7 @@
 /*
  * Imports.
  */
-import React, { PureComponent, createRef, Fragment } from "react";
+import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
 
 import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../../types";
@@ -57,23 +57,13 @@ function getStyles(palette: NormalisedPalette): Styles {
 
 export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps, EnterEmailThemeState> {
     static contextType = StyleContext;
-
     /*
      * Constructor.
      */
     constructor(props: EnterEmailThemeProps) {
         super(props);
-
-        const formFields = props.formFields.map(field => {
-            return {
-                ...field,
-                ref: createRef<HTMLInputElement>(),
-                validated: false
-            };
-        });
-
         this.state = {
-            formFields
+            emailSent: false
         };
     }
 
@@ -82,8 +72,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
      */
 
     onSuccess = (): void => {
-        this.setState(oldState => ({
-            ...oldState,
+        this.setState(() => ({
             emailSent: true
         }));
         if (this.props.onSuccess !== undefined) {
@@ -92,8 +81,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
     };
 
     resend = (): void => {
-        this.setState(oldState => ({
-            ...oldState,
+        this.setState(() => ({
             emailSent: false
         }));
     };
@@ -104,8 +92,8 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
     render(): JSX.Element {
         const styles = this.context;
         const componentStyles = getStyles(styles.palette);
-        const { callAPI } = this.props;
-        const { formFields, emailSent } = this.state;
+        const { formFields, callAPI } = this.props;
+        const { emailSent } = this.state;
 
         // If email sent, show success UI.
         if (emailSent === true) {

@@ -1,7 +1,7 @@
 import { PureComponent } from "react";
 import EmailPassword from "../../../emailPassword";
-import { SignInAndUpProps, SignInAndUpState, SignInThemeResponse, SignUpThemeResponse, OnHandleSignInAndUpSuccessContext, SignInAPIResponse, VerifyEmailAPIResponse } from "../../../types";
-import { APIFormField, RequestJson } from "../../../../../types";
+import { SignInAndUpProps, SignInAndUpState, SignInThemeResponse, SignUpThemeResponse, OnHandleSignInAndUpSuccessContext, SignInAPIResponse, VerifyEmailAPIResponse, FormFieldThemeProps } from "../../../types";
+import { APIFormField, NormalisedFormField, RequestJson } from "../../../../../types";
 import Session from "../../../../session/session";
 declare class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
     constructor(props: SignInAndUpProps);
@@ -19,6 +19,7 @@ declare class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpSta
     onCallSignInAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
     onCallEmailExistAPI: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
     validateEmail: (value: string) => Promise<string | undefined>;
+    getSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[];
     componentDidMount: () => Promise<void>;
     render: () => JSX.Element;
 }

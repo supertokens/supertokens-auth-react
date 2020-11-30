@@ -16,10 +16,10 @@
 /*
  * Imports.
  */
-import React, { PureComponent, createRef, Fragment } from "react";
+import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
 
-import { SignInThemeProps, FormFieldState } from "../../../../types";
+import { SignInThemeProps } from "../../../../types";
 import { CSSObject } from "@emotion/serialize/types";
 
 /** @jsx jsx */
@@ -58,27 +58,8 @@ function getStyles(palette: NormalisedPalette): Styles {
  * Component.
  */
 
-export default class SignInTheme extends PureComponent<SignInThemeProps, { formFields: FormFieldState[] }> {
+export default class SignInTheme extends PureComponent<SignInThemeProps> {
     static contextType = StyleContext;
-
-    /*
-     * Constructor.
-     */
-    constructor(props: SignInThemeProps) {
-        super(props);
-
-        const formFields = props.formFields.map(field => {
-            return {
-                ...field,
-                ref: createRef<HTMLInputElement>(),
-                validated: false
-            };
-        });
-
-        this.state = {
-            formFields
-        };
-    }
 
     /*
      * Render.
@@ -89,7 +70,7 @@ export default class SignInTheme extends PureComponent<SignInThemeProps, { formF
         const componentStyle = getStyles(styles.palette as NormalisedPalette);
 
         const { signUpClicked, forgotPasswordClick, onSuccess, callAPI } = this.props;
-        const { formFields } = this.state;
+        const { formFields } = this.props;
 
         return (
             <FormBase
