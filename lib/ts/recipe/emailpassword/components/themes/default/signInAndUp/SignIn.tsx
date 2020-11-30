@@ -79,7 +79,6 @@ export default class SignInTheme extends PureComponent<SignInThemeProps> {
                 onSuccess={onSuccess}
                 callAPI={callAPI}
                 showLabels={true}
-                noValidateOnBlur={true}
                 header={
                     <Fragment>
                         <div className="headerTitle" css={[componentStyle.headerTitle, styles.headerTitle]}>

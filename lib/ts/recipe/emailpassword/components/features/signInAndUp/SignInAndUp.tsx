@@ -256,7 +256,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         );
     };
 
-    getSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {
+    getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {
         const emailPasswordOnly = formFields.length === 2;
         return formFields.map(field => ({
             ...field,
@@ -268,11 +268,25 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
                 // Otherwise, show for all non optional fields (including email and password).
                 return field.optional === false;
             })(),
-            validateOnBlurOnly: (() => {
-                if (field.id === "email") {
-                    return this.validateEmail;
+            validate: (() => {
+                // If field is not email, return field validate unchanged.
+                if (field.id !== "email") {
+                    return field.validate;
                 }
-                return undefined;
+
+                // Otherwise, if email, use syntax validate method and check if email exists.
+                return async (value: any): Promise<string | undefined> => {
+                    const syntaxError = field.validate(value);
+                    if (syntaxError !== undefined) {
+                        return syntaxError;
+                    }
+
+                    if (typeof value !== "string") {
+                        return "Email must be of type string";
+                    }
+
+                    return this.validateEmail(value);
+                };
             })()
         }));
     }
@@ -314,7 +328,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
 
         const signUpForm = {
             styleFromInit: signUpFeature.style,
-            formFields: this.getSignUpFeatureFormFields(signUpFeature.formFields),
+            formFields: this.getThemeSignUpFeatureFormFields(signUpFeature.formFields),
             privacyPolicyLink: signUpFeature.privacyPolicyLink,
             termsOfServiceLink: signUpFeature.termsOfServiceLink,
             onSuccess: this.onSignUpSuccess,

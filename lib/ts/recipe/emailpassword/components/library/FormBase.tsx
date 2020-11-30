@@ -80,11 +80,6 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             if (field.id === formFields[i].id) {
                 // Validate.
                 formFields[i].error = await formFields[i].validate(field.value);
-                const validateOnBlurOnly = formFields[i].validateOnBlurOnly;
-
-                if (formFields[i].error === undefined && validateOnBlurOnly !== undefined) {
-                    formFields[i].error = await validateOnBlurOnly(field.value);
-                }
             }
         }
         const status = this.getNewStatus(formFields, "blur");
@@ -213,9 +208,9 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
      */
     render(): JSX.Element {
         const styles = this.context;
-        const { header, footer, buttonLabel, showLabels, noValidateOnBlur } = this.props;
+        const { header, footer, buttonLabel, showLabels, validateOnBlur } = this.props;
         const { formFields } = this.state;
-        const onInputBlur = noValidateOnBlur === true ? undefined : this.handleInputBlur;
+        const onInputBlur = validateOnBlur === true ? this.handleInputBlur : undefined;
 
         return (
             <div className="container" css={styles.container}>

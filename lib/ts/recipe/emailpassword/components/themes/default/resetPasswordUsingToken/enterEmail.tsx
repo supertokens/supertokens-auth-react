@@ -121,6 +121,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
                 onSuccess={this.onSuccess}
                 callAPI={callAPI}
                 showLabels={false}
+                validateOnBlur={true}
                 header={
                     <Fragment>
                         <div className="headerTitle" css={[componentStyles.headerTitle, styles.headerTitle]}>

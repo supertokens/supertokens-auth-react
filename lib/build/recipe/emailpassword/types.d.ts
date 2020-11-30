@@ -122,7 +122,6 @@ export declare type NormalisedFormFieldWithError = NormalisedFormField & {
 };
 export declare type FormFieldThemeProps = NormalisedFormFieldWithError & {
     showIsRequired?: boolean;
-    validateOnBlurOnly?: (value: string) => Promise<string | undefined>;
     autoComplete?: string;
 };
 export declare type FormFieldState = FormFieldThemeProps & {
@@ -230,7 +229,7 @@ export declare type FormBaseProps = {
     formFields: FormFieldThemeProps[];
     showLabels: boolean;
     buttonLabel: string;
-    noValidateOnBlur?: boolean;
+    validateOnBlur?: boolean;
     onSuccess?: () => void;
     callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse | SignUpThemeResponse | SubmitNewPasswordThemeResponse | EnterEmailThemeResponse>;
 };
