@@ -48,11 +48,6 @@ SuperTokens.init({
                 id: "name",
                 label: "Full name",
                 placeholder: "First name and last name",
-                validate: async (value) => {
-                  if (value.length === 0) {
-                    return "Please provide a valid name"
-                  }
-                } 
             },{
                 id: "age",
                 label: "Your age",
