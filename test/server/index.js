@@ -41,24 +41,24 @@ SuperTokens.init({
     },
     recipeList: [
         EmailPassword.init({
-            // signUpFeature: {
-            //     formFields: [{
-            //       id: "name"
-            //     }, {
-            //       id: "age",
-            //       validate: async (value) => {
-            //         if (parseInt(value) < 18) {
-            //             return "You must be over 18 to register";
-            //         }
+            signUpFeature: {
+                formFields: [{
+                  id: "name"
+                }, {
+                  id: "age",
+                  validate: async (value) => {
+                    if (parseInt(value) < 18) {
+                        return "You must be over 18 to register";
+                    }
   
-            //         // If no error, return undefined.
-            //         return undefined;
-            //       }
-            //     },  {
-            //       id: "country",
-            //       optional: true
-            //     }]
-            // }
+                    // If no error, return undefined.
+                    return undefined;
+                  }
+                },  {
+                  id: "country",
+                  optional: true
+                }]
+            }
         }),
         Session.init({})
     ]
