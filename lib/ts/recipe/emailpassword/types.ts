@@ -402,7 +402,11 @@ export type FormFieldState = FormFieldThemeProps & {
     /*
      * Has the value already been submitted to its validator.
      */
-    ref: RefObject<HTMLInputElement>;
+    ref: RefObject<InputRef>;
+};
+
+export type InputRef = HTMLInputElement & {
+    isFocused?: boolean;
 };
 
 export type FormFieldError = {

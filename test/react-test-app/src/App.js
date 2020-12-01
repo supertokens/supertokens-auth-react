@@ -40,31 +40,31 @@ SuperTokens.init({
         signUpForm: {
           privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
           termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-          formFields: [{
-                id: "email",
-                label: "Your Email",
-                placeholder: "Your work email"
-            },{
-                id: "name",
-                label: "Full name",
-                placeholder: "First name and last name",
-            },{
-                id: "age",
-                label: "Your age",
-                placeholder: "How old are you?",
-                validate: async (value) => {
-                  if (parseInt(value) > 18) {
-                      return undefined;
-                  }
+          // formFields: [{
+          //       id: "email",
+          //       label: "Your Email",
+          //       placeholder: "Your work email"
+          //   },{
+          //       id: "name",
+          //       label: "Full name",
+          //       placeholder: "First name and last name",
+          //   },{
+          //       id: "age",
+          //       label: "Your age",
+          //       placeholder: "How old are you?",
+          //       validate: async (value) => {
+          //         if (parseInt(value) > 18) {
+          //             return undefined;
+          //         }
 
-                  return "You must be over 18 to register";;
-                }
-              }, {
-                id: "country",
-                label: "Your Country",
-                placeholder: "Where do you live?",
-                optional: true
-            }]
+          //         return "You must be over 18 to register";;
+          //       }
+          //     }, {
+          //       id: "country",
+          //       label: "Your Country",
+          //       placeholder: "Where do you live?",
+          //       optional: true
+          //   }]
           }
       }
     }),
