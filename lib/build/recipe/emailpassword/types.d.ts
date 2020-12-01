@@ -125,7 +125,10 @@ export declare type FormFieldThemeProps = NormalisedFormFieldWithError & {
     autoComplete?: string;
 };
 export declare type FormFieldState = FormFieldThemeProps & {
-    ref: RefObject<HTMLInputElement>;
+    ref: RefObject<InputRef>;
+};
+export declare type InputRef = HTMLInputElement & {
+    isFocused?: boolean;
 };
 export declare type FormFieldError = {
     id: string;

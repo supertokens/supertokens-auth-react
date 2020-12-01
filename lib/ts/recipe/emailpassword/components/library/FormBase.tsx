@@ -24,7 +24,7 @@ import { Button, FormRow, Input, InputError, Label } from ".";
 import { jsx } from "@emotion/core";
 import { APIFormField } from "../../../../types";
 import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY, MANDATORY_FORM_FIELDS_ID } from "../../constants";
-import { FormBaseProps, FormBaseState, FormBaseStatus, FormFieldState } from "../../types";
+import { FormBaseProps, FormBaseState, FormBaseStatus, FormFieldState, InputRef } from "../../types";
 
 /*
  * Component.
@@ -42,7 +42,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         this.state = {
             formFields: props.formFields.map(field => ({
                 ...field,
-                ref: createRef<HTMLInputElement>()
+                ref: createRef<InputRef>()
             })),
             status: "IN_PROGRESS"
         };
@@ -53,93 +53,72 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
      */
 
     handleInputFocus = async (field: APIFormField): Promise<void> => {
-        const formFields = this.state.formFields;
-        for (let i = 0; i < formFields.length; i++) {
-            if (field.id === formFields[i].id) {
-                // remove error on input change.
-                formFields[i].error = undefined;
-            }
-        }
-
-        const status = this.getNewStatus(formFields, "focus");
-
-        // Slightly delay the error update to prevent UI glitches.
-        setTimeout(
-            () =>
-                this.setState(() => ({
-                    status,
-                    formFields: [...formFields]
-                })),
-            300
-        );
+        this.setState(oldState => {
+            return this.getNewState(oldState.formFields, field.id, undefined);
+        });
     };
 
     handleInputBlur = async (field: APIFormField): Promise<void> => {
         const formFields = this.state.formFields;
+        let error: string | undefined = undefined;
         for (let i = 0; i < formFields.length; i++) {
             if (field.id === formFields[i].id) {
                 // Not empty for non optional field.
                 if (field.value === "" && formFields[i].optional === false) {
-                    formFields[i].error = "Field is not optional";
+                    error = "Field is not optional";
                     break;
                 }
                 // Validate.
-                formFields[i].error = await formFields[i].validate(field.value);
+                error = await formFields[i].validate(field.value);
                 break;
             }
         }
-        const status = this.getNewStatus(formFields, "blur");
 
-        // Slightly delay the update to prevent UI glitches.
-        setTimeout(
-            () =>
-                this.setState(oldState => {
-                    // Do not update status asynchronously on blur if backend error already came in.
-                    if (oldState.status === "GENERAL_ERROR") {
-                        return oldState;
-                    }
-                    return {
-                        status,
-                        formFields: [...formFields]
-                    };
-                }),
-            300
-        );
+        this.setState(oldState => {
+            // Do not update status asynchronously on blur if backend error already came in.
+            if (oldState.status === "GENERAL_ERROR") {
+                return oldState;
+            }
+            return this.getNewState(oldState.formFields, field.id, error);
+        });
     };
 
-    getNewStatus(formFields: FormFieldState[], type: "focus" | "blur"): FormBaseStatus {
-        let newStatus: FormBaseStatus = "READY";
-        let isNotLastRequiredFieldEmpty = false;
+    getNewState(formFields: FormFieldState[], fieldId: string, error: string | undefined): FormBaseState {
+        // Add error to formFields array for corresponding field.
+        formFields = formFields.map(field => {
+            if (field.id !== fieldId) {
+                return field;
+            }
+            return {
+                ...field,
+                error
+            };
+        });
+
+        let status: FormBaseStatus = "READY";
+
         for (const i in formFields) {
             const field = formFields[i];
             if (field.error !== undefined) {
-                newStatus = "FIELD_ERRORS";
+                status = "FIELD_ERRORS";
                 break;
             }
             if (field.optional === false) {
                 const value = field.ref.current !== null ? field.ref.current.value : "";
 
                 if (value.length === 0) {
-                    if (type === "blur") {
-                        newStatus = "IN_PROGRESS";
-                    } else {
-                        /*
-                         * In case of input focus event type,
-                         * Leave the benefice of the doubt if last empty field to re-enable Submit button even if input is still focused.
-                         */
-                        if (isNotLastRequiredFieldEmpty === false) {
-                            // On empty value, do not update status ot in progress if it is the only empty field on focus.
-                            isNotLastRequiredFieldEmpty = true;
-                        } else {
-                            // If is not last required field empty, then set status to in progress.
-                            newStatus = "IN_PROGRESS";
-                        }
+                    const isFocused = field.ref.current !== null ? field.ref.current.isFocused : false;
+                    if (isFocused !== true) {
+                        status = "IN_PROGRESS";
                     }
                 }
             }
         }
 
-        return newStatus;
+        return {
+            status,
+            formFields
+        };
     }
 
     onFormSubmit = async (e: FormEvent): Promise<void> => {

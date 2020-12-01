@@ -25,6 +25,7 @@ import StyleContext from "../styles/styleContext";
 
 import { forwardRef, RefObject } from "react";
 import { APIFormField } from "../../../../types";
+import { InputRef } from "../../types";
 
 /*
  * Props.
@@ -49,28 +50,34 @@ type InputProps = {
 
 function Input(
     { type, name, hasError, autoComplete, onInputFocus, onInputBlur, placeholder }: InputProps,
-    ref: RefObject<any>
+    ref: RefObject<InputRef>
 ): JSX.Element {
     /*
      * Method.
      */
 
     function handleFocus() {
-        if (onInputFocus) {
-            onInputFocus({
-                id: ref.current.name,
-                value: ref.current.value
-            });
+        if (onInputFocus === undefined || ref.current === null) {
+            return;
         }
+
+        ref.current.isFocused = true;
+        onInputFocus({
+            id: ref.current.name,
+            value: ref.current.value
+        });
     }
 
     function handleBlur() {
-        if (onInputBlur) {
-            onInputBlur({
-                id: ref.current.name,
-                value: ref.current.value
-            });
+        if (onInputBlur === undefined || ref.current === null) {
+            return;
         }
+
+        ref.current.isFocused = false;
+        onInputBlur({
+            id: ref.current.name,
+            value: ref.current.value
+        });
     }
 
     /*
