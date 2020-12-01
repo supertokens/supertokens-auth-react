@@ -21,8 +21,13 @@
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
-import { ST_ROOT_ID } from "../../lib/build/constants";
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import {
+    EMAIL_EXISTS_API,
+    RESET_PASSWORD_API,
+    RESET_PASSWORD_TOKEN_API,
+    TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL
+} from "../constants";
 import { RESET_PASSWORD_INVALID_TOKEN_ERROR } from "../../lib/build/constants";
 import {
     clearBrowserCookies,
@@ -36,14 +41,12 @@ import {
     submitForm,
     getFieldErrors,
     getSubmitFormButtonLabel,
-    getInputNames
+    getInputNames,
+    hasMethodBeenCalled
 } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-
-const RESET_PASSWORD_TOKEN_API = `${TEST_SERVER_BASE_URL}/auth/user/password/reset/token`;
-const RESET_PASSWORD_API = `${TEST_SERVER_BASE_URL}/auth/user/password/reset`;
 
 /*
  * Tests.
@@ -100,19 +103,28 @@ describe("SuperTokens Reset password feature/theme", function() {
             const placeholders = await getPlaceholders(page);
             assert.deepStrictEqual(placeholders, ["Your work email"]); // Email placeholder as defined in signUpForm.formFields.
 
+            // Set incorrect email.
+            await setInputValues(page, [{ name: "email", value: "john.doe.io" }]);
+
+            const formFieldsErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldsErrors, ["!\nEmail is invalid"]);
+
             // Set values.
             await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
 
             // Submit.
-            const { request, response } = await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API);
+            const [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
+                submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API),
+                hasMethodBeenCalled(page, EMAIL_EXISTS_API)
+            ]);
 
             // Assert Request.
+            assert.strictEqual(hasEmailExistMethodBeenCalled, false);
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(request.postData(), '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"}]}');
 
             // Assert Response.
-            const responseData = await response.json();
-            assert.strictEqual(responseData.status, "OK");
+            assert.strictEqual(response.status, "OK");
 
             // Assert success page.
             const successMessage = await sendEmailResetPasswordSuccessMessage(page);
@@ -189,8 +201,7 @@ describe("SuperTokens Reset password feature/theme", function() {
             );
 
             // Assert Invalid token response.
-            const responseData = await response.json();
-            assert.strictEqual(responseData.status, "RESET_PASSWORD_INVALID_TOKEN_ERROR");
+            assert.strictEqual(response.status, "RESET_PASSWORD_INVALID_TOKEN_ERROR");
             const generalError = await getGeneralError(page);
             assert.strictEqual(generalError, RESET_PASSWORD_INVALID_TOKEN_ERROR);
         });

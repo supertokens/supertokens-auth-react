@@ -31,26 +31,16 @@ import {
     submitFormReturnRequestAndResponse,
     getInputNames,
     submitForm,
+    hasMethodBeenCalled,
     isFormButtonDisabled
 } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
-
-/*
- * Consts.
- */
-const SIGN_UP_API = `${TEST_SERVER_BASE_URL}/auth/signup`;
-const EMAIL_EXISTS_API = `${TEST_SERVER_BASE_URL}/email/exists`;
+import { EMAIL_EXISTS_API, SIGN_UP_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 
 /*
  * Tests.
- * TODOs (inside current tests and not as new tests.)
- *  - Test that a Verify Email Exist API call is made on blur for SignUp.
- *  - Test that a Verify Email Exist API call is NOT made on blur for SignIn/ResetPassword.
- *  - Test this call is not made on signup clicked.
- *  - Try to register with same email after success should return error form field on blur.
  */
 describe("SuperTokens SignUp feature/theme", function() {
     let browser;
@@ -150,7 +140,6 @@ describe("SuperTokens SignUp feature/theme", function() {
 
         it("Successful signup", async function() {
             await successfulSignUp(page);
-
             const cookies = await page.cookies();
 
             assert.deepStrictEqual(cookies.map(c => c.name), [
@@ -165,6 +154,24 @@ describe("SuperTokens SignUp feature/theme", function() {
             const onSuccessFulRedirectUrl = "/dashboard";
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.strictEqual(pathname, onSuccessFulRedirectUrl);
+
+            // Clear cookies, try to signup with same address.
+            await clearBrowserCookies(page);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
+            // Set values.
+            const [, hasEmailExistMethodBeenCalled] = await Promise.all([
+                setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]),
+                hasMethodBeenCalled(page, EMAIL_EXISTS_API)
+            ]);
+
+            // Assert.
+            assert.strictEqual(hasEmailExistMethodBeenCalled, false);
+            let formFieldErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldErrors, ["!\nThis email already exists. Please sign in instead"]);
+
+            await setInputValues(page, [{ name: "email", value: "jane.doe@supertokens.io" }]);
+            formFieldErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldErrors, []);
         });
     });
 });
@@ -178,7 +185,13 @@ export async function successfulSignUp(page) {
         { name: "age", value: "20" }
     ]);
 
-    const { request, response } = await submitFormReturnRequestAndResponse(page, SIGN_UP_API);
+    let [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
+        submitFormReturnRequestAndResponse(page, SIGN_UP_API),
+        hasMethodBeenCalled(page, EMAIL_EXISTS_API)
+    ]);
+
+    // Verify that email exists API has not been called.
+    assert.strictEqual(hasEmailExistMethodBeenCalled, false);
 
     assert.strictEqual(request.headers().rid, "emailpassword");
     assert.strictEqual(
@@ -186,8 +199,8 @@ export async function successfulSignUp(page) {
         '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}'
     );
 
-    const responseData = await response.json();
-    assert.strictEqual(responseData.status, "OK");
+    assert.strictEqual(response.status, "OK");
+    await page.setRequestInterception(false);
 
     await new Promise(r => setTimeout(r, 500)); // Make sure to wait for navigation. TODO Make more robust.
     const onSuccessFulRedirectUrl = "/dashboard";
