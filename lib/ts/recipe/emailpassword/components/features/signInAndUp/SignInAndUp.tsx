@@ -276,7 +276,8 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
 
                 // Otherwise, if email, use syntax validate method and check if email exists.
                 return async (value: any): Promise<string | undefined> => {
-                    const syntaxError = field.validate(value);
+                    const syntaxError = await field.validate(value);
+
                     if (syntaxError !== undefined) {
                         return syntaxError;
                     }
@@ -284,8 +285,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
                     if (typeof value !== "string") {
                         return "Email must be of type string";
                     }
-
-                    return this.doesEmailExist(value);
+                    return await this.doesEmailExist(value);
                 };
             })()
         }));

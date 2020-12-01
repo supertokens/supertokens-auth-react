@@ -126,7 +126,7 @@ export async function handleEmailExistsAPICall(
         if (response.status === API_RESPONSE_STATUS.OK) {
             // If email exists.
             if (response.exists === true) {
-                return "Email already exists";
+                return "This email already exists. Please sign in instead";
             }
 
             // Otherwise, no errors.

@@ -33,6 +33,7 @@ import {
     clickForgotPasswordLink,
     submitForm,
     getInputNames,
+    hasMethodBeenCalled,
     toggleSignInSignUp,
     isFormButtonDisabled,
     submitFormReturnRequestAndResponse
@@ -44,12 +45,7 @@ import { SOMETHING_WENT_WRONG_ERROR, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
-
-/*
- * Consts.
- */
-const SIGN_IN_API = `${TEST_SERVER_BASE_URL}/auth/signin`;
+import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 
 /*
  * Tests.
@@ -160,8 +156,7 @@ describe("SuperTokens SignIn feature/theme", function() {
                 '{"formFields":[{"id":"email","value":"john@gmail.com"},{"id":"password","value":"********"}]}'
             );
 
-            const responseData = await response.json();
-            assert.strictEqual(responseData.status, "WRONG_CREDENTIALS_ERROR");
+            assert.strictEqual(response.status, "WRONG_CREDENTIALS_ERROR");
 
             // Assert wrong credentials
             formFieldsErrors = await getFieldErrors(page);
@@ -188,7 +183,14 @@ describe("SuperTokens SignIn feature/theme", function() {
             ]);
 
             // Submit.
-            const { request, response } = await submitFormReturnRequestAndResponse(page, SIGN_IN_API);
+            const [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                hasMethodBeenCalled(page, EMAIL_EXISTS_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" })
+            ]);
+
+            // Verify that email exists API has not been called.
+            assert.strictEqual(hasEmailExistMethodBeenCalled, false);
 
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.strictEqual(
@@ -196,9 +198,7 @@ describe("SuperTokens SignIn feature/theme", function() {
                 '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}]}'
             );
 
-            const responseData = await response.json();
-            assert.strictEqual(responseData.status, "OK");
-            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            assert.strictEqual(response.status, "OK");
 
             // Verify cookies were set.
             cookies = await page.cookies();
@@ -209,7 +209,6 @@ describe("SuperTokens SignIn feature/theme", function() {
                 "sAccessToken"
             ]);
 
-            await new Promise(r => setTimeout(r, 500)); // Make sure to wait for navigation. TODO Make more robust.
             // Redirected to onSuccessFulRedirectUrl
             const onSuccessFulRedirectUrl = "/dashboard";
             let pathname = await page.evaluate(() => window.location.pathname);
