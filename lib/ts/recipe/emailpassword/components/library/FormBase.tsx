@@ -24,7 +24,7 @@ import { Button, FormRow, Input, InputError, Label } from ".";
 import { jsx } from "@emotion/core";
 import { APIFormField } from "../../../../types";
 import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID_ARRAY, MANDATORY_FORM_FIELDS_ID } from "../../constants";
-import { FormBaseProps, FormBaseState, FormBaseStatus, FormFieldState } from "../../types";
+import { FormBaseProps, FormBaseState, FormBaseStatus, FormFieldState, InputRef } from "../../types";
 
 /*
  * Component.
@@ -42,7 +42,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         this.state = {
             formFields: props.formFields.map(field => ({
                 ...field,
-                ref: createRef<any>()
+                ref: createRef<InputRef>()
             })),
             status: "IN_PROGRESS"
         };
