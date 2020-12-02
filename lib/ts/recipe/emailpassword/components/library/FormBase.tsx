@@ -64,7 +64,9 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         for (let i = 0; i < formFields.length; i++) {
             if (field.id === formFields[i].id) {
                 // Validate.
-                error = await formFields[i].validate(field.value);
+                if (field.value !== "") {
+                    error = await formFields[i].validate(field.value);
+                }
                 break;
             }
         }

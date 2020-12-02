@@ -338,5 +338,19 @@ export function mergeFormFields(
         }
     }
 
-    return mergedFormFields;
+    return mergedFormFields.map(field => getFormattedFormField(field));
+}
+
+export function getFormattedFormField(field: NormalisedFormField): NormalisedFormField {
+    return {
+        ...field,
+        validate: async (value: any): Promise<string | undefined> => {
+            // Absent or not optional empty field
+            if (value === "" && field.optional === false) {
+                return "Field is not optional";
+            }
+
+            return await field.validate(value);
+        }
+    };
 }

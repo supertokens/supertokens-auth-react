@@ -91,31 +91,23 @@ export async function validateForm(
         const field = configFormFields[i];
 
         // Find corresponding input value.
-        const input = inputs.find(i => i.id === field.id);
+        const input = <APIFormField>inputs.find(i => i.id === field.id);
 
-        // Absent or not optional empty field
-        if (input === undefined || (input.value === "" && field.optional === false)) {
+        // Otherwise, use validate function.
+
+        // Trim value for email only.
+        let value: string = input.value;
+        if (<MANDATORY_FORM_FIELDS_ID>input.id === MANDATORY_FORM_FIELDS_ID.EMAIL) {
+            value = value.trim();
+        }
+        const error = await field.validate(value);
+
+        // If error, add it.
+        if (error !== undefined) {
             validationErrors.push({
-                error: "Field is not optional",
+                error,
                 id: field.id
             });
-        } else {
-            // Otherwise, use validate function.
-
-            // Trim value for email only.
-            let value: string = input.value;
-            if (<MANDATORY_FORM_FIELDS_ID>input.id === MANDATORY_FORM_FIELDS_ID.EMAIL) {
-                value = value.trim();
-            }
-            const error = await field.validate(value);
-
-            // If error, add it.
-            if (error !== undefined) {
-                validationErrors.push({
-                    error,
-                    id: field.id
-                });
-            }
         }
     }
 

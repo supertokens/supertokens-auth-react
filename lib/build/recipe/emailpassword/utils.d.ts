@@ -8,3 +8,4 @@ export declare function normaliseSignInFormFeatureConfig(appInfo: NormalisedAppI
 export declare function getDefaultFormFields(): NormalisedFormField[];
 export declare function normaliseResetPasswordUsingTokenFeature(signUpPasswordFieldValidate: (value: any) => Promise<string | undefined>, signUpEmailField: NormalisedFormField, websiteBasePath: NormalisedURLPath, config?: ResetPasswordUsingTokenUserInput): NormalisedResetPasswordUsingTokenFeatureConfig;
 export declare function mergeFormFields(defaultFormFields: NormalisedFormField[], userFormFields: FormField[]): NormalisedFormField[];
+export declare function getFormattedFormField(field: NormalisedFormField): NormalisedFormField;

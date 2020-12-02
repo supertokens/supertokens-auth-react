@@ -13,8 +13,8 @@
  * under the License.
  */
 import assert from "assert";
-import {mergeFormFields} from "../../../../lib/build/recipe/emailpassword/utils";
-import {defaultValidate} from "../../../../lib/build/recipe/emailpassword/validators";
+import {mergeFormFields, getFormattedFormField} from "../../../../lib/build/recipe/emailpassword/utils";
+import {assertFormFieldsEqual} from "../../../helpers";
 
 describe("Email password utils tests", function() {
     it("merge form fields", async function() {
@@ -90,36 +90,60 @@ describe("Email password utils tests", function() {
         };
 
         // No user input => default form fields.
-        assert.deepStrictEqual(mergeFormFields([defaultEmailFormField, defaultPasswordFormField], []), [
-            defaultEmailFormField,
-            defaultPasswordFormField
-        ]);
+        await assertFormFieldsEqual(
+            mergeFormFields([defaultEmailFormField, defaultPasswordFormField], []),
+            [
+                defaultEmailFormField,
+                defaultPasswordFormField
+            ].map(getFormattedFormField),
+            [
+                ["", "john", "john.doe@gmail.com"],
+                ["", "test", "test123", "Str0ngP@ssword"]
+            ]
+        );
 
         // custom email => custom email, default password.
-        assert.deepStrictEqual(
+        await assertFormFieldsEqual(
             mergeFormFields([defaultEmailFormField, defaultPasswordFormField], [customEmailFormField]),
-            [customEmailFormField, defaultPasswordFormField]
+            [customEmailFormField, defaultPasswordFormField].map(getFormattedFormField),
+            [
+                ["", "john", "john.doe@gmail.com"],
+                ["", "test", "test123", "Str0ngP@ssword"]
+            ]
         );
 
         // default email + custom password => default email, custom password.
-        assert.deepStrictEqual(
+        await assertFormFieldsEqual(
             mergeFormFields([defaultEmailFormField, defaultPasswordFormField], [customPasswordFormField]),
-            [defaultEmailFormField, customPasswordFormField]
+            [defaultEmailFormField, customPasswordFormField].map(getFormattedFormField),
+            [
+                ["", "john", "john.doe@gmail.com"],
+                ["", "test", "test123", "Str0ngP@ssword"]
+            ]
         );
 
         // custom password + custom email (reverse order) => custom email + custom password (right order).
-        assert.deepStrictEqual(
+        await assertFormFieldsEqual(
             mergeFormFields(
                 [defaultEmailFormField, defaultPasswordFormField],
                 [customPasswordFormField, customEmailFormField]
             ),
-            [customEmailFormField, customPasswordFormField]
+            [customEmailFormField, customPasswordFormField].map(getFormattedFormField),
+            [
+                ["", "john", "john.doe@gmail.com"],
+                ["", "test", "test123", "Str0ngP@ssword"]
+            ]
         );
 
         // custom field => default email, default password, custom field.
-        assert.deepStrictEqual(
+        await assertFormFieldsEqual(
             mergeFormFields([defaultEmailFormField, defaultPasswordFormField], [randomCustomFormFieldWithValidate]),
-            [defaultEmailFormField, defaultPasswordFormField, randomCustomFormFieldWithValidate]
+            [defaultEmailFormField, defaultPasswordFormField, randomCustomFormFieldWithValidate].map(getFormattedFormField),
+            [
+                ["", "john", "john.doe@gmail.com"],
+                ["", "test", "test123", "Str0ngP@ssword"],
+                ["", "test", "1", "5", "john@email.com"]
+            ]
         );
 
         // optional custom email => custom email not optional.
@@ -130,12 +154,17 @@ describe("Email password utils tests", function() {
         assert.strictEqual(mergedOptionalCustomEmailFormFields[0].optional, false);
 
         // custom field, custom password, custom email => custom email, custom password, custom field
-        assert.deepStrictEqual(
+        await assertFormFieldsEqual(
             mergeFormFields(
                 [defaultEmailFormField, defaultPasswordFormField],
                 [randomCustomFormFieldWithValidate, customPasswordFormField, customEmailFormField]
             ),
-            [customEmailFormField, customPasswordFormField, randomCustomFormFieldWithValidate]
+            [customEmailFormField, customPasswordFormField, randomCustomFormFieldWithValidate].map(getFormattedFormField),
+            [
+                ["", "john", "john.doe@gmail.com"],
+                ["", "test", "test123", "Str0ngP@ssword"],
+                ["", "test", "1", "5", "john@email.com"]
+            ]
         );
 
         // custom email without validate method => custom email with default validate method.
@@ -161,7 +190,7 @@ describe("Email password utils tests", function() {
             mergedRandomWithoutValidateNorOptional[2].placeholder ===
                 randomCustomFormFieldWithoutOptionalProperties.label
         );
-        assert(mergedRandomWithoutValidateNorOptional[2].validate === defaultValidate);
+        assert(mergedRandomWithoutValidateNorOptional[2].validate !== undefined);
         assert(mergedRandomWithoutValidateNorOptional[2].optional === false);
     });
 });
