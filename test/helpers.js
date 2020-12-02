@@ -57,11 +57,6 @@ export async function submitForm(page) {
     await submitButton.click();
 }
 
-export async function isFormButtonDisabled(page) {
-    const disabledButton = await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("div > div > form > div > button:disabled")`);
-    return disabledButton._remoteObject.subtype === "node";
-}
-
 export async function getLogoutButton(page) {
     return await page.evaluateHandle("document.querySelector('button.logout')");
 }

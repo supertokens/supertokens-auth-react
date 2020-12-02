@@ -247,7 +247,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                         <FormRow key="form-button">
                             <Fragment>
                                 <Button
-                                    disabled={["READY", "GENERAL_ERROR"].includes(this.state.status) !== true}
+                                    disabled={this.state.status === "LOADING"}
                                     isLoading={this.state.status === "LOADING"}
                                     type="submit"
                                     label={buttonLabel}

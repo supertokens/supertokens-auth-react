@@ -35,7 +35,6 @@ import {
     getInputNames,
     hasMethodBeenCalled,
     toggleSignInSignUp,
-    isFormButtonDisabled,
     submitFormReturnRequestAndResponse
 } from "../helpers";
 import fetch from "isomorphic-fetch";
@@ -119,19 +118,11 @@ describe("SuperTokens SignIn feature/theme", function() {
         });
 
         it("Should show error messages with incorrect inputs", async function() {
-            // Form is disabled on init.
-            let disabled = await isFormButtonDisabled(page);
-            assert.strictEqual(disabled, true);
-
             // Set incorrect values.
             await setInputValues(page, [
                 { name: "email", value: "invalid_email" },
                 { name: "password", value: "********" }
             ]);
-
-            // Form is disabled.
-            disabled = await isFormButtonDisabled(page);
-            assert.strictEqual(disabled, false);
 
             await submitForm(page);
             // // Assert.
@@ -143,9 +134,6 @@ describe("SuperTokens SignIn feature/theme", function() {
                 { name: "email", value: "john@gmail.com" },
                 { name: "password", value: "********" }
             ]);
-            // Form is now enabled
-            disabled = await isFormButtonDisabled(page);
-            assert.strictEqual(disabled, false);
 
             // Submit.
             const { request, response } = await submitFormReturnRequestAndResponse(page, SIGN_IN_API);
