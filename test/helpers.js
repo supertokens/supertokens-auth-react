@@ -18,6 +18,7 @@
  */
 import { ST_ROOT_SELECTOR } from "./constants";
 import assert from "assert";
+import {VerifyIfOptionalAndValidate} from "../lib/build/utils";
 
 /*
  * General Helpers.
@@ -194,4 +195,26 @@ export async function hasMethodBeenCalled(page, URL, method = "GET", timeout = 1
     await page.setRequestInterception(false);
     page.off("request", onRequestVerifyMatch);
     return methodCalled;
+}
+
+export async function assertFormFieldsEqual(actual, expected, values) {
+    assert.deepStrictEqual(actual.length, expected.length);
+    assert.deepStrictEqual(actual.length, values.length);
+
+    for (const i in actual) {
+        assert.deepStrictEqual(actual[i].id, expected[i].id);
+        assert.deepStrictEqual(actual[i].email, expected[i].email);
+        assert.deepStrictEqual(actual[i].label, expected[i].label);
+        assert.deepStrictEqual(actual[i].placeholder, expected[i].placeholder);
+        assert.deepStrictEqual(actual[i].optional, expected[i].optional);
+        await assertValidator(actual[i].validate, expected[i].validate, values[i]);
+    }
+}
+
+async function assertValidator(actualValidate, expectedValidate, values) {
+    for (const j in values) {
+        const actualError = await actualValidate(values[j]);
+        const expectedError = await expectedValidate(values[j]);
+        assert.deepStrictEqual(actualError, expectedError);
+    }
 }

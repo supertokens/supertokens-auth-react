@@ -40,7 +40,7 @@ import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import { APIFormField, NormalisedFormField, RequestJson } from "../../../../../types";
 import { redirectToInApp, redirectToWithReload } from "../../../../../utils";
 import FeatureWrapper from "../../../../components/featureWrapper";
-import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../../constants";
+import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID, SUCCESS_ACTION } from "../../../constants";
 import SuperTokens from "../../../../../superTokens";
 import Session from "../../../../session/session";
 
@@ -270,7 +270,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             })(),
             validate: (() => {
                 // If field is not email, return field validate unchanged.
-                if (field.id !== "email") {
+                if (field.id !== MANDATORY_FORM_FIELDS_ID.EMAIL) {
                     return field.validate;
                 }
 
