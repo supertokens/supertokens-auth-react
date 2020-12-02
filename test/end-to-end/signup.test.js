@@ -31,8 +31,7 @@ import {
     submitFormReturnRequestAndResponse,
     getInputNames,
     submitForm,
-    hasMethodBeenCalled,
-    isFormButtonDisabled
+    hasMethodBeenCalled
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -103,9 +102,15 @@ describe("SuperTokens SignUp feature/theme", function() {
         });
 
         it("Should show error messages", async function() {
-            // Form is disabled on init.
-            let disabled = await isFormButtonDisabled(page);
-            assert.strictEqual(disabled, true);
+            await submitForm(page);
+            // Assert.
+            let formFieldErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldErrors, [
+                "!\nField is not optional",
+                "!\nField is not optional",
+                "!\nField is not optional",
+                "!\nField is not optional"
+            ]);
 
             // Set values with errors.
             await setInputValues(page, [
@@ -114,11 +119,9 @@ describe("SuperTokens SignUp feature/theme", function() {
                 { name: "name", value: "" },
                 { name: "age", value: "17" }
             ]);
-            disabled = await isFormButtonDisabled(page);
-            assert.strictEqual(disabled, true);
 
-            // // Assert.
-            let formFieldErrors = await getFieldErrors(page);
+            // Assert.
+            formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, [
                 "!\nEmail is invalid",
                 "!\nPassword must contain at least 8 characters, including a number",
