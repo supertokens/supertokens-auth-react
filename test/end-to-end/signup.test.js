@@ -125,7 +125,6 @@ describe("SuperTokens SignUp feature/theme", function() {
             assert.deepStrictEqual(formFieldErrors, [
                 "!\nEmail is invalid",
                 "!\nPassword must contain at least 8 characters, including a number",
-                "!\nField is not optional",
                 "!\nYou must be over 18 to register"
             ]);
 

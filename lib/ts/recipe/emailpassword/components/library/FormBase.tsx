@@ -63,11 +63,6 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         let error: string | undefined = undefined;
         for (let i = 0; i < formFields.length; i++) {
             if (field.id === formFields[i].id) {
-                // Not empty for non optional field.
-                if (field.value === "" && formFields[i].optional === false) {
-                    error = "Field is not optional";
-                    break;
-                }
                 // Validate.
                 error = await formFields[i].validate(field.value);
                 break;
