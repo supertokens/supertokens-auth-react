@@ -117,6 +117,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             backgroundColor: palette.colors.generalErrorBackground,
             paddingTop: "10px",
             paddingBottom: "10px",
+            marginBottom: "15px",
             paddingLeft: "18px",
             paddingRight: "18px",
             letterSpacing: "0.2px",

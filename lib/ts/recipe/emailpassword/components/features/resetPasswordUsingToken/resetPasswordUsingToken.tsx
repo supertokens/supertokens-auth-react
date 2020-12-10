@@ -35,7 +35,7 @@ import FeatureWrapper from "../../../../components/featureWrapper";
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../../constants";
-import { redirectToInApp } from "../../../../../utils";
+import { getWindowOrThrow, redirectToInApp } from "../../../../../utils";
 import { handleEnterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 
 /*
@@ -49,7 +49,7 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
     constructor(props: ResetPasswordUsingTokenProps) {
         super(props);
 
-        const urlParams = new URLSearchParams(window.location.search);
+        const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
         let token = urlParams.get("token");
         if (token === null) {
             token = "";
