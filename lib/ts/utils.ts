@@ -13,7 +13,12 @@
  * under the License.
  */
 
-import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
+import {
+    DEFAULT_API_BASE_PATH,
+    DEFAULT_WEBSITE_BASE_PATH,
+    RECIPE_ID_QUERY_PARAM,
+    WINDOW_UNDEFINED_ERROR
+} from "./constants";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { MANDATORY_FORM_FIELDS_ID } from "./recipe/emailpassword/constants";
@@ -118,7 +123,7 @@ export async function validateForm(
  * getCurrentNormalisedUrlPath
  */
 export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
-    return new NormalisedURLPath(window.location.pathname);
+    return new NormalisedURLPath(getWindowOrThrow().location.pathname);
 }
 
 /*
@@ -129,7 +134,7 @@ export function redirectToWithReload(url: string): void {
         url = "/";
     }
 
-    window.location.href = url;
+    getWindowOrThrow().location.href = url;
 }
 
 /*
@@ -165,5 +170,13 @@ export function redirectToInApp(path: string, title?: string, history?: History<
     }
 
     // Otherwise, reload the page.
-    window.location.href = path;
+    getWindowOrThrow().location.href = path;
+}
+
+export function getWindowOrThrow(): any {
+    if (typeof window === "undefined") {
+        throw new Error(WINDOW_UNDEFINED_ERROR);
+    }
+
+    return window;
 }

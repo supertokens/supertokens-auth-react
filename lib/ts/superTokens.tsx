@@ -19,11 +19,18 @@
 import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
 import { NormalisedAppInfo, ReactComponentClass, SuperTokensConfig } from "./types";
-import { getCurrentNormalisedUrlPath, getRecipeIdFromSearch, isTest, normaliseInputAppInfoOrThrowError } from "./utils";
+import {
+    getCurrentNormalisedUrlPath,
+    getRecipeIdFromSearch,
+    getWindowOrThrow,
+    isTest,
+    normaliseInputAppInfoOrThrowError
+} from "./utils";
 import NormalisedURLPath from "./normalisedURLPath";
 const { getSuperTokensRoutesForReactRouterDom } = require("./components/superTokensRoute");
 import { PathToComponentWithRecipeIdMap } from "./types";
 import Session from "./recipe/session/session";
+import { SSR_ERROR } from "./constants";
 
 /*
  * Class.
@@ -73,7 +80,11 @@ export default class SuperTokens {
 
     private static getInstanceOrThrow(): SuperTokens {
         if (SuperTokens.instance === undefined) {
-            throw new Error("SuperTokens must be initialized before calling this method.");
+            let error = "SuperTokens must be initialized before calling this method.";
+            if (typeof window === "undefined") {
+                error = error + SSR_ERROR;
+            }
+            throw new Error(error);
         }
 
         return SuperTokens.instance;
@@ -127,7 +138,7 @@ export default class SuperTokens {
 
     getRoutingComponent = (): JSX.Element | undefined => {
         const normalisedPath = getCurrentNormalisedUrlPath();
-        const recipeId = getRecipeIdFromSearch(window.location.search);
+        const recipeId = getRecipeIdFromSearch(getWindowOrThrow().location.search);
         const Component = this.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
         if (Component === undefined) {
             return undefined;

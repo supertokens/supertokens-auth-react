@@ -10,3 +10,4 @@ export declare function getCurrentNormalisedUrlPath(): NormalisedURLPath;
 export declare function redirectToWithReload(url: string): void;
 export declare function WithRouter(Component: ReactComponentClass): ReactComponentClass;
 export declare function redirectToInApp(path: string, title?: string, history?: History<LocationState>): void;
+export declare function getWindowOrThrow(): any;

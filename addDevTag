@@ -18,13 +18,26 @@ while IFS='"' read -ra ADDR; do
     done
 done <<< "$version"
 
+versionLock=`cat package-lock.json | grep -e '"version":'`
+
+while IFS='"' read -ra ADDR; do
+    counter=0
+    for i in "${ADDR[@]}"; do
+        if [ $counter == 3 ]
+        then
+            versionLock=$i
+        fi
+        counter=$(($counter+1))
+    done
+done <<< "$versionLock"
+
 # get current branch name
 branch_name="$(git symbolic-ref HEAD 2>/dev/null)" ||
 branch_name="(unnamed branch)"     # detached HEAD
 branch_name=${branch_name##refs/heads/}
 
 # check if branch is correct based on the version-----------
-if ! [[ $version == $branch_name* ]]
+if [[ $version !== $branch_name* || $version !== $versionLock ]]
 then
     RED='\033[0;31m'
     NC='\033[0m' # No Color

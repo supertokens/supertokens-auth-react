@@ -44,7 +44,7 @@ import { normaliseEmailPasswordConfig } from "./utils";
 import { ResetPasswordUsingToken, SignInAndUp } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, DEFAULT_RESET_PASSWORD_PATH } from "./constants";
-import { SOMETHING_WENT_WRONG_ERROR } from "../../constants";
+import { SOMETHING_WENT_WRONG_ERROR, SSR_ERROR } from "../../constants";
 
 /*
  * Class.
@@ -241,9 +241,14 @@ export default class EmailPassword extends RecipeModule {
 
     static getInstanceOrThrow(): EmailPassword {
         if (EmailPassword.instance === undefined) {
-            throw Error(
-                "No instance of EmailPassword found. Make sure to call the EmailPassword.init method.  See https://supertokens.io/docs/emailpassword/starter-guide/frontend"
-            );
+            let error =
+                "No instance of EmailPassword found. Make sure to call the EmailPassword.init method." +
+                "See https://supertokens.io/docs/emailpassword/starter-guide/frontend";
+
+            if (typeof window === "undefined") {
+                error = error + SSR_ERROR;
+            }
+            throw Error(error);
         }
 
         return EmailPassword.instance;

@@ -29,3 +29,9 @@ export const SOMETHING_WENT_WRONG_ERROR = "Something went wrong. Please try agai
 export const RESET_PASSWORD_INVALID_TOKEN_ERROR = "Invalid password reset token";
 
 export const INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR = "Incorrect email and password combination";
+
+export const SSR_ERROR =
+    "\nIf you are trying to use this method doing server-side-rendering, please make sure you move this method inside a componentDidMount method or useEffect hook.";
+
+export const WINDOW_UNDEFINED_ERROR =
+    "If you are using this package with server-side rendering, please make sure that you are checking if the window object is defined.";

@@ -21,7 +21,7 @@ import * as React from "react";
 import NormalisedURLPath from "../normalisedURLPath";
 import SuperTokens from "../superTokens";
 import { WithRouterType } from "../types";
-import { getRecipeIdFromSearch } from "../utils";
+import { getRecipeIdFromSearch, getWindowOrThrow } from "../utils";
 
 /*
  * Component.
@@ -54,7 +54,7 @@ function SuperTokensRouteWithRecipeId({
     path: string;
     withRouter: WithRouterType;
 }): JSX.Element | null {
-    const recipeId = getRecipeIdFromSearch(window.location.search);
+    const recipeId = getRecipeIdFromSearch(getWindowOrThrow().location.search);
     const normalisedPath = new NormalisedURLPath(path);
 
     const Component = SuperTokens.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
