@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Better error message for SSR.
 
-### Fix
+### Fixes
  - Add margin bottom for general Errors.
  - Move react-router-dom to optional dependencies.
 
@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Move error/success ticks to leave space for password managers
 - `DefaultToSignUp` config and default widget to sign up form.
 
-### Fix
+### Fixes
  - Remove all styles from feature wrapper
 
 ## [0.1.0] - 2020-11-18
