@@ -25,7 +25,7 @@ import { SessionUserInput } from "./types";
  * Class.
  */
 export default class SessionAPIWrapper {
-    static init(config: SessionUserInput): CreateRecipeFunction {
+    static init(config?: SessionUserInput): CreateRecipeFunction {
         return Session.init(config);
     }
 

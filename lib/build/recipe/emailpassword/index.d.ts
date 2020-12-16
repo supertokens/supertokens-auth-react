@@ -9,7 +9,7 @@ export default class EmailPasswordAPIWrapper {
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ResetPasswordUsingToken: typeof ResetPasswordUsingToken;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
-    static init(config: EmailPasswordConfig): CreateRecipeFunction;
+    static init(config?: EmailPasswordConfig): CreateRecipeFunction;
     static signOut(): Promise<SignOutAPIResponse>;
 }
 declare const init: typeof EmailPasswordAPIWrapper.init;

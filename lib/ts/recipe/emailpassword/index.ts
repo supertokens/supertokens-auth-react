@@ -38,7 +38,7 @@ export default class EmailPasswordAPIWrapper {
     static ResetPasswordUsingToken = ResetPasswordUsingToken;
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
 
-    static init(config: EmailPasswordConfig): CreateRecipeFunction {
+    static init(config?: EmailPasswordConfig): CreateRecipeFunction {
         return EmailPassword.init(config);
     }
 
