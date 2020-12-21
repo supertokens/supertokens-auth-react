@@ -245,6 +245,7 @@ export default class EmailPassword extends RecipeModule {
                 "No instance of EmailPassword found. Make sure to call the EmailPassword.init method." +
                 "See https://supertokens.io/docs/emailpassword/starter-guide/frontend";
 
+            // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
             if (typeof window === "undefined") {
                 error = error + SSR_ERROR;
             }

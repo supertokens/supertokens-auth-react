@@ -174,9 +174,11 @@ export function redirectToInApp(path: string, title?: string, history?: History<
 }
 
 export function getWindowOrThrow(): any {
+    // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
     if (typeof window === "undefined") {
         throw new Error(WINDOW_UNDEFINED_ERROR);
     }
 
+    // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
     return window;
 }
