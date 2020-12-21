@@ -241,4 +241,9 @@ export declare type SignInAPI = (requestJson: RequestJson, headers: HeadersInit)
 export declare type VerifyEmailAPI = (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
 export declare type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
 export declare type SubmitNewPasswordAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordAPIResponse>;
+declare global {
+    interface Document {
+        documentMode?: any;
+    }
+}
 export {};

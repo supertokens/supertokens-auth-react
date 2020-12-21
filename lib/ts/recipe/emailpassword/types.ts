@@ -655,3 +655,12 @@ export type SubmitNewPasswordAPI = (
     requestJson: RequestJson,
     headers: HeadersInit
 ) => Promise<SubmitNewPasswordAPIResponse>;
+
+/*
+ *  Add documentMode to document object in order to use to detect if browser is IE.
+ */
+declare global {
+    interface Document {
+        documentMode?: any;
+    }
+}
