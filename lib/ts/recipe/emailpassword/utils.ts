@@ -15,6 +15,7 @@
 
 import NormalisedURLPath from "../../normalisedURLPath";
 import { FormField, FormFieldBaseConfig, NormalisedAppInfo, NormalisedFormField } from "../../types";
+import { getWindowOrThrow } from "../../utils";
 import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID, MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
 import {
     EmailPasswordConfig,
@@ -361,7 +362,7 @@ function getShouldUseShadowDom(useShadowDom?: boolean): boolean {
      * In order to disable unsupported shadowDom
      * https://github.com/supertokens/supertokens-auth-react/issues/99
      */
-    const isIE = window.document.documentMode !== undefined;
+    const isIE = getWindowOrThrow().document.documentMode !== undefined;
     // If browser is Internet Explorer, always disable shadow dom.
     if (isIE === true) {
         return false;
