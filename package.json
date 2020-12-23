@@ -31,7 +31,6 @@
     "react-dom": "^16.0.0",
     "react-router-dom": "5.2.0",
     "regenerator-runtime": "0.13.7",
-    "supertokens-website": "^5.0.1",
     "tslint": "6.1.3",
     "typescript": "3.5.2"
   },
@@ -49,9 +48,11 @@
     "react-router-dom": ">=5.0.0"
   },
   "scripts": {
+    "init": "npm i -d && (cd ./test/react-test-app && npm i -d) && (cd ./test/server && npm i -d) && SRC=./test/react-test-app npm run link-dependencies",
     "start": "./test/startTestApp.sh",
     "server": "cd test/server/ && TEST_MODE=testing START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
     "test": "./test/startTestApp.sh --test",
+    "link-dependencies": "./test/linkDependencies.sh $SRC",
     "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
     "tsc": "cd lib && npx tsc -p tsconfig.json",
     "build": "cd lib && rm -r ./build 2> /dev/null && mkdir -p ./build && npx tsc -p tsconfig.json --emitDeclarationOnly && cd ../ && npm run compile",

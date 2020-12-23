@@ -18,6 +18,7 @@ jobs:
       - run: apt-get install lsof
       - run: npm i -d
       - run: cd ./test/react-test-app && npm i -d
+      - run: npm run link-dependencies
       - run: (cd .circleci/ && ./doTests.sh)
       - slack/status
 
