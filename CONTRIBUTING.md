@@ -24,8 +24,7 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 3. `cd supertokens-auth-react`
 4. Install the project dependencies
    ```
-   npm i -d
-   cd ./test/react-test-app && npm i -d
+   npm run init
    ```
 5. Add git pre-commit hooks
    ```
