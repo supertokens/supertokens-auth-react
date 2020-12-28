@@ -26,7 +26,7 @@ export const defaultPalette: NormalisedPalette = {
         inputBackground: "#f2f2f2",
         generalErrorBackground: "#fdf3f2",
         primary: "#ff9b33",
-        buttonRipple: "#FF6600",
+        buttonFocus: "#FF6600",
         error: "#ff1717",
         textTitle: "#222222",
         textLabel: "#222222",
@@ -188,12 +188,12 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             "&:active": {
                 outline: "none",
                 border: "none",
-                backgroundColor: palette.colors.ripple,
+                backgroundColor: palette.colors.buttonFocus,
                 transition: "background 0s",
                 backgroundSize: "100%"
             },
             "&:hover": {
-                backgroundColor: palette.colors.ripple
+                backgroundColor: palette.colors.buttonFocus
             },
             "&:focus": {
                 outline: "none",
