@@ -179,7 +179,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             borderRadius: "8px",
             backgroundPosition: "center",
             backgroundImage: `radial-gradient(circle, transparent 1%, ${palette.colors.primary} 1%)`,
-            transition: "background 0.6s",
+            transition: "background 0.4s",
             backgroundSize: "12000%",
             "&:disabled": {
                 border: "none",
