@@ -6,6 +6,7 @@
       ]
     ],
     "plugins": [
+      "@emotion/babel-plugin",
       "inline-react-svg",
       [
         "@babel/plugin-transform-react-jsx",

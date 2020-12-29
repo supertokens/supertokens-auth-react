@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import SuperTokens from "./superTokens";
 import { SuperTokensConfig } from "./types";
 export default class SuperTokensAPIWrapper {

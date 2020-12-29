@@ -22,7 +22,7 @@ import StyleContext from "../../../styles/styleContext";
 import { Styles } from "../../../../../../types";
 
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { jsx } from "@emotion/react";
 
 export default function SignUpFooter({
     componentStyles,

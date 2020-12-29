@@ -14,7 +14,7 @@
  */
 
 /** @jsx jsx */
-import { jsx, keyframes } from "@emotion/core";
+import { jsx, keyframes } from "@emotion/react";
 import { NormalisedDefaultStyles, NormalisedPalette } from "../types";
 
 /*

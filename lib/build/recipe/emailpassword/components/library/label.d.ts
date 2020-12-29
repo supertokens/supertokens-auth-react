@@ -1,4 +1,3 @@
-/// <reference types="react" />
 declare type LabelProps = {
     value: string;
     showIsRequired?: boolean;

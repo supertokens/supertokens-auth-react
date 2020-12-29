@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { CSSObject } from "@emotion/core";
+import { CSSObject } from "@emotion/react";
 import React from "react";
 import { Styles } from "../../../../types";
 import EmailPassword from "../../emailPassword";

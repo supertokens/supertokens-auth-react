@@ -19,10 +19,10 @@
 import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
 
-import { CSSObject } from "@emotion/serialize/types";
+import { CSSObject } from "@emotion/react/types";
 
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { jsx } from "@emotion/react";
 import { Styles } from "../../../../../../types";
 import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../../types";
 import { FormRow, Button } from "../../../library";

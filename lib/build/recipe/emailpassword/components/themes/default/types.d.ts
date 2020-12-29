@@ -1,4 +1,4 @@
-import { CSSObject } from "@emotion/core";
+import { CSSObject } from "@emotion/react";
 export declare enum paletteColorOptions {
     BACKGROUND = "background",
     INPUTBACKGROUND = "inputBackground",

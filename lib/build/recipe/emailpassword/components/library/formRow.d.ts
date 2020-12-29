@@ -1,4 +1,3 @@
-/// <reference types="react" />
 declare type FormRowProps = {
     children: JSX.Element;
     hasError?: boolean;

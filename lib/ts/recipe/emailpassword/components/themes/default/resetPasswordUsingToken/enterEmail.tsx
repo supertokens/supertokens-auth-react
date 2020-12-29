@@ -19,10 +19,10 @@ import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
 
 import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../../types";
-import { CSSObject } from "@emotion/serialize/types";
+import { CSSObject } from "@emotion/react/types";
 
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { jsx } from "@emotion/react";
 import FormBase from "../../../library/FormBase";
 import { Styles } from "../../../../../../types";
 import { NormalisedPalette } from "../types";
