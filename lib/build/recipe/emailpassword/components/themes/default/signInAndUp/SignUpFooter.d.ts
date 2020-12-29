@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { Styles } from "../../../../../../types";
 export default function SignUpFooter({ componentStyles, termsOfServiceLink, privacyPolicyLink }: {
     componentStyles: Styles;

@@ -1,3 +1,4 @@
+/// <reference types="react" />
 declare type FeatureWrapperProps = {
     children: JSX.Element;
     useShadowDom?: boolean;

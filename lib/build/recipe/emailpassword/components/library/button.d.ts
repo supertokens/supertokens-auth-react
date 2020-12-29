@@ -1,3 +1,4 @@
+/// <reference types="react" />
 declare type ButtonProps = {
     label: string;
     isLoading: boolean;
