@@ -30,7 +30,7 @@ SuperTokens.init({
   },
   recipeList: [
     EmailPassword.init({
-      useShadowDom: false,
+      // useShadowDom: false,
       palette: {
         colors
       },
