@@ -32,7 +32,7 @@ SuperTokens.init({
     EmailPassword.init({
       // useShadowDom: false,
       palette: {
-        colors
+        ...colors
       },
       signInAndUpFeature: {
         // defaultToSignUp: false,
