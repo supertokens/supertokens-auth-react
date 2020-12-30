@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.3] - 2020-12-24
 ### Fixed
+- Upgrade to Emotion v11 and react-shadow v19
 - Fix conflicting dependencies with npm link
 - No Shadow DOM for Internet Explorer
 

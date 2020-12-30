@@ -18,37 +18,11 @@
 import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
 import { SignUpThemeProps } from "../../../../types";
-import { CSSObject } from "@emotion/serialize/types";
 
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { jsx } from "@emotion/react";
 import FormBase from "../../../library/FormBase";
 import SignUpFooter from "./SignUpFooter";
-import { NormalisedPalette } from "../types";
-
-/*
- * Styles.
- */
-function getStyles(palette: NormalisedPalette): any {
-    return {
-        headerTitle: {
-            fontSize: palette.fonts.size[2],
-            lineHeight: "40px",
-            letterSpacing: "0.58px",
-            fontWeight: 800,
-            color: palette.colors.textTitle
-        } as CSSObject,
-
-        headerSubTitle: {
-            marginTop: "9px",
-            marginBottom: "21px"
-        } as CSSObject,
-
-        privacyPolicyAndTermsAndConditions: {
-            marginTop: "10px"
-        } as CSSObject
-    };
-}
 
 /*
  * Component.
@@ -62,7 +36,6 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
      */
     render(): JSX.Element {
         const styles = this.context;
-        const componentStyles = getStyles(styles.palette as NormalisedPalette);
         const { privacyPolicyLink, termsOfServiceLink, signInClicked, onSuccess, callAPI } = this.props;
         const { formFields } = this.props;
         return (
@@ -75,10 +48,10 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
                 showLabels={true}
                 header={
                     <Fragment>
-                        <div className="headerTitle" css={[componentStyles.headerTitle, styles.headerTitle]}>
+                        <div className="headerTitle" css={styles.headerTitle}>
                             Sign Up
                         </div>
-                        <div className="headerSubtitle" css={[componentStyles.headerSubTitle, styles.headerSubtitle]}>
+                        <div className="headerSubtitle" css={styles.headerSubtitle}>
                             <div className="secondaryText" css={styles.secondaryText}>
                                 Already have an account?
                                 <span className="link" onClick={signInClicked} css={styles.link}>
@@ -89,13 +62,7 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
                         <div className="divider" css={styles.divider}></div>
                     </Fragment>
                 }
-                footer={
-                    <SignUpFooter
-                        componentStyles={componentStyles}
-                        privacyPolicyLink={privacyPolicyLink}
-                        termsOfServiceLink={termsOfServiceLink}
-                    />
-                }
+                footer={<SignUpFooter privacyPolicyLink={privacyPolicyLink} termsOfServiceLink={termsOfServiceLink} />}
             />
         );
     }

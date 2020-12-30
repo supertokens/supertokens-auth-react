@@ -19,41 +19,11 @@
 import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
 
-import { CSSObject } from "@emotion/serialize/types";
-
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
-import { Styles } from "../../../../../../types";
+import { jsx } from "@emotion/react";
 import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../../types";
 import { FormRow, Button } from "../../../library";
 import FormBase from "../../../library/FormBase";
-import { NormalisedPalette } from "../types";
-
-/*
- * Styles.
- */
-
-function getStyles(palette: NormalisedPalette): Styles {
-    return {
-        headerTitle: {
-            fontSize: palette.fonts.size[2],
-            lineHeight: "40px",
-            letterSpacing: "0.58px",
-            fontWeight: 600,
-            color: palette.colors.textTitle
-        } as CSSObject,
-
-        headerSubTitle: {
-            marginTop: "9px",
-            marginBottom: "21px"
-        } as CSSObject,
-
-        successMessage: {
-            marginTop: "15px",
-            marginBottom: "15px"
-        } as CSSObject
-    };
-}
 
 /*
  * Component.
@@ -91,7 +61,6 @@ export default class SubmitNewPasswordTheme extends PureComponent<
 
     render(): JSX.Element {
         const styles = this.context;
-        const componentStyles = getStyles(styles.palette);
         const { callAPI, formFields, onSignInClicked } = this.props;
         const { hasNewPassword } = this.state;
 
@@ -99,14 +68,14 @@ export default class SubmitNewPasswordTheme extends PureComponent<
             return (
                 <div className="container" css={styles.container}>
                     <div className="row" css={styles.row}>
-                        <div className="headerTitle" css={[componentStyles.headerTitle, styles.headerTitle]}>
+                        <div className="headerTitle" css={styles.headerTitle}>
                             Success!
                         </div>
                         <FormRow key="form-button">
                             <Fragment>
                                 <div
                                     className="primaryText successMessage"
-                                    css={[styles.primaryText, componentStyles.successMessage, styles.successMessage]}>
+                                    css={[styles.primaryText, styles.submitNewPasswordSuccessMessage]}>
                                     Your password has been updated successfully
                                 </div>
                                 <Button
@@ -133,10 +102,10 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                 showLabels={false}
                 header={
                     <Fragment>
-                        <div className="headerTitle" css={[componentStyles.headerTitle, styles.headerTitle]}>
+                        <div className="headerTitle" css={styles.headerTitle}>
                             Change your password
                         </div>
-                        <div className="headerSubtitle" css={[componentStyles.headerSubTitle, styles.headerSubTitle]}>
+                        <div className="headerSubtitle" css={styles.headerSubtitle}>
                             <div className="secondaryText" css={styles.secondaryText}>
                                 Enter a new password below to change your password
                             </div>

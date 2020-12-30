@@ -1,11 +1,9 @@
 import React, { PureComponent } from "react";
-import { CSSObject } from "@emotion/serialize/types";
 import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../../types";
-import { NormalisedPalette } from "../types";
 export default class SubmitNewPasswordTheme extends PureComponent<SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState> {
     static contextType: React.Context<{
-        [x: string]: CSSObject;
-        palette: NormalisedPalette;
+        [x: string]: import("@emotion/react").CSSObject;
+        palette: import("../types").NormalisedPalette;
     }>;
     constructor(props: SubmitNewPasswordThemeProps);
     onSuccess: () => void;

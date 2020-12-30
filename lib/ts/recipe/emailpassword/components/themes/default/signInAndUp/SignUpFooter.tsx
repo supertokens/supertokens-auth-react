@@ -19,17 +19,14 @@
 
 import React, { useContext } from "react";
 import StyleContext from "../../../styles/styleContext";
-import { Styles } from "../../../../../../types";
 
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { jsx } from "@emotion/react";
 
 export default function SignUpFooter({
-    componentStyles,
     termsOfServiceLink,
     privacyPolicyLink
 }: {
-    componentStyles: Styles;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
 }): JSX.Element | null {
@@ -42,11 +39,7 @@ export default function SignUpFooter({
     return (
         <div
             className="secondaryText privacyPolicyAndTermsAndConditions"
-            css={[
-                componentStyles.privacyPolicyAndTermsAndConditions,
-                styles.secondaryText,
-                styles.privacyPolicyAndTermsAndConditions
-            ]}>
+            css={[styles.secondaryText, styles.privacyPolicyAndTermsAndConditions]}>
             By signing up, you agree to our
             {termsOfServiceLink !== undefined && (
                 <a className="link" css={styles.link} target="_blank" href={termsOfServiceLink}>

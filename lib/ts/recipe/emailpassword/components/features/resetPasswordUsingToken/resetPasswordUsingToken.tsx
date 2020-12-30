@@ -33,7 +33,7 @@ import { APIFormField, RequestJson } from "../../../../../types";
 import FeatureWrapper from "../../../../components/featureWrapper";
 
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { jsx } from "@emotion/react";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../../constants";
 import { getWindowOrThrow, redirectToInApp } from "../../../../../utils";
 import { handleEnterEmailAPI, handleSubmitNewPasswordAPI } from "./api";

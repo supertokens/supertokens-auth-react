@@ -20,39 +20,11 @@ import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
 
 import { SignInThemeProps } from "../../../../types";
-import { CSSObject } from "@emotion/serialize/types";
 
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { jsx } from "@emotion/react";
 
 import FormBase from "../../../library/FormBase";
-import { Styles } from "../../../../../../types";
-import { NormalisedPalette } from "../types";
-
-/*
- * Styles.
- */
-
-function getStyles(palette: NormalisedPalette): Styles {
-    return {
-        headerTitle: {
-            fontSize: palette.fonts.size[2],
-            lineHeight: "40px",
-            letterSpacing: "0.58px",
-            fontWeight: 800,
-            color: palette.colors.textTitle
-        } as CSSObject,
-
-        headerSubTitle: {
-            marginTop: "9px",
-            marginBottom: "21px"
-        } as CSSObject,
-
-        forgotPasswordLink: {
-            marginTop: "10px"
-        } as CSSObject
-    };
-}
 
 /*
  * Component.
@@ -67,7 +39,6 @@ export default class SignInTheme extends PureComponent<SignInThemeProps> {
 
     render(): JSX.Element {
         const styles = this.context;
-        const componentStyle = getStyles(styles.palette as NormalisedPalette);
 
         const { signUpClicked, forgotPasswordClick, onSuccess, callAPI } = this.props;
         const { formFields } = this.props;
@@ -81,10 +52,10 @@ export default class SignInTheme extends PureComponent<SignInThemeProps> {
                 showLabels={true}
                 header={
                     <Fragment>
-                        <div className="headerTitle" css={[componentStyle.headerTitle, styles.headerTitle]}>
+                        <div className="headerTitle" css={styles.headerTitle}>
                             Sign In
                         </div>
-                        <div className="headerSubtitle" css={[componentStyle.headerSubTitle, styles.headerSubtitle]}>
+                        <div className="headerSubtitle" css={styles.headerSubtitle}>
                             <div className="secondaryText" css={styles.secondaryText}>
                                 Not registered yet?
                                 <span className="link" onClick={signUpClicked} css={styles.link}>
@@ -98,12 +69,7 @@ export default class SignInTheme extends PureComponent<SignInThemeProps> {
                 footer={
                     <div
                         className="link secondaryText forgotPasswordLink"
-                        css={[
-                            styles.link,
-                            styles.secondaryText,
-                            componentStyle.forgotPasswordLink,
-                            styles.forgotPasswordLink
-                        ]}
+                        css={[styles.link, styles.secondaryText, styles.forgotPasswordLink]}
                         onClick={forgotPasswordClick}>
                         Forgot password?
                     </div>

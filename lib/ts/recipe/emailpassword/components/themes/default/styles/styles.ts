@@ -14,7 +14,7 @@
  */
 
 /** @jsx jsx */
-import { jsx, keyframes } from "@emotion/core";
+import { jsx, keyframes } from "@emotion/react";
 import { NormalisedDefaultStyles, NormalisedPalette } from "../types";
 
 /*
@@ -137,7 +137,8 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         input: {
-            width: "94%",
+            boxSizing: "border-box",
+            width: "100%",
             backgroundColor: palette.colors.inputBackground,
             borderRadius: "12px",
             border: "1px solid #dddddd",
@@ -149,6 +150,37 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
                 outline: "none"
             },
             height: "42px"
+        },
+
+        headerTitle: {
+            fontSize: palette.fonts.size[2],
+            lineHeight: "40px",
+            letterSpacing: "0.58px",
+            fontWeight: 800,
+            marginBottom: "9px",
+            color: palette.colors.textTitle
+        },
+
+        headerSubtitle: {
+            marginBottom: "21px"
+        },
+
+        forgotPasswordLink: {
+            marginTop: "10px"
+        },
+
+        enterEmailSuccessMessage: {
+            marginTop: "15px",
+            marginBottom: "15px"
+        },
+
+        submitNewPasswordSuccessMessage: {
+            marginTop: "15px",
+            marginBottom: "15px"
+        },
+
+        privacyPolicyAndTermsAndConditions: {
+            marginTop: "10px"
         },
 
         inputErrorMessage: {
