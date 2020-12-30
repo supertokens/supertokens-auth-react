@@ -22,7 +22,13 @@ import root from "react-shadow/emotion";
 import { ST_ROOT_ID } from "../../constants";
 import ErrorBoundary from "./errorBoundary";
 
-import { Fragment } from "react";
+/** @jsx jsx */
+import { CacheProvider, jsx } from "@emotion/react";
+import createCache from "@emotion/cache";
+
+const superTokensEmotionCache = createCache({
+    key: "supertokens"
+});
 
 /*
  * Props.
@@ -43,15 +49,7 @@ export default function FeatureWrapper({ children, useShadowDom }: FeatureWrappe
      */
     return (
         <ErrorBoundary>
-            <WithOrWithoutShadowDom useShadowDom={useShadowDom}>
-                <Fragment>
-                    {children}
-                    <link
-                        href="//fonts.googleapis.com/css?family=Rubik:wght@300;400;500;700"
-                        rel="stylesheet"
-                        type="text/css"></link>
-                </Fragment>
-            </WithOrWithoutShadowDom>
+            <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
         </ErrorBoundary>
     );
 }
@@ -59,7 +57,11 @@ export default function FeatureWrapper({ children, useShadowDom }: FeatureWrappe
 function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps): JSX.Element {
     // If explicitely specified to not use shadow dom.
     if (useShadowDom === false) {
-        return <div id={ST_ROOT_ID}>{children}</div>;
+        return (
+            <div id={ST_ROOT_ID}>
+                <CacheProvider value={superTokensEmotionCache}>{children}</CacheProvider>
+            </div>
+        );
     }
 
     // Otherwise, use shadow dom.

@@ -19,37 +19,10 @@ import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
 
 import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../../types";
-import { CSSObject } from "@emotion/serialize/types";
 
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { jsx } from "@emotion/react";
 import FormBase from "../../../library/FormBase";
-import { Styles } from "../../../../../../types";
-import { NormalisedPalette } from "../types";
-
-/*
- * Styles.
- */
-function getStyles(palette: NormalisedPalette): Styles {
-    return {
-        headerTitle: {
-            fontSize: palette.fonts.size[2],
-            lineHeight: "40px",
-            letterSpacing: "0.58px",
-            fontWeight: 600,
-            color: palette.colors.textTitle
-        } as CSSObject,
-
-        headerSubTitle: {
-            marginTop: "9px",
-            marginBottom: "21px"
-        } as CSSObject,
-
-        successMessage: {
-            marginBottom: "15px"
-        } as CSSObject
-    };
-}
 
 /*
  * Component.
@@ -91,7 +64,6 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
      */
     render(): JSX.Element {
         const styles = this.context;
-        const componentStyles = getStyles(styles.palette);
         const { formFields, callAPI } = this.props;
         const { emailSent } = this.state;
 
@@ -102,7 +74,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
                     <div className="row" css={styles.row}>
                         <div
                             className="primaryText successMessage"
-                            css={[styles.primaryText, componentStyles.successMessage, styles.successMessage]}>
+                            css={[styles.primaryText, styles.enterEmailSuccessMessage]}>
                             Please check your email for the password recovery link.{" "}
                             <span className="link" css={styles.link} onClick={this.resend}>
                                 Resend
@@ -124,10 +96,10 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
                 validateOnBlur={true}
                 header={
                     <Fragment>
-                        <div className="headerTitle" css={[componentStyles.headerTitle, styles.headerTitle]}>
+                        <div className="headerTitle" css={styles.headerTitle}>
                             Reset your password
                         </div>
-                        <div className="headerSubtitle" css={[componentStyles.headerSubTitle, styles.headerSubtitle]}>
+                        <div className="headerSubtitle" css={styles.headerSubtitle}>
                             <div className="secondaryText" css={styles.secondaryText}>
                                 We will send you an email to reset your password
                             </div>

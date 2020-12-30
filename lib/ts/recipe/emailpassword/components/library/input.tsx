@@ -18,7 +18,7 @@
  */
 
 /** @jsx jsx */
-import { jsx, CSSObject } from "@emotion/core";
+import { jsx, CSSObject } from "@emotion/react";
 
 import React, { useContext } from "react";
 import StyleContext from "../styles/styleContext";

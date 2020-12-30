@@ -20,7 +20,7 @@ import * as React from "react";
 import { PureComponent, Fragment } from "react";
 
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { jsx } from "@emotion/react";
 import { handleSignInAPI, handleSignUpAPI, handleEmailExistsAPICall } from "./api";
 import EmailPassword from "../../../emailPassword";
 import {

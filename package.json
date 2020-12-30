@@ -10,6 +10,7 @@
     "@babel/preset-react": "7.12.1",
     "@babel/preset-typescript": "7.12.1",
     "@babel/register": "7.12.1",
+    "@emotion/eslint-plugin": "^11.0.0",
     "@types/chroma-js": "^2.1.3",
     "@types/node": "14.11.10",
     "@types/react": "16.9.53",
@@ -36,11 +37,13 @@
     "typescript": "3.5.2"
   },
   "dependencies": {
-    "@emotion/core": "10.0.35",
+    "@emotion/babel-plugin": "^11.1.2",
+    "@emotion/cache": "^11.1.3",
+    "@emotion/react": "11.1.4",
+    "@emotion/server": "11.0.0",
     "chroma-js": "^2.1.0",
-    "emotion": "10.0.27",
-    "emotion-server": "10.0.27",
-    "react-shadow": "18.4.2",
+    "emotion": "11.0.0",
+    "react-shadow": "19.0.1",
     "supertokens-website": "^5.0.1"
   },
   "peerDependencies": {

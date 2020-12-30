@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { CSSObject } from "@emotion/core";
+import { CSSObject } from "@emotion/react";
 
 export enum paletteColorOptions {
     BACKGROUND = "background",

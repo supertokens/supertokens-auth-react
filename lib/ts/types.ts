@@ -15,7 +15,7 @@
 import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
-import { CSSObject } from "@emotion/serialize/types/index";
+import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
 
 /*

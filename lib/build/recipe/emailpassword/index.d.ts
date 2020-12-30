@@ -1,5 +1,5 @@
 import { CreateRecipeFunction } from "../../types";
-import { EmailPasswordConfig, SignOutAPIResponse } from "./types";
+import { EmailPasswordUserInput, SignOutAPIResponse } from "./types";
 import SignInAndUpTheme from "./components/themes/default/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/resetPasswordUsingToken";
 import { ResetPasswordUsingTokenTheme } from "./components/themes/default/resetPasswordUsingToken";
@@ -9,7 +9,7 @@ export default class EmailPasswordAPIWrapper {
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ResetPasswordUsingToken: typeof ResetPasswordUsingToken;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
-    static init(config?: EmailPasswordConfig): CreateRecipeFunction;
+    static init(config?: EmailPasswordUserInput): CreateRecipeFunction;
     static signOut(): Promise<SignOutAPIResponse>;
 }
 declare const init: typeof EmailPasswordAPIWrapper.init;

@@ -17,7 +17,7 @@
  * Imports.
  */
 import { CreateRecipeFunction } from "../../types";
-import { EmailPasswordConfig, SignOutAPIResponse } from "./types";
+import { EmailPasswordUserInput, SignOutAPIResponse } from "./types";
 
 import EmailPassword from "./emailPassword";
 import SignInAndUpTheme from "./components/themes/default/signInAndUp";
@@ -38,7 +38,7 @@ export default class EmailPasswordAPIWrapper {
     static ResetPasswordUsingToken = ResetPasswordUsingToken;
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
 
-    static init(config?: EmailPasswordConfig): CreateRecipeFunction {
+    static init(config?: EmailPasswordUserInput): CreateRecipeFunction {
         return EmailPassword.init(config);
     }
 
