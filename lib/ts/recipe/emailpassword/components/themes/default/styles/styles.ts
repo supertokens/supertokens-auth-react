@@ -137,7 +137,8 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         input: {
-            width: "94%",
+            boxSizing: "border-box",
+            width: "100%",
             backgroundColor: palette.colors.inputBackground,
             borderRadius: "12px",
             border: "1px solid #dddddd",
