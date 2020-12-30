@@ -16,6 +16,7 @@
 /** @jsx jsx */
 import { jsx, keyframes } from "@emotion/react";
 import { NormalisedDefaultStyles, NormalisedPalette } from "../types";
+import chroma from "chroma-js";
 
 /*
  * Palette
@@ -208,13 +209,27 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             fontWeight: 700,
             borderWidth: "0px",
             borderRadius: "8px",
+            backgroundPosition: "center",
+            backgroundImage: `radial-gradient(circle, transparent 1%, ${palette.colors.primary} 1%)`,
+            transition: "background 0.4s",
+            backgroundSize: "12000%",
             "&:disabled": {
                 border: "none",
                 cursor: "no-drop"
             },
             "&:active": {
                 outline: "none",
-                border: "none"
+                border: "none",
+                backgroundColor: chroma(palette.colors.primary)
+                    .darken(0.1)
+                    .hex(),
+                transition: "background 0s",
+                backgroundSize: "100%"
+            },
+            "&:hover": {
+                backgroundColor: chroma(palette.colors.primary)
+                    .darken(0.1)
+                    .hex()
             },
             "&:focus": {
                 outline: "none",

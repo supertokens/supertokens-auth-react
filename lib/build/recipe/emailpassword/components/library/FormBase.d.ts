@@ -3,7 +3,7 @@ import { APIFormField } from "../../../../types";
 import { FormBaseProps, FormBaseState, FormFieldState } from "../../types";
 export default class FormBase extends PureComponent<FormBaseProps, FormBaseState> {
     static contextType: React.Context<{
-        [x: string]: import("@emotion/react").CSSObject;
+        [x: string]: import("@emotion/serialize").CSSObject;
         palette: import("../themes/default/types").NormalisedPalette;
     }>;
     constructor(props: FormBaseProps);
