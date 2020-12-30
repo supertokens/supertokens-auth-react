@@ -2,6 +2,7 @@
 !**/*.d.ts
 .git/
 test/
+eslint/
 react-test-app/
 hooks/
 .circleci/
