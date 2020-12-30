@@ -53,11 +53,12 @@
     "react-router-dom": ">=5.0.0"
   },
   "scripts": {
-    "init": "npm i -d && (cd ./test/react-test-app && npm i -d) && (cd ./test/server && npm i -d) && SRC=./test/react-test-app npm run link-dependencies",
+    "init": "cd ./test/react-test-app && npm i -d",
     "start": "./test/startTestApp.sh",
     "server": "cd test/server/ && TEST_MODE=testing START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
     "test": "./test/startTestApp.sh --test",
     "link-dependencies": "./test/linkDependencies.sh $SRC",
+    "install": "SRC=./test/react-test-app npm run link-dependencies",
     "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
     "tsc": "cd lib && npx tsc -p tsconfig.json",
     "build": "cd lib && rm -r ./build 2> /dev/null && mkdir -p ./build && npx tsc -p tsconfig.json --emitDeclarationOnly && cd ../ && npm run compile",
