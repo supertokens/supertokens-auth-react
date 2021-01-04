@@ -11,7 +11,8 @@
     "supertokens-auth-react": "0.2.2"
   },
   "scripts": {
-    "install": "(cd ../../ && npm link) && npm link supertokens-auth-react",
+    "preinstall": "(cd ../../ && npm i -d)",
+    "postinstall": "(cd ../../ && npm link) && npm link supertokens-auth-react && (cd ../../ && SRC=./test/react-test-app npm run link-dependencies)",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
