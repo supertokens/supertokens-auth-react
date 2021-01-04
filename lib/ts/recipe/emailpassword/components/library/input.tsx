@@ -26,6 +26,7 @@ import StyleContext from "../styles/styleContext";
 import { forwardRef, RefObject } from "react";
 import { APIFormField } from "../../../../types";
 import { InputRef } from "../../types";
+import Checked from "../../assets/checked";
 
 /*
  * Props.
@@ -37,6 +38,7 @@ type InputProps = {
     type: string;
     name: string;
     autoComplete?: string;
+    validated: boolean;
     hasError: boolean;
     placeholder: string;
     ref: RefObject<any>;
@@ -49,7 +51,7 @@ type InputProps = {
  */
 
 function Input(
-    { type, name, hasError, autoComplete, onInputFocus, onInputBlur, placeholder }: InputProps,
+    { type, name, hasError, autoComplete, onInputFocus, onInputBlur, placeholder, validated }: InputProps,
     ref: RefObject<InputRef>
 ): JSX.Element {
     /*
@@ -102,6 +104,11 @@ function Input(
                 placeholder={placeholder}
                 ref={ref}
             />
+            {validated === true && (
+                <div className="inputAdornment" css={styles.inputAdornment}>
+                    <Checked color={styles.palette.colors.primary} />
+                </div>
+            )}
         </div>
     );
 }

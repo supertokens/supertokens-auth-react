@@ -24,14 +24,15 @@ import { spawn } from "child_process";
 import puppeteer from "puppeteer";
 import {
     clearBrowserCookies,
-    getPlaceholders,
     getLabelsText,
-    setInputValues,
-    getFieldErrors,
-    submitFormReturnRequestAndResponse,
     getInputNames,
-    submitForm,
-    hasMethodBeenCalled
+    getPlaceholders,
+    getSuccessInputAdornments,
+    getFieldErrors,
+    hasMethodBeenCalled,
+    setInputValues,
+    submitFormReturnRequestAndResponse,
+    submitForm
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -99,6 +100,9 @@ describe("SuperTokens SignUp feature/theme", function() {
                 "How old are you?",
                 "Where do you live?"
             ]);
+
+            const adornments = await getSuccessInputAdornments(page);
+            assert.strictEqual(adornments.length, 0);
         });
 
         it("Should show error messages", async function() {
@@ -186,6 +190,9 @@ export async function successfulSignUp(page) {
         { name: "name", value: "John Doe" },
         { name: "age", value: "20" }
     ]);
+
+    const adornments = await getSuccessInputAdornments(page);
+    assert.strictEqual(adornments.length, 4);
 
     let [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
         submitFormReturnRequestAndResponse(page, SIGN_UP_API),

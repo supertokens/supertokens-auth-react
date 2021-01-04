@@ -98,6 +98,15 @@ export async function getInputNames(page) {
     , {ST_ROOT_SELECTOR})
 }
 
+export async function getSuccessInputAdornments(page) {
+    return await page.evaluate(({ST_ROOT_SELECTOR}) => 
+        Array.from(
+            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll('.formRow .inputAdornment'),
+            i => i.name
+        )
+    , {ST_ROOT_SELECTOR})
+}
+
 export async function getLabelsText(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
         Array.from(
@@ -134,14 +143,15 @@ export async function getGeneralError(page) {
  }
 
  export async function setInputValues(page, fields) {
-    return await page.evaluate(({fields, ST_ROOT_SELECTOR}) => {
+    await page.evaluate(({fields, ST_ROOT_SELECTOR}) => {
         fields.forEach(field => {
             const inputNode = document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(`input[name=${field.name}]`);
             inputNode.focus();
             inputNode.value = field.value;
             inputNode.blur();
-        })
+        });
     }, {fields, ST_ROOT_SELECTOR});
+    return await new Promise(r => setTimeout(r, 150)); // Make sure to wait for success feedbacks.
 }
 
 export async function clearBrowserCookies (page) {

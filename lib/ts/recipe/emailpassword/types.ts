@@ -388,7 +388,7 @@ export type NormalisedFormFieldWithError = NormalisedFormField & {
 
 export type FormFieldThemeProps = NormalisedFormFieldWithError & {
     /*
-     * Has the value already been submitted to its validator.
+     * Show Is required (*) next to label
      */
     showIsRequired?: boolean;
 
@@ -401,6 +401,11 @@ export type FormFieldThemeProps = NormalisedFormFieldWithError & {
 export type FormFieldState = FormFieldThemeProps & {
     /*
      * Has the value already been submitted to its validator.
+     */
+    validated: boolean;
+
+    /*
+     * Input
      */
     ref: RefObject<InputRef>;
 };

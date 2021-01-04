@@ -125,6 +125,7 @@ export declare type FormFieldThemeProps = NormalisedFormFieldWithError & {
     autoComplete?: string;
 };
 export declare type FormFieldState = FormFieldThemeProps & {
+    validated: boolean;
     ref: RefObject<InputRef>;
 };
 export declare type InputRef = HTMLInputElement & {

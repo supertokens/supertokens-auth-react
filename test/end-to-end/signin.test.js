@@ -23,19 +23,20 @@ import assert from "assert";
 import puppeteer from "puppeteer";
 import {
     clearBrowserCookies,
-    getLogoutButton,
-    getSubmitFormButtonLabel,
-    getPlaceholders,
-    getLabelsText,
-    setInputValues,
-    getGeneralError,
-    getFieldErrors,
     clickForgotPasswordLink,
-    submitForm,
+    getFieldErrors,
+    getGeneralError,
     getInputNames,
+    getLogoutButton,
+    getLabelsText,
+    getPlaceholders,
+    getSubmitFormButtonLabel,
+    getSuccessInputAdornments,
     hasMethodBeenCalled,
-    toggleSignInSignUp,
-    submitFormReturnRequestAndResponse
+    setInputValues,
+    submitForm,
+    submitFormReturnRequestAndResponse,
+    toggleSignInSignUp
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { successfulSignUp } from "./signup.test";
@@ -97,6 +98,9 @@ describe("SuperTokens SignIn feature/theme", function() {
 
             const placeholders = await getPlaceholders(page);
             assert.deepStrictEqual(placeholders, ["Your work email", "Password"]);
+
+            const adornments = await getSuccessInputAdornments(page);
+            assert.strictEqual(adornments.length, 0);
         });
 
         it('Should switch between signup and sign in widget when "Sign Up" is clicked.', async function() {
@@ -124,6 +128,9 @@ describe("SuperTokens SignIn feature/theme", function() {
                 { name: "password", value: "********" }
             ]);
 
+            let adornments = await getSuccessInputAdornments(page);
+            assert.strictEqual(adornments.length, 0);
+
             await submitForm(page);
             // // Assert.
             let formFieldsErrors = await getFieldErrors(page);
@@ -134,6 +141,9 @@ describe("SuperTokens SignIn feature/theme", function() {
                 { name: "email", value: "john@gmail.com" },
                 { name: "password", value: "********" }
             ]);
+
+            adornments = await getSuccessInputAdornments(page);
+            assert.strictEqual(adornments.length, 0);
 
             // Submit.
             const { request, response } = await submitFormReturnRequestAndResponse(page, SIGN_IN_API);
@@ -169,6 +179,9 @@ describe("SuperTokens SignIn feature/theme", function() {
                 { name: "email", value: "john.doe@supertokens.io" },
                 { name: "password", value: "Str0ngP@ssw0rd" }
             ]);
+
+            const adornments = await getSuccessInputAdornments(page);
+            assert.strictEqual(adornments.length, 0);
 
             // Submit.
             const [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([

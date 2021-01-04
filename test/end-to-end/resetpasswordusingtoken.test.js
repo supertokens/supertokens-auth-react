@@ -31,18 +31,19 @@ import {
 import { RESET_PASSWORD_INVALID_TOKEN_ERROR } from "../../lib/build/constants";
 import {
     clearBrowserCookies,
-    getResendResetPasswordEmailLink,
-    sendEmailResetPasswordSuccessMessage,
-    getPlaceholders,
-    getLabelsText,
-    setInputValues,
-    getGeneralError,
-    submitFormReturnRequestAndResponse,
-    submitForm,
     getFieldErrors,
-    getSubmitFormButtonLabel,
+    getGeneralError,
     getInputNames,
-    hasMethodBeenCalled
+    getLabelsText,
+    getPlaceholders,
+    getSuccessInputAdornments,
+    getSubmitFormButtonLabel,
+    getResendResetPasswordEmailLink,
+    hasMethodBeenCalled,
+    sendEmailResetPasswordSuccessMessage,
+    setInputValues,
+    submitForm,
+    submitFormReturnRequestAndResponse
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -51,7 +52,7 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe("SuperTokens Reset password feature/theme", function() {
+describe.only("SuperTokens Reset password feature/theme", function() {
     let browser;
     let page;
 
@@ -109,8 +110,14 @@ describe("SuperTokens Reset password feature/theme", function() {
             const formFieldsErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldsErrors, ["!\nEmail is invalid"]);
 
+            let adornments = await getSuccessInputAdornments(page);
+            assert.strictEqual(adornments.length, 0);
+
             // Set values.
             await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
+
+            adornments = await getSuccessInputAdornments(page);
+            assert.strictEqual(adornments.length, 1);
 
             // Submit.
             const [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
@@ -156,14 +163,17 @@ describe("SuperTokens Reset password feature/theme", function() {
             const placeholders = await getPlaceholders(page);
             assert.deepStrictEqual(placeholders, ["New password", "Confirm your password"]); // Email placeholder as defined in signUpForm.formFields.
 
+            let adornments = await getSuccessInputAdornments(page);
+            assert.strictEqual(adornments.length, 0);
+
             // Set incorrect values.
             await setInputValues(page, [
                 { name: "password", value: "password" },
                 { name: "confirm-password", value: "password" }
             ]);
 
-            // Submit.
-            await submitForm(page);
+            adornments = await getSuccessInputAdornments(page);
+            assert.strictEqual(adornments.length, 0);
 
             // Front end validation
             let formFieldsErrors = await getFieldErrors(page);
@@ -178,6 +188,9 @@ describe("SuperTokens Reset password feature/theme", function() {
                 { name: "confirm-password", value: "Str0ngP@ssw0rdButMismatch" }
             ]);
 
+            adornments = await getSuccessInputAdornments(page);
+            assert.strictEqual(adornments.length, 2);
+
             // Submit.
             await submitForm(page);
 
@@ -189,6 +202,9 @@ describe("SuperTokens Reset password feature/theme", function() {
                 { name: "password", value: "Str0ngP@ssw0rd" },
                 { name: "confirm-password", value: "Str0ngP@ssw0rd" }
             ]);
+
+            adornments = await getSuccessInputAdornments(page);
+            assert.strictEqual(adornments.length, 2);
 
             // Submit.
             const { request, response } = await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
