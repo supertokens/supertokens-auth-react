@@ -121,8 +121,8 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             paddingLeft: "18px",
             paddingRight: "18px",
             letterSpacing: "0.2px",
-            fontSize: palette.fonts.size[1],
-            borderRadius: "12px",
+            fontSize: palette.fonts.size[0],
+            borderRadius: "8px",
             color: palette.colors.error,
             animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`
         },
