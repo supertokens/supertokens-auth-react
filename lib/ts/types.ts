@@ -24,7 +24,7 @@ import { ComponentClass } from "react";
 
 export type SuperTokensConfig = {
     /*
-     * Configurations for authentication.
+     * App Info configurations.
      */
     appInfo: AppInfoUserInput;
 
@@ -38,28 +38,28 @@ export type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule;
 
 export type AppInfoUserInput = {
     /*
-     * The name of your application.
+     * The name of the application.
      */
     appName: string;
 
     /*
-     * The API that connects with your application.
+     * The API that connects with the application.
      */
     apiDomain: string;
 
     /*
-     * The domain on which your application runs.
+     * The domain on which the application runs.
      */
     websiteDomain: string;
 
     /*
-     * The base path for SuperTokens middleware in your API.
+     * The base path for SuperTokens middleware in the API.
      * Default to `/auth`
      */
     apiBasePath?: string;
 
     /*
-     * The base path for SuperTokens middleware in your front end application.
+     * The base path for SuperTokens middleware in the front end application.
      * Default to `/auth`
      */
     websiteBasePath?: string;
@@ -67,28 +67,28 @@ export type AppInfoUserInput = {
 
 export type NormalisedAppInfo = {
     /*
-     * The name of your application.
+     * The name of the application.
      */
     appName: string;
 
     /*
-     * The API that connects with your application.
+     * The API that connects with the application.
      */
     apiDomain: NormalisedURLDomain;
 
     /*
-     * The domain on which your application runs.
+     * The domain on which the application runs.
      */
     websiteDomain: NormalisedURLDomain;
 
     /*
-     * The base path for SuperTokens middleware in your API.
+     * The base path for SuperTokens middleware in the API.
      * Default to `/auth`
      */
     apiBasePath: NormalisedURLPath;
 
     /*
-     * The base path for SuperTokens middleware in your front end application.
+     * The base path for SuperTokens middleware in the front end application.
      * Default to `/auth`
      */
     websiteBasePath: NormalisedURLPath;
@@ -189,13 +189,11 @@ export type APIFormField = {
     /*
      * Id, or name of the input.
      */
-
     id: string;
 
     /*
      * Value of the corresponding id.
      */
-
     value: string;
 };
 
@@ -203,7 +201,6 @@ export type RequestJson = {
     /*
      * Standard form fields passed to the API.
      */
-
     formFields: APIFormField[];
 
     /*

@@ -1,10 +1,10 @@
 import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson, Styles } from "../../types";
-import EmailPassword from "./emailPassword";
 import { CSSObject } from "@emotion/react/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
 import { History } from "history";
+import EmailPassword from "./emailPassword";
 export declare type EmailPasswordUserInput = {
     palette?: PaletteUserInput;
     useShadowDom?: boolean;
@@ -82,8 +82,8 @@ export declare type SignInAndUpProps = BaseProps & {
     doesSessionExist?: () => Promise<boolean>;
     onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
-    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
+    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
 };
 export declare type ResetPasswordUsingTokenProps = BaseProps & {
     onHandleSuccess(context: {

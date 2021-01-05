@@ -24,12 +24,12 @@ import {
     RequestJson,
     Styles
 } from "../../types";
-import EmailPassword from "./emailPassword";
 import { CSSObject } from "@emotion/react/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
 import { History } from "history";
+import EmailPassword from "./emailPassword";
 
 /*
  * EmailPassword User InputsConfig Types.
@@ -129,13 +129,11 @@ export type NormalisedSignInAndUpFeatureConfig = {
     /*
      * SignUp form config.
      */
-
     signUpForm: NormalisedSignUpFormFeatureConfig;
 
     /*
      * SignIn form config.
      */
-
     signInForm: NormalisedSignInFormFeatureConfig;
 };
 
@@ -175,7 +173,7 @@ export type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
 
 export type SignInFormFeatureUserInput = FeatureBaseConfig & {
     /*
-     * Form fields for SignUp.
+     * Form fields for SignIn.
      */
     formFields?: FormFieldSignInConfig[];
 
@@ -187,7 +185,7 @@ export type SignInFormFeatureUserInput = FeatureBaseConfig & {
 
 export type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
     /*
-     * Form fields for SignUp.
+     * Normalised form fields for SignIn.
      */
     formFields: NormalisedFormField[];
 
@@ -235,12 +233,12 @@ export type NormalisedResetPasswordUsingTokenFeatureConfig = {
     onSuccessRedirectURL: string;
 
     /*
-     * submitNewPasswordForm config.
+     * Normalised submitNewPasswordForm config.
      */
     submitNewPasswordForm: NormalisedSubmitNewPasswordForm;
 
     /*
-     * enterEmailForm config.
+     * Normalised enterEmailForm config.
      */
     enterEmailForm: NormalisedEnterEmailForm;
 };
@@ -274,26 +272,61 @@ export type BaseProps = {
 };
 
 export type SignInAndUpProps = BaseProps & {
+    /*
+     * Optional method called when forgot password is clicked.
+     * Return true if handled properly.
+     * Return false for default behaviour.
+     */
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
 
+    /*
+     * Optional method called to verify if session exists.
+     * Return true if valid session.
+     * Return false if no valid session.
+     */
     doesSessionExist?: () => Promise<boolean>;
 
+    /*
+     * Optional method called on successful Sign-up/Sign-in
+     * Return true if handled properly.
+     * Return false for default behaviour.
+     */
     onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
 
+    /*
+     * Optional method to overwrite Sign Up API call.
+     */
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 
-    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
-
+    /*
+     * Optional method to overwrite Sign InAPI call.
+     */
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
+
+    /*
+     * Optional method to overwrite Email Exists API call.
+     */
+    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
 };
 
 export type ResetPasswordUsingTokenProps = BaseProps & {
+    /*
+     * Optional method called on successful Sign-up/Sign-in
+     * Return true if handled properly.
+     * Return false for default behaviour.
+     */
     onHandleSuccess(context: {
         action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
     }): Promise<boolean>;
 
+    /*
+     * Optional method to overwrite Submit New Password API call.
+     */
     onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordAPIResponse>;
 
+    /*
+     * Optional method to overwrite Send Reset Email API call.
+     */
     onCallSendResetEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse>;
 };
 
@@ -411,6 +444,9 @@ export type FormFieldState = FormFieldThemeProps & {
 };
 
 export type InputRef = HTMLInputElement & {
+    /*
+     * Is the current input HTML Element focused.
+     */
     isFocused?: boolean;
 };
 
@@ -436,6 +472,9 @@ type SuccessAPIResponse = {
 export type SignOutAPIResponse = SuccessAPIResponse;
 
 export type VerifyEmailAPIResponse = SuccessAPIResponse & {
+    /*
+     * Is email already registered
+     */
     exists: boolean;
 };
 
@@ -458,6 +497,9 @@ export type BaseSignInUpAPIResponse =
            */
           status: API_RESPONSE_STATUS.OK;
 
+          /*
+           * User object.
+           */
           user: User;
       }
     | FormFieldAPIResponse;
@@ -566,14 +608,14 @@ export type ResetPasswordUsingTokenThemeProps = {
 
 export type EnterEmailThemeProps = ThemeBaseProps & {
     /*
-     * Call Sign In API.
+     * Call Enter Email API.
      */
     callAPI: (fields: APIFormField[]) => Promise<EnterEmailThemeResponse>;
 };
 
 export type SubmitNewPasswordThemeProps = ThemeBaseProps & {
     /*
-     * Call Sign In API.
+     * Call Submit New Password API.
      */
     callAPI: (fields: APIFormField[]) => Promise<SubmitNewPasswordThemeResponse>;
 
