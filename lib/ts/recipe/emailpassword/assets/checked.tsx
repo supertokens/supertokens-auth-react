@@ -26,7 +26,7 @@ import * as React from "react";
  * Component.
  */
 
-export default function Checked({ color }: { color: string }): JSX.Element {
+export default function CheckedIcon({ color }: { color: string }): JSX.Element {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width="14.862" height="12.033" viewBox="0 0 14.862 12.033">
             <path

@@ -99,7 +99,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                 onSuccess={this.onSuccess}
                 validateOnBlur={true}
                 callAPI={callAPI}
-                showLabels={false}
+                showLabels={true}
                 header={
                     <Fragment>
                         <div className="headerTitle" css={styles.headerTitle}>

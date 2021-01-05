@@ -27,6 +27,7 @@ import {
     getFieldErrors,
     getGeneralError,
     getInputNames,
+    getInputTypes,
     getLogoutButton,
     getLabelsText,
     getPlaceholders,
@@ -36,6 +37,7 @@ import {
     setInputValues,
     submitForm,
     submitFormReturnRequestAndResponse,
+    toggleShowPasswordIcon,
     toggleSignInSignUp
 } from "../helpers";
 import fetch from "isomorphic-fetch";
@@ -174,11 +176,18 @@ describe("SuperTokens SignIn feature/theme", function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await toggleSignInSignUp(page);
 
+            let types = await getInputTypes(page);
+            assert.deepStrictEqual(types, ["email", "password"]);
+
             // Set correct values.
             await setInputValues(page, [
                 { name: "email", value: "john.doe@supertokens.io" },
                 { name: "password", value: "Str0ngP@ssw0rd" }
             ]);
+
+            await toggleShowPasswordIcon(page);
+            types = await getInputTypes(page);
+            assert.deepStrictEqual(types, ["email", "text"]);
 
             const adornments = await getSuccessInputAdornments(page);
             assert.strictEqual(adornments.length, 0);

@@ -52,7 +52,7 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe.only("SuperTokens Reset password feature/theme", function() {
+describe("SuperTokens Reset password feature/theme", function() {
     let browser;
     let page;
 
@@ -158,7 +158,7 @@ describe.only("SuperTokens Reset password feature/theme", function() {
             assert.deepStrictEqual(inputNames, ["password", "confirm-password"]);
 
             const labelNames = await getLabelsText(page);
-            assert.deepStrictEqual(labelNames, []); // No labels.
+            assert.deepStrictEqual(labelNames, ["New password:", "Confirm password:"]);
 
             const placeholders = await getPlaceholders(page);
             assert.deepStrictEqual(placeholders, ["New password", "Confirm your password"]); // Email placeholder as defined in signUpForm.formFields.

@@ -128,6 +128,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         inputWrapper: {
+            paddingTop: "10px",
             float: "left",
             width: "100%"
         },
@@ -218,6 +219,15 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             height: "0px"
         },
 
+        showPassword: {
+            float: "right",
+            top: "-65px",
+            position: "relative",
+            display: "flex",
+            height: "0px",
+            cursor: "pointer"
+        },
+
         button: {
             width: "100%",
             height: "34px",
@@ -260,7 +270,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             fontWeight: 600,
             fontSize: palette.fonts.size[0],
             lineHeight: "24px",
-            paddingBottom: "10px",
             color: palette.colors.textLabel
         },
 

@@ -1,4 +1,4 @@
 /// <reference types="react" />
-export default function Checked({ color }: {
+export default function CheckedIcon({ color }: {
     color: string;
 }): JSX.Element;

@@ -26,7 +26,7 @@ import * as React from "react";
  * Component.
  */
 
-export default function Error({ color }: { color: string }): JSX.Element {
+export default function ErrorIcon({ color }: { color: string }): JSX.Element {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 17 15">
             <g>

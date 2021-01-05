@@ -18,7 +18,6 @@
  */
 import { ST_ROOT_SELECTOR } from "./constants";
 import assert from "assert";
-import {VerifyIfOptionalAndValidate} from "../lib/build/utils";
 
 /*
  * General Helpers.
@@ -107,6 +106,15 @@ export async function getSuccessInputAdornments(page) {
     , {ST_ROOT_SELECTOR})
 }
 
+export async function getInputTypes(page) {
+    return await page.evaluate(({ST_ROOT_SELECTOR}) => 
+        Array.from(
+            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll('.formRow input'),
+            i => i.type
+        )
+    , {ST_ROOT_SELECTOR})
+}
+
 export async function getLabelsText(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
         Array.from(
@@ -125,6 +133,11 @@ export async function getPlaceholders(page) {
     , {ST_ROOT_SELECTOR})
 }
 
+export async function toggleShowPasswordIcon(page) {
+    return await page.evaluate(({ST_ROOT_SELECTOR}) => 
+        document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector('.showPassword').click()
+    , {ST_ROOT_SELECTOR});
+}
 
 export async function getFieldErrors(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 

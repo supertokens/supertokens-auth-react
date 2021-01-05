@@ -26,7 +26,9 @@ import StyleContext from "../styles/styleContext";
 import { forwardRef, RefObject } from "react";
 import { APIFormField } from "../../../../types";
 import { InputRef } from "../../types";
-import Checked from "../../assets/checked";
+import CheckedIcon from "../../assets/checked";
+import ShowPasswordIcon from "../../assets/showPassword";
+import { useState } from "react";
 
 /*
  * Props.
@@ -54,6 +56,11 @@ function Input(
     { type, name, hasError, autoComplete, onInputFocus, onInputBlur, placeholder, validated }: InputProps,
     ref: RefObject<InputRef>
 ): JSX.Element {
+    /*
+     * State.
+     */
+    const [showPassword, setShowPassword] = useState(false);
+
     /*
      * Method.
      */
@@ -91,6 +98,11 @@ function Input(
         autoComplete = "off";
     }
 
+    let inputType = type;
+    if (type === "password" && showPassword === true) {
+        inputType = "text";
+    }
+
     return (
         <div className="inputWrapper" css={[styles.inputWrapper]}>
             <input
@@ -99,14 +111,22 @@ function Input(
                 css={[styles.input, errorStyle]}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
-                type={type}
+                type={inputType}
                 name={name}
                 placeholder={placeholder}
                 ref={ref}
             />
             {validated === true && (
                 <div className="inputAdornment" css={styles.inputAdornment}>
-                    <Checked color={styles.palette.colors.primary} />
+                    <CheckedIcon color={styles.palette.colors.primary} />
+                </div>
+            )}
+            {type === "password" && (
+                <div
+                    onClick={() => setShowPassword(showPassword === false)}
+                    className="showPassword"
+                    css={styles.showPassword}>
+                    <ShowPasswordIcon color={styles.palette.colors.textPrimary} showPassword={showPassword} />
                 </div>
             )}
         </div>
