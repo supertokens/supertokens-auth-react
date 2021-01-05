@@ -88,7 +88,7 @@ export type NormalisedEmailPasswordConfig = {
     /*
      * Email Verification feature.
      */
-    emailVerificationFeature?: NormalisedEmailVerificationFeatureConfig;
+    emailVerificationFeature: NormalisedEmailVerificationFeatureConfig;
 };
 
 export type SignInAndUpFeatureUserInput = {
@@ -295,14 +295,14 @@ export type NormalisedEmailVerificationFeatureConfig = {
     disableDefaultImplementation: boolean;
 
     /*
-     * Normalised sendEmailScreen config.
+     * Normalised sendVerifyEmailScreen config.
      */
-    sendEmailScreen: FeatureBaseConfig;
+    sendVerifyEmailScreen: FeatureBaseConfig;
 
     /*
-     * Normalised emailLinkClickedScreen config.
+     * Normalised verifyEmailLinkClickedScreen config.
      */
-    emailLinkClickedScreen: FeatureBaseConfig;
+    verifyEmailLinkClickedScreen: FeatureBaseConfig;
 };
 
 export type EmailVerificationMode = "OFF" | "REQUIRED";

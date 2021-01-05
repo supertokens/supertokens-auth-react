@@ -18,7 +18,7 @@ export declare type NormalisedEmailPasswordConfig = {
     useShadowDom: boolean;
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
-    emailVerificationFeature?: NormalisedEmailVerificationFeatureConfig;
+    emailVerificationFeature: NormalisedEmailVerificationFeatureConfig;
 };
 export declare type SignInAndUpFeatureUserInput = {
     disableDefaultImplementation?: boolean;
@@ -81,8 +81,8 @@ export declare type EmailVerificationUserInput = {
 export declare type NormalisedEmailVerificationFeatureConfig = {
     mode: EmailVerificationMode;
     disableDefaultImplementation: boolean;
-    sendEmailScreen: FeatureBaseConfig;
-    emailLinkClickedScreen: FeatureBaseConfig;
+    sendVerifyEmailScreen: FeatureBaseConfig;
+    verifyEmailLinkClickedScreen: FeatureBaseConfig;
 };
 export declare type EmailVerificationMode = "OFF" | "REQUIRED";
 export declare type BaseProps = {

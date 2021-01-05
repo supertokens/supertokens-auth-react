@@ -32,7 +32,7 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe("EmailPassword", function() {
+describe.only("EmailPassword", function() {
     const onSuccessRedirectURL = "https://example.com/login";
     const privacyPolicyLink = "https://example.com/privacy";
     const termsOfServiceLink = "https://example.com/terms";
@@ -82,11 +82,12 @@ describe("EmailPassword", function() {
         );
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] !== undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] !== undefined);
+        assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/verify-email"] !== undefined);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getRecipeId(), "emailpassword");
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL, "/");
     });
 
-    it("Initializing EmailPassword with onSuccessRedirectURL and disable default implementation for signInAndUp", async function() {
+    it("Initializing EmailPassword with onSuccessRedirectURL and disable default implementation ", async function() {
         EmailPassword.init({
             signInAndUpFeature: {
                 onSuccessRedirectURL,
@@ -101,11 +102,16 @@ describe("EmailPassword", function() {
             },
             resetPasswordUsingTokenFeature: {
                 disableDefaultImplementation: true
+            },
+            emailVerificationFeature: {
+                mode: "REQUIRED",
+                disableDefaultImplementation: true
             }
         })(SuperTokens.getAppInfo());
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] === undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] === undefined);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL, onSuccessRedirectURL);
+        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().emailVerificationFeature.mode, "REQUIRED");
     });
 
     it("Initializing EmailPassword with optional custom Fields for SignUp", async function() {
