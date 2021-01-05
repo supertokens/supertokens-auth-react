@@ -24,7 +24,7 @@ import chroma from "chroma-js";
 export const defaultPalette: NormalisedPalette = {
     colors: {
         background: "white",
-        inputBackground: "#f2f2f2",
+        inputBackground: "#fafafa",
         generalErrorBackground: "#fdf3f2",
         primary: "#ff9b33",
         error: "#ff1717",
@@ -34,7 +34,7 @@ export const defaultPalette: NormalisedPalette = {
         textLink: "#0076ff"
     },
     fonts: {
-        size: ["14px", "16px", "28px"]
+        size: ["14px", "16px", "24px"]
     }
 };
 
@@ -88,7 +88,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         container: {
             fontFamily: "'Rubik', sans-serif",
             maxWidth: "524px",
-            width: "50vw",
             margin: "26px auto",
             minWidth: "420px",
             textAlign: "center",
@@ -109,9 +108,9 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
 
         row: {
             margin: "0 auto",
-            width: "69%",
-            paddingTop: "45px",
-            paddingBottom: "20px"
+            width: "76%",
+            paddingTop: "30px",
+            paddingBottom: "10px"
         },
 
         generalError: {
@@ -122,13 +121,14 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             paddingLeft: "18px",
             paddingRight: "18px",
             letterSpacing: "0.2px",
-            fontSize: palette.fonts.size[1],
-            borderRadius: "12px",
+            fontSize: palette.fonts.size[0],
+            borderRadius: "8px",
             color: palette.colors.error,
             animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`
         },
 
         inputWrapper: {
+            paddingTop: "10px",
             float: "left",
             width: "100%"
         },
@@ -141,7 +141,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             boxSizing: "border-box",
             width: "100%",
             backgroundColor: palette.colors.inputBackground,
-            borderRadius: "12px",
+            borderRadius: "8px",
             border: "1px solid #dddddd",
             fontSize: palette.fonts.size[0],
             paddingLeft: "20px",
@@ -150,7 +150,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
                 border: `1px solid ${palette.colors.primary}`,
                 outline: "none"
             },
-            height: "42px"
+            height: "34px"
         },
 
         headerTitle: {
@@ -158,7 +158,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             lineHeight: "40px",
             letterSpacing: "0.58px",
             fontWeight: 800,
-            marginBottom: "9px",
+            marginBottom: "2px",
             color: palette.colors.textTitle
         },
 
@@ -181,6 +181,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         privacyPolicyAndTermsAndConditions: {
+            maxWidth: "300px",
             marginTop: "10px"
         },
 
@@ -190,8 +191,13 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             color: palette.colors.error,
             lineHeight: "24px",
             fontWeight: 400,
+            fontSize: palette.fonts.size[0],
             textAlign: "left",
-            animation: `${slideTop} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`
+            animation: `${slideTop} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`,
+            maxWidth: "330px",
+            "@media (max-width: 440px)": {
+                maxWidth: "250px"
+            }
         },
 
         inputErrorSymbol: {
@@ -201,9 +207,30 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             left: "2px"
         },
 
+        inputAdornment: {
+            float: "right",
+            left: "8%",
+            top: "-24px",
+            position: "relative",
+            display: "flex",
+            "@media (max-width: 440px)": {
+                left: "10%"
+            },
+            height: "0px"
+        },
+
+        showPassword: {
+            float: "right",
+            top: "-65px",
+            position: "relative",
+            display: "flex",
+            height: "0px",
+            cursor: "pointer"
+        },
+
         button: {
             width: "100%",
-            height: "42px",
+            height: "34px",
             backgroundColor: palette.colors.primary,
             color: "white",
             fontWeight: 700,
@@ -240,10 +267,9 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
 
         label: {
             textAlign: "left",
-            fontWeight: 500,
-            fontSize: palette.fonts.size[1],
+            fontWeight: 600,
+            fontSize: palette.fonts.size[0],
             lineHeight: "24px",
-            paddingBottom: "10px",
             color: palette.colors.textLabel
         },
 
@@ -262,7 +288,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         secondaryText: {
-            fontSize: palette.fonts.size[1],
+            fontSize: palette.fonts.size[0],
             fontWeight: 300,
             letterSpacing: "0.4px",
             color: palette.colors.textPrimary
@@ -272,7 +298,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             paddingLeft: "3px",
             paddingRight: "3px",
             color: palette.colors.textLink,
-            fontSize: palette.fonts.size[1],
+            fontSize: palette.fonts.size[0],
             cursor: "pointer",
             letterSpacing: "0.16px",
             lineHeight: "26px"

@@ -26,27 +26,21 @@ import * as React from "react";
  * Component.
  */
 
-export default function Error({ color }: { color: string }): JSX.Element {
+export default function ErrorIcon({ color }: { color: string }): JSX.Element {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 17 15">
             <g>
                 <g fill={color}>
                     <path
-                        d="M15.683 17.75H3.317c-.619 0-1.18-.316-1.499-.846-.32-.53-.338-1.174-.049-1.72L7.952 3.467c.309-.584.887-.933 1.548-.933.66 0 1.24.349 1.548.933l6.183 11.715c.289.547.27 1.19-.05 1.72-.319.53-.88.847-1.498.847z"
-                        transform="translate(-789 -316) translate(789 316)"
-                    />
-                    <path
-                        fill="#fff"
-                        d="M9.5 2.785c-.566 0-1.062.299-1.327.8L1.99 15.3c-.247.469-.231 1.02.042 1.475.274.454.755.725 1.285.725h12.366c.53 0 1.01-.271 1.285-.725.273-.455.29-1.006.042-1.475L10.827 3.585c-.265-.501-.76-.8-1.327-.8m0-.5c.697 0 1.394.355 1.769 1.066l6.183 11.715c.703 1.332-.263 2.934-1.769 2.934H3.317c-1.506 0-2.472-1.602-1.769-2.934L7.731 3.351c.375-.71 1.072-1.066 1.769-1.066z"
-                        transform="translate(-789 -316) translate(789 316)"
+                        d="M13.568 14.75H3.432c-.63 0-1.195-.325-1.512-.869-.317-.544-.32-1.196-.01-1.744l5.067-8.943c.315-.556.884-.887 1.523-.887.639 0 1.208.331 1.523.887l5.067 8.943c.31.548.307 1.2-.01 1.744s-.882.869-1.512.869z"
+                        transform="translate(-824.894 -352.829) translate(824.894 352.829)"
                     />
                 </g>
                 <text
                     fill="#fff"
-                    fontFamily="Rubik-Bold, Rubik"
-                    fontSize="12px"
-                    fontWeight="700"
-                    transform="translate(-789 -316) translate(796.696 330.715)">
+                    font-size="10px"
+                    font-weight="700"
+                    transform="translate(-824.894 -352.829) translate(832.014 365.198)">
                     <tspan x="0" y="0">
                         !
                     </tspan>

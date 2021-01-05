@@ -1,4 +1,4 @@
 /// <reference types="react" />
-export default function ErrorIcon({ color }: {
+export default function CheckedIcon({ color }: {
     color: string;
 }): JSX.Element;

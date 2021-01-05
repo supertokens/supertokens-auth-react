@@ -13,21 +13,27 @@
  * under the License.
  */
 
-import React from "react";
-import { Fragment } from "react";
-
 /*
- * Component
+ * Imports.
  */
 
-export function ThemeBase({ children }: { children: JSX.Element }): JSX.Element {
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
+
+import * as React from "react";
+
+/*
+ * Component.
+ */
+
+export default function CheckedIcon({ color }: { color: string }): JSX.Element {
     return (
-        <Fragment>
-            {children}
-            <link
-                href="//fonts.googleapis.com/css?family=Rubik:wght@300;400;600;500;700"
-                rel="stylesheet"
-                type="text/css"></link>
-        </Fragment>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14.862" height="12.033" viewBox="0 0 14.862 12.033">
+            <path
+                fill={color}
+                d="M12.629 49L5.06 56.572l-2.829-2.829L0 55.977l5.057 5.057.654-.651 9.152-9.152z"
+                transform="translate(0 -49)"
+            />
+        </svg>
     );
 }

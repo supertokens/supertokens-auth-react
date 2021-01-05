@@ -21,7 +21,7 @@
 import { jsx } from "@emotion/react";
 import React, { useContext } from "react";
 import StyleContext from "../styles/styleContext";
-import Error from "../../assets/error";
+import ErrorIcon from "../../assets/error";
 
 /*
  * Props.
@@ -43,7 +43,7 @@ export default function InputError({ error }: InputErrorProps): JSX.Element {
     return (
         <div className="inputErrorMessage" css={styles.inputErrorMessage}>
             <span className="inputErrorSymbol" css={styles.inputErrorSymbol}>
-                <Error color={styles.palette.colors.error} />
+                <ErrorIcon color={styles.palette.colors.error} />
             </span>
             {error}
         </div>

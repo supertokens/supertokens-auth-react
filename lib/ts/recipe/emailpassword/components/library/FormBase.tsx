@@ -42,6 +42,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         this.state = {
             formFields: props.formFields.map(field => ({
                 ...field,
+                validated: false,
                 ref: createRef<InputRef>()
             })),
             status: "IN_PROGRESS"
@@ -54,7 +55,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
 
     handleInputFocus = async (field: APIFormField): Promise<void> => {
         this.setState(oldState => {
-            return this.getNewState(oldState.formFields, field.id, undefined);
+            return this.getNewState(oldState.formFields, field, "focus", undefined);
         });
     };
 
@@ -76,18 +77,24 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             if (oldState.status === "GENERAL_ERROR") {
                 return oldState;
             }
-            return this.getNewState(oldState.formFields, field.id, error);
+            return this.getNewState(oldState.formFields, field, "blur", error);
         });
     };
 
-    getNewState(formFields: FormFieldState[], fieldId: string, error: string | undefined): FormBaseState {
+    getNewState(
+        formFields: FormFieldState[],
+        field: APIFormField,
+        event: "blur" | "focus",
+        error: string | undefined
+    ): FormBaseState {
         // Add error to formFields array for corresponding field.
-        formFields = formFields.map(field => {
-            if (field.id !== fieldId) {
-                return field;
+        formFields = formFields.map(formField => {
+            if (formField.id !== field.id) {
+                return formField;
             }
             return {
-                ...field,
+                ...formField,
+                validated: event === "blur" && error === undefined && field.value.length !== 0,
                 error
             };
         });
@@ -227,6 +234,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                                         <Input
                                             type={type}
                                             name={field.id}
+                                            validated={field.validated}
                                             placeholder={field.placeholder}
                                             ref={field.ref}
                                             autoComplete={field.autoComplete}
