@@ -10,6 +10,7 @@ export declare type EmailPasswordUserInput = {
     useShadowDom?: boolean;
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
+    emailVerificationFeature?: EmailVerificationUserInput;
 };
 export declare type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUserInput;
 export declare type NormalisedEmailPasswordConfig = {
@@ -17,6 +18,7 @@ export declare type NormalisedEmailPasswordConfig = {
     useShadowDom: boolean;
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
+    emailVerificationFeature?: NormalisedEmailVerificationFeatureConfig;
 };
 export declare type SignInAndUpFeatureUserInput = {
     disableDefaultImplementation?: boolean;
@@ -70,6 +72,19 @@ export declare type NormalisedSubmitNewPasswordForm = FeatureBaseConfig & {
 export declare type NormalisedEnterEmailForm = FeatureBaseConfig & {
     formFields: NormalisedFormField[];
 };
+export declare type EmailVerificationUserInput = {
+    mode?: EmailVerificationMode;
+    disableDefaultImplementation?: boolean;
+    sendVerifyEmailScreen?: FeatureBaseConfig;
+    verifyEmailLinkClickedScreen?: FeatureBaseConfig;
+};
+export declare type NormalisedEmailVerificationFeatureConfig = {
+    mode: EmailVerificationMode;
+    disableDefaultImplementation: boolean;
+    sendEmailScreen: FeatureBaseConfig;
+    emailLinkClickedScreen: FeatureBaseConfig;
+};
+export declare type EmailVerificationMode = "OFF" | "REQUIRED";
 export declare type BaseProps = {
     __internal?: {
         instance: EmailPassword;
@@ -83,30 +98,45 @@ export declare type SignInAndUpProps = BaseProps & {
     onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
-    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
 };
 export declare type ResetPasswordUsingTokenProps = BaseProps & {
-    onHandleSuccess(context: {
-        action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
-    }): Promise<boolean>;
+    onHandleSuccess(context: onHandleResetPasswordUsingTokenSuccessContext): Promise<boolean>;
     onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordAPIResponse>;
     onCallSendResetEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse>;
 };
 export declare type onHandleResetPasswordUsingTokenSuccessContext = {
     action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
 };
+export declare type EmailPasswordAuthProps = BaseProps & {
+    onCallIsEmailVerifiedAPI?: (headers: HeadersInit) => Promise<IsEmailVerifiedAPIResponse>;
+    doesSessionExist?: () => Promise<boolean>;
+    onHandleShowVerifyEmailScreen?: () => Promise<boolean>;
+};
+export declare type VerifyEmailScreenProps = BaseProps & {
+    doesSessionExist?: () => Promise<boolean>;
+    onCallVerifyEmailAPI?: (token: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+    onCallSendVerificationEmailAPI?: (headers: HeadersInit) => Promise<SendVerificationEmailAPIResponse>;
+    onHandleSuccess?: (context: onHandleSuccessVerifyEmailScreenContext) => Promise<boolean>;
+    signOut?: () => Promise<SignOutAPIResponse>;
+};
+export declare type onHandleSuccessVerifyEmailScreenContext = {
+    action: SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL | SUCCESS_ACTION.VERIFY_EMAIL_SENT;
+};
 declare type ThemeBaseProps = {
     styleFromInit?: Styles;
-    formFields: FormFieldThemeProps[];
     onSuccess?: () => void;
 };
-export declare type SignInThemeProps = ThemeBaseProps & {
+declare type FormThemeBaseProps = ThemeBaseProps & {
+    formFields: FormFieldThemeProps[];
+};
+export declare type SignInThemeProps = FormThemeBaseProps & {
     signUpClicked?: () => void;
     forgotPasswordClick?: () => void;
     resetPasswordURL?: NormalisedURLPath;
     callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse>;
 };
-export declare type SignUpThemeProps = ThemeBaseProps & {
+export declare type SignUpThemeProps = FormThemeBaseProps & {
     signInClicked?: () => void;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
@@ -139,9 +169,16 @@ declare type SuccessAPIResponse = {
     status: API_RESPONSE_STATUS.OK;
 };
 export declare type SignOutAPIResponse = SuccessAPIResponse;
-export declare type VerifyEmailAPIResponse = SuccessAPIResponse & {
+export declare type EmailExistsAPIResponse = SuccessAPIResponse & {
     exists: boolean;
 };
+export declare type IsEmailVerifiedAPIResponse = SuccessAPIResponse & {
+    isVerified: boolean;
+};
+export declare type VerifyEmailAPIResponse = SuccessAPIResponse | {
+    status: API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR;
+};
+export declare type SendVerificationEmailAPIResponse = SuccessAPIResponse;
 export declare type FormFieldAPIResponse = {
     status: API_RESPONSE_STATUS.FIELD_ERROR;
     formFields: FormFieldError[];
@@ -166,6 +203,8 @@ export declare type SignInAPIResponse = BaseSignInUpAPIResponse | {
 export declare type SignInThemeResponse = SignInAPIResponse | ThemeResponseGeneralError;
 export declare type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
 export declare type EnterEmailThemeResponse = EnterEmailAPIResponse | ThemeResponseGeneralError;
+export declare type SendVerifyEmailAPIResponse = BaseResetPasswordAPIResponse;
+export declare type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | ThemeResponseGeneralError;
 export declare type SubmitNewPasswordAPIResponse = BaseResetPasswordAPIResponse | {
     status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
 };
@@ -189,10 +228,10 @@ export declare type ResetPasswordUsingTokenThemeProps = {
     submitNewPasswordForm: SubmitNewPasswordThemeProps;
     hasToken: boolean;
 };
-export declare type EnterEmailThemeProps = ThemeBaseProps & {
+export declare type EnterEmailThemeProps = FormThemeBaseProps & {
     callAPI: (fields: APIFormField[]) => Promise<EnterEmailThemeResponse>;
 };
-export declare type SubmitNewPasswordThemeProps = ThemeBaseProps & {
+export declare type SubmitNewPasswordThemeProps = FormThemeBaseProps & {
     callAPI: (fields: APIFormField[]) => Promise<SubmitNewPasswordThemeResponse>;
     onSignInClicked: () => void;
 };
@@ -202,6 +241,14 @@ export declare type EnterEmailThemeState = {
 export declare type SubmitNewPasswordThemeState = {
     hasNewPassword?: boolean;
 };
+export declare type VerifyEmailScreenThemeProps = {
+    sendVerifyEmailScreen: SendVerifyEmailScreenThemeProps;
+    verifyEmailLinkClickedScreen: VerifyEmailLinkClickedScreenThemeProps;
+};
+export declare type SendVerifyEmailScreenThemeProps = ThemeBaseProps & {
+    callAPI: () => Promise<SendVerifyEmailThemeResponse>;
+};
+export declare type VerifyEmailLinkClickedScreenThemeProps = ThemeBaseProps;
 export declare enum SignInAndUpStateStatus {
     LOADING = "LOADING",
     READY = "READY",
@@ -239,7 +286,7 @@ export declare type FormBaseProps = {
 };
 export declare type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 export declare type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
-export declare type VerifyEmailAPI = (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+export declare type VerifyEmailAPI = (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
 export declare type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
 export declare type SubmitNewPasswordAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordAPIResponse>;
 declare global {

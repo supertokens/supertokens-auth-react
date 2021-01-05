@@ -32,7 +32,7 @@ import {
     OnHandleSignInAndUpSuccessContext,
     SignUpAPIResponse,
     SignInAPIResponse,
-    VerifyEmailAPIResponse,
+    EmailExistsAPIResponse,
     FormFieldThemeProps
 } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
@@ -238,7 +238,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         return this.getRecipeInstanceOrThrow().signInAPI(requestJson, headers);
     };
 
-    onCallEmailExistAPI = async (value: string, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
+    onCallEmailExistAPI = async (value: string, headers: HeadersInit): Promise<EmailExistsAPIResponse> => {
         // If props provided by user.
         if (this.props.onCallEmailExistsAPI !== undefined) {
             return await this.props.onCallEmailExistsAPI(value, headers);

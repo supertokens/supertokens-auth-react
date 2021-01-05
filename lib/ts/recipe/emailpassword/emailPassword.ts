@@ -36,7 +36,7 @@ import {
     SignOutAPIResponse,
     SignUpAPIResponse,
     SubmitNewPasswordAPIResponse,
-    VerifyEmailAPIResponse
+    EmailExistsAPIResponse
 } from "./types";
 import { isTest, validateForm } from "../../utils";
 import HttpRequest from "../../httpRequest";
@@ -114,7 +114,7 @@ export default class EmailPassword extends RecipeModule {
         });
     };
 
-    emailExistsAPI = async (value: string, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
+    emailExistsAPI = async (value: string, headers: HeadersInit): Promise<EmailExistsAPIResponse> => {
         return this.httpRequest.get(
             "/signup/email/exists",
             {
