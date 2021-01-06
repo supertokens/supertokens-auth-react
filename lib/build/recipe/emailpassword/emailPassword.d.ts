@@ -1,6 +1,6 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, RequestJson, APIFormField } from "../../types";
-import { EmailPasswordConfig, EmailPasswordUserInput, FormFieldError, NormalisedEmailPasswordConfig, SignInAPIResponse, SignOutAPIResponse, SubmitNewPasswordAPIResponse, EmailExistsAPIResponse } from "./types";
+import { EmailPasswordConfig, EmailPasswordUserInput, FormFieldError, NormalisedEmailPasswordConfig, SignInAPIResponse, SignOutAPIResponse, SubmitNewPasswordAPIResponse, EmailExistsAPIResponse, VerifyEmailAPIResponse, IsEmailVerifiedAPIResponse } from "./types";
 import { API_RESPONSE_STATUS } from "./constants";
 export default class EmailPassword extends RecipeModule {
     static instance?: EmailPassword;
@@ -18,6 +18,11 @@ export default class EmailPassword extends RecipeModule {
     signOut: () => Promise<{
         status: API_RESPONSE_STATUS.OK;
     }>;
+    sendVerificationEmailAPI: (headers: HeadersInit) => Promise<{
+        status: API_RESPONSE_STATUS.OK;
+    }>;
+    verifyEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+    isEmailVerifiedAPI: (headers: HeadersInit) => Promise<IsEmailVerifiedAPIResponse>;
     signUpValidate(input: APIFormField[]): Promise<FormFieldError[]>;
     signInValidate(input: APIFormField[]): Promise<FormFieldError[]>;
     submitNewPasswordValidate(input: APIFormField[]): Promise<FormFieldError[]>;

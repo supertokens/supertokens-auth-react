@@ -9,7 +9,7 @@ import SuperTokens from 'supertokens-auth-react';
 import EmailPassword, {signOut} from 'supertokens-auth-react/recipe/emailpassword';
 import axios from "axios";
 
-import Session, {doesSessionExist} from 'supertokens-auth-react/recipe/session';
+import Session from 'supertokens-auth-react/recipe/session';
 Session.addAxiosInterceptors(axios);
 
 
@@ -33,6 +33,9 @@ SuperTokens.init({
       // useShadowDom: false,
       palette: {
         ...colors
+      },
+      emailVerificationFeature: {
+        mode: "REQUIRED"
       },
       signInAndUpFeature: {
         // defaultToSignUp: false,
@@ -126,10 +129,6 @@ export function Dashboard () {
 
   const [sessionInfoUsingAxios, setSessionInfoUsingAxios] = useState(undefined);
   const [sessionInfoUsingFetch, setSessionInfoUsingFetch] = useState(undefined);
-
-  if (!doesSessionExist()) {
-    window.location.href = "/auth";
-  }
 
   async function logout() {
     await signOut();

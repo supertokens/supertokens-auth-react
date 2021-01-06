@@ -27,6 +27,7 @@ export const defaultPalette: NormalisedPalette = {
         inputBackground: "#fafafa",
         generalErrorBackground: "#fdf3f2",
         primary: "#ff9b33",
+        success: "#41a700",
         error: "#ff1717",
         textTitle: "#222222",
         textLabel: "#222222",
@@ -34,7 +35,7 @@ export const defaultPalette: NormalisedPalette = {
         textLink: "#0076ff"
     },
     fonts: {
-        size: ["14px", "16px", "24px"]
+        size: ["14px", "16px", "19px", "24px"]
     }
 };
 
@@ -87,9 +88,8 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
     return {
         container: {
             fontFamily: "'Rubik', sans-serif",
-            maxWidth: "524px",
             margin: "26px auto",
-            minWidth: "420px",
+            width: "420px",
             textAlign: "center",
             borderRadius: "8px",
             boxShadow: "1px 1px 10px rgba(0,0,0,0.16)",
@@ -114,7 +114,10 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         generalError: {
-            backgroundColor: palette.colors.generalErrorBackground,
+            backgroundColor: chroma(palette.colors.error)
+                .brighten(2)
+                .luminance(0.9)
+                .hex(),
             paddingTop: "10px",
             paddingBottom: "10px",
             marginBottom: "15px",
@@ -154,7 +157,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         headerTitle: {
-            fontSize: palette.fonts.size[2],
+            fontSize: palette.fonts.size[3],
             lineHeight: "40px",
             letterSpacing: "0.58px",
             fontWeight: 800,
@@ -234,7 +237,9 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             backgroundColor: palette.colors.primary,
             color: "white",
             fontWeight: 700,
-            borderWidth: "0px",
+            border: `1px solid ${chroma(palette.colors.primary)
+                .darken(0.3)
+                .hex()}`,
             borderRadius: "8px",
             backgroundPosition: "center",
             backgroundImage: `radial-gradient(circle, transparent 1%, ${palette.colors.primary} 1%)`,
@@ -281,9 +286,10 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         primaryText: {
-            fontSize: palette.fonts.size[1],
-            fontWeight: 400,
+            fontSize: palette.fonts.size[0],
+            fontWeight: 500,
             letterSpacing: "0.4px",
+            lineHeight: "21px",
             color: palette.colors.textLabel
         },
 
@@ -311,6 +317,80 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             display: "flex",
             alignItems: "center",
             paddingBottom: "5px"
+        },
+
+        sendVerifyEmailIcon: {
+            marginTop: "11px"
+        },
+
+        headerTinyTitle: {
+            marginTop: "13px",
+            fontSize: palette.fonts.size[2],
+            letterSpacing: "1.1px",
+            fontWeight: 500,
+            lineHeight: "28px"
+        },
+
+        sendVerifyEmailText: {
+            lineHeight: "21px",
+            fontSize: palette.fonts.size[0],
+            textAlign: "center",
+            fontWeight: 300,
+            letterSpacing: "0.8px"
+        },
+
+        secondaryLinkWithArrow: {
+            marginTop: "10px",
+            marginBottom: "30px",
+            cursor: "pointer",
+            "&:hover": {
+                position: "relative",
+                left: "2px",
+                wordSpacing: "4px"
+            }
+        },
+
+        sendVerifyEmailResend: {
+            marginTop: "13px",
+            fontWeight: 300,
+            "&:hover": {
+                textDecoration: "underline"
+            }
+        },
+
+        generalSuccess: {
+            color: palette.colors.success,
+            fontSize: palette.fonts.size[0],
+            backgroundColor: chroma(palette.colors.success)
+                .brighten(2)
+                .luminance(0.9)
+                .hex(),
+            animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`,
+            padding: "9px 15px 9px 15px",
+            borderRadius: "6px",
+            display: "inline-block"
+        },
+
+        spinner: {
+            width: "80px",
+            height: "auto",
+            paddingTop: "20px",
+            paddingBottom: "40px",
+            margin: "0 auto"
+        },
+
+        error: {
+            color: palette.colors.error
+        },
+
+        noFormRow: {
+            paddingBottom: "25px"
+        },
+
+        emailVerificationButtonWrapper: {
+            paddingTop: "25px",
+            maxWidth: "96px",
+            margin: "0 auto"
         }
     };
 }

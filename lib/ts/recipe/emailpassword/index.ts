@@ -20,10 +20,13 @@ import { CreateRecipeFunction } from "../../types";
 import { EmailPasswordUserInput, SignOutAPIResponse } from "./types";
 
 import EmailPassword from "./emailPassword";
+import EmailPasswordAuth from "./components/emailPasswordAuth";
+import SignInAndUp from "./components/features/signInAndUp/SignInAndUp";
 import SignInAndUpTheme from "./components/themes/default/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/resetPasswordUsingToken";
-import { ResetPasswordUsingTokenTheme } from "./components/themes/default/resetPasswordUsingToken";
-import SignInAndUp from "./components/features/signInAndUp/SignInAndUp";
+import ResetPasswordUsingTokenTheme from "./components/themes/default/resetPasswordUsingToken";
+import EmailVerification from "./components/features/emailVerification/emailVerification";
+import EmailVerificationScreenTheme from "./components/themes/default/emailVerification/emailVerificationScreen";
 
 /*
  * Class.
@@ -33,10 +36,15 @@ export default class EmailPasswordAPIWrapper {
      * Static attributes.
      */
 
+    static EmailPasswordAuth = EmailPasswordAuth;
     static SignInAndUp = SignInAndUp;
     static SignInAndUpTheme = SignInAndUpTheme;
+
     static ResetPasswordUsingToken = ResetPasswordUsingToken;
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
+
+    static EmailVerification = EmailVerification;
+    static EmailVerificationScreenTheme = EmailVerificationScreenTheme;
 
     static init(config?: EmailPasswordUserInput): CreateRecipeFunction {
         return EmailPassword.init(config);
@@ -51,11 +59,14 @@ const init = EmailPasswordAPIWrapper.init;
 const signOut = EmailPasswordAPIWrapper.signOut;
 
 export {
+    EmailPasswordAuth,
     EmailPasswordAPIWrapper,
     init,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
     ResetPasswordUsingToken,
-    ResetPasswordUsingTokenTheme
+    ResetPasswordUsingTokenTheme,
+    EmailVerification,
+    EmailVerificationScreenTheme
 };

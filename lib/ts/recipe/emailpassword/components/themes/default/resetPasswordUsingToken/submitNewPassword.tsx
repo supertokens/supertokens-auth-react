@@ -74,7 +74,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                         <FormRow key="form-button">
                             <Fragment>
                                 <div
-                                    className="primaryText successMessage"
+                                    className="primaryText submitNewPasswordSuccessMessage"
                                     css={[styles.primaryText, styles.submitNewPasswordSuccessMessage]}>
                                     Your password has been updated successfully
                                 </div>

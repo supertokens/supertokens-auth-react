@@ -22,10 +22,14 @@ import {
     NormalisedFormField
 } from "../../types";
 import { getWindowOrThrow } from "../../utils";
-import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID, MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
+import {
+    DEFAULT_RESET_PASSWORD_PATH,
+    EMAIL_VERIFICATION_MODE,
+    MANDATORY_FORM_FIELDS_ID,
+    MANDATORY_FORM_FIELDS_ID_ARRAY
+} from "./constants";
 import {
     EmailPasswordConfig,
-    EmailVerificationMode,
     EmailVerificationUserInput,
     NormalisedEmailPasswordConfig,
     NormalisedEmailVerificationFeatureConfig,
@@ -304,9 +308,9 @@ export function normaliseEmailVerificationFeature(
     }
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
-    let mode = <EmailVerificationMode>"REQUIRED";
-    if (config.mode !== undefined) {
-        mode = <EmailVerificationMode>config.mode;
+    let mode = EMAIL_VERIFICATION_MODE.OFF;
+    if (config.mode === EMAIL_VERIFICATION_MODE.REQUIRED) {
+        mode = EMAIL_VERIFICATION_MODE.REQUIRED;
     }
 
     const sendVerifyEmailScreenStyle =

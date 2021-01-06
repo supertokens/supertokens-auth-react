@@ -201,12 +201,17 @@ export type RequestJson = {
     /*
      * Standard form fields passed to the API.
      */
-    formFields: APIFormField[];
+    formFields?: APIFormField[];
 
     /*
      * Reset password token.
      */
     token?: string;
+
+    /*
+     * Method.
+     */
+    method?: "token";
 };
 
 export type NormalisedFormField = {

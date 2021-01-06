@@ -36,12 +36,15 @@ import {
     SignOutAPIResponse,
     SignUpAPIResponse,
     SubmitNewPasswordAPIResponse,
-    EmailExistsAPIResponse
+    EmailExistsAPIResponse,
+    SendVerificationEmailAPIResponse,
+    VerifyEmailAPIResponse,
+    IsEmailVerifiedAPIResponse
 } from "./types";
 import { isTest, validateForm } from "../../utils";
 import HttpRequest from "../../httpRequest";
 import { normaliseEmailPasswordConfig } from "./utils";
-import { ResetPasswordUsingToken, SignInAndUp } from ".";
+import { ResetPasswordUsingToken, SignInAndUp, EmailVerification } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { API_RESPONSE_STATUS, DEFAULT_RESET_PASSWORD_PATH, DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
 import { SOMETHING_WENT_WRONG_ERROR, SSR_ERROR } from "../../constants";
@@ -98,7 +101,7 @@ export default class EmailPassword extends RecipeModule {
             const normalisedFullPath = this.getAppInfo().websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
             );
-            features[normalisedFullPath.getAsStringDangerous()] = ResetPasswordUsingToken; // TODO EmailVerificationScreen
+            features[normalisedFullPath.getAsStringDangerous()] = EmailVerification; // TODO EmailVerificationScreen
         }
 
         return features;
@@ -198,6 +201,38 @@ export default class EmailPassword extends RecipeModule {
         }
 
         return await result.json();
+    };
+
+    /*
+     * Email Verification
+     */
+
+    sendVerificationEmailAPI = async (headers: HeadersInit): Promise<SendVerificationEmailAPIResponse> => {
+        return this.httpRequest.post("/user/email/verify/token", {
+            headers: {
+                ...headers,
+                rid: this.getRecipeId()
+            }
+        });
+    };
+
+    verifyEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
+        return this.httpRequest.post("/user/email/verify", {
+            body: JSON.stringify(requestJson),
+            headers: {
+                ...headers,
+                rid: this.getRecipeId()
+            }
+        });
+    };
+
+    isEmailVerifiedAPI = async (headers: HeadersInit): Promise<IsEmailVerifiedAPIResponse> => {
+        return this.httpRequest.get("/user/email/verify", {
+            headers: {
+                ...headers,
+                rid: this.getRecipeId()
+            }
+        });
     };
 
     /*

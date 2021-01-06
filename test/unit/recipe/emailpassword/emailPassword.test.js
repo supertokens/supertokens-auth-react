@@ -32,7 +32,7 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe.only("EmailPassword", function() {
+describe("EmailPassword", function() {
     const onSuccessRedirectURL = "https://example.com/login";
     const privacyPolicyLink = "https://example.com/privacy";
     const termsOfServiceLink = "https://example.com/terms";

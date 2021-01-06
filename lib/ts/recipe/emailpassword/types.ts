@@ -27,7 +27,16 @@ import {
 import { CSSObject } from "@emotion/react/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "./constants";
+import {
+    API_RESPONSE_STATUS,
+    EMAIL_PASSWORD_AUTH,
+    EMAIL_VERIFICATION_MODE,
+    FORM_BASE_STATUS,
+    SEND_VERIFY_EMAIL_STATUS,
+    SIGN_IN_AND_UP_STATUS,
+    SUCCESS_ACTION,
+    VERIFY_EMAIL_LINK_CLICKED_STATUS
+} from "./constants";
 import { History } from "history";
 import EmailPassword from "./emailPassword";
 
@@ -305,7 +314,7 @@ export type NormalisedEmailVerificationFeatureConfig = {
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
 };
 
-export type EmailVerificationMode = "OFF" | "REQUIRED";
+export type EmailVerificationMode = EMAIL_VERIFICATION_MODE.OFF | EMAIL_VERIFICATION_MODE.REQUIRED;
 
 /*
  * Props Types.
@@ -351,7 +360,7 @@ export type SignInAndUpProps = BaseProps & {
     onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 
     /*
-     * Optional method to overwrite Sign InAPI call.
+     * Optional method to overwrite Sign In API call.
      */
     onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
 
@@ -384,7 +393,7 @@ export type onHandleResetPasswordUsingTokenSuccessContext = {
 
 export type EmailPasswordAuthProps = BaseProps & {
     /*
-     * Optional method to overwrite Is Email VerifiedAPI call.
+     * Optional method to overwrite Is Email Verified API call.
      */
     onCallIsEmailVerifiedAPI?: (headers: HeadersInit) => Promise<IsEmailVerifiedAPIResponse>;
 
@@ -398,10 +407,17 @@ export type EmailPasswordAuthProps = BaseProps & {
      * Return true if handled properly.
      * Return false for default behaviour.
      */
-    onHandleShowVerifyEmailScreen?: () => Promise<boolean>;
+    onHandleShowEmailVerificationScreen?: () => Promise<boolean>;
 };
 
-export type VerifyEmailScreenProps = BaseProps & {
+export type EmailPasswordAuthState = {
+    /*
+     * EmailPassword Auth Status
+     */
+    status: EMAIL_PASSWORD_AUTH.LOADING | EMAIL_PASSWORD_AUTH.READY;
+};
+
+export type EmailVerificationProps = BaseProps & {
     /*
      * Optional method called to overwrite verify if session exists.
      */
@@ -410,17 +426,17 @@ export type VerifyEmailScreenProps = BaseProps & {
     /*
      * Optional method to overwrite Verify Email API call.
      */
-    onCallVerifyEmailAPI?: (token: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+    onCallVerifyEmailAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
 
     /*
      * Optional method to overwrite call to send verification Email API call.
      */
-    onCallSendVerificationEmailAPI?: (headers: HeadersInit) => Promise<SendVerificationEmailAPIResponse>;
+    onCallSendVerifyEmailAPI?: (headers: HeadersInit) => Promise<SendVerificationEmailAPIResponse>;
 
     /*
      * Optional method called on successful email address verification / send email for email address verification.
      */
-    onHandleSuccess?: (context: onHandleSuccessVerifyEmailScreenContext) => Promise<boolean>;
+    onHandleSuccess?: (context: onHandleEmailVerificationSuccessContext) => Promise<boolean>;
 
     /*
      * Optional method called when Sign Out button is clicked. Default to SuperTokens Session Sign Out.
@@ -428,7 +444,7 @@ export type VerifyEmailScreenProps = BaseProps & {
     signOut?: () => Promise<SignOutAPIResponse>;
 };
 
-export type onHandleSuccessVerifyEmailScreenContext = {
+export type onHandleEmailVerificationSuccessContext = {
     action: SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL | SUCCESS_ACTION.VERIFY_EMAIL_SENT;
 };
 
@@ -589,7 +605,7 @@ export type VerifyEmailAPIResponse =
     | SuccessAPIResponse
     | {
           /*
-           * Field validation errors.
+           * Email verification invalid token error.
            */
           status: API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR;
       };
@@ -666,9 +682,6 @@ export type SignInThemeResponse = SignInAPIResponse | ThemeResponseGeneralError;
 export type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
 export type EnterEmailThemeResponse = EnterEmailAPIResponse | ThemeResponseGeneralError;
 
-export type SendVerifyEmailAPIResponse = BaseResetPasswordAPIResponse;
-export type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | ThemeResponseGeneralError;
-
 export type SubmitNewPasswordAPIResponse =
     | BaseResetPasswordAPIResponse
     | {
@@ -680,6 +693,15 @@ export type SubmitNewPasswordAPIResponse =
 
 export type SubmitNewPasswordThemeResponse = SubmitNewPasswordAPIResponse | ThemeResponseGeneralError;
 
+export type SendVerifyEmailAPIResponse = BaseResetPasswordAPIResponse;
+export type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | ThemeResponseGeneralError;
+
+export type VerifyEmailThemeResponse = {
+    /*
+     * Verify Email Link clicked Theme Status.
+     */
+    status: verifyEmailLinkClickedStatus;
+};
 export type OnHandleSignInAndUpSuccessContext =
     | { action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS }
     | {
@@ -760,42 +782,76 @@ export type SubmitNewPasswordThemeState = {
     hasNewPassword?: boolean;
 };
 
-export type VerifyEmailScreenThemeProps = {
+export type EmailVerificationThemeProps = {
     /*
      * Send Verification Email Screen Theme Props.
      */
-    sendVerifyEmailScreen: SendVerifyEmailScreenThemeProps;
+    sendVerifyEmailScreen: SendVerifyEmailThemeProps;
 
     /*
      * Verify Email Link Clicked Screen Theme Props.
      */
-    verifyEmailLinkClickedScreen: VerifyEmailLinkClickedScreenThemeProps;
+    verifyEmailLinkClickedScreen: VerifyEmailLinkClickedThemeProps;
+
+    /*
+     * A token is present in the query params or not.
+     */
+    hasToken: boolean;
 };
 
-export type SendVerifyEmailScreenThemeProps = ThemeBaseProps & {
+export type SendVerifyEmailThemeProps = ThemeBaseProps & {
     /*
      * Call Send Verify Email API.
      */
     callAPI: () => Promise<SendVerifyEmailThemeResponse>;
+
+    /*
+     * Optional method called when Sign Out button is clicked. Default to SuperTokens Session Sign Out.
+     */
+    signOut: () => Promise<void>;
 };
 
-export type VerifyEmailLinkClickedScreenThemeProps = ThemeBaseProps;
+export type SendVerifyEmailThemeState = {
+    /*
+     * Has the email been sent already.
+     */
+    status: SEND_VERIFY_EMAIL_STATUS.READY | SEND_VERIFY_EMAIL_STATUS.SUCCESS | SEND_VERIFY_EMAIL_STATUS.ERROR;
+};
 
-export enum SignInAndUpStateStatus {
-    LOADING = "LOADING",
-    READY = "READY",
-    SUCCESSFUL = "SUCCESSFUL"
-}
+export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
+    /*
+     * Call Verify Email API.
+     */
+    callAPI: () => Promise<VerifyEmailThemeResponse>;
+
+    /*
+     * Redirect to verify Email Screen on invalid token.
+     */
+    redirectToVerifyEmailScreen: () => Promise<void>;
+
+    /*
+     * On email verification success, action when "Continue" button is clicked.
+     */
+    onContinueClicked: () => Promise<void>;
+};
+
+export type VerifyEmailLinkClickedThemeState = VerifyEmailThemeResponse;
+
+type verifyEmailLinkClickedStatus =
+    | VERIFY_EMAIL_LINK_CLICKED_STATUS.LOADING
+    | VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID
+    | VERIFY_EMAIL_LINK_CLICKED_STATUS.GENERAL_ERROR
+    | VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL;
 
 export type SignInAndUpState =
     | {
-          status: SignInAndUpStateStatus.LOADING;
+          status: SIGN_IN_AND_UP_STATUS.LOADING;
       }
     | {
-          status: SignInAndUpStateStatus.READY;
+          status: SIGN_IN_AND_UP_STATUS.READY;
       }
     | {
-          status: SignInAndUpStateStatus.SUCCESSFUL;
+          status: SIGN_IN_AND_UP_STATUS.SUCCESSFUL;
           user: User;
           responseJson: any;
       };
@@ -804,7 +860,12 @@ export type PaletteUserInput = Record<string, string>;
 
 export type DefaultStylesUserInput = Record<string, CSSObject>;
 
-export type FormBaseStatus = "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
+export type FormBaseStatus =
+    | FORM_BASE_STATUS.IN_PROGRESS
+    | FORM_BASE_STATUS.READY
+    | FORM_BASE_STATUS.LOADING
+    | FORM_BASE_STATUS.FIELD_ERRORS
+    | FORM_BASE_STATUS.SUCCESS;
 export type FormBaseState =
     | {
           formFields: FormFieldState[];
@@ -812,7 +873,7 @@ export type FormBaseState =
       }
     | {
           formFields: FormFieldState[];
-          status: "GENERAL_ERROR";
+          status: FORM_BASE_STATUS.GENERAL_ERROR;
           generalError: string;
       };
 
@@ -840,7 +901,11 @@ export type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Prom
 
 export type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
 
-export type VerifyEmailAPI = (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
+export type VerifyEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+
+export type SendVerifyEmailAPI = (headers: HeadersInit) => Promise<SendVerifyEmailAPIResponse>;
+
+export type EmailExistsAPI = (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
 
 export type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
 
