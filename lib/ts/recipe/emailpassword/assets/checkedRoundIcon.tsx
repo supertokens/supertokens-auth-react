@@ -35,7 +35,7 @@ export default function CheckedRoundIcon({ color }: { color: string }): JSX.Elem
                     transform="translate(-.5 -.5) translate(1.242 1.703)"
                 />
                 <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M17 1a16 16 0 1 0 16 16A16 16 0 0 0 17 1zM3.462 17A13.538 13.538 0 1 1 17 30.538 13.538 13.538 0 0 1 3.462 17z"
                     transform="translate(-.5 -.5)"
                 />

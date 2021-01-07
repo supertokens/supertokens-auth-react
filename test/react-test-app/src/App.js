@@ -35,7 +35,7 @@ SuperTokens.init({
         ...colors
       },
       emailVerificationFeature: {
-        // mode: "REQUIRED"
+        mode: "REQUIRED"
       },
       signInAndUpFeature: {
         // defaultToSignUp: false,

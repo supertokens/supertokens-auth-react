@@ -41,6 +41,7 @@ import { redirectToInApp, redirectToWithReload } from "../../../../../utils";
 import FeatureWrapper from "../../../../components/featureWrapper";
 import {
     API_RESPONSE_STATUS,
+    DEFAULT_VERIFY_EMAIL_PATH,
     EMAIL_VERIFICATION_MODE,
     MANDATORY_FORM_FIELDS_ID,
     SIGN_IN_AND_UP_STATUS,
@@ -225,7 +226,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         ) {
             onSuccessRedirectURL = `${this.getRecipeInstanceOrThrow()
                 .getAppInfo()
-                .websiteBasePath.getAsStringDangerous()}/verify-email?rid=emailpassword`;
+                .websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=emailpassword`;
         }
 
         // Otherwise, use default,

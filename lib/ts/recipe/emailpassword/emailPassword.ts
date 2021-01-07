@@ -101,7 +101,7 @@ export default class EmailPassword extends RecipeModule {
             const normalisedFullPath = this.getAppInfo().websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
             );
-            features[normalisedFullPath.getAsStringDangerous()] = EmailVerification; // TODO EmailVerificationScreen
+            features[normalisedFullPath.getAsStringDangerous()] = EmailVerification;
         }
 
         return features;
@@ -235,6 +235,13 @@ export default class EmailPassword extends RecipeModule {
         });
     };
 
+    async isEmailVerified(): Promise<boolean> {
+        const response = await this.isEmailVerifiedAPI({
+            rid: this.getRecipeId()
+        });
+        return response.isVerified;
+    }
+
     /*
      * Validate
      */
@@ -283,10 +290,7 @@ export default class EmailPassword extends RecipeModule {
     }
 
     static async isEmailVerified(): Promise<boolean> {
-        const response = await EmailPassword.getInstanceOrThrow().isEmailVerifiedAPI({
-            rid: EmailPassword.getInstanceOrThrow().getRecipeId()
-        });
-        return response.isVerified;
+        return await EmailPassword.getInstanceOrThrow().isEmailVerified();
     }
 
     static getInstanceOrThrow(): EmailPassword {

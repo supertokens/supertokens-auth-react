@@ -23,6 +23,7 @@ export default class EmailPassword extends RecipeModule {
     }>;
     verifyEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
     isEmailVerifiedAPI: (headers: HeadersInit) => Promise<IsEmailVerifiedAPIResponse>;
+    isEmailVerified(): Promise<boolean>;
     signUpValidate(input: APIFormField[]): Promise<FormFieldError[]>;
     signInValidate(input: APIFormField[]): Promise<FormFieldError[]>;
     submitNewPasswordValidate(input: APIFormField[]): Promise<FormFieldError[]>;

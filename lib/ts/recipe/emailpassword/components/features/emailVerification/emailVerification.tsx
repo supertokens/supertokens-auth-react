@@ -35,7 +35,7 @@ import FeatureWrapper from "../../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { EMAIL_VERIFICATION_MODE, SUCCESS_ACTION } from "../../../constants";
+import { DEFAULT_VERIFY_EMAIL_PATH, EMAIL_VERIFICATION_MODE, SUCCESS_ACTION } from "../../../constants";
 import { getWindowOrThrow, redirectToInApp } from "../../../../../utils";
 import { handleVerifyEmailAPI, handleSendVerifyEmailAPI } from "./api";
 import Session from "../../../../session/session";
@@ -182,7 +182,7 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
         redirectToInApp(
             `${this.getRecipeInstanceOrThrow()
                 .getAppInfo()
-                .websiteBasePath.getAsStringDangerous()}/verify-email?rid=emailpassword`,
+                .websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=emailpassword`,
             undefined,
             undefined
         ); // No history object provided here, we need to reload the page.
@@ -199,8 +199,11 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
     };
 
     async componentDidMount(): Promise<void> {
+        const hasToken = this.state.token.length !== 0;
+
+        // Redirect to login if no existing session and no token in URL.
         const hasValidSession = await this.doesSessionExist();
-        if (hasValidSession === false) {
+        if (hasValidSession === false && hasToken === false) {
             redirectToInApp(
                 this.getRecipeInstanceOrThrow()
                     .getAppInfo()
@@ -210,7 +213,19 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
             );
         }
 
-        // TODO If email is already verified, redirect to onSuccessfulRedirectUrl.
+        try {
+            if (hasToken === false) {
+                const isEmailAlreadyVerified = await this.getRecipeInstanceOrThrow().isEmailVerified();
+                if (isEmailAlreadyVerified === true) {
+                    redirectToInApp(
+                        this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL,
+                        undefined,
+                        this.props.history
+                    );
+                }
+            }
+        } catch (e) {}
+
         return;
     }
 

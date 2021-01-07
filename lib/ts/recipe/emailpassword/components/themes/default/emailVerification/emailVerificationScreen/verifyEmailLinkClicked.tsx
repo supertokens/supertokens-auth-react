@@ -88,21 +88,13 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
             );
         }
 
-        if (
-            status === VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL ||
-            status === VERIFY_EMAIL_LINK_CLICKED_STATUS.ALREADY_VERIFIED
-        ) {
-            let message = "Email verification successful!";
-            if (status === VERIFY_EMAIL_LINK_CLICKED_STATUS.ALREADY_VERIFIED) {
-                message = "Email already verified.";
-            }
-
+        if (status === VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL) {
             return (
                 <div className="container" css={styles.container}>
                     <div className="row noFormRow" css={[styles.row, styles.noFormRow]}>
                         <CheckedRoundIcon color={styles.palette.colors.success} />
                         <div className="headerTitle headerTinyTitle" css={[styles.headerTitle, styles.headerTinyTitle]}>
-                            {message}
+                            Email verification successful!
                         </div>
                         <div className="emailVerificationButtonWrapper" css={styles.emailVerificationButtonWrapper}>
                             <Button isLoading={false} onClick={onContinueClicked} type="button" label={"CONTINUE"} />

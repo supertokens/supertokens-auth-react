@@ -26,7 +26,7 @@ import Session from "../../session/session";
 import SuperTokens from "../../../superTokens";
 import { redirectToInApp } from "../../../utils";
 import EmailPassword from "../emailPassword";
-import { EMAIL_PASSWORD_AUTH, EMAIL_VERIFICATION_MODE } from "../constants";
+import { DEFAULT_VERIFY_EMAIL_PATH, EMAIL_PASSWORD_AUTH, EMAIL_VERIFICATION_MODE } from "../constants";
 import SpinnerIcon from "../assets/spinnerIcon";
 import { defaultPalette } from "./themes/default/styles/styles";
 
@@ -114,7 +114,7 @@ class EmailPasswordAuth extends PureComponent<EmailPasswordAuthProps, EmailPassw
         redirectToInApp(
             `${this.getRecipeInstanceOrThrow()
                 .getAppInfo()
-                .websiteBasePath.getAsStringDangerous()}/verify-email?rid=emailpassword`,
+                .websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=emailpassword`,
             undefined,
             this.props.history
         );
