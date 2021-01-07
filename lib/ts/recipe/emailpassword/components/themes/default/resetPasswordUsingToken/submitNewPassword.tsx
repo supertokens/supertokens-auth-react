@@ -66,15 +66,15 @@ export default class SubmitNewPasswordTheme extends PureComponent<
 
         if (hasNewPassword === true) {
             return (
-                <div className="container" css={styles.container}>
-                    <div className="row" css={styles.row}>
-                        <div className="headerTitle" css={styles.headerTitle}>
+                <div data-supertokens="container" css={styles.container}>
+                    <div data-supertokens="row" css={styles.row}>
+                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
                             Success!
                         </div>
                         <FormRow key="form-button">
                             <Fragment>
                                 <div
-                                    className="primaryText submitNewPasswordSuccessMessage"
+                                    data-supertokens="primaryText submitNewPasswordSuccessMessage"
                                     css={[styles.primaryText, styles.submitNewPasswordSuccessMessage]}>
                                     Your password has been updated successfully
                                 </div>
@@ -102,11 +102,11 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                 showLabels={true}
                 header={
                     <Fragment>
-                        <div className="headerTitle" css={styles.headerTitle}>
+                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
                             Change your password
                         </div>
-                        <div className="headerSubtitle" css={styles.headerSubtitle}>
-                            <div className="secondaryText" css={styles.secondaryText}>
+                        <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                            <div data-supertokens="secondaryText" css={styles.secondaryText}>
                                 Enter a new password below to change your password
                             </div>
                         </div>

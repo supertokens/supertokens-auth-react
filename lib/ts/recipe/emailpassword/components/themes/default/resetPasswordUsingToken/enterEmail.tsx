@@ -70,13 +70,13 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
         // If email sent, show success UI.
         if (emailSent === true) {
             return (
-                <div className="container" css={styles.container}>
-                    <div className="row" css={styles.row}>
+                <div data-supertokens="container" css={styles.container}>
+                    <div data-supertokens="row" css={styles.row}>
                         <div
-                            className="primaryText enterEmailSuccessMessage"
+                            data-supertokens="primaryText enterEmailSuccessMessage"
                             css={[styles.primaryText, styles.enterEmailSuccessMessage]}>
                             Please check your email for the password recovery link.{" "}
-                            <span className="link" css={styles.link} onClick={this.resend}>
+                            <span data-supertokens="link" css={styles.link} onClick={this.resend}>
                                 Resend
                             </span>
                         </div>
@@ -96,11 +96,11 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
                 validateOnBlur={true}
                 header={
                     <Fragment>
-                        <div className="headerTitle" css={styles.headerTitle}>
+                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
                             Reset your password
                         </div>
-                        <div className="headerSubtitle" css={styles.headerSubtitle}>
-                            <div className="secondaryText" css={styles.secondaryText}>
+                        <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                            <div data-supertokens="secondaryText" css={styles.secondaryText}>
                                 We will send you an email to reset your password
                             </div>
                         </div>

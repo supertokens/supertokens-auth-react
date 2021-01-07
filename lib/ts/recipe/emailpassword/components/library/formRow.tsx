@@ -47,7 +47,7 @@ export default function FormRow({ children, hasError }: FormRowProps): JSX.Eleme
               }
             : {};
     return (
-        <div className="formRow" css={[styles.formRow, errorStyle]}>
+        <div data-supertokens="formRow" css={[styles.formRow, errorStyle]}>
             {children}
         </div>
     );

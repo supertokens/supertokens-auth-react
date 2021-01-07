@@ -38,17 +38,17 @@ export default function SignUpFooter({
 
     return (
         <div
-            className="secondaryText privacyPolicyAndTermsAndConditions"
+            data-supertokens="secondaryText privacyPolicyAndTermsAndConditions"
             css={[styles.secondaryText, styles.privacyPolicyAndTermsAndConditions]}>
             By signing up, you agree to our
             {termsOfServiceLink !== undefined && (
-                <a className="link" css={styles.link} target="_blank" href={termsOfServiceLink}>
+                <a data-supertokens="link" css={styles.link} target="_blank" href={termsOfServiceLink}>
                     Terms of Service
                 </a>
             )}
             {termsOfServiceLink !== undefined && privacyPolicyLink !== undefined && "and"}
             {privacyPolicyLink !== undefined && (
-                <a className="link" css={styles.link} href={privacyPolicyLink} target="_blank">
+                <a data-supertokens="link" css={styles.link} href={privacyPolicyLink} target="_blank">
                     Privacy Policy
                 </a>
             )}
