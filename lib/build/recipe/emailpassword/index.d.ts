@@ -17,7 +17,9 @@ export default class EmailPasswordAPIWrapper {
     static EmailVerificationScreenTheme: typeof EmailVerificationScreenTheme;
     static init(config?: EmailPasswordUserInput): CreateRecipeFunction;
     static signOut(): Promise<SignOutAPIResponse>;
+    static isEmailVerified(): Promise<boolean>;
 }
 declare const init: typeof EmailPasswordAPIWrapper.init;
 declare const signOut: typeof EmailPasswordAPIWrapper.signOut;
-export { EmailPasswordAuth, EmailPasswordAPIWrapper, init, SignInAndUp, SignInAndUpTheme, signOut, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, EmailVerification, EmailVerificationScreenTheme };
+declare const isEmailVerified: typeof EmailPasswordAPIWrapper.isEmailVerified;
+export { EmailPasswordAuth, EmailPasswordAPIWrapper, init, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, EmailVerification, EmailVerificationScreenTheme };

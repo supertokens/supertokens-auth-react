@@ -29,6 +29,7 @@ export default class EmailPassword extends RecipeModule {
     enterEmailValidate(input: APIFormField[]): Promise<FormFieldError[]>;
     static init(config?: EmailPasswordUserInput): CreateRecipeFunction;
     static signOut(): Promise<SignOutAPIResponse>;
+    static isEmailVerified(): Promise<boolean>;
     static getInstanceOrThrow(): EmailPassword;
     static reset(): void;
 }

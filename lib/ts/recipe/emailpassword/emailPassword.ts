@@ -282,6 +282,13 @@ export default class EmailPassword extends RecipeModule {
         return EmailPassword.getInstanceOrThrow().signOut();
     }
 
+    static async isEmailVerified(): Promise<boolean> {
+        const response = await EmailPassword.getInstanceOrThrow().isEmailVerifiedAPI({
+            rid: EmailPassword.getInstanceOrThrow().getRecipeId()
+        });
+        return response.isVerified;
+    }
+
     static getInstanceOrThrow(): EmailPassword {
         if (EmailPassword.instance === undefined) {
             let error =

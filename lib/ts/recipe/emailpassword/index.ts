@@ -53,15 +53,21 @@ export default class EmailPasswordAPIWrapper {
     static async signOut(): Promise<SignOutAPIResponse> {
         return EmailPassword.signOut();
     }
+
+    static async isEmailVerified(): Promise<boolean> {
+        return EmailPassword.isEmailVerified();
+    }
 }
 
 const init = EmailPasswordAPIWrapper.init;
 const signOut = EmailPasswordAPIWrapper.signOut;
+const isEmailVerified = EmailPasswordAPIWrapper.isEmailVerified;
 
 export {
     EmailPasswordAuth,
     EmailPasswordAPIWrapper,
     init,
+    isEmailVerified,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,

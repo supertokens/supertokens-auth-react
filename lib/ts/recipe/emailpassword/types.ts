@@ -607,7 +607,9 @@ export type VerifyEmailAPIResponse =
           /*
            * Email verification invalid token error.
            */
-          status: API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR;
+          status:
+              | API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR
+              | API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR;
       };
 
 export type SendVerificationEmailAPIResponse = SuccessAPIResponse;
@@ -841,7 +843,8 @@ type verifyEmailLinkClickedStatus =
     | VERIFY_EMAIL_LINK_CLICKED_STATUS.LOADING
     | VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID
     | VERIFY_EMAIL_LINK_CLICKED_STATUS.GENERAL_ERROR
-    | VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL;
+    | VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL
+    | VERIFY_EMAIL_LINK_CLICKED_STATUS.ALREADY_VERIFIED;
 
 export type SignInAndUpState =
     | {

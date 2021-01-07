@@ -179,7 +179,7 @@ export declare type IsEmailVerifiedAPIResponse = SuccessAPIResponse & {
     isVerified: boolean;
 };
 export declare type VerifyEmailAPIResponse = SuccessAPIResponse | {
-    status: API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR;
+    status: API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR | API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR;
 };
 export declare type SendVerificationEmailAPIResponse = SuccessAPIResponse;
 export declare type FormFieldAPIResponse = {
@@ -265,7 +265,7 @@ export declare type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
     onContinueClicked: () => Promise<void>;
 };
 export declare type VerifyEmailLinkClickedThemeState = VerifyEmailThemeResponse;
-declare type verifyEmailLinkClickedStatus = VERIFY_EMAIL_LINK_CLICKED_STATUS.LOADING | VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID | VERIFY_EMAIL_LINK_CLICKED_STATUS.GENERAL_ERROR | VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL;
+declare type verifyEmailLinkClickedStatus = VERIFY_EMAIL_LINK_CLICKED_STATUS.LOADING | VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID | VERIFY_EMAIL_LINK_CLICKED_STATUS.GENERAL_ERROR | VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL | VERIFY_EMAIL_LINK_CLICKED_STATUS.ALREADY_VERIFIED;
 export declare type SignInAndUpState = {
     status: SIGN_IN_AND_UP_STATUS.LOADING;
 } | {

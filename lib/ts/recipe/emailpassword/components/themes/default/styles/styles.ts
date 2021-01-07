@@ -25,7 +25,6 @@ export const defaultPalette: NormalisedPalette = {
     colors: {
         background: "white",
         inputBackground: "#fafafa",
-        generalErrorBackground: "#fdf3f2",
         primary: "#ff9b33",
         success: "#41a700",
         error: "#ff1717",

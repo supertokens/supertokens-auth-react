@@ -49,6 +49,14 @@ export async function handleVerifyEmailAPI(
                 status: VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID
             };
         }
+
+        // Otherwise, if reset password invalid token error.
+        if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
+            return {
+                status: VERIFY_EMAIL_LINK_CLICKED_STATUS.ALREADY_VERIFIED
+            };
+        }
+
         // Otherwise, status === OK
         if (response.status === API_RESPONSE_STATUS.OK) {
             return {
