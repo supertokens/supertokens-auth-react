@@ -54,44 +54,35 @@ require("jsdom-global")();
 describe("SuperTokens Email Verification feature/theme", function() {
     let browser;
     let page;
-
     before(async function() {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
             method: "POST"
         }).catch(console.error);
-
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST"
         }).catch(console.error);
-
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true
         });
-
         page = await browser.newPage();
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
     });
-
     after(async function() {
         await browser.close();
-
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST"
         }).catch(console.error);
-
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
             method: "POST"
         }).catch(console.error);
     });
-
     describe("Email verification screen", function() {
         beforeEach(async function() {
             page = await browser.newPage();
             clearBrowserCookies(page);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
         });
-
         it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified", async function() {});
         it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function() {});
         it('Should resend email when "Resend Email" button is clicked', async function() {
@@ -103,14 +94,12 @@ describe("SuperTokens Email Verification feature/theme", function() {
         });
         it("Should redirect to login page when email verification screen is accessed without a valid session", async function() {});
     });
-
     describe("Verify Email with token screen", function() {
         beforeEach(async function() {
             page = await browser.newPage();
             clearBrowserCookies(page);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?mode=REQUIRED&token=TOKEN`);
         });
-
         it("Should show invalid token screen when token is invalid or expired", async function() {});
         it('Should show "Something went wrong" screen when API failure', async function() {});
         it('Should show "Email Verification successful" screen when token is valid', async function() {
@@ -120,17 +109,14 @@ describe("SuperTokens Email Verification feature/theme", function() {
              * - Click on "Continue" redirects to onSuccessfulRedirect
              */
         });
-
         it("Should allow to verify a session without a valid session", async function() {});
     });
-
     describe("Email Verified", function() {
         beforeEach(async function() {
             page = await browser.newPage();
             clearBrowserCookies(page);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?mode=REQUIRED`);
         });
-
         it("Should redirect to onSuccessfulRedirect when email is already verified", async function() {});
     });
 });
