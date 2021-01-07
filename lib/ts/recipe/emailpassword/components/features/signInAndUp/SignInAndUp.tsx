@@ -41,6 +41,7 @@ import { redirectToInApp, redirectToWithReload } from "../../../../../utils";
 import FeatureWrapper from "../../../../components/featureWrapper";
 import {
     API_RESPONSE_STATUS,
+    EMAIL_VERIFICATION_MODE,
     MANDATORY_FORM_FIELDS_ID,
     SIGN_IN_AND_UP_STATUS,
     SUCCESS_ACTION
@@ -215,10 +216,19 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             }
         }
 
-        // Otherwise, use default, redirect to onSuccessRedirectURL
-        const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature
-            .onSuccessRedirectURL;
+        // redirect to email verification screen if sign up and email verification mode is required.
+        let onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL;
+        if (
+            context.action === SUCCESS_ACTION.SIGN_UP_COMPLETE &&
+            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode ===
+                EMAIL_VERIFICATION_MODE.REQUIRED
+        ) {
+            onSuccessRedirectURL = `${this.getRecipeInstanceOrThrow()
+                .getAppInfo()
+                .websiteBasePath.getAsStringDangerous()}/verify-email?rid=emailpassword`;
+        }
 
+        // Otherwise, use default,
         redirectToWithReload(onSuccessRedirectURL);
     };
 
