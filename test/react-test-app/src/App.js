@@ -12,6 +12,7 @@ import axios from "axios";
 import Session from 'supertokens-auth-react/recipe/session';
 Session.addAxiosInterceptors(axios);
 
+const emailVerificationMode = getQueryParams('theme') || "OFF";
 
 const colors = getQueryParams('theme') === 'dark' ? {
   background: '#333',
@@ -35,7 +36,7 @@ SuperTokens.init({
         ...colors
       },
       emailVerificationFeature: {
-        mode: "REQUIRED"
+        mode: emailVerificationMode
       },
       signInAndUpFeature: {
         // defaultToSignUp: false,
