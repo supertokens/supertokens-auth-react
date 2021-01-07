@@ -26,8 +26,8 @@ import StyleContext from "../styles/styleContext";
 import { forwardRef, RefObject } from "react";
 import { APIFormField } from "../../../../types";
 import { InputRef } from "../../types";
-import CheckedIcon from "../../assets/checked";
-import ShowPasswordIcon from "../../assets/showPassword";
+import CheckedIcon from "../../assets/checkedIcon";
+import ShowPasswordIcon from "../../assets/showPasswordIcon";
 import { useState } from "react";
 
 /*

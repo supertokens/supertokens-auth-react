@@ -1,6 +1,6 @@
 import { PureComponent } from "react";
 import EmailPassword from "../../../emailPassword";
-import { SignInAndUpProps, SignInAndUpState, SignInThemeResponse, SignUpThemeResponse, OnHandleSignInAndUpSuccessContext, SignInAPIResponse, VerifyEmailAPIResponse, FormFieldThemeProps } from "../../../types";
+import { SignInAndUpProps, SignInAndUpState, SignInThemeResponse, SignUpThemeResponse, OnHandleSignInAndUpSuccessContext, SignInAPIResponse, EmailExistsAPIResponse, FormFieldThemeProps } from "../../../types";
 import { APIFormField, NormalisedFormField, RequestJson } from "../../../../../types";
 import Session from "../../../../session/session";
 declare class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
@@ -17,7 +17,7 @@ declare class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpSta
     onHandleSuccess: (context: OnHandleSignInAndUpSuccessContext) => Promise<void>;
     onCallSignUpAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<import("../../../types").BaseSignInUpAPIResponse>;
     onCallSignInAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
-    onCallEmailExistAPI: (value: string, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
+    onCallEmailExistAPI: (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
     doesEmailExist: (value: string) => Promise<string | undefined>;
     getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[];
     componentDidMount: () => Promise<void>;

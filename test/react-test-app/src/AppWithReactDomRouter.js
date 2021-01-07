@@ -6,7 +6,7 @@ import {
   Link
 } from "react-router-dom";
 import {getSuperTokensRoutesForReactRouterDom} from 'supertokens-auth-react';
-import {SignInAndUp, ResetPasswordUsingToken} from 'supertokens-auth-react/recipe/emailpassword';
+import {SignInAndUp, ResetPasswordUsingToken, EmailPasswordAuth} from 'supertokens-auth-react/recipe/emailpassword';
 import {BaseComponent, Home, About, Contact, Dashboard} from './App';
 import SignInAndUpCustom from './themes/signInAndUp';
 
@@ -29,9 +29,16 @@ function AppWithReactDomRouter() {
             <Route path="/about">
               <About />
             </Route>
+
+            {/* Logged In Components */}
             <Route path="/dashboard">
-              <Dashboard />
+              <EmailPasswordAuth>
+                <Dashboard />
+              </EmailPasswordAuth>
             </Route>
+
+
+
             <Route path="/contact">
               <Contact />
             </Route>

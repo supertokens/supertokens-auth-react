@@ -21,7 +21,7 @@
 import { jsx } from "@emotion/react";
 import React, { useContext } from "react";
 import StyleContext from "../styles/styleContext";
-import ErrorIcon from "../../assets/error";
+import ErrorIcon from "../../assets/errorIcon";
 
 /*
  * Props.

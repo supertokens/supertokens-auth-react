@@ -36,14 +36,22 @@ import {
     SignOutAPIResponse,
     SignUpAPIResponse,
     SubmitNewPasswordAPIResponse,
-    VerifyEmailAPIResponse
+    EmailExistsAPIResponse,
+    SendVerificationEmailAPIResponse,
+    VerifyEmailAPIResponse,
+    IsEmailVerifiedAPIResponse
 } from "./types";
 import { isTest, validateForm } from "../../utils";
 import HttpRequest from "../../httpRequest";
 import { normaliseEmailPasswordConfig } from "./utils";
-import { ResetPasswordUsingToken, SignInAndUp } from ".";
+import { ResetPasswordUsingToken, SignInAndUp, EmailVerification } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { API_RESPONSE_STATUS, DEFAULT_RESET_PASSWORD_PATH } from "./constants";
+import {
+    API_RESPONSE_STATUS,
+    DEFAULT_RESET_PASSWORD_PATH,
+    DEFAULT_VERIFY_EMAIL_PATH,
+    EMAIL_VERIFICATION_MODE
+} from "./constants";
 import { SOMETHING_WENT_WRONG_ERROR, SSR_ERROR } from "../../constants";
 
 /*
@@ -93,6 +101,17 @@ export default class EmailPassword extends RecipeModule {
             );
             features[normalisedFullPath.getAsStringDangerous()] = ResetPasswordUsingToken;
         }
+
+        if (
+            this.config.emailVerificationFeature.disableDefaultImplementation !== true &&
+            this.config.emailVerificationFeature.mode !== EMAIL_VERIFICATION_MODE.OFF
+        ) {
+            const normalisedFullPath = this.getAppInfo().websiteBasePath.appendPath(
+                new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
+            );
+            features[normalisedFullPath.getAsStringDangerous()] = EmailVerification;
+        }
+
         return features;
     };
 
@@ -114,7 +133,7 @@ export default class EmailPassword extends RecipeModule {
         });
     };
 
-    emailExistsAPI = async (value: string, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
+    emailExistsAPI = async (value: string, headers: HeadersInit): Promise<EmailExistsAPIResponse> => {
         return this.httpRequest.get(
             "/signup/email/exists",
             {
@@ -193,6 +212,45 @@ export default class EmailPassword extends RecipeModule {
     };
 
     /*
+     * Email Verification
+     */
+
+    sendVerificationEmailAPI = async (headers: HeadersInit): Promise<SendVerificationEmailAPIResponse> => {
+        return this.httpRequest.post("/user/email/verify/token", {
+            headers: {
+                ...headers,
+                rid: this.getRecipeId()
+            }
+        });
+    };
+
+    verifyEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
+        return this.httpRequest.post("/user/email/verify", {
+            body: JSON.stringify(requestJson),
+            headers: {
+                ...headers,
+                rid: this.getRecipeId()
+            }
+        });
+    };
+
+    isEmailVerifiedAPI = async (headers: HeadersInit): Promise<IsEmailVerifiedAPIResponse> => {
+        return this.httpRequest.get("/user/email/verify", {
+            headers: {
+                ...headers,
+                rid: this.getRecipeId()
+            }
+        });
+    };
+
+    async isEmailVerified(): Promise<boolean> {
+        const response = await this.isEmailVerifiedAPI({
+            rid: this.getRecipeId()
+        });
+        return response.isVerified;
+    }
+
+    /*
      * Validate
      */
 
@@ -237,6 +295,10 @@ export default class EmailPassword extends RecipeModule {
 
     static signOut(): Promise<SignOutAPIResponse> {
         return EmailPassword.getInstanceOrThrow().signOut();
+    }
+
+    static async isEmailVerified(): Promise<boolean> {
+        return await EmailPassword.getInstanceOrThrow().isEmailVerified();
     }
 
     static getInstanceOrThrow(): EmailPassword {

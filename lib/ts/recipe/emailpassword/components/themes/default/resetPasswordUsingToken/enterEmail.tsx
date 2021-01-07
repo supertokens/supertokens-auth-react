@@ -73,7 +73,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
                 <div className="container" css={styles.container}>
                     <div className="row" css={styles.row}>
                         <div
-                            className="primaryText successMessage"
+                            className="primaryText enterEmailSuccessMessage"
                             css={[styles.primaryText, styles.enterEmailSuccessMessage]}>
                             Please check your email for the password recovery link.{" "}
                             <span className="link" css={styles.link} onClick={this.resend}>

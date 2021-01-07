@@ -19,7 +19,7 @@
 import { SOMETHING_WENT_WRONG_ERROR, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR } from "../../../../../constants";
 import { APIFormField } from "../../../../../types";
 import { API_RESPONSE_STATUS } from "../../../constants";
-import { SignUpAPI, SignUpThemeResponse, SignInAPI, SignInThemeResponse, VerifyEmailAPI } from "../../../types";
+import { SignUpAPI, SignUpThemeResponse, SignInAPI, SignInThemeResponse, EmailExistsAPI } from "../../../types";
 
 /*
  * Methods.
@@ -114,7 +114,7 @@ export async function handleSignInAPI(
 export async function handleEmailExistsAPICall(
     value: string,
     rid: string,
-    onCallEmailExistsAPI: VerifyEmailAPI
+    onCallEmailExistsAPI: EmailExistsAPI
 ): Promise<string | undefined> {
     try {
         const headers: HeadersInit = {

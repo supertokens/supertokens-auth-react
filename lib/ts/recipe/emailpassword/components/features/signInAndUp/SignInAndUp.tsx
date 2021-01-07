@@ -26,13 +26,12 @@ import EmailPassword from "../../../emailPassword";
 import {
     SignInAndUpProps,
     SignInAndUpState,
-    SignInAndUpStateStatus,
     SignInThemeResponse,
     SignUpThemeResponse,
     OnHandleSignInAndUpSuccessContext,
     SignUpAPIResponse,
     SignInAPIResponse,
-    VerifyEmailAPIResponse,
+    EmailExistsAPIResponse,
     FormFieldThemeProps
 } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
@@ -40,7 +39,14 @@ import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import { APIFormField, NormalisedFormField, RequestJson } from "../../../../../types";
 import { redirectToInApp, redirectToWithReload } from "../../../../../utils";
 import FeatureWrapper from "../../../../components/featureWrapper";
-import { API_RESPONSE_STATUS, MANDATORY_FORM_FIELDS_ID, SUCCESS_ACTION } from "../../../constants";
+import {
+    API_RESPONSE_STATUS,
+    DEFAULT_VERIFY_EMAIL_PATH,
+    EMAIL_VERIFICATION_MODE,
+    MANDATORY_FORM_FIELDS_ID,
+    SIGN_IN_AND_UP_STATUS,
+    SUCCESS_ACTION
+} from "../../../constants";
 import SuperTokens from "../../../../../superTokens";
 import Session from "../../../../session/session";
 
@@ -56,7 +62,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         super(props);
 
         this.state = {
-            status: SignInAndUpStateStatus.LOADING
+            status: SIGN_IN_AND_UP_STATUS.LOADING
         };
     }
 
@@ -101,7 +107,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
     };
 
     onSignInSuccess = async (): Promise<void> => {
-        if (this.state.status !== SignInAndUpStateStatus.SUCCESSFUL) {
+        if (this.state.status !== SIGN_IN_AND_UP_STATUS.SUCCESSFUL) {
             throw Error(SOMETHING_WENT_WRONG_ERROR);
         }
 
@@ -138,14 +144,14 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
     setStateOnSuccessfulAPICall(normalisedAPIResponse: SignInThemeResponse | SignUpThemeResponse): void {
         this.setState(oldState => {
             if (
-                oldState.status !== SignInAndUpStateStatus.READY ||
+                oldState.status !== SIGN_IN_AND_UP_STATUS.READY ||
                 normalisedAPIResponse.status !== API_RESPONSE_STATUS.OK
             ) {
                 return oldState;
             }
 
             return {
-                status: SignInAndUpStateStatus.SUCCESSFUL,
+                status: SIGN_IN_AND_UP_STATUS.SUCCESSFUL,
                 responseJson: normalisedAPIResponse,
                 user: {
                     id: normalisedAPIResponse.user.id,
@@ -156,7 +162,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
     }
 
     onSignUpSuccess = async (): Promise<void> => {
-        if (this.state.status !== SignInAndUpStateStatus.SUCCESSFUL) {
+        if (this.state.status !== SIGN_IN_AND_UP_STATUS.SUCCESSFUL) {
             throw Error(SOMETHING_WENT_WRONG_ERROR);
         }
 
@@ -211,10 +217,19 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             }
         }
 
-        // Otherwise, use default, redirect to onSuccessRedirectURL
-        const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature
-            .onSuccessRedirectURL;
+        // redirect to email verification screen if sign up and email verification mode is required.
+        let onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL;
+        if (
+            context.action === SUCCESS_ACTION.SIGN_UP_COMPLETE &&
+            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode ===
+                EMAIL_VERIFICATION_MODE.REQUIRED
+        ) {
+            onSuccessRedirectURL = `${this.getRecipeInstanceOrThrow()
+                .getAppInfo()
+                .websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=emailpassword`;
+        }
 
+        // Otherwise, use default,
         redirectToWithReload(onSuccessRedirectURL);
     };
 
@@ -238,7 +253,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         return this.getRecipeInstanceOrThrow().signInAPI(requestJson, headers);
     };
 
-    onCallEmailExistAPI = async (value: string, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
+    onCallEmailExistAPI = async (value: string, headers: HeadersInit): Promise<EmailExistsAPIResponse> => {
         // If props provided by user.
         if (this.props.onCallEmailExistsAPI !== undefined) {
             return await this.props.onCallEmailExistsAPI(value, headers);
@@ -301,13 +316,13 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         }
 
         this.setState(oldState => {
-            if (oldState.status !== SignInAndUpStateStatus.LOADING) {
+            if (oldState.status !== SIGN_IN_AND_UP_STATUS.LOADING) {
                 return oldState;
             }
 
             return {
                 ...oldState,
-                status: SignInAndUpStateStatus.READY
+                status: SIGN_IN_AND_UP_STATUS.READY
             };
         });
     };
@@ -338,7 +353,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
 
         // Before session is verified, return empty fragment, prevent UI glitch.
-        if (this.state.status === SignInAndUpStateStatus.LOADING) {
+        if (this.state.status === SIGN_IN_AND_UP_STATUS.LOADING) {
             return <Fragment />;
         }
 

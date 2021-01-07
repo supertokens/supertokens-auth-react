@@ -71,7 +71,7 @@ export async function getForgotPasswordLink(page) {
 }
 
 export async function getResendResetPasswordEmailLink (page) {
-    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("div > div > div.successMessage > span")`);
+    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("div > div > div.enterEmailSuccessMessage > span")`);
 }
 
 export async function sendEmailResetPasswordSuccessMessage (page) {
@@ -79,7 +79,7 @@ export async function sendEmailResetPasswordSuccessMessage (page) {
         () =>
             document
                 .querySelector("#supertokens-root")
-                .shadowRoot.querySelector("div > div > div.successMessage").innerText
+                .shadowRoot.querySelector("div > div > div.enterEmailSuccessMessage").innerText
     );
 }
 
