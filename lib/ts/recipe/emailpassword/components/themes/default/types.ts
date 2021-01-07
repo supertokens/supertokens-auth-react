@@ -15,18 +15,6 @@
 
 import { CSSObject } from "@emotion/react";
 
-export enum paletteColorOptions {
-    BACKGROUND = "background",
-    INPUTBACKGROUND = "inputBackground",
-    GENERALERRORBACKGROUND = "generalErrorBackground",
-    PRIMARY = "primary",
-    ERROR = "error",
-    TEXTTITLE = "textTitle",
-    TEXTLABEL = "textLabel",
-    TEXTPRIMARY = "textPrimary",
-    TEXTLINK = "textLink"
-}
-
 export type NormalisedPalette = {
     colors: Record<string, string>;
     fonts: {

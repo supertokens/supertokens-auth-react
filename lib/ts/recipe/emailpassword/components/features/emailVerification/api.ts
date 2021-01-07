@@ -43,7 +43,7 @@ export async function handleVerifyEmailAPI(
             headers
         );
 
-        // Otherwise, if reset password invalid token error.
+        // Otherwise, if email verification invalid token error.
         if (response.status === API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR) {
             return {
                 status: VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID
@@ -58,7 +58,7 @@ export async function handleVerifyEmailAPI(
         }
 
         console.error(
-            "There was an error handling the output format of onVerifyEmailAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks/email-verification#output"
+            "There was an error handling the output format of onVerifyEmailAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks/email-verification"
         );
         return {
             status: VERIFY_EMAIL_LINK_CLICKED_STATUS.GENERAL_ERROR
@@ -88,7 +88,7 @@ export async function handleSendVerifyEmailAPI(
         }
 
         console.error(
-            "There was an error handling the output format of onCallSendVerifyEmailAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks/email-verification#output-1"
+            "There was an error handling the output format of onCallSendVerifyEmailAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks/email-verification"
         );
         return {
             status: API_RESPONSE_STATUS.GENERAL_ERROR,
