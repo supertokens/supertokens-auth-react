@@ -48,18 +48,18 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
                 showLabels={true}
                 header={
                     <Fragment>
-                        <div className="headerTitle" css={styles.headerTitle}>
+                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
                             Sign Up
                         </div>
-                        <div className="headerSubtitle" css={styles.headerSubtitle}>
-                            <div className="secondaryText" css={styles.secondaryText}>
+                        <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                            <div data-supertokens="secondaryText" css={styles.secondaryText}>
                                 Already have an account?
-                                <span className="link" onClick={signInClicked} css={styles.link}>
+                                <span data-supertokens="link" onClick={signInClicked} css={styles.link}>
                                     Sign In
                                 </span>
                             </div>
                         </div>
-                        <div className="divider" css={styles.divider}></div>
+                        <div data-supertokens="divider" css={styles.divider}></div>
                     </Fragment>
                 }
                 footer={<SignUpFooter privacyPolicyLink={privacyPolicyLink} termsOfServiceLink={termsOfServiceLink} />}

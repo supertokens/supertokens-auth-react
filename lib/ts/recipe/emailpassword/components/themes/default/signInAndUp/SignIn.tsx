@@ -52,23 +52,23 @@ export default class SignInTheme extends PureComponent<SignInThemeProps> {
                 showLabels={true}
                 header={
                     <Fragment>
-                        <div className="headerTitle" css={styles.headerTitle}>
+                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
                             Sign In
                         </div>
-                        <div className="headerSubtitle" css={styles.headerSubtitle}>
-                            <div className="secondaryText" css={styles.secondaryText}>
+                        <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                            <div data-supertokens="secondaryText" css={styles.secondaryText}>
                                 Not registered yet?
-                                <span className="link" onClick={signUpClicked} css={styles.link}>
+                                <span data-supertokens="link" onClick={signUpClicked} css={styles.link}>
                                     Sign Up
                                 </span>
                             </div>
                         </div>
-                        <div className="divider" css={styles.divider}></div>
+                        <div data-supertokens="divider" css={styles.divider}></div>
                     </Fragment>
                 }
                 footer={
                     <div
-                        className="link secondaryText forgotPasswordLink"
+                        data-supertokens="link secondaryText forgotPasswordLink"
                         css={[styles.link, styles.secondaryText, styles.forgotPasswordLink]}
                         onClick={forgotPasswordClick}>
                         Forgot password?
