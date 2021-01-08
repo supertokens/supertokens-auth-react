@@ -108,8 +108,8 @@ export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeP
                     <div
                         className="primaryText sendVerifyEmailText"
                         css={[styles.primaryText, styles.sendVerifyEmailText]}>
-                        To confirm your email address, <strong>please click on the link</strong> in the email we sent
-                        you.
+                        <strong>Please click on the link</strong> in the email we just sent you to confirm your email
+                        address.
                     </div>
                     {status !== SEND_VERIFY_EMAIL_STATUS.SUCCESS && (
                         <div

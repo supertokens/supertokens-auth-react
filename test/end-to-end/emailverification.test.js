@@ -21,29 +21,19 @@
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
-import {
-    EMAIL_EXISTS_API,
-    RESET_PASSWORD_API,
-    RESET_PASSWORD_TOKEN_API,
-    TEST_CLIENT_BASE_URL,
-    TEST_SERVER_BASE_URL
-} from "../constants";
+import { SEND_VERIFY_EMAIL_API, VERIFY_EMAIL_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import {
     clearBrowserCookies,
-    getFieldErrors,
-    getGeneralError,
-    getInputNames,
-    getLabelsText,
-    getPlaceholders,
-    getSuccessInputAdornments,
-    getSubmitFormButtonLabel,
-    getResendResetPasswordEmailLink,
-    hasMethodBeenCalled,
-    sendEmailResetPasswordSuccessMessage,
+    clickLinkWithRightArrow,
+    getVerificationEmailInvalidTokenText,
     setInputValues,
     submitForm,
-    submitFormReturnRequestAndResponse
+    sendVerifyEmail,
+    getGeneralSuccess,
+    toggleSignInSignUp
 } from "../helpers";
+
+import { successfulSignUp } from "./signup.test";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -51,7 +41,7 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe("SuperTokens Email Verification feature/theme", function() {
+describe.only("SuperTokens Email Verification feature/theme", function() {
     let browser;
     let page;
     before(async function() {
@@ -66,7 +56,7 @@ describe("SuperTokens Email Verification feature/theme", function() {
             headless: true
         });
         page = await browser.newPage();
-        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+        await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
     });
     after(async function() {
         await browser.close();
@@ -81,27 +71,69 @@ describe("SuperTokens Email Verification feature/theme", function() {
         beforeEach(async function() {
             page = await browser.newPage();
             clearBrowserCookies(page);
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
         });
-        it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified", async function() {});
-        it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function() {});
-        it('Should resend email when "Resend Email" button is clicked', async function() {
-            /*
-             * TODO
-             * - Click on resend email should show "Email Resent" success message
-             * - Click on Logout should remove session and redirect to login page
-             */
+
+        it("Should redirect to login page when email verification screen is accessed without a valid session", async function() {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth");
         });
-        it("Should redirect to login page when email verification screen is accessed without a valid session", async function() {});
+
+        it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified", async function() {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await successfulSignUp(page);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+        });
+
+        it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function() {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await toggleSignInSignUp(page);
+            await page.screenshot({ path: "./screenshot.jpeg" });
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" }
+            ]);
+            await submitForm(page);
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            // Click on resend email should show "Email Resent" success message
+            await sendVerifyEmail(page);
+            await page.waitForResponse(
+                response => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
+            );
+            const generalSuccess = await getGeneralSuccess(page);
+            assert.deepStrictEqual(generalSuccess, "Email resent");
+
+            // Click on Logout should remove session and redirect to login page
+            await clickLinkWithRightArrow(page);
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth");
+        });
     });
     describe("Verify Email with token screen", function() {
         beforeEach(async function() {
             page = await browser.newPage();
             clearBrowserCookies(page);
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?mode=REQUIRED&token=TOKEN`);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
         });
-        it("Should show invalid token screen when token is invalid or expired", async function() {});
-        it('Should show "Something went wrong" screen when API failure', async function() {});
+
+        it("Should show invalid token screen when token is invalid or expired", async function() {
+            await page.waitForResponse(response => response.url() === VERIFY_EMAIL_API && response.status() === 200);
+            await new Promise(r => setTimeout(r, 50)); // Make sure to wait for status to update.
+            const verificationEmailInvalidTokenText = await getVerificationEmailInvalidTokenText(page);
+            assert.deepStrictEqual(verificationEmailInvalidTokenText, "The email verification link has expired");
+
+            // Click Continue should redirect to /auth when no session is present
+            await clickLinkWithRightArrow(page);
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth");
+        });
+
         it('Should show "Email Verification successful" screen when token is valid', async function() {
             /*
              * TODO
@@ -109,7 +141,13 @@ describe("SuperTokens Email Verification feature/theme", function() {
              * - Click on "Continue" redirects to onSuccessfulRedirect
              */
         });
-        it("Should allow to verify a session without a valid session", async function() {});
+
+        it("Should allow to verify a session without a valid session", async function() {
+            clearBrowserCookies(page);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+        });
     });
     describe("Email Verified", function() {
         beforeEach(async function() {
@@ -120,3 +158,5 @@ describe("SuperTokens Email Verification feature/theme", function() {
         it("Should redirect to onSuccessfulRedirect when email is already verified", async function() {});
     });
 });
+
+// it('Should show "Something went wrong" screen when API failure', async function() {});

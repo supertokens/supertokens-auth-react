@@ -32,7 +32,8 @@ import {
     hasMethodBeenCalled,
     setInputValues,
     submitFormReturnRequestAndResponse,
-    submitForm
+    submitForm,
+    toggleSignInSignUp
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -146,6 +147,10 @@ describe("SuperTokens SignUp feature/theme", function() {
 
         it("Successful signup", async function() {
             await successfulSignUp(page);
+            const onSuccessFulRedirectUrl = "/dashboard";
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, onSuccessFulRedirectUrl);
+
             const cookies = await page.cookies();
 
             assert.deepStrictEqual(cookies.map(c => c.name), [
@@ -157,8 +162,7 @@ describe("SuperTokens SignUp feature/theme", function() {
             // doesSessionExist return true, hence, redirecting to onSuccessFulRedirectUrl
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
 
-            const onSuccessFulRedirectUrl = "/dashboard";
-            const pathname = await page.evaluate(() => window.location.pathname);
+            pathname = await page.evaluate(() => window.location.pathname);
             assert.strictEqual(pathname, onSuccessFulRedirectUrl);
 
             // Clear cookies, try to signup with same address.
@@ -210,9 +214,5 @@ export async function successfulSignUp(page) {
 
     assert.strictEqual(response.status, "OK");
     await page.setRequestInterception(false);
-
     await new Promise(r => setTimeout(r, 500)); // Make sure to wait for navigation. TODO Make more robust.
-    const onSuccessFulRedirectUrl = "/dashboard";
-    const pathname = await page.evaluate(() => window.location.pathname);
-    assert.deepStrictEqual(pathname, onSuccessFulRedirectUrl);
 }

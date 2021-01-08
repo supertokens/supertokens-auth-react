@@ -693,7 +693,12 @@ export type SubmitNewPasswordAPIResponse =
 
 export type SubmitNewPasswordThemeResponse = SubmitNewPasswordAPIResponse | ThemeResponseGeneralError;
 
-export type SendVerifyEmailAPIResponse = BaseResetPasswordAPIResponse;
+export type SendVerifyEmailAPIResponse = {
+    /*
+     * Success.
+     */
+    status: API_RESPONSE_STATUS.OK | API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR;
+};
 export type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | ThemeResponseGeneralError;
 
 export type VerifyEmailThemeResponse = {

@@ -139,6 +139,19 @@ export async function toggleShowPasswordIcon(page) {
     , {ST_ROOT_SELECTOR});
 }
 
+export async function sendVerifyEmail(page) {
+    return await page.evaluate(({ST_ROOT_SELECTOR}) => 
+        document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector('.sendVerifyEmailResend').click()
+    , {ST_ROOT_SELECTOR});
+}
+
+export async function clickLinkWithRightArrow(page) {
+    return await page.evaluate(({ST_ROOT_SELECTOR}) => 
+        document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector('.secondaryLinkWithArrow').click()
+    , {ST_ROOT_SELECTOR});
+}
+
+
 export async function getFieldErrors(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
         Array.from(
@@ -155,6 +168,21 @@ export async function getGeneralError(page) {
      )
  }
 
+ export async function getGeneralSuccess(page) {
+    return  await page.evaluate(
+        (ST_ROOT_SELECTOR) => document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(".generalSuccess").innerText,
+        ST_ROOT_SELECTOR
+     )
+ }
+
+ export async function getVerificationEmailInvalidTokenText(page) {
+    return  await page.evaluate(
+        (ST_ROOT_SELECTOR) => document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(".headerTinyTitle").innerText,
+        ST_ROOT_SELECTOR
+     )
+ }
+
+ 
  export async function setInputValues(page, fields) {
     await page.evaluate(({fields, ST_ROOT_SELECTOR}) => {
         fields.forEach(field => {

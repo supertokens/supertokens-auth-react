@@ -35,7 +35,12 @@ import FeatureWrapper from "../../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { DEFAULT_VERIFY_EMAIL_PATH, EMAIL_VERIFICATION_MODE, SUCCESS_ACTION } from "../../../constants";
+import {
+    API_RESPONSE_STATUS,
+    DEFAULT_VERIFY_EMAIL_PATH,
+    EMAIL_VERIFICATION_MODE,
+    SUCCESS_ACTION
+} from "../../../constants";
 import { getWindowOrThrow, redirectToInApp } from "../../../../../utils";
 import { handleVerifyEmailAPI, handleSendVerifyEmailAPI } from "./api";
 import Session from "../../../../session/session";
@@ -215,8 +220,8 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
 
         try {
             if (hasToken === false) {
-                const isEmailAlreadyVerified = await this.getRecipeInstanceOrThrow().isEmailVerified();
-                if (isEmailAlreadyVerified === true) {
+                const response = await this.sendVerifyEmail();
+                if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
                     redirectToInApp(
                         this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL,
                         undefined,
