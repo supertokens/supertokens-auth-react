@@ -80,6 +80,13 @@ export async function handleSendVerifyEmailAPI(
         };
         const response = await sendVerifyEmailAPI(headers);
 
+        // If email already verified.
+        if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
+            return {
+                status: API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR
+            };
+        }
+
         // Otherwise, success.
         if (response.status === API_RESPONSE_STATUS.OK) {
             return {

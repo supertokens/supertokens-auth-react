@@ -210,7 +210,9 @@ export declare type SubmitNewPasswordAPIResponse = BaseResetPasswordAPIResponse 
     status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
 };
 export declare type SubmitNewPasswordThemeResponse = SubmitNewPasswordAPIResponse | ThemeResponseGeneralError;
-export declare type SendVerifyEmailAPIResponse = BaseResetPasswordAPIResponse;
+export declare type SendVerifyEmailAPIResponse = {
+    status: API_RESPONSE_STATUS.OK | API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR;
+};
 export declare type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | ThemeResponseGeneralError;
 export declare type VerifyEmailThemeResponse = {
     status: verifyEmailLinkClickedStatus;
