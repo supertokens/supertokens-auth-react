@@ -78,9 +78,9 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
 
         if (status === VERIFY_EMAIL_LINK_CLICKED_STATUS.LOADING) {
             return (
-                <div className="container" css={styles.container}>
-                    <div className="row" css={styles.row}>
-                        <div className="spinner" css={styles.spinner}>
+                <div data-supertokens="container" css={styles.container}>
+                    <div data-supertokens="row" css={styles.row}>
+                        <div data-supertokens="spinner" css={styles.spinner}>
                             <SpinnerIcon color={styles.palette.colors.primary} />
                         </div>
                     </div>
@@ -90,13 +90,17 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
 
         if (status === VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL) {
             return (
-                <div className="container" css={styles.container}>
-                    <div className="row noFormRow" css={[styles.row, styles.noFormRow]}>
+                <div data-supertokens="container" css={styles.container}>
+                    <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
                         <CheckedRoundIcon color={styles.palette.colors.success} />
-                        <div className="headerTitle headerTinyTitle" css={[styles.headerTitle, styles.headerTinyTitle]}>
+                        <div
+                            data-supertokens="headerTitle headerTinyTitle"
+                            css={[styles.headerTitle, styles.headerTinyTitle]}>
                             Email verification successful!
                         </div>
-                        <div className="emailVerificationButtonWrapper" css={styles.emailVerificationButtonWrapper}>
+                        <div
+                            data-supertokens="emailVerificationButtonWrapper"
+                            css={styles.emailVerificationButtonWrapper}>
                             <Button isLoading={false} onClick={onContinueClicked} type="button" label={"CONTINUE"} />
                         </div>
                     </div>
@@ -106,14 +110,16 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
 
         if (status === VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID) {
             return (
-                <div className="container" css={styles.container}>
-                    <div className="row noFormRow" css={[styles.row, styles.noFormRow]}>
-                        <div className="headerTitle headerTinyTitle" css={[styles.headerTitle, styles.headerTinyTitle]}>
+                <div data-supertokens="container" css={styles.container}>
+                    <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
+                        <div
+                            data-supertokens="headerTitle headerTinyTitle"
+                            css={[styles.headerTitle, styles.headerTinyTitle]}>
                             The email verification link has expired
                         </div>
                         <div
                             onClick={redirectToVerifyEmailScreen}
-                            className="secondaryText secondaryLinkWithArrow"
+                            data-supertokens="secondaryText secondaryLinkWithArrow"
                             css={[styles.secondaryText, styles.secondaryLinkWithArrow]}>
                             Continue <ArrowRightIcon color={styles.palette.colors.textPrimary} />
                         </div>
@@ -123,12 +129,12 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
         }
 
         return (
-            <div className="container" css={styles.container}>
-                <div className="row noFormRow" css={[styles.row, styles.noFormRow]}>
-                    <div className="headerTitle error" css={[styles.headerTitle, styles.error]}>
+            <div data-supertokens="container" css={styles.container}>
+                <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
+                    <div data-supertokens="headerTitle error" css={[styles.headerTitle, styles.error]}>
                         <ErrorLargeIcon color={styles.palette.colors.error} /> Something went wrong
                     </div>
-                    <div className="secondaryText" css={styles.primaryText}>
+                    <div data-supertokens="primaryText" css={styles.primaryText}>
                         We encountered an unexpected error. Please contact support for assistance
                     </div>
                 </div>

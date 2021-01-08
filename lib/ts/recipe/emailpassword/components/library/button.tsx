@@ -48,7 +48,7 @@ export default function Button({ type, label, disabled, isLoading, onClick }: Bu
         disabled = false;
     }
     return (
-        <button type={type} disabled={disabled} onClick={onClick} css={styles.button} className="button">
+        <button type={type} disabled={disabled} onClick={onClick} css={styles.button} data-supertokens="button">
             {label}
             {isLoading && "..."}
         </button>

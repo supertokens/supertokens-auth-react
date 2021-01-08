@@ -42,7 +42,7 @@ export default function Label({ value, showIsRequired }: LabelProps): JSX.Elemen
      */
     const styles = useContext(StyleContext);
     return (
-        <div className="label" css={styles.label}>
+        <div data-supertokens="label" css={styles.label}>
             {value}
             {":"}
             {showIsRequired && " *"}

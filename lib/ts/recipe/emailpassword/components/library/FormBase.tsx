@@ -207,11 +207,11 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         const onInputBlur = validateOnBlur === true ? this.handleInputBlur : undefined;
 
         return (
-            <div className="container" css={styles.container}>
-                <div className="row" css={styles.row}>
+            <div data-supertokens="container" css={styles.container}>
+                <div data-supertokens="row" css={styles.row}>
                     {header}
                     {this.state.status === FORM_BASE_STATUS.GENERAL_ERROR && (
-                        <div className="generalError" css={styles.generalError}>
+                        <div data-supertokens="generalError" css={styles.generalError}>
                             {this.state.generalError}
                         </div>
                     )}

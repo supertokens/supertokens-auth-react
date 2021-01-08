@@ -87,33 +87,35 @@ export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeP
         const { status } = this.state;
 
         return (
-            <div className="container" css={styles.container}>
-                <div className="row" css={styles.row}>
+            <div data-supertokens="container" css={styles.container}>
+                <div data-supertokens="row" css={styles.row}>
                     {status === SEND_VERIFY_EMAIL_STATUS.ERROR && (
-                        <div className="generalError" css={styles.generalError}>
+                        <div data-supertokens="generalError" css={styles.generalError}>
                             {SOMETHING_WENT_WRONG_ERROR}
                         </div>
                     )}
                     {status === SEND_VERIFY_EMAIL_STATUS.SUCCESS && (
-                        <div className="generalSuccess" css={styles.generalSuccess}>
+                        <div data-supertokens="generalSuccess" css={styles.generalSuccess}>
                             Email resent
                         </div>
                     )}
-                    <div className="sendVerifyEmailIcon" css={styles.sendVerifyEmailIcon}>
+                    <div data-supertokens="sendVerifyEmailIcon" css={styles.sendVerifyEmailIcon}>
                         <EmailIcon />
                     </div>
-                    <div className="headerTitle headerTinyTitle" css={[styles.headerTitle, styles.headerTinyTitle]}>
+                    <div
+                        data-supertokens="headerTitle headerTinyTitle"
+                        css={[styles.headerTitle, styles.headerTinyTitle]}>
                         Verify your email address
                     </div>
                     <div
-                        className="primaryText sendVerifyEmailText"
+                        data-supertokens="primaryText sendVerifyEmailText"
                         css={[styles.primaryText, styles.sendVerifyEmailText]}>
                         <strong>Please click on the link</strong> in the email we just sent you to confirm your email
                         address.
                     </div>
                     {status !== SEND_VERIFY_EMAIL_STATUS.SUCCESS && (
                         <div
-                            className="link sendVerifyEmailResend"
+                            data-supertokens="link sendVerifyEmailResend"
                             css={[styles.link, styles.sendVerifyEmailResend]}
                             onClick={this.sendEmail}>
                             Resend Email
@@ -121,7 +123,7 @@ export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeP
                     )}
                     {
                         <div
-                            className="secondaryText secondaryLinkWithArrow"
+                            data-supertokens="secondaryText secondaryLinkWithArrow"
                             css={[styles.secondaryText, styles.secondaryLinkWithArrow]}
                             onClick={() => signOut()}>
                             Logout <ArrowRightIcon color={styles.palette.colors.textPrimary} />

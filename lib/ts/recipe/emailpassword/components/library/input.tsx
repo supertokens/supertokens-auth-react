@@ -104,10 +104,10 @@ function Input(
     }
 
     return (
-        <div className="inputWrapper" css={[styles.inputWrapper]}>
+        <div data-supertokens="inputWrapper" css={[styles.inputWrapper]}>
             <input
                 autoComplete={autoComplete}
-                className="input inputError"
+                data-supertokens="input inputError"
                 css={[styles.input, errorStyle]}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
@@ -117,14 +117,14 @@ function Input(
                 ref={ref}
             />
             {validated === true && (
-                <div className="inputAdornment" css={styles.inputAdornment}>
+                <div data-supertokens="inputAdornment" css={styles.inputAdornment}>
                     <CheckedIcon color={styles.palette.colors.primary} />
                 </div>
             )}
             {type === "password" && (
                 <div
                     onClick={() => setShowPassword(showPassword === false)}
-                    className="showPassword"
+                    data-supertokens="showPassword"
                     css={styles.showPassword}>
                     <ShowPasswordIcon color={styles.palette.colors.textPrimary} showPassword={showPassword} />
                 </div>

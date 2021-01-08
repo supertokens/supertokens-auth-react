@@ -35,7 +35,6 @@ export function mockWindowLocation(url) {
     }
 }
 
-
 /*
  * Selectors and actions helpers.
  * Using Puppeteer within shadowDom https://github.com/puppeteer/puppeteer/issues/858#issuecomment-438540596
@@ -63,15 +62,15 @@ export async function getLogoutButton(page) {
 
 
 export async function getSignInOrSignUpSwitchLink(page) {
-    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("div > div > div.headerSubtitle > div > span.link")`);
+    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("div > div > [data-supertokens~='headerSubtitle'] > div > [data-supertokens~='link']")`);
 }
 
 export async function getForgotPasswordLink(page) {
-    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("form > div > .forgotPasswordLink")`);
+    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("form > div > [data-supertokens~='forgotPasswordLink']")`);
 }
 
 export async function getResendResetPasswordEmailLink (page) {
-    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("div > div > div.enterEmailSuccessMessage > span")`);
+    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("div > div > [data-supertokens~='enterEmailSuccessMessage'] > span")`);
 }
 
 export async function sendEmailResetPasswordSuccessMessage (page) {
@@ -79,7 +78,7 @@ export async function sendEmailResetPasswordSuccessMessage (page) {
         () =>
             document
                 .querySelector("#supertokens-root")
-                .shadowRoot.querySelector("div > div > div.enterEmailSuccessMessage").innerText
+                .shadowRoot.querySelector("div > div > [data-supertokens~='enterEmailSuccessMessage']").innerText
     );
 }
 
@@ -91,7 +90,7 @@ export async function assertNoSTComponents (page) {
 export async function getInputNames(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
         Array.from(
-            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll('.formRow .input'),
+            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll("[data-supertokens~='input']"),
             i => i.name
         )
     , {ST_ROOT_SELECTOR})
@@ -100,7 +99,7 @@ export async function getInputNames(page) {
 export async function getSuccessInputAdornments(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
         Array.from(
-            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll('.formRow .inputAdornment'),
+            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll("[data-supertokens~='inputAdornment']"),
             i => i.name
         )
     , {ST_ROOT_SELECTOR})
@@ -109,7 +108,7 @@ export async function getSuccessInputAdornments(page) {
 export async function getInputTypes(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
         Array.from(
-            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll('.formRow input'),
+            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll("[data-supertokens~='input']"),
             i => i.type
         )
     , {ST_ROOT_SELECTOR})
@@ -118,7 +117,7 @@ export async function getInputTypes(page) {
 export async function getLabelsText(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
         Array.from(
-            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll('.formRow .label'),
+            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll("[data-supertokens~='label']"),
             i => i.innerText
         )
     , {ST_ROOT_SELECTOR})
@@ -127,7 +126,7 @@ export async function getLabelsText(page) {
 export async function getPlaceholders(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
         Array.from(
-            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll('.formRow .input'),
+            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll("[data-supertokens~='input']"),
             i => i.placeholder
         )
     , {ST_ROOT_SELECTOR})
@@ -135,19 +134,19 @@ export async function getPlaceholders(page) {
 
 export async function toggleShowPasswordIcon(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
-        document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector('.showPassword').click()
+        document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='showPassword']").click()
     , {ST_ROOT_SELECTOR});
 }
 
 export async function sendVerifyEmail(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
-        document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector('.sendVerifyEmailResend').click()
+        document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='sendVerifyEmailResend']").click()
     , {ST_ROOT_SELECTOR});
 }
 
 export async function clickLinkWithRightArrow(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
-        document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector('.secondaryLinkWithArrow').click()
+        document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='secondaryLinkWithArrow']").click()
     , {ST_ROOT_SELECTOR});
 }
 
@@ -155,7 +154,7 @@ export async function clickLinkWithRightArrow(page) {
 export async function getFieldErrors(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
         Array.from(
-            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll('.formRow .inputErrorMessage'),
+            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll("[data-supertokens~='formRow'] [data-supertokens~='inputErrorMessage']"),
             i => i.innerText
         )
     , {ST_ROOT_SELECTOR})
@@ -163,22 +162,22 @@ export async function getFieldErrors(page) {
 
 export async function getGeneralError(page) {
     return  await page.evaluate(
-        (ST_ROOT_SELECTOR) => document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("div > div > div.generalError").innerText,
-        ST_ROOT_SELECTOR
+        ({ST_ROOT_SELECTOR}) => document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='generalError']").innerText,
+        {ST_ROOT_SELECTOR}
      )
  }
 
  export async function getGeneralSuccess(page) {
     return  await page.evaluate(
-        (ST_ROOT_SELECTOR) => document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(".generalSuccess").innerText,
-        ST_ROOT_SELECTOR
+        ({ST_ROOT_SELECTOR}) => document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='generalSuccess']").innerText,
+        {ST_ROOT_SELECTOR}
      )
  }
 
- export async function getVerificationEmailInvalidTokenText(page) {
+ export async function getVerificationEmailTitle(page) {
     return  await page.evaluate(
-        (ST_ROOT_SELECTOR) => document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(".headerTinyTitle").innerText,
-        ST_ROOT_SELECTOR
+        ({ST_ROOT_SELECTOR}) => document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='headerTinyTitle']").innerText,
+        {ST_ROOT_SELECTOR}
      )
  }
 

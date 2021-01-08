@@ -25,7 +25,7 @@ import { SEND_VERIFY_EMAIL_API, VERIFY_EMAIL_API, TEST_CLIENT_BASE_URL, TEST_SER
 import {
     clearBrowserCookies,
     clickLinkWithRightArrow,
-    getVerificationEmailInvalidTokenText,
+    getVerificationEmailTitle,
     setInputValues,
     submitForm,
     sendVerifyEmail,
@@ -41,7 +41,7 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe.only("SuperTokens Email Verification feature/theme", function() {
+describe("SuperTokens Email Verification feature/theme", function() {
     let browser;
     let page;
     before(async function() {
@@ -89,13 +89,11 @@ describe.only("SuperTokens Email Verification feature/theme", function() {
         it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await toggleSignInSignUp(page);
-            await page.screenshot({ path: "./screenshot.jpeg" });
             await setInputValues(page, [
                 { name: "email", value: "john.doe@supertokens.io" },
                 { name: "password", value: "Str0ngP@ssw0rd" }
             ]);
-            await submitForm(page);
-            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             let pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
             // Click on resend email should show "Email Resent" success message
@@ -107,8 +105,7 @@ describe.only("SuperTokens Email Verification feature/theme", function() {
             assert.deepStrictEqual(generalSuccess, "Email resent");
 
             // Click on Logout should remove session and redirect to login page
-            await clickLinkWithRightArrow(page);
-            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            await Promise.all([clickLinkWithRightArrow(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
         });
@@ -123,12 +120,11 @@ describe.only("SuperTokens Email Verification feature/theme", function() {
         it("Should show invalid token screen when token is invalid or expired", async function() {
             await page.waitForResponse(response => response.url() === VERIFY_EMAIL_API && response.status() === 200);
             await new Promise(r => setTimeout(r, 50)); // Make sure to wait for status to update.
-            const verificationEmailInvalidTokenText = await getVerificationEmailInvalidTokenText(page);
+            const verificationEmailInvalidTokenText = await getVerificationEmailTitle(page);
             assert.deepStrictEqual(verificationEmailInvalidTokenText, "The email verification link has expired");
 
             // Click Continue should redirect to /auth when no session is present
-            await clickLinkWithRightArrow(page);
-            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            await Promise.all([clickLinkWithRightArrow(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
