@@ -31,7 +31,7 @@ import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../../../constants";
  * Component.
  */
 
-export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeProps, SendVerifyEmailThemeState> {
+export default class SendVerifyEmailTheme extends PureComponent<SendVerifyEmailThemeProps, SendVerifyEmailThemeState> {
     static contextType = StyleContext;
     /*
      * Constructor.

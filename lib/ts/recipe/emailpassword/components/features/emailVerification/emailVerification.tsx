@@ -35,12 +35,7 @@ import FeatureWrapper from "../../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import {
-    API_RESPONSE_STATUS,
-    DEFAULT_VERIFY_EMAIL_PATH,
-    EMAIL_VERIFICATION_MODE,
-    SUCCESS_ACTION
-} from "../../../constants";
+import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE, SUCCESS_ACTION } from "../../../constants";
 import { getWindowOrThrow, redirectToInApp } from "../../../../../utils";
 import { handleVerifyEmailAPI, handleSendVerifyEmailAPI } from "./api";
 import Session from "../../../../session/session";
@@ -184,13 +179,8 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
     };
 
     redirectToVerifyEmailScreen = async (): Promise<void> => {
-        redirectToInApp(
-            `${this.getRecipeInstanceOrThrow()
-                .getAppInfo()
-                .websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=emailpassword`,
-            undefined,
-            undefined
-        ); // No history object provided here, we need to reload the page.
+        // Redirect to current patth, without token.
+        redirectToInApp(`${getWindowOrThrow().location.pathname}?rid=emailpassword`, undefined, undefined); // No history object provided here, we need to reload the page.
         return;
     };
 

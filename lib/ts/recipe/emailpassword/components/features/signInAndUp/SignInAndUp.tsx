@@ -217,7 +217,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             }
         }
 
-        // redirect to email verification screen if sign up and email verification mode is required.
+        // Otherwise, redirect to email verification screen if sign up and email verification mode is required.
         let onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL;
         if (
             context.action === SUCCESS_ACTION.SIGN_UP_COMPLETE &&
@@ -229,7 +229,6 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
                 .websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=emailpassword`;
         }
 
-        // Otherwise, use default,
         redirectToWithReload(onSuccessRedirectURL);
     };
 
