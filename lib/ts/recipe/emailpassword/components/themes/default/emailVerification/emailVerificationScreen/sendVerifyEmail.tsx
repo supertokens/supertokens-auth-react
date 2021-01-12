@@ -57,25 +57,23 @@ export default class SendVerifyEmailTheme extends PureComponent<SendVerifyEmailT
     };
 
     sendEmail = async (): Promise<void> => {
-        const { callAPI } = this.props;
-        try {
-            const response = await callAPI();
+        const { callAPI, onEmailAlreadyVerified } = this.props;
+        const response = await callAPI();
 
-            if (response.status === API_RESPONSE_STATUS.OK) {
-                this.setState({
-                    status: SEND_VERIFY_EMAIL_STATUS.SUCCESS
-                });
-                return;
-            }
-
-            this.setState({
-                status: SEND_VERIFY_EMAIL_STATUS.ERROR
-            });
-        } catch (e) {
-            this.setState({
-                status: SEND_VERIFY_EMAIL_STATUS.ERROR
-            });
+        if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
+            return onEmailAlreadyVerified();
         }
+
+        if (response.status === API_RESPONSE_STATUS.OK) {
+            this.setState({
+                status: SEND_VERIFY_EMAIL_STATUS.SUCCESS
+            });
+            return;
+        }
+
+        this.setState({
+            status: SEND_VERIFY_EMAIL_STATUS.ERROR
+        });
     };
 
     /*

@@ -85,7 +85,7 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
     };
 
     onEmailVerifiedSuccess = async (): Promise<void> => {
-        await this.onHandleSuccess({
+        return await this.onHandleSuccess({
             action: SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
         });
     };
@@ -98,7 +98,7 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
     };
 
     onSendVerifyEmailSuccess = async (): Promise<void> => {
-        await this.onHandleSuccess({
+        return await this.onHandleSuccess({
             action: SUCCESS_ACTION.VERIFY_EMAIL_SENT
         });
     };
@@ -110,12 +110,6 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
         }
 
         // Otherwise, do nothing.
-    };
-
-    onSignInClicked = (): void => {
-        const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature
-            .onSuccessRedirectURL;
-        redirectToInApp(onSuccessRedirectURL, undefined, this.props.history);
     };
 
     onCallVerifyEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
@@ -156,7 +150,6 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
                 this.props.history
             );
         } catch (e) {}
-        return;
     };
 
     getSessionRecipe(): Session | undefined {
@@ -179,27 +172,40 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
     };
 
     redirectToVerifyEmailScreen = async (): Promise<void> => {
-        // Redirect to current patth, without token.
-        redirectToInApp(`${getWindowOrThrow().location.pathname}?rid=emailpassword`, undefined, undefined); // No history object provided here, we need to reload the page.
-        return;
+        return redirectToInApp(
+            `${getWindowOrThrow().location.pathname}?rid=${this.getRecipeInstanceOrThrow().getRecipeId()}`,
+            undefined,
+            undefined
+        ); // No history object, we want to reload the page with current pathname but without the token in the url.
     };
 
-    onSuccessfulEmailVerificationContinueClicked = async (): Promise<void> => {
+    onSuccessRedirect = async (): Promise<void> => {
         redirectToInApp(
             this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL,
             undefined,
             this.props.history
         );
-        return;
     };
 
     async componentDidMount(): Promise<void> {
+        // In case Email Verification Mode is not required, redirect to onSuccessRedirectURL.
+        if (
+            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !==
+            EMAIL_VERIFICATION_MODE.REQUIRED
+        ) {
+            return redirectToInApp(
+                this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL,
+                undefined,
+                this.props.history
+            );
+        }
+
         const hasToken = this.state.token.length !== 0;
 
         // Redirect to login if no existing session and no token in URL.
         const hasValidSession = await this.doesSessionExist();
         if (hasValidSession === false && hasToken === false) {
-            redirectToInApp(
+            return redirectToInApp(
                 this.getRecipeInstanceOrThrow()
                     .getAppInfo()
                     .websiteBasePath.getAsStringDangerous(),
@@ -212,31 +218,13 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
             if (hasToken === false) {
                 const response = await this.sendVerifyEmail();
                 if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
-                    redirectToInApp(
-                        this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL,
-                        undefined,
-                        this.props.history
-                    );
+                    return this.onSuccessRedirect();
                 }
             }
         } catch (e) {}
-
-        return;
     }
 
     render = (): JSX.Element => {
-        // In case Email Verification Mode is not required, redirect to onSuccessRedirectURL.
-        if (
-            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !==
-            EMAIL_VERIFICATION_MODE.REQUIRED
-        ) {
-            redirectToInApp(
-                this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL,
-                undefined,
-                this.props.history
-            );
-        }
-
         const verifyEmailLinkClickedScreenFeature = this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature
             .verifyEmailLinkClickedScreen;
 
@@ -247,7 +235,8 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
             styleFromInit: sendVerifyEmailScreenFeature.style,
             callAPI: this.sendVerifyEmail,
             signOut: this.signOut,
-            onSuccess: this.onEmailVerifiedSuccess
+            onSuccess: this.onSendVerifyEmailSuccess,
+            onEmailAlreadyVerified: this.onSuccessRedirect
         };
 
         const verifyEmailLinkClickedScreen: VerifyEmailLinkClickedThemeProps = {
@@ -255,7 +244,7 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
             redirectToVerifyEmailScreen: this.redirectToVerifyEmailScreen,
             callAPI: this.verifyEmail,
             onSuccess: this.onEmailVerifiedSuccess,
-            onContinueClicked: this.onSuccessfulEmailVerificationContinueClicked
+            onContinueClicked: this.onSuccessRedirect
         };
         const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
 

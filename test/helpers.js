@@ -181,7 +181,13 @@ export async function getGeneralError(page) {
      )
  }
 
- 
+ export async function getVerificationEmailErrorTitle(page) {
+    return  await page.evaluate(
+        ({ST_ROOT_SELECTOR}) => document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='error']").innerText,
+        {ST_ROOT_SELECTOR}
+     )
+ }
+
  export async function setInputValues(page, fields) {
     await page.evaluate(({fields, ST_ROOT_SELECTOR}) => {
         fields.forEach(field => {

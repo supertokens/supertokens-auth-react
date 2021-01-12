@@ -224,9 +224,11 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode ===
                 EMAIL_VERIFICATION_MODE.REQUIRED
         ) {
+            const rid = this.getRecipeInstanceOrThrow().getRecipeId();
+
             onSuccessRedirectURL = `${this.getRecipeInstanceOrThrow()
                 .getAppInfo()
-                .websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=emailpassword`;
+                .websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=${rid}`;
         }
 
         redirectToWithReload(onSuccessRedirectURL);
