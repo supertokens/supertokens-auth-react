@@ -32,6 +32,7 @@ import {
     EMAIL_PASSWORD_AUTH,
     EMAIL_VERIFICATION_MODE,
     FORM_BASE_STATUS,
+    PRE_API_HOOK_ACTION,
     SEND_VERIFY_EMAIL_STATUS,
     SIGN_IN_AND_UP_STATUS,
     SUCCESS_ACTION,
@@ -54,6 +55,11 @@ export type EmailPasswordUserInput = {
      * Use shadow Dom root.
      */
     useShadowDom?: boolean;
+
+    /*
+     * Optional pre API Hook.
+     */
+    preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
 
     /*
      * Sign In and Sign Up feature.
@@ -83,6 +89,11 @@ export type NormalisedEmailPasswordConfig = {
      * Use shadow Dom root.
      */
     useShadowDom: boolean;
+
+    /*
+     * Optional pre API Hook.
+     */
+    preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
 
     /*
      * Sign In and Sign Up feature.
@@ -724,6 +735,27 @@ export type OnHandleSignInAndUpSuccessContext =
            */
           responseJson: any;
       };
+
+export type PreAPIHookContext = {
+    /*
+     * Pre API Hook action.
+     */
+    action:
+        | PRE_API_HOOK_ACTION.SEND_RESET_PASSWORD_EMAIL
+        | PRE_API_HOOK_ACTION.SUBMIT_NEW_PASSWORD
+        | PRE_API_HOOK_ACTION.VERIFY_EMAIL
+        | PRE_API_HOOK_ACTION.IS_EMAIL_VERIFIED
+        | PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL
+        | PRE_API_HOOK_ACTION.SIGN_IN
+        | PRE_API_HOOK_ACTION.SIGN_UP
+        | PRE_API_HOOK_ACTION.SIGN_OUT
+        | PRE_API_HOOK_ACTION.EMAIL_EXISTS;
+
+    /*
+     * Request object containing query params, body, headers.
+     */
+    requestInit: RequestInit;
+};
 
 export type User = {
     /*

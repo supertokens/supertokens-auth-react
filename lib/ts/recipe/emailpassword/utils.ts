@@ -83,10 +83,12 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
     const palette = config.palette !== undefined ? config.palette : {};
 
     const useShadowDom = getShouldUseShadowDom(config.useShadowDom);
+    const preAPIHook = config.preAPIHook;
 
     return {
         palette,
         useShadowDom,
+        preAPIHook,
         signInAndUpFeature,
         resetPasswordUsingTokenFeature,
         emailVerificationFeature
