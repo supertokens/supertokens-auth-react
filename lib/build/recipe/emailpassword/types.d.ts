@@ -96,7 +96,6 @@ export declare type BaseProps = {
 };
 export declare type SignInAndUpProps = BaseProps & {
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
-    doesSessionExist?: () => Promise<boolean>;
     onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
 };
 export declare type ResetPasswordUsingTokenProps = BaseProps & {
@@ -106,14 +105,12 @@ export declare type onHandleResetPasswordUsingTokenSuccessContext = {
     action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
 };
 export declare type EmailPasswordAuthProps = BaseProps & {
-    doesSessionExist?: () => Promise<boolean>;
     onHandleShowEmailVerificationScreen?: () => Promise<boolean>;
 };
 export declare type EmailPasswordAuthState = {
     status: EMAIL_PASSWORD_AUTH.LOADING | EMAIL_PASSWORD_AUTH.READY;
 };
 export declare type EmailVerificationProps = BaseProps & {
-    doesSessionExist?: () => Promise<boolean>;
     onHandleSuccess?: (context: onHandleEmailVerificationSuccessContext) => Promise<boolean>;
     signOut?: () => Promise<SignOutAPIResponse>;
 };

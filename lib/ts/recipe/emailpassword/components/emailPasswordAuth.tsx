@@ -63,11 +63,6 @@ class EmailPasswordAuth extends PureComponent<EmailPasswordAuthProps, EmailPassw
     }
 
     doesSessionExist = async (): Promise<boolean> => {
-        // If props provided by user.
-        if (this.props.doesSessionExist !== undefined) {
-            return await this.props.doesSessionExist();
-        }
-
         const sessionRecipe = this.getSessionRecipe();
         if (sessionRecipe !== undefined) {
             return sessionRecipe.doesSessionExist();

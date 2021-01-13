@@ -356,11 +356,6 @@ export type SignInAndUpProps = BaseProps & {
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
 
     /*
-     * Optional method called to overwrite verify if session exists.
-     */
-    doesSessionExist?: () => Promise<boolean>;
-
-    /*
      * Optional method called on successful Sign-up/Sign-in
      */
     onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
@@ -379,11 +374,6 @@ export type onHandleResetPasswordUsingTokenSuccessContext = {
 
 export type EmailPasswordAuthProps = BaseProps & {
     /*
-     * Optional method called to overwrite verify if session exists.
-     */
-    doesSessionExist?: () => Promise<boolean>;
-
-    /*
      * Optional method called when Email is not verified and Email verification mode is "REQUIRED"
      * Return true if handled properly.
      * Return false for default behaviour.
@@ -399,11 +389,6 @@ export type EmailPasswordAuthState = {
 };
 
 export type EmailVerificationProps = BaseProps & {
-    /*
-     * Optional method called to overwrite verify if session exists.
-     */
-    doesSessionExist?: () => Promise<boolean>;
-
     /*
      * Optional method called on successful email address verification / send email for email address verification.
      */
