@@ -98,20 +98,14 @@ export declare type SignInAndUpProps = BaseProps & {
     onHandleForgotPasswordClicked?: () => Promise<boolean>;
     doesSessionExist?: () => Promise<boolean>;
     onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
-    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
-    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
-    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
 };
 export declare type ResetPasswordUsingTokenProps = BaseProps & {
     onHandleSuccess(context: onHandleResetPasswordUsingTokenSuccessContext): Promise<boolean>;
-    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordAPIResponse>;
-    onCallSendResetEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse>;
 };
 export declare type onHandleResetPasswordUsingTokenSuccessContext = {
     action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
 };
 export declare type EmailPasswordAuthProps = BaseProps & {
-    onCallIsEmailVerifiedAPI?: (headers: HeadersInit) => Promise<IsEmailVerifiedAPIResponse>;
     doesSessionExist?: () => Promise<boolean>;
     onHandleShowEmailVerificationScreen?: () => Promise<boolean>;
 };
@@ -120,8 +114,6 @@ export declare type EmailPasswordAuthState = {
 };
 export declare type EmailVerificationProps = BaseProps & {
     doesSessionExist?: () => Promise<boolean>;
-    onCallVerifyEmailAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
-    onCallSendVerifyEmailAPI?: (headers: HeadersInit) => Promise<SendVerificationEmailAPIResponse>;
     onHandleSuccess?: (context: onHandleEmailVerificationSuccessContext) => Promise<boolean>;
     signOut?: () => Promise<SignOutAPIResponse>;
 };

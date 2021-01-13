@@ -364,21 +364,6 @@ export type SignInAndUpProps = BaseProps & {
      * Optional method called on successful Sign-up/Sign-in
      */
     onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
-
-    /*
-     * Optional method to overwrite Sign Up API call.
-     */
-    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
-
-    /*
-     * Optional method to overwrite Sign In API call.
-     */
-    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
-
-    /*
-     * Optional method to overwrite Email Exists API call.
-     */
-    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
 };
 
 export type ResetPasswordUsingTokenProps = BaseProps & {
@@ -386,16 +371,6 @@ export type ResetPasswordUsingTokenProps = BaseProps & {
      * Optional method called on successful Reset Password/Send Reset password email
      */
     onHandleSuccess(context: onHandleResetPasswordUsingTokenSuccessContext): Promise<boolean>;
-
-    /*
-     * Optional method to overwrite Submit New Password API call.
-     */
-    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordAPIResponse>;
-
-    /*
-     * Optional method to overwrite Send Reset Email API call.
-     */
-    onCallSendResetEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse>;
 };
 
 export type onHandleResetPasswordUsingTokenSuccessContext = {
@@ -403,11 +378,6 @@ export type onHandleResetPasswordUsingTokenSuccessContext = {
 };
 
 export type EmailPasswordAuthProps = BaseProps & {
-    /*
-     * Optional method to overwrite Is Email Verified API call.
-     */
-    onCallIsEmailVerifiedAPI?: (headers: HeadersInit) => Promise<IsEmailVerifiedAPIResponse>;
-
     /*
      * Optional method called to overwrite verify if session exists.
      */
@@ -433,16 +403,6 @@ export type EmailVerificationProps = BaseProps & {
      * Optional method called to overwrite verify if session exists.
      */
     doesSessionExist?: () => Promise<boolean>;
-
-    /*
-     * Optional method to overwrite Verify Email API call.
-     */
-    onCallVerifyEmailAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
-
-    /*
-     * Optional method to overwrite call to send verification Email API call.
-     */
-    onCallSendVerifyEmailAPI?: (headers: HeadersInit) => Promise<SendVerificationEmailAPIResponse>;
 
     /*
      * Optional method called on successful email address verification / send email for email address verification.
