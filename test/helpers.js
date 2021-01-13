@@ -197,7 +197,7 @@ export async function getGeneralError(page) {
             inputNode.blur();
         });
     }, {fields, ST_ROOT_SELECTOR});
-    return await new Promise(r => setTimeout(r, 150)); // Make sure to wait for success feedbacks.
+    return await new Promise(r => setTimeout(r, 200)); // Make sure to wait for success feedbacks.
 }
 
 export async function clearBrowserCookies (page) {

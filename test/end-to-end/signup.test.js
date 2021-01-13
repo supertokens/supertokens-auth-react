@@ -32,8 +32,7 @@ import {
     hasMethodBeenCalled,
     setInputValues,
     submitFormReturnRequestAndResponse,
-    submitForm,
-    toggleSignInSignUp
+    submitForm
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -46,6 +45,7 @@ import { EMAIL_EXISTS_API, SIGN_UP_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_U
 describe("SuperTokens SignUp feature/theme", function() {
     let browser;
     let page;
+    let consoleLogs;
 
     before(async function() {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
@@ -75,6 +75,13 @@ describe("SuperTokens SignUp feature/theme", function() {
 
     beforeEach(async function() {
         page = await browser.newPage();
+        consoleLogs = [];
+        page.on("console", consoleObj => {
+            const log = consoleObj.text();
+            if (log.startsWith("PRE_API_HOOKS")) {
+                consoleLogs.push(log);
+            }
+        });
         clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
     });
@@ -104,6 +111,7 @@ describe("SuperTokens SignUp feature/theme", function() {
 
             const adornments = await getSuccessInputAdornments(page);
             assert.strictEqual(adornments.length, 0);
+            assert.deepStrictEqual(consoleLogs, []);
         });
 
         it("Should show error messages", async function() {
@@ -143,6 +151,7 @@ describe("SuperTokens SignUp feature/theme", function() {
             // // Assert.
             formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, ["!\nEmail is invalid", "!\nYou must be over 18 to register"]);
+            assert.deepStrictEqual(consoleLogs, []);
         });
 
         it("Successful signup", async function() {
@@ -182,6 +191,12 @@ describe("SuperTokens SignUp feature/theme", function() {
             await setInputValues(page, [{ name: "email", value: "jane.doe@supertokens.io" }]);
             formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, []);
+            assert.deepStrictEqual(consoleLogs, [
+                "PRE_API_HOOKS EMAIL_EXISTS",
+                "PRE_API_HOOKS SIGN_UP",
+                "PRE_API_HOOKS EMAIL_EXISTS",
+                "PRE_API_HOOKS EMAIL_EXISTS"
+            ]);
         });
     });
 });

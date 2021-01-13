@@ -21,7 +21,7 @@ import { PureComponent, ReactElement } from "react";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { EmailPasswordAuthProps, EmailPasswordAuthState, IsEmailVerifiedAPIResponse } from "../types";
+import { EmailPasswordAuthProps, EmailPasswordAuthState } from "../types";
 import Session from "../../session/session";
 import SuperTokens from "../../../superTokens";
 import { redirectToInApp } from "../../../utils";
@@ -77,25 +77,15 @@ class EmailPasswordAuth extends PureComponent<EmailPasswordAuthProps, EmailPassw
         return false;
     };
 
-    onCallIsEmailVerifiedAPI = async (headers: HeadersInit): Promise<IsEmailVerifiedAPIResponse> => {
-        // If props provided by user.
-        if (this.props.onCallIsEmailVerifiedAPI) {
-            return await this.props.onCallIsEmailVerifiedAPI(headers);
-        }
-
-        // Otherwise, use SuperTokens API.
-        return await this.getRecipeInstanceOrThrow().isEmailVerifiedAPI(headers);
-    };
-
     isEmailVerifiedAPI = async (): Promise<boolean> => {
         try {
-            const response = await this.onCallIsEmailVerifiedAPI({
+            const response = await this.getRecipeInstanceOrThrow().isEmailVerifiedAPI({
                 rid: this.getRecipeInstanceOrThrow().getRecipeId()
             });
             return response.isVerified;
         } catch (e) {
             // In case of API failure, continue, do not break the application.
-            return false;
+            return true;
         }
     };
 

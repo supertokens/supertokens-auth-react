@@ -21,16 +21,13 @@ import { PureComponent, Fragment } from "react";
 import {
     EmailVerificationProps,
     onHandleEmailVerificationSuccessContext,
-    VerifyEmailAPIResponse,
     SendVerifyEmailThemeResponse,
     VerifyEmailLinkClickedThemeProps,
-    SendVerificationEmailAPIResponse,
     VerifyEmailThemeResponse,
     SendVerifyEmailThemeProps
 } from "../../../types";
 import EmailPassword from "../../../emailPassword";
 import { EmailVerificationScreenTheme, signOut } from "../../..";
-import { RequestJson } from "../../../../../types";
 import FeatureWrapper from "../../../../components/featureWrapper";
 
 /** @jsx jsx */
@@ -79,7 +76,7 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
     verifyEmail = async (): Promise<VerifyEmailThemeResponse> => {
         return await handleVerifyEmailAPI(
             this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.onCallVerifyEmailAPI,
+            this.getRecipeInstanceOrThrow().verifyEmailAPI,
             this.state.token
         );
     };
@@ -93,7 +90,7 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
     sendVerifyEmail = async (): Promise<SendVerifyEmailThemeResponse> => {
         return await handleSendVerifyEmailAPI(
             this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.onCallSendVerifyEmailAPI
+            this.getRecipeInstanceOrThrow().sendVerificationEmailAPI
         );
     };
 
@@ -110,26 +107,6 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
         }
 
         // Otherwise, do nothing.
-    };
-
-    onCallVerifyEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
-        // If props provided by user.
-        if (this.props.onCallVerifyEmailAPI !== undefined) {
-            return this.props.onCallVerifyEmailAPI(requestJson, headers);
-        }
-
-        // Otherwise, use default.
-        return this.getRecipeInstanceOrThrow().verifyEmailAPI(requestJson, headers);
-    };
-
-    onCallSendVerifyEmailAPI = async (headers: HeadersInit): Promise<SendVerificationEmailAPIResponse> => {
-        // If props provided by user.
-        if (this.props.onCallSendVerifyEmailAPI !== undefined) {
-            return this.props.onCallSendVerifyEmailAPI(headers);
-        }
-
-        // Otherwise, use default.
-        return this.getRecipeInstanceOrThrow().sendVerificationEmailAPI(headers);
     };
 
     signOut = async (): Promise<void> => {

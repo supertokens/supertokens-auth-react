@@ -29,14 +29,11 @@ import {
     SignInThemeResponse,
     SignUpThemeResponse,
     OnHandleSignInAndUpSuccessContext,
-    SignUpAPIResponse,
-    SignInAPIResponse,
-    EmailExistsAPIResponse,
     FormFieldThemeProps
 } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
-import { APIFormField, NormalisedFormField, RequestJson } from "../../../../../types";
+import { APIFormField, NormalisedFormField } from "../../../../../types";
 import { redirectToInApp, redirectToWithReload } from "../../../../../utils";
 import FeatureWrapper from "../../../../components/featureWrapper";
 import {
@@ -98,7 +95,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         const normalisedAPIResponse = await handleSignInAPI(
             formFields,
             this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.onCallSignInAPI
+            this.getRecipeInstanceOrThrow().signInAPI
         );
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
@@ -133,7 +130,7 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         const normalisedAPIResponse = await handleSignUpAPI(
             formFields,
             this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.onCallSignUpAPI
+            this.getRecipeInstanceOrThrow().signUpAPI
         );
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
@@ -234,41 +231,11 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         redirectToWithReload(onSuccessRedirectURL);
     };
 
-    onCallSignUpAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpAPIResponse> => {
-        // If props provided by user.
-        if (this.props.onCallSignUpAPI !== undefined) {
-            return this.props.onCallSignUpAPI(requestJson, headers);
-        }
-
-        // Otherwise, use default.
-        return this.getRecipeInstanceOrThrow().signUpAPI(requestJson, headers);
-    };
-
-    onCallSignInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
-        // If props provided by user.
-        if (this.props.onCallSignInAPI !== undefined) {
-            return this.props.onCallSignInAPI(requestJson, headers);
-        }
-
-        // Otherwise, use default.
-        return this.getRecipeInstanceOrThrow().signInAPI(requestJson, headers);
-    };
-
-    onCallEmailExistAPI = async (value: string, headers: HeadersInit): Promise<EmailExistsAPIResponse> => {
-        // If props provided by user.
-        if (this.props.onCallEmailExistsAPI !== undefined) {
-            return await this.props.onCallEmailExistsAPI(value, headers);
-        }
-
-        // Otherwise, use built in.
-        return await this.getRecipeInstanceOrThrow().emailExistsAPI(value, headers);
-    };
-
     doesEmailExist = async (value: string): Promise<string | undefined> => {
         return await handleEmailExistsAPICall(
             value,
             this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.onCallEmailExistAPI
+            this.getRecipeInstanceOrThrow().emailExistsAPI
         );
     };
 
