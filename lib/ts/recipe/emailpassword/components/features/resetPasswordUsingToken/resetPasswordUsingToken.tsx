@@ -20,9 +20,8 @@ import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import {
     EnterEmailThemeResponse,
+    FeatureBaseProps,
     SubmitNewPasswordThemeProps,
-    ResetPasswordUsingTokenProps,
-    onHandleResetPasswordUsingTokenSuccessContext,
     SubmitNewPasswordThemeResponse
 } from "../../../types";
 import EmailPassword from "../../../emailPassword";
@@ -32,19 +31,19 @@ import FeatureWrapper from "../../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../../constants";
-import { getWindowOrThrow, redirectToInApp } from "../../../../../utils";
+import { API_RESPONSE_STATUS, GET_REDIRECTION_URL_ACTION, SUCCESS_ACTION } from "../../../constants";
+import { getWindowOrThrow } from "../../../../../utils";
 import { handleEnterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 
 /*
  * Component.
  */
 
-class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps, { token: string }> {
+class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: string }> {
     /*
      * Constructor.
      */
-    constructor(props: ResetPasswordUsingTokenProps) {
+    constructor(props: FeatureBaseProps) {
         super(props);
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
@@ -106,7 +105,7 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
     };
 
     onSubmitNewPasswordFormSuccess = async (): Promise<void> => {
-        await this.onHandleSuccess({
+        await this.getRecipeInstanceOrThrow().onHandleEvent({
             action: SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL
         });
     };
@@ -131,25 +130,18 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
     };
 
     onEnterEmailFormSuccess = async (): Promise<void> => {
-        await this.onHandleSuccess({
+        await this.getRecipeInstanceOrThrow().onHandleEvent({
             action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT
         });
     };
 
-    onHandleSuccess = async (context: onHandleResetPasswordUsingTokenSuccessContext): Promise<void> => {
-        // If props provided by user, and successfully handled.
-        if (this.props.onHandleSuccess !== undefined) {
-            await this.props.onHandleSuccess(context);
-        }
-
-        // Otherwise, do nothing.
-    };
-
     onSignInClicked = (): void => {
-        // Otherwise, use default, redirect to onSuccessRedirectURL
-        const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
-            .onSuccessRedirectURL;
-        redirectToInApp(onSuccessRedirectURL, undefined, this.props.history);
+        this.getRecipeInstanceOrThrow().redirect(
+            { action: GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
+            false,
+            undefined,
+            this.props.history
+        );
     };
 
     render = (): JSX.Element => {

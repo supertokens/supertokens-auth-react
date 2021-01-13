@@ -78,7 +78,7 @@ describe("SuperTokens SignUp feature/theme", function() {
         consoleLogs = [];
         page.on("console", consoleObj => {
             const log = consoleObj.text();
-            if (log.startsWith("PRE_API_HOOKS")) {
+            if (log.startsWith("ST_LOGS")) {
                 consoleLogs.push(log);
             }
         });
@@ -168,7 +168,7 @@ describe("SuperTokens SignUp feature/theme", function() {
                 "sIdRefreshToken",
                 "sAccessToken"
             ]);
-            // doesSessionExist return true, hence, redirecting to onSuccessFulRedirectUrl
+            // doesSessionExist return true, hence, redirecting to success URL
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
 
             pathname = await page.evaluate(() => window.location.pathname);
@@ -192,10 +192,14 @@ describe("SuperTokens SignUp feature/theme", function() {
             formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, []);
             assert.deepStrictEqual(consoleLogs, [
-                "PRE_API_HOOKS EMAIL_EXISTS",
-                "PRE_API_HOOKS SIGN_UP",
-                "PRE_API_HOOKS EMAIL_EXISTS",
-                "PRE_API_HOOKS EMAIL_EXISTS"
+                "ST_LOGS PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS ON_HANDLE_EVENT SIGN_UP_COMPLETE",
+                "ST_LOGS GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
+                "ST_LOGS GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS PRE_API_HOOKS EMAIL_EXISTS"
             ]);
         });
     });

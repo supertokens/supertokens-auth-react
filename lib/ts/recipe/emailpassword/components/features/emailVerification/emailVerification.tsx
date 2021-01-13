@@ -19,12 +19,11 @@
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import {
-    EmailVerificationProps,
-    onHandleEmailVerificationSuccessContext,
     SendVerifyEmailThemeResponse,
     VerifyEmailLinkClickedThemeProps,
     VerifyEmailThemeResponse,
-    SendVerifyEmailThemeProps
+    SendVerifyEmailThemeProps,
+    FeatureBaseProps
 } from "../../../types";
 import EmailPassword from "../../../emailPassword";
 import { EmailVerificationScreenTheme, signOut } from "../../..";
@@ -32,21 +31,24 @@ import FeatureWrapper from "../../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE, SUCCESS_ACTION } from "../../../constants";
-import { getWindowOrThrow, redirectToInApp } from "../../../../../utils";
+import {
+    API_RESPONSE_STATUS,
+    EMAIL_VERIFICATION_MODE,
+    GET_REDIRECTION_URL_ACTION,
+    SUCCESS_ACTION
+} from "../../../constants";
+import { getWindowOrThrow } from "../../../../../utils";
 import { handleVerifyEmailAPI, handleSendVerifyEmailAPI } from "./api";
-import Session from "../../../../session/session";
-import SuperTokens from "../../../../../superTokens";
 
 /*
  * Component.
  */
 
-class EmailVerification extends PureComponent<EmailVerificationProps, { token: string }> {
+class EmailVerification extends PureComponent<FeatureBaseProps, { token: string }> {
     /*
      * Constructor.
      */
-    constructor(props: EmailVerificationProps) {
+    constructor(props: FeatureBaseProps) {
         super(props);
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
@@ -82,7 +84,7 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
     };
 
     onEmailVerifiedSuccess = async (): Promise<void> => {
-        return await this.onHandleSuccess({
+        return await this.getRecipeInstanceOrThrow().onHandleEvent({
             action: SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
         });
     };
@@ -95,78 +97,54 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
     };
 
     onSendVerifyEmailSuccess = async (): Promise<void> => {
-        return await this.onHandleSuccess({
+        return await this.getRecipeInstanceOrThrow().onHandleEvent({
             action: SUCCESS_ACTION.VERIFY_EMAIL_SENT
         });
     };
 
-    onHandleSuccess = async (context: onHandleEmailVerificationSuccessContext): Promise<void> => {
-        // If props provided by user, and successfully handled.
-        if (this.props.onHandleSuccess !== undefined) {
-            await this.props.onHandleSuccess(context);
-        }
-
-        // Otherwise, do nothing.
-    };
-
     signOut = async (): Promise<void> => {
-        // If props provided by user.
-        if (this.props.signOut !== undefined) {
-            await this.props.signOut();
-            return;
-        }
-
-        // Otherwise, use default.
         try {
             await signOut();
-            redirectToInApp(
-                this.getRecipeInstanceOrThrow()
-                    .getAppInfo()
-                    .websiteBasePath.getAsStringDangerous(),
+            return this.getRecipeInstanceOrThrow().redirect(
+                { action: GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
+                false,
                 undefined,
                 this.props.history
             );
         } catch (e) {}
     };
 
-    getSessionRecipe(): Session | undefined {
-        return SuperTokens.getDefaultSessionRecipe();
-    }
+    redirectToVerifyEmailScreen = async (): Promise<void> => {
+        let action = GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP;
 
-    doesSessionExist = async (): Promise<boolean> => {
-        const sessionRecipe = this.getSessionRecipe();
-        if (sessionRecipe !== undefined) {
-            return sessionRecipe.doesSessionExist();
+        if (this.getRecipeInstanceOrThrow().doesSessionExist() === true) {
+            action = GET_REDIRECTION_URL_ACTION.VERIFY_EMAIL;
+            this.setState(() => ({
+                token: ""
+            }));
         }
 
-        // Otherwise, return false.
-        return false;
-    };
-
-    redirectToVerifyEmailScreen = async (): Promise<void> => {
-        return redirectToInApp(
-            `${getWindowOrThrow().location.pathname}?rid=${this.getRecipeInstanceOrThrow().getRecipeId()}`,
-            undefined,
-            undefined
-        ); // No history object, we want to reload the page with current pathname but without the token in the url.
+        return this.getRecipeInstanceOrThrow().redirect({ action }, false, undefined, this.props.history);
     };
 
     onSuccessRedirect = async (): Promise<void> => {
-        redirectToInApp(
-            this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL,
+        return this.getRecipeInstanceOrThrow().redirect(
+            { action: GET_REDIRECTION_URL_ACTION.SUCCESS },
+            false,
             undefined,
             this.props.history
         );
     };
 
     async componentDidMount(): Promise<void> {
-        // In case Email Verification Mode is not required, redirect to onSuccessRedirectURL.
+        // In case Email Verification Mode is not required, redirect to success URL.
         if (
             this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !==
             EMAIL_VERIFICATION_MODE.REQUIRED
         ) {
-            return redirectToInApp(
-                this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL,
+            return this.getRecipeInstanceOrThrow().redirect(
+                { action: GET_REDIRECTION_URL_ACTION.SUCCESS },
+                false,
                 undefined,
                 this.props.history
             );
@@ -175,12 +153,11 @@ class EmailVerification extends PureComponent<EmailVerificationProps, { token: s
         const hasToken = this.state.token.length !== 0;
 
         // Redirect to login if no existing session and no token in URL.
-        const hasValidSession = await this.doesSessionExist();
-        if (hasValidSession === false && hasToken === false) {
-            return redirectToInApp(
-                this.getRecipeInstanceOrThrow()
-                    .getAppInfo()
-                    .websiteBasePath.getAsStringDangerous(),
+        const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
+        if (sessionExists === false && hasToken === false) {
+            return this.getRecipeInstanceOrThrow().redirect(
+                { action: GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
+                false,
                 undefined,
                 this.props.history
             );

@@ -35,9 +35,19 @@ SuperTokens.init({
   recipeList: [
     EmailPassword.init({
       preAPIHook: async (context) => {
-        console.log(`PRE_API_HOOKS ${context.action}`);
+        console.log(`ST_LOGS PRE_API_HOOKS ${context.action}`);
         return context.requestInit;
       },
+      getRedirectionURL: async (context) => {
+        console.log(`ST_LOGS GET_REDIRECTION_URL ${context.action}`);
+        if (context.action === "SUCCESS") {
+          return "/dashboard";
+        }
+      },
+      onHandleEvent: async (context) => {
+        console.log(`ST_LOGS ON_HANDLE_EVENT ${context.action}`);
+      },
+
       // useShadowDom: false,
       palette: {
         ...colors
@@ -47,7 +57,6 @@ SuperTokens.init({
       },
       signInAndUpFeature: {
         // defaultToSignUp: false,
-        onSuccessRedirectURL: '/dashboard',
         signUpForm: {
           privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
           termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",

@@ -1,14 +1,10 @@
 import { PureComponent } from "react";
-import { EmailPasswordAuthProps, EmailPasswordAuthState } from "../types";
-import Session from "../../session/session";
+import { FeatureBaseProps, EmailPasswordAuthState } from "../types";
 import EmailPassword from "../emailPassword";
-declare class EmailPasswordAuth extends PureComponent<EmailPasswordAuthProps, EmailPasswordAuthState> {
-    constructor(props: EmailPasswordAuthProps);
+declare class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAuthState> {
+    constructor(props: FeatureBaseProps);
     getRecipeInstanceOrThrow: () => EmailPassword;
-    getSessionRecipe(): Session | undefined;
-    doesSessionExist: () => Promise<boolean>;
     isEmailVerifiedAPI: () => Promise<boolean>;
-    onHandleShowEmailVerificationScreen: () => Promise<void>;
     componentDidMount(): Promise<void>;
     render: () => JSX.Element;
 }

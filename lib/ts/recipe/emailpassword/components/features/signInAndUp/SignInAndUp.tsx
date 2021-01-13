@@ -24,38 +24,34 @@ import { jsx } from "@emotion/react";
 import { handleSignInAPI, handleSignUpAPI, handleEmailExistsAPICall } from "./api";
 import EmailPassword from "../../../emailPassword";
 import {
-    SignInAndUpProps,
     SignInAndUpState,
     SignInThemeResponse,
     SignUpThemeResponse,
-    OnHandleSignInAndUpSuccessContext,
-    FormFieldThemeProps
+    FormFieldThemeProps,
+    FeatureBaseProps
 } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import { APIFormField, NormalisedFormField } from "../../../../../types";
-import { redirectToInApp, redirectToWithReload } from "../../../../../utils";
 import FeatureWrapper from "../../../../components/featureWrapper";
 import {
     API_RESPONSE_STATUS,
-    DEFAULT_VERIFY_EMAIL_PATH,
     EMAIL_VERIFICATION_MODE,
+    GET_REDIRECTION_URL_ACTION,
     MANDATORY_FORM_FIELDS_ID,
     SIGN_IN_AND_UP_STATUS,
     SUCCESS_ACTION
 } from "../../../constants";
-import SuperTokens from "../../../../../superTokens";
-import Session from "../../../../session/session";
 
 /*
  * Component.
  */
 
-class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
+class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     /*
      * Constructor.
      */
-    constructor(props: SignInAndUpProps) {
+    constructor(props: FeatureBaseProps) {
         super(props);
 
         this.state = {
@@ -75,10 +71,6 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
         }
         return instance;
     };
-
-    getSessionRecipe(): Session | undefined {
-        return SuperTokens.getDefaultSessionRecipe();
-    }
 
     signIn = async (formFields: APIFormField[]): Promise<SignInThemeResponse> => {
         // Front end validation.
@@ -108,11 +100,13 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             throw Error(SOMETHING_WENT_WRONG_ERROR);
         }
 
-        await this.onHandleSuccess({
+        this.getRecipeInstanceOrThrow().onHandleEvent({
             action: SUCCESS_ACTION.SIGN_IN_COMPLETE,
             user: this.state.user,
             responseJson: this.state.responseJson
         });
+
+        return await this.getRecipeInstanceOrThrow().redirect({ action: GET_REDIRECTION_URL_ACTION.SUCCESS });
     };
 
     signUp = async (formFields: APIFormField[]): Promise<SignUpThemeResponse> => {
@@ -163,67 +157,31 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
             throw Error(SOMETHING_WENT_WRONG_ERROR);
         }
 
-        return await this.onHandleSuccess({
+        this.getRecipeInstanceOrThrow().onHandleEvent({
             action: SUCCESS_ACTION.SIGN_UP_COMPLETE,
             user: this.state.user,
             responseJson: this.state.responseJson
         });
-    };
 
-    doesSessionExist = async (): Promise<boolean> => {
-        const sessionRecipe = this.getSessionRecipe();
-        if (sessionRecipe !== undefined) {
-            return sessionRecipe.doesSessionExist();
+        // Otherwise, redirect to email verification screen if sign up and email verification mode is required.
+        let action = GET_REDIRECTION_URL_ACTION.SUCCESS;
+        if (
+            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode ===
+            EMAIL_VERIFICATION_MODE.REQUIRED
+        ) {
+            action = GET_REDIRECTION_URL_ACTION.VERIFY_EMAIL;
         }
 
-        // Otherwise, return false.
-        return false;
+        return await this.getRecipeInstanceOrThrow().redirect({ action });
     };
 
     onHandleForgotPasswordClicked = async (): Promise<void> => {
-        // If props provided by user, and successfully handled.
-        if (this.props.onHandleForgotPasswordClicked !== undefined) {
-            const isHandledByUser: boolean = await this.props.onHandleForgotPasswordClicked();
-            if (isHandledByUser) {
-                return;
-            }
-        }
-
-        // Otherwise, redirect to resetPasswordURL, if defined.
-        const resetPasswordUrl = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm
-            .resetPasswordURL;
-
-        if (resetPasswordUrl === undefined) {
-            return;
-        }
-        const rid = this.getRecipeInstanceOrThrow().getRecipeId();
-        redirectToInApp(`${resetPasswordUrl.getAsStringDangerous()}?rid=${rid}`, "Reset password", this.props.history);
-    };
-
-    onHandleSuccess = async (context: OnHandleSignInAndUpSuccessContext): Promise<void> => {
-        // If props provided by user, and successfully handled.
-        if (this.props.onHandleSuccess !== undefined) {
-            const isHandledByUser = await this.props.onHandleSuccess(context);
-            if (isHandledByUser) {
-                return;
-            }
-        }
-
-        // Otherwise, redirect to email verification screen if sign up and email verification mode is required.
-        let onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL;
-        if (
-            context.action === SUCCESS_ACTION.SIGN_UP_COMPLETE &&
-            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode ===
-                EMAIL_VERIFICATION_MODE.REQUIRED
-        ) {
-            const rid = this.getRecipeInstanceOrThrow().getRecipeId();
-
-            onSuccessRedirectURL = `${this.getRecipeInstanceOrThrow()
-                .getAppInfo()
-                .websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=${rid}`;
-        }
-
-        redirectToWithReload(onSuccessRedirectURL);
+        return this.getRecipeInstanceOrThrow().redirect(
+            { action: GET_REDIRECTION_URL_ACTION.RESET_PASSWORD },
+            false,
+            "Reset password",
+            this.props.history
+        );
     };
 
     doesEmailExist = async (value: string): Promise<string | undefined> => {
@@ -273,9 +231,15 @@ class SignInAndUp extends PureComponent<SignInAndUpProps, SignInAndUpState> {
      * Init.
      */
     componentDidMount = async (): Promise<void> => {
-        const sessionExists = await this.doesSessionExist();
+        const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists) {
-            return await this.onHandleSuccess({ action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS });
+            this.getRecipeInstanceOrThrow().onHandleEvent({ action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS });
+            return await this.getRecipeInstanceOrThrow().redirect(
+                { action: GET_REDIRECTION_URL_ACTION.SUCCESS },
+                false,
+                undefined,
+                this.props.history
+            );
         }
 
         this.setState(oldState => {

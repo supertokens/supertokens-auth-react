@@ -40,9 +40,11 @@ import {
     SendVerificationEmailAPIResponse,
     VerifyEmailAPIResponse,
     IsEmailVerifiedAPIResponse,
-    PreAPIHookContext
+    PreAPIHookContext,
+    GetRedirectionURLContext,
+    OnHandleEventContext
 } from "./types";
-import { isTest, validateForm } from "../../utils";
+import { isTest, redirectToInApp, redirectToWithReload, validateForm } from "../../utils";
 import HttpRequest from "../../httpRequest";
 import { normaliseEmailPasswordConfig } from "./utils";
 import { ResetPasswordUsingToken, SignInAndUp, EmailVerification } from ".";
@@ -52,9 +54,13 @@ import {
     DEFAULT_RESET_PASSWORD_PATH,
     DEFAULT_VERIFY_EMAIL_PATH,
     EMAIL_VERIFICATION_MODE,
+    GET_REDIRECTION_URL_ACTION,
     PRE_API_HOOK_ACTION
 } from "./constants";
 import { SOMETHING_WENT_WRONG_ERROR, SSR_ERROR } from "../../constants";
+import { History, LocationState } from "history";
+import Session from "../session/session";
+import SuperTokens from "../../superTokens";
 
 /*
  * Class.
@@ -124,6 +130,86 @@ export default class EmailPassword extends RecipeModule {
         }
 
         return context.requestInit;
+    };
+
+    redirect = async (
+        context: GetRedirectionURLContext,
+        shouldReload = false,
+        title?: string,
+        history?: History<LocationState>
+    ): Promise<void> => {
+        const redirectUrl = await this.getRedirectionURL(context);
+
+        // If shouldReload, reload.
+        if (shouldReload === true) {
+            return await redirectToWithReload(redirectUrl);
+        }
+        try {
+            new URL(redirectUrl);
+            // Otherwise, If full URL, use redirectToWithReload
+            return await redirectToWithReload(redirectUrl);
+        } catch (e) {
+            // Otherwise, redirect in app.
+            return await redirectToInApp(redirectUrl, title, history);
+        }
+    };
+
+    getRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
+        // If getRedirectionURL provided by user.
+        const getRedirectionURL = this.getConfig().getRedirectionURL;
+        if (getRedirectionURL !== undefined) {
+            const redirectionUrl = await getRedirectionURL(context);
+            // And handled by user, return their value.
+            if (redirectionUrl !== undefined) {
+                return redirectionUrl;
+            }
+        }
+
+        // Otherwise, use default.
+        let redirectionUrl = "/";
+        const rid = this.getRecipeId();
+
+        switch (context.action) {
+            case GET_REDIRECTION_URL_ACTION.SUCCESS:
+                redirectionUrl = "/";
+                break;
+
+            case GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP:
+                redirectionUrl = `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}?rid=${rid}`;
+                break;
+
+            case GET_REDIRECTION_URL_ACTION.VERIFY_EMAIL:
+                redirectionUrl = `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=${rid}`;
+                break;
+
+            case GET_REDIRECTION_URL_ACTION.RESET_PASSWORD:
+                redirectionUrl = `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}${DEFAULT_RESET_PASSWORD_PATH}?rid=${rid}`;
+                break;
+            default:
+                break;
+        }
+        return redirectionUrl;
+    };
+
+    onHandleEvent(context: OnHandleEventContext): void {
+        const onHandleEvent = this.getConfig().onHandleEvent;
+        if (onHandleEvent !== undefined) {
+            onHandleEvent(context);
+        }
+    }
+
+    getSessionRecipe(): Session | undefined {
+        return SuperTokens.getDefaultSessionRecipe();
+    }
+
+    doesSessionExist = (): boolean => {
+        const sessionRecipe = this.getSessionRecipe();
+        if (sessionRecipe !== undefined) {
+            return sessionRecipe.doesSessionExist();
+        }
+
+        // Otherwise, return false.
+        return false;
     };
 
     /*

@@ -79,7 +79,7 @@ describe("SuperTokens Email Verification feature/theme", function() {
             consoleLogs = [];
             page.on("console", consoleObj => {
                 const log = consoleObj.text();
-                if (log.startsWith("PRE_API_HOOKS")) {
+                if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
                 }
             });
@@ -98,9 +98,11 @@ describe("SuperTokens Email Verification feature/theme", function() {
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
             assert.deepStrictEqual(consoleLogs, [
-                "PRE_API_HOOKS EMAIL_EXISTS",
-                "PRE_API_HOOKS SIGN_UP",
-                "PRE_API_HOOKS SEND_VERIFY_EMAIL"
+                "ST_LOGS PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS ON_HANDLE_EVENT SIGN_UP_COMPLETE",
+                "ST_LOGS GET_REDIRECTION_URL VERIFY_EMAIL",
+                "ST_LOGS PRE_API_HOOKS SEND_VERIFY_EMAIL"
             ]);
         });
 
@@ -127,11 +129,15 @@ describe("SuperTokens Email Verification feature/theme", function() {
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             assert.deepStrictEqual(consoleLogs, [
-                "PRE_API_HOOKS SIGN_IN",
-                "PRE_API_HOOKS IS_EMAIL_VERIFIED",
-                "PRE_API_HOOKS SEND_VERIFY_EMAIL",
-                "PRE_API_HOOKS SEND_VERIFY_EMAIL",
-                "PRE_API_HOOKS SIGN_OUT"
+                "ST_LOGS PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS ON_HANDLE_EVENT SIGN_IN_COMPLETE",
+                "ST_LOGS GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS PRE_API_HOOKS IS_EMAIL_VERIFIED",
+                "ST_LOGS GET_REDIRECTION_URL VERIFY_EMAIL",
+                "ST_LOGS PRE_API_HOOKS SEND_VERIFY_EMAIL",
+                "ST_LOGS PRE_API_HOOKS SEND_VERIFY_EMAIL",
+                "ST_LOGS PRE_API_HOOKS SIGN_OUT",
+                "ST_LOGS GET_REDIRECTION_URL SIGN_IN_AND_UP"
             ]);
         });
     });
@@ -141,7 +147,7 @@ describe("SuperTokens Email Verification feature/theme", function() {
             consoleLogs = [];
             page.on("console", consoleObj => {
                 const log = consoleObj.text();
-                if (log.startsWith("PRE_API_HOOKS")) {
+                if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
                 }
             });
@@ -160,7 +166,10 @@ describe("SuperTokens Email Verification feature/theme", function() {
 
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(consoleLogs, ["PRE_API_HOOKS SEND_VERIFY_EMAIL"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS PRE_API_HOOKS SEND_VERIFY_EMAIL",
+                "ST_LOGS GET_REDIRECTION_URL SIGN_IN_AND_UP"
+            ]);
         });
 
         it('Should show "Email Verification successful" screen when token is valid', async function() {
@@ -176,7 +185,7 @@ describe("SuperTokens Email Verification feature/theme", function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
-            assert.deepStrictEqual(consoleLogs, ["PRE_API_HOOKS SEND_VERIFY_EMAIL"]);
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS SEND_VERIFY_EMAIL"]);
         });
     });
     describe("Email Verified", function() {
@@ -185,7 +194,7 @@ describe("SuperTokens Email Verification feature/theme", function() {
             consoleLogs = [];
             page.on("console", consoleObj => {
                 const log = consoleObj.text();
-                if (log.startsWith("PRE_API_HOOKS")) {
+                if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
                 }
             });
@@ -194,7 +203,6 @@ describe("SuperTokens Email Verification feature/theme", function() {
         });
         it("Should redirect to onSuccessfulRedirect when email is already verified", async function() {
             // TODO.
-            assert.deepStrictEqual(consoleLogs, []);
         });
     });
 });
@@ -223,7 +231,7 @@ describe("SuperTokens Email Verification feature/theme server errors", function(
             consoleLogs = [];
             page.on("console", consoleObj => {
                 const log = consoleObj.text();
-                if (log.startsWith("PRE_API_HOOKS")) {
+                if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
                 }
             });
@@ -236,7 +244,7 @@ describe("SuperTokens Email Verification feature/theme server errors", function(
             await new Promise(r => setTimeout(r, 50)); // Make sure to wait for status to update.
             const verificationEmailErrorTitle = await getVerificationEmailErrorTitle(page);
             assert.deepStrictEqual(verificationEmailErrorTitle, "!\n Something went wrong");
-            assert.deepStrictEqual(consoleLogs, ["PRE_API_HOOKS SEND_VERIFY_EMAIL"]);
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS SEND_VERIFY_EMAIL"]);
         });
     });
 });
@@ -274,7 +282,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
             consoleLogs = [];
             page.on("console", consoleObj => {
                 const log = consoleObj.text();
-                if (log.startsWith("PRE_API_HOOKS")) {
+                if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
                 }
             });
@@ -296,10 +304,12 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
             assert.deepStrictEqual(pathname, "/dashboard");
 
             assert.deepStrictEqual(consoleLogs, [
-                "PRE_API_HOOKS EMAIL_EXISTS",
-                "PRE_API_HOOKS SIGN_UP",
-                "PRE_API_HOOKS SEND_VERIFY_EMAIL",
-                "PRE_API_HOOKS IS_EMAIL_VERIFIED"
+                "ST_LOGS PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS ON_HANDLE_EVENT SIGN_UP_COMPLETE",
+                "ST_LOGS GET_REDIRECTION_URL VERIFY_EMAIL",
+                "ST_LOGS PRE_API_HOOKS SEND_VERIFY_EMAIL",
+                "ST_LOGS PRE_API_HOOKS IS_EMAIL_VERIFIED"
             ]);
         });
     });

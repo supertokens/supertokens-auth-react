@@ -72,7 +72,6 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
     const resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig = normaliseResetPasswordUsingTokenFeature(
         signUpPasswordField.validate,
         signUpEmailField,
-        config.appInfo.websiteBasePath,
         config.resetPasswordUsingTokenFeature
     );
 
@@ -84,11 +83,15 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
 
     const useShadowDom = getShouldUseShadowDom(config.useShadowDom);
     const preAPIHook = config.preAPIHook;
+    const onHandleEvent = config.onHandleEvent;
+    const getRedirectionURL = config.getRedirectionURL;
 
     return {
         palette,
         useShadowDom,
         preAPIHook,
+        getRedirectionURL,
+        onHandleEvent,
         signInAndUpFeature,
         resetPasswordUsingTokenFeature,
         emailVerificationFeature
@@ -104,7 +107,6 @@ export function normaliseSignInAndUpFeature(
     }
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
-    const onSuccessRedirectURL = config.onSuccessRedirectURL !== undefined ? config.onSuccessRedirectURL : "/";
     const signUpForm: NormalisedSignUpFormFeatureConfig = normaliseSignUpFormFeatureConfig(config.signUpForm);
     const defaultToSignUp = config.defaultToSignUp !== undefined ? config.defaultToSignUp : true;
 
@@ -141,7 +143,6 @@ export function normaliseSignInAndUpFeature(
         config.signInForm
     );
     return {
-        onSuccessRedirectURL,
         disableDefaultImplementation,
         defaultToSignUp,
         signUpForm,
@@ -244,7 +245,6 @@ function getDefaultPasswordFormField(): NormalisedFormField {
 export function normaliseResetPasswordUsingTokenFeature(
     signUpPasswordFieldValidate: (value: any) => Promise<string | undefined>,
     signUpEmailField: NormalisedFormField,
-    websiteBasePath: NormalisedURLPath,
     config?: ResetPasswordUsingTokenUserInput
 ): NormalisedResetPasswordUsingTokenFeatureConfig {
     if (config === undefined) {
@@ -252,10 +252,6 @@ export function normaliseResetPasswordUsingTokenFeature(
     }
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
-    const onSuccessRedirectURL =
-        config.onSuccessRedirectURL !== undefined
-            ? config.onSuccessRedirectURL
-            : websiteBasePath.getAsStringDangerous();
 
     const submitNewPasswordFormStyle =
         config.submitNewPasswordForm !== undefined && config.submitNewPasswordForm.style !== undefined
@@ -295,7 +291,6 @@ export function normaliseResetPasswordUsingTokenFeature(
     };
 
     return {
-        onSuccessRedirectURL,
         disableDefaultImplementation,
         submitNewPasswordForm,
         enterEmailForm

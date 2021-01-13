@@ -33,7 +33,6 @@ require("jsdom-global")();
  * Tests.
  */
 describe("EmailPassword", function() {
-    const onSuccessRedirectURL = "https://example.com/login";
     const privacyPolicyLink = "https://example.com/privacy";
     const termsOfServiceLink = "https://example.com/terms";
     const resetPasswordURL = "https://example.com/reset";
@@ -84,13 +83,11 @@ describe("EmailPassword", function() {
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] !== undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/verify-email"] === undefined);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getRecipeId(), "emailpassword");
-        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL, "/");
     });
 
-    it("Initializing EmailPassword with onSuccessRedirectURL and disable default implementation but Email verification required", async function() {
+    it("Initializing EmailPassword and disable default implementation but Email verification required", async function() {
         EmailPassword.init({
             signInAndUpFeature: {
-                onSuccessRedirectURL,
                 disableDefaultImplementation: true,
                 signUpForm: {
                     privacyPolicyLink,
@@ -110,7 +107,6 @@ describe("EmailPassword", function() {
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] === undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] === undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/verify-email"] !== undefined);
-        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.onSuccessRedirectURL, onSuccessRedirectURL);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().getConfig().emailVerificationFeature.mode, "REQUIRED");
     });
 

@@ -18,12 +18,18 @@ export declare enum PRE_API_HOOK_ACTION {
     SIGN_OUT = "SIGN_OUT",
     EMAIL_EXISTS = "EMAIL_EXISTS"
 }
+export declare enum GET_REDIRECTION_URL_ACTION {
+    SUCCESS = "SUCCESS",
+    SIGN_IN_AND_UP = "SIGN_IN_AND_UP",
+    VERIFY_EMAIL = "VERIFY_EMAIL",
+    RESET_PASSWORD = "RESET_PASSWORD"
+}
 export declare enum SIGN_IN_AND_UP_STATUS {
     LOADING = "LOADING",
     READY = "READY",
     SUCCESSFUL = "SUCCESSFUL"
 }
-export declare enum EMAIL_PASSWORD_AUTH {
+export declare enum EMAIL_PASSWORD_AUTH_STATE {
     LOADING = "LOADING",
     READY = "READY"
 }

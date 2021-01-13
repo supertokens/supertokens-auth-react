@@ -29,16 +29,17 @@ import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import {
     API_RESPONSE_STATUS,
-    EMAIL_PASSWORD_AUTH,
+    EMAIL_PASSWORD_AUTH_STATE,
     EMAIL_VERIFICATION_MODE,
     FORM_BASE_STATUS,
+    GET_REDIRECTION_URL_ACTION,
     PRE_API_HOOK_ACTION,
     SEND_VERIFY_EMAIL_STATUS,
     SIGN_IN_AND_UP_STATUS,
     SUCCESS_ACTION,
     VERIFY_EMAIL_LINK_CLICKED_STATUS
 } from "./constants";
-import { History } from "history";
+import { History, LocationState } from "history";
 import EmailPassword from "./emailPassword";
 
 /*
@@ -60,6 +61,16 @@ export type EmailPasswordUserInput = {
      * Optional pre API Hook.
      */
     preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
+
+    /*
+     * Optional method used for redirections.
+     */
+    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
+
+    /*
+     * Optional method used for handling event success.
+     */
+    onHandleEvent?: (context: OnHandleEventContext) => void;
 
     /*
      * Sign In and Sign Up feature.
@@ -96,6 +107,16 @@ export type NormalisedEmailPasswordConfig = {
     preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
 
     /*
+     * Optional method used for redirections.
+     */
+    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
+
+    /*
+     * Optional method used for handling event success.
+     */
+    onHandleEvent?: (context: OnHandleEventContext) => void;
+
+    /*
      * Sign In and Sign Up feature.
      */
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
@@ -123,11 +144,6 @@ export type SignInAndUpFeatureUserInput = {
     defaultToSignUp?: boolean;
 
     /*
-     * URL to redirect to in case disableDefaultImplemention is true
-     */
-    onSuccessRedirectURL?: string;
-
-    /*
      * SignUp form config.
      */
 
@@ -150,11 +166,6 @@ export type NormalisedSignInAndUpFeatureConfig = {
      * Default to sign up form.
      */
     defaultToSignUp: boolean;
-
-    /*
-     * URL to redirect to in case disableDefaultImplemention is true
-     */
-    onSuccessRedirectURL: string;
 
     /*
      * SignUp form config.
@@ -236,11 +247,6 @@ export type ResetPasswordUsingTokenUserInput = {
     disableDefaultImplementation?: boolean;
 
     /*
-     * URL to redirect to in case disableDefaultImplemention is true
-     */
-    onSuccessRedirectURL?: string;
-
-    /*
      * submitNewPasswordForm config.
      */
     submitNewPasswordForm?: FeatureBaseConfig;
@@ -256,11 +262,6 @@ export type NormalisedResetPasswordUsingTokenFeatureConfig = {
      * Disable default implementation with default routes.
      */
     disableDefaultImplementation: boolean;
-
-    /*
-     * URL to redirect to in case disableDefaultImplemention is true
-     */
-    onSuccessRedirectURL: string;
 
     /*
      * Normalised submitNewPasswordForm config.
@@ -330,7 +331,7 @@ export type EmailVerificationMode = EMAIL_VERIFICATION_MODE.OFF | EMAIL_VERIFICA
 /*
  * Props Types.
  */
-export type BaseProps = {
+export type FeatureBaseProps = {
     /*
      * Internal props provided by
      */
@@ -344,64 +345,14 @@ export type BaseProps = {
     /*
      * History provided by react-router
      */
-    history?: History;
-};
-
-export type SignInAndUpProps = BaseProps & {
-    /*
-     * Optional method called when forgot password is clicked.
-     * Return true if handled properly.
-     * Return false for default behaviour.
-     */
-    onHandleForgotPasswordClicked?: () => Promise<boolean>;
-
-    /*
-     * Optional method called on successful Sign-up/Sign-in
-     */
-    onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
-};
-
-export type ResetPasswordUsingTokenProps = BaseProps & {
-    /*
-     * Optional method called on successful Reset Password/Send Reset password email
-     */
-    onHandleSuccess(context: onHandleResetPasswordUsingTokenSuccessContext): Promise<boolean>;
-};
-
-export type onHandleResetPasswordUsingTokenSuccessContext = {
-    action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
-};
-
-export type EmailPasswordAuthProps = BaseProps & {
-    /*
-     * Optional method called when Email is not verified and Email verification mode is "REQUIRED"
-     * Return true if handled properly.
-     * Return false for default behaviour.
-     */
-    onHandleShowEmailVerificationScreen?: () => Promise<boolean>;
+    history?: History<LocationState>;
 };
 
 export type EmailPasswordAuthState = {
     /*
      * EmailPassword Auth Status
      */
-    status: EMAIL_PASSWORD_AUTH.LOADING | EMAIL_PASSWORD_AUTH.READY;
-};
-
-export type EmailVerificationProps = BaseProps & {
-    /*
-     * Optional method called on successful email address verification / send email for email address verification.
-     */
-    onHandleSuccess?: (context: onHandleEmailVerificationSuccessContext) => Promise<boolean>;
-
-    /*
-     * Optional method called when Sign Out button is clicked. Default to SuperTokens Session Sign Out.
-     */
-    signOut?: () => Promise<SignOutAPIResponse>;
-};
-
-export type onHandleEmailVerificationSuccessContext = {
-    action: SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL | SUCCESS_ACTION.VERIFY_EMAIL_SENT;
+    status: EMAIL_PASSWORD_AUTH_STATE.LOADING | EMAIL_PASSWORD_AUTH_STATE.READY;
 };
 
 type ThemeBaseProps = {
@@ -663,23 +614,6 @@ export type VerifyEmailThemeResponse = {
      */
     status: verifyEmailLinkClickedStatus;
 };
-export type OnHandleSignInAndUpSuccessContext =
-    | { action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS }
-    | {
-          /*
-           * Sign In / Sign Up success.
-           */
-          action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
-          /*
-           * User returned from API.
-           */
-          user: { id: string; email: string };
-
-          /*
-           * Response body from API.
-           */
-          responseJson: any;
-      };
 
 export type PreAPIHookContext = {
     /*
@@ -701,6 +635,47 @@ export type PreAPIHookContext = {
      */
     requestInit: RequestInit;
 };
+
+export type GetRedirectionURLContext = {
+    /*
+     * Get Redirection URL Action.
+     */
+    action:
+        | GET_REDIRECTION_URL_ACTION.SUCCESS
+        | GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP
+        | GET_REDIRECTION_URL_ACTION.VERIFY_EMAIL
+        | GET_REDIRECTION_URL_ACTION.RESET_PASSWORD;
+};
+
+export type OnHandleEventContext =
+    | {
+          /*
+           * On Handle Event actions
+           */
+          action:
+              | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
+              | SUCCESS_ACTION.VERIFY_EMAIL_SENT
+              | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
+              | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL
+              | SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT
+              | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
+              | SUCCESS_ACTION.SESSION_ALREADY_EXISTS;
+      }
+    | {
+          /*
+           * Sign In / Sign Up success.
+           */
+          action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
+          /*
+           * User returned from API.
+           */
+          user: { id: string; email: string };
+
+          /*
+           * Response body from API.
+           */
+          responseJson: any;
+      };
 
 export type User = {
     /*

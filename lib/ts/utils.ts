@@ -127,17 +127,6 @@ export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
 }
 
 /*
- * redirectToWithReload
- */
-export function redirectToWithReload(url: string): void {
-    if (url.length === 0) {
-        url = "/";
-    }
-
-    getWindowOrThrow().location.href = url;
-}
-
-/*
  * WithRouter
  */
 export function WithRouter(Component: ReactComponentClass): ReactComponentClass {
@@ -150,7 +139,20 @@ export function WithRouter(Component: ReactComponentClass): ReactComponentClass 
 }
 
 /*
+ * redirectToWithReload
+ * Do not use redirectToWithReload directly if redirecting to SuperTokens's paths, instead use corresponding recipe module manager .redirect method with shouldReload = true.
+ */
+export function redirectToWithReload(url: string): void {
+    if (url.length === 0) {
+        url = "/";
+    }
+
+    getWindowOrThrow().location.href = url;
+}
+
+/*
  * redirectToInApp
+ * Do not use redirectToInApp directly if redirecting to SuperTokens's paths, instead use corresponding recipe module manager .redirect method.
  */
 export function redirectToInApp(path: string, title?: string, history?: History<LocationState>): void {
     if (path.length === 0) {
