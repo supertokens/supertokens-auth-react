@@ -811,9 +811,14 @@ export type SendVerifyEmailThemeProps = ThemeBaseProps & {
     callAPI: () => Promise<SendVerifyEmailThemeResponse>;
 
     /*
-     * Optional method called when Sign Out button is clicked. Default to SuperTokens Session Sign Out.
+     * Method called when Sign Out button is clicked. Default to SuperTokens Session Sign Out.
      */
     signOut: () => Promise<void>;
+
+    /*
+     * Method called when "resend email" clicked results in email already verified response.
+     */
+    onEmailAlreadyVerified: () => Promise<void>;
 };
 
 export type SendVerifyEmailThemeState = {
