@@ -23,13 +23,11 @@ import {
     SubmitNewPasswordThemeProps,
     ResetPasswordUsingTokenProps,
     onHandleResetPasswordUsingTokenSuccessContext,
-    SubmitNewPasswordThemeResponse,
-    SubmitNewPasswordAPIResponse,
-    EnterEmailAPIResponse
+    SubmitNewPasswordThemeResponse
 } from "../../../types";
 import EmailPassword from "../../../emailPassword";
 import { ResetPasswordUsingTokenTheme } from "../../..";
-import { APIFormField, RequestJson } from "../../../../../types";
+import { APIFormField } from "../../../../../types";
 import FeatureWrapper from "../../../../components/featureWrapper";
 
 /** @jsx jsx */
@@ -102,7 +100,7 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
         return await handleSubmitNewPasswordAPI(
             [formFields[0]],
             this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.onCallSubmitNewPasswordAPI,
+            this.getRecipeInstanceOrThrow().submitNewPasswordAPI,
             this.state.token
         );
     };
@@ -128,7 +126,7 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
         return await handleEnterEmailAPI(
             formFields,
             this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.onCallSendResetEmailAPI
+            this.getRecipeInstanceOrThrow().enterEmailAPI
         );
     };
 
@@ -152,32 +150,6 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
         const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
             .onSuccessRedirectURL;
         redirectToInApp(onSuccessRedirectURL, undefined, this.props.history);
-    };
-
-    onCallSendResetEmailAPI = async (
-        requestJson: RequestJson,
-        headers: HeadersInit
-    ): Promise<EnterEmailAPIResponse> => {
-        // If props provided by user.
-        if (this.props.onCallSendResetEmailAPI !== undefined) {
-            return this.props.onCallSendResetEmailAPI(requestJson, headers);
-        }
-
-        // Otherwise, use default.
-        return this.getRecipeInstanceOrThrow().enterEmailAPI(requestJson, headers);
-    };
-
-    onCallSubmitNewPasswordAPI = async (
-        requestJson: RequestJson,
-        headers: HeadersInit
-    ): Promise<SubmitNewPasswordAPIResponse> => {
-        // If props provided by user.
-        if (this.props.onCallSubmitNewPasswordAPI !== undefined) {
-            return this.props.onCallSubmitNewPasswordAPI(requestJson, headers);
-        }
-
-        // Otherwise, use default.
-        return this.getRecipeInstanceOrThrow().submitNewPasswordAPI(requestJson, headers);
     };
 
     render = (): JSX.Element => {

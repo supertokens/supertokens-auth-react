@@ -283,7 +283,7 @@ export default class EmailPassword extends RecipeModule {
 
     isEmailVerifiedAPI = async (headers: HeadersInit): Promise<IsEmailVerifiedAPIResponse> => {
         const context = {
-            action: PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL,
+            action: PRE_API_HOOK_ACTION.IS_EMAIL_VERIFIED,
             requestInit: {
                 headers: {
                     ...headers,

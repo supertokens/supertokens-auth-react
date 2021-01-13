@@ -1,7 +1,7 @@
 import { PureComponent } from "react";
-import { EnterEmailThemeResponse, ResetPasswordUsingTokenProps, onHandleResetPasswordUsingTokenSuccessContext, SubmitNewPasswordThemeResponse, SubmitNewPasswordAPIResponse } from "../../../types";
+import { EnterEmailThemeResponse, ResetPasswordUsingTokenProps, onHandleResetPasswordUsingTokenSuccessContext, SubmitNewPasswordThemeResponse } from "../../../types";
 import EmailPassword from "../../../emailPassword";
-import { APIFormField, RequestJson } from "../../../../../types";
+import { APIFormField } from "../../../../../types";
 declare class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps, {
     token: string;
 }> {
@@ -13,8 +13,6 @@ declare class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTo
     onEnterEmailFormSuccess: () => Promise<void>;
     onHandleSuccess: (context: onHandleResetPasswordUsingTokenSuccessContext) => Promise<void>;
     onSignInClicked: () => void;
-    onCallSendResetEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<import("../../../types").BaseResetPasswordAPIResponse>;
-    onCallSubmitNewPasswordAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordAPIResponse>;
     render: () => JSX.Element;
 }
 export default ResetPasswordUsingToken;
