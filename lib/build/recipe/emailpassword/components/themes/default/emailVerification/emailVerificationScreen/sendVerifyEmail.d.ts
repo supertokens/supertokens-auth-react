@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { SendVerifyEmailThemeProps, SendVerifyEmailThemeState } from "../../../../../types";
-export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeProps, SendVerifyEmailThemeState> {
+export default class SendVerifyEmailTheme extends PureComponent<SendVerifyEmailThemeProps, SendVerifyEmailThemeState> {
     static contextType: React.Context<{
         [x: string]: import("@emotion/serialize").CSSObject;
         palette: import("../../types").NormalisedPalette;

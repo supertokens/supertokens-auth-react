@@ -64,7 +64,6 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
         this.setState(() => ({
             status: response.status
         }));
-        return;
     };
 
     /*

@@ -114,7 +114,7 @@ class EmailPasswordAuth extends PureComponent<EmailPasswordAuthProps, EmailPassw
         redirectToInApp(
             `${this.getRecipeInstanceOrThrow()
                 .getAppInfo()
-                .websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=emailpassword`,
+                .websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=${this.getRecipeInstanceOrThrow().getRecipeId()}`,
             undefined,
             this.props.history
         );

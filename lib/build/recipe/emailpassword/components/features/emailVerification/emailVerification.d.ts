@@ -14,7 +14,6 @@ declare class EmailVerification extends PureComponent<EmailVerificationProps, {
     sendVerifyEmail: () => Promise<SendVerifyEmailThemeResponse>;
     onSendVerifyEmailSuccess: () => Promise<void>;
     onHandleSuccess: (context: onHandleEmailVerificationSuccessContext) => Promise<void>;
-    onSignInClicked: () => void;
     onCallVerifyEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
     onCallSendVerifyEmailAPI: (headers: HeadersInit) => Promise<{
         status: API_RESPONSE_STATUS.OK;
@@ -23,7 +22,7 @@ declare class EmailVerification extends PureComponent<EmailVerificationProps, {
     getSessionRecipe(): Session | undefined;
     doesSessionExist: () => Promise<boolean>;
     redirectToVerifyEmailScreen: () => Promise<void>;
-    onSuccessfulEmailVerificationContinueClicked: () => Promise<void>;
+    onSuccessRedirect: () => Promise<void>;
     componentDidMount(): Promise<void>;
     render: () => JSX.Element;
 }

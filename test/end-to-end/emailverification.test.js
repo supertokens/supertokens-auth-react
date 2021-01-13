@@ -25,6 +25,7 @@ import { SEND_VERIFY_EMAIL_API, VERIFY_EMAIL_API, TEST_CLIENT_BASE_URL, TEST_SER
 import {
     clearBrowserCookies,
     clickLinkWithRightArrow,
+    getVerificationEmailErrorTitle,
     getVerificationEmailTitle,
     setInputValues,
     submitForm,
@@ -41,6 +42,7 @@ require("jsdom-global")();
 /*
  * Tests.
  */
+
 describe("SuperTokens Email Verification feature/theme", function() {
     let browser;
     let page;
@@ -155,4 +157,35 @@ describe("SuperTokens Email Verification feature/theme", function() {
     });
 });
 
-// it('Should show "Something went wrong" screen when API failure', async function() {});
+describe("SuperTokens Email Verification feature/theme server errors", function() {
+    let browser;
+    let page;
+
+    before(async function() {
+        browser = await puppeteer.launch({
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            headless: true
+        });
+        page = await browser.newPage();
+        await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
+    });
+
+    after(async function() {
+        await browser.close();
+    });
+
+    describe("Verify Email with token screen", function() {
+        beforeEach(async function() {
+            page = await browser.newPage();
+            clearBrowserCookies(page);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
+        });
+
+        it('Should show "Something went wrong" screen when API failure', async function() {
+            await page.waitForResponse(response => response.url() === VERIFY_EMAIL_API && response.status() === 500);
+            await new Promise(r => setTimeout(r, 50)); // Make sure to wait for status to update.
+            const verificationEmailErrorTitle = await getVerificationEmailErrorTitle(page);
+            assert.deepStrictEqual(verificationEmailErrorTitle, "!\n Something went wrong");
+        });
+    });
+});

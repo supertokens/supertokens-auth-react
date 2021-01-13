@@ -257,6 +257,7 @@ export declare type EmailVerificationThemeProps = {
 export declare type SendVerifyEmailThemeProps = ThemeBaseProps & {
     callAPI: () => Promise<SendVerifyEmailThemeResponse>;
     signOut: () => Promise<void>;
+    onEmailAlreadyVerified: () => Promise<void>;
 };
 export declare type SendVerifyEmailThemeState = {
     status: SEND_VERIFY_EMAIL_STATUS.READY | SEND_VERIFY_EMAIL_STATUS.SUCCESS | SEND_VERIFY_EMAIL_STATUS.ERROR;
