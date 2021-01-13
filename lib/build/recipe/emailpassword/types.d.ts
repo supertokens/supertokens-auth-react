@@ -2,12 +2,13 @@ import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, Normal
 import { CSSObject } from "@emotion/react/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { API_RESPONSE_STATUS, EMAIL_PASSWORD_AUTH, EMAIL_VERIFICATION_MODE, FORM_BASE_STATUS, SEND_VERIFY_EMAIL_STATUS, SIGN_IN_AND_UP_STATUS, SUCCESS_ACTION, VERIFY_EMAIL_LINK_CLICKED_STATUS } from "./constants";
+import { API_RESPONSE_STATUS, EMAIL_PASSWORD_AUTH, EMAIL_VERIFICATION_MODE, FORM_BASE_STATUS, PRE_API_HOOK_ACTION, SEND_VERIFY_EMAIL_STATUS, SIGN_IN_AND_UP_STATUS, SUCCESS_ACTION, VERIFY_EMAIL_LINK_CLICKED_STATUS } from "./constants";
 import { History } from "history";
 import EmailPassword from "./emailPassword";
 export declare type EmailPasswordUserInput = {
     palette?: PaletteUserInput;
     useShadowDom?: boolean;
+    preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     emailVerificationFeature?: EmailVerificationUserInput;
@@ -16,6 +17,7 @@ export declare type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUser
 export declare type NormalisedEmailPasswordConfig = {
     palette: PaletteUserInput;
     useShadowDom: boolean;
+    preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     emailVerificationFeature: NormalisedEmailVerificationFeatureConfig;
@@ -226,6 +228,10 @@ export declare type OnHandleSignInAndUpSuccessContext = {
         email: string;
     };
     responseJson: any;
+};
+export declare type PreAPIHookContext = {
+    action: PRE_API_HOOK_ACTION.SEND_RESET_PASSWORD_EMAIL | PRE_API_HOOK_ACTION.SUBMIT_NEW_PASSWORD | PRE_API_HOOK_ACTION.VERIFY_EMAIL | PRE_API_HOOK_ACTION.IS_EMAIL_VERIFIED | PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL | PRE_API_HOOK_ACTION.SIGN_IN | PRE_API_HOOK_ACTION.SIGN_UP | PRE_API_HOOK_ACTION.SIGN_OUT | PRE_API_HOOK_ACTION.EMAIL_EXISTS;
+    requestInit: RequestInit;
 };
 export declare type User = {
     id: string;

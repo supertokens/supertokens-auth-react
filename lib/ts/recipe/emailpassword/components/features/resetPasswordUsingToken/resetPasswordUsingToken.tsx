@@ -151,7 +151,7 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
         // Otherwise, use default, redirect to onSuccessRedirectURL
         const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
             .onSuccessRedirectURL;
-        redirectToInApp(onSuccessRedirectURL, "Sign In", this.props.history);
+        redirectToInApp(onSuccessRedirectURL, undefined, this.props.history);
     };
 
     onCallSendResetEmailAPI = async (

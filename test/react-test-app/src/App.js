@@ -34,6 +34,10 @@ SuperTokens.init({
   },
   recipeList: [
     EmailPassword.init({
+      preAPIHook: async (context) => {
+        console.log(context);
+        return context.requestInit;
+      },
       // useShadowDom: false,
       palette: {
         ...colors

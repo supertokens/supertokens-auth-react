@@ -39,7 +39,8 @@ import {
     EmailExistsAPIResponse,
     SendVerificationEmailAPIResponse,
     VerifyEmailAPIResponse,
-    IsEmailVerifiedAPIResponse
+    IsEmailVerifiedAPIResponse,
+    PreAPIHookContext
 } from "./types";
 import { isTest, validateForm } from "../../utils";
 import HttpRequest from "../../httpRequest";
@@ -50,7 +51,8 @@ import {
     API_RESPONSE_STATUS,
     DEFAULT_RESET_PASSWORD_PATH,
     DEFAULT_VERIFY_EMAIL_PATH,
-    EMAIL_VERIFICATION_MODE
+    EMAIL_VERIFICATION_MODE,
+    PRE_API_HOOK_ACTION
 } from "./constants";
 import { SOMETHING_WENT_WRONG_ERROR, SSR_ERROR } from "../../constants";
 
@@ -115,6 +117,15 @@ export default class EmailPassword extends RecipeModule {
         return features;
     };
 
+    preAPIHook = async (context: PreAPIHookContext): Promise<RequestInit> => {
+        const preAPIHook = this.getConfig().preAPIHook;
+        if (preAPIHook !== undefined) {
+            return await preAPIHook(context);
+        }
+
+        return context.requestInit;
+    };
+
     /*
      * API.
      */
@@ -124,38 +135,49 @@ export default class EmailPassword extends RecipeModule {
      */
 
     signUpAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpAPIResponse> => {
-        return this.httpRequest.post("/signup", {
-            body: JSON.stringify(requestJson),
-            headers: {
-                ...headers,
-                rid: this.getRecipeId()
-            }
-        });
-    };
-
-    emailExistsAPI = async (value: string, headers: HeadersInit): Promise<EmailExistsAPIResponse> => {
-        return this.httpRequest.get(
-            "/signup/email/exists",
-            {
+        const context = {
+            action: PRE_API_HOOK_ACTION.SIGN_UP,
+            requestInit: {
+                body: JSON.stringify(requestJson),
                 headers: {
                     ...headers,
                     rid: this.getRecipeId()
                 }
-            },
-            {
-                email: value
             }
-        );
+        };
+        const requestInit = await this.preAPIHook(context);
+        return this.httpRequest.post("/signup", requestInit);
+    };
+
+    emailExistsAPI = async (value: string, headers: HeadersInit): Promise<EmailExistsAPIResponse> => {
+        const context = {
+            action: PRE_API_HOOK_ACTION.EMAIL_EXISTS,
+            requestInit: {
+                headers: {
+                    ...headers,
+                    rid: this.getRecipeId()
+                }
+            }
+        };
+        const requestInit = await this.preAPIHook(context);
+        return this.httpRequest.get("/signup/email/exists", requestInit, {
+            email: value
+        });
     };
 
     signInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
-        return this.httpRequest.post("/signin", {
-            body: JSON.stringify(requestJson),
-            headers: {
-                ...headers,
-                rid: this.getRecipeId()
+        const context = {
+            action: PRE_API_HOOK_ACTION.SIGN_IN,
+            requestInit: {
+                body: JSON.stringify(requestJson),
+                headers: {
+                    ...headers,
+                    rid: this.getRecipeId()
+                }
             }
-        });
+        };
+        const requestInit = await this.preAPIHook(context);
+        return this.httpRequest.post("/signin", requestInit);
     };
 
     /*
@@ -166,23 +188,33 @@ export default class EmailPassword extends RecipeModule {
         requestJson: RequestJson,
         headers: HeadersInit
     ): Promise<SubmitNewPasswordAPIResponse> => {
-        return this.httpRequest.post("/user/password/reset", {
-            body: JSON.stringify(requestJson),
-            headers: {
-                ...headers,
-                rid: this.getRecipeId()
+        const context = {
+            action: PRE_API_HOOK_ACTION.SUBMIT_NEW_PASSWORD,
+            requestInit: {
+                body: JSON.stringify(requestJson),
+                headers: {
+                    ...headers,
+                    rid: this.getRecipeId()
+                }
             }
-        });
+        };
+        const requestInit = await this.preAPIHook(context);
+        return this.httpRequest.post("/user/password/reset", requestInit);
     };
 
     enterEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse> => {
-        return this.httpRequest.post("/user/password/reset/token", {
-            body: JSON.stringify(requestJson),
-            headers: {
-                ...headers,
-                rid: this.getRecipeId()
+        const context = {
+            action: PRE_API_HOOK_ACTION.SEND_RESET_PASSWORD_EMAIL,
+            requestInit: {
+                body: JSON.stringify(requestJson),
+                headers: {
+                    ...headers,
+                    rid: this.getRecipeId()
+                }
             }
-        });
+        };
+        const requestInit = await this.preAPIHook(context);
+        return this.httpRequest.post("/user/password/reset/token", requestInit);
     };
 
     /*
@@ -190,13 +222,18 @@ export default class EmailPassword extends RecipeModule {
      */
 
     signOut = async (): Promise<SignOutAPIResponse> => {
-        const result = await this.httpRequest.fetch(this.httpRequest.getFullUrl("/signout"), {
-            method: "POST",
-            body: JSON.stringify({}),
-            headers: {
-                rid: this.getRecipeId()
+        const context = {
+            action: PRE_API_HOOK_ACTION.SIGN_OUT,
+            requestInit: {
+                method: "POST",
+                headers: {
+                    rid: this.getRecipeId()
+                }
             }
-        });
+        };
+        const requestInit = await this.preAPIHook(context);
+
+        const result = await this.httpRequest.fetch(this.httpRequest.getFullUrl("/signout"), requestInit);
 
         const sessionExpiredStatusCode = sessionSdk.sessionExpiredStatusCode;
         if (result.status === sessionExpiredStatusCode) {
@@ -216,37 +253,50 @@ export default class EmailPassword extends RecipeModule {
      */
 
     sendVerificationEmailAPI = async (headers: HeadersInit): Promise<SendVerificationEmailAPIResponse> => {
-        return this.httpRequest.post("/user/email/verify/token", {
-            headers: {
-                ...headers,
-                rid: this.getRecipeId()
+        const context = {
+            action: PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL,
+            requestInit: {
+                headers: {
+                    ...headers,
+                    rid: this.getRecipeId()
+                }
             }
-        });
+        };
+        const requestInit = await this.preAPIHook(context);
+        return this.httpRequest.post("/user/email/verify/token", requestInit);
     };
 
     verifyEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
-        return this.httpRequest.post("/user/email/verify", {
-            body: JSON.stringify(requestJson),
-            headers: {
-                ...headers,
-                rid: this.getRecipeId()
+        const context = {
+            action: PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL,
+            requestInit: {
+                body: JSON.stringify(requestJson),
+                headers: {
+                    ...headers,
+                    rid: this.getRecipeId()
+                }
             }
-        });
+        };
+        const requestInit = await this.preAPIHook(context);
+        return this.httpRequest.post("/user/email/verify", requestInit);
     };
 
     isEmailVerifiedAPI = async (headers: HeadersInit): Promise<IsEmailVerifiedAPIResponse> => {
-        return this.httpRequest.get("/user/email/verify", {
-            headers: {
-                ...headers,
-                rid: this.getRecipeId()
+        const context = {
+            action: PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL,
+            requestInit: {
+                headers: {
+                    ...headers,
+                    rid: this.getRecipeId()
+                }
             }
-        });
+        };
+        const requestInit = await this.preAPIHook(context);
+        return this.httpRequest.get("/user/email/verify", requestInit);
     };
 
     async isEmailVerified(): Promise<boolean> {
-        const response = await this.isEmailVerifiedAPI({
-            rid: this.getRecipeId()
-        });
+        const response = await this.isEmailVerifiedAPI({});
         return response.isVerified;
     }
 
