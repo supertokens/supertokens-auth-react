@@ -2,12 +2,15 @@ import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, Normal
 import { CSSObject } from "@emotion/react/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { API_RESPONSE_STATUS, EMAIL_PASSWORD_AUTH, EMAIL_VERIFICATION_MODE, FORM_BASE_STATUS, SEND_VERIFY_EMAIL_STATUS, SIGN_IN_AND_UP_STATUS, SUCCESS_ACTION, VERIFY_EMAIL_LINK_CLICKED_STATUS } from "./constants";
-import { History } from "history";
+import { API_RESPONSE_STATUS, EMAIL_PASSWORD_AUTH_STATE, EMAIL_VERIFICATION_MODE, FORM_BASE_STATUS, GET_REDIRECTION_URL_ACTION, PRE_API_HOOK_ACTION, SEND_VERIFY_EMAIL_STATUS, SIGN_IN_AND_UP_STATUS, SUCCESS_ACTION, VERIFY_EMAIL_LINK_CLICKED_STATUS } from "./constants";
+import { History, LocationState } from "history";
 import EmailPassword from "./emailPassword";
 export declare type EmailPasswordUserInput = {
     palette?: PaletteUserInput;
     useShadowDom?: boolean;
+    preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
+    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
+    onHandleEvent?: (context: OnHandleEventContext) => void;
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     emailVerificationFeature?: EmailVerificationUserInput;
@@ -16,6 +19,9 @@ export declare type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUser
 export declare type NormalisedEmailPasswordConfig = {
     palette: PaletteUserInput;
     useShadowDom: boolean;
+    preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
+    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
+    onHandleEvent?: (context: OnHandleEventContext) => void;
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     emailVerificationFeature: NormalisedEmailVerificationFeatureConfig;
@@ -23,14 +29,12 @@ export declare type NormalisedEmailPasswordConfig = {
 export declare type SignInAndUpFeatureUserInput = {
     disableDefaultImplementation?: boolean;
     defaultToSignUp?: boolean;
-    onSuccessRedirectURL?: string;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;
 };
 export declare type NormalisedSignInAndUpFeatureConfig = {
     disableDefaultImplementation: boolean;
     defaultToSignUp: boolean;
-    onSuccessRedirectURL: string;
     signUpForm: NormalisedSignUpFormFeatureConfig;
     signInForm: NormalisedSignInFormFeatureConfig;
 };
@@ -56,13 +60,11 @@ export declare type FormFieldSignInConfig = FormFieldBaseConfig;
 export declare type FormFieldSignUpConfig = FormField;
 export declare type ResetPasswordUsingTokenUserInput = {
     disableDefaultImplementation?: boolean;
-    onSuccessRedirectURL?: string;
     submitNewPasswordForm?: FeatureBaseConfig;
     enterEmailForm?: FeatureBaseConfig;
 };
 export declare type NormalisedResetPasswordUsingTokenFeatureConfig = {
     disableDefaultImplementation: boolean;
-    onSuccessRedirectURL: string;
     submitNewPasswordForm: NormalisedSubmitNewPasswordForm;
     enterEmailForm: NormalisedEnterEmailForm;
 };
@@ -85,46 +87,15 @@ export declare type NormalisedEmailVerificationFeatureConfig = {
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
 };
 export declare type EmailVerificationMode = EMAIL_VERIFICATION_MODE.OFF | EMAIL_VERIFICATION_MODE.REQUIRED;
-export declare type BaseProps = {
+export declare type FeatureBaseProps = {
     __internal?: {
         instance: EmailPassword;
     };
     children?: JSX.Element;
-    history?: History;
-};
-export declare type SignInAndUpProps = BaseProps & {
-    onHandleForgotPasswordClicked?: () => Promise<boolean>;
-    doesSessionExist?: () => Promise<boolean>;
-    onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
-    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
-    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
-    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
-};
-export declare type ResetPasswordUsingTokenProps = BaseProps & {
-    onHandleSuccess(context: onHandleResetPasswordUsingTokenSuccessContext): Promise<boolean>;
-    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordAPIResponse>;
-    onCallSendResetEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse>;
-};
-export declare type onHandleResetPasswordUsingTokenSuccessContext = {
-    action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
-};
-export declare type EmailPasswordAuthProps = BaseProps & {
-    onCallIsEmailVerifiedAPI?: (headers: HeadersInit) => Promise<IsEmailVerifiedAPIResponse>;
-    doesSessionExist?: () => Promise<boolean>;
-    onHandleShowEmailVerificationScreen?: () => Promise<boolean>;
+    history?: History<LocationState>;
 };
 export declare type EmailPasswordAuthState = {
-    status: EMAIL_PASSWORD_AUTH.LOADING | EMAIL_PASSWORD_AUTH.READY;
-};
-export declare type EmailVerificationProps = BaseProps & {
-    doesSessionExist?: () => Promise<boolean>;
-    onCallVerifyEmailAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
-    onCallSendVerifyEmailAPI?: (headers: HeadersInit) => Promise<SendVerificationEmailAPIResponse>;
-    onHandleSuccess?: (context: onHandleEmailVerificationSuccessContext) => Promise<boolean>;
-    signOut?: () => Promise<SignOutAPIResponse>;
-};
-export declare type onHandleEmailVerificationSuccessContext = {
-    action: SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL | SUCCESS_ACTION.VERIFY_EMAIL_SENT;
+    status: EMAIL_PASSWORD_AUTH_STATE.LOADING | EMAIL_PASSWORD_AUTH_STATE.READY;
 };
 declare type ThemeBaseProps = {
     styleFromInit?: Styles;
@@ -217,8 +188,15 @@ export declare type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | 
 export declare type VerifyEmailThemeResponse = {
     status: verifyEmailLinkClickedStatus;
 };
-export declare type OnHandleSignInAndUpSuccessContext = {
-    action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS;
+export declare type PreAPIHookContext = {
+    action: PRE_API_HOOK_ACTION.SEND_RESET_PASSWORD_EMAIL | PRE_API_HOOK_ACTION.SUBMIT_NEW_PASSWORD | PRE_API_HOOK_ACTION.VERIFY_EMAIL | PRE_API_HOOK_ACTION.IS_EMAIL_VERIFIED | PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL | PRE_API_HOOK_ACTION.SIGN_IN | PRE_API_HOOK_ACTION.SIGN_UP | PRE_API_HOOK_ACTION.SIGN_OUT | PRE_API_HOOK_ACTION.EMAIL_EXISTS;
+    requestInit: RequestInit;
+};
+export declare type GetRedirectionURLContext = {
+    action: GET_REDIRECTION_URL_ACTION.SUCCESS | GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP | GET_REDIRECTION_URL_ACTION.VERIFY_EMAIL | GET_REDIRECTION_URL_ACTION.RESET_PASSWORD;
+};
+export declare type OnHandleEventContext = {
+    action: SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL | SUCCESS_ACTION.VERIFY_EMAIL_SENT | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL | SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL | SUCCESS_ACTION.SESSION_ALREADY_EXISTS;
 } | {
     action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
     user: {

@@ -55,7 +55,7 @@ import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_U
 describe("SuperTokens SignIn feature/theme", function() {
     let browser;
     let page;
-
+    let consoleLogs;
     before(async function() {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
             method: "POST"
@@ -85,9 +85,17 @@ describe("SuperTokens SignIn feature/theme", function() {
 
     beforeEach(async function() {
         page = await browser.newPage();
+        consoleLogs = [];
+        page.on("console", consoleObj => {
+            const log = consoleObj.text();
+            if (log.startsWith("ST_LOGS")) {
+                consoleLogs.push(log);
+            }
+        });
         await clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
         await toggleSignInSignUp(page);
+        assert.deepStrictEqual(consoleLogs, []);
     });
 
     describe("SignIn test (default)", function() {
@@ -103,6 +111,7 @@ describe("SuperTokens SignIn feature/theme", function() {
 
             const adornments = await getSuccessInputAdornments(page);
             assert.strictEqual(adornments.length, 0);
+            assert.deepStrictEqual(consoleLogs, []);
         });
 
         it('Should switch between signup and sign in widget when "Sign Up" is clicked.', async function() {
@@ -115,12 +124,14 @@ describe("SuperTokens SignIn feature/theme", function() {
 
             buttonLabel = await getSubmitFormButtonLabel(page);
             assert.strictEqual(buttonLabel, "SIGN IN");
+            assert.deepStrictEqual(consoleLogs, []);
         });
 
         it('Should switch to resetPassword when "Forgot password" is clicked.', async function() {
             await clickForgotPasswordLink(page);
             const buttonLabel = await getSubmitFormButtonLabel(page);
             assert.strictEqual(buttonLabel, "Email me");
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS GET_REDIRECTION_URL RESET_PASSWORD"]);
         });
 
         it("Should show error messages with incorrect inputs", async function() {
@@ -163,6 +174,7 @@ describe("SuperTokens SignIn feature/theme", function() {
             assert.deepStrictEqual(formFieldsErrors, []);
             const generalError = await getGeneralError(page);
             assert.strictEqual(generalError, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR);
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS SIGN_IN"]);
         });
 
         it("Successful Sign In", async function() {
@@ -265,6 +277,16 @@ describe("SuperTokens SignIn feature/theme", function() {
             assert.deepStrictEqual(pathname, "/auth");
             cookies = await page.cookies();
             assert.deepStrictEqual(cookies, []); // Make sure cookies were removed on logout.
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS ON_HANDLE_EVENT SIGN_UP_COMPLETE",
+                "ST_LOGS GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS ON_HANDLE_EVENT SIGN_IN_COMPLETE",
+                "ST_LOGS GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS PRE_API_HOOKS SIGN_OUT"
+            ]);
         });
     });
 });
@@ -272,6 +294,7 @@ describe("SuperTokens SignIn feature/theme", function() {
 describe("SuperTokens SignIn feature/theme => Server Error", function() {
     let browser;
     let page;
+    let consoleLogs;
 
     before(async function() {
         browser = await puppeteer.launch({
@@ -287,6 +310,13 @@ describe("SuperTokens SignIn feature/theme => Server Error", function() {
     beforeEach(async function() {
         page = await browser.newPage();
         await clearBrowserCookies(page);
+        consoleLogs = [];
+        page.on("console", consoleObj => {
+            const log = consoleObj.text();
+            if (log.startsWith("ST_LOGS")) {
+                consoleLogs.push(log);
+            }
+        });
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
         await toggleSignInSignUp(page);
     });
@@ -306,143 +336,6 @@ describe("SuperTokens SignIn feature/theme => Server Error", function() {
         // Assert server Error
         const generalError = await getGeneralError(page);
         assert.strictEqual(generalError, SOMETHING_WENT_WRONG_ERROR);
-    });
-});
-
-describe("SuperTokens SignIn feature/theme callbacks", function() {
-    let browser;
-    let page;
-    let consoleLogs = [];
-
-    before(async function() {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true
-        });
-
-        page = await browser.newPage();
-
-        // Catch console.log sent from ST callbacks.
-        page.on("console", consoleObj => {
-            const log = consoleObj.text();
-            if (log.startsWith("ST_CALLBACKS")) {
-                consoleLogs.push(log);
-            }
-        });
-    });
-
-    after(async function() {
-        await browser.close();
-    });
-
-    beforeEach(async function() {
-        consoleLogs = [];
-        clearBrowserCookies(page);
-        await page.goto(`${TEST_CLIENT_BASE_URL}/custom/auth`);
-        await toggleSignInSignUp(page);
-    });
-
-    it("Call doesSessionExist callback on load if provided", async function() {
-        assert.deepStrictEqual(consoleLogs, ["ST_CALLBACKS Does session exist props session:false"]);
-    });
-
-    it("Sign In using custom callbacks", async function() {
-        // Set values.
-        await setInputValues(page, [
-            { name: "email", value: "john.doe" },
-            { name: "password", value: "Str0ngP@ssw0rd" }
-        ]);
-
-        await submitForm(page);
-
-        // Use front end validation first before calling custom API.
-        const formFieldsErrors = await getFieldErrors(page);
-        assert.deepStrictEqual(formFieldsErrors, ["!\nEmail is invalid"]);
-
-        // Update email and retry.
-        await setInputValues(page, [
-            { name: "email", value: "john.doe@supertokens.io" },
-            { name: "password", value: "Str0ngP@ssw0rd" }
-        ]);
-        await submitForm(page);
-        await page.waitForNavigation({ waitUntil: "networkidle0" });
-
-        assert.deepStrictEqual(consoleLogs, [
-            "ST_CALLBACKS Does session exist props session:false",
-            "ST_CALLBACKS onCallSignInAPI, email:john.doe@supertokens.io password:Str0ngP@ssw0rd rid:emailpassword",
-            "ST_CALLBACKS onHandleSuccess SIGN_IN_COMPLETE email:john.doe@supertokens.io id:1"
-        ]);
-        consoleLogs = [];
-
-        // Redirected to onSuccessFulRedirectUrl
-        let pathname = await page.evaluate(() => window.location.pathname);
-        // Session.doesSessionExist returns true, allow to stay on /dashboard
-        assert.deepStrictEqual(pathname, "/custom-success-redirect");
-
-        await page.goto(`${TEST_CLIENT_BASE_URL}/custom/auth`);
-
-        pathname = await page.evaluate(() => window.location.pathname);
-        // Custom props doesSessionExist returns true, redirect to /dashboard
-        assert.deepStrictEqual(pathname, "/custom-success-redirect");
-
-        assert.deepStrictEqual(consoleLogs, [
-            "ST_CALLBACKS Does session exist props session:true",
-            "ST_CALLBACKS onHandleSuccess SESSION_ALREADY_EXISTS"
-        ]);
-    });
-
-    it("Sign up using custom callbacks", async function() {
-        await toggleSignInSignUp(page);
-        // Set values.
-        await setInputValues(page, [
-            { name: "email", value: "john.doe@supertokens.io" },
-            { name: "password", value: "weakpassword" },
-            { name: "name", value: "John Doe" },
-            { name: "age", value: "20" }
-        ]);
-
-        await submitForm(page);
-
-        // Use front end validation first before calling custom API.
-        const formFieldsErrors = await getFieldErrors(page);
-        assert.deepStrictEqual(formFieldsErrors, ["!\nPassword must contain at least one number"]);
-
-        await setInputValues(page, [{ name: "password", value: "Str0ngP@ssw0rd" }]);
-        await submitForm(page);
-
-        await page.waitForNavigation({ waitUntil: "networkidle0" });
-
-        assert.deepStrictEqual(consoleLogs, [
-            "ST_CALLBACKS Does session exist props session:false",
-            "ST_CALLBACKS onCallSignUpAPI, email:john.doe@supertokens.io password:Str0ngP@ssw0rd rid:emailpassword",
-            "ST_CALLBACKS onHandleSuccess SIGN_UP_COMPLETE email:john.doe@supertokens.io id:1"
-        ]);
-
-        consoleLogs = [];
-
-        // Redirected to onSuccessFulRedirectUrl
-        let pathname = await page.evaluate(() => window.location.pathname);
-        // Session.doesSessionExist returns true, allow to stay on /dashboard
-        assert.deepStrictEqual(pathname, "/custom-success-redirect");
-
-        await page.goto(`${TEST_CLIENT_BASE_URL}/custom/auth`);
-
-        pathname = await page.evaluate(() => window.location.pathname);
-        // Do not login on signup, custom props doesSessionExist returns false
-        assert.deepStrictEqual(pathname, "/custom/auth");
-
-        assert.deepStrictEqual(consoleLogs, ["ST_CALLBACKS Does session exist props session:false"]);
-    });
-
-    it("Call onHandleForgotPasswordClicked callback on forgotPassword clicked if provided", async function() {
-        await clickForgotPasswordLink(page);
-        assert.deepStrictEqual(consoleLogs, [
-            "ST_CALLBACKS Does session exist props session:false",
-            "ST_CALLBACKS will redirect to ForgotPassword"
-        ]);
-        // Redirected to onSuccessFulRedirectUrl
-        const pathname = await page.evaluate(() => window.location.pathname);
-        // Session.doesSessionExist returns true, allow to stay on /dashboard
-        assert.deepStrictEqual(pathname, "/custom/auth/reset-password");
+        assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS SIGN_IN"]);
     });
 });

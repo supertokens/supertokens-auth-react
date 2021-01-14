@@ -29,15 +29,17 @@ import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import {
     API_RESPONSE_STATUS,
-    EMAIL_PASSWORD_AUTH,
+    EMAIL_PASSWORD_AUTH_STATE,
     EMAIL_VERIFICATION_MODE,
     FORM_BASE_STATUS,
+    GET_REDIRECTION_URL_ACTION,
+    PRE_API_HOOK_ACTION,
     SEND_VERIFY_EMAIL_STATUS,
     SIGN_IN_AND_UP_STATUS,
     SUCCESS_ACTION,
     VERIFY_EMAIL_LINK_CLICKED_STATUS
 } from "./constants";
-import { History } from "history";
+import { History, LocationState } from "history";
 import EmailPassword from "./emailPassword";
 
 /*
@@ -54,6 +56,21 @@ export type EmailPasswordUserInput = {
      * Use shadow Dom root.
      */
     useShadowDom?: boolean;
+
+    /*
+     * Optional pre API Hook.
+     */
+    preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
+
+    /*
+     * Optional method used for redirections.
+     */
+    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
+
+    /*
+     * Optional method used for handling event success.
+     */
+    onHandleEvent?: (context: OnHandleEventContext) => void;
 
     /*
      * Sign In and Sign Up feature.
@@ -85,6 +102,21 @@ export type NormalisedEmailPasswordConfig = {
     useShadowDom: boolean;
 
     /*
+     * Optional pre API Hook.
+     */
+    preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
+
+    /*
+     * Optional method used for redirections.
+     */
+    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
+
+    /*
+     * Optional method used for handling event success.
+     */
+    onHandleEvent?: (context: OnHandleEventContext) => void;
+
+    /*
      * Sign In and Sign Up feature.
      */
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
@@ -112,11 +144,6 @@ export type SignInAndUpFeatureUserInput = {
     defaultToSignUp?: boolean;
 
     /*
-     * URL to redirect to in case disableDefaultImplemention is true
-     */
-    onSuccessRedirectURL?: string;
-
-    /*
      * SignUp form config.
      */
 
@@ -139,11 +166,6 @@ export type NormalisedSignInAndUpFeatureConfig = {
      * Default to sign up form.
      */
     defaultToSignUp: boolean;
-
-    /*
-     * URL to redirect to in case disableDefaultImplemention is true
-     */
-    onSuccessRedirectURL: string;
 
     /*
      * SignUp form config.
@@ -225,11 +247,6 @@ export type ResetPasswordUsingTokenUserInput = {
     disableDefaultImplementation?: boolean;
 
     /*
-     * URL to redirect to in case disableDefaultImplemention is true
-     */
-    onSuccessRedirectURL?: string;
-
-    /*
      * submitNewPasswordForm config.
      */
     submitNewPasswordForm?: FeatureBaseConfig;
@@ -245,11 +262,6 @@ export type NormalisedResetPasswordUsingTokenFeatureConfig = {
      * Disable default implementation with default routes.
      */
     disableDefaultImplementation: boolean;
-
-    /*
-     * URL to redirect to in case disableDefaultImplemention is true
-     */
-    onSuccessRedirectURL: string;
 
     /*
      * Normalised submitNewPasswordForm config.
@@ -319,7 +331,7 @@ export type EmailVerificationMode = EMAIL_VERIFICATION_MODE.OFF | EMAIL_VERIFICA
 /*
  * Props Types.
  */
-export type BaseProps = {
+export type FeatureBaseProps = {
     /*
      * Internal props provided by
      */
@@ -333,119 +345,14 @@ export type BaseProps = {
     /*
      * History provided by react-router
      */
-    history?: History;
-};
-
-export type SignInAndUpProps = BaseProps & {
-    /*
-     * Optional method called when forgot password is clicked.
-     * Return true if handled properly.
-     * Return false for default behaviour.
-     */
-    onHandleForgotPasswordClicked?: () => Promise<boolean>;
-
-    /*
-     * Optional method called to overwrite verify if session exists.
-     */
-    doesSessionExist?: () => Promise<boolean>;
-
-    /*
-     * Optional method called on successful Sign-up/Sign-in
-     */
-    onHandleSuccess?: (context: OnHandleSignInAndUpSuccessContext) => Promise<boolean>;
-
-    /*
-     * Optional method to overwrite Sign Up API call.
-     */
-    onCallSignUpAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
-
-    /*
-     * Optional method to overwrite Sign In API call.
-     */
-    onCallSignInAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
-
-    /*
-     * Optional method to overwrite Email Exists API call.
-     */
-    onCallEmailExistsAPI?: (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
-};
-
-export type ResetPasswordUsingTokenProps = BaseProps & {
-    /*
-     * Optional method called on successful Reset Password/Send Reset password email
-     */
-    onHandleSuccess(context: onHandleResetPasswordUsingTokenSuccessContext): Promise<boolean>;
-
-    /*
-     * Optional method to overwrite Submit New Password API call.
-     */
-    onCallSubmitNewPasswordAPI(requestJson: RequestJson, headers: HeadersInit): Promise<SubmitNewPasswordAPIResponse>;
-
-    /*
-     * Optional method to overwrite Send Reset Email API call.
-     */
-    onCallSendResetEmailAPI(requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse>;
-};
-
-export type onHandleResetPasswordUsingTokenSuccessContext = {
-    action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL;
-};
-
-export type EmailPasswordAuthProps = BaseProps & {
-    /*
-     * Optional method to overwrite Is Email Verified API call.
-     */
-    onCallIsEmailVerifiedAPI?: (headers: HeadersInit) => Promise<IsEmailVerifiedAPIResponse>;
-
-    /*
-     * Optional method called to overwrite verify if session exists.
-     */
-    doesSessionExist?: () => Promise<boolean>;
-
-    /*
-     * Optional method called when Email is not verified and Email verification mode is "REQUIRED"
-     * Return true if handled properly.
-     * Return false for default behaviour.
-     */
-    onHandleShowEmailVerificationScreen?: () => Promise<boolean>;
+    history?: History<LocationState>;
 };
 
 export type EmailPasswordAuthState = {
     /*
      * EmailPassword Auth Status
      */
-    status: EMAIL_PASSWORD_AUTH.LOADING | EMAIL_PASSWORD_AUTH.READY;
-};
-
-export type EmailVerificationProps = BaseProps & {
-    /*
-     * Optional method called to overwrite verify if session exists.
-     */
-    doesSessionExist?: () => Promise<boolean>;
-
-    /*
-     * Optional method to overwrite Verify Email API call.
-     */
-    onCallVerifyEmailAPI?: (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
-
-    /*
-     * Optional method to overwrite call to send verification Email API call.
-     */
-    onCallSendVerifyEmailAPI?: (headers: HeadersInit) => Promise<SendVerificationEmailAPIResponse>;
-
-    /*
-     * Optional method called on successful email address verification / send email for email address verification.
-     */
-    onHandleSuccess?: (context: onHandleEmailVerificationSuccessContext) => Promise<boolean>;
-
-    /*
-     * Optional method called when Sign Out button is clicked. Default to SuperTokens Session Sign Out.
-     */
-    signOut?: () => Promise<SignOutAPIResponse>;
-};
-
-export type onHandleEmailVerificationSuccessContext = {
-    action: SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL | SUCCESS_ACTION.VERIFY_EMAIL_SENT;
+    status: EMAIL_PASSWORD_AUTH_STATE.LOADING | EMAIL_PASSWORD_AUTH_STATE.READY;
 };
 
 type ThemeBaseProps = {
@@ -707,8 +614,53 @@ export type VerifyEmailThemeResponse = {
      */
     status: verifyEmailLinkClickedStatus;
 };
-export type OnHandleSignInAndUpSuccessContext =
-    | { action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS }
+
+export type PreAPIHookContext = {
+    /*
+     * Pre API Hook action.
+     */
+    action:
+        | PRE_API_HOOK_ACTION.SEND_RESET_PASSWORD_EMAIL
+        | PRE_API_HOOK_ACTION.SUBMIT_NEW_PASSWORD
+        | PRE_API_HOOK_ACTION.VERIFY_EMAIL
+        | PRE_API_HOOK_ACTION.IS_EMAIL_VERIFIED
+        | PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL
+        | PRE_API_HOOK_ACTION.SIGN_IN
+        | PRE_API_HOOK_ACTION.SIGN_UP
+        | PRE_API_HOOK_ACTION.SIGN_OUT
+        | PRE_API_HOOK_ACTION.EMAIL_EXISTS;
+
+    /*
+     * Request object containing query params, body, headers.
+     */
+    requestInit: RequestInit;
+};
+
+export type GetRedirectionURLContext = {
+    /*
+     * Get Redirection URL Action.
+     */
+    action:
+        | GET_REDIRECTION_URL_ACTION.SUCCESS
+        | GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP
+        | GET_REDIRECTION_URL_ACTION.VERIFY_EMAIL
+        | GET_REDIRECTION_URL_ACTION.RESET_PASSWORD;
+};
+
+export type OnHandleEventContext =
+    | {
+          /*
+           * On Handle Event actions
+           */
+          action:
+              | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
+              | SUCCESS_ACTION.VERIFY_EMAIL_SENT
+              | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
+              | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL
+              | SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT
+              | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
+              | SUCCESS_ACTION.SESSION_ALREADY_EXISTS;
+      }
     | {
           /*
            * Sign In / Sign Up success.

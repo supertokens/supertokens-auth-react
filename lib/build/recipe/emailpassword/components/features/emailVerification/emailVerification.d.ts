@@ -1,26 +1,16 @@
 import { PureComponent } from "react";
-import { EmailVerificationProps, onHandleEmailVerificationSuccessContext, VerifyEmailAPIResponse, SendVerifyEmailThemeResponse, VerifyEmailThemeResponse } from "../../../types";
+import { SendVerifyEmailThemeResponse, VerifyEmailThemeResponse, FeatureBaseProps } from "../../../types";
 import EmailPassword from "../../../emailPassword";
-import { RequestJson } from "../../../../../types";
-import { API_RESPONSE_STATUS } from "../../../constants";
-import Session from "../../../../session/session";
-declare class EmailVerification extends PureComponent<EmailVerificationProps, {
+declare class EmailVerification extends PureComponent<FeatureBaseProps, {
     token: string;
 }> {
-    constructor(props: EmailVerificationProps);
+    constructor(props: FeatureBaseProps);
     getRecipeInstanceOrThrow: () => EmailPassword;
     verifyEmail: () => Promise<VerifyEmailThemeResponse>;
     onEmailVerifiedSuccess: () => Promise<void>;
     sendVerifyEmail: () => Promise<SendVerifyEmailThemeResponse>;
     onSendVerifyEmailSuccess: () => Promise<void>;
-    onHandleSuccess: (context: onHandleEmailVerificationSuccessContext) => Promise<void>;
-    onCallVerifyEmailAPI: (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
-    onCallSendVerifyEmailAPI: (headers: HeadersInit) => Promise<{
-        status: API_RESPONSE_STATUS.OK;
-    }>;
     signOut: () => Promise<void>;
-    getSessionRecipe(): Session | undefined;
-    doesSessionExist: () => Promise<boolean>;
     redirectToVerifyEmailScreen: () => Promise<void>;
     onSuccessRedirect: () => Promise<void>;
     componentDidMount(): Promise<void>;

@@ -55,6 +55,7 @@ require("jsdom-global")();
 describe("SuperTokens Reset password feature/theme", function() {
     let browser;
     let page;
+    let consoleLogs;
 
     before(async function() {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
@@ -70,8 +71,9 @@ describe("SuperTokens Reset password feature/theme", function() {
             headless: true
         });
 
-        // Sign Up first.
         page = await browser.newPage();
+
+        // Sign Up first.
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
     });
 
@@ -91,6 +93,14 @@ describe("SuperTokens Reset password feature/theme", function() {
         beforeEach(async function() {
             page = await browser.newPage();
             clearBrowserCookies(page);
+            // Catch console.log sent from PRE API HOOKS.
+            consoleLogs = [];
+            page.on("console", consoleObj => {
+                const log = consoleObj.text();
+                if (log.startsWith("ST_LOGS")) {
+                    consoleLogs.push(log);
+                }
+            });
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
         });
 
@@ -142,13 +152,25 @@ describe("SuperTokens Reset password feature/theme", function() {
             const resendResetPasswordEmailLink = await getResendResetPasswordEmailLink(page);
             await resendResetPasswordEmailLink.click();
             const buttonLabel = await getSubmitFormButtonLabel(page);
-            assert.strictEqual(buttonLabel, "Email me");
+            assert.deepStrictEqual(buttonLabel, "Email me");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL",
+                "ST_LOGS ON_HANDLE_EVENT RESET_PASSWORD_EMAIL_SENT"
+            ]);
         });
     });
 
     describe("Reset password new password form test", function() {
         beforeEach(async function() {
             page = await browser.newPage();
+            // Catch console.log sent from PRE API HOOKS.
+            consoleLogs = [];
+            page.on("console", consoleObj => {
+                const log = consoleObj.text();
+                if (log.startsWith("ST_LOGS")) {
+                    consoleLogs.push(log);
+                }
+            });
             clearBrowserCookies(page);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?token=TOKEN`);
         });
@@ -219,86 +241,12 @@ describe("SuperTokens Reset password feature/theme", function() {
             // Assert Invalid token response.
             assert.strictEqual(response.status, "RESET_PASSWORD_INVALID_TOKEN_ERROR");
             const generalError = await getGeneralError(page);
-            assert.strictEqual(generalError, RESET_PASSWORD_INVALID_TOKEN_ERROR);
+            assert.deepStrictEqual(generalError, RESET_PASSWORD_INVALID_TOKEN_ERROR);
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS SUBMIT_NEW_PASSWORD"]);
         });
 
-        it("Should reset password successfully and redirect to onSuccessRedirectURL if token is defined", async function() {
+        it("Should reset password successfully and redirect to success URL if token is defined", async function() {
             // TODO? How to test this without a valid token?
         });
-    });
-});
-
-describe("SuperTokens ResetPassword feature/theme callbacks", function() {
-    let browser;
-    let page;
-    let consoleLogs = [];
-
-    before(async function() {
-        browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true
-        });
-
-        page = await browser.newPage();
-
-        // Catch console.log sent from ST callbacks.
-        page.on("console", consoleObj => {
-            const log = consoleObj.text();
-            if (log.startsWith("ST_CALLBACKS")) {
-                consoleLogs.push(log);
-            }
-        });
-    });
-
-    after(async function() {
-        await browser.close();
-    });
-
-    beforeEach(async function() {
-        consoleLogs = [];
-        clearBrowserCookies(page);
-        await page.goto(`${TEST_CLIENT_BASE_URL}/custom/auth/reset-password`, { waitUntil: "domcontentloaded" });
-    });
-
-    it("Should use custom callback props", async function() {
-        // Send Email.
-        await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
-        await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-        assert.deepStrictEqual(consoleLogs, [
-            "ST_CALLBACKS onCallSendResetEmailAPI,  email:john.doe@supertokens.io",
-            "ST_CALLBACKS onHandleSuccess RESET_PASSWORD_EMAIL_SENT"
-        ]);
-
-        let pathname = await page.evaluate(() => window.location.pathname);
-        assert.deepStrictEqual(pathname, "/custom-success-redirect");
-
-        consoleLogs = [];
-        await page.goto(`${TEST_CLIENT_BASE_URL}/custom/auth/reset-password?token=TOKEN`);
-
-        // Set password mismatch
-        await setInputValues(page, [
-            { name: "password", value: "Str0ngP@ssw0rd" },
-            { name: "confirm-password", value: "Str0ngP@ssw0rdButMismatch" }
-        ]);
-
-        // Submit.
-        await submitForm(page);
-
-        // Use front end validators before calling API.
-        const formFieldsErrors = await getFieldErrors(page);
-        assert.deepStrictEqual(formFieldsErrors, ["!\nConfirmation password doesn't match"]);
-
-        await setInputValues(page, [{ name: "confirm-password", value: "Str0ngP@ssw0rd" }]);
-        await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-
-        assert.deepStrictEqual(consoleLogs, [
-            "ST_CALLBACKS onCallSubmitNewPasswordAPI, password:Str0ngP@ssw0rd token:TOKEN",
-            "ST_CALLBACKS onHandleSuccess PASSWORD_RESET_SUCCESSFUL"
-        ]);
-
-        pathname = await page.evaluate(() => window.location.pathname);
-        // Session.doesSessionExist returns true, allow to stay on /dashboard
-        assert.deepStrictEqual(pathname, "/custom-success-redirect");
     });
 });

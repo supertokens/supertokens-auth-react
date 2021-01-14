@@ -20,33 +20,30 @@ import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import {
     EnterEmailThemeResponse,
+    FeatureBaseProps,
     SubmitNewPasswordThemeProps,
-    ResetPasswordUsingTokenProps,
-    onHandleResetPasswordUsingTokenSuccessContext,
-    SubmitNewPasswordThemeResponse,
-    SubmitNewPasswordAPIResponse,
-    EnterEmailAPIResponse
+    SubmitNewPasswordThemeResponse
 } from "../../../types";
 import EmailPassword from "../../../emailPassword";
 import { ResetPasswordUsingTokenTheme } from "../../..";
-import { APIFormField, RequestJson } from "../../../../../types";
+import { APIFormField } from "../../../../../types";
 import FeatureWrapper from "../../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { API_RESPONSE_STATUS, SUCCESS_ACTION } from "../../../constants";
-import { getWindowOrThrow, redirectToInApp } from "../../../../../utils";
+import { API_RESPONSE_STATUS, GET_REDIRECTION_URL_ACTION, SUCCESS_ACTION } from "../../../constants";
+import { getWindowOrThrow } from "../../../../../utils";
 import { handleEnterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 
 /*
  * Component.
  */
 
-class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps, { token: string }> {
+class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: string }> {
     /*
      * Constructor.
      */
-    constructor(props: ResetPasswordUsingTokenProps) {
+    constructor(props: FeatureBaseProps) {
         super(props);
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
@@ -102,13 +99,13 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
         return await handleSubmitNewPasswordAPI(
             [formFields[0]],
             this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.onCallSubmitNewPasswordAPI,
+            this.getRecipeInstanceOrThrow().submitNewPasswordAPI,
             this.state.token
         );
     };
 
     onSubmitNewPasswordFormSuccess = async (): Promise<void> => {
-        await this.onHandleSuccess({
+        await this.getRecipeInstanceOrThrow().onHandleEvent({
             action: SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL
         });
     };
@@ -128,56 +125,23 @@ class ResetPasswordUsingToken extends PureComponent<ResetPasswordUsingTokenProps
         return await handleEnterEmailAPI(
             formFields,
             this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.onCallSendResetEmailAPI
+            this.getRecipeInstanceOrThrow().enterEmailAPI
         );
     };
 
     onEnterEmailFormSuccess = async (): Promise<void> => {
-        await this.onHandleSuccess({
+        await this.getRecipeInstanceOrThrow().onHandleEvent({
             action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT
         });
     };
 
-    onHandleSuccess = async (context: onHandleResetPasswordUsingTokenSuccessContext): Promise<void> => {
-        // If props provided by user, and successfully handled.
-        if (this.props.onHandleSuccess !== undefined) {
-            await this.props.onHandleSuccess(context);
-        }
-
-        // Otherwise, do nothing.
-    };
-
     onSignInClicked = (): void => {
-        // Otherwise, use default, redirect to onSuccessRedirectURL
-        const onSuccessRedirectURL = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
-            .onSuccessRedirectURL;
-        redirectToInApp(onSuccessRedirectURL, "Sign In", this.props.history);
-    };
-
-    onCallSendResetEmailAPI = async (
-        requestJson: RequestJson,
-        headers: HeadersInit
-    ): Promise<EnterEmailAPIResponse> => {
-        // If props provided by user.
-        if (this.props.onCallSendResetEmailAPI !== undefined) {
-            return this.props.onCallSendResetEmailAPI(requestJson, headers);
-        }
-
-        // Otherwise, use default.
-        return this.getRecipeInstanceOrThrow().enterEmailAPI(requestJson, headers);
-    };
-
-    onCallSubmitNewPasswordAPI = async (
-        requestJson: RequestJson,
-        headers: HeadersInit
-    ): Promise<SubmitNewPasswordAPIResponse> => {
-        // If props provided by user.
-        if (this.props.onCallSubmitNewPasswordAPI !== undefined) {
-            return this.props.onCallSubmitNewPasswordAPI(requestJson, headers);
-        }
-
-        // Otherwise, use default.
-        return this.getRecipeInstanceOrThrow().submitNewPasswordAPI(requestJson, headers);
+        this.getRecipeInstanceOrThrow().redirect(
+            { action: GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
+            false,
+            undefined,
+            this.props.history
+        );
     };
 
     render = (): JSX.Element => {
