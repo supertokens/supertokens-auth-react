@@ -14,97 +14,78 @@
  */
 
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
-import { API_RESPONSE_STATUS, VERIFY_EMAIL_LINK_CLICKED_STATUS } from "../../../constants";
+import RecipeModule from "../../../../recipeModule";
 import {
-    VerifyEmailAPI,
-    SendVerifyEmailAPI,
+    API_RESPONSE_STATUS,
+    EMAIL_PASSWORD_PRE_API_HOOK_ACTION,
+    VERIFY_EMAIL_LINK_CLICKED_STATUS
+} from "../../../constants";
+import {
     VerifyEmailThemeResponse,
-    SendVerifyEmailThemeResponse
+    SendVerifyEmailThemeResponse,
+    VerifyEmailAPIResponse,
+    SendVerifyEmailAPIResponse,
+    IsEmailVerifiedAPIResponse
 } from "../../../types";
 
 /*
  * Imports.
  */
 
-export async function handleVerifyEmailAPI(
-    rid: string,
-    verifyEmailAPI: VerifyEmailAPI,
-    token: string
-): Promise<VerifyEmailThemeResponse> {
-    try {
-        const headers: HeadersInit = {
-            rid
-        };
-        const response = await verifyEmailAPI(
-            {
+export async function verifyEmailAPI(recipe: RecipeModule, token: string): Promise<VerifyEmailThemeResponse> {
+    const response: VerifyEmailAPIResponse = await recipe.getHttp().post(
+        "/user/email/verify",
+        {
+            body: JSON.stringify({
                 method: "token",
                 token
-            },
-            headers
-        );
+            })
+        },
+        EMAIL_PASSWORD_PRE_API_HOOK_ACTION.VERIFY_EMAIL
+    );
 
-        // Otherwise, if email verification invalid token error.
-        if (response.status === API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR) {
-            return {
-                status: VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID
-            };
-        }
-
-        // Otherwise, status === OK
-        if (response.status === API_RESPONSE_STATUS.OK) {
-            return {
-                status: VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL
-            };
-        }
-
-        console.error(
-            "There was an error handling the output format of onVerifyEmailAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks/email-verification"
-        );
+    // Otherwise, if email verification invalid token error.
+    if (response.status === API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR) {
         return {
-            status: VERIFY_EMAIL_LINK_CLICKED_STATUS.GENERAL_ERROR
-        };
-    } catch (e) {
-        return {
-            status: VERIFY_EMAIL_LINK_CLICKED_STATUS.GENERAL_ERROR
+            status: VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID
         };
     }
+
+    // Otherwise, status === OK
+    if (response.status === API_RESPONSE_STATUS.OK) {
+        return {
+            status: VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL
+        };
+    }
+
+    throw Error(SOMETHING_WENT_WRONG_ERROR);
 }
 
-export async function handleSendVerifyEmailAPI(
-    rid: string,
-    sendVerifyEmailAPI: SendVerifyEmailAPI
-): Promise<SendVerifyEmailThemeResponse> {
-    try {
-        const headers: HeadersInit = {
-            rid
-        };
-        const response = await sendVerifyEmailAPI(headers);
+export async function sendVerifyEmailAPI(recipe: RecipeModule): Promise<SendVerifyEmailThemeResponse> {
+    const response: SendVerifyEmailAPIResponse = await recipe
+        .getHttp()
+        .post("/user/email/verify/token", {}, EMAIL_PASSWORD_PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL);
 
-        // If email already verified.
-        if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
-            return {
-                status: API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR
-            };
-        }
-
-        // Otherwise, success.
-        if (response.status === API_RESPONSE_STATUS.OK) {
-            return {
-                status: API_RESPONSE_STATUS.OK
-            };
-        }
-
-        console.error(
-            "There was an error handling the output format of onCallSendVerifyEmailAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks/email-verification"
-        );
+    // If email already verified.
+    if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
         return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
-        };
-    } catch (e) {
-        return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
+            status: API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR
         };
     }
+
+    // Otherwise, success.
+    if (response.status === API_RESPONSE_STATUS.OK) {
+        return {
+            status: API_RESPONSE_STATUS.OK
+        };
+    }
+
+    throw Error(SOMETHING_WENT_WRONG_ERROR);
+}
+
+export async function isEmailVerifiedAPI(recipe: RecipeModule): Promise<boolean> {
+    const response: IsEmailVerifiedAPIResponse = await recipe
+        .getHttp()
+        .get("/user/email/verify", {}, EMAIL_PASSWORD_PRE_API_HOOK_ACTION.IS_EMAIL_VERIFIED);
+    return response.isVerified;
 }

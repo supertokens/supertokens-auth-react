@@ -1,8 +1,7 @@
 import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
-import { NormalisedAppInfo, ReactComponentClass, SuperTokensConfig } from "./types";
+import { NormalisedAppInfo, SuperTokensConfig } from "./types";
 import NormalisedURLPath from "./normalisedURLPath";
-import { PathToComponentWithRecipeIdMap } from "./types";
 import Session from "./recipe/session/session";
 export default class SuperTokens {
     private static instance?;
@@ -11,14 +10,10 @@ export default class SuperTokens {
     private pathsToComponentWithRecipeIdMap?;
     constructor(config: SuperTokensConfig);
     static init(config: SuperTokensConfig): void;
-    private static getInstanceOrThrow;
+    static getInstanceOrThrow(): SuperTokens;
     static getAppInfo(): NormalisedAppInfo;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | undefined;
-    static getRecipeList(): RecipeModule[];
-    static getPathsToComponentWithRecipeIdMap(): PathToComponentWithRecipeIdMap;
-    static getDefaultSessionRecipe(): Session | undefined;
-    static getMatchingComponentForRouteAndRecipeId(path: NormalisedURLPath, recipeId: string | null): ReactComponentClass | undefined;
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[];
     getAppInfo: () => NormalisedAppInfo;
     canHandleRoute: () => boolean;

@@ -29,15 +29,18 @@ import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import {
     API_RESPONSE_STATUS,
-    EMAIL_PASSWORD_AUTH_STATE,
     EMAIL_VERIFICATION_MODE,
+    ENTER_EMAIL_STATUS,
+    FORM_BASE_API_RESPONSE,
     FORM_BASE_STATUS,
-    GET_REDIRECTION_URL_ACTION,
-    PRE_API_HOOK_ACTION,
+    EMAIL_PASSWORD_REDIRECTION_URL_ACTION,
+    EMAIL_PASSWORD_PRE_API_HOOK_ACTION,
     SEND_VERIFY_EMAIL_STATUS,
     SIGN_IN_AND_UP_STATUS,
+    SUBMIT_NEW_PASSWORD_STATUS,
     SUCCESS_ACTION,
-    VERIFY_EMAIL_LINK_CLICKED_STATUS
+    VERIFY_EMAIL_LINK_CLICKED_STATUS,
+    EMAIL_PASSWORD_AUTH_STATE
 } from "./constants";
 import { History, LocationState } from "history";
 import EmailPassword from "./emailPassword";
@@ -56,21 +59,6 @@ export type EmailPasswordUserInput = {
      * Use shadow Dom root.
      */
     useShadowDom?: boolean;
-
-    /*
-     * Optional pre API Hook.
-     */
-    preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
-
-    /*
-     * Optional method used for redirections.
-     */
-    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
-
-    /*
-     * Optional method used for handling event success.
-     */
-    onHandleEvent?: (context: OnHandleEventContext) => void;
 
     /*
      * Sign In and Sign Up feature.
@@ -348,13 +336,6 @@ export type FeatureBaseProps = {
     history?: History<LocationState>;
 };
 
-export type EmailPasswordAuthState = {
-    /*
-     * EmailPassword Auth Status
-     */
-    status: EMAIL_PASSWORD_AUTH_STATE.LOADING | EMAIL_PASSWORD_AUTH_STATE.READY;
-};
-
 type ThemeBaseProps = {
     /*
      * Custom styling from user.
@@ -362,9 +343,9 @@ type ThemeBaseProps = {
     styleFromInit?: Styles;
 
     /*
-     * Called on successful signin/signup/resetpassword.
+     * Called on successful state.
      */
-    onSuccess?: () => void;
+    onSuccess: () => void;
 };
 
 type FormThemeBaseProps = ThemeBaseProps & {
@@ -383,17 +364,12 @@ export type SignInThemeProps = FormThemeBaseProps & {
     /*
      * Callback called when Forgot password link is clicked.
      */
-    forgotPasswordClick?: () => void;
-
-    /*
-     * Reset password URL for forgot password button.
-     */
-    resetPasswordURL?: NormalisedURLPath;
+    forgotPasswordClick: () => void;
 
     /*
      * Call Sign In API.
      */
-    callAPI: (fields: APIFormField[]) => Promise<SignInThemeResponse>;
+    signInAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
 };
 
 export type SignUpThemeProps = FormThemeBaseProps & {
@@ -415,7 +391,7 @@ export type SignUpThemeProps = FormThemeBaseProps & {
     /*
      * Call Sign Up API.
      */
-    callAPI: (fields: APIFormField[]) => Promise<SignUpThemeResponse>;
+    signUpAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
 };
 
 export type SignInAndUpThemeProps = {
@@ -598,8 +574,6 @@ export type SubmitNewPasswordAPIResponse =
           status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
       };
 
-export type SubmitNewPasswordThemeResponse = SubmitNewPasswordAPIResponse | ThemeResponseGeneralError;
-
 export type SendVerifyEmailAPIResponse = {
     /*
      * Success.
@@ -612,23 +586,14 @@ export type VerifyEmailThemeResponse = {
     /*
      * Verify Email Link clicked Theme Status.
      */
-    status: verifyEmailLinkClickedStatus;
+    status: keyof typeof VERIFY_EMAIL_LINK_CLICKED_STATUS;
 };
 
 export type PreAPIHookContext = {
     /*
      * Pre API Hook action.
      */
-    action:
-        | PRE_API_HOOK_ACTION.SEND_RESET_PASSWORD_EMAIL
-        | PRE_API_HOOK_ACTION.SUBMIT_NEW_PASSWORD
-        | PRE_API_HOOK_ACTION.VERIFY_EMAIL
-        | PRE_API_HOOK_ACTION.IS_EMAIL_VERIFIED
-        | PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL
-        | PRE_API_HOOK_ACTION.SIGN_IN
-        | PRE_API_HOOK_ACTION.SIGN_UP
-        | PRE_API_HOOK_ACTION.SIGN_OUT
-        | PRE_API_HOOK_ACTION.EMAIL_EXISTS;
+    action: keyof typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION;
 
     /*
      * Request object containing query params, body, headers.
@@ -640,11 +605,7 @@ export type GetRedirectionURLContext = {
     /*
      * Get Redirection URL Action.
      */
-    action:
-        | GET_REDIRECTION_URL_ACTION.SUCCESS
-        | GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP
-        | GET_REDIRECTION_URL_ACTION.VERIFY_EMAIL
-        | GET_REDIRECTION_URL_ACTION.RESET_PASSWORD;
+    action: keyof typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION;
 };
 
 export type OnHandleEventContext =
@@ -670,11 +631,6 @@ export type OnHandleEventContext =
            * User returned from API.
            */
           user: { id: string; email: string };
-
-          /*
-           * Response body from API.
-           */
-          responseJson: any;
       };
 
 export type User = {
@@ -710,33 +666,19 @@ export type EnterEmailThemeProps = FormThemeBaseProps & {
     /*
      * Call Enter Email API.
      */
-    callAPI: (fields: APIFormField[]) => Promise<EnterEmailThemeResponse>;
+    enterEmailAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
 };
 
 export type SubmitNewPasswordThemeProps = FormThemeBaseProps & {
     /*
      * Call Submit New Password API.
      */
-    callAPI: (fields: APIFormField[]) => Promise<SubmitNewPasswordThemeResponse>;
+    submitNewPasswordAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
 
     /*
      * Click on Sign In button after reset password form.
      */
     onSignInClicked: () => void;
-};
-
-export type EnterEmailThemeState = {
-    /*
-     * Has the email been sent already.
-     */
-    emailSent?: boolean;
-};
-
-export type SubmitNewPasswordThemeState = {
-    /*
-     * Has new password been set successfully.
-     */
-    hasNewPassword?: boolean;
 };
 
 export type EmailVerificationThemeProps = {
@@ -760,7 +702,7 @@ export type SendVerifyEmailThemeProps = ThemeBaseProps & {
     /*
      * Call Send Verify Email API.
      */
-    callAPI: () => Promise<SendVerifyEmailThemeResponse>;
+    sendVerifyEmailAPI: () => Promise<SendVerifyEmailThemeResponse>;
 
     /*
      * Method called when Sign Out button is clicked. Default to SuperTokens Session Sign Out.
@@ -773,37 +715,22 @@ export type SendVerifyEmailThemeProps = ThemeBaseProps & {
     onEmailAlreadyVerified: () => Promise<void>;
 };
 
-export type SendVerifyEmailThemeState = {
-    /*
-     * Has the email been sent already.
-     */
-    status: SEND_VERIFY_EMAIL_STATUS.READY | SEND_VERIFY_EMAIL_STATUS.SUCCESS | SEND_VERIFY_EMAIL_STATUS.ERROR;
-};
-
 export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
     /*
      * Call Verify Email API.
      */
-    callAPI: () => Promise<VerifyEmailThemeResponse>;
+    verifyEmailAPI: () => Promise<VerifyEmailThemeResponse>;
 
     /*
      * Redirect to verify Email Screen on invalid token.
      */
-    redirectToVerifyEmailScreen: () => Promise<void>;
+    onTokenInvalidRedirect: () => Promise<void>;
 
     /*
      * On email verification success, action when "Continue" button is clicked.
      */
     onContinueClicked: () => Promise<void>;
 };
-
-export type VerifyEmailLinkClickedThemeState = VerifyEmailThemeResponse;
-
-type verifyEmailLinkClickedStatus =
-    | VERIFY_EMAIL_LINK_CLICKED_STATUS.LOADING
-    | VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID
-    | VERIFY_EMAIL_LINK_CLICKED_STATUS.GENERAL_ERROR
-    | VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL;
 
 export type SignInAndUpState =
     | {
@@ -815,23 +742,56 @@ export type SignInAndUpState =
     | {
           status: SIGN_IN_AND_UP_STATUS.SUCCESSFUL;
           user: User;
-          responseJson: any;
       };
+
+export type EnterEmailThemeState = {
+    /*
+     * Enter Email Status
+     */
+    status: keyof typeof ENTER_EMAIL_STATUS;
+};
+
+export type SubmitNewPasswordThemeState = {
+    /*
+     * Enter Email Status
+     */
+    status: keyof typeof SUBMIT_NEW_PASSWORD_STATUS;
+};
+
+export type SendVerifyEmailThemeState = {
+    /*
+     * Status.
+     */
+    status: keyof typeof SEND_VERIFY_EMAIL_STATUS;
+};
+
+export type VerifyEmailLinkClickedThemeState = {
+    /*
+     * Verify Email Link clicked Status.
+     */
+    status: keyof typeof VERIFY_EMAIL_LINK_CLICKED_STATUS;
+};
+
+export type EmailPasswordAuthState = {
+    /*
+     * EmailPassword Auth Status
+     */
+    status: EMAIL_PASSWORD_AUTH_STATE.LOADING | EMAIL_PASSWORD_AUTH_STATE.READY;
+};
 
 export type PaletteUserInput = Record<string, string>;
 
 export type DefaultStylesUserInput = Record<string, CSSObject>;
 
-export type FormBaseStatus =
-    | FORM_BASE_STATUS.IN_PROGRESS
-    | FORM_BASE_STATUS.READY
-    | FORM_BASE_STATUS.LOADING
-    | FORM_BASE_STATUS.FIELD_ERRORS
-    | FORM_BASE_STATUS.SUCCESS;
 export type FormBaseState =
     | {
           formFields: FormFieldState[];
-          status: FormBaseStatus;
+          status:
+              | FORM_BASE_STATUS.IN_PROGRESS
+              | FORM_BASE_STATUS.READY
+              | FORM_BASE_STATUS.LOADING
+              | FORM_BASE_STATUS.FIELD_ERRORS
+              | FORM_BASE_STATUS.SUCCESS;
       }
     | {
           formFields: FormFieldState[];
@@ -854,10 +814,43 @@ export type FormBaseProps = {
 
     onSuccess?: () => void;
 
-    callAPI: (
-        fields: APIFormField[]
-    ) => Promise<SignInThemeResponse | SignUpThemeResponse | SubmitNewPasswordThemeResponse | EnterEmailThemeResponse>;
+    callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
 };
+
+export type FormBaseAPIResponse =
+    | {
+          /*
+           * Success.
+           */
+          status: FORM_BASE_API_RESPONSE.OK;
+
+          /*
+           * User object.
+           */
+          user?: User;
+      }
+    | {
+          /*
+           * General Errors.
+           */
+          status: FORM_BASE_API_RESPONSE.GENERAL_ERROR;
+
+          /*
+           * Error message.
+           */
+          message: string;
+      }
+    | {
+          /*
+           * Field validation errors.
+           */
+          status: FORM_BASE_API_RESPONSE.FIELD_ERROR;
+
+          /*
+           * Array of Field Id and their corresponding error.
+           */
+          formFields: FormFieldError[];
+      };
 
 export type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
 

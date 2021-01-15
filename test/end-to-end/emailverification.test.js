@@ -167,7 +167,7 @@ describe("SuperTokens Email Verification feature/theme", function() {
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS PRE_API_HOOKS SEND_VERIFY_EMAIL",
+                "ST_LOGS PRE_API_HOOKS VERIFY_EMAIL",
                 "ST_LOGS GET_REDIRECTION_URL SIGN_IN_AND_UP"
             ]);
         });
@@ -180,12 +180,12 @@ describe("SuperTokens Email Verification feature/theme", function() {
              */
         });
 
-        it("Should allow to verify a session without a valid session", async function() {
+        it("Should allow to verify an email without a valid session", async function() {
             clearBrowserCookies(page);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS SEND_VERIFY_EMAIL"]);
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS VERIFY_EMAIL"]);
         });
     });
     describe("Email Verified", function() {
@@ -244,7 +244,7 @@ describe("SuperTokens Email Verification feature/theme server errors", function(
             await new Promise(r => setTimeout(r, 50)); // Make sure to wait for status to update.
             const verificationEmailErrorTitle = await getVerificationEmailErrorTitle(page);
             assert.deepStrictEqual(verificationEmailErrorTitle, "!\n Something went wrong");
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS SEND_VERIFY_EMAIL"]);
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS VERIFY_EMAIL"]);
         });
     });
 });

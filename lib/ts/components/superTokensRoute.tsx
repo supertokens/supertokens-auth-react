@@ -32,7 +32,7 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
         // eslint-disable-next-line
         const Route = require("react-router-dom").Route;
         const withRouter: WithRouterType = require("react-router-dom").withRouter;
-        const pathsToComponentWithRecipeIdMap = SuperTokens.getPathsToComponentWithRecipeIdMap();
+        const pathsToComponentWithRecipeIdMap = SuperTokens.getInstanceOrThrow().getPathsToComponentWithRecipeIdMap();
 
         return Object.keys(pathsToComponentWithRecipeIdMap).map(path => {
             return (
@@ -57,7 +57,10 @@ function SuperTokensRouteWithRecipeId({
     const recipeId = getRecipeIdFromSearch(getWindowOrThrow().location.search);
     const normalisedPath = new NormalisedURLPath(path);
 
-    const Component = SuperTokens.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
+    const Component = SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(
+        normalisedPath,
+        recipeId
+    );
     if (Component === undefined) {
         return null;
     }

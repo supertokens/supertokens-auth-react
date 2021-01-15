@@ -82,16 +82,10 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
     const palette = config.palette !== undefined ? config.palette : {};
 
     const useShadowDom = getShouldUseShadowDom(config.useShadowDom);
-    const preAPIHook = config.preAPIHook;
-    const onHandleEvent = config.onHandleEvent;
-    const getRedirectionURL = config.getRedirectionURL;
 
     return {
         palette,
         useShadowDom,
-        preAPIHook,
-        getRedirectionURL,
-        onHandleEvent,
         signInAndUpFeature,
         resetPasswordUsingTokenFeature,
         emailVerificationFeature

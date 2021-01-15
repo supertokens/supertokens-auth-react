@@ -20,9 +20,9 @@ import * as React from "react";
 import { useState } from "react";
 import { SignInAndUpThemeProps } from "../../../../types";
 
-import SignUp from "./SignUp";
-import SignIn from "./SignIn";
-import { ThemeBase } from "../ThemeBase";
+import SignUp from "./signUp";
+import SignIn from "./signIn";
+import { ThemeBase } from "../themeBase";
 import { StyleProvider } from "../../../styles/styleContext";
 import { defaultPalette, getDefaultStyles } from "../styles/styles";
 

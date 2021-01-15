@@ -12,68 +12,57 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 /*
  * Imports.
  */
 import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
-
-import { SignInThemeProps } from "../../../../types";
+import { SignUpThemeProps } from "../../../../types";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-
-import FormBase from "../../../library/FormBase";
+import FormBase from "../../../library/formBase";
+import SignUpFooter from "./signUpFooter";
 
 /*
  * Component.
  */
 
-export default class SignInTheme extends PureComponent<SignInThemeProps> {
+export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
     static contextType = StyleContext;
 
     /*
      * Render.
      */
-
     render(): JSX.Element {
         const styles = this.context;
-
-        const { signUpClicked, forgotPasswordClick, onSuccess, callAPI } = this.props;
+        const { privacyPolicyLink, termsOfServiceLink, signInClicked, onSuccess, signUpAPI } = this.props;
         const { formFields } = this.props;
-
         return (
             <FormBase
                 formFields={formFields}
-                buttonLabel={"SIGN IN"}
+                buttonLabel={"SIGN UP"}
                 onSuccess={onSuccess}
-                callAPI={callAPI}
+                callAPI={signUpAPI}
+                validateOnBlur={true}
                 showLabels={true}
                 header={
                     <Fragment>
                         <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                            Sign In
+                            Sign Up
                         </div>
                         <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
                             <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                                Not registered yet?
-                                <span data-supertokens="link" onClick={signUpClicked} css={styles.link}>
-                                    Sign Up
+                                Already have an account?
+                                <span data-supertokens="link" onClick={signInClicked} css={styles.link}>
+                                    Sign In
                                 </span>
                             </div>
                         </div>
                         <div data-supertokens="divider" css={styles.divider}></div>
                     </Fragment>
                 }
-                footer={
-                    <div
-                        data-supertokens="link secondaryText forgotPasswordLink"
-                        css={[styles.link, styles.secondaryText, styles.forgotPasswordLink]}
-                        onClick={forgotPasswordClick}>
-                        Forgot password?
-                    </div>
-                }
+                footer={<SignUpFooter privacyPolicyLink={privacyPolicyLink} termsOfServiceLink={termsOfServiceLink} />}
             />
         );
     }

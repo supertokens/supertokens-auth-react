@@ -23,7 +23,8 @@ import StyleContext from "../../../styles/styleContext";
 import { jsx } from "@emotion/react";
 import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../../types";
 import { FormRow, Button } from "../../../library";
-import FormBase from "../../../library/FormBase";
+import FormBase from "../../../library/formBase";
+import { SUBMIT_NEW_PASSWORD_STATUS } from "../../../../constants";
 
 /*
  * Component.
@@ -41,18 +42,15 @@ export default class SubmitNewPasswordTheme extends PureComponent<
     constructor(props: SubmitNewPasswordThemeProps) {
         super(props);
         this.state = {
-            hasNewPassword: false
+            status: SUBMIT_NEW_PASSWORD_STATUS.READY
         };
     }
 
     onSuccess = (): void => {
         this.setState(() => ({
-            hasNewPassword: true
+            status: SUBMIT_NEW_PASSWORD_STATUS.SUCCESS
         }));
-
-        if (this.props.onSuccess !== undefined) {
-            this.props.onSuccess();
-        }
+        this.props.onSuccess();
     };
 
     /*
@@ -61,10 +59,10 @@ export default class SubmitNewPasswordTheme extends PureComponent<
 
     render(): JSX.Element {
         const styles = this.context;
-        const { callAPI, formFields, onSignInClicked } = this.props;
-        const { hasNewPassword } = this.state;
+        const { submitNewPasswordAPI, formFields, onSignInClicked } = this.props;
+        const { status } = this.state;
 
-        if (hasNewPassword === true) {
+        if (status === SUBMIT_NEW_PASSWORD_STATUS.SUCCESS) {
             return (
                 <div data-supertokens="container" css={styles.container}>
                     <div data-supertokens="row" css={styles.row}>
@@ -98,7 +96,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                 buttonLabel={"Change password"}
                 onSuccess={this.onSuccess}
                 validateOnBlur={true}
-                callAPI={callAPI}
+                callAPI={submitNewPasswordAPI}
                 showLabels={true}
                 header={
                     <Fragment>

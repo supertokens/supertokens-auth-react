@@ -18,12 +18,7 @@
  */
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import {
-    EnterEmailThemeResponse,
-    FeatureBaseProps,
-    SubmitNewPasswordThemeProps,
-    SubmitNewPasswordThemeResponse
-} from "../../../types";
+import { FeatureBaseProps, FormBaseAPIResponse, SubmitNewPasswordThemeProps } from "../../../types";
 import EmailPassword from "../../../emailPassword";
 import { ResetPasswordUsingTokenTheme } from "../../..";
 import { APIFormField } from "../../../../../types";
@@ -31,9 +26,9 @@ import FeatureWrapper from "../../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { API_RESPONSE_STATUS, GET_REDIRECTION_URL_ACTION, SUCCESS_ACTION } from "../../../constants";
-import { getWindowOrThrow } from "../../../../../utils";
-import { handleEnterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
+import { FORM_BASE_API_RESPONSE, EMAIL_PASSWORD_REDIRECTION_URL_ACTION, SUCCESS_ACTION } from "../../../constants";
+import { getWindowOrThrow, validateForm } from "../../../../../utils";
+import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 
 /*
  * Component.
@@ -70,14 +65,17 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         return instance;
     };
 
-    submitNewPassword = async (formFields: APIFormField[]): Promise<SubmitNewPasswordThemeResponse> => {
+    submitNewPassword = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
         // Front end validation.
-        const validationErrors = await this.getRecipeInstanceOrThrow().submitNewPasswordValidate(formFields);
+        const validationErrors = await validateForm(
+            formFields,
+            this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+        );
 
         // If errors, return.
         if (validationErrors.length > 0) {
             return {
-                status: API_RESPONSE_STATUS.FIELD_ERROR,
+                status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
                 formFields: validationErrors
             };
         }
@@ -85,7 +83,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // Verify that both passwords match.
         if (formFields[0].value !== formFields[1].value) {
             return {
-                status: API_RESPONSE_STATUS.FIELD_ERROR,
+                status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
                 formFields: [
                     {
                         id: "confirm-password",
@@ -96,52 +94,25 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         }
 
         // Call API, only send first password.
-        return await handleSubmitNewPasswordAPI(
-            [formFields[0]],
-            this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.getRecipeInstanceOrThrow().submitNewPasswordAPI,
-            this.state.token
-        );
+        return await handleSubmitNewPasswordAPI([formFields[0]], this.getRecipeInstanceOrThrow(), this.state.token);
     };
 
-    onSubmitNewPasswordFormSuccess = async (): Promise<void> => {
-        await this.getRecipeInstanceOrThrow().onHandleEvent({
-            action: SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL
-        });
-    };
-
-    enterEmail = async (formFields: APIFormField[]): Promise<EnterEmailThemeResponse> => {
+    enterEmail = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
         // Front end validation.
-        const validationErrors = await this.getRecipeInstanceOrThrow().enterEmailValidate(formFields);
+        const validationErrors = await validateForm(
+            formFields,
+            this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature.enterEmailForm.formFields
+        );
 
         // If errors, return.
         if (validationErrors.length > 0) {
             return {
-                status: API_RESPONSE_STATUS.FIELD_ERROR,
+                status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
                 formFields: validationErrors
             };
         }
 
-        return await handleEnterEmailAPI(
-            formFields,
-            this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.getRecipeInstanceOrThrow().enterEmailAPI
-        );
-    };
-
-    onEnterEmailFormSuccess = async (): Promise<void> => {
-        await this.getRecipeInstanceOrThrow().onHandleEvent({
-            action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT
-        });
-    };
-
-    onSignInClicked = (): void => {
-        this.getRecipeInstanceOrThrow().redirect(
-            { action: GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
-            false,
-            undefined,
-            this.props.history
-        );
+        return await enterEmailAPI(formFields, this.getRecipeInstanceOrThrow());
     };
 
     render = (): JSX.Element => {
@@ -154,16 +125,29 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         const submitNewPasswordForm: SubmitNewPasswordThemeProps = {
             styleFromInit: submitNewPasswordFormFeature.style,
             formFields: submitNewPasswordFormFeature.formFields,
-            callAPI: this.submitNewPassword,
-            onSuccess: this.onSubmitNewPasswordFormSuccess,
-            onSignInClicked: this.onSignInClicked
+            submitNewPasswordAPI: this.submitNewPassword,
+            onSuccess: () => {
+                this.getRecipeInstanceOrThrow().onHandleEvent({
+                    action: SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL
+                });
+            },
+            onSignInClicked: () => {
+                this.getRecipeInstanceOrThrow().redirect(
+                    { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
+                    this.props.history
+                );
+            }
         };
 
         const enterEmailForm = {
             styleFromInit: enterEmailFormFeature.style,
             formFields: enterEmailFormFeature.formFields,
-            onSuccess: this.onEnterEmailFormSuccess,
-            callAPI: this.enterEmail
+            onSuccess: () => {
+                this.getRecipeInstanceOrThrow().onHandleEvent({
+                    action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT
+                });
+            },
+            enterEmailAPI: this.enterEmail
         };
         const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
 

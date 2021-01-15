@@ -129,7 +129,7 @@ describe("SuperTokens", function() {
             ...defaultConfigs,
             recipeList: [EmailPassword.init()]
         });
-        assert.strictEqual(SuperTokens.getRecipeList().length, 1);
+        assert.strictEqual(SuperTokens.getInstanceOrThrow().getRecipeList().length, 1);
     });
 
     it("SuperTokens canHandleRoute should work appropriately", async function() {
