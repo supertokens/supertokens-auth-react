@@ -16,7 +16,10 @@
 /*
  * Imports.
  */
-import { RouteToFeatureComponentMap, RecipeModuleConfig, NormalisedAppInfo } from "../types";
+import HttpRequest from "../httpRequest";
+import { RouteToFeatureComponentMap, RecipeModuleConfig, NormalisedAppInfo, RecipeModuleHooks } from "../types";
+import { redirectToInApp, redirectToWithReload } from "../utils";
+import { History, LocationState } from "history";
 
 /*
  * Class.
@@ -28,6 +31,8 @@ export default abstract class RecipeModule {
 
     private recipeId: string;
     private appInfo: NormalisedAppInfo;
+    private hooks: RecipeModuleHooks;
+    private httpRequest: HttpRequest;
 
     /*
      * Constructor.
@@ -35,6 +40,12 @@ export default abstract class RecipeModule {
     constructor(config: RecipeModuleConfig) {
         this.recipeId = config.recipeId;
         this.appInfo = config.appInfo;
+        this.httpRequest = new HttpRequest(this);
+        this.hooks = {
+            preAPIHook: config.preAPIHook,
+            onHandleEvent: config.onHandleEvent,
+            getRedirectionURL: config.getRedirectionURL
+        };
     }
 
     /*
@@ -48,5 +59,66 @@ export default abstract class RecipeModule {
         return this.appInfo;
     };
 
+    getHttp = (): HttpRequest => {
+        return this.httpRequest;
+    };
+
+    preAPIHook = async <T>(context: { action: T; requestInit: RequestInit }): Promise<RequestInit> => {
+        const preAPIHook = this.hooks.preAPIHook;
+        if (preAPIHook !== undefined) {
+            return await preAPIHook(context);
+        }
+
+        return context.requestInit;
+    };
+
+    redirect = async <T>(
+        context: { action: T },
+        history?: History<LocationState>,
+        title?: string,
+        shouldReload = false
+    ): Promise<void> => {
+        const redirectUrl = await this.getRedirectionURL(context);
+
+        // If shouldReload, reload.
+        if (shouldReload === true) {
+            return await redirectToWithReload(redirectUrl);
+        }
+        try {
+            new URL(redirectUrl);
+            // Otherwise, If full URL, use redirectToWithReload
+            return await redirectToWithReload(redirectUrl);
+        } catch (e) {
+            // Otherwise, redirect in app.
+            return await redirectToInApp(redirectUrl, title, history);
+        }
+    };
+
+    getRedirectionURL = async (context: { action: unknown }): Promise<string> => {
+        let redirectUrl;
+        // If getRedirectionURL provided by user.
+        const getRedirectionURL = this.hooks.getRedirectionURL;
+        if (getRedirectionURL !== undefined) {
+            redirectUrl = (await getRedirectionURL(context)) || redirectUrl;
+            if (redirectUrl !== undefined) {
+                return redirectUrl;
+            }
+        }
+
+        return await this.getDefaultRedirectionURL(context);
+    };
+
+    onHandleEvent<T>(context: T): void {
+        const onHandleEvent = this.hooks.onHandleEvent;
+        if (onHandleEvent !== undefined) {
+            onHandleEvent(context);
+        }
+    }
+
     abstract getFeatures(): RouteToFeatureComponentMap;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected async getDefaultRedirectionURL<T>(context: { action: T }): Promise<string> {
+        throw new Error("Recipe must overwrite getDefaultRedirectionURL");
+    }
 }

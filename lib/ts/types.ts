@@ -105,6 +105,38 @@ export type RecipeModuleConfig = {
      * AppInfo as present in the recipe module manager
      */
     appInfo: NormalisedAppInfo;
+
+    /*
+     * Optional pre API Hook.
+     */
+    preAPIHook?: <T>(context: T) => Promise<RequestInit>;
+
+    /*
+     * Optional method used for redirections.
+     */
+    getRedirectionURL?: <T>(context: T) => Promise<string | undefined>;
+
+    /*
+     * Optional method used for handling event success.
+     */
+    onHandleEvent?: <T>(context: T) => void;
+};
+
+export type RecipeModuleHooks = {
+    /*
+     * Optional pre API Hook.
+     */
+    preAPIHook?: <T>(context: { action: T; requestInit: RequestInit }) => Promise<RequestInit>;
+
+    /*
+     * Optional method used for redirections.
+     */
+    getRedirectionURL?: <T>(context: { action: T }) => Promise<string | undefined>;
+
+    /*
+     * Optional method used for handling event success.
+     */
+    onHandleEvent?: <T>(context: T) => void;
 };
 
 /*

@@ -18,13 +18,7 @@
  */
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import {
-    SendVerifyEmailThemeResponse,
-    VerifyEmailLinkClickedThemeProps,
-    VerifyEmailThemeResponse,
-    SendVerifyEmailThemeProps,
-    FeatureBaseProps
-} from "../../../types";
+import { VerifyEmailLinkClickedThemeProps, SendVerifyEmailThemeProps, FeatureBaseProps } from "../../../types";
 import EmailPassword from "../../../emailPassword";
 import { EmailVerificationScreenTheme, signOut } from "../../..";
 import FeatureWrapper from "../../../../components/featureWrapper";
@@ -34,11 +28,11 @@ import { jsx } from "@emotion/react";
 import {
     API_RESPONSE_STATUS,
     EMAIL_VERIFICATION_MODE,
-    GET_REDIRECTION_URL_ACTION,
+    EMAIL_PASSWORD_REDIRECTION_URL_ACTION,
     SUCCESS_ACTION
 } from "../../../constants";
 import { getWindowOrThrow } from "../../../../../utils";
-import { handleVerifyEmailAPI, handleSendVerifyEmailAPI } from "./api";
+import { verifyEmailAPI, sendVerifyEmailAPI } from "./api";
 
 /*
  * Component.
@@ -75,65 +69,27 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
         return instance;
     };
 
-    verifyEmail = async (): Promise<VerifyEmailThemeResponse> => {
-        return await handleVerifyEmailAPI(
-            this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.getRecipeInstanceOrThrow().verifyEmailAPI,
-            this.state.token
-        );
-    };
-
-    onEmailVerifiedSuccess = async (): Promise<void> => {
-        return await this.getRecipeInstanceOrThrow().onHandleEvent({
-            action: SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
-        });
-    };
-
-    sendVerifyEmail = async (): Promise<SendVerifyEmailThemeResponse> => {
-        return await handleSendVerifyEmailAPI(
-            this.getRecipeInstanceOrThrow().getRecipeId(),
-            this.getRecipeInstanceOrThrow().sendVerificationEmailAPI
-        );
-    };
-
-    onSendVerifyEmailSuccess = async (): Promise<void> => {
-        return await this.getRecipeInstanceOrThrow().onHandleEvent({
-            action: SUCCESS_ACTION.VERIFY_EMAIL_SENT
-        });
-    };
-
     signOut = async (): Promise<void> => {
         try {
             await signOut();
             return this.getRecipeInstanceOrThrow().redirect(
-                { action: GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
-                false,
-                undefined,
+                { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
                 this.props.history
             );
         } catch (e) {}
     };
 
-    redirectToVerifyEmailScreen = async (): Promise<void> => {
-        let action = GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP;
+    onTokenInvalidRedirect = async (): Promise<void> => {
+        let action = EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP;
 
         if (this.getRecipeInstanceOrThrow().doesSessionExist() === true) {
-            action = GET_REDIRECTION_URL_ACTION.VERIFY_EMAIL;
+            action = EMAIL_PASSWORD_REDIRECTION_URL_ACTION.VERIFY_EMAIL;
             this.setState(() => ({
                 token: ""
             }));
         }
 
-        return this.getRecipeInstanceOrThrow().redirect({ action }, false, undefined, this.props.history);
-    };
-
-    onSuccessRedirect = async (): Promise<void> => {
-        return this.getRecipeInstanceOrThrow().redirect(
-            { action: GET_REDIRECTION_URL_ACTION.SUCCESS },
-            false,
-            undefined,
-            this.props.history
-        );
+        return this.getRecipeInstanceOrThrow().redirect({ action }, this.props.history);
     };
 
     async componentDidMount(): Promise<void> {
@@ -143,9 +99,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             EMAIL_VERIFICATION_MODE.REQUIRED
         ) {
             return this.getRecipeInstanceOrThrow().redirect(
-                { action: GET_REDIRECTION_URL_ACTION.SUCCESS },
-                false,
-                undefined,
+                { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS },
                 this.props.history
             );
         }
@@ -156,45 +110,57 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists === false && hasToken === false) {
             return this.getRecipeInstanceOrThrow().redirect(
-                { action: GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
-                false,
-                undefined,
+                { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
                 this.props.history
             );
         }
 
         try {
             if (hasToken === false) {
-                const response = await this.sendVerifyEmail();
+                const response = await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow());
                 if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
-                    return this.onSuccessRedirect();
+                    return this.getRecipeInstanceOrThrow().redirect(
+                        { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS },
+                        this.props.history
+                    );
                 }
             }
         } catch (e) {}
     }
 
     render = (): JSX.Element => {
-        const verifyEmailLinkClickedScreenFeature = this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature
-            .verifyEmailLinkClickedScreen;
-
         const sendVerifyEmailScreenFeature = this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature
             .sendVerifyEmailScreen;
 
         const sendVerifyEmailScreen: SendVerifyEmailThemeProps = {
             styleFromInit: sendVerifyEmailScreenFeature.style,
-            callAPI: this.sendVerifyEmail,
+            sendVerifyEmailAPI: async () => await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow()),
             signOut: this.signOut,
-            onSuccess: this.onSendVerifyEmailSuccess,
-            onEmailAlreadyVerified: this.onSuccessRedirect
+            onSuccess: () =>
+                this.getRecipeInstanceOrThrow().onHandleEvent({ action: SUCCESS_ACTION.VERIFY_EMAIL_SENT }),
+            onEmailAlreadyVerified: () =>
+                this.getRecipeInstanceOrThrow().redirect(
+                    { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS },
+                    this.props.history
+                )
         };
+
+        const verifyEmailLinkClickedScreenFeature = this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature
+            .verifyEmailLinkClickedScreen;
 
         const verifyEmailLinkClickedScreen: VerifyEmailLinkClickedThemeProps = {
             styleFromInit: verifyEmailLinkClickedScreenFeature.style,
-            redirectToVerifyEmailScreen: this.redirectToVerifyEmailScreen,
-            callAPI: this.verifyEmail,
-            onSuccess: this.onEmailVerifiedSuccess,
-            onContinueClicked: this.onSuccessRedirect
+            onTokenInvalidRedirect: this.onTokenInvalidRedirect,
+            onSuccess: () =>
+                this.getRecipeInstanceOrThrow().onHandleEvent({ action: SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL }),
+            onContinueClicked: () =>
+                this.getRecipeInstanceOrThrow().redirect(
+                    { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS },
+                    this.props.history
+                ),
+            verifyEmailAPI: async () => await verifyEmailAPI(this.getRecipeInstanceOrThrow(), this.state.token)
         };
+
         const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
 
         const hasToken = this.state.token.length !== 0;

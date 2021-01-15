@@ -1,7 +1,7 @@
 import { CreateRecipeFunction } from "../../types";
 import { EmailPasswordUserInput, SignOutAPIResponse } from "./types";
 import EmailPasswordAuth from "./components/emailPasswordAuth";
-import SignInAndUp from "./components/features/signInAndUp/SignInAndUp";
+import SignInAndUp from "./components/features/signInAndUp/signInAndUp";
 import SignInAndUpTheme from "./components/themes/default/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/resetPasswordUsingToken";
 import ResetPasswordUsingTokenTheme from "./components/themes/default/resetPasswordUsingToken";

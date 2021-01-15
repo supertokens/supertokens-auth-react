@@ -24,12 +24,13 @@ import { Button, FormRow, Input, InputError, Label } from ".";
 import { jsx } from "@emotion/react";
 import { APIFormField } from "../../../../types";
 import {
-    API_RESPONSE_STATUS,
     MANDATORY_FORM_FIELDS_ID_ARRAY,
     MANDATORY_FORM_FIELDS_ID,
-    FORM_BASE_STATUS
+    FORM_BASE_STATUS,
+    FORM_BASE_API_RESPONSE
 } from "../../constants";
 import { FormBaseProps, FormBaseState, FormFieldState, InputRef } from "../../types";
+import { SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
 
 /*
  * Component.
@@ -149,50 +150,54 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         });
 
         // Call API.
-        const result = await this.props.callAPI(fields);
-
-        // If successful
-        if (result.status === API_RESPONSE_STATUS.OK) {
-            if (this.props.onSuccess !== undefined) {
-                this.props.onSuccess();
-            }
-            // Set Success state.
-            this.setState(oldState => ({
-                ...oldState,
-                status: FORM_BASE_STATUS.SUCCESS
-            }));
-            return;
-        }
-
-        // If field error.
-        if (result.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-            const errorFields = result.formFields;
-
-            // Update formFields state with errors.
-            const formFields = this.state.formFields.map(field => {
-                for (let i = 0; i < errorFields.length; i++) {
-                    if (field.id === errorFields[i].id) {
-                        field.error = errorFields[i].error;
-                    }
+        try {
+            const result = await this.props.callAPI(fields);
+            // If successful
+            if (result.status === FORM_BASE_API_RESPONSE.OK) {
+                if (this.props.onSuccess !== undefined) {
+                    await this.props.onSuccess();
                 }
-                return field;
-            });
-            this.setState(() => ({
-                status: FORM_BASE_STATUS.FIELD_ERRORS,
-                formFields: formFields
-            }));
-            return;
-        }
+                // Set Success state.
+                this.setState(oldState => ({
+                    ...oldState,
+                    status: FORM_BASE_STATUS.SUCCESS
+                }));
+                return;
+            }
 
-        // Otherwise if message, set generalError
-        if (
-            result.status === API_RESPONSE_STATUS.GENERAL_ERROR ||
-            result.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR
-        ) {
+            // If field error.
+            if (result.status === FORM_BASE_API_RESPONSE.FIELD_ERROR) {
+                const errorFields = result.formFields;
+
+                // Update formFields state with errors.
+                const formFields = this.state.formFields.map(field => {
+                    for (let i = 0; i < errorFields.length; i++) {
+                        if (field.id === errorFields[i].id) {
+                            field.error = errorFields[i].error;
+                        }
+                    }
+                    return field;
+                });
+                this.setState(() => ({
+                    status: FORM_BASE_STATUS.FIELD_ERRORS,
+                    formFields: formFields
+                }));
+                return;
+            }
+
+            // Otherwise if message, set generalError
+            if (result.status === FORM_BASE_API_RESPONSE.GENERAL_ERROR) {
+                this.setState(oldState => ({
+                    ...oldState,
+                    status: FORM_BASE_STATUS.GENERAL_ERROR,
+                    generalError: result.message
+                }));
+            }
+        } catch (e) {
             this.setState(oldState => ({
                 ...oldState,
                 status: FORM_BASE_STATUS.GENERAL_ERROR,
-                generalError: result.message
+                generalError: SOMETHING_WENT_WRONG_ERROR
             }));
         }
     };

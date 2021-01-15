@@ -21,8 +21,8 @@ import { SignUpThemeProps } from "../../../../types";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import FormBase from "../../../library/FormBase";
-import SignUpFooter from "./SignUpFooter";
+import FormBase from "../../../library/formBase";
+import SignUpFooter from "./signUpFooter";
 
 /*
  * Component.
@@ -36,14 +36,14 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
      */
     render(): JSX.Element {
         const styles = this.context;
-        const { privacyPolicyLink, termsOfServiceLink, signInClicked, onSuccess, callAPI } = this.props;
+        const { privacyPolicyLink, termsOfServiceLink, signInClicked, onSuccess, signUpAPI } = this.props;
         const { formFields } = this.props;
         return (
             <FormBase
                 formFields={formFields}
                 buttonLabel={"SIGN UP"}
                 onSuccess={onSuccess}
-                callAPI={callAPI}
+                callAPI={signUpAPI}
                 validateOnBlur={true}
                 showLabels={true}
                 header={

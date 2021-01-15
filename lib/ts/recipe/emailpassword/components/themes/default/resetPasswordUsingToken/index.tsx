@@ -19,7 +19,7 @@
 import * as React from "react";
 import { StyleProvider } from "../../../styles/styleContext";
 import { ResetPasswordUsingTokenThemeProps } from "../../../../types";
-import { ThemeBase } from "../ThemeBase";
+import { ThemeBase } from "../themeBase";
 
 import EnterEmail from "./enterEmail";
 import SubmitNewPassword from "./submitNewPassword";

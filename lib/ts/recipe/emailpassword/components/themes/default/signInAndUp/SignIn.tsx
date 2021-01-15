@@ -24,7 +24,7 @@ import { SignInThemeProps } from "../../../../types";
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 
-import FormBase from "../../../library/FormBase";
+import FormBase from "../../../library/formBase";
 
 /*
  * Component.
@@ -40,7 +40,7 @@ export default class SignInTheme extends PureComponent<SignInThemeProps> {
     render(): JSX.Element {
         const styles = this.context;
 
-        const { signUpClicked, forgotPasswordClick, onSuccess, callAPI } = this.props;
+        const { signUpClicked, forgotPasswordClick, onSuccess, signInAPI } = this.props;
         const { formFields } = this.props;
 
         return (
@@ -48,7 +48,7 @@ export default class SignInTheme extends PureComponent<SignInThemeProps> {
                 formFields={formFields}
                 buttonLabel={"SIGN IN"}
                 onSuccess={onSuccess}
-                callAPI={callAPI}
+                callAPI={signInAPI}
                 showLabels={true}
                 header={
                     <Fragment>

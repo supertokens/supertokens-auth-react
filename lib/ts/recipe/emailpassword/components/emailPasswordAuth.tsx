@@ -21,11 +21,13 @@ import { PureComponent, ReactElement } from "react";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { FeatureBaseProps, EmailPasswordAuthState } from "../types";
+import { EmailPasswordAuthState, FeatureBaseProps } from "../types";
 import EmailPassword from "../emailPassword";
-import { EMAIL_PASSWORD_AUTH_STATE, EMAIL_VERIFICATION_MODE, GET_REDIRECTION_URL_ACTION } from "../constants";
-import SpinnerIcon from "../assets/spinnerIcon";
-import { defaultPalette } from "./themes/default/styles/styles";
+import {
+    EMAIL_PASSWORD_AUTH_STATE,
+    EMAIL_VERIFICATION_MODE,
+    EMAIL_PASSWORD_REDIRECTION_URL_ACTION
+} from "../constants";
 
 /*
  * Component.
@@ -57,10 +59,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
 
     isEmailVerifiedAPI = async (): Promise<boolean> => {
         try {
-            const response = await this.getRecipeInstanceOrThrow().isEmailVerifiedAPI({
-                rid: this.getRecipeInstanceOrThrow().getRecipeId()
-            });
-            return response.isVerified;
+            return await this.getRecipeInstanceOrThrow().isEmailVerified();
         } catch (e) {
             // In case of API failure, continue, do not break the application.
             return true;
@@ -71,9 +70,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists === false) {
             return this.getRecipeInstanceOrThrow().redirect(
-                { action: GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
-                false,
-                undefined,
+                { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
                 this.props.history
             );
         }
@@ -95,9 +92,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
         const isEmailVerified = await this.isEmailVerifiedAPI();
         if (isEmailVerified === false) {
             return this.getRecipeInstanceOrThrow().redirect(
-                { action: GET_REDIRECTION_URL_ACTION.VERIFY_EMAIL },
-                false,
-                undefined,
+                { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.VERIFY_EMAIL },
                 this.props.history
             );
         }
@@ -107,22 +102,9 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
     /*
      * Render.
      */
-    render = (): JSX.Element => {
-        const primary = EmailPassword.getInstanceOrThrow().getConfig().palette.primary || defaultPalette.colors.primary;
+    render = (): JSX.Element | null => {
         if (this.state.status === EMAIL_PASSWORD_AUTH_STATE.LOADING) {
-            return (
-                <div
-                    style={{
-                        left: "50%",
-                        position: "absolute",
-                        top: "50%",
-                        width: "100px",
-                        height: "auto",
-                        transform: "translateX(-50%) translateY(-50%)"
-                    }}>
-                    <SpinnerIcon color={primary} />
-                </div>
-            );
+            return null;
         }
 
         return this.props.children as ReactElement<any>;

@@ -16,51 +16,30 @@
 /*
  * Imports.
  */
-import sessionSdk from "supertokens-website/lib/build/fetch";
 
 import RecipeModule from "../recipeModule";
-import {
-    CreateRecipeFunction,
-    RouteToFeatureComponentMap,
-    RequestJson,
-    NormalisedAppInfo,
-    APIFormField
-} from "../../types";
+import { CreateRecipeFunction, RouteToFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     EmailPasswordConfig,
     EmailPasswordUserInput,
-    EnterEmailAPIResponse,
-    FormFieldError,
     NormalisedEmailPasswordConfig,
-    SignInAPIResponse,
-    SignOutAPIResponse,
-    SignUpAPIResponse,
-    SubmitNewPasswordAPIResponse,
-    EmailExistsAPIResponse,
-    SendVerificationEmailAPIResponse,
-    VerifyEmailAPIResponse,
-    IsEmailVerifiedAPIResponse,
-    PreAPIHookContext,
-    GetRedirectionURLContext,
-    OnHandleEventContext
+    SignOutAPIResponse
 } from "./types";
-import { isTest, redirectToInApp, redirectToWithReload, validateForm } from "../../utils";
-import HttpRequest from "../../httpRequest";
+import { isTest } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
 import { ResetPasswordUsingToken, SignInAndUp, EmailVerification } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
 import {
-    API_RESPONSE_STATUS,
     DEFAULT_RESET_PASSWORD_PATH,
     DEFAULT_VERIFY_EMAIL_PATH,
     EMAIL_VERIFICATION_MODE,
-    GET_REDIRECTION_URL_ACTION,
-    PRE_API_HOOK_ACTION
+    EMAIL_PASSWORD_REDIRECTION_URL_ACTION
 } from "./constants";
-import { SOMETHING_WENT_WRONG_ERROR, SSR_ERROR } from "../../constants";
-import { History, LocationState } from "history";
+import { SSR_ERROR } from "../../constants";
 import Session from "../session/session";
 import SuperTokens from "../../superTokens";
+import { isEmailVerifiedAPI } from "./components/features/emailVerification/api";
+import { signOut } from "./components/features/signOut/api";
 
 /*
  * Class.
@@ -77,15 +56,12 @@ export default class EmailPassword extends RecipeModule {
      */
     private config: NormalisedEmailPasswordConfig;
 
-    private httpRequest: HttpRequest;
-
     /*
      * Constructor.
      */
     constructor(config: EmailPasswordConfig) {
         super(config);
         this.config = normaliseEmailPasswordConfig(config);
-        this.httpRequest = new HttpRequest(config.appInfo);
     }
 
     /*
@@ -123,84 +99,26 @@ export default class EmailPassword extends RecipeModule {
         return features;
     };
 
-    preAPIHook = async (context: PreAPIHookContext): Promise<RequestInit> => {
-        const preAPIHook = this.getConfig().preAPIHook;
-        if (preAPIHook !== undefined) {
-            return await preAPIHook(context);
-        }
+    getDefaultRedirectionURL = async (context: { action: unknown }): Promise<string> => {
+        switch (context.action as EMAIL_PASSWORD_REDIRECTION_URL_ACTION) {
+            case EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP:
+                return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}?rid=${this.getRecipeId()}`;
 
-        return context.requestInit;
-    };
+            case EMAIL_PASSWORD_REDIRECTION_URL_ACTION.VERIFY_EMAIL:
+                return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=${this.getRecipeId()}`;
 
-    redirect = async (
-        context: GetRedirectionURLContext,
-        shouldReload = false,
-        title?: string,
-        history?: History<LocationState>
-    ): Promise<void> => {
-        const redirectUrl = await this.getRedirectionURL(context);
+            case EMAIL_PASSWORD_REDIRECTION_URL_ACTION.RESET_PASSWORD:
+                return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}${DEFAULT_RESET_PASSWORD_PATH}?rid=${this.getRecipeId()}`;
 
-        // If shouldReload, reload.
-        if (shouldReload === true) {
-            return await redirectToWithReload(redirectUrl);
-        }
-        try {
-            new URL(redirectUrl);
-            // Otherwise, If full URL, use redirectToWithReload
-            return await redirectToWithReload(redirectUrl);
-        } catch (e) {
-            // Otherwise, redirect in app.
-            return await redirectToInApp(redirectUrl, title, history);
-        }
-    };
-
-    getRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        // If getRedirectionURL provided by user.
-        const getRedirectionURL = this.getConfig().getRedirectionURL;
-        if (getRedirectionURL !== undefined) {
-            const redirectionUrl = await getRedirectionURL(context);
-            // And handled by user, return their value.
-            if (redirectionUrl !== undefined) {
-                return redirectionUrl;
-            }
-        }
-
-        // Otherwise, use default.
-        let redirectionUrl = "/";
-        const rid = this.getRecipeId();
-
-        switch (context.action) {
-            case GET_REDIRECTION_URL_ACTION.SUCCESS:
-                redirectionUrl = "/";
-                break;
-
-            case GET_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP:
-                redirectionUrl = `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}?rid=${rid}`;
-                break;
-
-            case GET_REDIRECTION_URL_ACTION.VERIFY_EMAIL:
-                redirectionUrl = `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=${rid}`;
-                break;
-
-            case GET_REDIRECTION_URL_ACTION.RESET_PASSWORD:
-                redirectionUrl = `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}${DEFAULT_RESET_PASSWORD_PATH}?rid=${rid}`;
-                break;
+            case EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS:
             default:
-                break;
+                return "/";
         }
-        return redirectionUrl;
     };
 
-    onHandleEvent(context: OnHandleEventContext): void {
-        const onHandleEvent = this.getConfig().onHandleEvent;
-        if (onHandleEvent !== undefined) {
-            onHandleEvent(context);
-        }
-    }
-
-    getSessionRecipe(): Session | undefined {
-        return SuperTokens.getDefaultSessionRecipe();
-    }
+    getSessionRecipe = (): Session | undefined => {
+        return SuperTokens.getInstanceOrThrow().getDefaultSessionRecipe();
+    };
 
     doesSessionExist = (): boolean => {
         const sessionRecipe = this.getSessionRecipe();
@@ -212,206 +130,16 @@ export default class EmailPassword extends RecipeModule {
         return false;
     };
 
-    /*
-     * API.
-     */
-
-    /*
-     * SignIn/SignUp
-     */
-
-    signUpAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignUpAPIResponse> => {
-        const context = {
-            action: PRE_API_HOOK_ACTION.SIGN_UP,
-            requestInit: {
-                body: JSON.stringify(requestJson),
-                headers: {
-                    ...headers,
-                    rid: this.getRecipeId()
-                }
-            }
-        };
-        const requestInit = await this.preAPIHook(context);
-        return this.httpRequest.post("/signup", requestInit);
-    };
-
-    emailExistsAPI = async (value: string, headers: HeadersInit): Promise<EmailExistsAPIResponse> => {
-        const context = {
-            action: PRE_API_HOOK_ACTION.EMAIL_EXISTS,
-            requestInit: {
-                headers: {
-                    ...headers,
-                    rid: this.getRecipeId()
-                }
-            }
-        };
-        const requestInit = await this.preAPIHook(context);
-        return this.httpRequest.get("/signup/email/exists", requestInit, {
-            email: value
-        });
-    };
-
-    signInAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<SignInAPIResponse> => {
-        const context = {
-            action: PRE_API_HOOK_ACTION.SIGN_IN,
-            requestInit: {
-                body: JSON.stringify(requestJson),
-                headers: {
-                    ...headers,
-                    rid: this.getRecipeId()
-                }
-            }
-        };
-        const requestInit = await this.preAPIHook(context);
-        return this.httpRequest.post("/signin", requestInit);
-    };
-
-    /*
-     * Reset Password
-     */
-
-    submitNewPasswordAPI = async (
-        requestJson: RequestJson,
-        headers: HeadersInit
-    ): Promise<SubmitNewPasswordAPIResponse> => {
-        const context = {
-            action: PRE_API_HOOK_ACTION.SUBMIT_NEW_PASSWORD,
-            requestInit: {
-                body: JSON.stringify(requestJson),
-                headers: {
-                    ...headers,
-                    rid: this.getRecipeId()
-                }
-            }
-        };
-        const requestInit = await this.preAPIHook(context);
-        return this.httpRequest.post("/user/password/reset", requestInit);
-    };
-
-    enterEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<EnterEmailAPIResponse> => {
-        const context = {
-            action: PRE_API_HOOK_ACTION.SEND_RESET_PASSWORD_EMAIL,
-            requestInit: {
-                body: JSON.stringify(requestJson),
-                headers: {
-                    ...headers,
-                    rid: this.getRecipeId()
-                }
-            }
-        };
-        const requestInit = await this.preAPIHook(context);
-        return this.httpRequest.post("/user/password/reset/token", requestInit);
-    };
-
-    /*
-     * SignOut
-     */
-
     signOut = async (): Promise<SignOutAPIResponse> => {
-        const context = {
-            action: PRE_API_HOOK_ACTION.SIGN_OUT,
-            requestInit: {
-                method: "POST",
-                headers: {
-                    rid: this.getRecipeId()
-                }
-            }
-        };
-        const requestInit = await this.preAPIHook(context);
-
-        const result = await this.httpRequest.fetch(this.httpRequest.getFullUrl("/signout"), requestInit);
-
-        const sessionExpiredStatusCode = sessionSdk.sessionExpiredStatusCode;
-        if (result.status === sessionExpiredStatusCode) {
-            return {
-                status: API_RESPONSE_STATUS.OK
-            };
-        }
-        if (result.status >= 300) {
-            throw Error(SOMETHING_WENT_WRONG_ERROR);
-        }
-
-        return await result.json();
+        return await signOut(this);
     };
 
     /*
      * Email Verification
      */
 
-    sendVerificationEmailAPI = async (headers: HeadersInit): Promise<SendVerificationEmailAPIResponse> => {
-        const context = {
-            action: PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL,
-            requestInit: {
-                headers: {
-                    ...headers,
-                    rid: this.getRecipeId()
-                }
-            }
-        };
-        const requestInit = await this.preAPIHook(context);
-        return this.httpRequest.post("/user/email/verify/token", requestInit);
-    };
-
-    verifyEmailAPI = async (requestJson: RequestJson, headers: HeadersInit): Promise<VerifyEmailAPIResponse> => {
-        const context = {
-            action: PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL,
-            requestInit: {
-                body: JSON.stringify(requestJson),
-                headers: {
-                    ...headers,
-                    rid: this.getRecipeId()
-                }
-            }
-        };
-        const requestInit = await this.preAPIHook(context);
-        return this.httpRequest.post("/user/email/verify", requestInit);
-    };
-
-    isEmailVerifiedAPI = async (headers: HeadersInit): Promise<IsEmailVerifiedAPIResponse> => {
-        const context = {
-            action: PRE_API_HOOK_ACTION.IS_EMAIL_VERIFIED,
-            requestInit: {
-                headers: {
-                    ...headers,
-                    rid: this.getRecipeId()
-                }
-            }
-        };
-        const requestInit = await this.preAPIHook(context);
-        return this.httpRequest.get("/user/email/verify", requestInit);
-    };
-
     async isEmailVerified(): Promise<boolean> {
-        const response = await this.isEmailVerifiedAPI({});
-        return response.isVerified;
-    }
-
-    /*
-     * Validate
-     */
-
-    /*
-     * SignIn/SignUp
-     */
-
-    async signUpValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateForm(input, this.config.signInAndUpFeature.signUpForm.formFields);
-    }
-
-    async signInValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateForm(input, this.config.signInAndUpFeature.signInForm.formFields);
-    }
-
-    /*
-     * Reset Password
-     */
-
-    async submitNewPasswordValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateForm(input, this.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields);
-    }
-
-    async enterEmailValidate(input: APIFormField[]): Promise<FormFieldError[]> {
-        return await validateForm(input, this.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields);
+        return await isEmailVerifiedAPI(this);
     }
 
     /*

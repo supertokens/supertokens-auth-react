@@ -22,7 +22,8 @@ import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../../types";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import FormBase from "../../../library/FormBase";
+import FormBase from "../../../library/formBase";
+import { ENTER_EMAIL_STATUS } from "../../../../constants";
 
 /*
  * Component.
@@ -36,7 +37,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
     constructor(props: EnterEmailThemeProps) {
         super(props);
         this.state = {
-            emailSent: false
+            status: ENTER_EMAIL_STATUS.READY
         };
     }
 
@@ -46,16 +47,14 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
 
     onSuccess = (): void => {
         this.setState(() => ({
-            emailSent: true
+            status: ENTER_EMAIL_STATUS.SENT
         }));
-        if (this.props.onSuccess !== undefined) {
-            this.props.onSuccess();
-        }
+        this.props.onSuccess();
     };
 
     resend = (): void => {
         this.setState(() => ({
-            emailSent: false
+            status: ENTER_EMAIL_STATUS.READY
         }));
     };
 
@@ -64,11 +63,10 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
      */
     render(): JSX.Element {
         const styles = this.context;
-        const { formFields, callAPI } = this.props;
-        const { emailSent } = this.state;
+        const { formFields, enterEmailAPI } = this.props;
+        const { status } = this.state;
 
-        // If email sent, show success UI.
-        if (emailSent === true) {
+        if (status === ENTER_EMAIL_STATUS.SENT) {
             return (
                 <div data-supertokens="container" css={styles.container}>
                     <div data-supertokens="row" css={styles.row}>
@@ -91,7 +89,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
                 formFields={formFields}
                 buttonLabel={"Email me"}
                 onSuccess={this.onSuccess}
-                callAPI={callAPI}
+                callAPI={enterEmailAPI}
                 showLabels={false}
                 validateOnBlur={true}
                 header={
