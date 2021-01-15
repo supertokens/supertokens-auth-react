@@ -44,7 +44,7 @@
     "chroma-js": "2.1.0",
     "emotion": "11.0.0",
     "react-shadow": "19.0.1",
-    "supertokens-website": "^5.0.1"
+    "supertokens-website": "^5.0.6"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
@@ -55,7 +55,7 @@
   "scripts": {
     "init": "npm i -d && (cd ./test/server && npm i ) && (cd ./test/react-test-app && npm i -d)",
     "start": "./test/startTestApp.sh",
-    "server": "cd test/server/ && TEST_MODE=testing START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
+    "server": "cd test/server/ && START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
     "test": "./test/startTestApp.sh --test",
     "link-dependencies": "./test/linkDependencies.sh $SRC",
     "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
