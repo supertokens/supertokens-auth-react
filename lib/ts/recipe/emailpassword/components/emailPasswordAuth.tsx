@@ -69,7 +69,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
     async componentDidMount(): Promise<void> {
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists === false) {
-            return this.getRecipeInstanceOrThrow().redirect(
+            return await this.getRecipeInstanceOrThrow().redirect(
                 { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
                 this.props.history
             );
@@ -91,7 +91,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
         // Otherwise, make sure that the email is valid, otherwise, redirect to email validation screen.
         const isEmailVerified = await this.isEmailVerifiedAPI();
         if (isEmailVerified === false) {
-            return this.getRecipeInstanceOrThrow().redirect(
+            return await this.getRecipeInstanceOrThrow().redirect(
                 { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.VERIFY_EMAIL },
                 this.props.history
             );
