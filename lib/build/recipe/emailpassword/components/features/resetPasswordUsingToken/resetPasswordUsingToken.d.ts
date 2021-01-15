@@ -1,5 +1,5 @@
 import { PureComponent } from "react";
-import { EnterEmailThemeResponse, FeatureBaseProps, SubmitNewPasswordThemeResponse } from "../../../types";
+import { FeatureBaseProps, FormBaseAPIResponse } from "../../../types";
 import EmailPassword from "../../../emailPassword";
 import { APIFormField } from "../../../../../types";
 declare class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, {
@@ -7,11 +7,8 @@ declare class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, {
 }> {
     constructor(props: FeatureBaseProps);
     getRecipeInstanceOrThrow: () => EmailPassword;
-    submitNewPassword: (formFields: APIFormField[]) => Promise<SubmitNewPasswordThemeResponse>;
-    onSubmitNewPasswordFormSuccess: () => Promise<void>;
-    enterEmail: (formFields: APIFormField[]) => Promise<EnterEmailThemeResponse>;
-    onEnterEmailFormSuccess: () => Promise<void>;
-    onSignInClicked: () => void;
+    submitNewPassword: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse>;
+    enterEmail: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse>;
     render: () => JSX.Element;
 }
 export default ResetPasswordUsingToken;

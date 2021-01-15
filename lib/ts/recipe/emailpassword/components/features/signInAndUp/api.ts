@@ -18,129 +18,94 @@
  */
 import { SOMETHING_WENT_WRONG_ERROR, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR } from "../../../../../constants";
 import { APIFormField } from "../../../../../types";
-import { API_RESPONSE_STATUS } from "../../../constants";
-import { SignUpAPI, SignUpThemeResponse, SignInAPI, SignInThemeResponse, EmailExistsAPI } from "../../../types";
+import RecipeModule from "../../../../recipeModule";
+import { API_RESPONSE_STATUS, FORM_BASE_API_RESPONSE, EMAIL_PASSWORD_PRE_API_HOOK_ACTION } from "../../../constants";
+import { EmailExistsAPIResponse, FormBaseAPIResponse, SignInAPIResponse, SignUpAPIResponse } from "../../../types";
 
 /*
  * Methods.
  */
 
-export async function handleSignUpAPI(
-    formFields: APIFormField[],
-    rid: string,
-    signUpAPI: SignUpAPI
-): Promise<SignUpThemeResponse> {
-    try {
-        const headers: HeadersInit = {
-            rid
-        };
-        const response = await signUpAPI({ formFields }, headers);
+export async function signUpAPI(formFields: APIFormField[], recipe: RecipeModule): Promise<FormBaseAPIResponse> {
+    const response: SignUpAPIResponse = await recipe.getHttp().post(
+        "/signup",
+        {
+            body: JSON.stringify({ formFields })
+        },
+        EMAIL_PASSWORD_PRE_API_HOOK_ACTION.SIGN_UP
+    );
 
-        // Otherwise, if field errors.
-        if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-            return {
-                status: API_RESPONSE_STATUS.FIELD_ERROR,
-                formFields: response.formFields
-            };
-        }
-
-        // Otherwise, success.
-        if (response.status === API_RESPONSE_STATUS.OK) {
-            return response;
-        }
-
-        console.error(
-            "There was an error handling the output format of onCallSignUpAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks//sign-in-up#output"
-        );
+    // If success.
+    if (response.status === API_RESPONSE_STATUS.OK) {
         return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
-        };
-    } catch (e) {
-        return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
+            status: FORM_BASE_API_RESPONSE.OK,
+            user: response.user
         };
     }
+
+    // Otherwise, if field errors.
+    if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+        return {
+            status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+            formFields: response.formFields
+        };
+    }
+
+    throw new Error(SOMETHING_WENT_WRONG_ERROR);
 }
 
-export async function handleSignInAPI(
-    formFields: APIFormField[],
-    rid: string,
-    signInAPI: SignInAPI
-): Promise<SignInThemeResponse> {
-    try {
-        const headers: HeadersInit = {
-            rid
-        };
-        const response = await signInAPI({ formFields }, headers);
-        // Otherwise, if field errors.
-        if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-            return {
-                status: API_RESPONSE_STATUS.FIELD_ERROR,
-                formFields: response.formFields
-            };
-        }
+export async function signInAPI(formFields: APIFormField[], recipe: RecipeModule): Promise<FormBaseAPIResponse> {
+    const response: SignInAPIResponse = await recipe.getHttp().post(
+        "/signin",
+        {
+            body: JSON.stringify({ formFields })
+        },
+        EMAIL_PASSWORD_PRE_API_HOOK_ACTION.SIGN_IN
+    );
 
-        // Otherwise, if wrong credentials error.
-        if (response.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
-            return {
-                status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR,
-                message: INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR
-            };
-        }
-
-        // Otherwise, if success.
-        if (response.status === API_RESPONSE_STATUS.OK) {
-            return response;
-        }
-
-        // Otherwise, something went wrong.
-        console.error(
-            "There was an error handling the output format of onCallSignInAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks//sign-in-up#output-1"
-        );
+    // If success.
+    if (response.status === API_RESPONSE_STATUS.OK) {
         return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
-        };
-    } catch (e) {
-        return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
+            status: FORM_BASE_API_RESPONSE.OK,
+            user: response.user
         };
     }
+
+    // Otherwise, if field errors.
+    if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+        return {
+            status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+            formFields: response.formFields
+        };
+    }
+
+    // Otherwise, if wrong credentials error.
+    if (response.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
+        return {
+            status: FORM_BASE_API_RESPONSE.GENERAL_ERROR,
+            message: INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR
+        };
+    }
+
+    throw new Error(SOMETHING_WENT_WRONG_ERROR);
 }
 
-export async function handleEmailExistsAPICall(
-    value: string,
-    rid: string,
-    onCallEmailExistsAPI: EmailExistsAPI
-): Promise<string | undefined> {
-    try {
-        const headers: HeadersInit = {
-            rid
-        };
-        const response = await onCallEmailExistsAPI(value, headers);
+export async function emailExistsAPI(email: string, recipe: RecipeModule): Promise<string | undefined> {
+    const response: EmailExistsAPIResponse = await recipe
+        .getHttp()
+        .get("/signup/email/exists", {}, EMAIL_PASSWORD_PRE_API_HOOK_ACTION.EMAIL_EXISTS, { email });
 
-        // If email already exists.
-        if (response.status === API_RESPONSE_STATUS.OK) {
-            // If email exists.
-            if (response.exists === true) {
-                return "This email already exists. Please sign in instead";
-            }
-
-            // Otherwise, no errors.
-            return undefined;
+    // If email already exists.
+    if (response.status === API_RESPONSE_STATUS.OK) {
+        // If email exists.
+        if (response.exists === true) {
+            return "This email already exists. Please sign in instead";
         }
 
-        // Otherwise, something went wrong.
-        console.error(
-            "There was an error handling the output format of onCallEmailExistsAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks//sign-in-up#output-1"
-        );
-        // Fail silently.
-        return undefined;
-    } catch (e) {
-        // Fail silently.
+        // Otherwise, no errors.
         return undefined;
     }
+
+    // Fail silently.
+    return undefined;
 }

@@ -14,54 +14,75 @@
  */
 import { SOMETHING_WENT_WRONG_ERROR } from "./constants";
 import NormalisedURLPath from "./normalisedURLPath";
-import { NormalisedAppInfo } from "./types";
+import RecipeModule from "./recipe/recipeModule";
 import { supported_fdi } from "./version";
 
 export default class HttpRequest {
     /*
      * Instance Attributes.
      */
-    private appInfo: NormalisedAppInfo;
+    private recipe: RecipeModule;
 
     /*
      * Constructor.
      */
-    constructor(appInfo: NormalisedAppInfo) {
-        this.appInfo = appInfo;
+    constructor(recipe: RecipeModule) {
+        this.recipe = recipe;
     }
 
     /*
      * Instance Methods.
      */
-    get = async <T>(path: string, config: RequestInit, queryParams?: Record<string, string>): Promise<T> => {
-        return await this.fetchResponseJsonOrThrowAbove300(this.getFullUrl(path, queryParams), {
-            method: "GET",
-            ...config
-        });
+    get = async <S, T>(
+        path: string,
+        config: RequestInit,
+        action: T,
+        queryParams?: Record<string, string>
+    ): Promise<S> => {
+        return await this.fetchResponseJsonOrThrowAbove300(
+            this.getFullUrl(path, queryParams),
+            {
+                method: "GET",
+                ...config
+            },
+            action
+        );
     };
 
-    post = async <T>(path: string, config: RequestInit): Promise<T> => {
-        return await this.fetchResponseJsonOrThrowAbove300(this.getFullUrl(path), {
-            method: "POST",
-            ...config
-        });
+    post = async <S, T>(path: string, config: RequestInit, action: S): Promise<T> => {
+        return await this.fetchResponseJsonOrThrowAbove300(
+            this.getFullUrl(path),
+            {
+                method: "POST",
+                ...config
+            },
+            action
+        );
     };
 
-    delete = async <T>(path: string, config: RequestInit): Promise<T> => {
-        return await this.fetchResponseJsonOrThrowAbove300(this.getFullUrl(path), {
-            method: "DELETE",
-            ...config
-        });
+    delete = async <S, T>(path: string, action: S, config: RequestInit): Promise<T> => {
+        return await this.fetchResponseJsonOrThrowAbove300(
+            this.getFullUrl(path),
+            {
+                method: "DELETE",
+                ...config
+            },
+            action
+        );
     };
 
-    put = async <T>(path: string, config: RequestInit): Promise<T> => {
-        return await this.fetchResponseJsonOrThrowAbove300(this.getFullUrl(path), {
-            method: "PUT",
-            ...config
-        });
+    put = async <S, T>(path: string, action: S, config: RequestInit): Promise<T> => {
+        return await this.fetchResponseJsonOrThrowAbove300(
+            this.getFullUrl(path),
+            {
+                method: "PUT",
+                ...config
+            },
+            action
+        );
     };
 
-    fetch = async (url: RequestInfo, config: RequestInit): Promise<Response> => {
+    fetch = async <S>(url: RequestInfo, config: RequestInit, action: S): Promise<Response> => {
         let headers;
         if (config === undefined) {
             headers = {};
@@ -69,18 +90,24 @@ export default class HttpRequest {
             headers = config.headers;
         }
 
-        return await fetch(url, {
-            ...config,
-            headers: {
-                ...headers,
-                "fdi-version": supported_fdi.join(","),
-                "Content-Type": "application/json"
+        const requestInit = await this.recipe.preAPIHook({
+            action,
+            requestInit: {
+                ...config,
+                headers: {
+                    ...headers,
+                    "fdi-version": supported_fdi.join(","),
+                    "Content-Type": "application/json",
+                    rid: this.recipe.getRecipeId()
+                }
             }
         });
+
+        return await fetch(url, requestInit);
     };
 
-    fetchResponseJsonOrThrowAbove300 = async <T>(url: RequestInfo, config: RequestInit): Promise<T> => {
-        const result = await this.fetch(url, config);
+    fetchResponseJsonOrThrowAbove300 = async <S, T>(url: RequestInfo, config: RequestInit, action: S): Promise<T> => {
+        const result = await this.fetch(url, config, action);
         if (result.status >= 300) {
             throw Error(SOMETHING_WENT_WRONG_ERROR);
         }
@@ -90,7 +117,11 @@ export default class HttpRequest {
 
     getFullUrl = (pathStr: string, queryParams?: Record<string, string>): string => {
         const path = new NormalisedURLPath(pathStr);
-        const fullUrl = `${this.appInfo.apiDomain.getAsStringDangerous()}${this.appInfo.apiBasePath.getAsStringDangerous()}${path.getAsStringDangerous()}`;
+        const fullUrl = `${this.recipe
+            .getAppInfo()
+            .apiDomain.getAsStringDangerous()}${this.recipe
+            .getAppInfo()
+            .apiBasePath.getAsStringDangerous()}${path.getAsStringDangerous()}`;
 
         if (queryParams === undefined) {
             return fullUrl;

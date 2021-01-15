@@ -22,12 +22,12 @@ import StyleContext from "../../../../styles/styleContext";
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import { VerifyEmailLinkClickedThemeProps, VerifyEmailLinkClickedThemeState } from "../../../../../types";
-import SpinnerIcon from "../../../../../assets/spinnerIcon";
-import { VERIFY_EMAIL_LINK_CLICKED_STATUS } from "../../../../../constants";
 import ErrorLargeIcon from "../../../../../assets/errorLargeIcon";
 import ArrowRightIcon from "../../../../../assets/arrowRightIcon";
 import { Button } from "../../../../library";
 import CheckedRoundIcon from "../../../../../assets/checkedRoundIcon";
+import { VERIFY_EMAIL_LINK_CLICKED_STATUS } from "../../../../../constants";
+import SpinnerIcon from "../../../../../assets/spinnerIcon";
 
 /*
  * Component.
@@ -54,16 +54,20 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
             status: VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL
         }));
 
-        if (this.props.onSuccess !== undefined) {
-            this.props.onSuccess();
-        }
+        this.props.onSuccess();
     };
 
     componentDidMount = async (): Promise<void> => {
-        const response = await this.props.callAPI();
-        this.setState(() => ({
-            status: response.status
-        }));
+        try {
+            const response = await this.props.verifyEmailAPI();
+            this.setState(() => ({
+                status: response.status
+            }));
+        } catch (e) {
+            this.setState(() => ({
+                status: VERIFY_EMAIL_LINK_CLICKED_STATUS.GENERAL_ERROR
+            }));
+        }
     };
 
     /*
@@ -73,7 +77,7 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
     render(): JSX.Element {
         const styles = this.context;
         const { status } = this.state;
-        const { redirectToVerifyEmailScreen, onContinueClicked } = this.props;
+        const { onTokenInvalidRedirect, onContinueClicked } = this.props;
 
         if (status === VERIFY_EMAIL_LINK_CLICKED_STATUS.LOADING) {
             return (
@@ -117,7 +121,7 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
                             The email verification link has expired
                         </div>
                         <div
-                            onClick={redirectToVerifyEmailScreen}
+                            onClick={onTokenInvalidRedirect}
                             data-supertokens="secondaryText secondaryLinkWithArrow"
                             css={[styles.secondaryText, styles.secondaryLinkWithArrow]}>
                             Continue <ArrowRightIcon color={styles.palette.colors.textPrimary} />

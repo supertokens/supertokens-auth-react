@@ -78,7 +78,7 @@ export default class SuperTokens {
         SuperTokens.instance = new SuperTokens(config);
     }
 
-    private static getInstanceOrThrow(): SuperTokens {
+    static getInstanceOrThrow(): SuperTokens {
         if (SuperTokens.instance === undefined) {
             let error = "SuperTokens must be initialized before calling this method.";
             // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
@@ -101,25 +101,6 @@ export default class SuperTokens {
 
     static getRoutingComponent(): JSX.Element | undefined {
         return SuperTokens.getInstanceOrThrow().getRoutingComponent();
-    }
-
-    static getRecipeList(): RecipeModule[] {
-        return SuperTokens.getInstanceOrThrow().getRecipeList();
-    }
-
-    static getPathsToComponentWithRecipeIdMap(): PathToComponentWithRecipeIdMap {
-        return SuperTokens.getInstanceOrThrow().getPathsToComponentWithRecipeIdMap();
-    }
-
-    static getDefaultSessionRecipe(): Session | undefined {
-        return SuperTokens.getInstanceOrThrow().getDefaultSessionRecipe();
-    }
-
-    static getMatchingComponentForRouteAndRecipeId(
-        path: NormalisedURLPath,
-        recipeId: string | null
-    ): ReactComponentClass | undefined {
-        return SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(path, recipeId);
     }
 
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {

@@ -19,7 +19,7 @@
 import * as React from "react";
 import { StyleProvider } from "../../../../styles/styleContext";
 import { EmailVerificationThemeProps } from "../../../../../types";
-import { ThemeBase } from "../../ThemeBase";
+import { ThemeBase } from "../../themeBase";
 
 import SendVerifyEmail from "./sendVerifyEmail";
 import VerifyEmailLinkClicked from "./verifyEmailLinkClicked";

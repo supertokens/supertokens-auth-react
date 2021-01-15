@@ -15,13 +15,9 @@
 
 import { RESET_PASSWORD_INVALID_TOKEN_ERROR, SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import { APIFormField } from "../../../../../types";
-import { API_RESPONSE_STATUS } from "../../../constants";
-import {
-    SubmitNewPasswordThemeResponse,
-    EnterEmailThemeResponse,
-    EnterEmailAPI,
-    SubmitNewPasswordAPI
-} from "../../../types";
+import RecipeModule from "../../../../recipeModule";
+import { API_RESPONSE_STATUS, EMAIL_PASSWORD_PRE_API_HOOK_ACTION, FORM_BASE_API_RESPONSE } from "../../../constants";
+import { EnterEmailAPIResponse, FormBaseAPIResponse, SubmitNewPasswordAPIResponse } from "../../../types";
 
 /*
  * Imports.
@@ -29,97 +25,66 @@ import {
 
 export async function handleSubmitNewPasswordAPI(
     formFields: APIFormField[],
-    rid: string,
-    submitNewPasswordAPI: SubmitNewPasswordAPI,
+    recipe: RecipeModule,
     token: string
-): Promise<SubmitNewPasswordThemeResponse> {
-    try {
-        const headers: HeadersInit = {
-            rid
-        };
-        const response = await submitNewPasswordAPI(
-            {
-                formFields,
-                token: token
-            },
-            headers
-        );
+): Promise<FormBaseAPIResponse> {
+    const response: SubmitNewPasswordAPIResponse = await recipe.getHttp().post(
+        "/user/password/reset",
+        {
+            body: JSON.stringify({ formFields, token })
+        },
+        EMAIL_PASSWORD_PRE_API_HOOK_ACTION.SUBMIT_NEW_PASSWORD
+    );
 
-        // Otherwise, if field errors.
-        if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-            return {
-                status: API_RESPONSE_STATUS.FIELD_ERROR,
-                formFields: response.formFields
-            };
-        }
-
-        // Otherwise, if reset password invalid token error.
-        if (response.status === API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR) {
-            return {
-                status: API_RESPONSE_STATUS.GENERAL_ERROR,
-                message: RESET_PASSWORD_INVALID_TOKEN_ERROR
-            };
-        }
-
-        // Otherwise, status === OK
-        if (response.status === API_RESPONSE_STATUS.OK) {
-            return {
-                status: API_RESPONSE_STATUS.OK
-            };
-        }
-
-        console.error(
-            "There was an error handling the output format of onCallSubmitNewPasswordAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks/reset-password#output"
-        );
+    // Otherwise, if field errors.
+    if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
         return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
-        };
-    } catch (e) {
-        return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
+            status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+            formFields: response.formFields
         };
     }
+
+    // Otherwise, if reset password invalid token error.
+    if (response.status === API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR) {
+        return {
+            status: FORM_BASE_API_RESPONSE.GENERAL_ERROR,
+            message: RESET_PASSWORD_INVALID_TOKEN_ERROR
+        };
+    }
+
+    // Otherwise, status === OK
+    if (response.status === API_RESPONSE_STATUS.OK) {
+        return {
+            status: FORM_BASE_API_RESPONSE.OK
+        };
+    }
+
+    throw Error(SOMETHING_WENT_WRONG_ERROR);
 }
 
-export async function handleEnterEmailAPI(
-    formFields: APIFormField[],
-    rid: string,
-    enterEmailAPI: EnterEmailAPI
-): Promise<EnterEmailThemeResponse> {
-    try {
-        const headers: HeadersInit = {
-            rid
-        };
-        const response = await enterEmailAPI({ formFields }, headers);
+export async function enterEmailAPI(formFields: APIFormField[], recipe: RecipeModule): Promise<FormBaseAPIResponse> {
+    const response: EnterEmailAPIResponse = await recipe.getHttp().post(
+        "/user/password/reset/token",
+        {
+            body: JSON.stringify({ formFields })
+        },
+        EMAIL_PASSWORD_PRE_API_HOOK_ACTION.SEND_RESET_PASSWORD_EMAIL
+    );
 
-        // Otherwise, if field errors.
-        if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
-            return {
-                status: API_RESPONSE_STATUS.FIELD_ERROR,
-                formFields: response.formFields
-            };
-        }
-
-        // Otherwise, success.
-        if (response.status === API_RESPONSE_STATUS.OK) {
-            return {
-                status: API_RESPONSE_STATUS.OK
-            };
-        }
-
-        console.error(
-            "There was an error handling the output format of onCallSendResetEmailAPI props callback. Please refer to https://supertokens.io/docs/auth-react/emailpassword/callbacks/reset-password#output-1"
-        );
+    // Otherwise, if field errors.
+    if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
         return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
-        };
-    } catch (e) {
-        return {
-            status: API_RESPONSE_STATUS.GENERAL_ERROR,
-            message: SOMETHING_WENT_WRONG_ERROR
+            status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+            formFields: response.formFields
         };
     }
+
+    // Otherwise, success.
+    if (response.status === API_RESPONSE_STATUS.OK) {
+        return {
+            status: FORM_BASE_API_RESPONSE.OK
+        };
+    }
+
+    throw Error(SOMETHING_WENT_WRONG_ERROR);
 }

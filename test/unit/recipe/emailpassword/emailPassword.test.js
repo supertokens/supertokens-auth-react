@@ -21,6 +21,7 @@
 import regeneratorRuntime from "regenerator-runtime";
 import EmailPassword from "../../../../lib/build/recipe/emailpassword/emailPassword";
 import {getDefaultFormFields, getFormattedFormField} from "../../../../lib/build/recipe/emailpassword/utils";
+import {validateForm} from "../../../../lib/build/utils";
 import {defaultLoginPasswordValidator, defaultValidate} from "../../../../lib/build/recipe/emailpassword/validators";
 import assert from "assert";
 import SuperTokens from "../../../../lib/build/superTokens";
@@ -486,37 +487,41 @@ describe("EmailPassword", function() {
 
     it("Validate SignIn EmailPassword fields validation", async function() {
         EmailPassword.init()(SuperTokens.getAppInfo());
-        const inputErrors = await EmailPassword.getInstanceOrThrow().signInValidate([{
+        const formFields = [{
             id: "email",
             value: "test@supertokens.io"
         }, {
             id: "password",
             value: "test123E"
-        }]);
+        }];
+        const inputErrors = await validateForm(formFields, EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.signInForm.formFields);
+            
         assert.deepStrictEqual(inputErrors, []);
     });
 
     it("Validate SignIn EmailPassword fields validation with spaces in email should trim and return no errors", async function() {
         EmailPassword.init()(SuperTokens.getAppInfo());
-        const inputErrors = await EmailPassword.getInstanceOrThrow().signInValidate([{
+        const formFields = [{
             id: "email",
             value: "  test@supertokens.io    "
         }, {
             id: "password",
             value: "test123E"
-        }]);
+        }];
+        const inputErrors = await validateForm(formFields, EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.signInForm.formFields);
         assert.deepStrictEqual(inputErrors, []);
     });
 
     it("Validate SignIn EmailPassword fields validation with invalid email should return error", async function() {
         EmailPassword.init()(SuperTokens.getAppInfo());
-        const inputErrors = await EmailPassword.getInstanceOrThrow().signInValidate([{
+        const formFields = [{
             id: "email",
             value: "123"
         }, {
             id: "password",
             value: "test123E"
-        }]);
+        }];
+        const inputErrors = await validateForm(formFields, EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.signInForm.formFields);
         assert.deepStrictEqual(inputErrors, [{
             error: "Email is invalid",
             id: "email"
@@ -540,8 +545,7 @@ describe("EmailPassword", function() {
             }
         })(SuperTokens.getAppInfo());
 
-        
-        const inputErrors = await EmailPassword.getInstanceOrThrow().signUpValidate([{
+        const input = [{
             id: "email",
             value: "test@supertokens.io"
         }, {
@@ -550,7 +554,9 @@ describe("EmailPassword", function() {
         }, {
             id: "company",
             value: ""
-        }]);
+        }];
+        const inputErrors = await validateForm(input, EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.signUpForm.formFields);
+        
         assert.deepStrictEqual(inputErrors, [
             {
                 error: "Field is not optional",
@@ -576,13 +582,15 @@ describe("EmailPassword", function() {
             }
         })(SuperTokens.getAppInfo());
 
-        assert.rejects(EmailPassword.getInstanceOrThrow().signUpValidate([{
+        const input = [{
             id: "email",
             value: "test@supertokens.io"
         }, {
             id: "password",
             value: "test123E"
-        }]), Error("Are you sending too many / too few formFields?"))
+        }];
+
+        assert.rejects(validateForm(input, EmailPassword.getInstanceOrThrow().getConfig().signInAndUpFeature.signUpForm.formFields), Error("Are you sending too many / too few formFields?"))
                 
     });
 
