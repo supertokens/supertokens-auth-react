@@ -88,20 +88,22 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         container: {
             fontFamily: "'Rubik', sans-serif",
             margin: "26px auto",
-            width: "420px",
+            maxWidth: "420px",
             textAlign: "center",
             borderRadius: "8px",
             boxShadow: "1px 1px 10px rgba(0,0,0,0.16)",
             backgroundColor: palette.colors.background,
             "@media (max-width: 440px)": {
-                margin: "12px auto",
-                minWidth: "320px"
+                margin: "6px auto",
+                maxWidth: "95vw"
             },
             "@media (max-width: 340px)": {
-                minWidth: "260px"
+                margin: "6px auto",
+                maxWidth: "95vw"
             },
             "@media (max-width: 300px)": {
-                minWidth: "220px"
+                maxWidth: "95vw",
+                margin: "6px auto"
             }
         },
 
