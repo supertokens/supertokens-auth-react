@@ -52,7 +52,8 @@ h1 {
 }
 
 .page {
-    flex: 3 0 auto
+    flex: 3 0 auto;
+    width: 100vw;
 }
 
 /* Navbar */

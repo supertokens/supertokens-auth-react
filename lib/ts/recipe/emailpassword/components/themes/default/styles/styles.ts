@@ -87,23 +87,16 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
     return {
         container: {
             fontFamily: "'Rubik', sans-serif",
-            margin: "26px auto",
+            margin: "12px auto",
+            marginTop: "26px",
+            marginBottom: "26px",
             maxWidth: "420px",
             textAlign: "center",
             borderRadius: "8px",
             boxShadow: "1px 1px 10px rgba(0,0,0,0.16)",
             backgroundColor: palette.colors.background,
             "@media (max-width: 440px)": {
-                margin: "6px auto",
                 maxWidth: "95vw"
-            },
-            "@media (max-width: 340px)": {
-                margin: "6px auto",
-                maxWidth: "95vw"
-            },
-            "@media (max-width: 300px)": {
-                maxWidth: "95vw",
-                margin: "6px auto"
             }
         },
 
@@ -283,7 +276,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             display: "flex",
             flexDirection: "column",
             paddingTop: "0px",
-            paddingBottom: "35px"
+            paddingBottom: "34px"
         },
 
         primaryText: {
