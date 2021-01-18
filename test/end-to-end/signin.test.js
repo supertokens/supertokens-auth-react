@@ -31,6 +31,7 @@ import {
     getLogoutButton,
     getLabelsText,
     getPlaceholders,
+    getShowPasswordIcon,
     getSubmitFormButtonLabel,
     getSuccessInputAdornments,
     hasMethodBeenCalled,
@@ -188,6 +189,8 @@ describe("SuperTokens SignIn feature/theme", function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await toggleSignInSignUp(page);
 
+            let showPasswordIcon = await getShowPasswordIcon(page);
+            assert.strictEqual(showPasswordIcon, null);
             let types = await getInputTypes(page);
             assert.deepStrictEqual(types, ["email", "password"]);
 
@@ -196,6 +199,9 @@ describe("SuperTokens SignIn feature/theme", function() {
                 { name: "email", value: "john.doe@supertokens.io" },
                 { name: "password", value: "Str0ngP@ssw0rd" }
             ]);
+
+            showPasswordIcon = await getShowPasswordIcon(page);
+            assert.notStrictEqual(showPasswordIcon, null);
 
             await toggleShowPasswordIcon(page);
             types = await getInputTypes(page);

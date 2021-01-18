@@ -51,6 +51,10 @@ export async function getSubmitFormButton(page) {
     return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("form > div > button")`);
 }
 
+export async function getInputField(page, name) {
+    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("input[name='${name}'")`);
+}
+
 export async function submitForm(page) {
     const submitButton = await getSubmitFormButton(page);
     await submitButton.click();
@@ -132,6 +136,12 @@ export async function getPlaceholders(page) {
     , {ST_ROOT_SELECTOR})
 }
 
+export async function getShowPasswordIcon(page) {
+    return await page.evaluate(({ST_ROOT_SELECTOR}) => 
+        document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='showPassword']")
+    , {ST_ROOT_SELECTOR});
+}
+
 export async function toggleShowPasswordIcon(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
         document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='showPassword']").click()
@@ -189,15 +199,28 @@ export async function getGeneralError(page) {
  }
 
  export async function setInputValues(page, fields) {
-    await page.evaluate(({fields, ST_ROOT_SELECTOR}) => {
-        fields.forEach(field => {
+    for(const field of fields) {
+
+        // Reset input value.
+        await page.evaluate(({field, ST_ROOT_SELECTOR}) => {
             const inputNode = document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(`input[name=${field.name}]`);
-            inputNode.focus();
-            inputNode.value = field.value;
+            inputNode.value = "";
+        }, {field, ST_ROOT_SELECTOR});
+
+        // Type new value.
+        const passwordInput = await getInputField(page, field.name);
+        await passwordInput.type(field.value);
+
+        // Blur.
+        await page.evaluate(({field, ST_ROOT_SELECTOR}) => {
+            const inputNode = document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector(`input[name=${field.name}]`);
             inputNode.blur();
-        });
-    }, {fields, ST_ROOT_SELECTOR});
-    return await new Promise(r => setTimeout(r, 300)); // Make sure to wait for success feedbacks.
+        }, {field, ST_ROOT_SELECTOR});
+
+    }
+
+    // Make sure to wait for success feedbacks.
+    return await new Promise(r => setTimeout(r, 300)); 
 }
 
 export async function clearBrowserCookies (page) {
