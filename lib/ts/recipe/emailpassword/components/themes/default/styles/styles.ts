@@ -146,6 +146,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             letterSpacing: "1.2px",
             "&:focus": {
                 border: `1px solid ${palette.colors.primary}`,
+                boxShadow: `0 0 0 0.2rem ${chroma(palette.colors.primary).alpha(0.25)}`,
                 outline: "none"
             },
             height: "34px"

@@ -60,6 +60,7 @@ function Input(
      * State.
      */
     const [showPassword, setShowPassword] = useState(false);
+    const [value, setValue] = useState("");
 
     /*
      * Method.
@@ -89,6 +90,12 @@ function Input(
         });
     }
 
+    function handleChange() {
+        if (ref.current !== null && ref.current.value !== null) {
+            setValue(ref.current.value);
+        }
+    }
+
     /*
      * Render.
      */
@@ -115,13 +122,14 @@ function Input(
                 name={name}
                 placeholder={placeholder}
                 ref={ref}
+                onChange={handleChange}
             />
             {validated === true && (
                 <div data-supertokens="inputAdornment" css={styles.inputAdornment}>
                     <CheckedIcon color={styles.palette.colors.primary} />
                 </div>
             )}
-            {type === "password" && (
+            {type === "password" && value.length > 0 && (
                 <div
                     onClick={() => setShowPassword(showPassword === false)}
                     data-supertokens="showPassword"
