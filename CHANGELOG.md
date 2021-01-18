@@ -6,10 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.2] - 2020-01-18
 
+### Changed
+- Add focus state box shadow
+- Show password icon only when password is not empty
+
 ### Fixes
 - Fix width when wrapped in flex container
 - Fix right input padding
-
 ## [0.4.1] - 2020-01-16
 
 ### Fixes
