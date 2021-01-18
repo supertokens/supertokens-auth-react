@@ -19,6 +19,7 @@ const emailVerificationMode = window.localStorage.getItem('mode') || "OFF";
 
 const colors = getQueryParams('theme') === 'dark' ? {
   background: '#333',
+  inputBackground: "#292929", 
   textTitle: "white",
   textLabel: "white",
   textPrimary: "white",

@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.3] - 2020-01-18
+
+### Changed
+- Input border radius from 8 to 6px
+- Input padding from 20 to 16px
+- Input background colour from 1 to 0.25 opacity on focus
+
 ## [0.4.2] - 2020-01-18
 
 ### Changed
