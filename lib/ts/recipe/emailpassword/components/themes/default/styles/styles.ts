@@ -142,6 +142,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             border: "1px solid #dddddd",
             fontSize: palette.fonts.size[0],
             paddingLeft: "20px",
+            paddingRight: "20px",
             letterSpacing: "1.2px",
             "&:focus": {
                 border: `1px solid ${palette.colors.primary}`,
