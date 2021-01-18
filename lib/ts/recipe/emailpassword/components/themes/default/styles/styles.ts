@@ -138,13 +138,14 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             boxSizing: "border-box",
             width: "100%",
             backgroundColor: palette.colors.inputBackground,
-            borderRadius: "8px",
-            border: "1px solid #dddddd",
+            borderRadius: "6px",
+            border: `1px solid ${chroma(palette.colors.inputBackground).darken(0.5)}`,
             fontSize: palette.fonts.size[0],
-            paddingLeft: "20px",
-            paddingRight: "20px",
+            paddingLeft: "15px",
+            paddingRight: "15px",
             letterSpacing: "1.2px",
             "&:focus": {
+                backgroundColor: `${chroma(palette.colors.inputBackground).alpha(0.25)}`,
                 border: `1px solid ${palette.colors.primary}`,
                 boxShadow: `0 0 0 0.2rem ${chroma(palette.colors.primary).alpha(0.25)}`,
                 outline: "none"
