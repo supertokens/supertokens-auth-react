@@ -27,6 +27,8 @@ import {
     clickLinkWithRightArrow,
     getVerificationEmailErrorTitle,
     getVerificationEmailTitle,
+    getTextByDataSupertokens,
+    getLatestURLWithToken,
     setInputValues,
     submitForm,
     sendVerifyEmail,
@@ -173,11 +175,19 @@ describe("SuperTokens Email Verification feature/theme", function() {
         });
 
         it('Should show "Email Verification successful" screen when token is valid', async function() {
-            /*
-             * TODO
-             * - Should show \"Email Verification successful\" screen when token is valid
-             * - Click on "Continue" redirects to onSuccessfulRedirect
-             */
+            const latestURLWithToken = await getLatestURLWithToken();
+            await Promise.all([page.goto(latestURLWithToken), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            const title = await getTextByDataSupertokens(page, "headerTitle");
+            assert.deepStrictEqual(title, "Email verification successful!");
+            await submitForm(page);
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS PRE_API_HOOKS VERIFY_EMAIL",
+                "ST_LOGS GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS GET_REDIRECTION_URL SIGN_IN_AND_UP"
+            ]);
         });
 
         it("Should allow to verify an email without a valid session", async function() {

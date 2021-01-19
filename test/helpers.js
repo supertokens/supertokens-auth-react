@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { ST_ROOT_SELECTOR } from "./constants";
+import { ST_ROOT_SELECTOR, TEST_SERVER_BASE_URL } from "./constants";
 import assert from "assert";
 
 /*
@@ -48,7 +48,7 @@ export async function getSubmitFormButtonLabel(page) {
 }
 
 export async function getSubmitFormButton(page) {
-    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("form > div > button")`);
+    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("button")`);
 }
 
 export async function getInputField(page, name) {
@@ -75,6 +75,15 @@ export async function getForgotPasswordLink(page) {
 
 export async function getResendResetPasswordEmailLink (page) {
     return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("div > div > [data-supertokens~='enterEmailSuccessMessage'] > span")`);
+}
+
+export async function getTextByDataSupertokens (page, value) {
+    return await page.evaluate(
+        (value) =>
+            document
+                .querySelector("#supertokens-root")
+                .shadowRoot.querySelector(`[data-supertokens~='${value}']`).innerText
+    , value);
 }
 
 export async function sendEmailResetPasswordSuccessMessage (page) {
@@ -296,4 +305,10 @@ async function assertValidator(actualValidate, expectedValidate, values) {
         const expectedError = await expectedValidate(values[j]);
         assert.deepStrictEqual(actualError, expectedError);
     }
+}
+
+export async function getLatestURLWithToken() {
+    const response = await fetch(`${TEST_SERVER_BASE_URL}/token`);
+    const {latestURLWithToken} = await response.json();
+    return latestURLWithToken;
 }
