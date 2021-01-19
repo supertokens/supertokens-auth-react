@@ -30,6 +30,8 @@ app.use(urlencodedParser);
 app.use(jsonParser);
 app.use(cookieParser());
 
+let latestURLWithToken = "";
+
 SuperTokens.init({
     appInfo: {
         appName: "SuperTokens",
@@ -58,7 +60,20 @@ SuperTokens.init({
                   id: "country",
                   optional: true
                 }]
+            },
+            resetPasswordUsingTokenFeature: {
+                createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
+                    console.log(passwordResetURLWithToken);
+                    latestURLWithToken = passwordResetURLWithToken;
+                }
+            },
+            emailVerificationFeature: {
+                createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
+                    console.log(emailVerificationURLWithToken);
+                    latestURLWithToken = emailVerificationURLWithToken;
+                }
             }
+            
         }),
         Session.init({})
     ]
@@ -109,6 +124,12 @@ app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
         userId: session.getUserId(),
         jwtPayload: session.getJWTPayload(),
         sessionData: await session.getSessionData(),
+    });
+});
+
+app.get("/token",  async (_, res) => {
+    res.send({
+        latestURLWithToken
     });
 });
 

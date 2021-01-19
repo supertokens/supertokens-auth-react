@@ -35,9 +35,11 @@ import {
     getGeneralError,
     getInputNames,
     getLabelsText,
+    getLatestURLWithToken,
     getPlaceholders,
     getSuccessInputAdornments,
     getSubmitFormButtonLabel,
+    getTextByDataSupertokens,
     getResendResetPasswordEmailLink,
     hasMethodBeenCalled,
     sendEmailResetPasswordSuccessMessage,
@@ -45,6 +47,7 @@ import {
     submitForm,
     submitFormReturnRequestAndResponse
 } from "../helpers";
+import { successfulSignUp } from "./signup.test";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -75,6 +78,7 @@ describe("SuperTokens Reset password feature/theme", function() {
 
         // Sign Up first.
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+        await successfulSignUp(page);
     });
 
     after(async function() {
@@ -246,7 +250,27 @@ describe("SuperTokens Reset password feature/theme", function() {
         });
 
         it("Should reset password successfully and redirect to success URL if token is defined", async function() {
-            // TODO? How to test this without a valid token?
+            // Send reset password email.
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
+            await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
+            await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API);
+            // Get valid token.
+            const latestURLWithToken = await getLatestURLWithToken();
+            await page.goto(latestURLWithToken),
+                // Submit new password
+                await setInputValues(page, [
+                    { name: "password", value: "NEW_Str0ngP@ssw0rd" },
+                    { name: "confirm-password", value: "NEW_Str0ngP@ssw0rd" }
+                ]);
+            await submitForm(page);
+
+            await page.screenshot({ path: "screenshot.jpeg" });
+            const title = await getTextByDataSupertokens(page, "headerTitle");
+            assert.deepStrictEqual(title, "Success!");
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth");
         });
     });
 });
