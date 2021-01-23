@@ -109,10 +109,19 @@ export async function getInputNames(page) {
     , {ST_ROOT_SELECTOR})
 }
 
-export async function getSuccessInputAdornments(page) {
+export async function getInputAdornmentsSuccess(page) {
     return await page.evaluate(({ST_ROOT_SELECTOR}) => 
         Array.from(
-            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll("[data-supertokens~='inputAdornment']"),
+            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll("[data-supertokens~='inputAdornmentSuccess']"),
+            i => i.name
+        )
+    , {ST_ROOT_SELECTOR})
+}
+
+export async function getInputAdornmentsError(page) {
+    return await page.evaluate(({ST_ROOT_SELECTOR}) => 
+        Array.from(
+            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll("[data-supertokens~='inputAdornmentError']"),
             i => i.name
         )
     , {ST_ROOT_SELECTOR})

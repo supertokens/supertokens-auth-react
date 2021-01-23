@@ -31,13 +31,14 @@ import {
 import { RESET_PASSWORD_INVALID_TOKEN_ERROR } from "../../lib/build/constants";
 import {
     clearBrowserCookies,
+    getInputAdornmentsError,
     getFieldErrors,
     getGeneralError,
     getInputNames,
     getLabelsText,
     getLatestURLWithToken,
     getPlaceholders,
-    getSuccessInputAdornments,
+    getInputAdornmentsSuccess,
     getSubmitFormButtonLabel,
     getTextByDataSupertokens,
     getResendResetPasswordEmailLink,
@@ -122,16 +123,22 @@ describe("SuperTokens Reset password feature/theme", function() {
             await setInputValues(page, [{ name: "email", value: "john.doe.io" }]);
 
             const formFieldsErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldsErrors, ["!\nEmail is invalid"]);
+            assert.deepStrictEqual(formFieldsErrors, ["Email is invalid"]);
 
-            let adornments = await getSuccessInputAdornments(page);
-            assert.strictEqual(adornments.length, 0);
+            let successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 0);
+
+            let errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 1);
 
             // Set values.
             await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
 
-            adornments = await getSuccessInputAdornments(page);
-            assert.strictEqual(adornments.length, 1);
+            successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 1);
+
+            errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 0);
 
             // Submit.
             const [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
@@ -189,8 +196,11 @@ describe("SuperTokens Reset password feature/theme", function() {
             const placeholders = await getPlaceholders(page);
             assert.deepStrictEqual(placeholders, ["New password", "Confirm your password"]); // Email placeholder as defined in signUpForm.formFields.
 
-            let adornments = await getSuccessInputAdornments(page);
-            assert.strictEqual(adornments.length, 0);
+            let successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 0);
+
+            let errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 0);
 
             // Set incorrect values.
             await setInputValues(page, [
@@ -198,15 +208,18 @@ describe("SuperTokens Reset password feature/theme", function() {
                 { name: "confirm-password", value: "password" }
             ]);
 
-            adornments = await getSuccessInputAdornments(page);
-            assert.strictEqual(adornments.length, 0);
+            successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 0);
 
             // Front end validation
             let formFieldsErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldsErrors, [
-                "!\nPassword must contain at least one number",
-                "!\nPassword must contain at least one number"
+                "Password must contain at least one number",
+                "Password must contain at least one number"
             ]);
+
+            errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 2);
 
             // Set password mismatch
             await setInputValues(page, [
@@ -214,23 +227,24 @@ describe("SuperTokens Reset password feature/theme", function() {
                 { name: "confirm-password", value: "Str0ngP@ssw0rdButMismatch" }
             ]);
 
-            adornments = await getSuccessInputAdornments(page);
-            assert.strictEqual(adornments.length, 2);
+            successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 2);
 
             // Submit.
             await submitForm(page);
 
             formFieldsErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldsErrors, ["!\nConfirmation password doesn't match"]);
-
+            assert.deepStrictEqual(formFieldsErrors, ["Confirmation password doesn't match"]);
+            errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 1);
             // Set correct values.
             await setInputValues(page, [
                 { name: "password", value: "Str0ngP@ssw0rd" },
                 { name: "confirm-password", value: "Str0ngP@ssw0rd" }
             ]);
 
-            adornments = await getSuccessInputAdornments(page);
-            assert.strictEqual(adornments.length, 2);
+            successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 2);
 
             // Submit.
             const { request, response } = await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
