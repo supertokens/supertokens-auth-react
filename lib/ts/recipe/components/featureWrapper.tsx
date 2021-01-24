@@ -60,10 +60,26 @@ function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps)
         return (
             <div id={ST_ROOT_ID}>
                 <CacheProvider value={superTokensEmotionCache}>{children}</CacheProvider>
+                <DisableAutoFillInput />
             </div>
         );
     }
 
     // Otherwise, use shadow dom.
-    return <root.div id={ST_ROOT_ID}>{children}</root.div>;
+    return (
+        <root.div id={ST_ROOT_ID}>
+            {children}
+            <DisableAutoFillInput />
+        </root.div>
+    );
+}
+
+function DisableAutoFillInput(): JSX.Element {
+    return (
+        <style type="text/css">
+            {
+                "input.supertokens-input:-webkit-autofill,input.supertokens-input:-webkit-autofill:focus,input.supertokens-input:-webkit-autofill:hover,select:-webkit-autofill,select:-webkit-autofill:focus,select:-webkit-autofill:hover,textarea:-webkit-autofill,textarea:-webkit-autofill:focus,textarea:-webkit-autofill:hover{transition:background-color 5000s ease-in-out 0s}"
+            }
+        </style>
+    );
 }

@@ -36,37 +36,37 @@ export default function ShowPasswordIcon({
     if (showPassword === true) {
         return (
             <div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20.869" height="18.159" viewBox="0 0 20.869 18.159">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18.391" height="16.276" viewBox="0 0 18.391 16.276">
                     <g>
                         <g>
                             <g>
                                 <g>
                                     <path
                                         fill={color}
-                                        d="M31.75 101.089C29.028 96.97 25.374 94.7 21.459 94.7s-7.569 2.27-10.291 6.389a.871.871 0 0 0 0 .958c2.722 4.119 6.376 6.389 10.291 6.389s7.569-2.27 10.291-6.389a.87.87 0 0 0 0-.958zM21.459 106.7c-3.16 0-6.168-1.814-8.514-5.128 2.343-3.314 5.35-5.128 8.514-5.128s6.168 1.814 8.514 5.128c-2.346 3.312-5.349 5.128-8.514 5.128z"
-                                        transform="translate(-822 -420.048) translate(-54 149.088) translate(876 273) translate(-11.025 -94.7)"
+                                        d="M29.289 100.33c-2.4-3.63-5.619-5.63-9.069-5.63s-6.67 2-9.069 5.63a.767.767 0 0 0 0 .845c2.4 3.63 5.619 5.63 9.069 5.63s6.67-2 9.069-5.63a.767.767 0 0 0 0-.845zm-9.069 4.944c-2.785 0-5.435-1.6-7.5-4.519 2.065-2.92 4.715-4.519 7.5-4.519s5.435 1.6 7.5 4.519c-2.064 2.92-4.711 4.519-7.5 4.519z"
+                                        transform="translate(-822 -420.048) translate(822 422.035) translate(-11.025 -94.7)"
                                     />
                                 </g>
                             </g>
                         </g>
-                        <g fill={color} stroke="#fff" transform="translate(-822 -420.048) translate(827.859 424.38)">
-                            <circle cx="4.58" cy="4.58" r="4.58" stroke="none" />
-                            <circle cx="4.58" cy="4.58" r="4.08" fill="none" />
+                        <g fill={color} stroke="#fff" transform="translate(-822 -420.048) translate(827.164 424.055)">
+                            <circle cx="4.036" cy="4.036" r="4.036" stroke="none" />
+                            <circle cx="4.036" cy="4.036" r="3.536" fill="none" />
                         </g>
                         <path
                             fill="none"
                             stroke="#707070"
-                            strokeLinecap="round"
-                            strokeWidth="2.25px"
-                            d="M13.595 0L0 13.595"
-                            transform="translate(-822 -420.048) translate(825.5 421.639)"
+                            stroke-linecap="round"
+                            stroke-width="2.25px"
+                            d="M11.981 0L0 11.981"
+                            transform="translate(-822 -420.048) translate(825.084 421.639)"
                         />
                         <path
                             fill="none"
                             stroke="#fff"
-                            strokeLinecap="round"
-                            d="M15.861 0L0 15.861"
-                            transform="translate(-822 -420.048) translate(825.5 421.639)"
+                            stroke-linecap="round"
+                            d="M13.978 0L0 13.978"
+                            transform="translate(-822 -420.048) translate(825.084 421.639)"
                         />
                     </g>
                 </svg>
@@ -75,23 +75,23 @@ export default function ShowPasswordIcon({
     }
 
     return (
-        <div style={{ position: "relative", top: "2px" }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20.869" height="13.736" viewBox="0 0 20.869 13.736">
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18.281" height="12.033" viewBox="0 0 18.281 12.033">
                 <g>
                     <g>
                         <g>
                             <g>
                                 <path
                                     fill={color}
-                                    d="M31.75 101.089C29.028 96.97 25.374 94.7 21.459 94.7s-7.569 2.27-10.291 6.389a.871.871 0 0 0 0 .958c2.722 4.119 6.376 6.389 10.291 6.389s7.569-2.27 10.291-6.389a.87.87 0 0 0 0-.958zM21.459 106.7c-3.16 0-6.168-1.814-8.514-5.128 2.343-3.314 5.35-5.128 8.514-5.128s6.168 1.814 8.514 5.128c-2.346 3.312-5.349 5.128-8.514 5.128z"
-                                    transform="translate(-822 -422.088) translate(-54 149.088) translate(876 273) translate(-11.025 -94.7)"
+                                    d="M29.18 100.3c-2.384-3.608-5.586-5.6-9.015-5.6s-6.63 1.989-9.015 5.6a.763.763 0 0 0 0 .84c2.384 3.608 5.586 5.6 9.015 5.6s6.63-1.989 9.015-5.6a.763.763 0 0 0 0-.84zm-9.015 4.914c-2.769 0-5.4-1.589-7.459-4.492 2.052-2.9 4.686-4.492 7.459-4.492s5.4 1.589 7.459 4.492c-2.056 2.899-4.686 4.489-7.458 4.489z"
+                                    transform="translate(-822 -422.088) translate(822 422.088) translate(-11.025 -94.7)"
                                 />
                             </g>
                         </g>
                     </g>
-                    <g fill={color} stroke="#fff" transform="translate(-822 -422.088) translate(827.859 424.38)">
-                        <circle cx="4.58" cy="4.58" r="4.58" stroke="none" />
-                        <circle cx="4.58" cy="4.58" r="4.08" fill="none" />
+                    <g fill={color} stroke="#fff" transform="translate(-822 -422.088) translate(827.133 424.096)">
+                        <circle cx="4.012" cy="4.012" r="4.012" stroke="none" />
+                        <circle cx="4.012" cy="4.012" r="3.512" fill="none" />
                     </g>
                 </g>
             </svg>

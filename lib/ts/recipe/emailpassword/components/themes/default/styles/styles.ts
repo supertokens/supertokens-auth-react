@@ -30,6 +30,7 @@ export const defaultPalette: NormalisedPalette = {
         error: "#ff1717",
         textTitle: "#222222",
         textLabel: "#222222",
+        textInput: "#222222",
         textPrimary: "#656565",
         textLink: "#0076ff"
     },
@@ -125,32 +126,60 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         inputWrapper: {
-            paddingTop: "10px",
-            float: "left",
-            width: "100%"
-        },
-
-        inputError: {
-            border: `1px solid ${palette.colors.error}`
-        },
-
-        input: {
             boxSizing: "border-box",
             width: "100%",
+            display: "flex",
             backgroundColor: palette.colors.inputBackground,
+            height: "34px",
             borderRadius: "6px",
             border: `1px solid ${chroma(palette.colors.inputBackground).darken(0.5)}`,
-            fontSize: palette.fonts.size[0],
-            paddingLeft: "15px",
-            paddingRight: "15px",
-            letterSpacing: "1.2px",
-            "&:focus": {
+            "&:focus-within": {
                 backgroundColor: `${chroma(palette.colors.inputBackground).alpha(0.25)}`,
                 border: `1px solid ${palette.colors.primary}`,
                 boxShadow: `0 0 0 0.2rem ${chroma(palette.colors.primary).alpha(0.25)}`,
                 outline: "none"
-            },
-            height: "34px"
+            }
+        },
+
+        inputError: {
+            border: `1px solid ${palette.colors.error}`,
+            boxShadow: `0 0 0 0.2rem ${chroma(palette.colors.error).alpha(0.25)}`,
+            outline: "none",
+            "&:focus-within": {
+                border: `1px solid ${palette.colors.error}`,
+                boxShadow: `0 0 0 0.2rem ${chroma(palette.colors.error).alpha(0.25)}`,
+                outline: "none"
+            }
+        },
+
+        input: {
+            boxSizing: "border-box",
+            paddingLeft: "15px",
+            filter: "none",
+            color: palette.colors.textInput,
+            backgroundColor: palette.colors.inputBackground,
+            borderRadius: "6px",
+            fontSize: palette.fonts.size[0],
+            border: "none",
+            paddingRight: "25px",
+            letterSpacing: "1.2px",
+            flex: "9 1 75%",
+            width: "75%",
+            height: "32px",
+            "&:focus": {
+                border: "none",
+                outline: "none"
+            }
+        },
+
+        inputAdornment: {
+            position: "relative",
+            top: "7px",
+            marginRight: "5px"
+        },
+
+        showPassword: {
+            cursor: "pointer"
         },
 
         headerTitle: {
@@ -205,27 +234,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             top: "1px",
             position: "relative",
             left: "2px"
-        },
-
-        inputAdornment: {
-            float: "right",
-            left: "8%",
-            top: "-24px",
-            position: "relative",
-            display: "flex",
-            "@media (max-width: 440px)": {
-                left: "10%"
-            },
-            height: "0px"
-        },
-
-        showPassword: {
-            float: "right",
-            top: "-65px",
-            position: "relative",
-            display: "flex",
-            height: "0px",
-            cursor: "pointer"
         },
 
         button: {

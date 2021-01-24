@@ -24,10 +24,11 @@ import { spawn } from "child_process";
 import puppeteer from "puppeteer";
 import {
     clearBrowserCookies,
+    getInputAdornmentsError,
     getLabelsText,
     getInputNames,
     getPlaceholders,
-    getSuccessInputAdornments,
+    getInputAdornmentsSuccess,
     getFieldErrors,
     hasMethodBeenCalled,
     setInputValues,
@@ -109,7 +110,7 @@ describe("SuperTokens SignUp feature/theme", function() {
                 "Where do you live?"
             ]);
 
-            const adornments = await getSuccessInputAdornments(page);
+            const adornments = await getInputAdornmentsSuccess(page);
             assert.strictEqual(adornments.length, 0);
             assert.deepStrictEqual(consoleLogs, []);
         });
@@ -119,10 +120,10 @@ describe("SuperTokens SignUp feature/theme", function() {
             // Assert.
             let formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, [
-                "!\nField is not optional",
-                "!\nField is not optional",
-                "!\nField is not optional",
-                "!\nField is not optional"
+                "Field is not optional",
+                "Field is not optional",
+                "Field is not optional",
+                "Field is not optional"
             ]);
 
             // Set values with errors.
@@ -136,9 +137,9 @@ describe("SuperTokens SignUp feature/theme", function() {
             // Assert.
             formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, [
-                "!\nEmail is invalid",
-                "!\nPassword must contain at least 8 characters, including a number",
-                "!\nYou must be over 18 to register"
+                "Email is invalid",
+                "Password must contain at least 8 characters, including a number",
+                "You must be over 18 to register"
             ]);
 
             await setInputValues(page, [
@@ -150,7 +151,7 @@ describe("SuperTokens SignUp feature/theme", function() {
 
             // // Assert.
             formFieldErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldErrors, ["!\nEmail is invalid", "!\nYou must be over 18 to register"]);
+            assert.deepStrictEqual(formFieldErrors, ["Email is invalid", "You must be over 18 to register"]);
             assert.deepStrictEqual(consoleLogs, []);
         });
 
@@ -186,7 +187,7 @@ describe("SuperTokens SignUp feature/theme", function() {
             // Assert.
             assert.strictEqual(hasEmailExistMethodBeenCalled, false);
             let formFieldErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldErrors, ["!\nThis email already exists. Please sign in instead"]);
+            assert.deepStrictEqual(formFieldErrors, ["This email already exists. Please sign in instead"]);
 
             await setInputValues(page, [{ name: "email", value: "jane.doe@supertokens.io" }]);
             formFieldErrors = await getFieldErrors(page);
@@ -214,8 +215,11 @@ export async function successfulSignUp(page) {
         { name: "age", value: "20" }
     ]);
 
-    const adornments = await getSuccessInputAdornments(page);
-    assert.strictEqual(adornments.length, 4);
+    const successAdornments = await getInputAdornmentsSuccess(page);
+    assert.strictEqual(successAdornments.length, 4);
+
+    const errorAdornments = await getInputAdornmentsError(page);
+    assert.strictEqual(errorAdornments.length, 0);
 
     let [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
         submitFormReturnRequestAndResponse(page, SIGN_UP_API),

@@ -26,6 +26,7 @@ import StyleContext from "../styles/styleContext";
 import { forwardRef, RefObject } from "react";
 import { APIFormField } from "../../../../types";
 import { InputRef } from "../../types";
+import ErrorIcon from "../../assets/errorIcon";
 import CheckedIcon from "../../assets/checkedIcon";
 import ShowPasswordIcon from "../../assets/showPasswordIcon";
 import { useState } from "react";
@@ -67,15 +68,17 @@ function Input(
      */
 
     function handleFocus() {
-        if (onInputFocus === undefined || ref.current === null) {
+        if (ref.current === null) {
             return;
         }
 
         ref.current.isFocused = true;
-        onInputFocus({
-            id: ref.current.name,
-            value: ref.current.value
-        });
+        if (onInputFocus !== undefined) {
+            onInputFocus({
+                id: ref.current.name,
+                value: ref.current.value
+            });
+        }
     }
 
     function handleBlur() {
@@ -111,32 +114,44 @@ function Input(
     }
 
     return (
-        <div data-supertokens="inputWrapper" css={[styles.inputWrapper]}>
-            <input
-                autoComplete={autoComplete}
-                data-supertokens="input inputError"
-                css={[styles.input, errorStyle]}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                type={inputType}
-                name={name}
-                placeholder={placeholder}
-                ref={ref}
-                onChange={handleChange}
-            />
-            {validated === true && (
-                <div data-supertokens="inputAdornment" css={styles.inputAdornment}>
-                    <CheckedIcon color={styles.palette.colors.primary} />
-                </div>
-            )}
-            {type === "password" && value.length > 0 && (
-                <div
-                    onClick={() => setShowPassword(showPassword === false)}
-                    data-supertokens="showPassword"
-                    css={styles.showPassword}>
-                    <ShowPasswordIcon color={styles.palette.colors.textPrimary} showPassword={showPassword} />
-                </div>
-            )}
+        <div data-supertokens="inputContainer" css={styles.inputContainer}>
+            <div data-supertokens="inputWrapper inputError" css={[styles.inputWrapper, errorStyle]}>
+                <input
+                    autoComplete={autoComplete}
+                    data-supertokens="input"
+                    css={styles.input}
+                    className="supertokens-input"
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    type={inputType}
+                    name={name}
+                    placeholder={placeholder}
+                    ref={ref}
+                    onChange={handleChange}
+                />
+                {hasError === true && (
+                    <div
+                        data-supertokens="inputAdornment inputAdornmentError"
+                        css={[styles.inputAdornment, styles.inputAdornmentError]}>
+                        <ErrorIcon color={styles.palette.colors.error} />
+                    </div>
+                )}
+                {validated === true && hasError === false && (
+                    <div
+                        data-supertokens="inputAdornment inputAdornmentSuccess"
+                        css={[styles.inputAdornment, styles.inputAdornmentSuccess]}>
+                        <CheckedIcon color={styles.palette.colors.primary} />
+                    </div>
+                )}
+                {type === "password" && value.length > 0 && (
+                    <div
+                        onClick={() => setShowPassword(showPassword === false)}
+                        data-supertokens="inputAdornment showPassword"
+                        css={[styles.showPassword, styles.inputAdornment]}>
+                        <ShowPasswordIcon color={styles.palette.colors.textPrimary} showPassword={showPassword} />
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

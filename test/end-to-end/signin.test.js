@@ -33,13 +33,14 @@ import {
     getPlaceholders,
     getShowPasswordIcon,
     getSubmitFormButtonLabel,
-    getSuccessInputAdornments,
+    getInputAdornmentsSuccess,
     hasMethodBeenCalled,
     setInputValues,
     submitForm,
     submitFormReturnRequestAndResponse,
     toggleShowPasswordIcon,
-    toggleSignInSignUp
+    toggleSignInSignUp,
+    getInputAdornmentsError
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { successfulSignUp } from "./signup.test";
@@ -110,7 +111,7 @@ describe("SuperTokens SignIn feature/theme", function() {
             const placeholders = await getPlaceholders(page);
             assert.deepStrictEqual(placeholders, ["Your work email", "Password"]);
 
-            const adornments = await getSuccessInputAdornments(page);
+            const adornments = await getInputAdornmentsSuccess(page);
             assert.strictEqual(adornments.length, 0);
             assert.deepStrictEqual(consoleLogs, []);
         });
@@ -142,13 +143,16 @@ describe("SuperTokens SignIn feature/theme", function() {
                 { name: "password", value: "********" }
             ]);
 
-            let adornments = await getSuccessInputAdornments(page);
-            assert.strictEqual(adornments.length, 0);
+            let adornmentsSuccess = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(adornmentsSuccess.length, 0);
+
+            let adornmentsError = await getInputAdornmentsError(page);
+            assert.strictEqual(adornmentsError.length, 0);
 
             await submitForm(page);
             // // Assert.
             let formFieldsErrors = await getFieldErrors(page);
-            assert.deepStrictEqual(formFieldsErrors, ["!\nEmail is invalid"]);
+            assert.deepStrictEqual(formFieldsErrors, ["Email is invalid"]);
 
             // Set values.
             await setInputValues(page, [
@@ -156,8 +160,11 @@ describe("SuperTokens SignIn feature/theme", function() {
                 { name: "password", value: "********" }
             ]);
 
-            adornments = await getSuccessInputAdornments(page);
-            assert.strictEqual(adornments.length, 0);
+            adornmentsSuccess = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(adornmentsSuccess.length, 0);
+
+            adornmentsError = await getInputAdornmentsError(page);
+            assert.strictEqual(adornmentsError.length, 0);
 
             // Submit.
             const { request, response } = await submitFormReturnRequestAndResponse(page, SIGN_IN_API);
@@ -207,7 +214,7 @@ describe("SuperTokens SignIn feature/theme", function() {
             types = await getInputTypes(page);
             assert.deepStrictEqual(types, ["email", "text"]);
 
-            const adornments = await getSuccessInputAdornments(page);
+            const adornments = await getInputAdornmentsSuccess(page);
             assert.strictEqual(adornments.length, 0);
 
             // Submit.
