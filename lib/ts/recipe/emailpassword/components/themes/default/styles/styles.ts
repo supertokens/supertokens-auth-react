@@ -125,6 +125,10 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`
         },
 
+        inputContainer: {
+            marginTop: "6px"
+        },
+
         inputWrapper: {
             boxSizing: "border-box",
             width: "100%",
@@ -157,7 +161,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             paddingLeft: "15px",
             filter: "none",
             color: palette.colors.textInput,
-            backgroundColor: palette.colors.inputBackground,
+            backgroundColor: "transparent",
             borderRadius: "6px",
             fontSize: palette.fonts.size[0],
             border: "none",
@@ -167,13 +171,13 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             width: "75%",
             height: "32px",
             "&:focus": {
-                backgroundColor: `${chroma(palette.colors.inputBackground).alpha(0.25)}`,
                 border: "none",
                 outline: "none"
             }
         },
 
         inputAdornment: {
+            justifyContent: "center",
             position: "relative",
             top: "7px",
             marginRight: "5px"

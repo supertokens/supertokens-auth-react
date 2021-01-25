@@ -6,7 +6,9 @@ import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import { EmailPasswordGetRedirectionURLContext, EmailPasswordOnHandleEventContext, EmailPasswordPreAPIHookContext } from '../../../lib/ts/recipe/emailpassword/types';
-
+import HeliumTheme from "./Themes/Helium";
+import HydrogenTheme from "./Themes/Hydrogen";
+import DarkTheme from "./Themes/Dark";
 export function getApiDomain() {
   const apiPort = process.env.REACT_APP_API_PORT || 8082;
   const apiUrl = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
@@ -14,12 +16,10 @@ export function getApiDomain() {
 }
 
 export function getWebsiteDomain() {
-  const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
+  const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3002;
   const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
   return websiteUrl;
 }
-
-let colors = {};
 
 const mode = getQueryParams('mode');
 
@@ -27,19 +27,7 @@ if (mode !== null) {
   window.localStorage.setItem('mode', mode);
 }
 
-const theme = getQueryParams('theme');
-if (theme !== null) {
-  colors = theme === 'dark' ? {
-    background: '#333',
-    inputBackground: "#292929", 
-    textTitle: "white",
-    textLabel: "white",
-    textPrimary: "white",
-    error: '#ad2e2e',
-    textInput: '#a9a9a9',
-    textLink: '#a9a9a9'
-  } : {};
-}
+const theme = getTheme();
 
 
 SuperTokens.init({
@@ -50,14 +38,30 @@ SuperTokens.init({
   },
   recipeList: [
     EmailPassword.init({
-      palette: {
-        ...colors
-      },
+      palette: theme.colors,
       emailVerificationFeature: {
+        sendVerifyEmailScreen: {
+          style: theme.style
+        },
+        verifyEmailLinkClickedScreen: {
+          style: theme.style
+        },
         mode: "REQUIRED"
+      },
+      resetPasswordUsingTokenFeature: {
+        enterEmailForm: {
+          style: theme.style
+        },
+        submitNewPasswordForm: {
+          style: theme.style
+        }
       }, 
       signInAndUpFeature: {
+        signInForm: {
+          style: theme.style
+        },
         signUpForm: {
+          style: theme.style,
           privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
           termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
           // formFields: [{
@@ -139,4 +143,36 @@ export default App;
 function getQueryParams(param: string): string | null {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(param);
+}
+
+export type Theme = {
+  colors: any,
+  style: any,
+}
+function getTheme(): {
+  colors: any,
+  style?: any,
+} {
+
+  let theme = {
+    colors: {},
+    style: {}
+  };
+
+  const themeParams = getQueryParams('theme');
+
+  if (themeParams === "dark") {
+    return DarkTheme;
+  }
+
+  if (themeParams === "helium") {
+    return HeliumTheme;
+  }
+
+  if (themeParams === "hydrogen") {
+    return HydrogenTheme;
+  }
+
+  return theme;
+
 }
