@@ -148,7 +148,11 @@ function Input(
                         onClick={() => setShowPassword(showPassword === false)}
                         data-supertokens="inputAdornment showPassword"
                         css={[styles.showPassword, styles.inputAdornment]}>
-                        <ShowPasswordIcon color={styles.palette.colors.textPrimary} showPassword={showPassword} />
+                        <ShowPasswordIcon
+                            primaryColor={styles.palette.colors.textPrimary}
+                            secondaryColor={styles.palette.colors.inputBackground}
+                            showPassword={showPassword}
+                        />
                     </div>
                 )}
             </div>

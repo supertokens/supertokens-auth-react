@@ -54,9 +54,9 @@
     "react-router-dom": ">=5.0.0"
   },
   "scripts": {
-    "init": "npm i -d && (cd ./test/server && npm i ) && (cd ./examples/with-create-react-app && npm i -d)",
+    "init": "npm i -d && (cd ./test/server && npm i ) && (cd ./examples/for-tests && npm i -d)",
     "start": "npm-run-all --parallel front server watch",
-    "front": "(cd ./examples/with-create-react-app/ && npm run start)",
+    "front": "(cd ./examples/for-tests/ && npm run start)",
     "server": "cd test/server/ && START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
     "test": "./test/startTestApp.sh",
     "link-dependencies": "./test/linkDependencies.sh $SRC",

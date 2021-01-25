@@ -8,6 +8,7 @@ export default function Footer(): JSX.Element {
                 backgroundColor: "#000000",
                 alignItems: "center",
                 justifyContent: "center",
+                textAlign: "center",
                 alignSelf: "flex-end",
                 color: "#ffffff",
                 fontWeight: "bold"
