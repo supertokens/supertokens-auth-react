@@ -276,9 +276,8 @@ describe("SuperTokens Reset password feature/theme", function() {
                     { name: "password", value: "NEW_Str0ngP@ssw0rd" },
                     { name: "confirm-password", value: "NEW_Str0ngP@ssw0rd" }
                 ]);
-            await submitForm(page);
+            await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
 
-            await page.screenshot({ path: "screenshot.jpeg" });
             const title = await getTextByDataSupertokens(page, "headerTitle");
             assert.deepStrictEqual(title, "Success!");
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
