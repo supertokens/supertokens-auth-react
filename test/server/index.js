@@ -30,13 +30,32 @@ app.use(urlencodedParser);
 app.use(jsonParser);
 app.use(cookieParser());
 
+
+const WEB_PORT = process.env.WEB_PORT || 3031;
+const websiteDomain = `http://localhost:${WEB_PORT}`
 let latestURLWithToken = "";
 
+const formFields = process.env.MIN_FIELDS && [] || [{
+    id: "name"
+  }, {
+    id: "age",
+    validate: async (value) => {
+      if (parseInt(value) < 18) {
+          return "You must be over 18 to register";
+      }
+
+      // If no error, return undefined.
+      return undefined;
+    }
+  },  {
+    id: "country",
+    optional: true
+  }]
 SuperTokens.init({
     appInfo: {
         appName: "SuperTokens",
         apiDomain: "localhost:" + (process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT),
-        websiteDomain: "http://localhost:3031"
+        websiteDomain
     },
     supertokens: {
         connectionURI: "http://localhost:9000"
@@ -44,22 +63,7 @@ SuperTokens.init({
     recipeList: [
         EmailPassword.init({
             signUpFeature: {
-                formFields: [{
-                  id: "name"
-                }, {
-                  id: "age",
-                  validate: async (value) => {
-                    if (parseInt(value) < 18) {
-                        return "You must be over 18 to register";
-                    }
-  
-                    // If no error, return undefined.
-                    return undefined;
-                  }
-                },  {
-                  id: "country",
-                  optional: true
-                }]
+                formFields
             },
             resetPasswordUsingTokenFeature: {
                 createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
@@ -81,7 +85,7 @@ SuperTokens.init({
 
 app.use(
     cors({
-        origin: "http://localhost:3031",
+        origin: websiteDomain,
         allowedHeaders: ["content-type", ...SuperTokens.getAllCORSHeaders()],
         methods: ["GET", "PUT", "POST", "DELETE"],
         credentials: true

@@ -3,7 +3,6 @@
 .git/
 test/
 eslint/
-react-test-app/
 hooks/
 .circleci/
 lib/tsconfig.json
@@ -19,3 +18,4 @@ frontendDriverInterfaceSupported.json
 .github/
 .babelrc
 .gitattributes
+examples/

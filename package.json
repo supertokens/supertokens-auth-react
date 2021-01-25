@@ -27,6 +27,7 @@
     "jsdom": "16.4.0",
     "jsdom-global": "3.0.2",
     "mocha": "6.1.4",
+    "npm-run-all": "^4.1.5",
     "prettier": "1.18.2",
     "puppeteer": "5.3.1",
     "react": "16.14.0",
@@ -53,10 +54,11 @@
     "react-router-dom": ">=5.0.0"
   },
   "scripts": {
-    "init": "npm i -d && (cd ./test/server && npm i ) && (cd ./test/react-test-app && npm i -d)",
-    "start": "./test/startTestApp.sh",
+    "init": "npm i -d && (cd ./test/server && npm i ) && (cd ./examples/with-create-react-app && npm i -d)",
+    "start": "npm-run-all --parallel front server watch",
+    "front": "(cd ./examples/with-create-react-app/ && npm run start)",
     "server": "cd test/server/ && START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
-    "test": "./test/startTestApp.sh --test",
+    "test": "./test/startTestApp.sh",
     "link-dependencies": "./test/linkDependencies.sh $SRC",
     "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
     "tsc": "cd lib && npx tsc -p tsconfig.json",

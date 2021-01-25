@@ -13,3 +13,4 @@
  * under the License. 
 */
 export * from '../../lib/ts/recipe/emailpassword';
+export {default} from '../../lib/ts/recipe/emailpassword';

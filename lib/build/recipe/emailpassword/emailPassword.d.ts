@@ -10,7 +10,7 @@ export default class EmailPassword extends RecipeModule {
     getConfig: () => NormalisedEmailPasswordConfig;
     getFeatures: () => Record<string, import("../../types").ReactComponentClass>;
     getDefaultRedirectionURL: (context: {
-        action: unknown;
+        action: "VERIFY_EMAIL" | "SUCCESS" | "SIGN_IN_AND_UP" | "RESET_PASSWORD";
     }) => Promise<string>;
     getSessionRecipe: () => Session | undefined;
     doesSessionExist: () => boolean;

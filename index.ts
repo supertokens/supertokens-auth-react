@@ -14,3 +14,4 @@
 */
 
 export * from './lib/ts/';
+export {default} from './lib/ts/';

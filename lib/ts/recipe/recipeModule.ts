@@ -63,7 +63,7 @@ export default abstract class RecipeModule {
         return this.httpRequest;
     };
 
-    preAPIHook = async <T>(context: { action: T; requestInit: RequestInit }): Promise<RequestInit> => {
+    preAPIHook = async (context: { action: string; requestInit: RequestInit }): Promise<RequestInit> => {
         const preAPIHook = this.hooks.preAPIHook;
         if (preAPIHook !== undefined) {
             return await preAPIHook(context);
@@ -72,8 +72,8 @@ export default abstract class RecipeModule {
         return context.requestInit;
     };
 
-    redirect = async <T>(
-        context: { action: T },
+    redirect = async (
+        context: { action: string },
         history?: History<LocationState>,
         title?: string,
         shouldReload = false
@@ -94,7 +94,7 @@ export default abstract class RecipeModule {
         }
     };
 
-    getRedirectionURL = async (context: { action: unknown }): Promise<string> => {
+    getRedirectionURL = async (context: { action: string }): Promise<string> => {
         let redirectUrl;
         // If getRedirectionURL provided by user.
         const getRedirectionURL = this.hooks.getRedirectionURL;
@@ -108,7 +108,7 @@ export default abstract class RecipeModule {
         return await this.getDefaultRedirectionURL(context);
     };
 
-    onHandleEvent<T>(context: T): void {
+    onHandleEvent(context: { action: string; user?: { id: string; email: string } }): void {
         const onHandleEvent = this.hooks.onHandleEvent;
         if (onHandleEvent !== undefined) {
             onHandleEvent(context);
@@ -118,7 +118,7 @@ export default abstract class RecipeModule {
     abstract getFeatures(): RouteToFeatureComponentMap;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getDefaultRedirectionURL<T>(context: { action: T }): Promise<string> {
+    protected async getDefaultRedirectionURL(context: { action: unknown }): Promise<string> {
         throw new Error("Recipe must overwrite getDefaultRedirectionURL");
     }
 }

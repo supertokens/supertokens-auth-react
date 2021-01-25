@@ -22,26 +22,29 @@ export declare type NormalisedAppInfo = {
     apiBasePath: NormalisedURLPath;
     websiteBasePath: NormalisedURLPath;
 };
-export declare type RecipeModuleConfig = {
+export declare type RecipeModuleConfig = RecipeModuleHooks & {
     recipeId: string;
     /**
      *
      * AppInfo as present in the recipe module manager
      */
     appInfo: NormalisedAppInfo;
-    preAPIHook?: <T>(context: T) => Promise<RequestInit>;
-    getRedirectionURL?: <T>(context: T) => Promise<string | undefined>;
-    onHandleEvent?: <T>(context: T) => void;
 };
 export declare type RecipeModuleHooks = {
-    preAPIHook?: <T>(context: {
-        action: T;
+    preAPIHook?: (context: {
+        action: string;
         requestInit: RequestInit;
     }) => Promise<RequestInit>;
-    getRedirectionURL?: <T>(context: {
-        action: T;
+    getRedirectionURL?: (context: {
+        action: string;
     }) => Promise<string | undefined>;
-    onHandleEvent?: <T>(context: T) => void;
+    onHandleEvent?: (context: {
+        action: string;
+        user?: {
+            id: string;
+            email: string;
+        };
+    }) => void;
 };
 export declare type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
 export declare type RouteWithPathAndRecipeId = {

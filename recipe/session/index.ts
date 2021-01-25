@@ -13,3 +13,4 @@
  * under the License. 
 */
 export * from '../../lib/ts/recipe/session';
+export {default} from '../../lib/ts/recipe/session';

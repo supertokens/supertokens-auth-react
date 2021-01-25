@@ -33,12 +33,12 @@ export default class HttpRequest {
     /*
      * Instance Methods.
      */
-    get = async <S, T>(
+    get = async <T>(
         path: string,
         config: RequestInit,
-        action: T,
+        action: string,
         queryParams?: Record<string, string>
-    ): Promise<S> => {
+    ): Promise<T> => {
         return await this.fetchResponseJsonOrThrowAbove300(
             this.getFullUrl(path, queryParams),
             {
@@ -49,7 +49,7 @@ export default class HttpRequest {
         );
     };
 
-    post = async <S, T>(path: string, config: RequestInit, action: S): Promise<T> => {
+    post = async <T>(path: string, config: RequestInit, action: string): Promise<T> => {
         return await this.fetchResponseJsonOrThrowAbove300(
             this.getFullUrl(path),
             {
@@ -60,7 +60,7 @@ export default class HttpRequest {
         );
     };
 
-    delete = async <S, T>(path: string, action: S, config: RequestInit): Promise<T> => {
+    delete = async <T>(path: string, action: string, config: RequestInit): Promise<T> => {
         return await this.fetchResponseJsonOrThrowAbove300(
             this.getFullUrl(path),
             {
@@ -71,7 +71,7 @@ export default class HttpRequest {
         );
     };
 
-    put = async <S, T>(path: string, action: S, config: RequestInit): Promise<T> => {
+    put = async <T>(path: string, action: string, config: RequestInit): Promise<T> => {
         return await this.fetchResponseJsonOrThrowAbove300(
             this.getFullUrl(path),
             {
@@ -82,7 +82,7 @@ export default class HttpRequest {
         );
     };
 
-    fetch = async <S>(url: RequestInfo, config: RequestInit, action: S): Promise<Response> => {
+    fetch = async (url: RequestInfo, config: RequestInit, action: string): Promise<Response> => {
         let headers;
         if (config === undefined) {
             headers = {};
@@ -106,7 +106,7 @@ export default class HttpRequest {
         return await fetch(url, requestInit);
     };
 
-    fetchResponseJsonOrThrowAbove300 = async <S, T>(url: RequestInfo, config: RequestInit, action: S): Promise<T> => {
+    fetchResponseJsonOrThrowAbove300 = async <T>(url: RequestInfo, config: RequestInit, action: string): Promise<T> => {
         const result = await this.fetch(url, config, action);
         if (result.status >= 300) {
             throw Error(SOMETHING_WENT_WRONG_ERROR);

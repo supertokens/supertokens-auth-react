@@ -23,7 +23,13 @@ import { PureComponent, Fragment } from "react";
 import { jsx } from "@emotion/react";
 import { signInAPI, signUpAPI, emailExistsAPI } from "./api";
 import EmailPassword from "../../../emailPassword";
-import { SignInAndUpState, FormFieldThemeProps, FeatureBaseProps, FormBaseAPIResponse } from "../../../types";
+import {
+    SignInAndUpState,
+    FormFieldThemeProps,
+    FeatureBaseProps,
+    FormBaseAPIResponse,
+    EmailPasswordRedirectionUrlAction
+} from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { APIFormField, NormalisedFormField } from "../../../../../types";
 import FeatureWrapper from "../../../../components/featureWrapper";
@@ -33,7 +39,7 @@ import {
     EMAIL_PASSWORD_REDIRECTION_URL_ACTION,
     MANDATORY_FORM_FIELDS_ID,
     SIGN_IN_AND_UP_STATUS,
-    SUCCESS_ACTION
+    EMAIL_PASSWORD_SUCCESS_ACTION
 } from "../../../constants";
 import { validateForm } from "../../../../../utils";
 
@@ -93,7 +99,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         }
 
         this.getRecipeInstanceOrThrow().onHandleEvent({
-            action: SUCCESS_ACTION.SIGN_IN_COMPLETE,
+            action: EMAIL_PASSWORD_SUCCESS_ACTION.SIGN_IN_COMPLETE,
             user: this.state.user
         });
 
@@ -150,12 +156,12 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         }
 
         this.getRecipeInstanceOrThrow().onHandleEvent({
-            action: SUCCESS_ACTION.SIGN_UP_COMPLETE,
+            action: EMAIL_PASSWORD_SUCCESS_ACTION.SIGN_UP_COMPLETE,
             user: this.state.user
         });
 
         // Otherwise, redirect to email verification screen if sign up and email verification mode is required.
-        let action = EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS;
+        let action: EmailPasswordRedirectionUrlAction = EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS;
         if (
             this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode ===
             EMAIL_VERIFICATION_MODE.REQUIRED
@@ -212,7 +218,9 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     componentDidMount = async (): Promise<void> => {
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists) {
-            this.getRecipeInstanceOrThrow().onHandleEvent({ action: SUCCESS_ACTION.SESSION_ALREADY_EXISTS });
+            this.getRecipeInstanceOrThrow().onHandleEvent({
+                action: EMAIL_PASSWORD_SUCCESS_ACTION.SESSION_ALREADY_EXISTS
+            });
             return await this.getRecipeInstanceOrThrow().redirect(
                 { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS },
                 this.props.history

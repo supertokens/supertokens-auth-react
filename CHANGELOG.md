@@ -12,7 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Better password manager handling
 - Remove autofill browser styling
 
+### Fixes
+- User Facing typescript definitions
+- setState race condition for redirecting to auth page on successful signup
 
+### Added
+- Examples folder
 ## [0.4.3] - 2020-01-18
 
 ### Changed

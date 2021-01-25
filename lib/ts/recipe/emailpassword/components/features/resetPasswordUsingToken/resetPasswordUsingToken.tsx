@@ -26,7 +26,11 @@ import FeatureWrapper from "../../../../components/featureWrapper";
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { FORM_BASE_API_RESPONSE, EMAIL_PASSWORD_REDIRECTION_URL_ACTION, SUCCESS_ACTION } from "../../../constants";
+import {
+    FORM_BASE_API_RESPONSE,
+    EMAIL_PASSWORD_REDIRECTION_URL_ACTION,
+    EMAIL_PASSWORD_SUCCESS_ACTION
+} from "../../../constants";
 import { getWindowOrThrow, validateForm } from "../../../../../utils";
 import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 
@@ -128,7 +132,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             submitNewPasswordAPI: this.submitNewPassword,
             onSuccess: () => {
                 this.getRecipeInstanceOrThrow().onHandleEvent({
-                    action: SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL
+                    action: EMAIL_PASSWORD_SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL
                 });
             },
             onSignInClicked: () => {
@@ -144,7 +148,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             formFields: enterEmailFormFeature.formFields,
             onSuccess: () => {
                 this.getRecipeInstanceOrThrow().onHandleEvent({
-                    action: SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT
+                    action: EMAIL_PASSWORD_SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT
                 });
             },
             enterEmailAPI: this.enterEmail

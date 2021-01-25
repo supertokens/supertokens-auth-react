@@ -33,14 +33,15 @@ import {
     ENTER_EMAIL_STATUS,
     FORM_BASE_API_RESPONSE,
     FORM_BASE_STATUS,
-    EMAIL_PASSWORD_REDIRECTION_URL_ACTION,
     EMAIL_PASSWORD_PRE_API_HOOK_ACTION,
     SEND_VERIFY_EMAIL_STATUS,
     SIGN_IN_AND_UP_STATUS,
     SUBMIT_NEW_PASSWORD_STATUS,
-    SUCCESS_ACTION,
     VERIFY_EMAIL_LINK_CLICKED_STATUS,
-    EMAIL_PASSWORD_AUTH_STATE
+    EMAIL_PASSWORD_AUTH_STATE,
+    EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION,
+    EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION,
+    EMAIL_PASSWORD_REDIRECTION_URL_ACTION
 } from "./constants";
 import { History, LocationState } from "history";
 import EmailPassword from "./emailPassword";
@@ -49,7 +50,24 @@ import EmailPassword from "./emailPassword";
  * EmailPassword User InputsConfig Types.
  */
 
-export type EmailPasswordUserInput = {
+export type EmailPasswordHooks = {
+    /*
+     * Optional pre API Hook.
+     */
+    preAPIHook?: (context: EmailPasswordPreAPIHookContext) => Promise<RequestInit>;
+
+    /*
+     * Optional method used for redirections.
+     */
+    getRedirectionURL?: (context: EmailPasswordGetRedirectionURLContext) => Promise<string | undefined>;
+
+    /*
+     * Optional method used for handling event success.
+     */
+    onHandleEvent?: (context: EmailPasswordOnHandleEventContext) => void;
+};
+
+export type EmailPasswordUserInput = EmailPasswordHooks & {
     /*
      * Styling palette.
      */
@@ -88,21 +106,6 @@ export type NormalisedEmailPasswordConfig = {
      * Use shadow Dom root.
      */
     useShadowDom: boolean;
-
-    /*
-     * Optional pre API Hook.
-     */
-    preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
-
-    /*
-     * Optional method used for redirections.
-     */
-    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
-
-    /*
-     * Optional method used for handling event success.
-     */
-    onHandleEvent?: (context: OnHandleEventContext) => void;
 
     /*
      * Sign In and Sign Up feature.
@@ -274,7 +277,7 @@ export type EmailVerificationUserInput = {
     /*
      * Email Verification Mode
      */
-    mode?: EmailVerificationMode;
+    mode?: "OFF" | "REQUIRED";
 
     /*
      * Disable default implementation with default routes.
@@ -589,11 +592,16 @@ export type VerifyEmailThemeResponse = {
     status: keyof typeof VERIFY_EMAIL_LINK_CLICKED_STATUS;
 };
 
-export type PreAPIHookContext = {
+export type EmailPasswordWithoutUserSuccessAction = typeof EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION[keyof typeof EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION];
+export type EmailPasswordWithUserSuccessAction = typeof EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION[keyof typeof EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION];
+export type EmailPasswordRedirectionUrlAction = typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION[keyof typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION];
+export type EmailPasswordPreAPIHookAction = typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION[keyof typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION];
+
+export type EmailPasswordPreAPIHookContext = {
     /*
      * Pre API Hook action.
      */
-    action: keyof typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION;
+    action: EmailPasswordPreAPIHookAction;
 
     /*
      * Request object containing query params, body, headers.
@@ -601,32 +609,25 @@ export type PreAPIHookContext = {
     requestInit: RequestInit;
 };
 
-export type GetRedirectionURLContext = {
+export type EmailPasswordGetRedirectionURLContext = {
     /*
-     * Get Redirection URL Action.
+     * Get Redirection URL Context
      */
-    action: keyof typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION;
+    action: EmailPasswordRedirectionUrlAction;
 };
 
-export type OnHandleEventContext =
+export type EmailPasswordOnHandleEventContext =
     | {
           /*
            * On Handle Event actions
            */
-          action:
-              | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
-              | SUCCESS_ACTION.VERIFY_EMAIL_SENT
-              | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
-              | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL
-              | SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT
-              | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
-              | SUCCESS_ACTION.SESSION_ALREADY_EXISTS;
+          action: EmailPasswordWithoutUserSuccessAction;
       }
     | {
           /*
            * Sign In / Sign Up success.
            */
-          action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
+          action: EmailPasswordWithUserSuccessAction;
           /*
            * User returned from API.
            */
