@@ -1,13 +1,6 @@
 #!/bin/bash
 
 #
-# Use.
-#
-# ./startTestApp => Start frontend test app
-# ./startTestApp --test => Start frontend test app without building
-# 
-
-#
 # Methods.
 #
 
@@ -19,7 +12,7 @@ function startFrontEnd () {
     (
         echo "Starting test example app"
         # go to test app.
-        cd ./examples/with-create-react-app/
+        cd ./examples/for-tests/
         # Run static react app on PORT 3031.
         BROWSER=none PORT=3031 npm run start
     )

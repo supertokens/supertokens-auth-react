@@ -12,7 +12,7 @@
   },
   "scripts": {
     "preinstall": "(cd ../../ && npm i -d)",
-    "postinstall": "(cd ../../ && npm link) && npm link supertokens-auth-react && (cd ../../ && SRC=./examples/with-create-react-app npm run link-dependencies)",
+    "postinstall": "(cd ../../ && npm link) && npm link supertokens-auth-react && (cd ../../ && SRC=./examples/for-tests npm run link-dependencies)",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
