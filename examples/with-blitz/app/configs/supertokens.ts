@@ -2,9 +2,6 @@ import SuperTokens from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 
-// TODO Remove and replace with a constant with 0.5.
-import { EMAIL_VERIFICATION_MODE } from "supertokens-auth-react/lib/build/recipe/emailpassword/constants";
-
 if (typeof window !== "undefined") {
     SuperTokens.init({
         appInfo: {
@@ -16,7 +13,7 @@ if (typeof window !== "undefined") {
         recipeList: [
             EmailPassword.init({
                 emailVerificationFeature: {
-                    mode: EMAIL_VERIFICATION_MODE.REQUIRED
+                    mode: "REQUIRED"
                 }
             }),
             Session.init()
