@@ -1,0 +1,267 @@
+.App {
+  text-align: center;
+  background-color: #fff;
+  /* background-color: #292929; */
+  min-height: 100vh;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content: space-between;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+
+}
+
+h1 {
+  font-size: 16px;
+  color: #002180
+}
+
+.App-header {
+  background-color:  #fafafa;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: #000;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.routing-header {
+  flex: 1 0 auto
+}
+
+.page {
+    flex: 3 0 auto;
+}
+
+/* Navbar */
+.menu__icon {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 27px;
+  height: 22px;
+  cursor: pointer;
+  z-index: 3;
+}
+
+@media (min-width: 767.99px) {
+  .menu__icon {
+    display: none;
+  }
+}
+
+.menu__icon span {
+  position: absolute;
+  left: 1px;
+  width: 100%;
+  height: 1px;
+  background-color: blue;
+}
+
+.menu__icon span:first-child {
+  top: 1px;
+}
+
+.menu__icon span:nth-child(2) {
+  top: 10.5px;
+}
+
+.menu__icon span:nth-child(3) {
+  top: 20px;
+}
+
+.menu__list {
+  display: flex;
+  list-style: none;
+}
+
+.menu__list li {
+  margin: 1px 0;
+}
+
+.menu__link {
+  font-family: Arial;
+  min-height: 27px;
+  color: grey;
+  font-size: 14px;
+  transition: all .3s ease 0s;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 22px;
+}
+
+@media (max-width: 767.98px) {
+    .menu__link {
+    padding: 5px 10px;
+  }
+  .menu__list {
+  display: block;
+  height: 100%;
+  }
+  .menu__body {
+    display: none;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    overflow: auto;
+    z-index: 2;
+    padding: 120px 20px 30px 20px;
+    transition: all .3s ease 0s;
+    background-color: #fff;
+  }
+  .menu__body:before {
+    content: '';
+    position: fixed;
+    width: 100%;
+    height: 105px;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    background-color: yellow;
+  }
+  .menu__body._active {
+   display: block;
+  }
+}
+
+@media (max-width: 479.97px) {
+  .menu__link {
+    padding: 0;
+    font-size: 20px;
+  }
+  .menu__body {
+    padding: 90px 20px 30px 20px;
+  }
+  .menu__body:before {
+    height: 70px;
+  }
+}
+
+/* STYLES SPECIFIC TO FOOTER  */
+.footer {
+  width: 100%;
+  position: relative;
+  height: auto;
+  background-color: #2b294a;
+  bottom: 0px;
+}
+.footer .col {
+  width: 190px;
+  height: auto;
+  float: left;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  padding: 0px 20px 20px 20px;
+}
+.footer .col h1 {
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 17px;
+  padding: 20px 0px 5px 0px;
+  color: #fff;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.250em;
+}
+.footer .col ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.footer .col ul li {
+  color: #999999;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: bold;
+  padding: 5px 0px 5px 0px;
+  cursor: pointer;
+  transition: .2s;
+  -webkit-transition: .2s;
+  -moz-transition: .2s;
+}
+.social ul li {
+  display: inline-block;
+  padding-right: 5px !important;
+}
+
+.footer .col ul li:hover {
+  color: #ffffff;
+  transition: .1s;
+  -webkit-transition: .1s;
+  -moz-transition: .1s;
+}
+.clearfix {
+  clear: both;
+}
+@media only screen and (min-width: 1280px) {
+  .contain {
+    width: 1200px;
+    margin: 0 auto;
+  }
+}
+@media only screen and (max-width: 1139px) {
+  .contain .social {
+    width: 1000px;
+    display: block;
+  }
+  .social h1 {
+    margin: 0px;
+  }
+}
+@media only screen and (max-width: 950px) {
+  .footer .col {
+    width: 33%;
+  }
+  .footer .col h1 {
+    font-size: 14px;
+  }
+  .footer .col ul li {
+    font-size: 13px;
+  }
+}
+@media only screen and (max-width: 500px) {
+    .footer .col {
+      width: 50%;
+    }
+    .footer .col h1 {
+      font-size: 14px;
+    }
+    .footer .col ul li {
+      font-size: 13px;
+    }
+}
+@media only screen and (max-width: 340px) {
+  .footer .col {
+    width: 100%;
+  }
+}
+
+

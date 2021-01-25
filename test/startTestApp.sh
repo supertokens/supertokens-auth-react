@@ -19,7 +19,7 @@ function startFrontEnd () {
     (
         echo "Starting test example app"
         # go to test app.
-        cd test/react-test-app/
+        cd ./examples/with-create-react-app/
         # Run static react app on PORT 3031.
         BROWSER=none PORT=3031 npm run start
     )
@@ -56,22 +56,16 @@ function startEndToEnd () {
 # Run.
 #
 
-mode=$1
-
 trap "killServers" EXIT # Trap to execute on script shutdown
 
 
-if [[ $mode == "--test" ]]; then
-    # Start by killing any servers up on 8082 and 3031 if any.
-    killServers
+# Start by killing any servers up on 8082 and 3031 if any.
+killServers
 
-    # Run node server in background.
-    (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . > /dev/null 2>&1 &)  
+# Run node server in background.
+(cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . > /dev/null 2>&1 &)  
 
-    # Start front end test app and run tests.
-    startEndToEnd &
-    startFrontEnd > /dev/null 2>&1
-    exit 0
-else
-    startFrontEnd # Start Front end.
-fi
+# Start front end test app and run tests.
+startEndToEnd &
+startFrontEnd > /dev/null 2>&1
+exit 0

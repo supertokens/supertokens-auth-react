@@ -2,10 +2,15 @@ import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, Normal
 import { CSSObject } from "@emotion/react/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE, ENTER_EMAIL_STATUS, FORM_BASE_API_RESPONSE, FORM_BASE_STATUS, EMAIL_PASSWORD_REDIRECTION_URL_ACTION, EMAIL_PASSWORD_PRE_API_HOOK_ACTION, SEND_VERIFY_EMAIL_STATUS, SIGN_IN_AND_UP_STATUS, SUBMIT_NEW_PASSWORD_STATUS, SUCCESS_ACTION, VERIFY_EMAIL_LINK_CLICKED_STATUS, EMAIL_PASSWORD_AUTH_STATE } from "./constants";
+import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE, ENTER_EMAIL_STATUS, FORM_BASE_API_RESPONSE, FORM_BASE_STATUS, EMAIL_PASSWORD_PRE_API_HOOK_ACTION, SEND_VERIFY_EMAIL_STATUS, SIGN_IN_AND_UP_STATUS, SUBMIT_NEW_PASSWORD_STATUS, VERIFY_EMAIL_LINK_CLICKED_STATUS, EMAIL_PASSWORD_AUTH_STATE, EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION, EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION, EMAIL_PASSWORD_REDIRECTION_URL_ACTION } from "./constants";
 import { History, LocationState } from "history";
 import EmailPassword from "./emailPassword";
-export declare type EmailPasswordUserInput = {
+export declare type EmailPasswordHooks = {
+    preAPIHook?: (context: EmailPasswordPreAPIHookContext) => Promise<RequestInit>;
+    getRedirectionURL?: (context: EmailPasswordGetRedirectionURLContext) => Promise<string | undefined>;
+    onHandleEvent?: (context: EmailPasswordOnHandleEventContext) => void;
+};
+export declare type EmailPasswordUserInput = EmailPasswordHooks & {
     palette?: PaletteUserInput;
     useShadowDom?: boolean;
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
@@ -16,9 +21,6 @@ export declare type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUser
 export declare type NormalisedEmailPasswordConfig = {
     palette: PaletteUserInput;
     useShadowDom: boolean;
-    preAPIHook?: (context: PreAPIHookContext) => Promise<RequestInit>;
-    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
-    onHandleEvent?: (context: OnHandleEventContext) => void;
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     emailVerificationFeature: NormalisedEmailVerificationFeatureConfig;
@@ -72,7 +74,7 @@ export declare type NormalisedEnterEmailForm = FeatureBaseConfig & {
     formFields: NormalisedFormField[];
 };
 export declare type EmailVerificationUserInput = {
-    mode?: EmailVerificationMode;
+    mode?: "OFF" | "REQUIRED";
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
@@ -180,17 +182,21 @@ export declare type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | 
 export declare type VerifyEmailThemeResponse = {
     status: keyof typeof VERIFY_EMAIL_LINK_CLICKED_STATUS;
 };
-export declare type PreAPIHookContext = {
-    action: keyof typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION;
+export declare type EmailPasswordWithoutUserSuccessAction = typeof EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION[keyof typeof EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION];
+export declare type EmailPasswordWithUserSuccessAction = typeof EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION[keyof typeof EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION];
+export declare type EmailPasswordRedirectionUrlAction = typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION[keyof typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION];
+export declare type EmailPasswordPreAPIHookAction = typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION[keyof typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION];
+export declare type EmailPasswordPreAPIHookContext = {
+    action: EmailPasswordPreAPIHookAction;
     requestInit: RequestInit;
 };
-export declare type GetRedirectionURLContext = {
-    action: keyof typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION;
+export declare type EmailPasswordGetRedirectionURLContext = {
+    action: EmailPasswordRedirectionUrlAction;
 };
-export declare type OnHandleEventContext = {
-    action: SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL | SUCCESS_ACTION.VERIFY_EMAIL_SENT | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL | SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL | SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT | SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL | SUCCESS_ACTION.SESSION_ALREADY_EXISTS;
+export declare type EmailPasswordOnHandleEventContext = {
+    action: EmailPasswordWithoutUserSuccessAction;
 } | {
-    action: SUCCESS_ACTION.SIGN_IN_COMPLETE | SUCCESS_ACTION.SIGN_UP_COMPLETE;
+    action: EmailPasswordWithUserSuccessAction;
     user: {
         id: string;
         email: string;

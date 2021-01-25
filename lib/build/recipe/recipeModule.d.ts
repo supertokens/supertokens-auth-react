@@ -10,19 +10,25 @@ export default abstract class RecipeModule {
     getRecipeId: () => string;
     getAppInfo: () => NormalisedAppInfo;
     getHttp: () => HttpRequest;
-    preAPIHook: <T>(context: {
-        action: T;
+    preAPIHook: (context: {
+        action: string;
         requestInit: RequestInit;
     }) => Promise<RequestInit>;
-    redirect: <T>(context: {
-        action: T;
+    redirect: (context: {
+        action: string;
     }, history?: History<unknown> | undefined, title?: string | undefined, shouldReload?: boolean) => Promise<void>;
     getRedirectionURL: (context: {
-        action: unknown;
+        action: string;
     }) => Promise<string>;
-    onHandleEvent<T>(context: T): void;
+    onHandleEvent(context: {
+        action: string;
+        user?: {
+            id: string;
+            email: string;
+        };
+    }): void;
     abstract getFeatures(): RouteToFeatureComponentMap;
-    protected getDefaultRedirectionURL<T>(context: {
-        action: T;
+    protected getDefaultRedirectionURL(context: {
+        action: unknown;
     }): Promise<string>;
 }

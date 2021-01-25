@@ -71,8 +71,6 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 ## Run the test application.
 
 1. `npm run start`
-2. `npm run server` // if server interactions required.
-
 
 ## Pull Request
 1. Before submitting a pull request make sure all tests have passed

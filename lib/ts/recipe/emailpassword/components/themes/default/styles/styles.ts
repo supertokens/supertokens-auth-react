@@ -167,6 +167,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             width: "75%",
             height: "32px",
             "&:focus": {
+                backgroundColor: `${chroma(palette.colors.inputBackground).alpha(0.25)}`,
                 border: "none",
                 outline: "none"
             }

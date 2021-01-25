@@ -25,8 +25,8 @@ import { EmailPasswordAuthState, FeatureBaseProps } from "../types";
 import EmailPassword from "../emailPassword";
 import {
     EMAIL_PASSWORD_AUTH_STATE,
-    EMAIL_VERIFICATION_MODE,
-    EMAIL_PASSWORD_REDIRECTION_URL_ACTION
+    EMAIL_PASSWORD_REDIRECTION_URL_ACTION,
+    EMAIL_VERIFICATION_MODE
 } from "../constants";
 
 /*

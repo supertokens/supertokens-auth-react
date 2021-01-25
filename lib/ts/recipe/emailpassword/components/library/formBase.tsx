@@ -154,14 +154,18 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             const result = await this.props.callAPI(fields);
             // If successful
             if (result.status === FORM_BASE_API_RESPONSE.OK) {
-                if (this.props.onSuccess !== undefined) {
-                    await this.props.onSuccess();
-                }
                 // Set Success state.
-                this.setState(oldState => ({
-                    ...oldState,
-                    status: FORM_BASE_STATUS.SUCCESS
-                }));
+                this.setState(
+                    oldState => ({
+                        ...oldState,
+                        status: FORM_BASE_STATUS.SUCCESS
+                    }),
+                    () => {
+                        if (this.props.onSuccess !== undefined) {
+                            this.props.onSuccess();
+                        }
+                    }
+                );
                 return;
             }
 

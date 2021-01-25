@@ -300,7 +300,7 @@ export function normaliseEmailVerificationFeature(
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
     let mode = EMAIL_VERIFICATION_MODE.OFF;
-    if (config.mode === EMAIL_VERIFICATION_MODE.REQUIRED) {
+    if (config.mode === "REQUIRED") {
         mode = EMAIL_VERIFICATION_MODE.REQUIRED;
     }
 
