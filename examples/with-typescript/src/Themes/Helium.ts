@@ -26,7 +26,7 @@ const HeliumTheme = {
           border: "none",
           boxShadow: "none",
           width: "100vw",
-          height: "90vh",
+          height: "95vh",
           textAlign: "center",
           display: "flex",
           flexDirection: "column",
