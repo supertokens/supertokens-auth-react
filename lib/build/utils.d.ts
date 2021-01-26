@@ -9,5 +9,5 @@ export declare function validateForm(inputs: APIFormField[], configFormFields: N
 export declare function getCurrentNormalisedUrlPath(): NormalisedURLPath;
 export declare function WithRouter(Component: ReactComponentClass): ReactComponentClass;
 export declare function redirectToWithReload(url: string): void;
-export declare function redirectToInApp(path: string, title?: string, history?: History<LocationState>): void;
+export declare function redirectToInApp(path: string, history?: History<LocationState>): void;
 export declare function getWindowOrThrow(): any;

@@ -103,9 +103,12 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             user: this.state.user
         });
 
-        return await this.getRecipeInstanceOrThrow().redirect({
-            action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS
-        });
+        return await this.getRecipeInstanceOrThrow().redirect(
+            {
+                action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS
+            },
+            this.props.history
+        );
     };
 
     signUp = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
@@ -169,7 +172,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             action = EMAIL_PASSWORD_REDIRECTION_URL_ACTION.VERIFY_EMAIL;
         }
 
-        return await this.getRecipeInstanceOrThrow().redirect({ action });
+        return await this.getRecipeInstanceOrThrow().redirect({ action }, this.props.history);
     };
 
     getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {
@@ -253,8 +256,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             forgotPasswordClick: () =>
                 this.getRecipeInstanceOrThrow().redirect(
                     { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.RESET_PASSWORD },
-                    this.props.history,
-                    "Reset password"
+                    this.props.history
                 )
         };
 

@@ -154,19 +154,14 @@ export function redirectToWithReload(url: string): void {
  * redirectToInApp
  * Do not use redirectToInApp directly if redirecting to SuperTokens's paths, instead use corresponding recipe module manager .redirect method.
  */
-export function redirectToInApp(path: string, title?: string, history?: History<LocationState>): void {
+export function redirectToInApp(path: string, history?: History<LocationState>): void {
     if (path.length === 0) {
         path = "/";
-    }
-    if (title === undefined) {
-        title = "";
     }
 
     // If history was provided, use.
     if (history !== undefined) {
-        history.push(path, {
-            title
-        });
+        history.push(path);
         return;
     }
 

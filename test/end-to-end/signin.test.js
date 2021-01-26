@@ -301,6 +301,64 @@ describe("SuperTokens SignIn feature/theme", function() {
                 "ST_LOGS PRE_API_HOOKS SIGN_OUT"
             ]);
         });
+
+        it("Successful Sign In with redirect to", async function() {
+            await clearBrowserCookies(page);
+
+            let cookies = await page.cookies();
+            assert.deepStrictEqual(cookies, []); // Make sure cookies were removed.
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/redirect-to-this-custom-path`),
+                page.waitForNavigation({ waitUntil: "networkidle0" })
+            ]);
+
+            await toggleSignInSignUp(page);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" }
+            ]);
+
+            // Submit.
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                hasMethodBeenCalled(page, EMAIL_EXISTS_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" })
+            ]);
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/redirect-to-this-custom-path");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS ON_HANDLE_EVENT SIGN_IN_COMPLETE"
+            ]);
+
+            // Logout
+            const logoutButton = await getLogoutButton(page);
+            await logoutButton.click();
+            await page.waitForNavigation();
+
+            // Login again will not redirect to custom path.
+            await toggleSignInSignUp(page);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" }
+            ]);
+
+            // Submit.
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                hasMethodBeenCalled(page, EMAIL_EXISTS_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" })
+            ]);
+
+            pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+        });
     });
 });
 

@@ -28,6 +28,8 @@ import {
     EMAIL_PASSWORD_REDIRECTION_URL_ACTION,
     EMAIL_VERIFICATION_MODE
 } from "../constants";
+import { getWindowOrThrow } from "supertokens-website/lib/build/utils";
+import { ReactComponentClass, WithRouterType } from "../../../types";
 
 /*
  * Component.
@@ -69,6 +71,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
     async componentDidMount(): Promise<void> {
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists === false) {
+            this.getRecipeInstanceOrThrow().setSuccessRedirectTo(getWindowOrThrow().location.pathname);
             return await this.getRecipeInstanceOrThrow().redirect(
                 { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
                 this.props.history
@@ -111,4 +114,11 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
     };
 }
 
-export default EmailPasswordAuth;
+export default (function(): ReactComponentClass {
+    try {
+        const withRouter: WithRouterType = require("react-router-dom").withRouter;
+        return withRouter(EmailPasswordAuth);
+    } catch (e) {
+        return EmailPasswordAuth;
+    }
+})();

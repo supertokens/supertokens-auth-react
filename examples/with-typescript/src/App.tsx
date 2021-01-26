@@ -128,6 +128,11 @@ function App() {
                 <Home />
               </EmailPassword.EmailPasswordAuth>
             </Route>
+            <Route path="/redirect-to-this-custom-path">
+              <EmailPassword.EmailPasswordAuth>
+                <Home />
+              </EmailPassword.EmailPasswordAuth>
+            </Route>
           </Switch>
         </div>
         <div className="footer">
