@@ -3,6 +3,7 @@
   "version": "0.4.0",
   "private": true,
   "scripts": {
+    "postinstall": "(cd ../../ && npm link) && npm link supertokens-auth-react && (cd ../../ && SRC=./examples/with-next npm run link-dependencies)",
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
@@ -13,7 +14,7 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "regenerator-runtime": "^0.13.7",
-    "supertokens-auth-react": "^0.4.3",
+    "supertokens-auth-react": "^0.5.0",
     "supertokens-node": "^3.3.1"
   }
 }

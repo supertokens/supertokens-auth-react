@@ -20,6 +20,7 @@
     "@typescript-eslint/parser": "4.6.0",
     "babel-plugin-inline-react-svg": "1.1.1",
     "babel-plugin-transform-class-properties": "6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "eslint": "6.8.0",
     "eslint-plugin-react-hooks": "4.2.0",
     "eslint-plugin-supertokens-auth-react": "file:eslint",
