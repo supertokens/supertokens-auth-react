@@ -1,5 +1,3 @@
-require("./supertokens.backend.config.js");
-
 module.exports = {
   middleware: []
   /* Uncomment this to customize the webpack config
