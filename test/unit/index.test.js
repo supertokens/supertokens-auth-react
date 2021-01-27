@@ -25,7 +25,6 @@ import { DEFAULT_WEBSITE_BASE_PATH, DEFAULT_API_BASE_PATH } from "../../lib/buil
 import assert from "assert";
 import { mockWindowLocation } from "../helpers";
 import * as React from "react";
-import { Fragment } from "react";
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 

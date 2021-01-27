@@ -16,6 +16,8 @@
 /*
  * Imports.
  */
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import { FeatureBaseProps, FormBaseAPIResponse, SubmitNewPasswordThemeProps } from "../../../types";
@@ -24,8 +26,6 @@ import { ResetPasswordUsingTokenTheme } from "../../..";
 import { APIFormField } from "../../../../../types";
 import FeatureWrapper from "../../../../components/featureWrapper";
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import {
     FORM_BASE_API_RESPONSE,
     EMAIL_PASSWORD_REDIRECTION_URL_ACTION,

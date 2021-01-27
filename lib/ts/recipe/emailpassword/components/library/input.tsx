@@ -36,7 +36,6 @@ import { useState } from "react";
  */
 
 type InputProps = {
-    style?: CSSObject;
     errorStyle?: CSSObject;
     type: string;
     name: string;

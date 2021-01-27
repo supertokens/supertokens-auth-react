@@ -16,12 +16,11 @@
 /*
  * Imports.
  */
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 
 import React, { useContext } from "react";
 import StyleContext from "../../../styles/styleContext";
-
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 
 export default function SignUpFooter({
     termsOfServiceLink,
