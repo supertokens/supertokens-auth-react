@@ -6,9 +6,6 @@
       ]
     ],
     "plugins": [
-      ["transform-runtime", {
-        "regenerator": true
-      }],
       "@emotion/babel-plugin",
       "inline-react-svg",
       [

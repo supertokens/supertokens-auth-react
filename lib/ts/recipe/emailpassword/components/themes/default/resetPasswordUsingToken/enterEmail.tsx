@@ -15,13 +15,13 @@
 /*
  * Imports.
  */
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
 
 import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../../types";
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import FormBase from "../../../library/formBase";
 import { ENTER_EMAIL_STATUS } from "../../../../constants";
 

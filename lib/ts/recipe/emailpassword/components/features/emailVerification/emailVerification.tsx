@@ -16,6 +16,8 @@
 /*
  * Imports.
  */
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import { VerifyEmailLinkClickedThemeProps, SendVerifyEmailThemeProps, FeatureBaseProps } from "../../../types";
@@ -23,8 +25,6 @@ import EmailPassword from "../../../emailPassword";
 import { EmailVerificationScreenTheme, signOut } from "../../..";
 import FeatureWrapper from "../../../../components/featureWrapper";
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE, EMAIL_PASSWORD_SUCCESS_ACTION } from "../../../constants";
 import { getWindowOrThrow } from "../../../../../utils";
 import { verifyEmailAPI, sendVerifyEmailAPI } from "./api";

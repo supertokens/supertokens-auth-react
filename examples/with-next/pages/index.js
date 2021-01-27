@@ -16,7 +16,7 @@ export default function Home() {
   }
 
   async function fetchUserData() {
-    const res = await fetch("/api/user");
+    const res = await fetch("/api/user"); // TODO use relative path.
     const json = await res.json();
     alert(JSON.stringify(json));
   }

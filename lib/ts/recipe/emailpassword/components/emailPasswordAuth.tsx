@@ -19,8 +19,6 @@
 import * as React from "react";
 import { PureComponent, ReactElement } from "react";
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { EmailPasswordAuthState, FeatureBaseProps } from "../types";
 import EmailPassword from "../emailPassword";
 import {
