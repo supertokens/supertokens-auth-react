@@ -2,7 +2,6 @@ import { Link, BlitzPage } from "blitz";
 import Layout from "app/layouts/Layout";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import dynamic from 'next/dynamic';
-import "../configs/supertokens";
 
 const EmailPasswordAuthNoSSR = dynamic(() => Promise.resolve().then(() => EmailPassword.EmailPasswordAuth), {
   ssr: false
