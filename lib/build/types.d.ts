@@ -48,10 +48,6 @@ export declare type RecipeModuleHooks = {
     }) => void;
 };
 export declare type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
-export declare type RouteWithPathAndRecipeId = {
-    path: NormalisedURLPath;
-    recipeId: string | null;
-};
 export declare type ComponentWithRecipeId = {
     rid: string;
     component: ReactComponentClass;
@@ -75,11 +71,6 @@ export declare type FormField = FormFieldBaseConfig & {
 export declare type APIFormField = {
     id: string;
     value: string;
-};
-export declare type RequestJson = {
-    formFields?: APIFormField[];
-    token?: string;
-    method?: "token";
 };
 export declare type NormalisedFormField = {
     id: string;

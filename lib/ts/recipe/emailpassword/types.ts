@@ -21,10 +21,8 @@ import {
     NormalisedBaseConfig,
     NormalisedFormField,
     RecipeModuleConfig,
-    RequestJson,
     Styles
 } from "../../types";
-import { CSSObject } from "@emotion/react/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import {
@@ -496,8 +494,6 @@ export type VerifyEmailAPIResponse =
           status: API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR;
       };
 
-export type SendVerificationEmailAPIResponse = SuccessAPIResponse;
-
 export type FormFieldAPIResponse = {
     /*
      * Field validation errors.
@@ -547,8 +543,6 @@ export type ThemeResponseGeneralError = {
 
 export type SignUpAPIResponse = BaseSignInUpAPIResponse;
 
-export type SignUpThemeResponse = SignUpAPIResponse | ThemeResponseGeneralError;
-
 export type SignInAPIResponse =
     | BaseSignInUpAPIResponse
     | {
@@ -563,10 +557,7 @@ export type SignInAPIResponse =
           message: string;
       };
 
-export type SignInThemeResponse = SignInAPIResponse | ThemeResponseGeneralError;
-
 export type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
-export type EnterEmailThemeResponse = EnterEmailAPIResponse | ThemeResponseGeneralError;
 
 export type SubmitNewPasswordAPIResponse =
     | BaseResetPasswordAPIResponse
@@ -782,8 +773,6 @@ export type EmailPasswordAuthState = {
 
 export type PaletteUserInput = Record<string, string>;
 
-export type DefaultStylesUserInput = Record<string, CSSObject>;
-
 export type FormBaseState =
     | {
           formFields: FormFieldState[];
@@ -852,23 +841,6 @@ export type FormBaseAPIResponse =
            */
           formFields: FormFieldError[];
       };
-
-export type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
-
-export type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
-
-export type VerifyEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
-
-export type SendVerifyEmailAPI = (headers: HeadersInit) => Promise<SendVerifyEmailAPIResponse>;
-
-export type EmailExistsAPI = (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
-
-export type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
-
-export type SubmitNewPasswordAPI = (
-    requestJson: RequestJson,
-    headers: HeadersInit
-) => Promise<SubmitNewPasswordAPIResponse>;
 
 /*
  *  Add documentMode to document object in order to use to detect if browser is IE.
