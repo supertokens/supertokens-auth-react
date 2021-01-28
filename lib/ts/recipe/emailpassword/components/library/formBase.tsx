@@ -16,12 +16,12 @@
 /*
  * Imports.
  */
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 import React, { createRef, FormEvent, Fragment, PureComponent } from "react";
 import StyleContext from "../styles/styleContext";
 import { Button, FormRow, Input, InputError, Label } from ".";
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { APIFormField } from "../../../../types";
 import {
     MANDATORY_FORM_FIELDS_ID_ARRAY,

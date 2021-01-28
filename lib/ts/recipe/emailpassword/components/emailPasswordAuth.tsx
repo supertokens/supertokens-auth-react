@@ -19,8 +19,6 @@
 import * as React from "react";
 import { PureComponent, ReactElement } from "react";
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { EmailPasswordAuthState, FeatureBaseProps } from "../types";
 import EmailPassword from "../emailPassword";
 import {
@@ -71,10 +69,11 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
     async componentDidMount(): Promise<void> {
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists === false) {
-            this.getRecipeInstanceOrThrow().setSuccessRedirectTo(getWindowOrThrow().location.pathname);
+            const redirectToPath = getWindowOrThrow().location.pathname;
             return await this.getRecipeInstanceOrThrow().redirect(
                 { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
-                this.props.history
+                this.props.history,
+                { redirectToPath }
             );
         }
 
@@ -94,9 +93,11 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
         // Otherwise, make sure that the email is valid, otherwise, redirect to email validation screen.
         const isEmailVerified = await this.isEmailVerifiedAPI();
         if (isEmailVerified === false) {
+            const redirectToPath = getWindowOrThrow().location.pathname;
             return await this.getRecipeInstanceOrThrow().redirect(
                 { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.VERIFY_EMAIL },
-                this.props.history
+                this.props.history,
+                { redirectToPath }
             );
         }
         return;

@@ -16,11 +16,11 @@
 /*
  * Imports.
  */
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { signInAPI, signUpAPI, emailExistsAPI } from "./api";
 import EmailPassword from "../../../emailPassword";
 import {
@@ -41,7 +41,7 @@ import {
     SIGN_IN_AND_UP_STATUS,
     EMAIL_PASSWORD_SUCCESS_ACTION
 } from "../../../constants";
-import { validateForm } from "../../../../../utils";
+import { getRedirectToPathFromURL, validateForm } from "../../../../../utils";
 
 /*
  * Component.
@@ -105,7 +105,8 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
 
         return await this.getRecipeInstanceOrThrow().redirect(
             {
-                action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS
+                action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS,
+                redirectToPath: getRedirectToPathFromURL()
             },
             this.props.history
         );
@@ -163,16 +164,20 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             user: this.state.user
         });
 
-        // Otherwise, redirect to email verification screen if sign up and email verification mode is required.
-        let action: EmailPasswordRedirectionUrlAction = EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS;
+        // Redirect to email verification screen if sign up and email verification mode is required.
+        const context: { action: EmailPasswordRedirectionUrlAction; redirectToPath?: string } = {
+            action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.VERIFY_EMAIL
+        };
         if (
-            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode ===
+            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !==
             EMAIL_VERIFICATION_MODE.REQUIRED
         ) {
-            action = EMAIL_PASSWORD_REDIRECTION_URL_ACTION.VERIFY_EMAIL;
+            // Or if sign up and email verification mode is not required, redirect to success screen.
+            context.redirectToPath = getRedirectToPathFromURL();
+            context.action = EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS;
         }
 
-        return await this.getRecipeInstanceOrThrow().redirect({ action }, this.props.history);
+        return await this.getRecipeInstanceOrThrow().redirect(context, this.props.history);
     };
 
     getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {

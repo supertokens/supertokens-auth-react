@@ -116,7 +116,7 @@ export type RecipeModuleHooks = {
     /*
      * Optional method used for redirections.
      */
-    getRedirectionURL?: (context: { action: string }) => Promise<string | undefined>;
+    getRedirectionURL?: (context: { action: string; redirectToPath?: string }) => Promise<string | undefined>;
 
     /*
      * Optional method used for handling event success.

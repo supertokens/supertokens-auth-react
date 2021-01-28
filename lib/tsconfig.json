@@ -10,6 +10,7 @@
         "moduleResolution": "node",
         "declaration": true,
         "jsx": "react",
+        "esModuleInterop": true,
         "types": ["node", "react", "@emotion/react/types/css-prop"]
     },
     "compileOnSave": true

@@ -20,7 +20,6 @@ import HttpRequest from "../httpRequest";
 import { RouteToFeatureComponentMap, RecipeModuleConfig, NormalisedAppInfo, RecipeModuleHooks } from "../types";
 import { redirectToInApp, redirectToWithReload } from "../utils";
 import { History, LocationState } from "history";
-import NormalisedURLPath from "../normalisedURLPath";
 
 /*
  * Class.
@@ -34,7 +33,6 @@ export default abstract class RecipeModule {
     private appInfo: NormalisedAppInfo;
     private hooks: RecipeModuleHooks;
     private httpRequest: HttpRequest;
-    private redirectTo?: NormalisedURLPath;
 
     /*
      * Constructor.
@@ -57,12 +55,6 @@ export default abstract class RecipeModule {
         return this.recipeId;
     };
 
-    setSuccessRedirectTo = (value: string): void => {
-        try {
-            this.redirectTo = new NormalisedURLPath(value);
-        } catch (e) {}
-    };
-
     getAppInfo = (): NormalisedAppInfo => {
         return this.appInfo;
     };
@@ -80,44 +72,34 @@ export default abstract class RecipeModule {
         return context.requestInit;
     };
 
-    redirect = async (context: { action: string }, history?: History<LocationState>): Promise<void> => {
+    redirect = async (
+        context: { action: string; redirectToPath?: string },
+        history?: History<LocationState>,
+        queryParams?: Record<string, string>
+    ): Promise<void> => {
         const redirectUrl = await this.getRedirectionURL(context);
         try {
             new URL(redirectUrl);
-            // Otherwise, If full URL, use redirectToWithReload
-            return await redirectToWithReload(redirectUrl);
+            // If full URL, use redirectToWithReload
+            return await redirectToWithReload(redirectUrl, queryParams);
         } catch (e) {
             // Otherwise, redirect in app.
-            return await redirectToInApp(redirectUrl, history);
+            return await redirectToInApp(redirectUrl, history, queryParams);
         }
     };
 
-    getRedirectionURL = async (context: { action: string }): Promise<string> => {
-        let redirectUrl = this.getSuccessRedirectionURL(context);
-        if (redirectUrl !== undefined) {
-            return redirectUrl;
-        }
-
+    getRedirectionURL = async (context: { action: string; redirectToPath?: string }): Promise<string> => {
         // If getRedirectionURL provided by user.
         const getRedirectionURL = this.hooks.getRedirectionURL;
         if (getRedirectionURL !== undefined) {
-            redirectUrl = (await getRedirectionURL(context)) || redirectUrl;
+            const redirectUrl = await getRedirectionURL(context);
             if (redirectUrl !== undefined) {
                 return redirectUrl;
             }
         }
 
+        // Otherwise, use recipe's default.
         return await this.getDefaultRedirectionURL(context);
-    };
-
-    getSuccessRedirectionURL = (context: { action: string }): string | undefined => {
-        if (context.action !== "SUCCESS" || this.redirectTo === undefined) {
-            return;
-        }
-
-        const redirectTo: string = this.redirectTo.getAsStringDangerous();
-        this.redirectTo = undefined; // Reset redirectToUrl.
-        return redirectTo;
     };
 
     onHandleEvent(context: { action: string; user?: { id: string; email: string } }): void {

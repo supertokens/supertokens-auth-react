@@ -6,10 +6,8 @@ export default abstract class RecipeModule {
     private appInfo;
     private hooks;
     private httpRequest;
-    private redirectTo?;
     constructor(config: RecipeModuleConfig);
     getRecipeId: () => string;
-    setSuccessRedirectTo: (value: string) => void;
     getAppInfo: () => NormalisedAppInfo;
     getHttp: () => HttpRequest;
     preAPIHook: (context: {
@@ -18,13 +16,12 @@ export default abstract class RecipeModule {
     }) => Promise<RequestInit>;
     redirect: (context: {
         action: string;
-    }, history?: History<unknown> | undefined) => Promise<void>;
+        redirectToPath?: string | undefined;
+    }, history?: History<unknown> | undefined, queryParams?: Record<string, string> | undefined) => Promise<void>;
     getRedirectionURL: (context: {
         action: string;
+        redirectToPath?: string | undefined;
     }) => Promise<string>;
-    getSuccessRedirectionURL: (context: {
-        action: string;
-    }) => string | undefined;
     onHandleEvent(context: {
         action: string;
         user?: {

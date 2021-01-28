@@ -16,13 +16,12 @@
 /*
  * Imports.
  */
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 import React, { PureComponent, Fragment } from "react";
 import StyleContext from "../../../styles/styleContext";
 
 import { SignInThemeProps } from "../../../../types";
-
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 
 import FormBase from "../../../library/formBase";
 

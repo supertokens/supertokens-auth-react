@@ -15,13 +15,14 @@
 /*
  * Imports.
  */
+
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 import React, { PureComponent } from "react";
 import StyleContext from "../../../../styles/styleContext";
 
 import { SendVerifyEmailThemeProps, SendVerifyEmailThemeState } from "../../../../../types";
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import EmailIcon from "../../../../../assets/emailLargeIcon";
 import ArrowRightIcon from "../../../../../assets/arrowRightIcon";
 import { API_RESPONSE_STATUS, SEND_VERIFY_EMAIL_STATUS } from "../../../../../constants";

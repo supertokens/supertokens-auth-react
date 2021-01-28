@@ -42,7 +42,7 @@ SuperTokens.init({
       getRedirectionURL: async (context) => {
         console.log(`ST_LOGS GET_REDIRECTION_URL ${context.action}`);
         if (context.action === "SUCCESS") {
-          return "/dashboard";
+          return context.redirectToPath || "/dashboard";
         }
       },
       onHandleEvent: async (context) => {

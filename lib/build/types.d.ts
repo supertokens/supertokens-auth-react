@@ -37,6 +37,7 @@ export declare type RecipeModuleHooks = {
     }) => Promise<RequestInit>;
     getRedirectionURL?: (context: {
         action: string;
+        redirectToPath?: string;
     }) => Promise<string | undefined>;
     onHandleEvent?: (context: {
         action: string;

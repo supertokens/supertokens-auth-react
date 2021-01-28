@@ -23,7 +23,7 @@ import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { MANDATORY_FORM_FIELDS_ID } from "./recipe/emailpassword/constants";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField, ReactComponentClass } from "./types";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 import { History, LocationState } from "history";
 
 /*
@@ -34,6 +34,25 @@ import { History, LocationState } from "history";
 export function getRecipeIdFromSearch(search: string): string | null {
     const urlParams = new URLSearchParams(search);
     return urlParams.get(RECIPE_ID_QUERY_PARAM);
+}
+
+export function getQueryParams(param: string): string | null {
+    const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
+    return urlParams.get(param);
+}
+
+export function getRedirectToPathFromURL(): string | undefined {
+    const param = getQueryParams("redirectToPath");
+    if (param === null) {
+        return undefined;
+    } else {
+        // Prevent Open redirects by normalising path.
+        try {
+            return new NormalisedURLPath(param).getAsStringDangerous();
+        } catch {
+            return undefined;
+        }
+    }
 }
 
 /*
@@ -126,15 +145,24 @@ export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
     return new NormalisedURLPath(getWindowOrThrow().location.pathname);
 }
 
-/*
- * WithRouter
- */
-export function WithRouter(Component: ReactComponentClass): ReactComponentClass {
+export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string {
+    if (queryParams === undefined) {
+        return stringUrl;
+    }
+
     try {
-        const WithRouter = require("react-router-dom").withRouter;
-        return WithRouter(Component);
+        const url = new URL(stringUrl);
+        Object.entries(queryParams).forEach(([key, value]) => {
+            url.searchParams.set(key, value);
+        });
+        return url.href;
     } catch (e) {
-        return Component;
+        const fakeDomain = stringUrl.startsWith("/") ? "http:localhost" : "http://localhost/";
+        const url = new URL(`${fakeDomain}${stringUrl}`);
+        Object.entries(queryParams).forEach(([key, value]) => {
+            url.searchParams.set(key, value);
+        });
+        return `${url.pathname}${url.search}`;
     }
 }
 
@@ -142,7 +170,8 @@ export function WithRouter(Component: ReactComponentClass): ReactComponentClass 
  * redirectToWithReload
  * Do not use redirectToWithReload directly if redirecting to SuperTokens's paths, instead use corresponding recipe module manager .redirect method with shouldReload = true.
  */
-export function redirectToWithReload(url: string): void {
+export function redirectToWithReload(url: string, queryParams?: Record<string, string>): void {
+    url = appendQueryParamsToURL(url, queryParams);
     if (url.length === 0) {
         url = "/";
     }
@@ -154,10 +183,16 @@ export function redirectToWithReload(url: string): void {
  * redirectToInApp
  * Do not use redirectToInApp directly if redirecting to SuperTokens's paths, instead use corresponding recipe module manager .redirect method.
  */
-export function redirectToInApp(path: string, history?: History<LocationState>): void {
+export function redirectToInApp(
+    path: string,
+    history?: History<LocationState>,
+    queryParams?: Record<string, string>
+): void {
     if (path.length === 0) {
         path = "/";
     }
+
+    path = appendQueryParamsToURL(path, queryParams);
 
     // If history was provided, use.
     if (history !== undefined) {

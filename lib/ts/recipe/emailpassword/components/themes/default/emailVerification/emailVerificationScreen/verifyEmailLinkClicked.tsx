@@ -16,11 +16,12 @@
 /*
  * Imports.
  */
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
+
 import React, { PureComponent } from "react";
 import StyleContext from "../../../../styles/styleContext";
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { VerifyEmailLinkClickedThemeProps, VerifyEmailLinkClickedThemeState } from "../../../../../types";
 import ErrorLargeIcon from "../../../../../assets/errorLargeIcon";
 import ArrowRightIcon from "../../../../../assets/arrowRightIcon";

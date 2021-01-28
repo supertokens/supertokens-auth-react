@@ -2,7 +2,6 @@
 import React, { useEffect } from "react";
 import dynamic from "next/dynamic";
 import Layout from "app/layouts/Layout";
-import "../../../configs/supertokens";
 import SuperTokens from "supertokens-auth-react";
 
 const SuperTokensComponentNoSSR = dynamic(
