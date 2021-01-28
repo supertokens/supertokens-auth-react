@@ -23,7 +23,7 @@ import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { MANDATORY_FORM_FIELDS_ID } from "./recipe/emailpassword/constants";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField, ReactComponentClass } from "./types";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 import { History, LocationState } from "history";
 
 /*
@@ -124,18 +124,6 @@ export async function validateForm(
  */
 export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
     return new NormalisedURLPath(getWindowOrThrow().location.pathname);
-}
-
-/*
- * WithRouter
- */
-export function WithRouter(Component: ReactComponentClass): ReactComponentClass {
-    try {
-        const WithRouter = require("react-router-dom").withRouter;
-        return WithRouter(Component);
-    } catch (e) {
-        return Component;
-    }
 }
 
 /*

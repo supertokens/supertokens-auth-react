@@ -129,18 +129,6 @@ export type RecipeModuleHooks = {
  */
 export type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
 
-export type RouteWithPathAndRecipeId = {
-    /*
-     * Normalised path.
-     */
-    path: NormalisedURLPath;
-
-    /*
-     * Unique Identifier of a module.
-     */
-    recipeId: string | null;
-};
-
 export type ComponentWithRecipeId = {
     /*
      * recipeId of the component.
@@ -212,23 +200,6 @@ export type APIFormField = {
      * Value of the corresponding id.
      */
     value: string;
-};
-
-export type RequestJson = {
-    /*
-     * Standard form fields passed to the API.
-     */
-    formFields?: APIFormField[];
-
-    /*
-     * Reset password token.
-     */
-    token?: string;
-
-    /*
-     * Method.
-     */
-    method?: "token";
 };
 
 export type NormalisedFormField = {
