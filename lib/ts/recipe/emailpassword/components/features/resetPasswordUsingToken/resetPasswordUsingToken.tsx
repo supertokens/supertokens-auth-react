@@ -26,11 +26,7 @@ import { ResetPasswordUsingTokenTheme } from "../../..";
 import { APIFormField } from "../../../../../types";
 import FeatureWrapper from "../../../../components/featureWrapper";
 
-import {
-    FORM_BASE_API_RESPONSE,
-    EMAIL_PASSWORD_REDIRECTION_URL_ACTION,
-    EMAIL_PASSWORD_SUCCESS_ACTION
-} from "../../../constants";
+import { FORM_BASE_API_RESPONSE } from "../../../constants";
 import { getWindowOrThrow, validateForm } from "../../../../../utils";
 import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 
@@ -132,14 +128,11 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             submitNewPasswordAPI: this.submitNewPassword,
             onSuccess: () => {
                 this.getRecipeInstanceOrThrow().onHandleEvent({
-                    action: EMAIL_PASSWORD_SUCCESS_ACTION.PASSWORD_RESET_SUCCESSFUL
+                    action: "PASSWORD_RESET_SUCCESSFUL"
                 });
             },
             onSignInClicked: () => {
-                this.getRecipeInstanceOrThrow().redirect(
-                    { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
-                    this.props.history
-                );
+                this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
             }
         };
 
@@ -148,7 +141,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             formFields: enterEmailFormFeature.formFields,
             onSuccess: () => {
                 this.getRecipeInstanceOrThrow().onHandleEvent({
-                    action: EMAIL_PASSWORD_SUCCESS_ACTION.RESET_PASSWORD_EMAIL_SENT
+                    action: "RESET_PASSWORD_EMAIL_SENT"
                 });
             },
             enterEmailAPI: this.enterEmail

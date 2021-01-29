@@ -1,6 +1,6 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction } from "../../types";
-import { EmailPasswordConfig, EmailPasswordUserInput, NormalisedEmailPasswordConfig, SignOutAPIResponse } from "./types";
+import { EmailPasswordConfig, EmailPasswordRedirectionUrlAction, EmailPasswordUserInput, NormalisedEmailPasswordConfig, SignOutAPIResponse } from "./types";
 import Session from "../session/session";
 export default class EmailPassword extends RecipeModule {
     static instance?: EmailPassword;
@@ -10,7 +10,7 @@ export default class EmailPassword extends RecipeModule {
     getConfig: () => NormalisedEmailPasswordConfig;
     getFeatures: () => Record<string, import("../../types").ReactComponentClass>;
     getDefaultRedirectionURL: (context: {
-        action: "VERIFY_EMAIL" | "SUCCESS" | "SIGN_IN_AND_UP" | "RESET_PASSWORD";
+        action: EmailPasswordRedirectionUrlAction;
     }) => Promise<string>;
     getSessionRecipe: () => Session | undefined;
     doesSessionExist: () => boolean;

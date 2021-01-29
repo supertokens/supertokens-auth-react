@@ -15,11 +15,7 @@
 
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import RecipeModule from "../../../../recipeModule";
-import {
-    API_RESPONSE_STATUS,
-    EMAIL_PASSWORD_PRE_API_HOOK_ACTION,
-    VERIFY_EMAIL_LINK_CLICKED_STATUS
-} from "../../../constants";
+import { API_RESPONSE_STATUS, VERIFY_EMAIL_LINK_CLICKED_STATUS } from "../../../constants";
 import {
     VerifyEmailThemeResponse,
     SendVerifyEmailThemeResponse,
@@ -41,7 +37,7 @@ export async function verifyEmailAPI(recipe: RecipeModule, token: string): Promi
                 token
             })
         },
-        EMAIL_PASSWORD_PRE_API_HOOK_ACTION.VERIFY_EMAIL
+        "VERIFY_EMAIL"
     );
 
     // Otherwise, if email verification invalid token error.
@@ -64,7 +60,7 @@ export async function verifyEmailAPI(recipe: RecipeModule, token: string): Promi
 export async function sendVerifyEmailAPI(recipe: RecipeModule): Promise<SendVerifyEmailThemeResponse> {
     const response: SendVerifyEmailAPIResponse = await recipe
         .getHttp()
-        .post("/user/email/verify/token", {}, EMAIL_PASSWORD_PRE_API_HOOK_ACTION.SEND_VERIFY_EMAIL);
+        .post("/user/email/verify/token", {}, "SEND_VERIFY_EMAIL");
 
     // If email already verified.
     if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
@@ -86,6 +82,6 @@ export async function sendVerifyEmailAPI(recipe: RecipeModule): Promise<SendVeri
 export async function isEmailVerifiedAPI(recipe: RecipeModule): Promise<boolean> {
     const response: IsEmailVerifiedAPIResponse = await recipe
         .getHttp()
-        .get("/user/email/verify", {}, EMAIL_PASSWORD_PRE_API_HOOK_ACTION.IS_EMAIL_VERIFIED);
+        .get("/user/email/verify", {}, "IS_EMAIL_VERIFIED");
     return response.isVerified;
 }

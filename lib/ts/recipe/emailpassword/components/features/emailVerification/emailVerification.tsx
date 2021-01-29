@@ -25,7 +25,7 @@ import EmailPassword from "../../../emailPassword";
 import { EmailVerificationScreenTheme, signOut } from "../../..";
 import FeatureWrapper from "../../../../components/featureWrapper";
 
-import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE, EMAIL_PASSWORD_SUCCESS_ACTION } from "../../../constants";
+import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE } from "../../../constants";
 import { getWindowOrThrow } from "../../../../../utils";
 import { verifyEmailAPI, sendVerifyEmailAPI } from "./api";
 
@@ -125,7 +125,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             signOut: this.signOut,
             onSuccess: () =>
                 this.getRecipeInstanceOrThrow().onHandleEvent({
-                    action: EMAIL_PASSWORD_SUCCESS_ACTION.VERIFY_EMAIL_SENT
+                    action: "VERIFY_EMAIL_SENT"
                 }),
             onEmailAlreadyVerified: () =>
                 this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history)
@@ -139,7 +139,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             onTokenInvalidRedirect: this.onTokenInvalidRedirect,
             onSuccess: () =>
                 this.getRecipeInstanceOrThrow().onHandleEvent({
-                    action: EMAIL_PASSWORD_SUCCESS_ACTION.EMAIL_VERIFIED_SUCCESSFUL
+                    action: "EMAIL_VERIFIED_SUCCESSFUL"
                 }),
             onContinueClicked: () =>
                 this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history),

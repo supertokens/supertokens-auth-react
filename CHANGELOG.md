@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.1] - 2020-01-27
 
 ### Fixes
-- Use tsconifg to compile instead of babel
+- Use tsconfig to compile instead of babel
 
 ## [0.5.0] - 2020-01-22
 

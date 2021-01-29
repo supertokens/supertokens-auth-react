@@ -30,8 +30,9 @@ import { getRecipeIdFromSearch, getWindowOrThrow } from "../utils";
 export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
     try {
         // eslint-disable-next-line
-        const Route = require("react-router-dom").Route;
-        const withRouter: WithRouterType = require("react-router-dom").withRouter;
+        const ReactRouterDom = require("react-router-dom");
+        const Route = ReactRouterDom.Route;
+        const withRouter: WithRouterType = ReactRouterDom.withRouter;
         const pathsToComponentWithRecipeIdMap = SuperTokens.getInstanceOrThrow().getPathsToComponentWithRecipeIdMap();
 
         return Object.keys(pathsToComponentWithRecipeIdMap).map(path => {

@@ -36,12 +36,10 @@ import FeatureWrapper from "../../../../components/featureWrapper";
 import {
     EMAIL_VERIFICATION_MODE,
     FORM_BASE_API_RESPONSE,
-    EMAIL_PASSWORD_REDIRECTION_URL_ACTION,
     MANDATORY_FORM_FIELDS_ID,
-    SIGN_IN_AND_UP_STATUS,
-    EMAIL_PASSWORD_SUCCESS_ACTION
+    SIGN_IN_AND_UP_STATUS
 } from "../../../constants";
-import { validateForm } from "../../../../../utils";
+import { getRedirectToPathFromURL, validateForm } from "../../../../../utils";
 
 /*
  * Component.
@@ -99,13 +97,17 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         }
 
         this.getRecipeInstanceOrThrow().onHandleEvent({
-            action: EMAIL_PASSWORD_SUCCESS_ACTION.SIGN_IN_COMPLETE,
+            action: "SIGN_IN_COMPLETE",
             user: this.state.user
         });
 
-        return await this.getRecipeInstanceOrThrow().redirect({
-            action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS
-        });
+        return await this.getRecipeInstanceOrThrow().redirect(
+            {
+                action: "SUCCESS",
+                redirectToPath: getRedirectToPathFromURL()
+            },
+            this.props.history
+        );
     };
 
     signUp = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
@@ -156,20 +158,24 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         }
 
         this.getRecipeInstanceOrThrow().onHandleEvent({
-            action: EMAIL_PASSWORD_SUCCESS_ACTION.SIGN_UP_COMPLETE,
+            action: "SIGN_UP_COMPLETE",
             user: this.state.user
         });
 
-        // Otherwise, redirect to email verification screen if sign up and email verification mode is required.
-        let action: EmailPasswordRedirectionUrlAction = EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS;
+        // Redirect to email verification screen if sign up and email verification mode is required.
+        const context: { action: EmailPasswordRedirectionUrlAction; redirectToPath?: string } = {
+            action: "VERIFY_EMAIL"
+        };
         if (
-            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode ===
+            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !==
             EMAIL_VERIFICATION_MODE.REQUIRED
         ) {
-            action = EMAIL_PASSWORD_REDIRECTION_URL_ACTION.VERIFY_EMAIL;
+            // Or if sign up and email verification mode is not required, redirect to success screen.
+            context.redirectToPath = getRedirectToPathFromURL();
+            context.action = "SUCCESS";
         }
 
-        return await this.getRecipeInstanceOrThrow().redirect({ action });
+        return await this.getRecipeInstanceOrThrow().redirect(context, this.props.history);
     };
 
     getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {
@@ -219,12 +225,9 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists) {
             this.getRecipeInstanceOrThrow().onHandleEvent({
-                action: EMAIL_PASSWORD_SUCCESS_ACTION.SESSION_ALREADY_EXISTS
+                action: "SESSION_ALREADY_EXISTS"
             });
-            return await this.getRecipeInstanceOrThrow().redirect(
-                { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS },
-                this.props.history
-            );
+            return await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history);
         }
 
         this.setState(oldState => {
@@ -251,11 +254,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             signInAPI: this.signIn,
             onSuccess: this.onSignInSuccess,
             forgotPasswordClick: () =>
-                this.getRecipeInstanceOrThrow().redirect(
-                    { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.RESET_PASSWORD },
-                    this.props.history,
-                    "Reset password"
-                )
+                this.getRecipeInstanceOrThrow().redirect({ action: "RESET_PASSWORD" }, this.props.history)
         };
 
         const signUpForm = {

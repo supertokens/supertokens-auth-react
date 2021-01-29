@@ -17,8 +17,13 @@
  * Imports.
  */
 import HttpRequest from "../httpRequest";
-import { RouteToFeatureComponentMap, RecipeModuleConfig, NormalisedAppInfo, RecipeModuleHooks } from "../types";
-import { redirectToInApp, redirectToWithReload } from "../utils";
+import {
+    RouteToFeatureComponentMap,
+    RecipeModuleConfig,
+    NormalisedAppInfo,
+    NormalisedRecipeModuleHooks
+} from "../types";
+import { appendQueryParamsToURL, getWindowOrThrow, normalisedRecipeModuleHooks } from "../utils";
 import { History, LocationState } from "history";
 
 /*
@@ -31,8 +36,8 @@ export default abstract class RecipeModule {
 
     private recipeId: string;
     private appInfo: NormalisedAppInfo;
-    private hooks: RecipeModuleHooks;
     private httpRequest: HttpRequest;
+    hooks: NormalisedRecipeModuleHooks;
 
     /*
      * Constructor.
@@ -41,11 +46,7 @@ export default abstract class RecipeModule {
         this.recipeId = config.recipeId;
         this.appInfo = config.appInfo;
         this.httpRequest = new HttpRequest(this);
-        this.hooks = {
-            preAPIHook: config.preAPIHook,
-            onHandleEvent: config.onHandleEvent,
-            getRedirectionURL: config.getRedirectionURL
-        };
+        this.hooks = normalisedRecipeModuleHooks(config);
     }
 
     /*
@@ -63,48 +64,43 @@ export default abstract class RecipeModule {
         return this.httpRequest;
     };
 
-    preAPIHook = async (context: { action: string; requestInit: RequestInit }): Promise<RequestInit> => {
-        const preAPIHook = this.hooks.preAPIHook;
-        if (preAPIHook !== undefined) {
-            return await preAPIHook(context);
-        }
-
-        return context.requestInit;
-    };
-
     redirect = async (
-        context: { action: string },
+        context: unknown,
         history?: History<LocationState>,
-        title?: string,
-        shouldReload = false
+        queryParams?: Record<string, string>
     ): Promise<void> => {
-        const redirectUrl = await this.getRedirectionURL(context);
+        let redirectUrl = await this.getRedirectUrl(context);
+        redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
 
-        // If shouldReload, reload.
-        if (shouldReload === true) {
-            return await redirectToWithReload(redirectUrl);
-        }
         try {
-            new URL(redirectUrl);
-            // Otherwise, If full URL, use redirectToWithReload
-            return await redirectToWithReload(redirectUrl);
+            new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
         } catch (e) {
-            // Otherwise, redirect in app.
-            return await redirectToInApp(redirectUrl, title, history);
+            // If history was provided, use to redirect without reloading.
+            if (history !== undefined) {
+                history.push(redirectUrl);
+                return;
+            }
         }
+        // Otherwise, redirect in app.
+        getWindowOrThrow().location.href = redirectUrl;
     };
 
-    getRedirectionURL = async (context: { action: string }): Promise<string> => {
-        let redirectUrl;
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    getRedirectUrl = async (context: any): Promise<string> => {
         // If getRedirectionURL provided by user.
-        const getRedirectionURL = this.hooks.getRedirectionURL;
-        if (getRedirectionURL !== undefined) {
-            redirectUrl = (await getRedirectionURL(context)) || redirectUrl;
+        let redirectUrl = await this.hooks.getRedirectionURL(context);
+        if (redirectUrl !== undefined) {
+            return redirectUrl;
+        }
+        // Try using redirectToPath
+        if (context.action === "SUCCESS") {
+            redirectUrl = context.redirectToPath;
             if (redirectUrl !== undefined) {
                 return redirectUrl;
             }
         }
 
+        // Otherwise, used default.
         return await this.getDefaultRedirectionURL(context);
     };
 
@@ -118,7 +114,7 @@ export default abstract class RecipeModule {
     abstract getFeatures(): RouteToFeatureComponentMap;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getDefaultRedirectionURL(context: { action: unknown }): Promise<string> {
+    protected async getDefaultRedirectionURL(context: unknown): Promise<string> {
         throw new Error("Recipe must overwrite getDefaultRedirectionURL");
     }
 }

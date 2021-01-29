@@ -16,7 +16,7 @@
 import { RESET_PASSWORD_INVALID_TOKEN_ERROR, SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import { APIFormField } from "../../../../../types";
 import RecipeModule from "../../../../recipeModule";
-import { API_RESPONSE_STATUS, EMAIL_PASSWORD_PRE_API_HOOK_ACTION, FORM_BASE_API_RESPONSE } from "../../../constants";
+import { API_RESPONSE_STATUS, FORM_BASE_API_RESPONSE } from "../../../constants";
 import { EnterEmailAPIResponse, FormBaseAPIResponse, SubmitNewPasswordAPIResponse } from "../../../types";
 
 /*
@@ -33,7 +33,7 @@ export async function handleSubmitNewPasswordAPI(
         {
             body: JSON.stringify({ formFields, token })
         },
-        EMAIL_PASSWORD_PRE_API_HOOK_ACTION.SUBMIT_NEW_PASSWORD
+        "SUBMIT_NEW_PASSWORD"
     );
 
     // Otherwise, if field errors.
@@ -68,7 +68,7 @@ export async function enterEmailAPI(formFields: APIFormField[], recipe: RecipeMo
         {
             body: JSON.stringify({ formFields })
         },
-        EMAIL_PASSWORD_PRE_API_HOOK_ACTION.SEND_RESET_PASSWORD_EMAIL
+        "SEND_RESET_PASSWORD_EMAIL"
     );
 
     // Otherwise, if field errors.
