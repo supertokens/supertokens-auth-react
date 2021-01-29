@@ -93,10 +93,6 @@ SuperTokens.init({
       },
 
       onHandleEvent(context: EmailPasswordOnHandleEventContext) {
-        if (context.action === "SIGN_IN_AND_UP") {
-          return "/auth#"
-        }
-        return undefined;
       },
 
       async preAPIHook(context: EmailPasswordPreAPIHookContext) {
@@ -104,9 +100,6 @@ SuperTokens.init({
       },
 
       async getRedirectionURL(context: EmailPasswordGetRedirectionURLContext) {
-        if (context.action === "SIGN_IN_AND_UP") {
-          return "/auth#"
-        }
         return undefined;
       }
       
