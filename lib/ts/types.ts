@@ -111,19 +111,35 @@ export type RecipeModuleHooks = {
     /*
      * Optional pre API Hook.
      */
-    preAPIHook?: (context: { action: string; requestInit: RequestInit }) => Promise<RequestInit>;
+    preAPIHook?: (context: unknown) => Promise<RequestInit>;
 
     /*
      * Optional method used for redirections.
      */
-    getRedirectionURL?: (context: { action: string; redirectToPath?: string }) => Promise<string | undefined>;
+    getRedirectionURL?: (context: unknown) => Promise<string | undefined>;
 
     /*
      * Optional method used for handling event success.
      */
-    onHandleEvent?: (context: { action: string; user?: { id: string; email: string } }) => void;
+    onHandleEvent?: (context: unknown) => void;
 };
 
+export type NormalisedRecipeModuleHooks = {
+    /*
+     * Optional pre API Hook.
+     */
+    preAPIHook: (context: unknown) => Promise<RequestInit>;
+
+    /*
+     * Method used for redirections.
+     */
+    getRedirectionURL: (context: unknown) => Promise<string | undefined>;
+
+    /*
+     * Method used for handling event success.
+     */
+    onHandleEvent: (context: unknown) => void;
+};
 /*
  * Routing manipulation types.
  */

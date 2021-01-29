@@ -1,7 +1,7 @@
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
-import { History, LocationState } from "history";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField, NormalisedRecipeModuleHooks, RecipeModuleHooks } from "./types";
+export declare function normalisedRecipeModuleHooks(config: RecipeModuleHooks): NormalisedRecipeModuleHooks;
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function getQueryParams(param: string): string | null;
 export declare function getRedirectToPathFromURL(): string | undefined;
@@ -10,6 +10,4 @@ export declare function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserIn
 export declare function validateForm(inputs: APIFormField[], configFormFields: NormalisedFormField[]): Promise<FormFieldError[]>;
 export declare function getCurrentNormalisedUrlPath(): NormalisedURLPath;
 export declare function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string;
-export declare function redirectToWithReload(url: string, queryParams?: Record<string, string>): void;
-export declare function redirectToInApp(path: string, history?: History<LocationState>, queryParams?: Record<string, string>): void;
 export declare function getWindowOrThrow(): any;

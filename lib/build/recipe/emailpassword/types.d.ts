@@ -1,7 +1,7 @@
 import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, Styles } from "../../types";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE, ENTER_EMAIL_STATUS, FORM_BASE_API_RESPONSE, FORM_BASE_STATUS, EMAIL_PASSWORD_PRE_API_HOOK_ACTION, SEND_VERIFY_EMAIL_STATUS, SIGN_IN_AND_UP_STATUS, SUBMIT_NEW_PASSWORD_STATUS, VERIFY_EMAIL_LINK_CLICKED_STATUS, EMAIL_PASSWORD_AUTH_STATE, EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION, EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION, EMAIL_PASSWORD_REDIRECTION_URL_ACTION } from "./constants";
+import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE, ENTER_EMAIL_STATUS, FORM_BASE_API_RESPONSE, FORM_BASE_STATUS, SEND_VERIFY_EMAIL_STATUS, SIGN_IN_AND_UP_STATUS, SUBMIT_NEW_PASSWORD_STATUS, VERIFY_EMAIL_LINK_CLICKED_STATUS, EMAIL_PASSWORD_AUTH_STATE } from "./constants";
 import { History, LocationState } from "history";
 import EmailPassword from "./emailPassword";
 export declare type EmailPasswordHooks = {
@@ -177,10 +177,10 @@ export declare type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | 
 export declare type VerifyEmailThemeResponse = {
     status: keyof typeof VERIFY_EMAIL_LINK_CLICKED_STATUS;
 };
-export declare type EmailPasswordWithoutUserSuccessAction = typeof EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION[keyof typeof EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION];
-export declare type EmailPasswordWithUserSuccessAction = typeof EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION[keyof typeof EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION];
-export declare type EmailPasswordRedirectionUrlAction = typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION[keyof typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION];
-export declare type EmailPasswordPreAPIHookAction = typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION[keyof typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION];
+export declare type EmailPasswordWithoutUserSuccessAction = "SESSION_ALREADY_EXISTS" | "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL" | "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
+export declare type EmailPasswordWithUserSuccessAction = "SIGN_IN_COMPLETE" | "SIGN_UP_COMPLETE";
+export declare type EmailPasswordRedirectionUrlAction = "SUCCESS" | "SIGN_IN_AND_UP" | "VERIFY_EMAIL" | "RESET_PASSWORD";
+export declare type EmailPasswordPreAPIHookAction = "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD" | "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_IN" | "SIGN_UP" | "SIGN_OUT";
 export declare type EmailPasswordPreAPIHookContext = {
     action: EmailPasswordPreAPIHookAction;
     requestInit: RequestInit;

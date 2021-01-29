@@ -305,9 +305,20 @@ describe("SuperTokens SignIn feature/theme", function() {
         it("Successful Sign In with redirect to, redirectToPath directly", async function() {
             await assertSignInRedirectTo(
                 page,
-                `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=%2Fredirect-to-this-custom-path`,
-                `${TEST_CLIENT_BASE_URL}/redirect-to-this-custom-path`
+                `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=%2Fredirect-here`,
+                `${TEST_CLIENT_BASE_URL}/redirect-here`
             );
+        });
+
+        it("Successful Sign In with redirect to, redirectToPath directly without trailing slash", async function() {
+            await assertSignInRedirectTo(
+                page,
+                `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=redirect-here`,
+                `${TEST_CLIENT_BASE_URL}/redirect-here`
+            );
+        });
+
+        it("Successful Sign In with redirect to, redirectToPath directly", async function() {
             // Use only path, no open redirect.
             await assertSignInRedirectTo(
                 page,

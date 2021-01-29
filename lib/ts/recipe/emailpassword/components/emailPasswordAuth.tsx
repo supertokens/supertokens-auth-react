@@ -21,11 +21,7 @@ import { PureComponent, ReactElement } from "react";
 
 import { EmailPasswordAuthState, FeatureBaseProps } from "../types";
 import EmailPassword from "../emailPassword";
-import {
-    EMAIL_PASSWORD_AUTH_STATE,
-    EMAIL_PASSWORD_REDIRECTION_URL_ACTION,
-    EMAIL_VERIFICATION_MODE
-} from "../constants";
+import { EMAIL_PASSWORD_AUTH_STATE, EMAIL_VERIFICATION_MODE } from "../constants";
 import { getWindowOrThrow } from "supertokens-website/lib/build/utils";
 import { ReactComponentClass, WithRouterType } from "../../../types";
 
@@ -70,11 +66,9 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists === false) {
             const redirectToPath = getWindowOrThrow().location.pathname;
-            return await this.getRecipeInstanceOrThrow().redirect(
-                { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP },
-                this.props.history,
-                { redirectToPath }
-            );
+            return await this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
+                redirectToPath
+            });
         }
 
         // Update status to ready.
@@ -94,11 +88,9 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
         const isEmailVerified = await this.isEmailVerifiedAPI();
         if (isEmailVerified === false) {
             const redirectToPath = getWindowOrThrow().location.pathname;
-            return await this.getRecipeInstanceOrThrow().redirect(
-                { action: EMAIL_PASSWORD_REDIRECTION_URL_ACTION.VERIFY_EMAIL },
-                this.props.history,
-                { redirectToPath }
-            );
+            return await this.getRecipeInstanceOrThrow().redirect({ action: "VERIFY_EMAIL" }, this.props.history, {
+                redirectToPath
+            });
         }
         return;
     }

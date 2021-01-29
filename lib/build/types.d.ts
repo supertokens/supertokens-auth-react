@@ -31,21 +31,14 @@ export declare type RecipeModuleConfig = RecipeModuleHooks & {
     appInfo: NormalisedAppInfo;
 };
 export declare type RecipeModuleHooks = {
-    preAPIHook?: (context: {
-        action: string;
-        requestInit: RequestInit;
-    }) => Promise<RequestInit>;
-    getRedirectionURL?: (context: {
-        action: string;
-        redirectToPath?: string;
-    }) => Promise<string | undefined>;
-    onHandleEvent?: (context: {
-        action: string;
-        user?: {
-            id: string;
-            email: string;
-        };
-    }) => void;
+    preAPIHook?: (context: unknown) => Promise<RequestInit>;
+    getRedirectionURL?: (context: unknown) => Promise<string | undefined>;
+    onHandleEvent?: (context: unknown) => void;
+};
+export declare type NormalisedRecipeModuleHooks = {
+    preAPIHook: (context: unknown) => Promise<RequestInit>;
+    getRedirectionURL: (context: unknown) => Promise<string | undefined>;
+    onHandleEvent: (context: unknown) => void;
 };
 export declare type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
 export declare type ComponentWithRecipeId = {

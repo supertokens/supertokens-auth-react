@@ -23,8 +23,41 @@ import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { MANDATORY_FORM_FIELDS_ID } from "./recipe/emailpassword/constants";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
-import { History, LocationState } from "history";
+import {
+    APIFormField,
+    AppInfoUserInput,
+    NormalisedAppInfo,
+    NormalisedFormField,
+    NormalisedRecipeModuleHooks,
+    RecipeModuleHooks
+} from "./types";
+
+/*
+ * NormalisedRecipeModuleHooks
+ */
+export function normalisedRecipeModuleHooks(config: RecipeModuleHooks): NormalisedRecipeModuleHooks {
+    let { preAPIHook, getRedirectionURL, onHandleEvent } = config;
+    if (preAPIHook === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        preAPIHook = async (context: { action: string; requestInit: RequestInit }): Promise<RequestInit> =>
+            context.requestInit;
+    }
+    if (getRedirectionURL === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        getRedirectionURL = async (context: { action: string }): Promise<string | undefined> => undefined;
+    }
+
+    if (onHandleEvent === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+        onHandleEvent = (context: { action: string; user?: { id: string; email: string } | undefined }): void => {};
+    }
+
+    return {
+        preAPIHook,
+        getRedirectionURL,
+        onHandleEvent
+    };
+}
 
 /*
  * getRecipeIdFromPath
@@ -164,44 +197,6 @@ export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<s
         });
         return `${url.pathname}${url.search}`;
     }
-}
-
-/*
- * redirectToWithReload
- * Do not use redirectToWithReload directly if redirecting to SuperTokens's paths, instead use corresponding recipe module manager .redirect method with shouldReload = true.
- */
-export function redirectToWithReload(url: string, queryParams?: Record<string, string>): void {
-    url = appendQueryParamsToURL(url, queryParams);
-    if (url.length === 0) {
-        url = "/";
-    }
-
-    getWindowOrThrow().location.href = url;
-}
-
-/*
- * redirectToInApp
- * Do not use redirectToInApp directly if redirecting to SuperTokens's paths, instead use corresponding recipe module manager .redirect method.
- */
-export function redirectToInApp(
-    path: string,
-    history?: History<LocationState>,
-    queryParams?: Record<string, string>
-): void {
-    if (path.length === 0) {
-        path = "/";
-    }
-
-    path = appendQueryParamsToURL(path, queryParams);
-
-    // If history was provided, use.
-    if (history !== undefined) {
-        history.push(path);
-        return;
-    }
-
-    // Otherwise, reload the page.
-    getWindowOrThrow().location.href = path;
 }
 
 export function getWindowOrThrow(): any {
