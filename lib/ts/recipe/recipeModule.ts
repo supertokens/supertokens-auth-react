@@ -69,13 +69,7 @@ export default abstract class RecipeModule {
         history?: History<LocationState>,
         queryParams?: Record<string, string>
     ): Promise<void> => {
-        // If getRedirectionURL provided by user.
-        let redirectUrl = await this.hooks.getRedirectionURL(context);
-        if (redirectUrl === undefined) {
-            // Otheriwse, used default.
-            redirectUrl = await this.getDefaultRedirectionURL(context);
-        }
-
+        let redirectUrl = await this.getRedirectUrl(context);
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
 
         try {
@@ -89,6 +83,25 @@ export default abstract class RecipeModule {
         }
         // Otherwise, redirect in app.
         getWindowOrThrow().location.href = redirectUrl;
+    };
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    getRedirectUrl = async (context: any): Promise<string> => {
+        // If getRedirectionURL provided by user.
+        let redirectUrl = await this.hooks.getRedirectionURL(context);
+        if (redirectUrl !== undefined) {
+            return redirectUrl;
+        }
+        // Try using redirectToPath
+        if (context.action === "SUCCESS") {
+            redirectUrl = context.redirectToPath;
+            if (redirectUrl !== undefined) {
+                return redirectUrl;
+            }
+        }
+
+        // Otherwise, used default.
+        return await this.getDefaultRedirectionURL(context);
     };
 
     onHandleEvent(context: { action: string; user?: { id: string; email: string } }): void {

@@ -109,6 +109,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
 
 export default (function(): ReactComponentClass {
     try {
+        // eslint-disable-next-line
         const withRouter: WithRouterType = require("react-router-dom").withRouter;
         return withRouter(EmailPasswordAuth);
     } catch (e) {
