@@ -8,13 +8,13 @@ import Footer from "./Footer"
 
 export function getApiDomain() {
   const apiPort = process.env.REACT_APP_API_PORT || 3001;
-  const apiUrl = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
+  const apiUrl = process.env.REACT_APP_API_URL || `http://supertokens.dev:${apiPort}`;
   return apiUrl;
 }
 
 export function getWebsiteDomain() {
   const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
+  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://a.supertokens.dev:${websitePort}`;
   return websiteUrl;
 }
 
@@ -43,6 +43,11 @@ function App() {
         <Switch>
           {getSuperTokensRoutesForReactRouterDom()}
           <Route path="/">
+            <EmailPassword.EmailPasswordAuth>
+              <Home />
+            </EmailPassword.EmailPasswordAuth>
+          </Route>
+          <Route path="/home">
             <EmailPassword.EmailPasswordAuth>
               <Home />
             </EmailPassword.EmailPasswordAuth>

@@ -5,11 +5,15 @@ let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
-const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
+const apiDomain = process.env.REACT_APP_API_URL || `http://supertokens.dev:${apiPort}`;
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`
+const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://supertokens.dev:${websitePort}`
+const websiteSubDomain = `http://a.supertokens.dev:${websitePort}`
 
 
+let getUserDomain = (email) =>{
+    return "a"
+}
 supertokens.init({
     supertokens: {
         connectionURI: "https://try.supertokens.io",
@@ -28,7 +32,7 @@ supertokens.init({
                     // getUserDomain is your implementation
                     let userDomain = await getUserDomain(email);
 
-                    return `https://${userDomain}.example.com/reset-password`;
+                    return `https://${userDomain}.supertokens.dev:${apiPort}/reset-password`;
 
                 }
             },
@@ -39,7 +43,7 @@ supertokens.init({
                     // getUserDomain is your implementation
                     let userDomain = await getUserDomain(userId);
 
-                    return `https://${userDomain}.example.com/verify-email`;
+                    return `https://${userDomain}.supertokens.dev:${apiPort}/verify-email`;
                 },
                 createAndSendCustomEmail: (user, emailVerificationURLWithToken) =>{
                     console.log(emailVerificationURLWithToken)
@@ -52,10 +56,16 @@ supertokens.init({
 });
 
 const app = express();
-
+var whitelist = [websiteDomain,websiteSubDomain]
 
 app.use(cors({
-    origin: websiteDomain,
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+          callback(null, true)
+        } else {
+          callback(new Error('Not allowed by CORS'))
+        }
+      },
     allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
     methods: ["GET", "PUT", "POST", "DELETE"],
     credentials: true,
