@@ -3,6 +3,8 @@ import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
+import Home from "./Home";
+import Footer from "./Footer"
 
 export function getApiDomain() {
   const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -42,11 +44,12 @@ function App() {
           {getSuperTokensRoutesForReactRouterDom()}
           <Route path="/">
             <EmailPassword.EmailPasswordAuth>
-              <div>HomePage</div>
+              <Home />
             </EmailPassword.EmailPasswordAuth>
           </Route>
         </Switch>
       </div>
+      <Footer />
     </Router >
   </div>
   );

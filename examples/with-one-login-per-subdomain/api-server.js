@@ -9,6 +9,7 @@ const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`
 
+
 supertokens.init({
     supertokens: {
         connectionURI: "https://try.supertokens.io",
@@ -19,7 +20,33 @@ supertokens.init({
         websiteDomain
     },
     recipeList: [
-        EmailPassword.init(),
+        EmailPassword.init({
+            resetPasswordUsingTokenFeature: {
+                getResetPasswordURL: async (user) =>{
+                    let {id, email} = user;
+
+                    // getUserDomain is your implementation
+                    let userDomain = await getUserDomain(email);
+
+                    return `https://${userDomain}.example.com/reset-password`;
+
+                }
+            },
+            emailVerificationFeature: {
+                getEmailVerificationURL: async (user) => {
+                    let {id, email} = user;
+
+                    // getUserDomain is your implementation
+                    let userDomain = await getUserDomain(userId);
+
+                    return `https://${userDomain}.example.com/verify-email`;
+                },
+                createAndSendCustomEmail: (user, emailVerificationURLWithToken) =>{
+                    console.log(emailVerificationURLWithToken)
+                }
+            },
+
+        }),
         Session.init()
     ]
 });
