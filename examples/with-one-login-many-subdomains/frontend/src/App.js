@@ -22,16 +22,34 @@ SuperTokens.init({
   appInfo: {
     appName: "SuperTokens Demo App",
     apiDomain: getApiDomain(),
-    websiteDomain: getWebsiteDomain()
+    websiteDomain: getWebsiteDomain(),
   },
   recipeList: [
     EmailPassword.init({
-      emailVerificationFeature: {
-        mode: "REQUIRED"
-      }
+      // emailVerificationFeature: {
+      //   mode: "REQUIRED"
+      // },
+      signInAndUpFeature: {
+        signUpForm: {
+          formFields: [
+            {
+              id: "username",
+              label: "Username",
+              placeholder: "A unique username",
+              validate: async (value) => {
+                // check with the backend that username is unique 
+                // and if it is, allow signup otherwise request for a different
+                // username
+                console.log(value);
+                return undefined
+              },
+            },
+          ],
+        },
+      },
     }),
-    Session.init()
-  ]
+    Session.init(),
+  ],
 });
 
 
