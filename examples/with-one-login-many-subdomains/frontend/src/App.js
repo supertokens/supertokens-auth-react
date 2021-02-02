@@ -5,6 +5,7 @@ import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
+import axios from 'axios';
 
 export function getApiDomain() {
   const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -37,11 +38,19 @@ SuperTokens.init({
               label: "Username",
               placeholder: "A unique username",
               validate: async (value) => {
+                const validUsernameRegex =  /^[A-Za-z0-9_]{3,20}$/;
+                if (!validUsernameRegex.test(value)) {
+                  return 'Invalid username: only alphabets, numbers and "_" allowed. Min 3 and Max 20 characters.'
+                }
+
                 // check with the backend that username is unique 
                 // and if it is, allow signup otherwise request for a different
                 // username
-                console.log(value);
-                return undefined
+                const isValidRes = await axios.get(`${getApiDomain()}/validate-username/${value}`)
+                if (isValidRes.data.valid) {
+                  return undefined
+                }
+                return 'This username is not available, please try something else'
               },
             },
           ],

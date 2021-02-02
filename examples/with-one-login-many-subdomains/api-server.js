@@ -30,7 +30,7 @@ supertokens.init({
             id: "username",
             validate: async (value) => {
                 console.log(value);
-                return undefined
+                return 'Fo'
             },
           },
         ],
@@ -74,6 +74,11 @@ app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
     sessionData: await session.getSessionData(),
   });
 });
+
+app.get('/validate-username/:username', async (req, res) => {
+    console.log(req.params.username);
+    res.send({valid: false})
+})
 
 app.use(supertokens.errorHandler());
 
