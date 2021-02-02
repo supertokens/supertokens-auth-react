@@ -13,6 +13,14 @@ const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain =
   process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
 
+const DB = []
+async function checkIfTenantExists(username) {
+    if (DB.includes(username)) {
+        return true
+    }
+    return false
+}
+
 supertokens.init({
   supertokens: {
     connectionURI: "https://try.supertokens.io",
@@ -29,8 +37,16 @@ supertokens.init({
           {
             id: "username",
             validate: async (value) => {
-                console.log(value);
-                return 'Fo'
+                const validUsernameRegex =  /^[A-Za-z0-9_]{3,20}$/;
+                if (!validUsernameRegex.test(value)) {
+                  return 'Invalid username: only alphabets, numbers and "_" allowed. Min 3 and Max 20 characters.'
+                }
+
+                const usernameExists = await checkIfTenantExists(value)
+                if (usernameExists) {
+                    return 'This username is not available, please try something else'
+                }
+                return undefined
             },
           },
         ],
@@ -47,9 +63,16 @@ supertokens.init({
 
 const app = express();
 
+const whiteList = [websiteDomain]
 app.use(
   cors({
-    origin: websiteDomain,
+    origin: function(origin, callback){
+        if (whiteList.indexOf(origin) !== -1) {
+          callback(null, true)
+        } else {
+          callback(new Error('Not allowed by CORS'))
+        }
+    },
     allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
     methods: ["GET", "PUT", "POST", "DELETE"],
     credentials: true,
@@ -76,8 +99,12 @@ app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
 });
 
 app.get('/validate-username/:username', async (req, res) => {
-    console.log(req.params.username);
-    res.send({valid: false})
+    const usernameExists = await checkIfTenantExists(req.params.username)
+    if (usernameExists) {
+        res.send({valid: false})
+        return
+    }
+    res.send({valid: true})
 })
 
 app.use(supertokens.errorHandler());
