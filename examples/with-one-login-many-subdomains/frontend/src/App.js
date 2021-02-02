@@ -9,14 +9,18 @@ import axios from 'axios';
 
 export function getApiDomain() {
   const apiPort = process.env.REACT_APP_API_PORT || 3001;
-  const apiUrl = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
+  const apiUrl = process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
   return apiUrl;
 }
 
 export function getWebsiteDomain() {
   const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
+  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://auth.example.com:${websitePort}`;
   return websiteUrl;
+}
+
+async function getUserDomain(userId) {
+  return "abc"
 }
 
 SuperTokens.init({
@@ -24,12 +28,22 @@ SuperTokens.init({
     appName: "SuperTokens Demo App",
     apiDomain: getApiDomain(),
     websiteDomain: getWebsiteDomain(),
+    websiteBasePath: "/",
   },
   recipeList: [
     EmailPassword.init({
       // emailVerificationFeature: {
       //   mode: "REQUIRED"
       // },
+      getRedirectionURL: async (context) => {
+        if (context.action === "SUCCESS") { 
+          if (window.location.hostname === "auth.example.com") {
+            return "http://abc.example.com:3000/home"
+          } else {
+            return "home"
+          }
+        }
+      },
       signInAndUpFeature: {
         signUpForm: {
           formFields: [
@@ -38,26 +52,30 @@ SuperTokens.init({
               label: "Username",
               placeholder: "A unique username",
               validate: async (value) => {
-                const validUsernameRegex =  /^[A-Za-z0-9_]{3,20}$/;
+                const validUsernameRegex = /^[A-Za-z0-9_]{3,20}$/;
                 if (!validUsernameRegex.test(value)) {
-                  return 'Invalid username: only alphabets, numbers and "_" allowed. Min 3 and Max 20 characters.'
+                  return 'Invalid username: only alphabets, numbers and "_" allowed. Min 3 and Max 20 characters.';
                 }
 
-                // check with the backend that username is unique 
+                // check with the backend that username is unique
                 // and if it is, allow signup otherwise request for a different
                 // username
-                const isValidRes = await axios.get(`${getApiDomain()}/validate-username/${value}`)
+                const isValidRes = await axios.get(
+                  `${getApiDomain()}/validate-username/${value}`
+                );
                 if (isValidRes.data.valid) {
-                  return undefined
+                  return undefined;
                 }
-                return 'This username is not available, please try something else'
+                return "This username is not available, please try something else";
               },
             },
           ],
         },
       },
     }),
-    Session.init(),
+    Session.init({
+      sessionScope: ".example.com",
+    }),
   ],
 });
 
@@ -68,12 +86,12 @@ function App() {
       <Router>
         <div className="fill">
           <Switch>
-            {getSuperTokensRoutesForReactRouterDom()}
-            <Route path="/">
+            <Route path="/home">
               <EmailPassword.EmailPasswordAuth>
-                <Home />
+                <Home/>
               </EmailPassword.EmailPasswordAuth>
             </Route>
+            {getSuperTokensRoutesForReactRouterDom()}
           </Switch>
         </div>
         <Footer />

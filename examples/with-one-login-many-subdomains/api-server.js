@@ -8,10 +8,15 @@ let EmailPassword = require("supertokens-node/recipe/emailpassword");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain =
-  process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
+  process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain =
-  process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
+  process.env.REACT_APP_WEBSITE_URL || `http://auth.example.com:${websitePort}`;
+
+let whiteList = []
+whiteList.push(websiteDomain)
+whiteList.push(`http://abc.example.com:${websitePort}`)
+whiteList.push(`http://xyz.example.com:${websitePort}`)
 
 const DB = []
 async function checkIfTenantExists(username) {
@@ -29,6 +34,7 @@ supertokens.init({
     appName: "SuperTokens Demo App",
     apiDomain,
     websiteDomain,
+    websiteBasePath: "/"
   },
   recipeList: [
     EmailPassword.init({
@@ -50,11 +56,6 @@ supertokens.init({
             },
           },
         ],
-        handleCustomFormFieldsPostSignUp: async (user, formFields) => {
-          console.log(user);
-          console.log(formFields);
-          let { id, email } = user;
-        },
       },
     }),
     Session.init(),
@@ -63,7 +64,6 @@ supertokens.init({
 
 const app = express();
 
-const whiteList = [websiteDomain]
 app.use(
   cors({
     origin: function(origin, callback){
