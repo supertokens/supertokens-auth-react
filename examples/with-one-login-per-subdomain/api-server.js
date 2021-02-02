@@ -38,7 +38,7 @@ supertokens.init({
                     // getUserDomain is your implementation
                     let userDomain = await getUserDomain(email);
 
-                    return `https://${userDomain}.example.com:${apiPort}/reset-password`;
+                    return `http://${userDomain}.example.com:${websitePort}/auth/reset-password`;
 
                 }
             },
@@ -49,7 +49,7 @@ supertokens.init({
                     // getUserDomain is your implementation
                     let userDomain = await getUserDomain(email);
 
-                    return `https://${userDomain}.example.com:${apiPort}/verify-email`;
+                    return `http://${userDomain}.example.com:${websitePort}/auth/verify-email`;
                 },
                 createAndSendCustomEmail: (user, emailVerificationURLWithToken) =>{
                     console.log(emailVerificationURLWithToken)
