@@ -98,6 +98,11 @@ app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
   });
 });
 
+app.get('/user-subdomain/:userId', Session.verifySession(), async (req, res) => {
+  res.send({subdomain: 'abc'})
+  return
+})
+
 app.get('/validate-username/:username', async (req, res) => {
     const usernameExists = await checkIfTenantExists(req.params.username)
     if (usernameExists) {

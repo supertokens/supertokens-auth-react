@@ -7,6 +7,8 @@ import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import axios from 'axios';
 
+Session.addAxiosInterceptors(axios)
+
 export function getApiDomain() {
   const apiPort = process.env.REACT_APP_API_PORT || 3001;
   const apiUrl = process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
@@ -19,8 +21,10 @@ export function getWebsiteDomain() {
   return websiteUrl;
 }
 
-async function getUserDomain(userId) {
-  return "abc"
+async function getSubdomainForUser(userId) {
+  const subdomainRes = await axios.get(`${getApiDomain()}/user-subdomain/${userId}`)
+  const subdomain = subdomainRes.data.subdomain
+  return `http://${subdomain}.example.com:3000/home`
 }
 
 SuperTokens.init({
@@ -36,11 +40,18 @@ SuperTokens.init({
       //   mode: "REQUIRED"
       // },
       getRedirectionURL: async (context) => {
+        console.log(context);
         if (context.action === "SUCCESS") { 
           if (window.location.hostname === "auth.example.com") {
-            return "http://abc.example.com:3000/home"
+            return getSubdomainForUser(Session.getUserId())
           } else {
             return "home"
+          }
+        }
+
+        if (context.action === "SIGN_IN_AND_UP") { 
+          if (!Session.doesSessionExist()) {
+            return getWebsiteDomain()
           }
         }
       },
