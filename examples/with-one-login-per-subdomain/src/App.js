@@ -26,7 +26,21 @@ SuperTokens.init({
     websiteDomain: getWebsiteDomain()
   },
   recipeList: [
-    EmailPassword.init(),
+    EmailPassword.init({
+      getRedirectionURL(context) {
+        switch(context.action) {
+            case "SUCCESS":
+                return "/home";
+                break;
+            case "SIGN_IN_AND_UP":
+                return "/home";
+                break;
+            default:
+                break;
+        }
+        return undefined;
+    }
+    }),
     Session.init()
   ]
 });
@@ -35,18 +49,23 @@ SuperTokens.init({
 function App() {
   return (
     <div className="App">
-    <Router>
-      <div className="fill">
-        <Switch>
-          {getSuperTokensRoutesForReactRouterDom()}
-          <Route path="/">
-          <Organization />
-          </Route>
-        </Switch>
-      </div>
-      <Footer />
-    </Router >
-  </div>
+      <Router>
+        <div className="fill">
+          <Switch>
+            {getSuperTokensRoutesForReactRouterDom()}
+            <Route exact path="/">
+              <Organization />
+            </Route>
+            <Route path="/home">
+              <EmailPassword.EmailPasswordAuth>
+                <Home />
+              </EmailPassword.EmailPasswordAuth>
+            </Route>
+          </Switch>
+        </div>
+        <Footer />
+      </Router >
+    </div>
   );
 }
 
