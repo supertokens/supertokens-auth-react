@@ -21,7 +21,7 @@ import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, RouteToFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     EmailPasswordConfig,
-    EmailPasswordRedirectionUrlAction,
+    EmailPasswordGetRedirectionURLContext,
     EmailPasswordUserInput,
     NormalisedEmailPasswordConfig,
     SignOutAPIResponse
@@ -95,7 +95,7 @@ export default class EmailPassword extends RecipeModule {
         return features;
     };
 
-    getDefaultRedirectionURL = async (context: { action: EmailPasswordRedirectionUrlAction }): Promise<string> => {
+    getDefaultRedirectionURL = async (context: EmailPasswordGetRedirectionURLContext): Promise<string> => {
         switch (context.action) {
             case "SIGN_IN_AND_UP":
                 return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}?rid=${this.getRecipeId()}`;
@@ -107,8 +107,7 @@ export default class EmailPassword extends RecipeModule {
                 return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}${DEFAULT_RESET_PASSWORD_PATH}?rid=${this.getRecipeId()}`;
 
             case "SUCCESS":
-            default:
-                return "/";
+                return context.redirectToPath === undefined ? "/" : context.redirectToPath;
         }
     };
 

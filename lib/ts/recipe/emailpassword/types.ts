@@ -579,29 +579,19 @@ export type VerifyEmailThemeResponse = {
     status: keyof typeof VERIFY_EMAIL_LINK_CLICKED_STATUS;
 };
 
-export type EmailPasswordWithoutUserSuccessAction =
-    | "SESSION_ALREADY_EXISTS"
-    | "RESET_PASSWORD_EMAIL_SENT"
-    | "PASSWORD_RESET_SUCCESSFUL"
-    | "VERIFY_EMAIL_SENT"
-    | "EMAIL_VERIFIED_SUCCESSFUL";
-export type EmailPasswordWithUserSuccessAction = "SIGN_IN_COMPLETE" | "SIGN_UP_COMPLETE";
-export type EmailPasswordRedirectionUrlAction = "SUCCESS" | "SIGN_IN_AND_UP" | "VERIFY_EMAIL" | "RESET_PASSWORD";
-export type EmailPasswordPreAPIHookAction =
-    | "SEND_RESET_PASSWORD_EMAIL"
-    | "SUBMIT_NEW_PASSWORD"
-    | "VERIFY_EMAIL"
-    | "SEND_VERIFY_EMAIL"
-    | "IS_EMAIL_VERIFIED"
-    | "SIGN_IN"
-    | "SIGN_UP"
-    | "SIGN_OUT";
-
 export type EmailPasswordPreAPIHookContext = {
     /*
      * Pre API Hook action.
      */
-    action: EmailPasswordPreAPIHookAction;
+    action:
+        | "SEND_RESET_PASSWORD_EMAIL"
+        | "SUBMIT_NEW_PASSWORD"
+        | "VERIFY_EMAIL"
+        | "SEND_VERIFY_EMAIL"
+        | "IS_EMAIL_VERIFIED"
+        | "SIGN_IN"
+        | "SIGN_UP"
+        | "SIGN_OUT";
 
     /*
      * Request object containing query params, body, headers.
@@ -609,25 +599,42 @@ export type EmailPasswordPreAPIHookContext = {
     requestInit: RequestInit;
 };
 
-export type EmailPasswordGetRedirectionURLContext = {
-    /*
-     * Get Redirection URL Context
-     */
-    action: EmailPasswordRedirectionUrlAction;
-};
+export type EmailPasswordGetRedirectionURLContext =
+    | {
+          /*
+           * Get Redirection URL Context
+           */
+          action: "SUCCESS";
+
+          /*
+           * Redirect To Path represents the intended path the user wanted to access.
+           */
+          redirectToPath?: string;
+      }
+    | {
+          /*
+           * Get Redirection URL Context
+           */
+          action: "SIGN_IN_AND_UP" | "VERIFY_EMAIL" | "RESET_PASSWORD";
+      };
 
 export type EmailPasswordOnHandleEventContext =
     | {
           /*
            * On Handle Event actions
            */
-          action: EmailPasswordWithoutUserSuccessAction;
+          action:
+              | "SESSION_ALREADY_EXISTS"
+              | "RESET_PASSWORD_EMAIL_SENT"
+              | "PASSWORD_RESET_SUCCESSFUL"
+              | "VERIFY_EMAIL_SENT"
+              | "EMAIL_VERIFIED_SUCCESSFUL";
       }
     | {
           /*
            * Sign In / Sign Up success.
            */
-          action: EmailPasswordWithUserSuccessAction;
+          action: "SIGN_IN_COMPLETE" | "SIGN_UP_COMPLETE";
           /*
            * User returned from API.
            */

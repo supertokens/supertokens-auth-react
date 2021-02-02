@@ -12,13 +12,6 @@ export default abstract class RecipeModule {
     getHttp: () => HttpRequest;
     redirect: (context: unknown, history?: History<unknown> | undefined, queryParams?: Record<string, string> | undefined) => Promise<void>;
     getRedirectUrl: (context: any) => Promise<string>;
-    onHandleEvent(context: {
-        action: string;
-        user?: {
-            id: string;
-            email: string;
-        };
-    }): void;
     abstract getFeatures(): RouteToFeatureComponentMap;
     protected getDefaultRedirectionURL(context: unknown): Promise<string>;
 }

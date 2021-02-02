@@ -127,7 +127,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             formFields: submitNewPasswordFormFeature.formFields,
             submitNewPasswordAPI: this.submitNewPassword,
             onSuccess: () => {
-                this.getRecipeInstanceOrThrow().onHandleEvent({
+                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL"
                 });
             },
@@ -140,7 +140,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             styleFromInit: enterEmailFormFeature.style,
             formFields: enterEmailFormFeature.formFields,
             onSuccess: () => {
-                this.getRecipeInstanceOrThrow().onHandleEvent({
+                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                     action: "RESET_PASSWORD_EMAIL_SENT"
                 });
             },

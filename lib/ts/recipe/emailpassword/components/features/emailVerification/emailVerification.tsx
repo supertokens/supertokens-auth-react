@@ -124,7 +124,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             sendVerifyEmailAPI: async () => await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow()),
             signOut: this.signOut,
             onSuccess: () =>
-                this.getRecipeInstanceOrThrow().onHandleEvent({
+                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                     action: "VERIFY_EMAIL_SENT"
                 }),
             onEmailAlreadyVerified: () =>
@@ -138,7 +138,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             styleFromInit: verifyEmailLinkClickedScreenFeature.style,
             onTokenInvalidRedirect: this.onTokenInvalidRedirect,
             onSuccess: () =>
-                this.getRecipeInstanceOrThrow().onHandleEvent({
+                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                     action: "EMAIL_VERIFIED_SUCCESSFUL"
                 }),
             onContinueClicked: () =>

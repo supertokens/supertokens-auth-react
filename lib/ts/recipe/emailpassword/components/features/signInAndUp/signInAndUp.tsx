@@ -28,7 +28,7 @@ import {
     FormFieldThemeProps,
     FeatureBaseProps,
     FormBaseAPIResponse,
-    EmailPasswordRedirectionUrlAction
+    EmailPasswordGetRedirectionURLContext
 } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { APIFormField, NormalisedFormField } from "../../../../../types";
@@ -96,7 +96,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             return;
         }
 
-        this.getRecipeInstanceOrThrow().onHandleEvent({
+        this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
             action: "SIGN_IN_COMPLETE",
             user: this.state.user
         });
@@ -157,13 +157,13 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             return;
         }
 
-        this.getRecipeInstanceOrThrow().onHandleEvent({
+        this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
             action: "SIGN_UP_COMPLETE",
             user: this.state.user
         });
 
         // Redirect to email verification screen if sign up and email verification mode is required.
-        const context: { action: EmailPasswordRedirectionUrlAction; redirectToPath?: string } = {
+        let context: EmailPasswordGetRedirectionURLContext = {
             action: "VERIFY_EMAIL"
         };
         if (
@@ -171,8 +171,10 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             EMAIL_VERIFICATION_MODE.REQUIRED
         ) {
             // Or if sign up and email verification mode is not required, redirect to success screen.
-            context.redirectToPath = getRedirectToPathFromURL();
-            context.action = "SUCCESS";
+            context = {
+                redirectToPath: getRedirectToPathFromURL(),
+                action: "SUCCESS"
+            };
         }
 
         return await this.getRecipeInstanceOrThrow().redirect(context, this.props.history);
@@ -224,7 +226,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     componentDidMount = async (): Promise<void> => {
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists) {
-            this.getRecipeInstanceOrThrow().onHandleEvent({
+            this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS"
             });
             return await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history);
