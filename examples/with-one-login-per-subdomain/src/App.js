@@ -4,17 +4,18 @@ import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
+import Organization from "./Organization"
 import Footer from "./Footer"
 
 export function getApiDomain() {
   const apiPort = process.env.REACT_APP_API_PORT || 3001;
-  const apiUrl = process.env.REACT_APP_API_URL || `http://supertokens.dev:${apiPort}`;
+  const apiUrl = process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
   return apiUrl;
 }
 
 export function getWebsiteDomain() {
   const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://a.supertokens.dev:${websitePort}`;
+  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://a.example.com:${websitePort}`;
   return websiteUrl;
 }
 
@@ -25,11 +26,7 @@ SuperTokens.init({
     websiteDomain: getWebsiteDomain()
   },
   recipeList: [
-    EmailPassword.init({
-      emailVerificationFeature: {
-        mode: "REQUIRED"
-      }
-    }),
+    EmailPassword.init(),
     Session.init()
   ]
 });
@@ -43,14 +40,7 @@ function App() {
         <Switch>
           {getSuperTokensRoutesForReactRouterDom()}
           <Route path="/">
-            <EmailPassword.EmailPasswordAuth>
-              <Home />
-            </EmailPassword.EmailPasswordAuth>
-          </Route>
-          <Route path="/home">
-            <EmailPassword.EmailPasswordAuth>
-              <Home />
-            </EmailPassword.EmailPasswordAuth>
+          <Organization />
           </Route>
         </Switch>
       </div>

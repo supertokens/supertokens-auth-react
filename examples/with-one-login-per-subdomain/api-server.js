@@ -5,10 +5,10 @@ let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
-const apiDomain = process.env.REACT_APP_API_URL || `http://supertokens.dev:${apiPort}`;
+const apiDomain = process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://supertokens.dev:${websitePort}`
-const websiteSubDomain = `http://a.supertokens.dev:${websitePort}`
+const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://example.com:${websitePort}`
+const websiteSubDomain = `http://a.example.com:${websitePort}`
 
 
 let getUserDomain = (email) =>{
@@ -32,7 +32,7 @@ supertokens.init({
                     // getUserDomain is your implementation
                     let userDomain = await getUserDomain(email);
 
-                    return `https://${userDomain}.supertokens.dev:${apiPort}/reset-password`;
+                    return `https://${userDomain}.example.com:${apiPort}/reset-password`;
 
                 }
             },
@@ -43,7 +43,7 @@ supertokens.init({
                     // getUserDomain is your implementation
                     let userDomain = await getUserDomain(userId);
 
-                    return `https://${userDomain}.supertokens.dev:${apiPort}/verify-email`;
+                    return `https://${userDomain}.example.com:${apiPort}/verify-email`;
                 },
                 createAndSendCustomEmail: (user, emailVerificationURLWithToken) =>{
                     console.log(emailVerificationURLWithToken)
