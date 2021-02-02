@@ -8,11 +8,17 @@ const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://example.com:${websitePort}`
-const websiteSubDomain = `http://a.example.com:${websitePort}`
+let whitelist = []
+whitelist.push(websiteDomain)
+whitelist.push(`http://a.example.com:${websitePort}`)
+whitelist.push(`http://b.example.com:${websitePort}`)
 
 
 let getUserDomain = (email) =>{
-    return "a"
+    // extracts the userDomain from the email used to sign up
+    // ex. from employee@supertokens.com, "supertokens" will be extracted as the userDomain
+    let userDomain = email.split("@")[1].split(".")[0] 
+    return userDomain
 }
 supertokens.init({
     supertokens: {
@@ -41,7 +47,7 @@ supertokens.init({
                     let {id, email} = user;
 
                     // getUserDomain is your implementation
-                    let userDomain = await getUserDomain(userId);
+                    let userDomain = await getUserDomain(email);
 
                     return `https://${userDomain}.example.com:${apiPort}/verify-email`;
                 },
@@ -56,7 +62,6 @@ supertokens.init({
 });
 
 const app = express();
-var whitelist = [websiteDomain,websiteSubDomain]
 
 app.use(cors({
     origin: function (origin, callback) {

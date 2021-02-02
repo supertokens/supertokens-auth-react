@@ -1,7 +1,9 @@
 import CallAPIView from "./CallAPIView";
+import {getApiDomain} from "../App"
 
 export default function SuccessView(props) {
     let userId = props.userId;
+    let domain = getApiDomain()
 
     return (
         <div
@@ -21,7 +23,7 @@ export default function SuccessView(props) {
                 style={{
                     fontSize: "50px"
                 }}>🥳🎉</span>
-            Login successful
+            Login successful at <div />{domain}
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />
             Your user ID is<div />{userId}

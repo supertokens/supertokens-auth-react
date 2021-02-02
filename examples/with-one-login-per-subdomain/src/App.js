@@ -4,7 +4,6 @@ import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
-import Organization from "./Organization"
 import Footer from "./Footer"
 
 export function getApiDomain() {
@@ -14,8 +13,10 @@ export function getApiDomain() {
 }
 
 export function getWebsiteDomain() {
+  const windowLocation = window.location.href
+  const subdomain = windowLocation.split("http://")[1].split(".")[0]
   const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://a.example.com:${websitePort}`;
+  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://${subdomain}.example.com:${websitePort}`;
   return websiteUrl;
 }
 
@@ -26,21 +27,7 @@ SuperTokens.init({
     websiteDomain: getWebsiteDomain()
   },
   recipeList: [
-    EmailPassword.init({
-      getRedirectionURL(context) {
-        switch(context.action) {
-            case "SUCCESS":
-                return "/home";
-                break;
-            case "SIGN_IN_AND_UP":
-                return "/home";
-                break;
-            default:
-                break;
-        }
-        return undefined;
-    }
-    }),
+    EmailPassword.init(),
     Session.init()
   ]
 });
@@ -53,10 +40,7 @@ function App() {
         <div className="fill">
           <Switch>
             {getSuperTokensRoutesForReactRouterDom()}
-            <Route exact path="/">
-              <Organization />
-            </Route>
-            <Route path="/home">
+            <Route path="/">
               <EmailPassword.EmailPasswordAuth>
                 <Home />
               </EmailPassword.EmailPasswordAuth>
