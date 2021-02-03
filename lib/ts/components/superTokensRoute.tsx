@@ -34,7 +34,6 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
         const Route = ReactRouterDom.Route;
         const withRouter: WithRouterType = ReactRouterDom.withRouter;
         const pathsToComponentWithRecipeIdMap = SuperTokens.getInstanceOrThrow().getPathsToComponentWithRecipeIdMap();
-
         return Object.keys(pathsToComponentWithRecipeIdMap).map(path => {
             return (
                 <Route exact key={`st-${path}`} path={path}>

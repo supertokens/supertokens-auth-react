@@ -12,26 +12,38 @@ import axios from "axios";
 import Session from 'supertokens-auth-react/recipe/session';
 Session.addAxiosInterceptors(axios);
 
+/*
+ * Use localStorage for tests configurations.
+ */
+if (getQueryParams('websiteBasePath')) {
+  window.localStorage.setItem('websiteBasePath', getQueryParams('websiteBasePath'));
+}
+const websiteBasePath = window.localStorage.getItem('websiteBasePath') || undefined;
+
+
+if (getQueryParams('useShadowDom')) {
+  window.localStorage.setItem('useShadowDom', getQueryParams('useShadowDom') === "true");
+}
+const useShadowDom = window.localStorage.getItem('useShadowDom') !== "false";
+
+
 if (getQueryParams('mode')) {
   window.localStorage.setItem('mode', getQueryParams('mode'));
 }
 const emailVerificationMode = window.localStorage.getItem('mode') || "OFF";
 
-const colors = getQueryParams('theme') === 'dark' ? {
-  background: '#333',
-  inputBackground: "#292929", 
-  textTitle: "white",
-  textLabel: "white",
-  textPrimary: "white",
-  error: '#ad2e2e',
-  textLink: '#a9a9a9'
-} : {};
+if (getQueryParams('defaultToSignUp')) {
+  window.localStorage.setItem('defaultToSignUp', getQueryParams('defaultToSignUp') === "true");
+}
+
+const defaultToSignUp = window.localStorage.getItem('defaultToSignUp') !== "false";
 
 SuperTokens.init({
   appInfo: {
     appName: "SuperTokens",
     websiteDomain: "localhost:3031",
-    apiDomain: "localhost:8082"
+    apiDomain: "localhost:8082",
+    websiteBasePath
   },
   recipeList: [
     EmailPassword.init({
@@ -48,16 +60,12 @@ SuperTokens.init({
       onHandleEvent: async (context) => {
         console.log(`ST_LOGS ON_HANDLE_EVENT ${context.action}`);
       },
-
-      // useShadowDom: false,
-      palette: {
-        ...colors
-      },
+      useShadowDom,
       emailVerificationFeature: {
         mode: emailVerificationMode
       },
       signInAndUpFeature: {
-        // defaultToSignUp: false,
+        defaultToSignUp,
         signUpForm: {
           privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
           termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
