@@ -98,9 +98,17 @@ app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
   });
 });
 
-app.get('/user-subdomain/:userId', Session.verifySession(), async (req, res) => {
-  res.send({subdomain: 'abc'})
-  return
+let getUserDomain = (email) =>{
+    // extracts the userDomain from the email used to sign up
+    // ex. from employee@supertokens.com, "supertokens" will be extracted as the userDomain
+    let userDomain = email.split("@")[1].split(".")[0] 
+    return userDomain
+}
+app.get('/user-subdomain', Session.verifySession(), async (req, res) => {
+  const session = req.session
+  const userDetails = await EmailPassword.getUserById(session.getUserId())
+  const subdomain = getUserDomain(userDetails.email)
+  res.send({subdomain})
 })
 
 app.get('/validate-username/:username', async (req, res) => {

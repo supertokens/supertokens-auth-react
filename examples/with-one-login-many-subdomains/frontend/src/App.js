@@ -22,9 +22,13 @@ export function getWebsiteDomain() {
 }
 
 async function getSubdomainForUser(userId) {
-  const subdomainRes = await axios.get(`${getApiDomain()}/user-subdomain/${userId}`)
-  const subdomain = subdomainRes.data.subdomain
-  return `http://${subdomain}.example.com:3000/home`
+  try {
+    const subdomainRes = await axios.get(`${getApiDomain()}/user-subdomain`)
+    const subdomain = subdomainRes.data.subdomain
+    return `http://${subdomain}.example.com:3000/home`
+  } catch (error) {
+    return getWebsiteDomain() 
+  }
 }
 
 SuperTokens.init({
@@ -49,10 +53,8 @@ SuperTokens.init({
           }
         }
 
-        if (context.action === "SIGN_IN_AND_UP") { 
-          if (!Session.doesSessionExist()) {
+        if (context.action === "SIGN_IN_AND_UP" && !Session.doesSessionExist()) { 
             return getWebsiteDomain()
-          }
         }
       },
       signInAndUpFeature: {
