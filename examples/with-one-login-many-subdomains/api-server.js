@@ -13,18 +13,25 @@ const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain =
   process.env.REACT_APP_WEBSITE_URL || `http://auth.example.com:${websitePort}`;
 
-let whiteList = []
-whiteList.push(websiteDomain)
-whiteList.push(`http://abc.example.com:${websitePort}`)
-whiteList.push(`http://xyz.example.com:${websitePort}`)
+let whiteList = [];
+whiteList.push(websiteDomain);
+whiteList.push(`http://abc.example.com:${websitePort}`);
+whiteList.push(`http://xyz.example.com:${websitePort}`);
 
-const DB = []
+const DB = [];
 async function checkIfTenantExists(username) {
-    if (DB.includes(username)) {
-        return true
-    }
-    return false
+  if (DB.includes(username)) {
+    return true;
+  }
+  return false;
 }
+
+function getUserDomain (email) {
+  // extracts the userDomain from the email used to sign up
+  // ex. from employee@supertokens.com, "supertokens" will be extracted as the userDomain
+  let userDomain = email.split("@")[1].split(".")[0];
+  return userDomain;
+};
 
 supertokens.init({
   supertokens: {
@@ -34,25 +41,43 @@ supertokens.init({
     appName: "SuperTokens Demo App",
     apiDomain,
     websiteDomain,
-    websiteBasePath: "/"
+    websiteBasePath: "/",
   },
   recipeList: [
     EmailPassword.init({
+      resetPasswordUsingTokenFeature: {
+        getResetPasswordURL: async (user) => {
+          let { email } = user;
+
+          // getUserDomain is your implementation
+          let userDomain = await getUserDomain(email);
+          return `http://${userDomain}.example.com:${websitePort}/auth/reset-password`;
+        },
+      },
+      emailVerificationFeature: {
+        getEmailVerificationURL: async (user) => {
+          let { email } = user;
+
+          // getUserDomain is your implementation
+          let userDomain = await getUserDomain(email);
+          return `http://${userDomain}.example.com:${websitePort}/auth/verify-email`;
+        },
+      },
       signUpFeature: {
         formFields: [
           {
             id: "username",
             validate: async (value) => {
-                const validUsernameRegex =  /^[A-Za-z0-9_]{3,20}$/;
-                if (!validUsernameRegex.test(value)) {
-                  return 'Invalid username: only alphabets, numbers and "_" allowed. Min 3 and Max 20 characters.'
-                }
+              const validUsernameRegex = /^[A-Za-z0-9_]{3,20}$/;
+              if (!validUsernameRegex.test(value)) {
+                return 'Invalid username: only alphabets, numbers and "_" allowed. Min 3 and Max 20 characters.';
+              }
 
-                const usernameExists = await checkIfTenantExists(value)
-                if (usernameExists) {
-                    return 'This username is not available, please try something else'
-                }
-                return undefined
+              const usernameExists = await checkIfTenantExists(value);
+              if (usernameExists) {
+                return "This username is not available, please try something else";
+              }
+              return undefined;
             },
           },
         ],
@@ -66,12 +91,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: function(origin, callback){
-        if (whiteList.indexOf(origin) !== -1) {
-          callback(null, true)
-        } else {
-          callback(new Error('Not allowed by CORS'))
-        }
+    origin: function(origin, callback) {
+      if (whiteList.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
     },
     allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
     methods: ["GET", "PUT", "POST", "DELETE"],
@@ -98,27 +123,21 @@ app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
   });
 });
 
-let getUserDomain = (email) =>{
-    // extracts the userDomain from the email used to sign up
-    // ex. from employee@supertokens.com, "supertokens" will be extracted as the userDomain
-    let userDomain = email.split("@")[1].split(".")[0] 
-    return userDomain
-}
-app.get('/user-subdomain', Session.verifySession(), async (req, res) => {
-  const session = req.session
-  const userDetails = await EmailPassword.getUserById(session.getUserId())
-  const subdomain = getUserDomain(userDetails.email)
-  res.send({subdomain})
-})
+app.get("/user-subdomain", Session.verifySession(), async (req, res) => {
+  const session = req.session;
+  const userDetails = await EmailPassword.getUserById(session.getUserId());
+  const subdomain = getUserDomain(userDetails.email);
+  res.send({ subdomain });
+});
 
-app.get('/validate-username/:username', async (req, res) => {
-    const usernameExists = await checkIfTenantExists(req.params.username)
-    if (usernameExists) {
-        res.send({valid: false})
-        return
-    }
-    res.send({valid: true})
-})
+app.get("/validate-username/:username", async (req, res) => {
+  const usernameExists = await checkIfTenantExists(req.params.username);
+  if (usernameExists) {
+    res.send({ valid: false });
+    return;
+  }
+  res.send({ valid: true });
+});
 
 app.use(supertokens.errorHandler());
 

@@ -40,20 +40,15 @@ SuperTokens.init({
   },
   recipeList: [
     EmailPassword.init({
-      // emailVerificationFeature: {
-      //   mode: "REQUIRED"
-      // },
+      emailVerificationFeature: {
+        mode: "REQUIRED"
+      },
       getRedirectionURL: async (context) => {
-        console.log(context);
         if (context.action === "SUCCESS") { 
-          if (window.location.hostname === "auth.example.com") {
-            return getSubdomainForUser(Session.getUserId())
-          } else {
-            return "home"
-          }
+          return getSubdomainForUser(Session.getUserId())
         }
 
-        if (context.action === "SIGN_IN_AND_UP" && !Session.doesSessionExist()) { 
+        if (context.action === "SIGN_IN_AND_UP") { 
             return getWebsiteDomain()
         }
       },
