@@ -19,18 +19,12 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import React, { createRef, FormEvent, Fragment, PureComponent } from "react";
-import StyleContext from "../styles/styleContext";
-import { Button, FormRow, Input, InputError, Label } from ".";
-
-import { APIFormField } from "../../../../types";
-import {
-    MANDATORY_FORM_FIELDS_ID_ARRAY,
-    MANDATORY_FORM_FIELDS_ID,
-    FORM_BASE_STATUS,
-    FORM_BASE_API_RESPONSE
-} from "../../constants";
-import { FormBaseProps, FormBaseState, FormFieldState, InputRef } from "../../types";
+import { FormRow, Label, Input, InputError, Button } from ".";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
+import StyleContext from "../../../../styles/styleContext";
+import { APIFormField } from "../../../../types";
+import { MANDATORY_FORM_FIELDS_ID_ARRAY, MANDATORY_FORM_FIELDS_ID } from "../../constants";
+import { FormBaseProps, FormBaseState, FormFieldState, InputRef } from "../../types";
 
 /*
  * Component.
@@ -51,7 +45,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                 validated: false,
                 ref: createRef<InputRef>()
             })),
-            status: FORM_BASE_STATUS.IN_PROGRESS
+            status: "IN_PROGRESS"
         };
     }
 
@@ -80,7 +74,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
 
         this.setState(oldState => {
             // Do not update status asynchronously on blur if backend error already came in.
-            if (oldState.status === FORM_BASE_STATUS.GENERAL_ERROR) {
+            if (oldState.status === "GENERAL_ERROR") {
                 return oldState;
             }
             return this.getNewState(oldState.formFields, field, "blur", error);
@@ -105,12 +99,12 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             };
         });
 
-        let status = FORM_BASE_STATUS.READY;
+        let status: FormBaseState["status"] = "READY";
 
         for (const i in formFields) {
             const field = formFields[i];
             if (field.error !== undefined) {
-                status = FORM_BASE_STATUS.FIELD_ERRORS;
+                status = "FIELD_ERRORS";
                 break;
             }
             if (field.optional === false) {
@@ -119,7 +113,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                 if (value.length === 0) {
                     const isFocused = field.ref.current !== null ? field.ref.current.isFocused : false;
                     if (isFocused !== true) {
-                        status = FORM_BASE_STATUS.IN_PROGRESS;
+                        status = "IN_PROGRESS";
                     }
                 }
             }
@@ -138,7 +132,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         // Set loading state.
         this.setState(oldState => ({
             ...oldState,
-            status: FORM_BASE_STATUS.LOADING
+            status: "LOADING"
         }));
 
         // Get the fields values from form.
@@ -153,12 +147,12 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         try {
             const result = await this.props.callAPI(fields);
             // If successful
-            if (result.status === FORM_BASE_API_RESPONSE.OK) {
+            if (result.status === "OK") {
                 // Set Success state.
                 this.setState(
                     oldState => ({
                         ...oldState,
-                        status: FORM_BASE_STATUS.SUCCESS
+                        status: "SUCCESS"
                     }),
                     () => {
                         if (this.props.onSuccess !== undefined) {
@@ -170,7 +164,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             }
 
             // If field error.
-            if (result.status === FORM_BASE_API_RESPONSE.FIELD_ERROR) {
+            if (result.status === "FIELD_ERROR") {
                 const errorFields = result.formFields;
 
                 // Update formFields state with errors.
@@ -183,24 +177,24 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                     return field;
                 });
                 this.setState(() => ({
-                    status: FORM_BASE_STATUS.FIELD_ERRORS,
+                    status: "FIELD_ERRORS",
                     formFields: formFields
                 }));
                 return;
             }
 
             // Otherwise if message, set generalError
-            if (result.status === FORM_BASE_API_RESPONSE.GENERAL_ERROR) {
+            if (result.status === "GENERAL_ERROR") {
                 this.setState(oldState => ({
                     ...oldState,
-                    status: FORM_BASE_STATUS.GENERAL_ERROR,
+                    status: "GENERAL_ERROR",
                     generalError: result.message
                 }));
             }
         } catch (e) {
             this.setState(oldState => ({
                 ...oldState,
-                status: FORM_BASE_STATUS.GENERAL_ERROR,
+                status: "GENERAL_ERROR",
                 generalError: SOMETHING_WENT_WRONG_ERROR
             }));
         }
@@ -219,7 +213,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             <div data-supertokens="container" css={styles.container}>
                 <div data-supertokens="row" css={styles.row}>
                     {header}
-                    {this.state.status === FORM_BASE_STATUS.GENERAL_ERROR && (
+                    {this.state.status === "GENERAL_ERROR" && (
                         <div data-supertokens="generalError" css={styles.generalError}>
                             {this.state.generalError}
                         </div>
@@ -266,8 +260,8 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                         <FormRow key="form-button">
                             <Fragment>
                                 <Button
-                                    disabled={this.state.status === FORM_BASE_STATUS.LOADING}
-                                    isLoading={this.state.status === FORM_BASE_STATUS.LOADING}
+                                    disabled={this.state.status === "LOADING"}
+                                    isLoading={this.state.status === "LOADING"}
                                     type="submit"
                                     label={buttonLabel}
                                 />

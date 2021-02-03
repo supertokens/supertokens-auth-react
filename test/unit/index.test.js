@@ -50,17 +50,23 @@ describe("SuperTokens", function() {
 
     it("Initializing SuperTokens config with default values", async function() {
         SuperTokens.init(defaultConfigs);
-        assert.strictEqual(SuperTokens.getAppInfo().appName, defaultConfigs.appInfo.appName);
+        assert.strictEqual(SuperTokens.getInstanceOrThrow().appInfo.appName, defaultConfigs.appInfo.appName);
         assert.strictEqual(
-            SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous(),
+            SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous(),
             `https://${defaultConfigs.appInfo.websiteDomain}`
         );
         assert.strictEqual(
-            SuperTokens.getAppInfo().apiDomain.getAsStringDangerous(),
+            SuperTokens.getInstanceOrThrow().appInfo.apiDomain.getAsStringDangerous(),
             `https://${defaultConfigs.appInfo.apiDomain}`
         );
-        assert.strictEqual(SuperTokens.getAppInfo().apiBasePath.getAsStringDangerous(), DEFAULT_API_BASE_PATH);
-        assert.strictEqual(SuperTokens.getAppInfo().websiteBasePath.getAsStringDangerous(), DEFAULT_WEBSITE_BASE_PATH);
+        assert.strictEqual(
+            SuperTokens.getInstanceOrThrow().appInfo.apiBasePath.getAsStringDangerous(),
+            DEFAULT_API_BASE_PATH
+        );
+        assert.strictEqual(
+            SuperTokens.getInstanceOrThrow().appInfo.websiteBasePath.getAsStringDangerous(),
+            DEFAULT_WEBSITE_BASE_PATH
+        );
     });
 
     it("Initializing SuperTokens twice should ignore new config", async function() {
@@ -72,7 +78,7 @@ describe("SuperTokens", function() {
                 appName: "NewAppName"
             }
         });
-        assert.strictEqual(SuperTokens.getAppInfo().appName, defaultConfigs.appInfo.appName);
+        assert.strictEqual(SuperTokens.getInstanceOrThrow().appInfo.appName, defaultConfigs.appInfo.appName);
     });
 
     it("Initializing SuperTokens without appInfo name should throw", async function() {
@@ -119,8 +125,11 @@ describe("SuperTokens", function() {
                 apiDomain
             }
         });
-        assert.strictEqual(SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous(), `http://${websiteDomain}`);
-        assert.strictEqual(SuperTokens.getAppInfo().apiDomain.getAsStringDangerous(), apiDomain);
+        assert.strictEqual(
+            SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous(),
+            `http://${websiteDomain}`
+        );
+        assert.strictEqual(SuperTokens.getInstanceOrThrow().appInfo.apiDomain.getAsStringDangerous(), apiDomain);
     });
 
     it("Initializing SuperTokens with EmailPassword module", async function() {
@@ -137,7 +146,7 @@ describe("SuperTokens", function() {
             recipeList: [EmailPassword.init()]
         });
 
-        const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous();
+        const randomWebsitePath = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
 
         mockWindowLocation(`${randomWebsitePath}/blog/`);
         assert.strictEqual(SuperTokens.canHandleRoute(), false);
@@ -172,7 +181,7 @@ describe("SuperTokens", function() {
             ]
         });
 
-        const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous();
+        const randomWebsitePath = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
 
         mockWindowLocation(`${randomWebsitePath}/auth`);
         assert.strictEqual(SuperTokens.canHandleRoute(), false);
@@ -188,7 +197,7 @@ describe("SuperTokens", function() {
             recipeList: [EmailPassword.init()]
         });
 
-        const randomWebsitePath = SuperTokens.getAppInfo().websiteDomain.getAsStringDangerous();
+        const randomWebsitePath = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
 
         const signInAndUpJSXElement = <SignInAndUp />;
         const resetPasswordUsingTokenJSXElement = <ResetPasswordUsingToken />;

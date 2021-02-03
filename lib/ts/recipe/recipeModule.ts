@@ -23,8 +23,7 @@ import {
     NormalisedAppInfo,
     NormalisedRecipeModuleHooks
 } from "../types";
-import { appendQueryParamsToURL, getWindowOrThrow, normalisedRecipeModuleHooks } from "../utils";
-import { History, LocationState } from "history";
+import { normalisedRecipeModuleHooks } from "../utils";
 
 /*
  * Class.
@@ -34,73 +33,20 @@ export default abstract class RecipeModule {
      * Instance attributes.
      */
 
-    private recipeId: string;
-    private appInfo: NormalisedAppInfo;
-    private httpRequest: HttpRequest;
+    recipeId: string;
+    appInfo: NormalisedAppInfo;
+    httpRequest: HttpRequest;
     hooks: NormalisedRecipeModuleHooks;
 
     /*
      * Constructor.
      */
-    constructor(config: RecipeModuleConfig) {
+    constructor(config: RecipeModuleConfig<unknown, unknown>) {
         this.recipeId = config.recipeId;
         this.appInfo = config.appInfo;
         this.httpRequest = new HttpRequest(this);
         this.hooks = normalisedRecipeModuleHooks(config);
     }
 
-    /*
-     * Instance Methods.
-     */
-    getRecipeId = (): string => {
-        return this.recipeId;
-    };
-
-    getAppInfo = (): NormalisedAppInfo => {
-        return this.appInfo;
-    };
-
-    getHttp = (): HttpRequest => {
-        return this.httpRequest;
-    };
-
-    redirect = async (
-        context: unknown,
-        history?: History<LocationState>,
-        queryParams?: Record<string, string>
-    ): Promise<void> => {
-        let redirectUrl = await this.getRedirectUrl(context);
-        redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
-
-        try {
-            new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
-        } catch (e) {
-            // If history was provided, use to redirect without reloading.
-            if (history !== undefined) {
-                history.push(redirectUrl);
-                return;
-            }
-        }
-        // Otherwise, redirect in app.
-        getWindowOrThrow().location.href = redirectUrl;
-    };
-
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    getRedirectUrl = async (context: any): Promise<string> => {
-        // If getRedirectionURL provided by user.
-        const redirectUrl = await this.hooks.getRedirectionURL(context);
-        if (redirectUrl !== undefined) {
-            return redirectUrl;
-        }
-
-        // Otherwise, use default.
-        return await this.getDefaultRedirectionURL(context);
-    };
-
     abstract getFeatures(): RouteToFeatureComponentMap;
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getDefaultRedirectionURL(context: unknown): Promise<string> {
-        throw new Error("Recipe must overwrite getDefaultRedirectionURL");
-    }
 }

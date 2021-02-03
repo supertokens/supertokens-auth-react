@@ -25,8 +25,6 @@ import EmailPassword from "../../../emailPassword";
 import { ResetPasswordUsingTokenTheme } from "../../..";
 import { APIFormField } from "../../../../../types";
 import FeatureWrapper from "../../../../components/featureWrapper";
-
-import { FORM_BASE_API_RESPONSE } from "../../../constants";
 import { getWindowOrThrow, validateForm } from "../../../../../utils";
 import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 
@@ -34,11 +32,11 @@ import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
  * Component.
  */
 
-class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: string }> {
+class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps<EmailPassword>, { token: string }> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: FeatureBaseProps<EmailPassword>) {
         super(props);
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
@@ -69,13 +67,13 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
         );
 
         // If errors, return.
         if (validationErrors.length > 0) {
             return {
-                status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+                status: "FIELD_ERROR",
                 formFields: validationErrors
             };
         }
@@ -83,7 +81,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // Verify that both passwords match.
         if (formFields[0].value !== formFields[1].value) {
             return {
-                status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+                status: "FIELD_ERROR",
                 formFields: [
                     {
                         id: "confirm-password",
@@ -101,13 +99,13 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature.enterEmailForm.formFields
+            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
         );
 
         // If errors, return.
         if (validationErrors.length > 0) {
             return {
-                status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+                status: "FIELD_ERROR",
                 formFields: validationErrors
             };
         }
@@ -116,10 +114,10 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
     };
 
     render = (): JSX.Element => {
-        const enterEmailFormFeature = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
+        const enterEmailFormFeature = this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature
             .enterEmailForm;
 
-        const submitNewPasswordFormFeature = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
+        const submitNewPasswordFormFeature = this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature
             .submitNewPasswordForm;
 
         const submitNewPasswordForm: SubmitNewPasswordThemeProps = {
@@ -146,7 +144,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             },
             enterEmailAPI: this.enterEmail
         };
-        const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
+        const useShadowDom = this.getRecipeInstanceOrThrow().config.useShadowDom;
 
         const hasToken = this.state.token.length !== 0;
 
@@ -159,6 +157,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <ResetPasswordUsingTokenTheme
+                            rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                             submitNewPasswordForm={submitNewPasswordForm}
                             enterEmailForm={enterEmailForm}
                             hasToken={hasToken}

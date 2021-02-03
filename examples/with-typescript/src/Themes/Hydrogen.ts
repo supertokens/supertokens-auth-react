@@ -1,3 +1,5 @@
+import { CSSObject } from "@emotion/react";
+
 const HydrogenTheme = {
     colors: {
         background: "#1a1925",
@@ -104,7 +106,7 @@ const HydrogenTheme = {
           maxWidth: "100%",
           marginTop: "25px"
         }
-    }
+    } as Record<string, CSSObject>
 };
 
 export default HydrogenTheme;

@@ -16,17 +16,15 @@
 /*
  * Imports.
  */
-import { CreateRecipeFunction } from "../../types";
-import { EmailPasswordUserInput, SignOutAPIResponse } from "./types";
+import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
+import { EmailPasswordUserInput } from "./types";
 
 import EmailPassword from "./emailPassword";
 import EmailPasswordAuth from "./components/emailPasswordAuth";
 import SignInAndUp from "./components/features/signInAndUp/signInAndUp";
-import SignInAndUpTheme from "./components/themes/default/signInAndUp";
+import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/resetPasswordUsingToken";
-import ResetPasswordUsingTokenTheme from "./components/themes/default/resetPasswordUsingToken";
-import EmailVerification from "./components/features/emailVerification/emailVerification";
-import EmailVerificationScreenTheme from "./components/themes/default/emailVerification/emailVerificationScreen";
+import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 
 /*
  * Class.
@@ -43,14 +41,11 @@ export default class EmailPasswordAPIWrapper {
     static ResetPasswordUsingToken = ResetPasswordUsingToken;
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
 
-    static EmailVerification = EmailVerification;
-    static EmailVerificationScreenTheme = EmailVerificationScreenTheme;
-
     static init(config?: EmailPasswordUserInput): CreateRecipeFunction {
         return EmailPassword.init(config);
     }
 
-    static async signOut(): Promise<SignOutAPIResponse> {
+    static async signOut(): Promise<SuccessAPIResponse> {
         return EmailPassword.signOut();
     }
 
@@ -72,7 +67,5 @@ export {
     SignInAndUpTheme,
     signOut,
     ResetPasswordUsingToken,
-    ResetPasswordUsingTokenTheme,
-    EmailVerification,
-    EmailVerificationScreenTheme
+    ResetPasswordUsingTokenTheme
 };

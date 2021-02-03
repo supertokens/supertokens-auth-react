@@ -14,25 +14,11 @@
  */
 
 import NormalisedURLPath from "../../normalisedURLPath";
-import {
-    FormField,
-    FormFieldBaseConfig,
-    NormalisedAppInfo,
-    NormalisedBaseConfig,
-    NormalisedFormField
-} from "../../types";
-import { getWindowOrThrow } from "../../utils";
-import {
-    DEFAULT_RESET_PASSWORD_PATH,
-    EMAIL_VERIFICATION_MODE,
-    MANDATORY_FORM_FIELDS_ID,
-    MANDATORY_FORM_FIELDS_ID_ARRAY
-} from "./constants";
+import { FormField, FormFieldBaseConfig, NormalisedAppInfo, NormalisedFormField } from "../../types";
+import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID, MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
 import {
     EmailPasswordConfig,
-    EmailVerificationUserInput,
     NormalisedEmailPasswordConfig,
-    NormalisedEmailVerificationFeatureConfig,
     NormalisedEnterEmailForm,
     NormalisedResetPasswordUsingTokenFeatureConfig,
     NormalisedSignInAndUpFeatureConfig,
@@ -75,20 +61,9 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
         config.resetPasswordUsingTokenFeature
     );
 
-    const emailVerificationFeature: NormalisedEmailVerificationFeatureConfig = normaliseEmailVerificationFeature(
-        config.emailVerificationFeature
-    );
-
-    const palette = config.palette !== undefined ? config.palette : {};
-
-    const useShadowDom = getShouldUseShadowDom(config.useShadowDom);
-
     return {
-        palette,
-        useShadowDom,
         signInAndUpFeature,
-        resetPasswordUsingTokenFeature,
-        emailVerificationFeature
+        resetPasswordUsingTokenFeature
     };
 }
 
@@ -291,45 +266,6 @@ export function normaliseResetPasswordUsingTokenFeature(
     };
 }
 
-export function normaliseEmailVerificationFeature(
-    config?: EmailVerificationUserInput
-): NormalisedEmailVerificationFeatureConfig {
-    if (config === undefined) {
-        config = {};
-    }
-
-    const disableDefaultImplementation = config.disableDefaultImplementation === true;
-    let mode = EMAIL_VERIFICATION_MODE.OFF;
-    if (config.mode === "REQUIRED") {
-        mode = EMAIL_VERIFICATION_MODE.REQUIRED;
-    }
-
-    const sendVerifyEmailScreenStyle =
-        config.sendVerifyEmailScreen !== undefined && config.sendVerifyEmailScreen.style !== undefined
-            ? config.sendVerifyEmailScreen.style
-            : {};
-
-    const sendVerifyEmailScreen: NormalisedBaseConfig = {
-        style: sendVerifyEmailScreenStyle
-    };
-
-    const verifyEmailLinkClickedScreenStyle =
-        config.verifyEmailLinkClickedScreen !== undefined && config.verifyEmailLinkClickedScreen.style !== undefined
-            ? config.verifyEmailLinkClickedScreen.style
-            : {};
-
-    const verifyEmailLinkClickedScreen: NormalisedBaseConfig = {
-        style: verifyEmailLinkClickedScreenStyle
-    };
-
-    return {
-        disableDefaultImplementation,
-        mode,
-        sendVerifyEmailScreen,
-        verifyEmailLinkClickedScreen
-    };
-}
-
 /*
  * mergeFormFields by keeping the provided order, defaultFormFields or merged first, and unmerged userFormFields after.
  */
@@ -402,20 +338,4 @@ export function getFormattedFormField(field: NormalisedFormField): NormalisedFor
             return await field.validate(value);
         }
     };
-}
-
-function getShouldUseShadowDom(useShadowDom?: boolean): boolean {
-    /*
-     * Detect if browser is IE
-     * In order to disable unsupported shadowDom
-     * https://github.com/supertokens/supertokens-auth-react/issues/99
-     */
-    const isIE = getWindowOrThrow().document.documentMode !== undefined;
-    // If browser is Internet Explorer, always disable shadow dom.
-    if (isIE === true) {
-        return false;
-    }
-
-    // Otherwise, use provided config or default to true.
-    return useShadowDom !== undefined ? useShadowDom : true;
 }

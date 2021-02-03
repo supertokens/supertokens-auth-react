@@ -19,7 +19,6 @@
 import { SOMETHING_WENT_WRONG_ERROR, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR } from "../../../../../constants";
 import { APIFormField } from "../../../../../types";
 import RecipeModule from "../../../../recipeModule";
-import { API_RESPONSE_STATUS, FORM_BASE_API_RESPONSE } from "../../../constants";
 import { EmailExistsAPIResponse, FormBaseAPIResponse, SignInAPIResponse, SignUpAPIResponse } from "../../../types";
 
 /*
@@ -27,7 +26,7 @@ import { EmailExistsAPIResponse, FormBaseAPIResponse, SignInAPIResponse, SignUpA
  */
 
 export async function signUpAPI(formFields: APIFormField[], recipe: RecipeModule): Promise<FormBaseAPIResponse> {
-    const response: SignUpAPIResponse = await recipe.getHttp().post(
+    const response: SignUpAPIResponse = await recipe.httpRequest.post(
         "/signup",
         {
             body: JSON.stringify({ formFields })
@@ -36,17 +35,17 @@ export async function signUpAPI(formFields: APIFormField[], recipe: RecipeModule
     );
 
     // If success.
-    if (response.status === API_RESPONSE_STATUS.OK) {
+    if (response.status === "OK") {
         return {
-            status: FORM_BASE_API_RESPONSE.OK,
+            status: "OK",
             user: response.user
         };
     }
 
     // Otherwise, if field errors.
-    if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+    if (response.status === "FIELD_ERROR") {
         return {
-            status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+            status: "FIELD_ERROR",
             formFields: response.formFields
         };
     }
@@ -55,7 +54,7 @@ export async function signUpAPI(formFields: APIFormField[], recipe: RecipeModule
 }
 
 export async function signInAPI(formFields: APIFormField[], recipe: RecipeModule): Promise<FormBaseAPIResponse> {
-    const response: SignInAPIResponse = await recipe.getHttp().post(
+    const response: SignInAPIResponse = await recipe.httpRequest.post(
         "/signin",
         {
             body: JSON.stringify({ formFields })
@@ -64,25 +63,25 @@ export async function signInAPI(formFields: APIFormField[], recipe: RecipeModule
     );
 
     // If success.
-    if (response.status === API_RESPONSE_STATUS.OK) {
+    if (response.status === "OK") {
         return {
-            status: FORM_BASE_API_RESPONSE.OK,
+            status: "OK",
             user: response.user
         };
     }
 
     // Otherwise, if field errors.
-    if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+    if (response.status === "FIELD_ERROR") {
         return {
-            status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+            status: "FIELD_ERROR",
             formFields: response.formFields
         };
     }
 
     // Otherwise, if wrong credentials error.
-    if (response.status === API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR) {
+    if (response.status === "WRONG_CREDENTIALS_ERROR") {
         return {
-            status: FORM_BASE_API_RESPONSE.GENERAL_ERROR,
+            status: "GENERAL_ERROR",
             message: INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR
         };
     }
@@ -91,12 +90,12 @@ export async function signInAPI(formFields: APIFormField[], recipe: RecipeModule
 }
 
 export async function emailExistsAPI(email: string, recipe: RecipeModule): Promise<string | undefined> {
-    const response: EmailExistsAPIResponse = await recipe
-        .getHttp()
-        .get("/signup/email/exists", {}, "EMAIL_EXISTS", { email });
+    const response: EmailExistsAPIResponse = await recipe.httpRequest.get("/signup/email/exists", {}, "EMAIL_EXISTS", {
+        email
+    });
 
     // If email already exists.
-    if (response.status === API_RESPONSE_STATUS.OK) {
+    if (response.status === "OK") {
         // If email exists.
         if (response.exists === true) {
             return "This email already exists. Please sign in instead";

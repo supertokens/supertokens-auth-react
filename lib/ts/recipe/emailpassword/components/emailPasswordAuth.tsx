@@ -21,22 +21,22 @@ import { PureComponent, ReactElement } from "react";
 
 import { EmailPasswordAuthState, FeatureBaseProps } from "../types";
 import EmailPassword from "../emailPassword";
-import { EMAIL_PASSWORD_AUTH_STATE, EMAIL_VERIFICATION_MODE } from "../constants";
 import { getWindowOrThrow } from "supertokens-website/lib/build/utils";
 import { ReactComponentClass, WithRouterType } from "../../../types";
+import EmailVerification from "../../emailverification/emailVerification";
 
 /*
  * Component.
  */
 
-class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAuthState> {
+class EmailPasswordAuth extends PureComponent<FeatureBaseProps<EmailPassword>, EmailPasswordAuthState> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: FeatureBaseProps<EmailPassword>) {
         super(props);
         this.state = {
-            status: EMAIL_PASSWORD_AUTH_STATE.LOADING
+            status: "LOADING"
         };
     }
 
@@ -73,14 +73,11 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
 
         // Update status to ready.
         this.setState({
-            status: EMAIL_PASSWORD_AUTH_STATE.READY
+            status: "READY"
         });
 
         // If email verification mode is off or optional, return.
-        if (
-            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !==
-            EMAIL_VERIFICATION_MODE.REQUIRED
-        ) {
+        if (EmailVerification.getInstanceOrThrow().config.mode !== "REQUIRED") {
             return;
         }
 
@@ -96,7 +93,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
      * Render.
      */
     render = (): JSX.Element | null => {
-        if (this.state.status === EMAIL_PASSWORD_AUTH_STATE.LOADING) {
+        if (this.state.status === "LOADING") {
             return null;
         }
 

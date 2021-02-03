@@ -5,17 +5,15 @@ import NormalisedURLPath from "./normalisedURLPath";
 import Session from "./recipe/session/session";
 export default class SuperTokens {
     private static instance?;
-    private appInfo;
+    appInfo: NormalisedAppInfo;
     private recipeList;
     private pathsToComponentWithRecipeIdMap?;
     constructor(config: SuperTokensConfig);
     static init(config: SuperTokensConfig): void;
     static getInstanceOrThrow(): SuperTokens;
-    static getAppInfo(): NormalisedAppInfo;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | undefined;
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[];
-    getAppInfo: () => NormalisedAppInfo;
     canHandleRoute: () => boolean;
     getRoutingComponent: () => JSX.Element | undefined;
     getPathsToComponentWithRecipeIdMap: () => Record<string, import("./types").ComponentWithRecipeId[]>;

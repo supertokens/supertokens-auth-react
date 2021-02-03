@@ -45,7 +45,7 @@ export default class SuperTokens {
     /*
      * Instance Attributes.
      */
-    private appInfo: NormalisedAppInfo;
+    appInfo: NormalisedAppInfo;
     private recipeList: RecipeModule[] = [];
     private pathsToComponentWithRecipeIdMap?: PathToComponentWithRecipeIdMap;
 
@@ -91,10 +91,6 @@ export default class SuperTokens {
         return SuperTokens.instance;
     }
 
-    static getAppInfo(): NormalisedAppInfo {
-        return SuperTokens.getInstanceOrThrow().getAppInfo();
-    }
-
     static canHandleRoute(): boolean {
         return SuperTokens.getInstanceOrThrow().canHandleRoute();
     }
@@ -110,10 +106,6 @@ export default class SuperTokens {
     /*
      * Instance Methods.
      */
-    getAppInfo = (): NormalisedAppInfo => {
-        return this.appInfo;
-    };
-
     canHandleRoute = (): boolean => {
         return this.getRoutingComponent() !== undefined;
     };
@@ -147,7 +139,7 @@ export default class SuperTokens {
                 }
 
                 pathsToComponentWithRecipeIdMap[featurePath].push({
-                    rid: recipe.getRecipeId(),
+                    rid: recipe.recipeId,
                     component: features[featurePath]
                 });
             }
@@ -186,7 +178,7 @@ export default class SuperTokens {
 
     getDefaultSessionRecipe = (): Session | undefined => {
         return this.getRecipeList().find(recipe => {
-            return recipe.getRecipeId() === Session.RECIPE_ID;
+            return recipe.recipeId === Session.RECIPE_ID;
         }) as Session;
     };
 

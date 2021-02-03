@@ -16,7 +16,6 @@
 import { RESET_PASSWORD_INVALID_TOKEN_ERROR, SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import { APIFormField } from "../../../../../types";
 import RecipeModule from "../../../../recipeModule";
-import { API_RESPONSE_STATUS, FORM_BASE_API_RESPONSE } from "../../../constants";
 import { EnterEmailAPIResponse, FormBaseAPIResponse, SubmitNewPasswordAPIResponse } from "../../../types";
 
 /*
@@ -28,7 +27,7 @@ export async function handleSubmitNewPasswordAPI(
     recipe: RecipeModule,
     token: string
 ): Promise<FormBaseAPIResponse> {
-    const response: SubmitNewPasswordAPIResponse = await recipe.getHttp().post(
+    const response: SubmitNewPasswordAPIResponse = await recipe.httpRequest.post(
         "/user/password/reset",
         {
             body: JSON.stringify({ formFields, token })
@@ -37,25 +36,25 @@ export async function handleSubmitNewPasswordAPI(
     );
 
     // Otherwise, if field errors.
-    if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+    if (response.status === "FIELD_ERROR") {
         return {
-            status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+            status: "FIELD_ERROR",
             formFields: response.formFields
         };
     }
 
     // Otherwise, if reset password invalid token error.
-    if (response.status === API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR) {
+    if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
         return {
-            status: FORM_BASE_API_RESPONSE.GENERAL_ERROR,
+            status: "GENERAL_ERROR",
             message: RESET_PASSWORD_INVALID_TOKEN_ERROR
         };
     }
 
     // Otherwise, status === OK
-    if (response.status === API_RESPONSE_STATUS.OK) {
+    if (response.status === "OK") {
         return {
-            status: FORM_BASE_API_RESPONSE.OK
+            status: "OK"
         };
     }
 
@@ -63,7 +62,7 @@ export async function handleSubmitNewPasswordAPI(
 }
 
 export async function enterEmailAPI(formFields: APIFormField[], recipe: RecipeModule): Promise<FormBaseAPIResponse> {
-    const response: EnterEmailAPIResponse = await recipe.getHttp().post(
+    const response: EnterEmailAPIResponse = await recipe.httpRequest.post(
         "/user/password/reset/token",
         {
             body: JSON.stringify({ formFields })
@@ -72,17 +71,17 @@ export async function enterEmailAPI(formFields: APIFormField[], recipe: RecipeMo
     );
 
     // Otherwise, if field errors.
-    if (response.status === API_RESPONSE_STATUS.FIELD_ERROR) {
+    if (response.status === "FIELD_ERROR") {
         return {
-            status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+            status: "FIELD_ERROR",
             formFields: response.formFields
         };
     }
 
     // Otherwise, success.
-    if (response.status === API_RESPONSE_STATUS.OK) {
+    if (response.status === "OK") {
         return {
-            status: FORM_BASE_API_RESPONSE.OK
+            status: "OK"
         };
     }
 
