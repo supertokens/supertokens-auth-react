@@ -8,10 +8,7 @@ const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://example.com:${websitePort}`
-let whitelist = []
-whitelist.push(websiteDomain)
-whitelist.push(`http://a.example.com:${websitePort}`)
-whitelist.push(`http://b.example.com:${websitePort}`)
+let whitelist = /http?:\/\/([a-z0-9]+[.])example[.]com/
 
 
 let getUserDomain = (email) =>{
@@ -61,13 +58,7 @@ supertokens.init({
 const app = express();
 
 app.use(cors({
-    origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1) {
-          callback(null, true)
-        } else {
-          callback(new Error('Not allowed by CORS'))
-        }
-      },
+    origin: whitelist,
     allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
     methods: ["GET", "PUT", "POST", "DELETE"],
     credentials: true,

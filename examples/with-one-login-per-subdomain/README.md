@@ -10,10 +10,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 127.0.0.1   b.example.com
 ```
 
-> **_NOTE:_**  For the demo, the subdomain is extracted from user's email provider, ex. for `user@a.com`, `a` would be the subdomain. A valid email address is required for password reset and email verification, to use these features in the demo you would need to add that email provider as a subdomain in `/etc/hosts` and add it to the cors domain whitelist on the server.  
+> **_NOTE:_**  For the demo, the subdomain is extracted from user's email provider, ex. for `user@a.com`, `a` would be the subdomain. A valid email address is required for password reset and email verification, to use these features in the demo you would need to add that email provider as a subdomain in the `/etc/hosts` file.  
 > Example:  
 > - To use `user@gmail.com`, you would need to add `gmail.example.com` to your `/etc/hosts`
-> - In [api-server.j](./api-server.js) add `http://gmail.example.com:${websitePort}` to the cors whitelist
 > - On starting the demo, navigate to `http://gmail.example:3000` and signup/signin
 
 ## Available Scripts
