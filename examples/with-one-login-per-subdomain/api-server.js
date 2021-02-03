@@ -51,9 +51,6 @@ supertokens.init({
 
                     return `http://${userDomain}.example.com:${websitePort}/auth/verify-email`;
                 },
-                createAndSendCustomEmail: (user, emailVerificationURLWithToken) =>{
-                    console.log(emailVerificationURLWithToken)
-                }
             },
 
         }),
