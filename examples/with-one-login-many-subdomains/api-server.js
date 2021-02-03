@@ -13,7 +13,7 @@ const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain =
   process.env.REACT_APP_WEBSITE_URL || `http://auth.example.com:${websitePort}`;
 
-const domainWhiteList = /http?:\/\/([a-z0-9]+[.])example[.]com/
+const domainWhiteList =/^(http?:\/\/([a-z0-9]+[.])example[.]com(?::\d{1,5})?)$/
 const DB = [];
 async function checkIfTenantExists(username) {
   if (DB.includes(username)) {
