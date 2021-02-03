@@ -5,11 +5,11 @@
 - Add the following to your hosts configs `/etc/hosts` to allow for multi tenancy locally:
 ```
 127.0.0.1   auth.example.com
-127.0.0.1   abc.example.com
-127.0.0.1   xyz.example.com
+127.0.0.1   gmail.example.com
+127.0.0.1   supertokens.example.com
 ```
 
-> **_NOTE:_**  For the demo, the subdomain for each user is recived from their email, ex. for `user@abc.com`, `abc` would be the subdomain. A valid email address is required for password reset and email verification, to use these features in the demo you would need to add that email provider as a subdomain in `/etc/hosts` and add it to the cors domain whitelist on the server.  
+> **_NOTE:_**  For the purpose of the demo, the subdomain for each user is extracted from their email provider, ex. for `user@abc.com`, `abc` would be the subdomain. A valid email address is required for password reset and email verification, to use these features in the demo you would need to add that email provider as a subdomain in `/etc/hosts` and add it to the cors domain whitelist on the server.  
 > Example:  
 > - To use `user@gmail.com`, you would need to add `gmail.example.com` to your `/etc/hosts`
 > - In [api-server.js](./api-server.js) add `http://gmail.example.com:${websitePort}` to the cors whitelist
