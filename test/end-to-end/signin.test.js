@@ -301,6 +301,88 @@ describe("SuperTokens SignIn feature/theme", function() {
                 "ST_LOGS PRE_API_HOOKS SIGN_OUT"
             ]);
         });
+
+        it("Successful Sign In with redirect to, redirectToPath directly", async function() {
+            await assertSignInRedirectTo(
+                page,
+                `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=%2Fredirect-here`,
+                `${TEST_CLIENT_BASE_URL}/redirect-here`
+            );
+        });
+
+        it("Successful Sign In with redirect to, redirectToPath directly without trailing slash", async function() {
+            await assertSignInRedirectTo(
+                page,
+                `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=redirect-here`,
+                `${TEST_CLIENT_BASE_URL}/redirect-here`
+            );
+        });
+
+        it("Successful Sign In with redirect to, redirectToPath directly", async function() {
+            // Use only path, no open redirect.
+            await assertSignInRedirectTo(
+                page,
+                `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=https://attacker.com/path`,
+                `${TEST_CLIENT_BASE_URL}/path`
+            );
+        });
+
+        it("Successful Sign In with redirect to, with EmailPasswordAuth", async function() {
+            await clearBrowserCookies(page);
+
+            let cookies = await page.cookies();
+            assert.deepStrictEqual(cookies, []); // Make sure cookies were removed.
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/redirect-to-this-custom-path`),
+                page.waitForNavigation({ waitUntil: "networkidle0" })
+            ]);
+
+            await toggleSignInSignUp(page);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" }
+            ]);
+
+            // Submit.
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" })
+            ]);
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/redirect-to-this-custom-path");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS ON_HANDLE_EVENT SIGN_IN_COMPLETE",
+                "ST_LOGS GET_REDIRECTION_URL SUCCESS"
+            ]);
+
+            // Logout
+            const logoutButton = await getLogoutButton(page);
+            await logoutButton.click();
+            await page.waitForNavigation();
+
+            // Login again will not redirect to custom path.
+            await toggleSignInSignUp(page);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" }
+            ]);
+
+            // Submit.
+            await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" })
+            ]);
+
+            pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+        });
     });
 });
 
@@ -352,3 +434,25 @@ describe("SuperTokens SignIn feature/theme => Server Error", function() {
         assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS SIGN_IN"]);
     });
 });
+
+async function assertSignInRedirectTo(page, startUrl, finalUrl) {
+    await clearBrowserCookies(page);
+    await Promise.all([page.goto(startUrl), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+    await toggleSignInSignUp(page);
+    // Set correct values.
+    await setInputValues(page, [
+        { name: "email", value: "john.doe@supertokens.io" },
+        { name: "password", value: "Str0ngP@ssw0rd" }
+    ]);
+
+    await page.screenshot({ path: "screenshot.jpeg" });
+    // Submit.
+    await Promise.all([
+        submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+        page.waitForNavigation({ waitUntil: "networkidle0" })
+    ]);
+
+    let href = await page.evaluate(() => window.location.href);
+    assert.deepStrictEqual(href, finalUrl);
+}

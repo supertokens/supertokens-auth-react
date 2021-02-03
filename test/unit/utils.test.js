@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { getRecipeIdFromSearch, validateForm } from "../../lib/build/utils";
+import { getRecipeIdFromSearch, validateForm, appendQueryParamsToURL } from "../../lib/build/utils";
 
 import { normaliseURLPathOrThrowError } from "../../lib/build/normalisedURLPath";
 import { normaliseURLDomainOrThrowError } from "../../lib/build/normalisedURLDomain";
@@ -120,6 +120,42 @@ describe("Config tests", function() {
         } catch (err) {
             assert(err.message === "Please provide a valid domain name");
         }
+    });
+
+    it("append search params to absolute/relative URL", async function() {
+        assert.strictEqual(appendQueryParamsToURL("/"), "/");
+        assert.strictEqual(appendQueryParamsToURL("/relativepath"), "/relativepath");
+        assert.strictEqual(appendQueryParamsToURL("/relativepath", {}), "/relativepath");
+        assert.strictEqual(appendQueryParamsToURL("https://127.0.0.1:80/"), "https://127.0.0.1:80/");
+        assert.strictEqual(appendQueryParamsToURL("https://example.com/one/two"), "https://example.com/one/two");
+        assert.strictEqual(appendQueryParamsToURL("https://example.com/one/two", {}), "https://example.com/one/two");
+        assert.strictEqual(
+            appendQueryParamsToURL("https://example.com/one/two", { foo: "bar" }),
+            "https://example.com/one/two?foo=bar"
+        );
+        assert.strictEqual(
+            appendQueryParamsToURL("https://example.com/one/two?blue=green", { foo: "bar" }),
+            "https://example.com/one/two?blue=green&foo=bar"
+        );
+        assert.strictEqual(
+            appendQueryParamsToURL("https://example.com/one/two?blue=green#with-hash", { foo: "bar" }),
+            "https://example.com/one/two?blue=green&foo=bar#with-hash"
+        );
+        assert.strictEqual(appendQueryParamsToURL("/relative/path", { foo: "bar" }), "/relative/path?foo=bar");
+        assert.strictEqual(
+            appendQueryParamsToURL("/relative/path?blue=green#with-hash", { foo: "bar" }),
+            "/relative/path?blue=green&foo=bar"
+        );
+        assert.strictEqual(appendQueryParamsToURL("?blue=green", { foo: "bar" }), "/?blue=green&foo=bar");
+        assert.strictEqual(
+            appendQueryParamsToURL("/auth", { scope: "read_user write_user" }),
+            "/auth?scope=read_user+write_user"
+        );
+        // Overwrite already existing params
+        assert.strictEqual(
+            appendQueryParamsToURL("/auth?rid=emailpassword", { rid: "thirdparty_emailpassword" }),
+            "/auth?rid=thirdparty_emailpassword"
+        );
     });
 
     it("get recipe Id from URL search", async function() {

@@ -21,10 +21,8 @@ import {
     NormalisedBaseConfig,
     NormalisedFormField,
     RecipeModuleConfig,
-    RequestJson,
     Styles
 } from "../../types";
-import { CSSObject } from "@emotion/react/types/index";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import {
@@ -33,15 +31,11 @@ import {
     ENTER_EMAIL_STATUS,
     FORM_BASE_API_RESPONSE,
     FORM_BASE_STATUS,
-    EMAIL_PASSWORD_PRE_API_HOOK_ACTION,
     SEND_VERIFY_EMAIL_STATUS,
     SIGN_IN_AND_UP_STATUS,
     SUBMIT_NEW_PASSWORD_STATUS,
     VERIFY_EMAIL_LINK_CLICKED_STATUS,
-    EMAIL_PASSWORD_AUTH_STATE,
-    EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION,
-    EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION,
-    EMAIL_PASSWORD_REDIRECTION_URL_ACTION
+    EMAIL_PASSWORD_AUTH_STATE
 } from "./constants";
 import { History, LocationState } from "history";
 import EmailPassword from "./emailPassword";
@@ -496,8 +490,6 @@ export type VerifyEmailAPIResponse =
           status: API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR;
       };
 
-export type SendVerificationEmailAPIResponse = SuccessAPIResponse;
-
 export type FormFieldAPIResponse = {
     /*
      * Field validation errors.
@@ -547,8 +539,6 @@ export type ThemeResponseGeneralError = {
 
 export type SignUpAPIResponse = BaseSignInUpAPIResponse;
 
-export type SignUpThemeResponse = SignUpAPIResponse | ThemeResponseGeneralError;
-
 export type SignInAPIResponse =
     | BaseSignInUpAPIResponse
     | {
@@ -563,10 +553,7 @@ export type SignInAPIResponse =
           message: string;
       };
 
-export type SignInThemeResponse = SignInAPIResponse | ThemeResponseGeneralError;
-
 export type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
-export type EnterEmailThemeResponse = EnterEmailAPIResponse | ThemeResponseGeneralError;
 
 export type SubmitNewPasswordAPIResponse =
     | BaseResetPasswordAPIResponse
@@ -592,16 +579,19 @@ export type VerifyEmailThemeResponse = {
     status: keyof typeof VERIFY_EMAIL_LINK_CLICKED_STATUS;
 };
 
-export type EmailPasswordWithoutUserSuccessAction = typeof EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION[keyof typeof EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION];
-export type EmailPasswordWithUserSuccessAction = typeof EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION[keyof typeof EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION];
-export type EmailPasswordRedirectionUrlAction = typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION[keyof typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION];
-export type EmailPasswordPreAPIHookAction = typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION[keyof typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION];
-
 export type EmailPasswordPreAPIHookContext = {
     /*
      * Pre API Hook action.
      */
-    action: EmailPasswordPreAPIHookAction;
+    action:
+        | "SEND_RESET_PASSWORD_EMAIL"
+        | "SUBMIT_NEW_PASSWORD"
+        | "VERIFY_EMAIL"
+        | "SEND_VERIFY_EMAIL"
+        | "IS_EMAIL_VERIFIED"
+        | "SIGN_IN"
+        | "SIGN_UP"
+        | "SIGN_OUT";
 
     /*
      * Request object containing query params, body, headers.
@@ -609,25 +599,42 @@ export type EmailPasswordPreAPIHookContext = {
     requestInit: RequestInit;
 };
 
-export type EmailPasswordGetRedirectionURLContext = {
-    /*
-     * Get Redirection URL Context
-     */
-    action: EmailPasswordRedirectionUrlAction;
-};
+export type EmailPasswordGetRedirectionURLContext =
+    | {
+          /*
+           * Get Redirection URL Context
+           */
+          action: "SUCCESS";
+
+          /*
+           * Redirect To Path represents the intended path the user wanted to access.
+           */
+          redirectToPath?: string;
+      }
+    | {
+          /*
+           * Get Redirection URL Context
+           */
+          action: "SIGN_IN_AND_UP" | "VERIFY_EMAIL" | "RESET_PASSWORD";
+      };
 
 export type EmailPasswordOnHandleEventContext =
     | {
           /*
            * On Handle Event actions
            */
-          action: EmailPasswordWithoutUserSuccessAction;
+          action:
+              | "SESSION_ALREADY_EXISTS"
+              | "RESET_PASSWORD_EMAIL_SENT"
+              | "PASSWORD_RESET_SUCCESSFUL"
+              | "VERIFY_EMAIL_SENT"
+              | "EMAIL_VERIFIED_SUCCESSFUL";
       }
     | {
           /*
            * Sign In / Sign Up success.
            */
-          action: EmailPasswordWithUserSuccessAction;
+          action: "SIGN_IN_COMPLETE" | "SIGN_UP_COMPLETE";
           /*
            * User returned from API.
            */
@@ -782,8 +789,6 @@ export type EmailPasswordAuthState = {
 
 export type PaletteUserInput = Record<string, string>;
 
-export type DefaultStylesUserInput = Record<string, CSSObject>;
-
 export type FormBaseState =
     | {
           formFields: FormFieldState[];
@@ -852,23 +857,6 @@ export type FormBaseAPIResponse =
            */
           formFields: FormFieldError[];
       };
-
-export type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
-
-export type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
-
-export type VerifyEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
-
-export type SendVerifyEmailAPI = (headers: HeadersInit) => Promise<SendVerifyEmailAPIResponse>;
-
-export type EmailExistsAPI = (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
-
-export type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
-
-export type SubmitNewPasswordAPI = (
-    requestJson: RequestJson,
-    headers: HeadersInit
-) => Promise<SubmitNewPasswordAPIResponse>;
 
 /*
  *  Add documentMode to document object in order to use to detect if browser is IE.

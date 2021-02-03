@@ -13,5 +13,4 @@ export declare function StyleProvider({ children, styleFromInit, getDefaultStyle
     getDefaultStyles: (palette: NormalisedPalette) => NormalisedDefaultStyles;
     defaultPalette: NormalisedPalette;
 }): JSX.Element;
-export declare const StyleConsumer: React.ExoticComponent<React.ConsumerProps<NormalisedStyle>>;
 export default StyleContext;

@@ -21,7 +21,7 @@ import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, RouteToFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     EmailPasswordConfig,
-    EmailPasswordRedirectionUrlAction,
+    EmailPasswordGetRedirectionURLContext,
     EmailPasswordUserInput,
     NormalisedEmailPasswordConfig,
     SignOutAPIResponse
@@ -30,12 +30,7 @@ import { isTest } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
 import { ResetPasswordUsingToken, SignInAndUp, EmailVerification } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
-import {
-    DEFAULT_RESET_PASSWORD_PATH,
-    DEFAULT_VERIFY_EMAIL_PATH,
-    EMAIL_PASSWORD_REDIRECTION_URL_ACTION,
-    EMAIL_VERIFICATION_MODE
-} from "./constants";
+import { DEFAULT_RESET_PASSWORD_PATH, DEFAULT_VERIFY_EMAIL_PATH, EMAIL_VERIFICATION_MODE } from "./constants";
 import { SSR_ERROR } from "../../constants";
 import Session from "../session/session";
 import SuperTokens from "../../superTokens";
@@ -100,20 +95,19 @@ export default class EmailPassword extends RecipeModule {
         return features;
     };
 
-    getDefaultRedirectionURL = async (context: { action: EmailPasswordRedirectionUrlAction }): Promise<string> => {
+    getDefaultRedirectionURL = async (context: EmailPasswordGetRedirectionURLContext): Promise<string> => {
         switch (context.action) {
-            case EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SIGN_IN_AND_UP:
+            case "SIGN_IN_AND_UP":
                 return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}?rid=${this.getRecipeId()}`;
 
-            case EMAIL_PASSWORD_REDIRECTION_URL_ACTION.VERIFY_EMAIL:
+            case "VERIFY_EMAIL":
                 return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=${this.getRecipeId()}`;
 
-            case EMAIL_PASSWORD_REDIRECTION_URL_ACTION.RESET_PASSWORD:
+            case "RESET_PASSWORD":
                 return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}${DEFAULT_RESET_PASSWORD_PATH}?rid=${this.getRecipeId()}`;
 
-            case EMAIL_PASSWORD_REDIRECTION_URL_ACTION.SUCCESS:
-            default:
-                return "/";
+            case "SUCCESS":
+                return context.redirectToPath === undefined ? "/" : context.redirectToPath;
         }
     };
 

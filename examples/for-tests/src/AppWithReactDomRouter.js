@@ -36,6 +36,11 @@ function AppWithReactDomRouter() {
                 <Dashboard />
               </EmailPasswordAuth>
             </Route>
+            <Route path="/redirect-to-this-custom-path">
+              <EmailPasswordAuth>
+                <Dashboard />
+              </EmailPasswordAuth>
+            </Route>
 
             <Route path="/contact">
               <Contact />

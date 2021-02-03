@@ -1,13 +1,13 @@
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField, ReactComponentClass } from "./types";
-import { History, LocationState } from "history";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField, NormalisedRecipeModuleHooks, RecipeModuleHooks } from "./types";
+export declare function normalisedRecipeModuleHooks(config: RecipeModuleHooks): NormalisedRecipeModuleHooks;
 export declare function getRecipeIdFromSearch(search: string): string | null;
+export declare function getQueryParams(param: string): string | null;
+export declare function getRedirectToPathFromURL(): string | undefined;
 export declare function isTest(): boolean;
 export declare function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): NormalisedAppInfo;
 export declare function validateForm(inputs: APIFormField[], configFormFields: NormalisedFormField[]): Promise<FormFieldError[]>;
 export declare function getCurrentNormalisedUrlPath(): NormalisedURLPath;
-export declare function WithRouter(Component: ReactComponentClass): ReactComponentClass;
-export declare function redirectToWithReload(url: string): void;
-export declare function redirectToInApp(path: string, title?: string, history?: History<LocationState>): void;
+export declare function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string;
 export declare function getWindowOrThrow(): any;

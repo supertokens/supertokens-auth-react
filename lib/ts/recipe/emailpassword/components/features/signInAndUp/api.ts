@@ -19,7 +19,7 @@
 import { SOMETHING_WENT_WRONG_ERROR, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR } from "../../../../../constants";
 import { APIFormField } from "../../../../../types";
 import RecipeModule from "../../../../recipeModule";
-import { API_RESPONSE_STATUS, FORM_BASE_API_RESPONSE, EMAIL_PASSWORD_PRE_API_HOOK_ACTION } from "../../../constants";
+import { API_RESPONSE_STATUS, FORM_BASE_API_RESPONSE } from "../../../constants";
 import { EmailExistsAPIResponse, FormBaseAPIResponse, SignInAPIResponse, SignUpAPIResponse } from "../../../types";
 
 /*
@@ -32,7 +32,7 @@ export async function signUpAPI(formFields: APIFormField[], recipe: RecipeModule
         {
             body: JSON.stringify({ formFields })
         },
-        EMAIL_PASSWORD_PRE_API_HOOK_ACTION.SIGN_UP
+        "SIGN_UP"
     );
 
     // If success.
@@ -60,7 +60,7 @@ export async function signInAPI(formFields: APIFormField[], recipe: RecipeModule
         {
             body: JSON.stringify({ formFields })
         },
-        EMAIL_PASSWORD_PRE_API_HOOK_ACTION.SIGN_IN
+        "SIGN_IN"
     );
 
     // If success.
@@ -93,7 +93,7 @@ export async function signInAPI(formFields: APIFormField[], recipe: RecipeModule
 export async function emailExistsAPI(email: string, recipe: RecipeModule): Promise<string | undefined> {
     const response: EmailExistsAPIResponse = await recipe
         .getHttp()
-        .get("/signup/email/exists", {}, EMAIL_PASSWORD_PRE_API_HOOK_ACTION.EMAIL_EXISTS, { email });
+        .get("/signup/email/exists", {}, "EMAIL_EXISTS", { email });
 
     // If email already exists.
     if (response.status === API_RESPONSE_STATUS.OK) {

@@ -1,8 +1,7 @@
-import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, RequestJson, Styles } from "../../types";
-import { CSSObject } from "@emotion/react/types/index";
+import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, RecipeModuleConfig, Styles } from "../../types";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE, ENTER_EMAIL_STATUS, FORM_BASE_API_RESPONSE, FORM_BASE_STATUS, EMAIL_PASSWORD_PRE_API_HOOK_ACTION, SEND_VERIFY_EMAIL_STATUS, SIGN_IN_AND_UP_STATUS, SUBMIT_NEW_PASSWORD_STATUS, VERIFY_EMAIL_LINK_CLICKED_STATUS, EMAIL_PASSWORD_AUTH_STATE, EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION, EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION, EMAIL_PASSWORD_REDIRECTION_URL_ACTION } from "./constants";
+import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE, ENTER_EMAIL_STATUS, FORM_BASE_API_RESPONSE, FORM_BASE_STATUS, SEND_VERIFY_EMAIL_STATUS, SIGN_IN_AND_UP_STATUS, SUBMIT_NEW_PASSWORD_STATUS, VERIFY_EMAIL_LINK_CLICKED_STATUS, EMAIL_PASSWORD_AUTH_STATE } from "./constants";
 import { History, LocationState } from "history";
 import EmailPassword from "./emailPassword";
 export declare type EmailPasswordHooks = {
@@ -147,7 +146,6 @@ export declare type IsEmailVerifiedAPIResponse = SuccessAPIResponse & {
 export declare type VerifyEmailAPIResponse = SuccessAPIResponse | {
     status: API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR;
 };
-export declare type SendVerificationEmailAPIResponse = SuccessAPIResponse;
 export declare type FormFieldAPIResponse = {
     status: API_RESPONSE_STATUS.FIELD_ERROR;
     formFields: FormFieldError[];
@@ -164,14 +162,11 @@ export declare type ThemeResponseGeneralError = {
     message: string;
 };
 export declare type SignUpAPIResponse = BaseSignInUpAPIResponse;
-export declare type SignUpThemeResponse = SignUpAPIResponse | ThemeResponseGeneralError;
 export declare type SignInAPIResponse = BaseSignInUpAPIResponse | {
     status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR;
     message: string;
 };
-export declare type SignInThemeResponse = SignInAPIResponse | ThemeResponseGeneralError;
 export declare type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
-export declare type EnterEmailThemeResponse = EnterEmailAPIResponse | ThemeResponseGeneralError;
 export declare type SubmitNewPasswordAPIResponse = BaseResetPasswordAPIResponse | {
     status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
 };
@@ -182,21 +177,20 @@ export declare type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | 
 export declare type VerifyEmailThemeResponse = {
     status: keyof typeof VERIFY_EMAIL_LINK_CLICKED_STATUS;
 };
-export declare type EmailPasswordWithoutUserSuccessAction = typeof EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION[keyof typeof EMAIL_PASSWORD_WITHOUT_USER_SUCCESS_ACTION];
-export declare type EmailPasswordWithUserSuccessAction = typeof EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION[keyof typeof EMAIL_PASSWORD_WITH_USER_SUCCESS_ACTION];
-export declare type EmailPasswordRedirectionUrlAction = typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION[keyof typeof EMAIL_PASSWORD_REDIRECTION_URL_ACTION];
-export declare type EmailPasswordPreAPIHookAction = typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION[keyof typeof EMAIL_PASSWORD_PRE_API_HOOK_ACTION];
 export declare type EmailPasswordPreAPIHookContext = {
-    action: EmailPasswordPreAPIHookAction;
+    action: "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD" | "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_IN" | "SIGN_UP" | "SIGN_OUT";
     requestInit: RequestInit;
 };
 export declare type EmailPasswordGetRedirectionURLContext = {
-    action: EmailPasswordRedirectionUrlAction;
+    action: "SUCCESS";
+    redirectToPath?: string;
+} | {
+    action: "SIGN_IN_AND_UP" | "VERIFY_EMAIL" | "RESET_PASSWORD";
 };
 export declare type EmailPasswordOnHandleEventContext = {
-    action: EmailPasswordWithoutUserSuccessAction;
+    action: "SESSION_ALREADY_EXISTS" | "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL" | "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
 } | {
-    action: EmailPasswordWithUserSuccessAction;
+    action: "SIGN_IN_COMPLETE" | "SIGN_UP_COMPLETE";
     user: {
         id: string;
         email: string;
@@ -257,7 +251,6 @@ export declare type EmailPasswordAuthState = {
     status: EMAIL_PASSWORD_AUTH_STATE.LOADING | EMAIL_PASSWORD_AUTH_STATE.READY;
 };
 export declare type PaletteUserInput = Record<string, string>;
-export declare type DefaultStylesUserInput = Record<string, CSSObject>;
 export declare type FormBaseState = {
     formFields: FormFieldState[];
     status: FORM_BASE_STATUS.IN_PROGRESS | FORM_BASE_STATUS.READY | FORM_BASE_STATUS.LOADING | FORM_BASE_STATUS.FIELD_ERRORS | FORM_BASE_STATUS.SUCCESS;
@@ -286,13 +279,6 @@ export declare type FormBaseAPIResponse = {
     status: FORM_BASE_API_RESPONSE.FIELD_ERROR;
     formFields: FormFieldError[];
 };
-export declare type SignUpAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignUpAPIResponse>;
-export declare type SignInAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SignInAPIResponse>;
-export declare type VerifyEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<VerifyEmailAPIResponse>;
-export declare type SendVerifyEmailAPI = (headers: HeadersInit) => Promise<SendVerifyEmailAPIResponse>;
-export declare type EmailExistsAPI = (value: string, headers: HeadersInit) => Promise<EmailExistsAPIResponse>;
-export declare type EnterEmailAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<EnterEmailAPIResponse>;
-export declare type SubmitNewPasswordAPI = (requestJson: RequestJson, headers: HeadersInit) => Promise<SubmitNewPasswordAPIResponse>;
 declare global {
     interface Document {
         documentMode?: any;

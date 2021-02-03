@@ -66,8 +66,6 @@ export function StyleProvider({
     return <StyleContext.Provider value={styles}>{children}</StyleContext.Provider>;
 }
 
-export const StyleConsumer = StyleContext.Consumer;
-
 /*
  * Helpers
  */

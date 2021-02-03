@@ -90,7 +90,7 @@ export default class HttpRequest {
             headers = config.headers;
         }
 
-        const requestInit = await this.recipe.preAPIHook({
+        const requestInit = await this.recipe.hooks.preAPIHook({
             action,
             requestInit: {
                 ...config,

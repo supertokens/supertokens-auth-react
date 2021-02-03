@@ -23,8 +23,41 @@ import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { MANDATORY_FORM_FIELDS_ID } from "./recipe/emailpassword/constants";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField, ReactComponentClass } from "./types";
-import { History, LocationState } from "history";
+import {
+    APIFormField,
+    AppInfoUserInput,
+    NormalisedAppInfo,
+    NormalisedFormField,
+    NormalisedRecipeModuleHooks,
+    RecipeModuleHooks
+} from "./types";
+
+/*
+ * NormalisedRecipeModuleHooks
+ */
+export function normalisedRecipeModuleHooks(config: RecipeModuleHooks): NormalisedRecipeModuleHooks {
+    let { preAPIHook, getRedirectionURL, onHandleEvent } = config;
+    if (preAPIHook === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        preAPIHook = async (context: { action: string; requestInit: RequestInit }): Promise<RequestInit> =>
+            context.requestInit;
+    }
+    if (getRedirectionURL === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        getRedirectionURL = async (context: { action: string }): Promise<string | undefined> => undefined;
+    }
+
+    if (onHandleEvent === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+        onHandleEvent = (context: { action: string; user?: { id: string; email: string } | undefined }): void => {};
+    }
+
+    return {
+        preAPIHook,
+        getRedirectionURL,
+        onHandleEvent
+    };
+}
 
 /*
  * getRecipeIdFromPath
@@ -34,6 +67,25 @@ import { History, LocationState } from "history";
 export function getRecipeIdFromSearch(search: string): string | null {
     const urlParams = new URLSearchParams(search);
     return urlParams.get(RECIPE_ID_QUERY_PARAM);
+}
+
+export function getQueryParams(param: string): string | null {
+    const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
+    return urlParams.get(param);
+}
+
+export function getRedirectToPathFromURL(): string | undefined {
+    const param = getQueryParams("redirectToPath");
+    if (param === null) {
+        return undefined;
+    } else {
+        // Prevent Open redirects by normalising path.
+        try {
+            return new NormalisedURLPath(param).getAsStringDangerous();
+        } catch {
+            return undefined;
+        }
+    }
 }
 
 /*
@@ -126,52 +178,25 @@ export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
     return new NormalisedURLPath(getWindowOrThrow().location.pathname);
 }
 
-/*
- * WithRouter
- */
-export function WithRouter(Component: ReactComponentClass): ReactComponentClass {
+export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string {
+    if (queryParams === undefined) {
+        return stringUrl;
+    }
+
     try {
-        const WithRouter = require("react-router-dom").withRouter;
-        return WithRouter(Component);
-    } catch (e) {
-        return Component;
-    }
-}
-
-/*
- * redirectToWithReload
- * Do not use redirectToWithReload directly if redirecting to SuperTokens's paths, instead use corresponding recipe module manager .redirect method with shouldReload = true.
- */
-export function redirectToWithReload(url: string): void {
-    if (url.length === 0) {
-        url = "/";
-    }
-
-    getWindowOrThrow().location.href = url;
-}
-
-/*
- * redirectToInApp
- * Do not use redirectToInApp directly if redirecting to SuperTokens's paths, instead use corresponding recipe module manager .redirect method.
- */
-export function redirectToInApp(path: string, title?: string, history?: History<LocationState>): void {
-    if (path.length === 0) {
-        path = "/";
-    }
-    if (title === undefined) {
-        title = "";
-    }
-
-    // If history was provided, use.
-    if (history !== undefined) {
-        history.push(path, {
-            title
+        const url = new URL(stringUrl);
+        Object.entries(queryParams).forEach(([key, value]) => {
+            url.searchParams.set(key, value);
         });
-        return;
+        return url.href;
+    } catch (e) {
+        const fakeDomain = stringUrl.startsWith("/") ? "http:localhost" : "http://localhost/";
+        const url = new URL(`${fakeDomain}${stringUrl}`);
+        Object.entries(queryParams).forEach(([key, value]) => {
+            url.searchParams.set(key, value);
+        });
+        return `${url.pathname}${url.search}`;
     }
-
-    // Otherwise, reload the page.
-    getWindowOrThrow().location.href = path;
 }
 
 export function getWindowOrThrow(): any {

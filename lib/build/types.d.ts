@@ -31,26 +31,16 @@ export declare type RecipeModuleConfig = RecipeModuleHooks & {
     appInfo: NormalisedAppInfo;
 };
 export declare type RecipeModuleHooks = {
-    preAPIHook?: (context: {
-        action: string;
-        requestInit: RequestInit;
-    }) => Promise<RequestInit>;
-    getRedirectionURL?: (context: {
-        action: string;
-    }) => Promise<string | undefined>;
-    onHandleEvent?: (context: {
-        action: string;
-        user?: {
-            id: string;
-            email: string;
-        };
-    }) => void;
+    preAPIHook?: (context: unknown) => Promise<RequestInit>;
+    getRedirectionURL?: (context: unknown) => Promise<string | undefined>;
+    onHandleEvent?: (context: unknown) => void;
+};
+export declare type NormalisedRecipeModuleHooks = {
+    preAPIHook: (context: unknown) => Promise<RequestInit>;
+    getRedirectionURL: (context: unknown) => Promise<string | undefined>;
+    onHandleEvent: (context: unknown) => void;
 };
 export declare type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
-export declare type RouteWithPathAndRecipeId = {
-    path: NormalisedURLPath;
-    recipeId: string | null;
-};
 export declare type ComponentWithRecipeId = {
     rid: string;
     component: ReactComponentClass;
@@ -74,11 +64,6 @@ export declare type FormField = FormFieldBaseConfig & {
 export declare type APIFormField = {
     id: string;
     value: string;
-};
-export declare type RequestJson = {
-    formFields?: APIFormField[];
-    token?: string;
-    method?: "token";
 };
 export declare type NormalisedFormField = {
     id: string;

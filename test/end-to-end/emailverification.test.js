@@ -176,11 +176,10 @@ describe("SuperTokens Email Verification feature/theme", function() {
 
         it('Should show "Email Verification successful" screen when token is valid', async function() {
             const latestURLWithToken = await getLatestURLWithToken();
-            await Promise.all([page.goto(latestURLWithToken), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
             const title = await getTextByDataSupertokens(page, "headerTitle");
             assert.deepStrictEqual(title, "Email verification successful!");
-            await submitForm(page);
-            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             assert.deepStrictEqual(consoleLogs, [
