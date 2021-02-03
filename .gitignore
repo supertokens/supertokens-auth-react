@@ -6,3 +6,5 @@ coverage
 apiPassword
 releasePassword
 screenshot.jpeg
+/examples/**/package-lock.json
+/examples/**/yarn.lock

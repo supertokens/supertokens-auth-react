@@ -88,28 +88,14 @@ export default abstract class RecipeModule {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     getRedirectUrl = async (context: any): Promise<string> => {
         // If getRedirectionURL provided by user.
-        let redirectUrl = await this.hooks.getRedirectionURL(context);
+        const redirectUrl = await this.hooks.getRedirectionURL(context);
         if (redirectUrl !== undefined) {
             return redirectUrl;
         }
-        // Try using redirectToPath
-        if (context.action === "SUCCESS") {
-            redirectUrl = context.redirectToPath;
-            if (redirectUrl !== undefined) {
-                return redirectUrl;
-            }
-        }
 
-        // Otherwise, used default.
+        // Otherwise, use default.
         return await this.getDefaultRedirectionURL(context);
     };
-
-    onHandleEvent(context: { action: string; user?: { id: string; email: string } }): void {
-        const onHandleEvent = this.hooks.onHandleEvent;
-        if (onHandleEvent !== undefined) {
-            onHandleEvent(context);
-        }
-    }
 
     abstract getFeatures(): RouteToFeatureComponentMap;
 

@@ -87,10 +87,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
         // Otherwise, make sure that the email is valid, otherwise, redirect to email validation screen.
         const isEmailVerified = await this.isEmailVerifiedAPI();
         if (isEmailVerified === false) {
-            const redirectToPath = getWindowOrThrow().location.pathname;
-            return await this.getRecipeInstanceOrThrow().redirect({ action: "VERIFY_EMAIL" }, this.props.history, {
-                redirectToPath
-            });
+            return await this.getRecipeInstanceOrThrow().redirect({ action: "VERIFY_EMAIL" }, this.props.history);
         }
         return;
     }
