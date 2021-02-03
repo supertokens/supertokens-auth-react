@@ -29,6 +29,12 @@ export default class NormalisedURLPath {
     };
 
     getAsStringDangerous = (): string => {
+        // In case path is empty, add slash.
+        if (this.value.length === 0) {
+            return "/";
+        }
+
+        // Otherwise, return value.
         return this.value;
     };
 }

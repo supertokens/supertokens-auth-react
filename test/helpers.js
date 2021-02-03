@@ -47,6 +47,13 @@ export async function getSubmitFormButtonLabel(page) {
     )
 }
 
+export async function getSubmitFormButtonLabelWithoutShadowDom(page) {
+    return  await page.evaluate(
+        () => document.querySelector("form > div > button").innerText,
+        
+     )
+ }
+
 export async function getSubmitFormButton(page) {
     return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("button")`);
 }
