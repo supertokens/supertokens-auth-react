@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "postinstall": "cd frontend && npm i -d)",
     "start": "npm-run-all --parallel api-server spa",
     "spa": "cd frontend && npm run start",
     "api-server": "node api-server.js",
