@@ -8,7 +8,7 @@ const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://example.com:${websitePort}`
-let whitelist = /http?:\/\/([a-z0-9]+[.])example[.]com/
+let whitelist = /^(http?:\/\/([a-z0-9]+[.])example[.]com(?::\d{1,5})?)$/
 
 
 let getUserDomain = (email) =>{
