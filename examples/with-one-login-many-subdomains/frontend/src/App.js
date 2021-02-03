@@ -21,7 +21,7 @@ export function getWebsiteDomain() {
   return websiteUrl;
 }
 
-async function getSubdomainForUser(userId) {
+async function getSubdomainForUser() {
   try {
     const subdomainRes = await axios.get(`${getApiDomain()}/user-subdomain`)
     const subdomain = subdomainRes.data.subdomain
@@ -46,10 +46,6 @@ SuperTokens.init({
       getRedirectionURL: async (context) => {
         if (context.action === "SUCCESS") { 
           return getSubdomainForUser(Session.getUserId())
-        }
-
-        if (context.action === "SIGN_IN_AND_UP") { 
-            return getWebsiteDomain()
         }
       },
       signInAndUpFeature: {

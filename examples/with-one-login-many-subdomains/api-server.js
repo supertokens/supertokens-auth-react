@@ -17,6 +17,8 @@ let whiteList = [];
 whiteList.push(websiteDomain);
 whiteList.push(`http://abc.example.com:${websitePort}`);
 whiteList.push(`http://xyz.example.com:${websitePort}`);
+whiteList.push(`http://qually.example.com:${websitePort}`);
+whiteList.push(`http://gmail.example.com:${websitePort}`);
 
 const DB = [];
 async function checkIfTenantExists(username) {
