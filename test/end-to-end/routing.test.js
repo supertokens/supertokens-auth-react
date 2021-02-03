@@ -32,7 +32,7 @@ import { getSubmitFormButtonLabel, getSubmitFormButtonLabelWithoutShadowDom, ass
 /*
  * Tests.
  */
-describe.only("SuperTokens Routing in Test App", function() {
+describe("SuperTokens Routing in Test App", function() {
     let browser;
 
     before(async function() {
