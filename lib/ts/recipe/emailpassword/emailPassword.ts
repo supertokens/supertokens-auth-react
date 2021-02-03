@@ -100,12 +100,18 @@ export default class EmailPassword extends RecipeModule {
             case "SIGN_IN_AND_UP":
                 return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}?rid=${this.getRecipeId()}`;
 
-            case "VERIFY_EMAIL":
-                return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}${DEFAULT_VERIFY_EMAIL_PATH}?rid=${this.getRecipeId()}`;
-
-            case "RESET_PASSWORD":
-                return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}${DEFAULT_RESET_PASSWORD_PATH}?rid=${this.getRecipeId()}`;
-
+            case "VERIFY_EMAIL": {
+                const verifyEmailPath = new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH);
+                return `${this.getAppInfo()
+                    .websiteBasePath.appendPath(verifyEmailPath)
+                    .getAsStringDangerous()}?rid=${this.getRecipeId()}`;
+            }
+            case "RESET_PASSWORD": {
+                const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
+                return `${this.getAppInfo()
+                    .websiteBasePath.appendPath(resetPasswordPath)
+                    .getAsStringDangerous()}?rid=${this.getRecipeId()}`;
+            }
             case "SUCCESS":
                 return context.redirectToPath === undefined ? "/" : context.redirectToPath;
         }
