@@ -90,5 +90,5 @@ export const MANDATORY_FORM_FIELDS_ID_ARRAY = Object.values(MANDATORY_FORM_FIELD
     x => typeof x === "string"
 );
 
-export const DEFAULT_RESET_PASSWORD_PATH = "/reset-password";
-export const DEFAULT_VERIFY_EMAIL_PATH = "/verify-email";
+export const DEFAULT_RESET_PASSWORD_PATH = "reset-password";
+export const DEFAULT_VERIFY_EMAIL_PATH = "verify-email";

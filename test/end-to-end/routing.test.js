@@ -28,7 +28,13 @@ import { DEFAULT_WEBSITE_BASE_PATH } from "../../lib/build/constants";
 require("jsdom-global")();
 
 import { TEST_CLIENT_BASE_URL } from "../constants";
-import { getSubmitFormButtonLabel, getSubmitFormButtonLabelWithoutShadowDom, assertNoSTComponents } from "../helpers";
+import {
+    getSubmitFormButtonLabel,
+    clickForgotPasswordLink,
+    getSubmitFormButtonLabelWithoutShadowDom,
+    assertNoSTComponents,
+    toggleSignInSignUp
+} from "../helpers";
 /*
  * Tests.
  */
@@ -208,6 +214,11 @@ describe("SuperTokens Routing in Test App", function() {
                 await page.goto(`${TEST_CLIENT_BASE_URL}/`);
                 const signUpButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(signUpButtonLabel, "SIGN UP");
+                // Click on forgot password link.
+                await toggleSignInSignUp(page);
+                await clickForgotPasswordLink(page);
+                const buttonLabel = await getSubmitFormButtonLabel(page);
+                assert.strictEqual(buttonLabel, "Email me");
             });
 
             it("/reset-password should show signin/signup", async function() {
