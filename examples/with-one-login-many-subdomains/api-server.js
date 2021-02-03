@@ -13,18 +13,13 @@ const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain =
   process.env.REACT_APP_WEBSITE_URL || `http://auth.example.com:${websitePort}`;
 
-let whiteList = [];
-whiteList.push(websiteDomain);
-whiteList.push(`http://abc.example.com:${websitePort}`);
-whiteList.push(`http://xyz.example.com:${websitePort}`);
-whiteList.push(`http://qually.example.com:${websitePort}`);
-whiteList.push(`http://gmail.example.com:${websitePort}`);
-
+const domainWhiteList = /http?:\/\/([a-z0-9]+[.])example[.]com/
 const DB = [];
 async function checkIfTenantExists(username) {
   if (DB.includes(username)) {
     return true;
   }
+  DB.push(username)
   return false;
 }
 
@@ -93,13 +88,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: function(origin, callback) {
-      if (whiteList.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: domainWhiteList,
     allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
     methods: ["GET", "PUT", "POST", "DELETE"],
     credentials: true,
