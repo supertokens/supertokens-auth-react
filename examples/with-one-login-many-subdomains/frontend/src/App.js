@@ -8,6 +8,7 @@ import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 Session.addAxiosInterceptors(axios);
 
@@ -26,10 +27,11 @@ export function getWebsiteDomain() {
   return websiteUrl;
 }
 
-async function getSubdomainForUser() {
+async function getRedirectionUrlForUser() {
   try {
     const subdomainRes = await axios.get(`${getApiDomain()}/user-subdomain`);
-    const subdomain = subdomainRes.data.subdomain;
+    const { subdomain } = subdomainRes.data;
+
     return `http://${subdomain}.example.com:3000`;
   } catch (error) {
     return getWebsiteDomain();
@@ -49,17 +51,9 @@ SuperTokens.init({
         mode: "REQUIRED",
       },
       getRedirectionURL: async (context) => {
-        console.log(context, " ", window.location.origin);
         if (context.action === "SUCCESS") {
-          return getSubdomainForUser(Session.getUserId());
+          return getRedirectionUrlForUser(Session.getUserId());
         }
-        if (context.action === "VERIFY_EMAIL") {
-          return `${getWebsiteDomain()}/verify-email`;
-        }
-        if (context.action === "RESET_PASSWORD") {
-          return `${getWebsiteDomain()}/reset-password`;
-        }
-        return getWebsiteDomain();
       },
     }),
     Session.init({
@@ -69,6 +63,34 @@ SuperTokens.init({
 });
 
 function App() {
+  const [isUserOnValidSubdomain, setIsUserOnValidSubdomain] = useState(false);
+
+  useEffect(() => {
+    async function redirectIfOnWrongSubdomain() {
+      try {
+        if (Session.doesSessionExist()) {
+          const currentSubdomain = window.location.hostname.split(".")[0];
+
+          const currentUserSubdomainRes = await axios.get(
+            `${getApiDomain()}/user-subdomain`
+          );
+          const {
+            subdomain: currentUserSubdomain,
+            isUserEmailVerified,
+          } = currentUserSubdomainRes.data;
+
+          if (isUserEmailVerified && window.location.origin !== getWebsiteDomain()) {
+            if (currentSubdomain !== currentUserSubdomain) {
+              window.location.href = `http://${currentUserSubdomain}.example.com:3000`;
+            }
+            setIsUserOnValidSubdomain(true);
+          }
+        }
+      } catch (error) {}
+    }
+    redirectIfOnWrongSubdomain();
+  }, []);
+
   return (
     <div className="App">
       <Router>
@@ -79,7 +101,7 @@ function App() {
             ) : (
               <Route path="/">
                 <EmailPassword.EmailPasswordAuth>
-                  <Home />
+                  {isUserOnValidSubdomain ? <Home /> : <Spinner />}
                 </EmailPassword.EmailPasswordAuth>
               </Route>
             )}
@@ -87,6 +109,14 @@ function App() {
         </div>
         <Footer />
       </Router>
+    </div>
+  );
+}
+
+export function Spinner() {
+  return (
+    <div className="spinner-container">
+      <div className="spinner"></div>
     </div>
   );
 }
