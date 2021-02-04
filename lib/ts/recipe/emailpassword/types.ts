@@ -25,18 +25,6 @@ import {
 } from "../../types";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
-import {
-    API_RESPONSE_STATUS,
-    EMAIL_VERIFICATION_MODE,
-    ENTER_EMAIL_STATUS,
-    FORM_BASE_API_RESPONSE,
-    FORM_BASE_STATUS,
-    SEND_VERIFY_EMAIL_STATUS,
-    SIGN_IN_AND_UP_STATUS,
-    SUBMIT_NEW_PASSWORD_STATUS,
-    VERIFY_EMAIL_LINK_CLICKED_STATUS,
-    EMAIL_PASSWORD_AUTH_STATE
-} from "./constants";
 import { History, LocationState } from "history";
 import EmailPassword from "./emailPassword";
 
@@ -311,7 +299,7 @@ export type NormalisedEmailVerificationFeatureConfig = {
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
 };
 
-export type EmailVerificationMode = EMAIL_VERIFICATION_MODE.OFF | EMAIL_VERIFICATION_MODE.REQUIRED;
+export type EmailVerificationMode = "OFF" | "REQUIRED";
 
 /*
  * Props Types.
@@ -462,7 +450,7 @@ type SuccessAPIResponse = {
     /*
      * Success.
      */
-    status: API_RESPONSE_STATUS.OK;
+    status: "OK";
 };
 
 export type SignOutAPIResponse = SuccessAPIResponse;
@@ -487,14 +475,14 @@ export type VerifyEmailAPIResponse =
           /*
            * Email verification invalid token error.
            */
-          status: API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR;
+          status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
       };
 
 export type FormFieldAPIResponse = {
     /*
      * Field validation errors.
      */
-    status: API_RESPONSE_STATUS.FIELD_ERROR;
+    status: "FIELD_ERROR";
 
     /*
      * Array of Field Id and their corresponding error.
@@ -507,7 +495,7 @@ export type BaseSignInUpAPIResponse =
           /*
            * Success.
            */
-          status: API_RESPONSE_STATUS.OK;
+          status: "OK";
 
           /*
            * User object.
@@ -521,7 +509,7 @@ export type BaseResetPasswordAPIResponse =
           /*
            * Success.
            */
-          status: API_RESPONSE_STATUS.OK;
+          status: "OK";
       }
     | FormFieldAPIResponse;
 
@@ -529,7 +517,7 @@ export type ThemeResponseGeneralError = {
     /*
      * General error.
      */
-    status: API_RESPONSE_STATUS.GENERAL_ERROR;
+    status: "GENERAL_ERROR";
 
     /*
      * General error message.
@@ -545,7 +533,7 @@ export type SignInAPIResponse =
           /*
            * Wrong credentials error.
            */
-          status: API_RESPONSE_STATUS.WRONG_CREDENTIALS_ERROR;
+          status: "WRONG_CREDENTIALS_ERROR";
 
           /*
            * Wrong credentials error message.
@@ -561,14 +549,14 @@ export type SubmitNewPasswordAPIResponse =
           /*
            * Wrong credentials error.
            */
-          status: API_RESPONSE_STATUS.RESET_PASSWORD_INVALID_TOKEN_ERROR;
+          status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
       };
 
 export type SendVerifyEmailAPIResponse = {
     /*
      * Success.
      */
-    status: API_RESPONSE_STATUS.OK | API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR;
+    status: "OK" | "EMAIL_ALREADY_VERIFIED_ERROR";
 };
 export type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | ThemeResponseGeneralError;
 
@@ -576,7 +564,7 @@ export type VerifyEmailThemeResponse = {
     /*
      * Verify Email Link clicked Theme Status.
      */
-    status: keyof typeof VERIFY_EMAIL_LINK_CLICKED_STATUS;
+    status: "LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL";
 };
 
 export type EmailPasswordPreAPIHookContext = {
@@ -742,13 +730,10 @@ export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
 
 export type SignInAndUpState =
     | {
-          status: SIGN_IN_AND_UP_STATUS.LOADING;
+          status: "LOADING" | "READY";
       }
     | {
-          status: SIGN_IN_AND_UP_STATUS.READY;
-      }
-    | {
-          status: SIGN_IN_AND_UP_STATUS.SUCCESSFUL;
+          status: "SUCCESSFUL";
           user: User;
       };
 
@@ -756,35 +741,35 @@ export type EnterEmailThemeState = {
     /*
      * Enter Email Status
      */
-    status: keyof typeof ENTER_EMAIL_STATUS;
+    status: "READY" | "SENT";
 };
 
 export type SubmitNewPasswordThemeState = {
     /*
-     * Enter Email Status
+     * Submit New Password Theme Status
      */
-    status: keyof typeof SUBMIT_NEW_PASSWORD_STATUS;
+    status: "READY" | "SUCCESS";
 };
 
 export type SendVerifyEmailThemeState = {
     /*
-     * Status.
+     * Send verify Email Theme Status.
      */
-    status: keyof typeof SEND_VERIFY_EMAIL_STATUS;
+    status: "READY" | "SUCCESS" | "ERROR";
 };
 
 export type VerifyEmailLinkClickedThemeState = {
     /*
      * Verify Email Link clicked Status.
      */
-    status: keyof typeof VERIFY_EMAIL_LINK_CLICKED_STATUS;
+    status: "LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL";
 };
 
 export type EmailPasswordAuthState = {
     /*
      * EmailPassword Auth Status
      */
-    status: EMAIL_PASSWORD_AUTH_STATE.LOADING | EMAIL_PASSWORD_AUTH_STATE.READY;
+    status: "LOADING" | "READY";
 };
 
 export type PaletteUserInput = Record<string, string>;
@@ -792,16 +777,11 @@ export type PaletteUserInput = Record<string, string>;
 export type FormBaseState =
     | {
           formFields: FormFieldState[];
-          status:
-              | FORM_BASE_STATUS.IN_PROGRESS
-              | FORM_BASE_STATUS.READY
-              | FORM_BASE_STATUS.LOADING
-              | FORM_BASE_STATUS.FIELD_ERRORS
-              | FORM_BASE_STATUS.SUCCESS;
+          status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
       }
     | {
           formFields: FormFieldState[];
-          status: FORM_BASE_STATUS.GENERAL_ERROR;
+          status: "GENERAL_ERROR";
           generalError: string;
       };
 
@@ -828,7 +808,7 @@ export type FormBaseAPIResponse =
           /*
            * Success.
            */
-          status: FORM_BASE_API_RESPONSE.OK;
+          status: "OK";
 
           /*
            * User object.
@@ -839,7 +819,7 @@ export type FormBaseAPIResponse =
           /*
            * General Errors.
            */
-          status: FORM_BASE_API_RESPONSE.GENERAL_ERROR;
+          status: "GENERAL_ERROR";
 
           /*
            * Error message.
@@ -850,7 +830,7 @@ export type FormBaseAPIResponse =
           /*
            * Field validation errors.
            */
-          status: FORM_BASE_API_RESPONSE.FIELD_ERROR;
+          status: "FIELD_ERROR";
 
           /*
            * Array of Field Id and their corresponding error.

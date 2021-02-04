@@ -26,7 +26,6 @@ import { ResetPasswordUsingTokenTheme } from "../../..";
 import { APIFormField } from "../../../../../types";
 import FeatureWrapper from "../../../../components/featureWrapper";
 
-import { FORM_BASE_API_RESPONSE } from "../../../constants";
 import { getWindowOrThrow, validateForm } from "../../../../../utils";
 import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 
@@ -75,7 +74,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // If errors, return.
         if (validationErrors.length > 0) {
             return {
-                status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+                status: "FIELD_ERROR",
                 formFields: validationErrors
             };
         }
@@ -83,7 +82,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // Verify that both passwords match.
         if (formFields[0].value !== formFields[1].value) {
             return {
-                status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+                status: "FIELD_ERROR",
                 formFields: [
                     {
                         id: "confirm-password",
@@ -107,7 +106,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // If errors, return.
         if (validationErrors.length > 0) {
             return {
-                status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+                status: "FIELD_ERROR",
                 formFields: validationErrors
             };
         }

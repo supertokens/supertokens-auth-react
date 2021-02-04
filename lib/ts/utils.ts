@@ -21,7 +21,6 @@ import {
 } from "./constants";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
-import { MANDATORY_FORM_FIELDS_ID } from "./recipe/emailpassword/constants";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import {
     APIFormField,
@@ -154,7 +153,7 @@ export async function validateForm(
 
         // Trim value for email only.
         let value: string = input.value;
-        if (<MANDATORY_FORM_FIELDS_ID>input.id === MANDATORY_FORM_FIELDS_ID.EMAIL) {
+        if (input.id === "email") {
             value = value.trim();
         }
         const error = await field.validate(value);

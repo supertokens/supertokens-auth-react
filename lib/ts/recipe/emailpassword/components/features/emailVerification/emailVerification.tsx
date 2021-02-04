@@ -25,7 +25,6 @@ import EmailPassword from "../../../emailPassword";
 import { EmailVerificationScreenTheme, signOut } from "../../..";
 import FeatureWrapper from "../../../../components/featureWrapper";
 
-import { API_RESPONSE_STATUS, EMAIL_VERIFICATION_MODE } from "../../../constants";
 import { getWindowOrThrow } from "../../../../../utils";
 import { verifyEmailAPI, sendVerifyEmailAPI } from "./api";
 
@@ -78,7 +77,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
 
         try {
             const response = await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow());
-            if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
+            if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
                 return await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history);
             }
         } catch (e) {}
@@ -90,10 +89,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
 
     async componentDidMount(): Promise<void> {
         // In case Email Verification Mode is not required, redirect to success URL.
-        if (
-            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !==
-            EMAIL_VERIFICATION_MODE.REQUIRED
-        ) {
+        if (this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !== "REQUIRED") {
             return await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history);
         }
 
@@ -108,7 +104,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
         try {
             if (hasToken === false) {
                 const response = await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow());
-                if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
+                if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
                     return await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history);
                 }
             }

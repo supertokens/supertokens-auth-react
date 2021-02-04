@@ -24,7 +24,6 @@ import StyleContext from "../../../styles/styleContext";
 import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../../types";
 import { FormRow, Button } from "../../../library";
 import FormBase from "../../../library/formBase";
-import { SUBMIT_NEW_PASSWORD_STATUS } from "../../../../constants";
 
 /*
  * Component.
@@ -42,13 +41,13 @@ export default class SubmitNewPasswordTheme extends PureComponent<
     constructor(props: SubmitNewPasswordThemeProps) {
         super(props);
         this.state = {
-            status: SUBMIT_NEW_PASSWORD_STATUS.READY
+            status: "READY"
         };
     }
 
     onSuccess = (): void => {
         this.setState(() => ({
-            status: SUBMIT_NEW_PASSWORD_STATUS.SUCCESS
+            status: "SUCCESS"
         }));
         this.props.onSuccess();
     };
@@ -62,7 +61,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
         const { submitNewPasswordAPI, formFields, onSignInClicked } = this.props;
         const { status } = this.state;
 
-        if (status === SUBMIT_NEW_PASSWORD_STATUS.SUCCESS) {
+        if (status === "SUCCESS") {
             return (
                 <div data-supertokens="container" css={styles.container}>
                     <div data-supertokens="row" css={styles.row}>

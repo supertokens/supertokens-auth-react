@@ -13,7 +13,7 @@ export default class EmailPassword extends RecipeModule {
     getSessionRecipe: () => Session | undefined;
     doesSessionExist: () => boolean;
     signOut: () => Promise<{
-        status: import("./constants").API_RESPONSE_STATUS.OK;
+        status: "OK";
     }>;
     isEmailVerified(): Promise<boolean>;
     static init(config?: EmailPasswordUserInput): CreateRecipeFunction;
