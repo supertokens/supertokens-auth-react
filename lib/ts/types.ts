@@ -94,7 +94,7 @@ export type NormalisedAppInfo = {
     websiteBasePath: NormalisedURLPath;
 };
 
-export type RecipeModuleConfig = RecipeModuleHooks & {
+export type RecipeModuleConfig<S, R> = RecipeModuleHooks<S, R> & {
     /*
      * Unique Identifier of a module.
      */
@@ -107,21 +107,16 @@ export type RecipeModuleConfig = RecipeModuleHooks & {
     appInfo: NormalisedAppInfo;
 };
 
-export type RecipeModuleHooks = {
+export type RecipeModuleHooks<S, R> = {
     /*
      * Optional pre API Hook.
      */
-    preAPIHook?: (context: unknown) => Promise<RequestInit>;
-
-    /*
-     * Optional method used for redirections.
-     */
-    getRedirectionURL?: (context: unknown) => Promise<string | undefined>;
+    preAPIHook?: (context: S) => Promise<RequestInit>;
 
     /*
      * Optional method used for handling event success.
      */
-    onHandleEvent?: (context: unknown) => void;
+    onHandleEvent?: (context: R) => void;
 };
 
 export type NormalisedRecipeModuleHooks = {
@@ -131,15 +126,49 @@ export type NormalisedRecipeModuleHooks = {
     preAPIHook: (context: unknown) => Promise<RequestInit>;
 
     /*
-     * Method used for redirections.
-     */
-    getRedirectionURL: (context: unknown) => Promise<string | undefined>;
-
-    /*
      * Method used for handling event success.
      */
     onHandleEvent: (context: unknown) => void;
 };
+
+export type NormalisedAuthRecipeConfigHooks = {
+    /*
+     * Method used for redirections.
+     */
+    getRedirectionURL: (context: unknown) => Promise<string | undefined>;
+};
+
+export type AuthRecipeModuleConfig<T, S, R> = AuthRecipeModuleUserInput<T, S, R> & RecipeModuleConfig<S, R>;
+
+export type AuthRecipeModuleUserInput<T, S, R> = RecipeModuleHooks<S, R> & {
+    /*
+     * Use shadow Dom root.
+     */
+    useShadowDom?: boolean;
+
+    /*
+     * Styling palette.
+     */
+    palette?: Record<string, string>;
+
+    /*
+     * Optional method used for redirections.
+     */
+    getRedirectionURL?: (context: T) => Promise<string | undefined>;
+};
+
+export type NormalisedAuthRecipeConfig = {
+    /*
+     * Use shadow Dom root.
+     */
+    useShadowDom: boolean;
+
+    /*
+     * Styling palette.
+     */
+    palette: Record<string, string>;
+};
+
 /*
  * Routing manipulation types.
  */
@@ -158,24 +187,6 @@ export type ComponentWithRecipeId = {
 };
 
 export type PathToComponentWithRecipeIdMap = Record<string, ComponentWithRecipeId[]>;
-
-/*
- * Features Config Types.
- */
-
-export type FeatureBaseConfig = {
-    /*
-     * Additional styles to override themes.
-     */
-    style?: Styles;
-};
-
-export type NormalisedBaseConfig = {
-    /*
-     * Additional styles to override themes.
-     */
-    style: Styles;
-};
 
 export type FormFieldBaseConfig = {
     /*
@@ -254,3 +265,28 @@ export type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element
 export type WithRouterType = (Component: ReactComponentClass) => ReactComponentClass;
 
 export type Styles = Record<string, CSSObject>;
+
+/*
+ * Features Config Types.
+ */
+
+export type FeatureBaseConfig = {
+    /*
+     * Additional styles to override themes.
+     */
+    style?: Styles;
+};
+
+export type NormalisedBaseConfig = {
+    /*
+     * Additional styles to override themes.
+     */
+    style: Styles;
+};
+
+export type SuccessAPIResponse = {
+    /*
+     * Success.
+     */
+    status: "OK";
+};

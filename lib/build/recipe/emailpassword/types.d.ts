@@ -15,10 +15,8 @@ export declare type EmailPasswordUserInput = EmailPasswordHooks & {
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     emailVerificationFeature?: EmailVerificationUserInput;
 };
-export declare type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUserInput;
+export declare type EmailPasswordConfig = EmailPasswordUserInput & RecipeModuleConfig<EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext>;
 export declare type NormalisedEmailPasswordConfig = {
-    palette: PaletteUserInput;
-    useShadowDom: boolean;
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     emailVerificationFeature: NormalisedEmailVerificationFeatureConfig;
@@ -132,18 +130,19 @@ export declare type FormFieldError = {
     id: string;
     error: string;
 };
-declare type SuccessAPIResponse = {
+export declare type SignOutAPIResponse = {
     status: "OK";
 };
-export declare type SignOutAPIResponse = SuccessAPIResponse;
-export declare type EmailExistsAPIResponse = SuccessAPIResponse & {
+export declare type EmailExistsAPIResponse = {
+    status: "OK";
     exists: boolean;
 };
-export declare type IsEmailVerifiedAPIResponse = SuccessAPIResponse & {
+export declare type IsEmailVerifiedAPIResponse = {
+    status: "OK";
     isVerified: boolean;
 };
-export declare type VerifyEmailAPIResponse = SuccessAPIResponse | {
-    status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
+export declare type VerifyEmailAPIResponse = {
+    status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
 };
 export declare type FormFieldAPIResponse = {
     status: "FIELD_ERROR";

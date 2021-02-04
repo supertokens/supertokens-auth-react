@@ -68,7 +68,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signInForm.formFields
+            this.getRecipeInstanceOrThrow().config.signInAndUpFeature.signInForm.formFields
         );
         // If errors, return.
         if (validationErrors.length > 0) {
@@ -108,7 +108,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature.signUpForm.formFields
+            this.getRecipeInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields
         );
 
         // If errors, return.
@@ -160,7 +160,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         let context: EmailPasswordGetRedirectionURLContext = {
             action: "VERIFY_EMAIL"
         };
-        if (this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !== "REQUIRED") {
+        if (this.getRecipeInstanceOrThrow().config.emailVerificationFeature.mode !== "REQUIRED") {
             // Or if sign up and email verification mode is not required, redirect to success screen.
             context = {
                 redirectToPath: getRedirectToPathFromURL(),
@@ -236,7 +236,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     };
 
     render = (): JSX.Element => {
-        const signInAndUpFeature = this.getRecipeInstanceOrThrow().getConfig().signInAndUpFeature;
+        const signInAndUpFeature = this.getRecipeInstanceOrThrow().config.signInAndUpFeature;
         const signUpFeature = signInAndUpFeature.signUpForm;
         const signInFeature = signInAndUpFeature.signInForm;
 
@@ -259,7 +259,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             signUpAPI: this.signUp
         };
 
-        const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
+        const useShadowDom = this.getRecipeInstanceOrThrow().config.useShadowDom;
 
         // Before session is verified, return empty fragment, prevent UI glitch.
         if (this.state.status === "LOADING") {

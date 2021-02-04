@@ -89,7 +89,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
 
     async componentDidMount(): Promise<void> {
         // In case Email Verification Mode is not required, redirect to success URL.
-        if (this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !== "REQUIRED") {
+        if (this.getRecipeInstanceOrThrow().config.emailVerificationFeature.mode !== "REQUIRED") {
             return await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history);
         }
 
@@ -112,7 +112,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
     }
 
     render = (): JSX.Element => {
-        const sendVerifyEmailScreenFeature = this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature
+        const sendVerifyEmailScreenFeature = this.getRecipeInstanceOrThrow().config.emailVerificationFeature
             .sendVerifyEmailScreen;
 
         const sendVerifyEmailScreen: SendVerifyEmailThemeProps = {
@@ -127,7 +127,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
                 this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history)
         };
 
-        const verifyEmailLinkClickedScreenFeature = this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature
+        const verifyEmailLinkClickedScreenFeature = this.getRecipeInstanceOrThrow().config.emailVerificationFeature
             .verifyEmailLinkClickedScreen;
 
         const verifyEmailLinkClickedScreen: VerifyEmailLinkClickedThemeProps = {
@@ -142,7 +142,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             verifyEmailAPI: async () => await verifyEmailAPI(this.getRecipeInstanceOrThrow(), this.state.token)
         };
 
-        const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
+        const useShadowDom = this.getRecipeInstanceOrThrow().config.useShadowDom;
 
         const hasToken = this.state.token.length !== 0;
 

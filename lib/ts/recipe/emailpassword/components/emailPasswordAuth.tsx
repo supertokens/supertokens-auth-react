@@ -76,7 +76,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
         });
 
         // If email verification mode is off or optional, return.
-        if (this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !== "REQUIRED") {
+        if (this.getRecipeInstanceOrThrow().config.emailVerificationFeature.mode !== "REQUIRED") {
             return;
         }
 

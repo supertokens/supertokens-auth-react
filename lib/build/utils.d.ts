@@ -1,7 +1,9 @@
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField, NormalisedRecipeModuleHooks, RecipeModuleHooks } from "./types";
-export declare function normalisedRecipeModuleHooks(config: RecipeModuleHooks): NormalisedRecipeModuleHooks;
+import { APIFormField, AppInfoUserInput, AuthRecipeModuleConfig, AuthRecipeModuleUserInput, NormalisedAppInfo, NormalisedAuthRecipeConfig, NormalisedAuthRecipeConfigHooks, NormalisedFormField, NormalisedRecipeModuleHooks, RecipeModuleHooks } from "./types";
+export declare function normalisedRecipeModuleHooks(config: RecipeModuleHooks<unknown, unknown>): NormalisedRecipeModuleHooks;
+export declare function normalisedAuthRecipeConfigHooks(config: AuthRecipeModuleUserInput<unknown, unknown, unknown>): NormalisedAuthRecipeConfigHooks;
+export declare function normaliseAuthRecipeModuleConfig(config: AuthRecipeModuleConfig<unknown, unknown, unknown>): NormalisedAuthRecipeConfig;
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function getQueryParams(param: string): string | null;
 export declare function getRedirectToPathFromURL(): string | undefined;
@@ -11,3 +13,4 @@ export declare function validateForm(inputs: APIFormField[], configFormFields: N
 export declare function getCurrentNormalisedUrlPath(): NormalisedURLPath;
 export declare function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string;
 export declare function getWindowOrThrow(): any;
+export declare function getShouldUseShadowDom(useShadowDom?: boolean): boolean;

@@ -27,7 +27,7 @@ export async function handleSubmitNewPasswordAPI(
     recipe: RecipeModule,
     token: string
 ): Promise<FormBaseAPIResponse> {
-    const response: SubmitNewPasswordAPIResponse = await recipe.getHttp().post(
+    const response: SubmitNewPasswordAPIResponse = await recipe.httpRequest.post(
         "/user/password/reset",
         {
             body: JSON.stringify({ formFields, token })
@@ -62,7 +62,7 @@ export async function handleSubmitNewPasswordAPI(
 }
 
 export async function enterEmailAPI(formFields: APIFormField[], recipe: RecipeModule): Promise<FormBaseAPIResponse> {
-    const response: EnterEmailAPIResponse = await recipe.getHttp().post(
+    const response: EnterEmailAPIResponse = await recipe.httpRequest.post(
         "/user/password/reset/token",
         {
             body: JSON.stringify({ formFields })

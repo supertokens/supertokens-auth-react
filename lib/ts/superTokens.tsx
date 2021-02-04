@@ -147,7 +147,7 @@ export default class SuperTokens {
                 }
 
                 pathsToComponentWithRecipeIdMap[featurePath].push({
-                    rid: recipe.getRecipeId(),
+                    rid: recipe.recipeId,
                     component: features[featurePath]
                 });
             }
@@ -186,7 +186,7 @@ export default class SuperTokens {
 
     getDefaultSessionRecipe = (): Session | undefined => {
         return this.getRecipeList().find(recipe => {
-            return recipe.getRecipeId() === Session.RECIPE_ID;
+            return recipe.recipeId === Session.RECIPE_ID;
         }) as Session;
     };
 

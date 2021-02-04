@@ -22,7 +22,7 @@ export declare type NormalisedAppInfo = {
     apiBasePath: NormalisedURLPath;
     websiteBasePath: NormalisedURLPath;
 };
-export declare type RecipeModuleConfig = RecipeModuleHooks & {
+export declare type RecipeModuleConfig<S, R> = RecipeModuleHooks<S, R> & {
     recipeId: string;
     /**
      *
@@ -30,15 +30,26 @@ export declare type RecipeModuleConfig = RecipeModuleHooks & {
      */
     appInfo: NormalisedAppInfo;
 };
-export declare type RecipeModuleHooks = {
-    preAPIHook?: (context: unknown) => Promise<RequestInit>;
-    getRedirectionURL?: (context: unknown) => Promise<string | undefined>;
-    onHandleEvent?: (context: unknown) => void;
+export declare type RecipeModuleHooks<S, R> = {
+    preAPIHook?: (context: S) => Promise<RequestInit>;
+    onHandleEvent?: (context: R) => void;
 };
 export declare type NormalisedRecipeModuleHooks = {
     preAPIHook: (context: unknown) => Promise<RequestInit>;
-    getRedirectionURL: (context: unknown) => Promise<string | undefined>;
     onHandleEvent: (context: unknown) => void;
+};
+export declare type NormalisedAuthRecipeConfigHooks = {
+    getRedirectionURL: (context: unknown) => Promise<string | undefined>;
+};
+export declare type AuthRecipeModuleConfig<T, S, R> = AuthRecipeModuleUserInput<T, S, R> & RecipeModuleConfig<S, R>;
+export declare type AuthRecipeModuleUserInput<T, S, R> = RecipeModuleHooks<S, R> & {
+    useShadowDom?: boolean;
+    palette?: Record<string, string>;
+    getRedirectionURL?: (context: T) => Promise<string | undefined>;
+};
+export declare type NormalisedAuthRecipeConfig = {
+    useShadowDom: boolean;
+    palette: Record<string, string>;
 };
 export declare type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
 export declare type ComponentWithRecipeId = {
@@ -46,12 +57,6 @@ export declare type ComponentWithRecipeId = {
     component: ReactComponentClass;
 };
 export declare type PathToComponentWithRecipeIdMap = Record<string, ComponentWithRecipeId[]>;
-export declare type FeatureBaseConfig = {
-    style?: Styles;
-};
-export declare type NormalisedBaseConfig = {
-    style: Styles;
-};
 export declare type FormFieldBaseConfig = {
     id: string;
     label: string;
@@ -76,3 +81,12 @@ export declare type NormalisedFormField = {
 export declare type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);
 export declare type WithRouterType = (Component: ReactComponentClass) => ReactComponentClass;
 export declare type Styles = Record<string, CSSObject>;
+export declare type FeatureBaseConfig = {
+    style?: Styles;
+};
+export declare type NormalisedBaseConfig = {
+    style: Styles;
+};
+export declare type SuccessAPIResponse = {
+    status: "OK";
+};

@@ -98,7 +98,7 @@ export default class HttpRequest {
                     ...headers,
                     "fdi-version": supported_fdi.join(","),
                     "Content-Type": "application/json",
-                    rid: this.recipe.getRecipeId()
+                    rid: this.recipe.recipeId
                 }
             }
         });
@@ -117,11 +117,7 @@ export default class HttpRequest {
 
     getFullUrl = (pathStr: string, queryParams?: Record<string, string>): string => {
         const path = new NormalisedURLPath(pathStr);
-        const fullUrl = `${this.recipe
-            .getAppInfo()
-            .apiDomain.getAsStringDangerous()}${this.recipe
-            .getAppInfo()
-            .apiBasePath.getAsStringDangerous()}${path.getAsStringDangerous()}`;
+        const fullUrl = `${this.recipe.appInfo.apiDomain.getAsStringDangerous()}${this.recipe.appInfo.apiBasePath.getAsStringDangerous()}${path.getAsStringDangerous()}`;
 
         if (queryParams === undefined) {
             return fullUrl;

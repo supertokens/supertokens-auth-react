@@ -44,7 +44,7 @@ export default class Session extends RecipeModule {
         sessionSdk.init({
             sessionScope: config.sessionScope,
             refreshAPICustomHeaders: {
-                rid: this.getRecipeId(),
+                rid: this.recipeId,
                 ...usersHeaders
             },
             autoAddCredentials: config.autoAddCredentials,

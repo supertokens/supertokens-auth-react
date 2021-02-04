@@ -42,4 +42,4 @@ export type SessionUserInput = {
     autoAddCredentials?: boolean;
 };
 
-export type SessionConfig = RecipeModuleConfig & SessionUserInput;
+export type SessionConfig = RecipeModuleConfig<unknown, unknown> & SessionUserInput;
