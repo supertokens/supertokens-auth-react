@@ -22,14 +22,10 @@ import {
     NormalisedFormField
 } from "../../types";
 import { getWindowOrThrow } from "../../utils";
-import {
-    DEFAULT_RESET_PASSWORD_PATH,
-    EMAIL_VERIFICATION_MODE,
-    MANDATORY_FORM_FIELDS_ID,
-    MANDATORY_FORM_FIELDS_ID_ARRAY
-} from "./constants";
+import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
 import {
     EmailPasswordConfig,
+    EmailVerificationMode,
     EmailVerificationUserInput,
     NormalisedEmailPasswordConfig,
     NormalisedEmailVerificationFeatureConfig,
@@ -59,13 +55,13 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
 
     const signUpPasswordField: NormalisedFormField = <NormalisedFormField>signInAndUpFeature.signUpForm.formFields.find(
         (field: NormalisedFormField) => {
-            return <MANDATORY_FORM_FIELDS_ID>field.id === MANDATORY_FORM_FIELDS_ID.PASSWORD;
+            return field.id === "password";
         }
     );
 
     const signUpEmailField: NormalisedFormField = <NormalisedFormField>signInAndUpFeature.signUpForm.formFields.find(
         (field: NormalisedFormField) => {
-            return <MANDATORY_FORM_FIELDS_ID>field.id === MANDATORY_FORM_FIELDS_ID.EMAIL;
+            return field.id === "email";
         }
     );
 
@@ -112,10 +108,10 @@ export function normaliseSignInAndUpFeature(
      */
     const defaultSignInFields: NormalisedFormField[] = signUpForm.formFields.reduce(
         (signInFieldsAccumulator, field) => {
-            if (field.id === MANDATORY_FORM_FIELDS_ID.EMAIL) {
+            if (field.id === "email") {
                 return [...signInFieldsAccumulator, field];
             }
-            if (field.id === MANDATORY_FORM_FIELDS_ID.PASSWORD) {
+            if (field.id === "password") {
                 return [
                     ...signInFieldsAccumulator,
                     {
@@ -183,7 +179,7 @@ export function normaliseSignInFormFeatureConfig(
     if (config.formFields !== undefined) {
         userFormFields = config.formFields
             // Filter on email and password only.
-            .filter(field => MANDATORY_FORM_FIELDS_ID_ARRAY.includes(<MANDATORY_FORM_FIELDS_ID>field.id))
+            .filter(field => MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id))
             // Sign In fields are never optional.
             .map((field: FormFieldBaseConfig) => ({
                 ...field,
@@ -299,9 +295,9 @@ export function normaliseEmailVerificationFeature(
     }
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
-    let mode = EMAIL_VERIFICATION_MODE.OFF;
+    let mode: EmailVerificationMode = "OFF";
     if (config.mode === "REQUIRED") {
-        mode = EMAIL_VERIFICATION_MODE.REQUIRED;
+        mode = "REQUIRED";
     }
 
     const sendVerifyEmailScreenStyle =
@@ -360,7 +356,7 @@ export function mergeFormFields(
                 }
 
                 // If "email" or "password", always mandatory.
-                if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(<MANDATORY_FORM_FIELDS_ID>userField.id)) {
+                if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(userField.id)) {
                     optional = false;
                 }
 

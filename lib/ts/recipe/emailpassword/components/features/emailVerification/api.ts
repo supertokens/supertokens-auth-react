@@ -15,7 +15,6 @@
 
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import RecipeModule from "../../../../recipeModule";
-import { API_RESPONSE_STATUS, VERIFY_EMAIL_LINK_CLICKED_STATUS } from "../../../constants";
 import {
     VerifyEmailThemeResponse,
     SendVerifyEmailThemeResponse,
@@ -41,16 +40,16 @@ export async function verifyEmailAPI(recipe: RecipeModule, token: string): Promi
     );
 
     // Otherwise, if email verification invalid token error.
-    if (response.status === API_RESPONSE_STATUS.EMAIL_VERIFICATION_INVALID_TOKEN_ERROR) {
+    if (response.status === "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR") {
         return {
-            status: VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID
+            status: "INVALID"
         };
     }
 
     // Otherwise, status === OK
-    if (response.status === API_RESPONSE_STATUS.OK) {
+    if (response.status === "OK") {
         return {
-            status: VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL
+            status: "SUCCESSFUL"
         };
     }
 
@@ -63,16 +62,16 @@ export async function sendVerifyEmailAPI(recipe: RecipeModule): Promise<SendVeri
         .post("/user/email/verify/token", {}, "SEND_VERIFY_EMAIL");
 
     // If email already verified.
-    if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
+    if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
         return {
-            status: API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR
+            status: "EMAIL_ALREADY_VERIFIED_ERROR"
         };
     }
 
     // Otherwise, success.
-    if (response.status === API_RESPONSE_STATUS.OK) {
+    if (response.status === "OK") {
         return {
-            status: API_RESPONSE_STATUS.OK
+            status: "OK"
         };
     }
 

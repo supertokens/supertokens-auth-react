@@ -33,12 +33,6 @@ import {
 import { SignInAndUpTheme } from "../../..";
 import { APIFormField, NormalisedFormField } from "../../../../../types";
 import FeatureWrapper from "../../../../components/featureWrapper";
-import {
-    EMAIL_VERIFICATION_MODE,
-    FORM_BASE_API_RESPONSE,
-    MANDATORY_FORM_FIELDS_ID,
-    SIGN_IN_AND_UP_STATUS
-} from "../../../constants";
 import { getRedirectToPathFromURL, validateForm } from "../../../../../utils";
 
 /*
@@ -53,7 +47,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         super(props);
 
         this.state = {
-            status: SIGN_IN_AND_UP_STATUS.LOADING
+            status: "LOADING"
         };
     }
 
@@ -79,7 +73,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         // If errors, return.
         if (validationErrors.length > 0) {
             return {
-                status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+                status: "FIELD_ERROR",
                 formFields: validationErrors
             };
         }
@@ -92,7 +86,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     };
 
     onSignInSuccess = async (): Promise<void> => {
-        if (this.state.status !== SIGN_IN_AND_UP_STATUS.SUCCESSFUL) {
+        if (this.state.status !== "SUCCESSFUL") {
             return;
         }
 
@@ -120,7 +114,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         // If errors, return.
         if (validationErrors.length > 0) {
             return {
-                status: FORM_BASE_API_RESPONSE.FIELD_ERROR,
+                status: "FIELD_ERROR",
                 formFields: validationErrors
             };
         }
@@ -135,15 +129,15 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     setStateOnSuccessfulAPICall(normalisedAPIResponse: FormBaseAPIResponse): void {
         this.setState(oldState => {
             if (
-                oldState.status !== SIGN_IN_AND_UP_STATUS.READY ||
-                normalisedAPIResponse.status !== FORM_BASE_API_RESPONSE.OK ||
+                oldState.status !== "READY" ||
+                normalisedAPIResponse.status !== "OK" ||
                 normalisedAPIResponse.user === undefined
             ) {
                 return oldState;
             }
 
             return {
-                status: SIGN_IN_AND_UP_STATUS.SUCCESSFUL,
+                status: "SUCCESSFUL",
                 user: {
                     id: normalisedAPIResponse.user.id,
                     email: normalisedAPIResponse.user.email
@@ -153,7 +147,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     }
 
     onSignUpSuccess = async (): Promise<void> => {
-        if (this.state.status !== SIGN_IN_AND_UP_STATUS.SUCCESSFUL) {
+        if (this.state.status !== "SUCCESSFUL") {
             return;
         }
 
@@ -166,10 +160,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         let context: EmailPasswordGetRedirectionURLContext = {
             action: "VERIFY_EMAIL"
         };
-        if (
-            this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !==
-            EMAIL_VERIFICATION_MODE.REQUIRED
-        ) {
+        if (this.getRecipeInstanceOrThrow().getConfig().emailVerificationFeature.mode !== "REQUIRED") {
             // Or if sign up and email verification mode is not required, redirect to success screen.
             context = {
                 redirectToPath: getRedirectToPathFromURL(),
@@ -194,7 +185,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             })(),
             validate: (() => {
                 // If field is not email, return field validate unchanged.
-                if (field.id !== MANDATORY_FORM_FIELDS_ID.EMAIL) {
+                if (field.id !== "email") {
                     return field.validate;
                 }
 
@@ -233,13 +224,13 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         }
 
         this.setState(oldState => {
-            if (oldState.status !== SIGN_IN_AND_UP_STATUS.LOADING) {
+            if (oldState.status !== "LOADING") {
                 return oldState;
             }
 
             return {
                 ...oldState,
-                status: SIGN_IN_AND_UP_STATUS.READY
+                status: "READY"
             };
         });
     };
@@ -271,7 +262,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
 
         // Before session is verified, return empty fragment, prevent UI glitch.
-        if (this.state.status === SIGN_IN_AND_UP_STATUS.LOADING) {
+        if (this.state.status === "LOADING") {
             return <Fragment />;
         }
 
