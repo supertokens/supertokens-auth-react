@@ -25,26 +25,3 @@
   font-weight: bold;
   font-size: 17px;
 }
-
-.spinner-container {
-    display: flex;
-    justify-content: center;
-    margin: 2rem 0;
-}
-.spinner {
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid rgb(140, 88, 255);
-    border-radius: 50%;
-    animation: spin 1.3s linear infinite;
-    height: 48px;
-    width: 48px;
-}
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}

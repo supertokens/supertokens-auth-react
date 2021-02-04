@@ -9,35 +9,15 @@ import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import axios from "axios";
 import { useEffect } from "react";
+import {
+  getApiDomain,
+  getAuthDomain,
+  getRedirectionUrlForUser,
+  getSubdomainForCurrentUser,
+  websitePort,
+} from "./utils";
 
 Session.addAxiosInterceptors(axios);
-
-const apiPort = process.env.REACT_APP_API_PORT || 3001;
-const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-
-export function getApiDomain() {
-  const apiUrl =
-    process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
-  return apiUrl;
-}
-
-export function getAuthDomain() {
-  const websiteUrl =
-    process.env.REACT_APP_WEBSITE_URL ||
-    `http://auth.example.com:${websitePort}`;
-  return websiteUrl;
-}
-
-async function getRedirectionUrlForUser() {
-  try {
-    const subdomainRes = await axios.get(`${getApiDomain()}/user-subdomain`);
-    const { subdomain } = subdomainRes.data;
-
-    return `http://${subdomain}.example.com:${websitePort}`;
-  } catch (error) {
-    return getAuthDomain();
-  }
-}
 
 SuperTokens.init({
   appInfo: {
@@ -53,7 +33,8 @@ SuperTokens.init({
       },
       getRedirectionURL: async (context) => {
         if (context.action === "SUCCESS") {
-          return getRedirectionUrlForUser(Session.getUserId());
+          const redirectionUrl = await getRedirectionUrlForUser();
+          return redirectionUrl
         }
       },
     }),
@@ -69,14 +50,9 @@ function App() {
       try {
         if (Session.doesSessionExist()) {
           const currentSubdomain = window.location.hostname.split(".")[0];
-
-          const currentUserSubdomainRes = await axios.get(
-            `${getApiDomain()}/user-subdomain`
-          );
-          const {
-            subdomain: currentUserSubdomain,
-          } = currentUserSubdomainRes.data;
-
+          const currentUserSubdomain = await getSubdomainForCurrentUser();
+          // location.origin check ensures that user gets the option to click 
+          // the continue button on verify-email page
           if (
             window.location.origin !== getAuthDomain() &&
             currentSubdomain !== currentUserSubdomain
@@ -107,14 +83,6 @@ function App() {
         </div>
         <Footer />
       </Router>
-    </div>
-  );
-}
-
-export function Spinner() {
-  return (
-    <div className="spinner-container">
-      <div className="spinner"></div>
     </div>
   );
 }
