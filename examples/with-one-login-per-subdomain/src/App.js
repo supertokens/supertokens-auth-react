@@ -13,10 +13,9 @@ export function getApiDomain() {
 }
 
 export function getWebsiteDomain() {
-  const windowLocation = window.location.href
-  const subdomain = windowLocation.split("http://")[1].split(".")[0]
+  const windowLocation = window.location.hostname
   const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://${subdomain}.example.com:${websitePort}`;
+  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://${windowLocation}:${websitePort}`;
   return websiteUrl;
 }
 
