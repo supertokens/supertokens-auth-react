@@ -1,7 +1,7 @@
 import { CSSObject } from "@emotion/react";
 import React from "react";
 import { Styles } from "../../../../types";
-import { NormalisedPalette, NormalisedDefaultStyles } from "../themes/default/types";
+import { NormalisedPalette, NormalisedDefaultStyles } from "../themes/types";
 declare type NormalisedStyle = {
     palette: NormalisedPalette;
     [x: string]: CSSObject;

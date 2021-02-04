@@ -17,7 +17,7 @@ import React from "react";
 import { Styles } from "../../../../types";
 import EmailPassword from "../../emailPassword";
 import { PaletteUserInput } from "../../types";
-import { NormalisedPalette, NormalisedDefaultStyles } from "../themes/default/types";
+import { NormalisedPalette, NormalisedDefaultStyles } from "../themes/types";
 
 type NormalisedStyle = {
     palette: NormalisedPalette;
