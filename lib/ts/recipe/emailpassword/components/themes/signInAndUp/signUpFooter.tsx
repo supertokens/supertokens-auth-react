@@ -20,7 +20,7 @@
 import { jsx } from "@emotion/react";
 
 import React, { useContext } from "react";
-import StyleContext from "../../styles/styleContext";
+import StyleContext from "../../../../../styles/styleContext";
 
 export default function SignUpFooter({
     termsOfServiceLink,

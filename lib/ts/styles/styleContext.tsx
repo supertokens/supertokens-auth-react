@@ -14,10 +14,7 @@
  */
 import { CSSObject } from "@emotion/react";
 import React from "react";
-import { Styles } from "../../../../types";
-import EmailPassword from "../../emailPassword";
-import { PaletteUserInput } from "../../types";
-import { NormalisedPalette, NormalisedDefaultStyles } from "../themes/types";
+import { NormalisedDefaultStyles, NormalisedPalette, Styles } from "../types";
 
 type NormalisedStyle = {
     palette: NormalisedPalette;
@@ -37,14 +34,15 @@ export function StyleProvider({
     children,
     styleFromInit,
     getDefaultStyles,
-    defaultPalette
+    defaultPalette,
+    rawPalette
 }: {
     children: JSX.Element;
     styleFromInit?: Styles;
     getDefaultStyles: (palette: NormalisedPalette) => NormalisedDefaultStyles;
     defaultPalette: NormalisedPalette;
+    rawPalette: Record<string, string>;
 }): JSX.Element {
-    const rawPalette = EmailPassword.getInstanceOrThrow().config.palette;
     const palette = getMergedPalette(defaultPalette, rawPalette);
 
     const styles: NormalisedStyle = {
@@ -69,7 +67,7 @@ export function StyleProvider({
 /*
  * Helpers
  */
-function getMergedPalette(defaultPalette: NormalisedPalette, rawPalette: PaletteUserInput): NormalisedPalette {
+function getMergedPalette(defaultPalette: NormalisedPalette, rawPalette: Record<string, string>): NormalisedPalette {
     const palette = defaultPalette;
     for (const key in palette.colors) {
         if (rawPalette[key] !== undefined) {

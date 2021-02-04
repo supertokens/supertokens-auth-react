@@ -23,14 +23,19 @@ import { SignInAndUpThemeProps } from "../../../types";
 import SignUp from "./signUp";
 import SignIn from "./signIn";
 import { ThemeBase } from "../themeBase";
-import { StyleProvider } from "../../styles/styleContext";
 import { defaultPalette, getDefaultStyles } from "../styles/styles";
+import { StyleProvider } from "../../../../../styles/styleContext";
 
 /*
  * Component.
  */
 
-export function SignInAndUpTheme({ signInForm, signUpForm, defaultToSignUp }: SignInAndUpThemeProps): JSX.Element {
+export function SignInAndUpTheme({
+    signInForm,
+    rawPalette,
+    signUpForm,
+    defaultToSignUp
+}: SignInAndUpThemeProps): JSX.Element {
     /*
      * State.
      */
@@ -45,6 +50,7 @@ export function SignInAndUpTheme({ signInForm, signUpForm, defaultToSignUp }: Si
     if (isSignUp) {
         return (
             <StyleProvider
+                rawPalette={rawPalette}
                 defaultPalette={defaultPalette}
                 styleFromInit={signUpForm.styleFromInit}
                 getDefaultStyles={getDefaultStyles}>
@@ -56,6 +62,7 @@ export function SignInAndUpTheme({ signInForm, signUpForm, defaultToSignUp }: Si
     // Otherwise, return SignIn.
     return (
         <StyleProvider
+            rawPalette={rawPalette}
             defaultPalette={defaultPalette}
             styleFromInit={signInForm.styleFromInit}
             getDefaultStyles={getDefaultStyles}>

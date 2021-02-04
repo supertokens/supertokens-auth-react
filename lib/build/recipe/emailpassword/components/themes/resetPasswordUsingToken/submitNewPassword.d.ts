@@ -3,7 +3,7 @@ import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../
 export default class SubmitNewPasswordTheme extends PureComponent<SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState> {
     static contextType: React.Context<{
         [x: string]: import("@emotion/serialize").CSSObject;
-        palette: import("../types").NormalisedPalette;
+        palette: import("../../../../../types").NormalisedPalette;
     }>;
     constructor(props: SubmitNewPasswordThemeProps);
     onSuccess: () => void;

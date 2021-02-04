@@ -3,7 +3,7 @@ import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../types";
 export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps, EnterEmailThemeState> {
     static contextType: React.Context<{
         [x: string]: import("@emotion/serialize").CSSObject;
-        palette: import("../types").NormalisedPalette;
+        palette: import("../../../../../types").NormalisedPalette;
     }>;
     constructor(props: EnterEmailThemeProps);
     onSuccess: () => void;

@@ -39,11 +39,11 @@ import { getRedirectToPathFromURL, validateForm } from "../../../../../utils";
  * Component.
  */
 
-class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
+class SignInAndUp extends PureComponent<FeatureBaseProps<EmailPassword>, SignInAndUpState> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: FeatureBaseProps<EmailPassword>) {
         super(props);
 
         this.state = {
@@ -275,6 +275,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <SignInAndUpTheme
+                            rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                             defaultToSignUp={signInAndUpFeature.defaultToSignUp}
                             signInForm={signInForm}
                             signUpForm={signUpForm}
@@ -283,6 +284,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
                     {/* Otherwise, custom theme is provided, propagate props. */}
                     {this.props.children &&
                         React.cloneElement(this.props.children, {
+                            rawPalette: this.getRecipeInstanceOrThrow().config.palette,
                             defaultToSignUp: signInAndUpFeature.defaultToSignUp,
                             signInForm,
                             signUpForm

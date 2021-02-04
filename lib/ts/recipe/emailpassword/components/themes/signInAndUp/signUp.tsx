@@ -18,7 +18,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import React, { PureComponent, Fragment } from "react";
-import StyleContext from "../../styles/styleContext";
+import StyleContext from "../../../../../styles/styleContext";
 import { SignUpThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";

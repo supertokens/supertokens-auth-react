@@ -17,13 +17,13 @@
  * Imports.
  */
 import * as React from "react";
-import { StyleProvider } from "../../../styles/styleContext";
 import { EmailVerificationThemeProps } from "../../../../types";
 import { ThemeBase } from "../../themeBase";
 
 import SendVerifyEmail from "./sendVerifyEmail";
 import VerifyEmailLinkClicked from "./verifyEmailLinkClicked";
 import { defaultPalette, getDefaultStyles } from "../../styles/styles";
+import { StyleProvider } from "../../../../../../styles/styleContext";
 
 /*
  * Component.
@@ -38,6 +38,7 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
     if (props.hasToken === false) {
         return (
             <StyleProvider
+                rawPalette={props.rawPalette}
                 defaultPalette={defaultPalette}
                 styleFromInit={props.sendVerifyEmailScreen.styleFromInit}
                 getDefaultStyles={getDefaultStyles}>
@@ -49,6 +50,7 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
     // Otherwise, return VerifyEmailLinkClicked.
     return (
         <StyleProvider
+            rawPalette={props.rawPalette}
             defaultPalette={defaultPalette}
             styleFromInit={props.verifyEmailLinkClickedScreen.styleFromInit}
             getDefaultStyles={getDefaultStyles}>

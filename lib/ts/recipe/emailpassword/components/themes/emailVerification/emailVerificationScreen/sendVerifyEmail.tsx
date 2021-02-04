@@ -19,13 +19,13 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import React, { PureComponent } from "react";
-import StyleContext from "../../../styles/styleContext";
 
 import { SendVerifyEmailThemeProps, SendVerifyEmailThemeState } from "../../../../types";
 
-import EmailIcon from "../../../../assets/emailLargeIcon";
-import ArrowRightIcon from "../../../../assets/arrowRightIcon";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../../constants";
+import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
+import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
+import StyleContext from "../../../../../../styles/styleContext";
 
 /*
  * Component.
@@ -98,7 +98,7 @@ export default class SendVerifyEmailTheme extends PureComponent<SendVerifyEmailT
                         </div>
                     )}
                     <div data-supertokens="sendVerifyEmailIcon" css={styles.sendVerifyEmailIcon}>
-                        <EmailIcon />
+                        <EmailLargeIcon />
                     </div>
                     <div
                         data-supertokens="headerTitle headerTinyTitle"
