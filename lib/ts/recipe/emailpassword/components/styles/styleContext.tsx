@@ -44,7 +44,7 @@ export function StyleProvider({
     getDefaultStyles: (palette: NormalisedPalette) => NormalisedDefaultStyles;
     defaultPalette: NormalisedPalette;
 }): JSX.Element {
-    const rawPalette = EmailPassword.getInstanceOrThrow().getConfig().palette;
+    const rawPalette = EmailPassword.getInstanceOrThrow().config.palette;
     const palette = getMergedPalette(defaultPalette, rawPalette);
 
     const styles: NormalisedStyle = {

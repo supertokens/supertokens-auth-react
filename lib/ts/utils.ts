@@ -25,7 +25,11 @@ import { FormFieldError } from "./recipe/emailpassword/types";
 import {
     APIFormField,
     AppInfoUserInput,
+    AuthRecipeModuleConfig,
+    AuthRecipeModuleUserInput,
     NormalisedAppInfo,
+    NormalisedAuthRecipeConfig,
+    NormalisedAuthRecipeConfigHooks,
     NormalisedFormField,
     NormalisedRecipeModuleHooks,
     RecipeModuleHooks
@@ -34,27 +38,51 @@ import {
 /*
  * NormalisedRecipeModuleHooks
  */
-export function normalisedRecipeModuleHooks(config: RecipeModuleHooks): NormalisedRecipeModuleHooks {
-    let { preAPIHook, getRedirectionURL, onHandleEvent } = config;
+export function normalisedRecipeModuleHooks(config: RecipeModuleHooks<unknown, unknown>): NormalisedRecipeModuleHooks {
+    let { preAPIHook, onHandleEvent } = config;
     if (preAPIHook === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        preAPIHook = async (context: { action: string; requestInit: RequestInit }): Promise<RequestInit> =>
-            context.requestInit;
-    }
-    if (getRedirectionURL === undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        getRedirectionURL = async (context: { action: string }): Promise<string | undefined> => undefined;
+        preAPIHook = async (context: any): Promise<RequestInit> => context.requestInit;
     }
 
     if (onHandleEvent === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-        onHandleEvent = (context: { action: string; user?: { id: string; email: string } | undefined }): void => {};
+        onHandleEvent = (context: unknown): void => {};
     }
 
     return {
         preAPIHook,
-        getRedirectionURL,
         onHandleEvent
+    };
+}
+
+/*
+ * NormalisedRecipeModuleHooks
+ */
+export function normalisedAuthRecipeConfigHooks(
+    config: AuthRecipeModuleUserInput<unknown, unknown, unknown>
+): NormalisedAuthRecipeConfigHooks {
+    let { getRedirectionURL } = config;
+    if (getRedirectionURL === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        getRedirectionURL = async (context: unknown): Promise<string | undefined> => undefined;
+    }
+    return {
+        getRedirectionURL
+    };
+}
+
+/*
+ * normaliseAuthRecipeModule
+ */
+export function normaliseAuthRecipeModuleConfig(
+    config: AuthRecipeModuleConfig<unknown, unknown, unknown>
+): NormalisedAuthRecipeConfig {
+    const useShadowDom = config.useShadowDom === undefined ? true : config.useShadowDom;
+    const palette = config.palette === undefined ? {} : config.palette;
+    return {
+        useShadowDom: getShouldUseShadowDom(useShadowDom),
+        palette
     };
 }
 
@@ -206,4 +234,20 @@ export function getWindowOrThrow(): any {
 
     // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
     return window;
+}
+
+export function getShouldUseShadowDom(useShadowDom?: boolean): boolean {
+    /*
+     * Detect if browser is IE
+     * In order to disable unsupported shadowDom
+     * https://github.com/supertokens/supertokens-auth-react/issues/99
+     */
+    const isIE = getWindowOrThrow().document.documentMode !== undefined;
+    // If browser is Internet Explorer, always disable shadow dom.
+    if (isIE === true) {
+        return false;
+    }
+
+    // Otherwise, use provided config or default to true.
+    return useShadowDom !== undefined ? useShadowDom : true;
 }

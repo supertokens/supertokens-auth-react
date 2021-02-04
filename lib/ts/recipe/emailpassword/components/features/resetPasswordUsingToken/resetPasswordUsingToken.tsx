@@ -68,7 +68,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
         );
 
         // If errors, return.
@@ -100,7 +100,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature.enterEmailForm.formFields
+            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
         );
 
         // If errors, return.
@@ -115,10 +115,10 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
     };
 
     render = (): JSX.Element => {
-        const enterEmailFormFeature = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
+        const enterEmailFormFeature = this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature
             .enterEmailForm;
 
-        const submitNewPasswordFormFeature = this.getRecipeInstanceOrThrow().getConfig().resetPasswordUsingTokenFeature
+        const submitNewPasswordFormFeature = this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature
             .submitNewPasswordForm;
 
         const submitNewPasswordForm: SubmitNewPasswordThemeProps = {
@@ -145,7 +145,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             },
             enterEmailAPI: this.enterEmail
         };
-        const useShadowDom = this.getRecipeInstanceOrThrow().getConfig().useShadowDom;
+        const useShadowDom = this.getRecipeInstanceOrThrow().config.useShadowDom;
 
         const hasToken = this.state.token.length !== 0;
 

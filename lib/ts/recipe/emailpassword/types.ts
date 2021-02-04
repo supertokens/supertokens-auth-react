@@ -71,24 +71,15 @@ export type EmailPasswordUserInput = EmailPasswordHooks & {
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
 
     /*
-     * Email Verification feature.
+     * Email Verification configs.
      */
     emailVerificationFeature?: EmailVerificationUserInput;
 };
 
-export type EmailPasswordConfig = RecipeModuleConfig & EmailPasswordUserInput;
+export type EmailPasswordConfig = EmailPasswordUserInput &
+    RecipeModuleConfig<EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext>;
 
 export type NormalisedEmailPasswordConfig = {
-    /*
-     * Styling palette.
-     */
-    palette: PaletteUserInput;
-
-    /*
-     * Use shadow Dom root.
-     */
-    useShadowDom: boolean;
-
     /*
      * Sign In and Sign Up feature.
      */
@@ -446,37 +437,43 @@ export type FormFieldError = {
     error: string;
 };
 
-type SuccessAPIResponse = {
+export type SignOutAPIResponse = {
     /*
      * Success.
      */
     status: "OK";
 };
 
-export type SignOutAPIResponse = SuccessAPIResponse;
+export type EmailExistsAPIResponse = {
+    /*
+     * Success.
+     */
+    status: "OK";
 
-export type EmailExistsAPIResponse = SuccessAPIResponse & {
     /*
      * Is email already registered
      */
     exists: boolean;
 };
 
-export type IsEmailVerifiedAPIResponse = SuccessAPIResponse & {
+export type IsEmailVerifiedAPIResponse = {
+    /*
+     * Success.
+     */
+    status: "OK";
+
     /*
      * Is email verified
      */
     isVerified: boolean;
 };
 
-export type VerifyEmailAPIResponse =
-    | SuccessAPIResponse
-    | {
-          /*
-           * Email verification invalid token error.
-           */
-          status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-      };
+export type VerifyEmailAPIResponse = {
+    /*
+     * Email verification status.
+     */
+    status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
+};
 
 export type FormFieldAPIResponse = {
     /*

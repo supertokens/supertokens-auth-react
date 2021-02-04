@@ -28,8 +28,8 @@ import { SignOutAPIResponse } from "../../../types";
 export async function signOut(recipe: RecipeModule): Promise<SignOutAPIResponse> {
     const sessionExpiredStatusCode = sessionSdk.sessionExpiredStatusCode;
 
-    const result = await recipe.getHttp().fetch(
-        recipe.getHttp().getFullUrl("/signout"),
+    const result = await recipe.httpRequest.fetch(
+        recipe.httpRequest.getFullUrl("/signout"),
         {
             method: "POST"
         },

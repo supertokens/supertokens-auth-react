@@ -26,7 +26,7 @@ import { EmailExistsAPIResponse, FormBaseAPIResponse, SignInAPIResponse, SignUpA
  */
 
 export async function signUpAPI(formFields: APIFormField[], recipe: RecipeModule): Promise<FormBaseAPIResponse> {
-    const response: SignUpAPIResponse = await recipe.getHttp().post(
+    const response: SignUpAPIResponse = await recipe.httpRequest.post(
         "/signup",
         {
             body: JSON.stringify({ formFields })
@@ -54,7 +54,7 @@ export async function signUpAPI(formFields: APIFormField[], recipe: RecipeModule
 }
 
 export async function signInAPI(formFields: APIFormField[], recipe: RecipeModule): Promise<FormBaseAPIResponse> {
-    const response: SignInAPIResponse = await recipe.getHttp().post(
+    const response: SignInAPIResponse = await recipe.httpRequest.post(
         "/signin",
         {
             body: JSON.stringify({ formFields })
@@ -90,9 +90,9 @@ export async function signInAPI(formFields: APIFormField[], recipe: RecipeModule
 }
 
 export async function emailExistsAPI(email: string, recipe: RecipeModule): Promise<string | undefined> {
-    const response: EmailExistsAPIResponse = await recipe
-        .getHttp()
-        .get("/signup/email/exists", {}, "EMAIL_EXISTS", { email });
+    const response: EmailExistsAPIResponse = await recipe.httpRequest.get("/signup/email/exists", {}, "EMAIL_EXISTS", {
+        email
+    });
 
     // If email already exists.
     if (response.status === "OK") {

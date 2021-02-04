@@ -16,7 +16,7 @@ export default function SignInAndUp(props){
      */
     const [isSignIn, setSignIn] = useState(false);
 
-    const palette = EmailPassword.getInstanceOrThrow().getConfig().palette;
+    const palette = EmailPassword.getInstanceOrThrow().config.palette;
     /*
      * Render.
      */
@@ -111,7 +111,7 @@ function SignIn (props) {
      * Render.
      */
 
-    const palette = EmailPassword.getInstanceOrThrow().getConfig().palette;
+    const palette = EmailPassword.getInstanceOrThrow().config.palette;
     return (
         <div>
             <form onSubmit={signIn}>

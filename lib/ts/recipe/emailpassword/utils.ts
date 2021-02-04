@@ -21,7 +21,6 @@ import {
     NormalisedBaseConfig,
     NormalisedFormField
 } from "../../types";
-import { getWindowOrThrow } from "../../utils";
 import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
 import {
     EmailPasswordConfig,
@@ -75,13 +74,7 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
         config.emailVerificationFeature
     );
 
-    const palette = config.palette !== undefined ? config.palette : {};
-
-    const useShadowDom = getShouldUseShadowDom(config.useShadowDom);
-
     return {
-        palette,
-        useShadowDom,
         signInAndUpFeature,
         resetPasswordUsingTokenFeature,
         emailVerificationFeature
@@ -398,20 +391,4 @@ export function getFormattedFormField(field: NormalisedFormField): NormalisedFor
             return await field.validate(value);
         }
     };
-}
-
-function getShouldUseShadowDom(useShadowDom?: boolean): boolean {
-    /*
-     * Detect if browser is IE
-     * In order to disable unsupported shadowDom
-     * https://github.com/supertokens/supertokens-auth-react/issues/99
-     */
-    const isIE = getWindowOrThrow().document.documentMode !== undefined;
-    // If browser is Internet Explorer, always disable shadow dom.
-    if (isIE === true) {
-        return false;
-    }
-
-    // Otherwise, use provided config or default to true.
-    return useShadowDom !== undefined ? useShadowDom : true;
 }

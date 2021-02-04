@@ -28,7 +28,7 @@ import {
  */
 
 export async function verifyEmailAPI(recipe: RecipeModule, token: string): Promise<VerifyEmailThemeResponse> {
-    const response: VerifyEmailAPIResponse = await recipe.getHttp().post(
+    const response: VerifyEmailAPIResponse = await recipe.httpRequest.post(
         "/user/email/verify",
         {
             body: JSON.stringify({
@@ -57,9 +57,11 @@ export async function verifyEmailAPI(recipe: RecipeModule, token: string): Promi
 }
 
 export async function sendVerifyEmailAPI(recipe: RecipeModule): Promise<SendVerifyEmailThemeResponse> {
-    const response: SendVerifyEmailAPIResponse = await recipe
-        .getHttp()
-        .post("/user/email/verify/token", {}, "SEND_VERIFY_EMAIL");
+    const response: SendVerifyEmailAPIResponse = await recipe.httpRequest.post(
+        "/user/email/verify/token",
+        {},
+        "SEND_VERIFY_EMAIL"
+    );
 
     // If email already verified.
     if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
@@ -79,8 +81,10 @@ export async function sendVerifyEmailAPI(recipe: RecipeModule): Promise<SendVeri
 }
 
 export async function isEmailVerifiedAPI(recipe: RecipeModule): Promise<boolean> {
-    const response: IsEmailVerifiedAPIResponse = await recipe
-        .getHttp()
-        .get("/user/email/verify", {}, "IS_EMAIL_VERIFIED");
+    const response: IsEmailVerifiedAPIResponse = await recipe.httpRequest.get(
+        "/user/email/verify",
+        {},
+        "IS_EMAIL_VERIFIED"
+    );
     return response.isVerified;
 }

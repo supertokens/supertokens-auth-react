@@ -5,4 +5,4 @@ export declare type SessionUserInput = {
     sessionExpiredStatusCode?: number;
     autoAddCredentials?: boolean;
 };
-export declare type SessionConfig = RecipeModuleConfig & SessionUserInput;
+export declare type SessionConfig = RecipeModuleConfig<unknown, unknown> & SessionUserInput;

@@ -17,8 +17,13 @@
  * Imports.
  */
 
-import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, RouteToFeatureComponentMap, NormalisedAppInfo } from "../../types";
+import AuthRecipeModule from "../authRecipeModule";
+import {
+    CreateRecipeFunction,
+    RouteToFeatureComponentMap,
+    NormalisedAppInfo,
+    NormalisedAuthRecipeConfig
+} from "../../types";
 import {
     EmailPasswordConfig,
     EmailPasswordGetRedirectionURLContext,
@@ -36,11 +41,12 @@ import Session from "../session/session";
 import SuperTokens from "../../superTokens";
 import { isEmailVerifiedAPI } from "./components/features/emailVerification/api";
 import { signOut } from "./components/features/signOut/api";
+import RecipeModule from "../recipeModule";
 
 /*
  * Class.
  */
-export default class EmailPassword extends RecipeModule {
+export default class EmailPassword extends AuthRecipeModule {
     /*
      * Static Attributes.
      */
@@ -50,14 +56,17 @@ export default class EmailPassword extends RecipeModule {
     /*
      * Instance Attributes.
      */
-    private config: NormalisedEmailPasswordConfig;
+    config: NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig;
 
     /*
      * Constructor.
      */
     constructor(config: EmailPasswordConfig) {
         super(config);
-        this.config = normaliseEmailPasswordConfig(config);
+        this.config = {
+            ...this.config,
+            ...normaliseEmailPasswordConfig(config)
+        };
     }
 
     /*
@@ -71,12 +80,12 @@ export default class EmailPassword extends RecipeModule {
     getFeatures = (): RouteToFeatureComponentMap => {
         const features: RouteToFeatureComponentMap = {};
         if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
-            const normalisedFullPath = this.getAppInfo().websiteBasePath.appendPath(new NormalisedURLPath("/"));
+            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = SignInAndUp;
         }
 
         if (this.config.resetPasswordUsingTokenFeature.disableDefaultImplementation !== true) {
-            const normalisedFullPath = this.getAppInfo().websiteBasePath.appendPath(
+            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH)
             );
             features[normalisedFullPath.getAsStringDangerous()] = ResetPasswordUsingToken;
@@ -86,7 +95,7 @@ export default class EmailPassword extends RecipeModule {
             this.config.emailVerificationFeature.disableDefaultImplementation !== true &&
             this.config.emailVerificationFeature.mode !== "OFF"
         ) {
-            const normalisedFullPath = this.getAppInfo().websiteBasePath.appendPath(
+            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
             );
             features[normalisedFullPath.getAsStringDangerous()] = EmailVerification;
@@ -98,19 +107,19 @@ export default class EmailPassword extends RecipeModule {
     getDefaultRedirectionURL = async (context: EmailPasswordGetRedirectionURLContext): Promise<string> => {
         switch (context.action) {
             case "SIGN_IN_AND_UP":
-                return `${this.getAppInfo().websiteBasePath.getAsStringDangerous()}?rid=${this.getRecipeId()}`;
+                return `${this.appInfo.websiteBasePath.getAsStringDangerous()}?rid=${this.recipeId}`;
 
             case "VERIFY_EMAIL": {
                 const verifyEmailPath = new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH);
-                return `${this.getAppInfo()
-                    .websiteBasePath.appendPath(verifyEmailPath)
-                    .getAsStringDangerous()}?rid=${this.getRecipeId()}`;
+                return `${this.appInfo.websiteBasePath.appendPath(verifyEmailPath).getAsStringDangerous()}?rid=${
+                    this.recipeId
+                }`;
             }
             case "RESET_PASSWORD": {
                 const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
-                return `${this.getAppInfo()
-                    .websiteBasePath.appendPath(resetPasswordPath)
-                    .getAsStringDangerous()}?rid=${this.getRecipeId()}`;
+                return `${this.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
+                    this.recipeId
+                }`;
             }
             case "SUCCESS":
                 return context.redirectToPath === undefined ? "/" : context.redirectToPath;
