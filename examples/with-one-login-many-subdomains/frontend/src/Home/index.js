@@ -3,13 +3,13 @@ import Logout from "./Logout";
 import SuccessView from "./SuccessView";
 import Session from 'supertokens-auth-react/recipe/session';
 import { signOut } from "supertokens-auth-react/recipe/emailpassword";
-import { getWebsiteDomain } from '../App';
+import { getAuthDomain } from '../App';
 
 export default function Home() {
     const userId = Session.getUserId();
     async function logoutClicked() {
         await signOut();
-        window.location.replace(getWebsiteDomain());
+        window.location.replace(getAuthDomain());
     }
 
     return (

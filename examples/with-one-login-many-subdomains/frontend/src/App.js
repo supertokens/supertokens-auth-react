@@ -8,19 +8,20 @@ import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 Session.addAxiosInterceptors(axios);
 
+const apiPort = process.env.REACT_APP_API_PORT || 3001;
+const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
+
 export function getApiDomain() {
-  const apiPort = process.env.REACT_APP_API_PORT || 3001;
   const apiUrl =
     process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
   return apiUrl;
 }
 
-export function getWebsiteDomain() {
-  const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
+export function getAuthDomain() {
   const websiteUrl =
     process.env.REACT_APP_WEBSITE_URL ||
     `http://auth.example.com:${websitePort}`;
@@ -32,9 +33,9 @@ async function getRedirectionUrlForUser() {
     const subdomainRes = await axios.get(`${getApiDomain()}/user-subdomain`);
     const { subdomain } = subdomainRes.data;
 
-    return `http://${subdomain}.example.com:3000`;
+    return `http://${subdomain}.example.com:${websitePort}`;
   } catch (error) {
-    return getWebsiteDomain();
+    return getAuthDomain();
   }
 }
 
@@ -42,7 +43,7 @@ SuperTokens.init({
   appInfo: {
     appName: "SuperTokens Demo App",
     apiDomain: getApiDomain(),
-    websiteDomain: getWebsiteDomain(),
+    websiteDomain: getAuthDomain(),
     websiteBasePath: "/",
   },
   recipeList: [
@@ -63,8 +64,6 @@ SuperTokens.init({
 });
 
 function App() {
-  const [isUserOnValidSubdomain, setIsUserOnValidSubdomain] = useState(false);
-
   useEffect(() => {
     async function redirectIfOnWrongSubdomain() {
       try {
@@ -76,14 +75,13 @@ function App() {
           );
           const {
             subdomain: currentUserSubdomain,
-            isUserEmailVerified,
           } = currentUserSubdomainRes.data;
 
-          if (isUserEmailVerified && window.location.origin !== getWebsiteDomain()) {
-            if (currentSubdomain !== currentUserSubdomain) {
-              window.location.href = `http://${currentUserSubdomain}.example.com:3000`;
-            }
-            setIsUserOnValidSubdomain(true);
+          if (
+            window.location.origin !== getAuthDomain() &&
+            currentSubdomain !== currentUserSubdomain
+          ) {
+            window.location.href = `http://${currentUserSubdomain}.example.com:${websitePort}`;
           }
         }
       } catch (error) {}
@@ -101,7 +99,7 @@ function App() {
             ) : (
               <Route path="/">
                 <EmailPassword.EmailPasswordAuth>
-                  {isUserOnValidSubdomain ? <Home /> : <Spinner />}
+                  <Home />
                 </EmailPassword.EmailPasswordAuth>
               </Route>
             )}
