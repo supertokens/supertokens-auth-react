@@ -26,7 +26,6 @@ import {
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { History, LocationState } from "history";
-import EmailPassword from "./emailPassword";
 
 /*
  * EmailPassword User InputsConfig Types.
@@ -295,11 +294,11 @@ export type EmailVerificationMode = "OFF" | "REQUIRED";
 /*
  * Props Types.
  */
-export type FeatureBaseProps = {
+export type FeatureBaseProps<T> = {
     /*
      * Internal props provided by
      */
-    __internal?: { instance: EmailPassword };
+    __internal?: { instance: T };
 
     /*
      * Children element
@@ -385,6 +384,11 @@ export type SignInAndUpThemeProps = {
      * Sign up form props.
      */
     signUpForm: SignUpThemeProps;
+
+    /*
+     * Raw Palette provided by user.
+     */
+    rawPalette: Record<string, string>;
 };
 
 export type NormalisedFormFieldWithError = NormalisedFormField & {
@@ -653,6 +657,11 @@ export type ResetPasswordUsingTokenThemeProps = {
      * A token is present in the query params or not.
      */
     hasToken: boolean;
+
+    /*
+     * Raw Palette provided by user.
+     */
+    rawPalette: Record<string, string>;
 };
 
 export type EnterEmailThemeProps = FormThemeBaseProps & {
@@ -689,6 +698,11 @@ export type EmailVerificationThemeProps = {
      * A token is present in the query params or not.
      */
     hasToken: boolean;
+
+    /*
+     * Raw Palette provided by user.
+     */
+    rawPalette: Record<string, string>;
 };
 
 export type SendVerifyEmailThemeProps = ThemeBaseProps & {

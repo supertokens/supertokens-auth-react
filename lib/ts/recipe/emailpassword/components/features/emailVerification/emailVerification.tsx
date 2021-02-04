@@ -32,11 +32,11 @@ import { verifyEmailAPI, sendVerifyEmailAPI } from "./api";
  * Component.
  */
 
-class EmailVerification extends PureComponent<FeatureBaseProps, { token: string }> {
+class EmailVerification extends PureComponent<FeatureBaseProps<EmailPassword>, { token: string }> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: FeatureBaseProps<EmailPassword>) {
         super(props);
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
@@ -155,6 +155,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <EmailVerificationScreenTheme
+                            rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                             sendVerifyEmailScreen={sendVerifyEmailScreen}
                             verifyEmailLinkClickedScreen={verifyEmailLinkClickedScreen}
                             hasToken={hasToken}
@@ -163,6 +164,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
                     {/* Otherwise, custom theme is provided, propagate props. */}
                     {this.props.children &&
                         React.cloneElement(this.props.children, {
+                            rawPalette: this.getRecipeInstanceOrThrow().config.palette,
                             sendVerifyEmailScreen,
                             verifyEmailLinkClickedScreen,
                             hasToken

@@ -28,11 +28,11 @@ import { ReactComponentClass, WithRouterType } from "../../../types";
  * Component.
  */
 
-class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAuthState> {
+class EmailPasswordAuth extends PureComponent<FeatureBaseProps<EmailPassword>, EmailPasswordAuthState> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: FeatureBaseProps<EmailPassword>) {
         super(props);
         this.state = {
             status: "LOADING"

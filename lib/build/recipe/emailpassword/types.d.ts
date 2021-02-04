@@ -2,7 +2,6 @@ import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, Normal
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { History, LocationState } from "history";
-import EmailPassword from "./emailPassword";
 export declare type EmailPasswordHooks = {
     preAPIHook?: (context: EmailPasswordPreAPIHookContext) => Promise<RequestInit>;
     getRedirectionURL?: (context: EmailPasswordGetRedirectionURLContext) => Promise<string | undefined>;
@@ -82,9 +81,9 @@ export declare type NormalisedEmailVerificationFeatureConfig = {
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
 };
 export declare type EmailVerificationMode = "OFF" | "REQUIRED";
-export declare type FeatureBaseProps = {
+export declare type FeatureBaseProps<T> = {
     __internal?: {
-        instance: EmailPassword;
+        instance: T;
     };
     children?: JSX.Element;
     history?: History<LocationState>;
@@ -111,6 +110,7 @@ export declare type SignInAndUpThemeProps = {
     defaultToSignUp: boolean;
     signInForm: SignInThemeProps;
     signUpForm: SignUpThemeProps;
+    rawPalette: Record<string, string>;
 };
 export declare type NormalisedFormFieldWithError = NormalisedFormField & {
     error?: string;
@@ -202,6 +202,7 @@ export declare type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailThemeProps;
     submitNewPasswordForm: SubmitNewPasswordThemeProps;
     hasToken: boolean;
+    rawPalette: Record<string, string>;
 };
 export declare type EnterEmailThemeProps = FormThemeBaseProps & {
     enterEmailAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
@@ -214,6 +215,7 @@ export declare type EmailVerificationThemeProps = {
     sendVerifyEmailScreen: SendVerifyEmailThemeProps;
     verifyEmailLinkClickedScreen: VerifyEmailLinkClickedThemeProps;
     hasToken: boolean;
+    rawPalette: Record<string, string>;
 };
 export declare type SendVerifyEmailThemeProps = ThemeBaseProps & {
     sendVerifyEmailAPI: () => Promise<SendVerifyEmailThemeResponse>;

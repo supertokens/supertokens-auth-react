@@ -4,7 +4,7 @@ import { FormBaseProps, FormBaseState, FormFieldState } from "../../types";
 export default class FormBase extends PureComponent<FormBaseProps, FormBaseState> {
     static contextType: React.Context<{
         [x: string]: import("@emotion/serialize").CSSObject;
-        palette: import("../themes/types").NormalisedPalette;
+        palette: import("../../../../types").NormalisedPalette;
     }>;
     constructor(props: FormBaseProps);
     handleInputFocus: (field: APIFormField) => Promise<void>;

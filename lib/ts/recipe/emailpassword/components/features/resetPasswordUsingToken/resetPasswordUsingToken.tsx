@@ -33,11 +33,11 @@ import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
  * Component.
  */
 
-class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: string }> {
+class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps<EmailPassword>, { token: string }> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: FeatureBaseProps<EmailPassword>) {
         super(props);
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
@@ -158,6 +158,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <ResetPasswordUsingTokenTheme
+                            rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                             submitNewPasswordForm={submitNewPasswordForm}
                             enterEmailForm={enterEmailForm}
                             hasToken={hasToken}
@@ -166,6 +167,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
                     {/* Otherwise, custom theme is provided, propagate props. */}
                     {this.props.children &&
                         React.cloneElement(this.props.children, {
+                            rawPalette: this.getRecipeInstanceOrThrow().config.palette,
                             submitNewPasswordForm,
                             enterEmailForm,
                             hasToken

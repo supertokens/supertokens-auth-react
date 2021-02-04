@@ -290,3 +290,12 @@ export type SuccessAPIResponse = {
      */
     status: "OK";
 };
+
+export type NormalisedPalette = {
+    colors: Record<string, string>;
+    fonts: {
+        size: string[];
+    };
+};
+
+export type NormalisedDefaultStyles = Record<string, CSSObject>;

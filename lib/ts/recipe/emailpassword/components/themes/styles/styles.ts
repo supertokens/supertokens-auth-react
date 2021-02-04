@@ -15,8 +15,8 @@
 
 /** @jsx jsx */
 import { jsx, keyframes } from "@emotion/react";
-import { NormalisedDefaultStyles, NormalisedPalette } from "../types";
 import chroma from "chroma-js";
+import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../../types";
 
 /*
  * Palette

@@ -19,13 +19,13 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import React, { createRef, FormEvent, Fragment, PureComponent } from "react";
-import StyleContext from "../styles/styleContext";
 import { Button, FormRow, Input, InputError, Label } from ".";
 
 import { APIFormField } from "../../../../types";
 import { FormBaseProps, FormBaseState, FormFieldState, InputRef } from "../../types";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
+import StyleContext from "../../../../styles/styleContext";
 
 /*
  * Component.

@@ -9,6 +9,7 @@ import { EmailPasswordGetRedirectionURLContext, EmailPasswordOnHandleEventContex
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import DarkTheme from "./Themes/Dark";
+import { CSSObject } from '@emotion/react';
 export function getApiDomain() {
   const apiPort = process.env.REACT_APP_API_PORT || 8082;
   const apiUrl = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
@@ -144,12 +145,12 @@ function getQueryParams(param: string): string | null {
 }
 
 export type Theme = {
-  colors: any,
-  style: any,
+  colors: Record<string, string>,
+  style: Record<string, CSSObject>,
 }
 function getTheme(): {
-  colors: any,
-  style?: any,
+  colors: Record<string, string>,
+  style?: Record<string, CSSObject>,
 } {
 
   let theme = {
