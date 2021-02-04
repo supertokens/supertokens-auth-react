@@ -25,6 +25,7 @@ import {
 } from "../types";
 import { appendQueryParamsToURL, getWindowOrThrow, normalisedRecipeModuleHooks } from "../utils";
 import { History, LocationState } from "history";
+import NormalisedURLDomain from "../normalisedURLDomain";
 
 /*
  * Class.
@@ -76,6 +77,15 @@ export default abstract class RecipeModule {
             new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
         } catch (e) {
             // If history was provided, use to redirect without reloading.
+
+            // For multi tenancy, If mismatch between websiteDomain and current location, prepand URL relative path with websiteDomain.
+            const origin = new NormalisedURLDomain(getWindowOrThrow().location.origin).getAsStringDangerous();
+            if (origin !== this.appInfo.websiteDomain.getAsStringDangerous()) {
+                redirectUrl = `${this.appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
+                getWindowOrThrow().location.href = redirectUrl;
+                return;
+            }
+
             if (history !== undefined) {
                 history.push(redirectUrl);
                 return;
