@@ -23,7 +23,6 @@ import StyleContext from "../../../styles/styleContext";
 import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../../types";
 
 import FormBase from "../../../library/formBase";
-import { ENTER_EMAIL_STATUS } from "../../../../constants";
 
 /*
  * Component.
@@ -37,7 +36,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
     constructor(props: EnterEmailThemeProps) {
         super(props);
         this.state = {
-            status: ENTER_EMAIL_STATUS.READY
+            status: "READY"
         };
     }
 
@@ -47,14 +46,14 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
 
     onSuccess = (): void => {
         this.setState(() => ({
-            status: ENTER_EMAIL_STATUS.SENT
+            status: "SENT"
         }));
         this.props.onSuccess();
     };
 
     resend = (): void => {
         this.setState(() => ({
-            status: ENTER_EMAIL_STATUS.READY
+            status: "READY"
         }));
     };
 
@@ -66,7 +65,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
         const { formFields, enterEmailAPI } = this.props;
         const { status } = this.state;
 
-        if (status === ENTER_EMAIL_STATUS.SENT) {
+        if (status === "SENT") {
             return (
                 <div data-supertokens="container" css={styles.container}>
                     <div data-supertokens="row" css={styles.row}>

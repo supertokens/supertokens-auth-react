@@ -27,7 +27,6 @@ import ErrorLargeIcon from "../../../../../assets/errorLargeIcon";
 import ArrowRightIcon from "../../../../../assets/arrowRightIcon";
 import { Button } from "../../../../library";
 import CheckedRoundIcon from "../../../../../assets/checkedRoundIcon";
-import { VERIFY_EMAIL_LINK_CLICKED_STATUS } from "../../../../../constants";
 import SpinnerIcon from "../../../../../assets/spinnerIcon";
 
 /*
@@ -46,13 +45,13 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
     constructor(props: VerifyEmailLinkClickedThemeProps) {
         super(props);
         this.state = {
-            status: VERIFY_EMAIL_LINK_CLICKED_STATUS.LOADING
+            status: "LOADING"
         };
     }
 
     onSuccess = (): void => {
         this.setState(() => ({
-            status: VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL
+            status: "SUCCESSFUL"
         }));
 
         this.props.onSuccess();
@@ -66,7 +65,7 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
             }));
         } catch (e) {
             this.setState(() => ({
-                status: VERIFY_EMAIL_LINK_CLICKED_STATUS.GENERAL_ERROR
+                status: "GENERAL_ERROR"
             }));
         }
     };
@@ -80,7 +79,7 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
         const { status } = this.state;
         const { onTokenInvalidRedirect, onContinueClicked } = this.props;
 
-        if (status === VERIFY_EMAIL_LINK_CLICKED_STATUS.LOADING) {
+        if (status === "LOADING") {
             return (
                 <div data-supertokens="container" css={styles.container}>
                     <div data-supertokens="row" css={styles.row}>
@@ -92,7 +91,7 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
             );
         }
 
-        if (status === VERIFY_EMAIL_LINK_CLICKED_STATUS.SUCCESSFUL) {
+        if (status === "SUCCESSFUL") {
             return (
                 <div data-supertokens="container" css={styles.container}>
                     <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
@@ -112,7 +111,7 @@ export default class VerifyEmailLinkClickedTheme extends PureComponent<
             );
         }
 
-        if (status === VERIFY_EMAIL_LINK_CLICKED_STATUS.INVALID) {
+        if (status === "INVALID") {
             return (
                 <div data-supertokens="container" css={styles.container}>
                     <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>

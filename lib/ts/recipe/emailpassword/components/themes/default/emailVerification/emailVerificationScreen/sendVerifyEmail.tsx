@@ -25,7 +25,6 @@ import { SendVerifyEmailThemeProps, SendVerifyEmailThemeState } from "../../../.
 
 import EmailIcon from "../../../../../assets/emailLargeIcon";
 import ArrowRightIcon from "../../../../../assets/arrowRightIcon";
-import { API_RESPONSE_STATUS, SEND_VERIFY_EMAIL_STATUS } from "../../../../../constants";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../../../constants";
 
 /*
@@ -40,7 +39,7 @@ export default class SendVerifyEmailTheme extends PureComponent<SendVerifyEmailT
     constructor(props: SendVerifyEmailThemeProps) {
         super(props);
         this.state = {
-            status: SEND_VERIFY_EMAIL_STATUS.READY
+            status: "READY"
         };
     }
 
@@ -50,7 +49,7 @@ export default class SendVerifyEmailTheme extends PureComponent<SendVerifyEmailT
 
     onSuccess = (): void => {
         this.setState(() => ({
-            status: SEND_VERIFY_EMAIL_STATUS.SUCCESS
+            status: "SUCCESS"
         }));
         this.props.onSuccess();
     };
@@ -60,19 +59,19 @@ export default class SendVerifyEmailTheme extends PureComponent<SendVerifyEmailT
         try {
             const response = await sendVerifyEmailAPI();
 
-            if (response.status === API_RESPONSE_STATUS.EMAIL_ALREADY_VERIFIED_ERROR) {
+            if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
                 return onEmailAlreadyVerified();
             }
 
-            if (response.status === API_RESPONSE_STATUS.OK) {
+            if (response.status === "OK") {
                 this.setState({
-                    status: SEND_VERIFY_EMAIL_STATUS.SUCCESS
+                    status: "SUCCESS"
                 });
                 return;
             }
         } catch (e) {
             this.setState({
-                status: SEND_VERIFY_EMAIL_STATUS.ERROR
+                status: "ERROR"
             });
         }
     };
@@ -88,12 +87,12 @@ export default class SendVerifyEmailTheme extends PureComponent<SendVerifyEmailT
         return (
             <div data-supertokens="container" css={styles.container}>
                 <div data-supertokens="row" css={styles.row}>
-                    {status === SEND_VERIFY_EMAIL_STATUS.ERROR && (
+                    {status === "ERROR" && (
                         <div data-supertokens="generalError" css={styles.generalError}>
                             {SOMETHING_WENT_WRONG_ERROR}
                         </div>
                     )}
-                    {status === SEND_VERIFY_EMAIL_STATUS.SUCCESS && (
+                    {status === "SUCCESS" && (
                         <div data-supertokens="generalSuccess" css={styles.generalSuccess}>
                             Email resent
                         </div>
@@ -112,7 +111,7 @@ export default class SendVerifyEmailTheme extends PureComponent<SendVerifyEmailT
                         <strong>Please click on the link</strong> in the email we just sent you to confirm your email
                         address.
                     </div>
-                    {status !== SEND_VERIFY_EMAIL_STATUS.SUCCESS && (
+                    {status !== "SUCCESS" && (
                         <div
                             data-supertokens="link sendVerifyEmailResend"
                             css={[styles.link, styles.sendVerifyEmailResend]}

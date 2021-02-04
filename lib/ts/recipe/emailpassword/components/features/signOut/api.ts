@@ -18,7 +18,6 @@
  */
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import RecipeModule from "../../../../recipeModule";
-import { API_RESPONSE_STATUS } from "../../../constants";
 import sessionSdk from "supertokens-website/lib/build/fetch";
 import { SignOutAPIResponse } from "../../../types";
 
@@ -39,7 +38,7 @@ export async function signOut(recipe: RecipeModule): Promise<SignOutAPIResponse>
 
     if (result.status === sessionExpiredStatusCode) {
         return {
-            status: API_RESPONSE_STATUS.OK
+            status: "OK"
         };
     }
     if (result.status >= 300) {

@@ -30,7 +30,7 @@ import { isTest } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
 import { ResetPasswordUsingToken, SignInAndUp, EmailVerification } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { DEFAULT_RESET_PASSWORD_PATH, DEFAULT_VERIFY_EMAIL_PATH, EMAIL_VERIFICATION_MODE } from "./constants";
+import { DEFAULT_RESET_PASSWORD_PATH, DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
 import { SSR_ERROR } from "../../constants";
 import Session from "../session/session";
 import SuperTokens from "../../superTokens";
@@ -84,7 +84,7 @@ export default class EmailPassword extends RecipeModule {
 
         if (
             this.config.emailVerificationFeature.disableDefaultImplementation !== true &&
-            this.config.emailVerificationFeature.mode !== EMAIL_VERIFICATION_MODE.OFF
+            this.config.emailVerificationFeature.mode !== "OFF"
         ) {
             const normalisedFullPath = this.getAppInfo().websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
