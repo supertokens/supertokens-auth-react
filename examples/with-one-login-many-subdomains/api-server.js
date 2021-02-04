@@ -36,20 +36,12 @@ supertokens.init({
     EmailPassword.init({
       resetPasswordUsingTokenFeature: {
         getResetPasswordURL: async (user) => {
-          let { email } = user;
-
-          // getUserDomain is your implementation
-          let userDomain = await getUserDomain(email);
-          return `http://${userDomain}.example.com:${websitePort}/reset-password`;
+          return `http://auth.example.com:${websitePort}/reset-password`;
         },
       },
       emailVerificationFeature: {
         getEmailVerificationURL: async (user) => {
-          let { email } = user;
-
-          // getUserDomain is your implementation
-          let userDomain = await getUserDomain(email);
-          return `http://${userDomain}.example.com:${websitePort}/verify-email`;
+          return `http://auth.example.com:${websitePort}/verify-email`;
         },
       },
     }),
