@@ -34,7 +34,7 @@ SuperTokens.init({
   appInfo: {
     appName: "SuperTokens Demo App",
     apiDomain: getApiDomain(),
-    websiteDomain: getWebsiteDomain()
+    websiteDomain: window.location.origin
   },
   recipeList: [
     EmailPassword.init({
