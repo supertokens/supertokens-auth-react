@@ -14,14 +14,6 @@ const websiteDomain =
   process.env.REACT_APP_WEBSITE_URL || `http://auth.example.com:${websitePort}`;
 
 const domainWhiteList =/^(http?:\/\/([a-z0-9]+[.])example[.]com(?::\d{1,5})?)$/
-const DB = [];
-async function checkIfTenantExists(username) {
-  if (DB.includes(username)) {
-    return true;
-  }
-  DB.push(username)
-  return false;
-}
 
 function getUserDomain (email) {
   // extracts the userDomain from the email used to sign up
@@ -59,25 +51,6 @@ supertokens.init({
           let userDomain = await getUserDomain(email);
           return `http://${userDomain}.example.com:${websitePort}/verify-email`;
         },
-      },
-      signUpFeature: {
-        formFields: [
-          {
-            id: "username",
-            validate: async (value) => {
-              const validUsernameRegex = /^[A-Za-z0-9_]{3,20}$/;
-              if (!validUsernameRegex.test(value)) {
-                return 'Invalid username: only alphabets, numbers and "_" allowed. Min 3 and Max 20 characters.';
-              }
-
-              const usernameExists = await checkIfTenantExists(value);
-              if (usernameExists) {
-                return "This username is not available, please try something else";
-              }
-              return undefined;
-            },
-          },
-        ],
       },
     }),
     Session.init(),
@@ -119,15 +92,6 @@ app.get("/user-subdomain", Session.verifySession(), async (req, res) => {
   const userDetails = await EmailPassword.getUserById(session.getUserId());
   const subdomain = getUserDomain(userDetails.email);
   res.send({ subdomain });
-});
-
-app.get("/validate-username/:username", async (req, res) => {
-  const usernameExists = await checkIfTenantExists(req.params.username);
-  if (usernameExists) {
-    res.send({ valid: false });
-    return;
-  }
-  res.send({ valid: true });
 });
 
 app.use(supertokens.errorHandler());

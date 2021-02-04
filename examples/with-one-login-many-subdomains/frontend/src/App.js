@@ -48,34 +48,6 @@ SuperTokens.init({
           return getSubdomainForUser(Session.getUserId())
         }
       },
-      signInAndUpFeature: {
-        signUpForm: {
-          formFields: [
-            {
-              id: "username",
-              label: "Username",
-              placeholder: "A unique username",
-              validate: async (value) => {
-                const validUsernameRegex = /^[A-Za-z0-9_]{3,20}$/;
-                if (!validUsernameRegex.test(value)) {
-                  return 'Invalid username: only alphabets, numbers and "_" allowed. Min 3 and Max 20 characters.';
-                }
-
-                // check with the backend that username is unique
-                // and if it is, allow signup otherwise request for a different
-                // username
-                const isValidRes = await axios.get(
-                  `${getApiDomain()}/validate-username/${value}`
-                );
-                if (isValidRes.data.valid) {
-                  return undefined;
-                }
-                return "This username is not available, please try something else";
-              },
-            },
-          ],
-        },
-      },
     }),
     Session.init({
       sessionScope: ".example.com",
