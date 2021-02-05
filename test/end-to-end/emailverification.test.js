@@ -45,7 +45,7 @@ require("jsdom-global")();
  * Tests.
  */
 
-describe.only("SuperTokens Email Verification feature/theme", function() {
+describe("SuperTokens Email Verification feature/theme", function() {
     let browser;
     let page;
     let consoleLogs;
