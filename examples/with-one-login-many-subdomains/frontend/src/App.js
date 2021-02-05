@@ -13,8 +13,7 @@ import {
   getApiDomain,
   getAuthDomain,
   getRedirectionUrlForUser,
-  getSubdomainForCurrentUser,
-  websitePort,
+  redirectIfOnWrongSubdomain,
 } from "./utils";
 
 Session.addAxiosInterceptors(axios);
@@ -33,8 +32,9 @@ SuperTokens.init({
       },
       getRedirectionURL: async (context) => {
         if (context.action === "SUCCESS") {
+          // redirect users to their associated subdomain e.g abc.example.com for user abc
           const redirectionUrl = await getRedirectionUrlForUser();
-          return redirectionUrl
+          return redirectionUrl;
         }
       },
     }),
@@ -46,22 +46,8 @@ SuperTokens.init({
 
 function App() {
   useEffect(() => {
-    async function redirectIfOnWrongSubdomain() {
-      try {
-        if (Session.doesSessionExist()) {
-          const currentSubdomain = window.location.hostname.split(".")[0];
-          const currentUserSubdomain = await getSubdomainForCurrentUser();
-          // location.origin check ensures that user gets the option to click 
-          // the continue button on verify-email page
-          if (
-            window.location.origin !== getAuthDomain() &&
-            currentSubdomain !== currentUserSubdomain
-          ) {
-            window.location.href = `http://${currentUserSubdomain}.example.com:${websitePort}`;
-          }
-        }
-      } catch (error) {}
-    }
+    // If the user `abc` navigates to `xyz.example.com`, redirect them back to
+    // their correct subdomain i.e `abc.example.com`
     redirectIfOnWrongSubdomain();
   }, []);
 
@@ -70,7 +56,10 @@ function App() {
       <Router>
         <div className="fill">
           <Switch>
-            {window.location.hostname === "auth.example.com" ? (
+            {/* Present users with login/signup when they are on auth.example.com. 
+            If not try rendering our protected route. In case the user is unauthenticated 
+            the auth wrapper will simply redirect them to the login page */}
+            {window.location.origin === getAuthDomain() ? (
               getSuperTokensRoutesForReactRouterDom()
             ) : (
               <Route path="/">
