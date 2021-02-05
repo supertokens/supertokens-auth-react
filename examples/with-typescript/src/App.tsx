@@ -161,6 +161,7 @@ function getTheme(): {
   const themeParams = getQueryParams('theme');
 
   if (themeParams === "dark") {
+    window.document.body.style.backgroundColor = "#1a1a1a"
     return DarkTheme;
   }
 
