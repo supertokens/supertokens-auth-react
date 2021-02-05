@@ -1,38 +1,47 @@
 import './App.css';
+import { useEffect } from "react"
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react"
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
-import Footer from "./Footer"
+import Footer from "./Footer";
+import { getApiDomain, getAuthDomain, getRedirectionUrlForUser, redirectIfOnWrongSubdomain } from "./utils"
 
-export function getApiDomain() {
-  const apiPort = process.env.REACT_APP_API_PORT || 3001;
-  const apiUrl = process.env.REACT_APP_API_URL || `http://example.com:${apiPort}`;
-  return apiUrl;
-}
-
-export function getWebsiteDomain() {
-  const windowLocation = window.location.hostname
-  const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://${windowLocation}:${websitePort}`;
-  return websiteUrl;
-}
 
 SuperTokens.init({
   appInfo: {
     appName: "SuperTokens Demo App",
     apiDomain: getApiDomain(),
-    websiteDomain: getWebsiteDomain()
+    websiteDomain: getAuthDomain()
   },
   recipeList: [
-    EmailPassword.init(),
-    Session.init()
+    EmailPassword.init({
+      emailVerificationFeature: {
+        mode: "REQUIRED"
+      },
+      getRedirectionURL: async (context) => {
+        if (context.action === "SUCCESS") {
+          // redirect users to their associated subdomain e.g abc.example.com for user abc
+          const redirectionUrl = await getRedirectionUrlForUser();
+          return redirectionUrl;
+        }
+      },
+    }),
+    Session.init({
+      sessionScope: ".example.com"
+    })
   ]
 });
 
 
 function App() {
+  useEffect(() => {
+    // If the user `abc` navigates to `xyz.example.com`, redirect them back to
+    // their correct subdomain i.e `abc.example.com`
+    redirectIfOnWrongSubdomain();
+  }, []);
+
   return (
     <div className="App">
       <Router>

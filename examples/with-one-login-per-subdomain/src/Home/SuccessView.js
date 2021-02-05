@@ -1,5 +1,5 @@
 import CallAPIView from "./CallAPIView";
-import {getApiDomain} from "../App"
+import {getApiDomain} from "../utils"
 
 export default function SuccessView(props) {
     let userId = props.userId;
