@@ -17,6 +17,7 @@ import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
+import { History, LocationState } from "history";
 
 /*
  * Recipe Module Manager Config Types.
@@ -92,81 +93,6 @@ export type NormalisedAppInfo = {
      * Default to `/auth`
      */
     websiteBasePath: NormalisedURLPath;
-};
-
-export type RecipeModuleConfig<S, R> = RecipeModuleHooks<S, R> & {
-    /*
-     * Unique Identifier of a module.
-     */
-    recipeId: string;
-
-    /**
-     *
-     * AppInfo as present in the recipe module manager
-     */
-    appInfo: NormalisedAppInfo;
-};
-
-export type RecipeModuleHooks<S, R> = {
-    /*
-     * Optional pre API Hook.
-     */
-    preAPIHook?: (context: S) => Promise<RequestInit>;
-
-    /*
-     * Optional method used for handling event success.
-     */
-    onHandleEvent?: (context: R) => void;
-};
-
-export type NormalisedRecipeModuleHooks = {
-    /*
-     * Optional pre API Hook.
-     */
-    preAPIHook: (context: unknown) => Promise<RequestInit>;
-
-    /*
-     * Method used for handling event success.
-     */
-    onHandleEvent: (context: unknown) => void;
-};
-
-export type NormalisedAuthRecipeConfigHooks = {
-    /*
-     * Method used for redirections.
-     */
-    getRedirectionURL: (context: unknown) => Promise<string | undefined>;
-};
-
-export type AuthRecipeModuleConfig<T, S, R> = AuthRecipeModuleUserInput<T, S, R> & RecipeModuleConfig<S, R>;
-
-export type AuthRecipeModuleUserInput<T, S, R> = RecipeModuleHooks<S, R> & {
-    /*
-     * Use shadow Dom root.
-     */
-    useShadowDom?: boolean;
-
-    /*
-     * Styling palette.
-     */
-    palette?: Record<string, string>;
-
-    /*
-     * Optional method used for redirections.
-     */
-    getRedirectionURL?: (context: T) => Promise<string | undefined>;
-};
-
-export type NormalisedAuthRecipeConfig = {
-    /*
-     * Use shadow Dom root.
-     */
-    useShadowDom: boolean;
-
-    /*
-     * Styling palette.
-     */
-    palette: Record<string, string>;
 };
 
 /*
@@ -299,3 +225,32 @@ export type NormalisedPalette = {
 };
 
 export type NormalisedDefaultStyles = Record<string, CSSObject>;
+
+export type ThemeBaseProps = {
+    /*
+     * Custom styling from user.
+     */
+    styleFromInit?: Styles;
+
+    /*
+     * Called on successful state.
+     */
+    onSuccess: () => void;
+};
+
+export type FeatureBaseProps = {
+    /*
+     * recipeId.
+     */
+    recipeId: string;
+
+    /*
+     * Children element
+     */
+    children?: JSX.Element;
+
+    /*
+     * History provided by react-router
+     */
+    history?: History<LocationState>;
+};

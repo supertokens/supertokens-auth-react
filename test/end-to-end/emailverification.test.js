@@ -157,12 +157,13 @@ describe("SuperTokens Email Verification feature/theme", function() {
         });
 
         it("Should show invalid token screen when token is invalid or expired", async function() {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
-            await page.waitForResponse(response => response.url() === VERIFY_EMAIL_API && response.status() === 200);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`),
+                page.waitForResponse(response => response.url() === VERIFY_EMAIL_API && response.status() === 200)
+            ]);
             await new Promise(r => setTimeout(r, 50)); // Make sure to wait for status to update.
             const verificationEmailInvalidTokenText = await getVerificationEmailTitle(page);
             assert.deepStrictEqual(verificationEmailInvalidTokenText, "The email verification link has expired");
-
             // Click Continue should redirect to /auth when no session is present
             await Promise.all([clickLinkWithRightArrow(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 

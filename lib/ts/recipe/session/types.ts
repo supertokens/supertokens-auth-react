@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { RecipeModuleConfig } from "../../types";
+import { RecipeModuleConfig } from "../recipeModule/types";
 
 /*
  * Session User InputsConfig Types.
@@ -42,4 +42,11 @@ export type SessionUserInput = {
     autoAddCredentials?: boolean;
 };
 
-export type SessionConfig = RecipeModuleConfig<unknown, unknown> & SessionUserInput;
+export type SessionConfig = RecipeModuleConfig<unknown, unknown, unknown> & SessionUserInput;
+
+export type SessionAuthState = {
+    /*
+     * Session Auth Status
+     */
+    status: "LOADING" | "READY";
+};

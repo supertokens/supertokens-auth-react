@@ -56,16 +56,15 @@ function SuperTokensRouteWithRecipeId({
 }): JSX.Element | null {
     const recipeId = getRecipeIdFromSearch(getWindowOrThrow().location.search);
     const normalisedPath = new NormalisedURLPath(path);
-
-    const Component = SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(
+    const componentWithRecipeId = SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(
         normalisedPath,
         recipeId
     );
-    if (Component === undefined) {
+
+    if (componentWithRecipeId === undefined) {
         return null;
     }
 
-    const WithRouterComponent = withRouter(Component);
-
-    return <WithRouterComponent />;
+    const WithRouterComponent = withRouter(componentWithRecipeId.component);
+    return <WithRouterComponent recipeId={componentWithRecipeId.rid} />;
 }

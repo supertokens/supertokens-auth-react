@@ -3,6 +3,7 @@ import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
+import { History, LocationState } from "history";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction[];
@@ -21,35 +22,6 @@ export declare type NormalisedAppInfo = {
     websiteDomain: NormalisedURLDomain;
     apiBasePath: NormalisedURLPath;
     websiteBasePath: NormalisedURLPath;
-};
-export declare type RecipeModuleConfig<S, R> = RecipeModuleHooks<S, R> & {
-    recipeId: string;
-    /**
-     *
-     * AppInfo as present in the recipe module manager
-     */
-    appInfo: NormalisedAppInfo;
-};
-export declare type RecipeModuleHooks<S, R> = {
-    preAPIHook?: (context: S) => Promise<RequestInit>;
-    onHandleEvent?: (context: R) => void;
-};
-export declare type NormalisedRecipeModuleHooks = {
-    preAPIHook: (context: unknown) => Promise<RequestInit>;
-    onHandleEvent: (context: unknown) => void;
-};
-export declare type NormalisedAuthRecipeConfigHooks = {
-    getRedirectionURL: (context: unknown) => Promise<string | undefined>;
-};
-export declare type AuthRecipeModuleConfig<T, S, R> = AuthRecipeModuleUserInput<T, S, R> & RecipeModuleConfig<S, R>;
-export declare type AuthRecipeModuleUserInput<T, S, R> = RecipeModuleHooks<S, R> & {
-    useShadowDom?: boolean;
-    palette?: Record<string, string>;
-    getRedirectionURL?: (context: T) => Promise<string | undefined>;
-};
-export declare type NormalisedAuthRecipeConfig = {
-    useShadowDom: boolean;
-    palette: Record<string, string>;
 };
 export declare type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
 export declare type ComponentWithRecipeId = {
@@ -97,3 +69,12 @@ export declare type NormalisedPalette = {
     };
 };
 export declare type NormalisedDefaultStyles = Record<string, CSSObject>;
+export declare type ThemeBaseProps = {
+    styleFromInit?: Styles;
+    onSuccess: () => void;
+};
+export declare type FeatureBaseProps = {
+    recipeId: string;
+    children?: JSX.Element;
+    history?: History<LocationState>;
+};

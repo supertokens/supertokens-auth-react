@@ -16,18 +16,17 @@
 /*
  * Imports.
  */
-import { CreateRecipeFunction } from "../../types";
-import { EmailPasswordUserInput, SignOutAPIResponse } from "./types";
+import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
+import { EmailPasswordUserInput } from "./types";
 
 import EmailPassword from "./emailPassword";
 import EmailPasswordAuth from "./components/emailPasswordAuth";
-import SignInAndUp from "./components/features/signInAndUp/signInAndUp";
+import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
-import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/resetPasswordUsingToken";
+import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
-import EmailVerification from "./components/features/emailVerification/emailVerification";
-import EmailVerificationScreenTheme from "./components/themes/emailVerification/emailVerificationScreen";
-
+import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
+import { EmailVerification } from "./components/features/emailVerification";
 /*
  * Class.
  */
@@ -44,13 +43,13 @@ export default class EmailPasswordAPIWrapper {
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
 
     static EmailVerification = EmailVerification;
-    static EmailVerificationScreenTheme = EmailVerificationScreenTheme;
+    static EmailVerificationTheme = EmailVerificationTheme;
 
     static init(config?: EmailPasswordUserInput): CreateRecipeFunction {
         return EmailPassword.init(config);
     }
 
-    static async signOut(): Promise<SignOutAPIResponse> {
+    static async signOut(): Promise<SuccessAPIResponse> {
         return EmailPassword.signOut();
     }
 
@@ -74,5 +73,5 @@ export {
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
     EmailVerification,
-    EmailVerificationScreenTheme
+    EmailVerificationTheme
 };

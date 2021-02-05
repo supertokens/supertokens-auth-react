@@ -20,35 +20,18 @@ import {
     FormFieldBaseConfig,
     NormalisedBaseConfig,
     NormalisedFormField,
-    RecipeModuleConfig,
-    Styles
+    ThemeBaseProps
 } from "../../types";
 import { RefObject } from "react";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { History, LocationState } from "history";
+import { RecipeModuleConfig } from "../recipeModule/types";
+import { AuthRecipeModuleGetRedirectionURLContext, AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 
-/*
- * EmailPassword User InputsConfig Types.
- */
-
-export type EmailPasswordHooks = {
-    /*
-     * Optional pre API Hook.
-     */
-    preAPIHook?: (context: EmailPasswordPreAPIHookContext) => Promise<RequestInit>;
-
-    /*
-     * Optional method used for redirections.
-     */
-    getRedirectionURL?: (context: EmailPasswordGetRedirectionURLContext) => Promise<string | undefined>;
-
-    /*
-     * Optional method used for handling event success.
-     */
-    onHandleEvent?: (context: EmailPasswordOnHandleEventContext) => void;
-};
-
-export type EmailPasswordUserInput = EmailPasswordHooks & {
+export type EmailPasswordUserInput = AuthRecipeModuleUserInput<
+    EmailPasswordGetRedirectionURLContext,
+    EmailPasswordPreAPIHookContext,
+    EmailPasswordOnHandleEventContext
+> & {
     /*
      * Styling palette.
      */
@@ -68,15 +51,14 @@ export type EmailPasswordUserInput = EmailPasswordHooks & {
      * Reset password Using Token feature.
      */
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
-
-    /*
-     * Email Verification configs.
-     */
-    emailVerificationFeature?: EmailVerificationUserInput;
 };
 
 export type EmailPasswordConfig = EmailPasswordUserInput &
-    RecipeModuleConfig<EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext>;
+    RecipeModuleConfig<
+        EmailPasswordGetRedirectionURLContext,
+        EmailPasswordPreAPIHookContext,
+        EmailPasswordOnHandleEventContext
+    >;
 
 export type NormalisedEmailPasswordConfig = {
     /*
@@ -88,11 +70,6 @@ export type NormalisedEmailPasswordConfig = {
      * Reset password Using Token feature.
      */
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
-
-    /*
-     * Email Verification feature.
-     */
-    emailVerificationFeature: NormalisedEmailVerificationFeatureConfig;
 };
 
 export type SignInAndUpFeatureUserInput = {
@@ -245,83 +222,9 @@ export type NormalisedEnterEmailForm = FeatureBaseConfig & {
     formFields: NormalisedFormField[];
 };
 
-export type EmailVerificationUserInput = {
-    /*
-     * Email Verification Mode
-     */
-    mode?: "OFF" | "REQUIRED";
-
-    /*
-     * Disable default implementation with default routes.
-     */
-    disableDefaultImplementation?: boolean;
-
-    /*
-     * sendVerifyEmailScreen config.
-     */
-    sendVerifyEmailScreen?: FeatureBaseConfig;
-
-    /*
-     * verifyEmailLinkClickedScreen config.
-     */
-    verifyEmailLinkClickedScreen?: FeatureBaseConfig;
-};
-
-export type NormalisedEmailVerificationFeatureConfig = {
-    /*
-     * Email Verification Mode
-     */
-    mode: EmailVerificationMode;
-
-    /*
-     * Disable default implementation with default routes.
-     */
-    disableDefaultImplementation: boolean;
-
-    /*
-     * Normalised sendVerifyEmailScreen config.
-     */
-    sendVerifyEmailScreen: FeatureBaseConfig;
-
-    /*
-     * Normalised verifyEmailLinkClickedScreen config.
-     */
-    verifyEmailLinkClickedScreen: FeatureBaseConfig;
-};
-
-export type EmailVerificationMode = "OFF" | "REQUIRED";
-
 /*
  * Props Types.
  */
-export type FeatureBaseProps<T> = {
-    /*
-     * Internal props provided by
-     */
-    __internal?: { instance: T };
-
-    /*
-     * Children element
-     */
-    children?: JSX.Element;
-
-    /*
-     * History provided by react-router
-     */
-    history?: History<LocationState>;
-};
-
-type ThemeBaseProps = {
-    /*
-     * Custom styling from user.
-     */
-    styleFromInit?: Styles;
-
-    /*
-     * Called on successful state.
-     */
-    onSuccess: () => void;
-};
 
 type FormThemeBaseProps = ThemeBaseProps & {
     /*
@@ -441,13 +344,6 @@ export type FormFieldError = {
     error: string;
 };
 
-export type SignOutAPIResponse = {
-    /*
-     * Success.
-     */
-    status: "OK";
-};
-
 export type EmailExistsAPIResponse = {
     /*
      * Success.
@@ -458,25 +354,6 @@ export type EmailExistsAPIResponse = {
      * Is email already registered
      */
     exists: boolean;
-};
-
-export type IsEmailVerifiedAPIResponse = {
-    /*
-     * Success.
-     */
-    status: "OK";
-
-    /*
-     * Is email verified
-     */
-    isVerified: boolean;
-};
-
-export type VerifyEmailAPIResponse = {
-    /*
-     * Email verification status.
-     */
-    status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
 };
 
 export type FormFieldAPIResponse = {
@@ -553,21 +430,6 @@ export type SubmitNewPasswordAPIResponse =
           status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
       };
 
-export type SendVerifyEmailAPIResponse = {
-    /*
-     * Success.
-     */
-    status: "OK" | "EMAIL_ALREADY_VERIFIED_ERROR";
-};
-export type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | ThemeResponseGeneralError;
-
-export type VerifyEmailThemeResponse = {
-    /*
-     * Verify Email Link clicked Theme Status.
-     */
-    status: "LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL";
-};
-
 export type EmailPasswordPreAPIHookContext = {
     /*
      * Pre API Hook action.
@@ -589,22 +451,12 @@ export type EmailPasswordPreAPIHookContext = {
 };
 
 export type EmailPasswordGetRedirectionURLContext =
+    | AuthRecipeModuleGetRedirectionURLContext
     | {
           /*
            * Get Redirection URL Context
            */
-          action: "SUCCESS";
-
-          /*
-           * Redirect To Path represents the intended path the user wanted to access.
-           */
-          redirectToPath?: string;
-      }
-    | {
-          /*
-           * Get Redirection URL Context
-           */
-          action: "SIGN_IN_AND_UP" | "VERIFY_EMAIL" | "RESET_PASSWORD";
+          action: "RESET_PASSWORD";
       };
 
 export type EmailPasswordOnHandleEventContext =
@@ -683,62 +535,6 @@ export type SubmitNewPasswordThemeProps = FormThemeBaseProps & {
     onSignInClicked: () => void;
 };
 
-export type EmailVerificationThemeProps = {
-    /*
-     * Send Verification Email Screen Theme Props.
-     */
-    sendVerifyEmailScreen: SendVerifyEmailThemeProps;
-
-    /*
-     * Verify Email Link Clicked Screen Theme Props.
-     */
-    verifyEmailLinkClickedScreen: VerifyEmailLinkClickedThemeProps;
-
-    /*
-     * A token is present in the query params or not.
-     */
-    hasToken: boolean;
-
-    /*
-     * Raw Palette provided by user.
-     */
-    rawPalette: Record<string, string>;
-};
-
-export type SendVerifyEmailThemeProps = ThemeBaseProps & {
-    /*
-     * Call Send Verify Email API.
-     */
-    sendVerifyEmailAPI: () => Promise<SendVerifyEmailThemeResponse>;
-
-    /*
-     * Method called when Sign Out button is clicked. Default to SuperTokens Session Sign Out.
-     */
-    signOut: () => Promise<void>;
-
-    /*
-     * Method called when "resend email" clicked results in email already verified response.
-     */
-    onEmailAlreadyVerified: () => Promise<void>;
-};
-
-export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
-    /*
-     * Call Verify Email API.
-     */
-    verifyEmailAPI: () => Promise<VerifyEmailThemeResponse>;
-
-    /*
-     * Redirect to verify Email Screen on invalid token.
-     */
-    onTokenInvalidRedirect: () => Promise<void>;
-
-    /*
-     * On email verification success, action when "Continue" button is clicked.
-     */
-    onContinueClicked: () => Promise<void>;
-};
-
 export type SignInAndUpState =
     | {
           status: "LOADING" | "READY";
@@ -767,20 +563,6 @@ export type SendVerifyEmailThemeState = {
      * Send verify Email Theme Status.
      */
     status: "READY" | "SUCCESS" | "ERROR";
-};
-
-export type VerifyEmailLinkClickedThemeState = {
-    /*
-     * Verify Email Link clicked Status.
-     */
-    status: "LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL";
-};
-
-export type EmailPasswordAuthState = {
-    /*
-     * EmailPassword Auth Status
-     */
-    status: "LOADING" | "READY";
 };
 
 export type PaletteUserInput = Record<string, string>;
