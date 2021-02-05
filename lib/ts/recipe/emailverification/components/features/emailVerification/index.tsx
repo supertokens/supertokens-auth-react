@@ -21,7 +21,6 @@ import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import { VerifyEmailLinkClickedThemeProps, SendVerifyEmailThemeProps } from "../../../types";
-import FeatureWrapper from "../../../../components/featureWrapper";
 import { getWindowOrThrow } from "../../../../../utils";
 import { verifyEmailAPI, sendVerifyEmailAPI } from "./api";
 import Session from "../../../../session";
@@ -30,6 +29,7 @@ import EmailVerificationRecipe from "../../../";
 import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
 import { isAuthRecipeModule } from "../../../../authRecipeModule/utils";
+import FeatureWrapper from "../../../../../components/featureWrapper";
 
 /*
  * Component.

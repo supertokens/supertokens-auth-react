@@ -31,8 +31,8 @@ import {
 } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { APIFormField, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
-import FeatureWrapper from "../../../../components/featureWrapper";
 import { getRedirectToPathFromURL, validateForm } from "../../../../../utils";
+import FeatureWrapper from "../../../../../components/featureWrapper";
 /*
  * Component.
  */

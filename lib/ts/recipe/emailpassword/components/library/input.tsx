@@ -25,11 +25,11 @@ import React, { useContext } from "react";
 import { forwardRef, RefObject } from "react";
 import { APIFormField } from "../../../../types";
 import { InputRef } from "../../types";
-import ErrorIcon from "../../../components/assets/errorIcon";
-import CheckedIcon from "../../../components/assets/checkedIcon";
-import ShowPasswordIcon from "../../../components/assets/showPasswordIcon";
 import { useState } from "react";
 import StyleContext from "../../../../styles/styleContext";
+import ShowPasswordIcon from "../../../../components/assets/showPasswordIcon";
+import CheckedIcon from "../../../../components/assets/checkedIcon";
+import ErrorIcon from "../../../../components/assets/errorIcon";
 
 /*
  * Props.

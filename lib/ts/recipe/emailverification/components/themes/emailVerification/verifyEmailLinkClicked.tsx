@@ -20,11 +20,11 @@
 import { jsx } from "@emotion/react";
 
 import React, { PureComponent } from "react";
+import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
+import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
+import ErrorLargeIcon from "../../../../../components/assets/errorLargeIcon";
+import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import StyleContext from "../../../../../styles/styleContext";
-import ArrowRightIcon from "../../../../components/assets/arrowRightIcon";
-import CheckedRoundIcon from "../../../../components/assets/checkedRoundIcon";
-import ErrorLargeIcon from "../../../../components/assets/errorLargeIcon";
-import SpinnerIcon from "../../../../components/assets/spinnerIcon";
 import { Button } from "../../../../emailpassword/components/library";
 
 import { VerifyEmailLinkClickedThemeProps, VerifyEmailLinkClickedThemeState } from "../../../types";

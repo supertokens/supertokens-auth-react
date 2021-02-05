@@ -22,8 +22,8 @@ import React, { PureComponent } from "react";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 
 import StyleContext from "../../../../../styles/styleContext";
-import ArrowRightIcon from "../../../../components/assets/arrowRightIcon";
-import EmailLargeIcon from "../../../../components/assets/emailLargeIcon";
+import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
+import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
 import { SendVerifyEmailThemeState } from "../../../../emailpassword/types";
 import { SendVerifyEmailThemeProps } from "../../../types";
 

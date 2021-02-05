@@ -24,10 +24,10 @@ import { FormBaseAPIResponse, SubmitNewPasswordThemeProps } from "../../../types
 import EmailPassword from "../../../emailPassword";
 import { ResetPasswordUsingTokenTheme } from "../../..";
 import { APIFormField, FeatureBaseProps } from "../../../../../types";
-import FeatureWrapper from "../../../../components/featureWrapper";
 
 import { getWindowOrThrow, validateForm } from "../../../../../utils";
 import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
+import FeatureWrapper from "../../../../../components/featureWrapper";
 
 /*
  * Component.
