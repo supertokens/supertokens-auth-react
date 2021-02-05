@@ -45,7 +45,7 @@ require("jsdom-global")();
  * Tests.
  */
 
-describe("SuperTokens Email Verification feature/theme", function() {
+describe.only("SuperTokens Email Verification feature/theme", function() {
     let browser;
     let page;
     let consoleLogs;
@@ -161,6 +161,7 @@ describe("SuperTokens Email Verification feature/theme", function() {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`),
                 page.waitForResponse(response => response.url() === VERIFY_EMAIL_API && response.status() === 200)
             ]);
+            await new Promise(r => setTimeout(r, 50)); // Make sure to wait for status to update.
             const verificationEmailInvalidTokenText = await getVerificationEmailTitle(page);
             assert.deepStrictEqual(verificationEmailInvalidTokenText, "The email verification link has expired");
             // Click Continue should redirect to /auth when no session is present
