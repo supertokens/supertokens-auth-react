@@ -18,7 +18,7 @@
  */
 import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
-import { NormalisedAppInfo, ReactComponentClass, SuperTokensConfig } from "./types";
+import { ComponentWithRecipeId, NormalisedAppInfo, SuperTokensConfig } from "./types";
 import {
     getCurrentNormalisedUrlPath,
     getRecipeIdFromSearch,
@@ -45,8 +45,8 @@ export default class SuperTokens {
     /*
      * Instance Attributes.
      */
-    private appInfo: NormalisedAppInfo;
-    private recipeList: RecipeModule[] = [];
+    appInfo: NormalisedAppInfo;
+    recipeList: RecipeModule[] = [];
     private pathsToComponentWithRecipeIdMap?: PathToComponentWithRecipeIdMap;
 
     /*
@@ -91,10 +91,6 @@ export default class SuperTokens {
         return SuperTokens.instance;
     }
 
-    static getAppInfo(): NormalisedAppInfo {
-        return SuperTokens.getInstanceOrThrow().getAppInfo();
-    }
-
     static canHandleRoute(): boolean {
         return SuperTokens.getInstanceOrThrow().canHandleRoute();
     }
@@ -110,9 +106,6 @@ export default class SuperTokens {
     /*
      * Instance Methods.
      */
-    getAppInfo = (): NormalisedAppInfo => {
-        return this.appInfo;
-    };
 
     canHandleRoute = (): boolean => {
         return this.getRoutingComponent() !== undefined;
@@ -121,12 +114,11 @@ export default class SuperTokens {
     getRoutingComponent = (): JSX.Element | undefined => {
         const normalisedPath = getCurrentNormalisedUrlPath();
         const recipeId = getRecipeIdFromSearch(getWindowOrThrow().location.search);
-        const Component = this.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
-        if (Component === undefined) {
+        const componentWithRecipeId = this.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
+        if (componentWithRecipeId === undefined) {
             return undefined;
         }
-
-        return <Component />;
+        return <componentWithRecipeId.component recipeId={componentWithRecipeId.rid} />;
     };
 
     getPathsToComponentWithRecipeIdMap = (): PathToComponentWithRecipeIdMap => {
@@ -135,8 +127,8 @@ export default class SuperTokens {
         }
 
         const pathsToComponentWithRecipeIdMap: PathToComponentWithRecipeIdMap = {};
-        for (let i = 0; i < this.getRecipeList().length; i++) {
-            const recipe = this.getRecipeList()[i];
+        for (let i = 0; i < this.recipeList.length; i++) {
+            const recipe = this.recipeList[i];
             const features = recipe.getFeatures();
             const featurePaths = Object.keys(features);
             for (let j = 0; j < featurePaths.length; j++) {
@@ -160,7 +152,7 @@ export default class SuperTokens {
     getMatchingComponentForRouteAndRecipeId = (
         normalisedUrl: NormalisedURLPath,
         recipeId: string | null
-    ): ReactComponentClass | undefined => {
+    ): ComponentWithRecipeId | undefined => {
         const path = normalisedUrl.getAsStringDangerous();
         const routeComponents = this.getPathsToComponentWithRecipeIdMap()[path];
         if (routeComponents === undefined) {
@@ -171,21 +163,29 @@ export default class SuperTokens {
         if (recipeId !== null) {
             for (let i = 0; i < routeComponents.length; i++) {
                 if (recipeId === routeComponents[i].rid) {
-                    return routeComponents[i].component;
+                    return routeComponents[i];
                 }
             }
         }
 
         // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.
-        return routeComponents[0].component;
+        return routeComponents[0];
     };
 
-    getRecipeList = (): RecipeModule[] => {
-        return this.recipeList;
-    };
+    getRecipeOrThrow(recipeId: string): RecipeModule {
+        const recipe = this.recipeList.find(recipe => {
+            return recipe.recipeId === recipeId;
+        });
+
+        if (recipe === undefined) {
+            throw new Error(`Missing recipe: ${recipeId}`);
+        }
+
+        return recipe;
+    }
 
     getDefaultSessionRecipe = (): Session | undefined => {
-        return this.getRecipeList().find(recipe => {
+        return this.recipeList.find(recipe => {
             return recipe.recipeId === Session.RECIPE_ID;
         }) as Session;
     };

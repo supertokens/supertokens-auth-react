@@ -14,20 +14,11 @@
  */
 
 import NormalisedURLPath from "../../normalisedURLPath";
-import {
-    FormField,
-    FormFieldBaseConfig,
-    NormalisedAppInfo,
-    NormalisedBaseConfig,
-    NormalisedFormField
-} from "../../types";
+import { FormField, FormFieldBaseConfig, NormalisedAppInfo, NormalisedFormField } from "../../types";
 import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
 import {
     EmailPasswordConfig,
-    EmailVerificationMode,
-    EmailVerificationUserInput,
     NormalisedEmailPasswordConfig,
-    NormalisedEmailVerificationFeatureConfig,
     NormalisedEnterEmailForm,
     NormalisedResetPasswordUsingTokenFeatureConfig,
     NormalisedSignInAndUpFeatureConfig,
@@ -70,14 +61,9 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
         config.resetPasswordUsingTokenFeature
     );
 
-    const emailVerificationFeature: NormalisedEmailVerificationFeatureConfig = normaliseEmailVerificationFeature(
-        config.emailVerificationFeature
-    );
-
     return {
         signInAndUpFeature,
-        resetPasswordUsingTokenFeature,
-        emailVerificationFeature
+        resetPasswordUsingTokenFeature
     };
 }
 
@@ -277,45 +263,6 @@ export function normaliseResetPasswordUsingTokenFeature(
         disableDefaultImplementation,
         submitNewPasswordForm,
         enterEmailForm
-    };
-}
-
-export function normaliseEmailVerificationFeature(
-    config?: EmailVerificationUserInput
-): NormalisedEmailVerificationFeatureConfig {
-    if (config === undefined) {
-        config = {};
-    }
-
-    const disableDefaultImplementation = config.disableDefaultImplementation === true;
-    let mode: EmailVerificationMode = "OFF";
-    if (config.mode === "REQUIRED") {
-        mode = "REQUIRED";
-    }
-
-    const sendVerifyEmailScreenStyle =
-        config.sendVerifyEmailScreen !== undefined && config.sendVerifyEmailScreen.style !== undefined
-            ? config.sendVerifyEmailScreen.style
-            : {};
-
-    const sendVerifyEmailScreen: NormalisedBaseConfig = {
-        style: sendVerifyEmailScreenStyle
-    };
-
-    const verifyEmailLinkClickedScreenStyle =
-        config.verifyEmailLinkClickedScreen !== undefined && config.verifyEmailLinkClickedScreen.style !== undefined
-            ? config.verifyEmailLinkClickedScreen.style
-            : {};
-
-    const verifyEmailLinkClickedScreen: NormalisedBaseConfig = {
-        style: verifyEmailLinkClickedScreenStyle
-    };
-
-    return {
-        disableDefaultImplementation,
-        mode,
-        sendVerifyEmailScreen,
-        verifyEmailLinkClickedScreen
     };
 }
 

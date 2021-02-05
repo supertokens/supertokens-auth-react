@@ -17,86 +17,31 @@
  * Imports.
  */
 import * as React from "react";
-import { PureComponent, ReactElement } from "react";
+import { PureComponent } from "react";
 
-import { EmailPasswordAuthState, FeatureBaseProps } from "../types";
 import EmailPassword from "../emailPassword";
-import { getWindowOrThrow } from "supertokens-website/lib/build/utils";
-import { ReactComponentClass, WithRouterType } from "../../../types";
+import { FeatureBaseProps, ReactComponentClass, WithRouterType } from "../../../types";
+import SessionAuth from "../../session/sessionAuth";
+import EmailVerificationAuth from "../../emailverification/emailVerificationAuth";
 
 /*
  * Component.
  */
 
-class EmailPasswordAuth extends PureComponent<FeatureBaseProps<EmailPassword>, EmailPasswordAuthState> {
-    /*
-     * Constructor.
-     */
-    constructor(props: FeatureBaseProps<EmailPassword>) {
-        super(props);
-        this.state = {
-            status: "LOADING"
-        };
-    }
-
-    /*
-     * Methods.
-     */
-    getRecipeInstanceOrThrow = (): EmailPassword => {
-        let instance;
-        if (this.props.__internal !== undefined && this.props.__internal.instance !== undefined) {
-            instance = this.props.__internal.instance;
-        } else {
-            instance = EmailPassword.getInstanceOrThrow();
-        }
-        return instance;
-    };
-
-    isEmailVerifiedAPI = async (): Promise<boolean> => {
-        try {
-            return await this.getRecipeInstanceOrThrow().isEmailVerified();
-        } catch (e) {
-            // In case of API failure, continue, do not break the application.
-            return true;
-        }
-    };
-
-    async componentDidMount(): Promise<void> {
-        const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
-        if (sessionExists === false) {
-            const redirectToPath = getWindowOrThrow().location.pathname;
-            return await this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
-                redirectToPath
-            });
-        }
-
-        // Update status to ready.
-        this.setState({
-            status: "READY"
-        });
-
-        // If email verification mode is off or optional, return.
-        if (this.getRecipeInstanceOrThrow().config.emailVerificationFeature.mode !== "REQUIRED") {
-            return;
-        }
-
-        // Otherwise, make sure that the email is valid, otherwise, redirect to email validation screen.
-        const isEmailVerified = await this.isEmailVerifiedAPI();
-        if (isEmailVerified === false) {
-            return await this.getRecipeInstanceOrThrow().redirect({ action: "VERIFY_EMAIL" }, this.props.history);
-        }
-        return;
-    }
-
+class EmailPasswordAuth extends PureComponent<FeatureBaseProps> {
     /*
      * Render.
      */
     render = (): JSX.Element | null => {
-        if (this.state.status === "LOADING") {
-            return null;
-        }
-
-        return this.props.children as ReactElement<any>;
+        return (
+            <SessionAuth recipeId={EmailPassword.getInstanceOrThrow().recipeId} history={this.props.history}>
+                <EmailVerificationAuth
+                    recipeId={EmailPassword.getInstanceOrThrow().recipeId}
+                    history={this.props.history}>
+                    {this.props.children}
+                </EmailVerificationAuth>
+            </SessionAuth>
+        );
     };
 }
 

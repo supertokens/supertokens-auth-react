@@ -22,24 +22,16 @@ import {
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import {
-    APIFormField,
-    AppInfoUserInput,
-    AuthRecipeModuleConfig,
-    AuthRecipeModuleUserInput,
-    NormalisedAppInfo,
-    NormalisedAuthRecipeConfig,
-    NormalisedAuthRecipeConfigHooks,
-    NormalisedFormField,
-    NormalisedRecipeModuleHooks,
-    RecipeModuleHooks
-} from "./types";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
+import { RecipeModuleHooks, NormalisedRecipeModuleHooks } from "./recipe/recipeModule/types";
 
 /*
  * NormalisedRecipeModuleHooks
  */
-export function normalisedRecipeModuleHooks(config: RecipeModuleHooks<unknown, unknown>): NormalisedRecipeModuleHooks {
-    let { preAPIHook, onHandleEvent } = config;
+export function normalisedRecipeModuleHooks(
+    config: RecipeModuleHooks<unknown, unknown, unknown>
+): NormalisedRecipeModuleHooks {
+    let { preAPIHook, onHandleEvent, getRedirectionURL } = config;
     if (preAPIHook === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         preAPIHook = async (context: any): Promise<RequestInit> => context.requestInit;
@@ -50,39 +42,15 @@ export function normalisedRecipeModuleHooks(config: RecipeModuleHooks<unknown, u
         onHandleEvent = (context: unknown): void => {};
     }
 
-    return {
-        preAPIHook,
-        onHandleEvent
-    };
-}
-
-/*
- * NormalisedRecipeModuleHooks
- */
-export function normalisedAuthRecipeConfigHooks(
-    config: AuthRecipeModuleUserInput<unknown, unknown, unknown>
-): NormalisedAuthRecipeConfigHooks {
-    let { getRedirectionURL } = config;
     if (getRedirectionURL === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         getRedirectionURL = async (context: unknown): Promise<string | undefined> => undefined;
     }
-    return {
-        getRedirectionURL
-    };
-}
 
-/*
- * normaliseAuthRecipeModule
- */
-export function normaliseAuthRecipeModuleConfig(
-    config: AuthRecipeModuleConfig<unknown, unknown, unknown>
-): NormalisedAuthRecipeConfig {
-    const useShadowDom = config.useShadowDom === undefined ? true : config.useShadowDom;
-    const palette = config.palette === undefined ? {} : config.palette;
     return {
-        useShadowDom: getShouldUseShadowDom(useShadowDom),
-        palette
+        preAPIHook,
+        getRedirectionURL,
+        onHandleEvent
     };
 }
 

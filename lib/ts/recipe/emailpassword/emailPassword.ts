@@ -18,30 +18,21 @@
  */
 
 import AuthRecipeModule from "../authRecipeModule";
-import {
-    CreateRecipeFunction,
-    RouteToFeatureComponentMap,
-    NormalisedAppInfo,
-    NormalisedAuthRecipeConfig
-} from "../../types";
+import { CreateRecipeFunction, RouteToFeatureComponentMap, NormalisedAppInfo, SuccessAPIResponse } from "../../types";
 import {
     EmailPasswordConfig,
     EmailPasswordGetRedirectionURLContext,
     EmailPasswordUserInput,
-    NormalisedEmailPasswordConfig,
-    SignOutAPIResponse
+    NormalisedEmailPasswordConfig
 } from "./types";
 import { isTest } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
-import { ResetPasswordUsingToken, SignInAndUp, EmailVerification } from ".";
+import { ResetPasswordUsingToken, SignInAndUp } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { DEFAULT_RESET_PASSWORD_PATH, DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
+import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import { SSR_ERROR } from "../../constants";
-import Session from "../session/session";
-import SuperTokens from "../../superTokens";
-import { isEmailVerifiedAPI } from "./components/features/emailVerification/api";
-import { signOut } from "./components/features/signOut/api";
 import RecipeModule from "../recipeModule";
+import { NormalisedAuthRecipeConfig } from "../authRecipeModule/types";
 
 /*
  * Class.
@@ -73,12 +64,8 @@ export default class EmailPassword extends AuthRecipeModule {
      * Instance methods.
      */
 
-    getConfig = (): NormalisedEmailPasswordConfig => {
-        return this.config;
-    };
-
     getFeatures = (): RouteToFeatureComponentMap => {
-        const features: RouteToFeatureComponentMap = {};
+        let features: RouteToFeatureComponentMap = {};
         if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
             const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = SignInAndUp;
@@ -91,66 +78,26 @@ export default class EmailPassword extends AuthRecipeModule {
             features[normalisedFullPath.getAsStringDangerous()] = ResetPasswordUsingToken;
         }
 
-        if (
-            this.config.emailVerificationFeature.disableDefaultImplementation !== true &&
-            this.config.emailVerificationFeature.mode !== "OFF"
-        ) {
-            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = EmailVerification;
+        if (this.emailVerification !== undefined) {
+            features = {
+                ...features,
+                ...this.emailVerification.getFeatures()
+            };
         }
 
         return features;
     };
 
     getDefaultRedirectionURL = async (context: EmailPasswordGetRedirectionURLContext): Promise<string> => {
-        switch (context.action) {
-            case "SIGN_IN_AND_UP":
-                return `${this.appInfo.websiteBasePath.getAsStringDangerous()}?rid=${this.recipeId}`;
-
-            case "VERIFY_EMAIL": {
-                const verifyEmailPath = new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH);
-                return `${this.appInfo.websiteBasePath.appendPath(verifyEmailPath).getAsStringDangerous()}?rid=${
-                    this.recipeId
-                }`;
-            }
-            case "RESET_PASSWORD": {
-                const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
-                return `${this.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
-                    this.recipeId
-                }`;
-            }
-            case "SUCCESS":
-                return context.redirectToPath === undefined ? "/" : context.redirectToPath;
-        }
-    };
-
-    getSessionRecipe = (): Session | undefined => {
-        return SuperTokens.getInstanceOrThrow().getDefaultSessionRecipe();
-    };
-
-    doesSessionExist = (): boolean => {
-        const sessionRecipe = this.getSessionRecipe();
-        if (sessionRecipe !== undefined) {
-            return sessionRecipe.doesSessionExist();
+        if (context.action === "RESET_PASSWORD") {
+            const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
+            return `${this.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
+                this.recipeId
+            }`;
         }
 
-        // Otherwise, return false.
-        return false;
+        return this.getAuthRecipeModuleDefaultRedirectionURL(context);
     };
-
-    signOut = async (): Promise<SignOutAPIResponse> => {
-        return await signOut(this);
-    };
-
-    /*
-     * Email Verification
-     */
-
-    async isEmailVerified(): Promise<boolean> {
-        return await isEmailVerifiedAPI(this);
-    }
 
     /*
      * Static methods.
@@ -167,7 +114,7 @@ export default class EmailPassword extends AuthRecipeModule {
         };
     }
 
-    static signOut(): Promise<SignOutAPIResponse> {
+    static signOut(): Promise<SuccessAPIResponse> {
         return EmailPassword.getInstanceOrThrow().signOut();
     }
 
