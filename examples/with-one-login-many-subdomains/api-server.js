@@ -33,18 +33,7 @@ supertokens.init({
     websiteBasePath: "/",
   },
   recipeList: [
-    EmailPassword.init({
-      resetPasswordUsingTokenFeature: {
-        getResetPasswordURL: async (user) => {
-          return `http://auth.example.com:${websitePort}/reset-password`;
-        },
-      },
-      emailVerificationFeature: {
-        getEmailVerificationURL: async (user) => {
-          return `http://auth.example.com:${websitePort}/verify-email`;
-        },
-      },
-    }),
+    EmailPassword.init(),
     Session.init(),
   ],
 });
