@@ -28,11 +28,13 @@ import { getRecipeIdFromSearch, getWindowOrThrow } from "../utils";
  */
 
 export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
-    if (SuperTokens.getInstanceOrThrow().reactRouterDom === undefined) {
+    const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
+    if (reactRouterDom === undefined) {
         return [];
     }
-    const Route = SuperTokens.getInstanceOrThrow().reactRouterDom.Route;
-    const withRouter: WithRouterType = SuperTokens.getInstanceOrThrow().reactRouterDom.withRouter;
+
+    const Route = reactRouterDom.Route;
+    const withRouter: WithRouterType = reactRouterDom.withRouter;
     const pathsToComponentWithRecipeIdMap = SuperTokens.getInstanceOrThrow().getPathsToComponentWithRecipeIdMap();
     return Object.keys(pathsToComponentWithRecipeIdMap).map(path => {
         return (
