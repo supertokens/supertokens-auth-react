@@ -47,9 +47,7 @@
     "supertokens-website": "^5.0.6"
   },
   "peerDependencies": {
-    "react": ">=16.8.0"
-  },
-  "optionalDependencies": {
+    "react": ">=16.8.0",
     "react-router-dom": ">=5.0.0"
   },
   "scripts": {
