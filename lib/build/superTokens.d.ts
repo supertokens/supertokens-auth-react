@@ -8,7 +8,8 @@ export default class SuperTokens {
     private appInfo;
     private recipeList;
     private pathsToComponentWithRecipeIdMap?;
-    reactRouterDom: any;
+    private useReactRouterDom;
+    private reactRouterDom?;
     constructor(config: SuperTokensConfig);
     static init(config: SuperTokensConfig): void;
     static getInstanceOrThrow(): SuperTokens;
@@ -22,6 +23,10 @@ export default class SuperTokens {
     getPathsToComponentWithRecipeIdMap: () => Record<string, import("./types").ComponentWithRecipeId[]>;
     getMatchingComponentForRouteAndRecipeId: (normalisedUrl: NormalisedURLPath, recipeId: string | null) => React.ComponentClass<{}, any> | (<T>(props: T) => JSX.Element) | undefined;
     getRecipeList: () => RecipeModule[];
+    getReactRouterDom: () => {
+        Route: any;
+        withRouter: any;
+    } | undefined;
     getDefaultSessionRecipe: () => Session | undefined;
     static reset(): void;
 }
