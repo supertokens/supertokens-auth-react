@@ -69,14 +69,12 @@ export default class SuperTokens {
 
         // Get react router dom if present and not disabled by user.
         this.useReactRouterDom = config.useReactRouterDom === false ? false : true;
-        if (this.useReactRouterDom === false) {
-            return;
-        }
-
-        try {
-            this.reactRouterDom = require("react-router-dom");
-        } catch (e) {
-            this.useReactRouterDom = false;
+        if (this.useReactRouterDom) {
+            try {
+                this.reactRouterDom = require("react-router-dom");
+            } catch (e) {
+                this.useReactRouterDom = false;
+            }
         }
     }
 
@@ -199,7 +197,7 @@ export default class SuperTokens {
     };
 
     getReactRouterDom = (): { Route: any; withRouter: any } | undefined => {
-        if (this.useReactRouterDom === false) {
+        if (!this.useReactRouterDom) {
             return undefined;
         }
 
