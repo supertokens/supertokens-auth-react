@@ -36,6 +36,12 @@ if (getQueryParams('defaultToSignUp')) {
   window.localStorage.setItem('defaultToSignUp', getQueryParams('defaultToSignUp') === "true");
 }
 
+if (getQueryParams('useReactRouterDom')) {
+  window.localStorage.setItem('useReactRouterDom', getQueryParams('useReactRouterDom') === "true");
+}
+const useReactRouterDom = window.localStorage.getItem('useReactRouterDom') !== "false";
+
+
 const defaultToSignUp = window.localStorage.getItem('defaultToSignUp') !== "false";
 
 SuperTokens.init({
@@ -45,6 +51,7 @@ SuperTokens.init({
     apiDomain: "localhost:8082",
     websiteBasePath
   },
+  useReactRouterDom,
   recipeList: [
     EmailPassword.init({
       preAPIHook: async (context) => {

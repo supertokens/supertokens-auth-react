@@ -8,6 +8,7 @@ export default class SuperTokens {
     private appInfo;
     private recipeList;
     private pathsToComponentWithRecipeIdMap?;
+    reactRouterDom: any;
     constructor(config: SuperTokensConfig);
     static init(config: SuperTokensConfig): void;
     static getInstanceOrThrow(): SuperTokens;

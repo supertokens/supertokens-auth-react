@@ -23,7 +23,7 @@ import { EmailPasswordAuthState, FeatureBaseProps } from "../types";
 import EmailPassword from "../emailPassword";
 import { EMAIL_PASSWORD_AUTH_STATE, EMAIL_VERIFICATION_MODE } from "../constants";
 import { getWindowOrThrow } from "supertokens-website/lib/build/utils";
-import { ReactComponentClass, WithRouterType } from "../../../types";
+import SuperTokens from "../../../superTokens";
 
 /*
  * Component.
@@ -104,12 +104,11 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps, EmailPasswordAut
     };
 }
 
-export default (function(): ReactComponentClass {
-    try {
-        // eslint-disable-next-line
-        const withRouter: WithRouterType = require("react-router-dom").withRouter;
-        return withRouter(EmailPasswordAuth);
-    } catch (e) {
-        return EmailPasswordAuth;
+export default function EmailPasswordAuthWrapper(props: FeatureBaseProps): JSX.Element {
+    if (SuperTokens.getInstanceOrThrow().reactRouterDom === undefined) {
+        return <EmailPasswordAuth {...props} />;
     }
-})();
+
+    const Component = SuperTokens.getInstanceOrThrow().reactRouterDom.withRouter(EmailPasswordAuth);
+    return <Component {...props} />;
+}

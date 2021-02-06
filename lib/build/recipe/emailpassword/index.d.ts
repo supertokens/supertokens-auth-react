@@ -8,7 +8,7 @@ import ResetPasswordUsingTokenTheme from "./components/themes/default/resetPassw
 import EmailVerification from "./components/features/emailVerification/emailVerification";
 import EmailVerificationScreenTheme from "./components/themes/default/emailVerification/emailVerificationScreen";
 export default class EmailPasswordAPIWrapper {
-    static EmailPasswordAuth: import("../../types").ReactComponentClass;
+    static EmailPasswordAuth: typeof EmailPasswordAuth;
     static SignInAndUp: typeof SignInAndUp;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ResetPasswordUsingToken: typeof ResetPasswordUsingToken;
