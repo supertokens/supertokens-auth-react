@@ -6,7 +6,7 @@ import Session from "supertokens-auth-react/recipe/session";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
 import Footer from "./Footer";
-import { getApiDomain, getAuthDomain, getRedirectionUrlForUser, redirectIfOnWrongSubdomain } from "./utils"
+import { getApiDomain, getAuthDomain, redirectIfOnWrongSubdomain } from "./utils"
 
 
 SuperTokens.init({
@@ -19,14 +19,7 @@ SuperTokens.init({
     EmailPassword.init({
       emailVerificationFeature: {
         mode: "REQUIRED"
-      },
-      getRedirectionURL: async (context) => {
-        if (context.action === "SUCCESS") {
-          // redirect users to their associated subdomain e.g abc.example.com for user abc
-          const redirectionUrl = await getRedirectionUrlForUser();
-          return redirectionUrl;
-        }
-      },
+      }
     }),
     Session.init({
       sessionScope: ".example.com"

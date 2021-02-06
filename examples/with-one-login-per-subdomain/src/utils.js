@@ -22,11 +22,6 @@ export async function getSubdomainForCurrentUser() {
     return res.data.subdomain;
 }
 
-export async function getRedirectionUrlForUser() {
-    const subdomain = await getSubdomainForCurrentUser();
-    return `http://${subdomain}.example.com:${websitePort}`;
-}
-
 export async function redirectIfOnWrongSubdomain() {
     try {
         if (Session.doesSessionExist()) {
