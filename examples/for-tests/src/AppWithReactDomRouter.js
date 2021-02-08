@@ -8,7 +8,6 @@ import {
 import {getSuperTokensRoutesForReactRouterDom} from 'supertokens-auth-react';
 import {SignInAndUp, EmailPasswordAuth} from 'supertokens-auth-react/recipe/emailpassword';
 import {BaseComponent, Home, About, Contact, Dashboard} from './App';
-import SignInAndUpCustom from './themes/signInAndUp';
 
 function AppWithReactDomRouter() {
 
@@ -47,11 +46,6 @@ function AppWithReactDomRouter() {
             </Route>
             <Route path="/custom-supertokens-login">
               <SignInAndUp />
-            </Route>
-            <Route path="/custom-theme">
-              <SignInAndUp >
-                <SignInAndUpCustom/>
-              </SignInAndUp >
             </Route>
           </Switch>
         </BaseComponent>

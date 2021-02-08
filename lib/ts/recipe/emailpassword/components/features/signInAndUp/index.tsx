@@ -233,7 +233,6 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         const signInForm = {
             styleFromInit: signInFeature.style,
             formFields: signInFeature.formFields,
-            resetPasswordURL: signInFeature.resetPasswordURL,
             signInAPI: this.signIn,
             onSuccess: this.onSignInSuccess,
             forgotPasswordClick: () =>

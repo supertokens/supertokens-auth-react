@@ -13,9 +13,8 @@
  * under the License.
  */
 
-import NormalisedURLPath from "../../normalisedURLPath";
-import { FormField, FormFieldBaseConfig, NormalisedAppInfo, NormalisedFormField } from "../../types";
-import { DEFAULT_RESET_PASSWORD_PATH, MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
+import { FormField, FormFieldBaseConfig, NormalisedFormField } from "../../types";
+import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
 import {
     EmailPasswordConfig,
     NormalisedEmailPasswordConfig,
@@ -39,7 +38,6 @@ import {
 
 export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): NormalisedEmailPasswordConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
-        config.appInfo,
         config.signInAndUpFeature
     );
 
@@ -67,10 +65,7 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
     };
 }
 
-export function normaliseSignInAndUpFeature(
-    appInfo: NormalisedAppInfo,
-    config?: SignInAndUpFeatureUserInput
-): NormalisedSignInAndUpFeatureConfig {
+export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput): NormalisedSignInAndUpFeatureConfig {
     if (config === undefined) {
         config = {};
     }
@@ -107,7 +102,6 @@ export function normaliseSignInAndUpFeature(
     );
 
     const signInForm: NormalisedSignInFormFeatureConfig = normaliseSignInFormFeatureConfig(
-        appInfo,
         defaultSignInFields,
         config.signInForm
     );
@@ -146,7 +140,6 @@ export function normaliseSignUpFormFeatureConfig(
 }
 
 export function normaliseSignInFormFeatureConfig(
-    appInfo: NormalisedAppInfo,
     defaultFormFields: NormalisedFormField[],
     config?: SignInFormFeatureUserInput
 ): NormalisedSignInFormFeatureConfig {
@@ -167,21 +160,11 @@ export function normaliseSignInFormFeatureConfig(
     }
     const formFields = mergeFormFields(defaultFormFields, userFormFields);
 
-    let resetPasswordURL: NormalisedURLPath;
-    if (config.resetPasswordURL !== undefined) {
-        resetPasswordURL = new NormalisedURLPath(config.resetPasswordURL);
-    } else {
-        resetPasswordURL = new NormalisedURLPath(
-            `${appInfo.websiteBasePath.getAsStringDangerous()}${DEFAULT_RESET_PASSWORD_PATH}`
-        );
-    }
-
     const style = config.style !== undefined ? config.style : {};
 
     return {
         style,
-        formFields,
-        resetPasswordURL
+        formFields
     };
 }
 
