@@ -21,7 +21,7 @@ import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import StyleContext from "../../../../../styles/styleContext";
-import SignUpFooter from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
+import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";
 import { SignInAndUpThemeProps, ThirdPartySignInAndUpThemeState } from "../../../types";
 import { ThemeBase } from "../themeBase";
 /*
