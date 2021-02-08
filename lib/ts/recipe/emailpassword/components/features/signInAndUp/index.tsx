@@ -23,16 +23,12 @@ import { PureComponent, Fragment } from "react";
 
 import { signInAPI, signUpAPI, emailExistsAPI } from "./api";
 import EmailPassword from "../../../emailPassword";
-import {
-    SignInAndUpState,
-    FormFieldThemeProps,
-    FormBaseAPIResponse,
-    EmailPasswordGetRedirectionURLContext
-} from "../../../types";
+import { FormFieldThemeProps, FormBaseAPIResponse, EmailPasswordGetRedirectionURLContext } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { APIFormField, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import { getRedirectToPathFromURL, validateForm } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import { SignInAndUpState } from "../../../../authRecipeModule/types";
 /*
  * Component.
  */
