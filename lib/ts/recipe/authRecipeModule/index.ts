@@ -20,7 +20,7 @@
 import Session from "../session/session";
 import RecipeModule from "../recipeModule";
 import { NormalisedAuthRecipeConfig, AuthRecipeModuleConfig, AuthRecipeModuleGetRedirectionURLContext } from "./types";
-import { SuccessAPIResponse } from "../../types";
+import { RecipeFeatureComponentMap, SuccessAPIResponse } from "../../types";
 import { signOut } from "./api";
 import { normaliseAuthRecipeModuleConfig } from "./utils";
 import EmailVerification from "../emailverification";
@@ -76,6 +76,15 @@ export default abstract class AuthRecipeModule extends RecipeModule {
                 return this.emailVerification.getEmailVerificationDefaultURL(context);
             }
         }
+    };
+
+    getAuthRecipeModuleFeatures = (): RecipeFeatureComponentMap => {
+        let features: RecipeFeatureComponentMap = {};
+        if (this.emailVerification !== undefined) {
+            features = this.emailVerification.getFeatures();
+        }
+
+        return features;
     };
 
     /*

@@ -103,9 +103,7 @@ export type NormalisedAppInfo = {
 /*
  * Routing manipulation types.
  */
-export type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
-
-export type ComponentWithRecipeId = {
+export type ComponentWithRecipeAndMatchingMethod = {
     /*
      * recipeId of the component.
      */
@@ -115,9 +113,16 @@ export type ComponentWithRecipeId = {
      * Component.
      */
     component: ReactComponentClass;
+
+    /*
+     * Matching method.
+     */
+    matches: () => boolean;
 };
 
-export type PathToComponentWithRecipeIdMap = Record<string, ComponentWithRecipeId[]>;
+export type RecipeFeatureComponentMap = Record<string, ComponentWithRecipeAndMatchingMethod>;
+
+export type BaseFeatureComponentMap = Record<string, ComponentWithRecipeAndMatchingMethod[]>;
 
 export type FormFieldBaseConfig = {
     /*

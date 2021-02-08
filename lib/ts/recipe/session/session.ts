@@ -17,7 +17,7 @@
  * Imports.
  */
 import RecipeModule from "../recipeModule";
-import { CreateRecipeFunction, NormalisedAppInfo, RouteToFeatureComponentMap } from "../../types";
+import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { SessionUserInput, SessionConfig } from "./types";
 import { isTest } from "../../utils";
 import sessionSdk from "supertokens-website";
@@ -58,7 +58,7 @@ export default class Session extends RecipeModule {
      * Instance methods.
      */
 
-    getFeatures = (): RouteToFeatureComponentMap => {
+    getFeatures = (): RecipeFeatureComponentMap => {
         return {};
     };
 

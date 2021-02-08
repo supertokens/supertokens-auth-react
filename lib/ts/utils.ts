@@ -219,3 +219,13 @@ export function getShouldUseShadowDom(useShadowDom?: boolean): boolean {
     // Otherwise, use provided config or default to true.
     return useShadowDom !== undefined ? useShadowDom : true;
 }
+
+/*
+ * Default method for matching recipe route based on query params.
+ */
+export function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean {
+    return () => {
+        const recipeIdFromSearch = getRecipeIdFromSearch(getWindowOrThrow().location.search);
+        return recipeIdFromSearch === recipeId;
+    };
+}

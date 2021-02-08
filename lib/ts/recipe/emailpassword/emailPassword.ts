@@ -18,14 +18,14 @@
  */
 
 import AuthRecipeModule from "../authRecipeModule";
-import { CreateRecipeFunction, RouteToFeatureComponentMap, NormalisedAppInfo, SuccessAPIResponse } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, SuccessAPIResponse } from "../../types";
 import {
     EmailPasswordConfig,
     EmailPasswordGetRedirectionURLContext,
     EmailPasswordUserInput,
     NormalisedEmailPasswordConfig
 } from "./types";
-import { isTest } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
 import { ResetPasswordUsingToken, SignInAndUp } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
@@ -64,28 +64,32 @@ export default class EmailPassword extends AuthRecipeModule {
      * Instance methods.
      */
 
-    getFeatures = (): RouteToFeatureComponentMap => {
-        let features: RouteToFeatureComponentMap = {};
+    getFeatures = (): RecipeFeatureComponentMap => {
+        const features: RecipeFeatureComponentMap = {};
         if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
             const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
-            features[normalisedFullPath.getAsStringDangerous()] = SignInAndUp;
+            features[normalisedFullPath.getAsStringDangerous()] = {
+                matches: matchRecipeIdUsingQueryParams(this.recipeId),
+                rid: this.recipeId,
+                component: SignInAndUp
+            };
         }
 
         if (this.config.resetPasswordUsingTokenFeature.disableDefaultImplementation !== true) {
             const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH)
             );
-            features[normalisedFullPath.getAsStringDangerous()] = ResetPasswordUsingToken;
-        }
-
-        if (this.emailVerification !== undefined) {
-            features = {
-                ...features,
-                ...this.emailVerification.getFeatures()
+            features[normalisedFullPath.getAsStringDangerous()] = {
+                matches: matchRecipeIdUsingQueryParams(this.recipeId),
+                rid: this.recipeId,
+                component: ResetPasswordUsingToken
             };
         }
 
-        return features;
+        return {
+            ...features,
+            ...this.getAuthRecipeModuleFeatures()
+        };
     };
 
     getDefaultRedirectionURL = async (context: EmailPasswordGetRedirectionURLContext): Promise<string> => {
