@@ -34,8 +34,8 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
 
     const Route = reactRouterDom.Route;
     const withRouter: WithRouterType = reactRouterDom.withRouter;
-    const pathsToComponentWithRecipeIdMap = SuperTokens.getInstanceOrThrow().getPathsToFeatureComponentWithRecipeIdMap();
-    return Object.keys(pathsToComponentWithRecipeIdMap).map(path => {
+    const pathsToFeatureComponentWithRecipeIdMap = SuperTokens.getInstanceOrThrow().getPathsToFeatureComponentWithRecipeIdMap();
+    return Object.keys(pathsToFeatureComponentWithRecipeIdMap).map(path => {
         return (
             <Route exact key={`st-${path}`} path={path}>
                 <SuperTokensRouteWithRecipeId withRouter={withRouter} path={path} />
@@ -52,14 +52,14 @@ function SuperTokensRouteWithRecipeId({
     withRouter: WithRouterType;
 }): JSX.Element | null {
     const normalisedPath = new NormalisedURLPath(path);
-    const componentWithRecipeId = SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(
+    const featureComponentWithRecipeId = SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(
         normalisedPath
     );
 
-    if (componentWithRecipeId === undefined) {
+    if (featureComponentWithRecipeId === undefined) {
         return null;
     }
 
-    const WithRouterComponent = withRouter(componentWithRecipeId.component);
-    return <WithRouterComponent recipeId={componentWithRecipeId.rid} />;
+    const WithRouterComponent = withRouter(featureComponentWithRecipeId.component);
+    return <WithRouterComponent recipeId={featureComponentWithRecipeId.rid} />;
 }
