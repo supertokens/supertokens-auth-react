@@ -18,7 +18,8 @@
  */
 import * as React from "react";
 import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette, getDefaultStyles } from "../../../../emailpassword/components/themes/styles/styles";
+import { defaultPalette } from "../../../../../styles/styles";
+import { getStyles } from "../../../../emailpassword/components/themes/styles/styles";
 import { ThemeBase } from "../../../../emailpassword/components/themes/themeBase";
 import { EmailVerificationThemeProps } from "../../../types";
 import SendVerifyEmail from "./sendVerifyEmail";
@@ -40,7 +41,7 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
                 rawPalette={props.rawPalette}
                 defaultPalette={defaultPalette}
                 styleFromInit={props.sendVerifyEmailScreen.styleFromInit}
-                getDefaultStyles={getDefaultStyles}>
+                getDefaultStyles={getStyles}>
                 <SendVerifyEmail {...props.sendVerifyEmailScreen} />
             </StyleProvider>
         );
@@ -52,7 +53,7 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
             rawPalette={props.rawPalette}
             defaultPalette={defaultPalette}
             styleFromInit={props.verifyEmailLinkClickedScreen.styleFromInit}
-            getDefaultStyles={getDefaultStyles}>
+            getDefaultStyles={getStyles}>
             <VerifyEmailLinkClicked {...props.verifyEmailLinkClickedScreen} />
         </StyleProvider>
     );

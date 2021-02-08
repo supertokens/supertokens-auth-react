@@ -14,117 +14,14 @@
  */
 
 /** @jsx jsx */
-import { jsx, keyframes } from "@emotion/react";
+import { jsx } from "@emotion/react";
 import chroma from "chroma-js";
-import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../../types";
+import { getDefaultStyles, getMergedStyles, slideTop } from "../../../../../styles/styles";
+import { NormalisedDefaultStyles, NormalisedPalette } from "../../../../../types";
 
-/*
- * Palette
- */
-export const defaultPalette: NormalisedPalette = {
-    colors: {
-        background: "white",
-        inputBackground: "#fafafa",
-        primary: "#ff9b33",
-        success: "#41a700",
-        error: "#ff1717",
-        textTitle: "#222222",
-        textLabel: "#222222",
-        textInput: "#222222",
-        textPrimary: "#656565",
-        textLink: "#0076ff"
-    },
-    fonts: {
-        size: ["14px", "16px", "19px", "24px"]
-    }
-};
-
-/*
- * Default styles.
- */
-const slideTop = keyframes`
-    0% {
-        transform: translateY(-5px);
-    }
-    100% {
-        transform: translateY(0px);
-    }
-`;
-
-const swingIn = keyframes`
-0% {
-    -webkit-transform: rotateX(-100deg);
-            transform: rotateX(-100deg);
-    -webkit-transform-origin: top;
-            transform-origin: top;
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: rotateX(0deg);
-            transform: rotateX(0deg);
-    -webkit-transform-origin: top;
-            transform-origin: top;
-    opacity: 1;
-  }
-}
-@keyframes swing-in-top-fwd {
-  0% {
-    -webkit-transform: rotateX(-100deg);
-            transform: rotateX(-100deg);
-    -webkit-transform-origin: top;
-            transform-origin: top;
-    opacity: 0;
-  }
-  100% {
-    -webkit-transform: rotateX(0deg);
-            transform: rotateX(0deg);
-    -webkit-transform-origin: top;
-            transform-origin: top;
-    opacity: 1;
-  }
-`;
-
-export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
-    return {
-        container: {
-            fontFamily: "'Rubik', sans-serif",
-            margin: "12px auto",
-            marginTop: "26px",
-            marginBottom: "26px",
-            width: "420px",
-            textAlign: "center",
-            borderRadius: "8px",
-            boxShadow: "1px 1px 10px rgba(0,0,0,0.16)",
-            backgroundColor: palette.colors.background,
-            "@media (max-width: 440px)": {
-                width: "95vw"
-            }
-        },
-
-        row: {
-            margin: "0 auto",
-            width: "76%",
-            paddingTop: "30px",
-            paddingBottom: "10px"
-        },
-
-        generalError: {
-            backgroundColor: chroma(palette.colors.error)
-                .brighten(2)
-                .luminance(0.9)
-                .hex(),
-            paddingTop: "10px",
-            paddingBottom: "10px",
-            marginBottom: "15px",
-            paddingLeft: "18px",
-            paddingRight: "18px",
-            letterSpacing: "0.2px",
-            fontSize: palette.fonts.size[0],
-            borderRadius: "8px",
-            color: palette.colors.error,
-            animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`
-        },
-
+export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
+    const baseStyles = getDefaultStyles(palette);
+    const recipeStyles = {
         inputContainer: {
             marginTop: "6px"
         },
@@ -187,19 +84,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             cursor: "pointer"
         },
 
-        headerTitle: {
-            fontSize: palette.fonts.size[3],
-            lineHeight: "40px",
-            letterSpacing: "0.58px",
-            fontWeight: 800,
-            marginBottom: "2px",
-            color: palette.colors.textTitle
-        },
-
-        headerSubtitle: {
-            marginBottom: "21px"
-        },
-
         forgotPasswordLink: {
             marginTop: "10px"
         },
@@ -212,11 +96,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         submitNewPasswordSuccessMessage: {
             marginTop: "15px",
             marginBottom: "15px"
-        },
-
-        privacyPolicyAndTermsAndConditions: {
-            maxWidth: "300px",
-            marginTop: "10px"
         },
 
         inputErrorMessage: {
@@ -241,45 +120,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             left: "2px"
         },
 
-        button: {
-            width: "100%",
-            height: "34px",
-            backgroundColor: palette.colors.primary,
-            color: "white",
-            fontWeight: 700,
-            border: `1px solid ${chroma(palette.colors.primary)
-                .darken(0.3)
-                .hex()}`,
-            borderRadius: "8px",
-            backgroundPosition: "center",
-            backgroundImage: `radial-gradient(circle, transparent 1%, ${palette.colors.primary} 1%)`,
-            transition: "background 0.4s",
-            backgroundSize: "12000%",
-            "&:disabled": {
-                border: "none",
-                cursor: "no-drop"
-            },
-            "&:active": {
-                outline: "none",
-                border: "none",
-                backgroundColor: chroma(palette.colors.primary)
-                    .darken(0.1)
-                    .hex(),
-                transition: "background 0s",
-                backgroundSize: "100%"
-            },
-            "&:hover": {
-                backgroundColor: chroma(palette.colors.primary)
-                    .darken(0.1)
-                    .hex()
-            },
-            "&:focus": {
-                outline: "none",
-                border: "none"
-            },
-            cursor: "pointer"
-        },
-
         label: {
             textAlign: "left",
             fontWeight: 600,
@@ -293,40 +133,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             flexDirection: "column",
             paddingTop: "0px",
             paddingBottom: "34px"
-        },
-
-        primaryText: {
-            fontSize: palette.fonts.size[0],
-            fontWeight: 500,
-            letterSpacing: "0.4px",
-            lineHeight: "21px",
-            color: palette.colors.textLabel
-        },
-
-        secondaryText: {
-            fontSize: palette.fonts.size[0],
-            fontWeight: 300,
-            letterSpacing: "0.4px",
-            color: palette.colors.textPrimary
-        },
-
-        link: {
-            paddingLeft: "3px",
-            paddingRight: "3px",
-            color: palette.colors.textLink,
-            fontSize: palette.fonts.size[0],
-            cursor: "pointer",
-            letterSpacing: "0.16px",
-            lineHeight: "26px"
-        },
-
-        divider: {
-            marginTop: "1em",
-            marginBottom: "1em",
-            borderBottom: "0.3px solid #dddddd",
-            display: "flex",
-            alignItems: "center",
-            paddingBottom: "5px"
         },
 
         sendVerifyEmailIcon: {
@@ -368,31 +174,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             }
         },
 
-        generalSuccess: {
-            color: palette.colors.success,
-            fontSize: palette.fonts.size[0],
-            backgroundColor: chroma(palette.colors.success)
-                .brighten(2)
-                .luminance(0.9)
-                .hex(),
-            animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`,
-            padding: "9px 15px 9px 15px",
-            borderRadius: "6px",
-            display: "inline-block"
-        },
-
-        spinner: {
-            width: "80px",
-            height: "auto",
-            paddingTop: "20px",
-            paddingBottom: "40px",
-            margin: "0 auto"
-        },
-
-        error: {
-            color: palette.colors.error
-        },
-
         noFormRow: {
             paddingBottom: "25px"
         },
@@ -402,5 +183,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             maxWidth: "96px",
             margin: "0 auto"
         }
-    };
+    } as NormalisedDefaultStyles;
+    return getMergedStyles(baseStyles, recipeStyles);
 }

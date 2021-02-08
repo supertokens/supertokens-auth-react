@@ -23,16 +23,12 @@ import { PureComponent, Fragment } from "react";
 
 import { signInAPI, signUpAPI, emailExistsAPI } from "./api";
 import EmailPassword from "../../../emailPassword";
-import {
-    SignInAndUpState,
-    FormFieldThemeProps,
-    FormBaseAPIResponse,
-    EmailPasswordGetRedirectionURLContext
-} from "../../../types";
+import { FormFieldThemeProps, FormBaseAPIResponse, EmailPasswordGetRedirectionURLContext } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { APIFormField, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import { getRedirectToPathFromURL, validateForm } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import { SignInAndUpState } from "../../../../authRecipeModule/types";
 /*
  * Component.
  */
@@ -233,7 +229,6 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         const signInForm = {
             styleFromInit: signInFeature.style,
             formFields: signInFeature.formFields,
-            resetPasswordURL: signInFeature.resetPasswordURL,
             signInAPI: this.signIn,
             onSuccess: this.onSignInSuccess,
             forgotPasswordClick: () =>
