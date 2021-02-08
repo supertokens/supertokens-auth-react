@@ -46,12 +46,16 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps> {
     };
 }
 
-export default function EmailPasswordAuthWrapper(props: FeatureBaseProps): JSX.Element {
+export default function EmailPasswordAuthWrapper({children}: {children: JSX.Element}): JSX.Element {
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
     if (reactRouterDom === undefined) {
-        return <EmailPasswordAuth {...props} />;
+        return <EmailPasswordAuth recipeId={EmailPassword.getInstanceOrThrow().recipeId}>
+            {children}
+        </EmailPasswordAuth>;
     }
 
     const Component = reactRouterDom.withRouter(EmailPasswordAuth);
-    return <Component {...props} />;
+    return <Component recipeId={EmailPassword.getInstanceOrThrow().recipeId}>
+        {children}
+    </Component>;
 }
