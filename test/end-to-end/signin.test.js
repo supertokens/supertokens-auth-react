@@ -327,6 +327,15 @@ describe("SuperTokens SignIn feature/theme", function() {
             );
         });
 
+        it("Successful Sign In with redirect to, no reflected XSS with redirectToPath params", async function() {
+            // Use only path, no open redirect.
+            await assertSignInRedirectTo(
+                page,
+                `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=javascript:alert(1)`,
+                `${TEST_CLIENT_BASE_URL}/javascript:alert(1)`
+            );
+        });
+
         it("Successful Sign In with redirect to, with EmailPasswordAuth", async function() {
             await clearBrowserCookies(page);
 

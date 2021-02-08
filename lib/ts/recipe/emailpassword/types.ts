@@ -23,7 +23,6 @@ import {
     ThemeBaseProps
 } from "../../types";
 import { RefObject } from "react";
-import NormalisedURLPath from "../../normalisedURLPath";
 import { RecipeModuleConfig } from "../recipeModule/types";
 import { AuthRecipeModuleGetRedirectionURLContext, AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 
@@ -157,11 +156,6 @@ export type SignInFormFeatureUserInput = FeatureBaseConfig & {
      * Form fields for SignIn.
      */
     formFields?: FormFieldSignInConfig[];
-
-    /*
-     * Link to the reset password URL in case disableDefaultImplemention is true.
-     */
-    resetPasswordURL?: string;
 };
 
 export type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
@@ -169,11 +163,6 @@ export type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
      * Normalised form fields for SignIn.
      */
     formFields: NormalisedFormField[];
-
-    /*
-     * Link to the reset password URL in case disableDefaultImplemention is true.
-     */
-    resetPasswordURL: NormalisedURLPath;
 };
 
 export type FormFieldSignInConfig = FormFieldBaseConfig;

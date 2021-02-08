@@ -36,7 +36,6 @@ require("jsdom-global")();
 describe("EmailPassword", function() {
     const privacyPolicyLink = "https://example.com/privacy";
     const termsOfServiceLink = "https://example.com/terms";
-    const resetPasswordURL = "https://example.com/reset";
 
     before(async function() {
         SuperTokens.init({
@@ -97,7 +96,6 @@ describe("EmailPassword", function() {
                     termsOfServiceLink
                 },
                 signInForm: {
-                    resetPasswordURL
                 }
             },
             resetPasswordUsingTokenFeature: {

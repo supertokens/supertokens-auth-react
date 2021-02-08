@@ -1,6 +1,5 @@
 import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, ThemeBaseProps } from "../../types";
 import { RefObject } from "react";
-import NormalisedURLPath from "../../normalisedURLPath";
 import { RecipeModuleConfig } from "../recipeModule/types";
 import { AuthRecipeModuleGetRedirectionURLContext, AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 export declare type EmailPasswordUserInput = AuthRecipeModuleUserInput<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext> & {
@@ -38,11 +37,9 @@ export declare type NormalisedSignUpFormFeatureConfig = NormalisedBaseConfig & {
 };
 export declare type SignInFormFeatureUserInput = FeatureBaseConfig & {
     formFields?: FormFieldSignInConfig[];
-    resetPasswordURL?: string;
 };
 export declare type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
     formFields: NormalisedFormField[];
-    resetPasswordURL: NormalisedURLPath;
 };
 export declare type FormFieldSignInConfig = FormFieldBaseConfig;
 export declare type FormFieldSignUpConfig = FormField;
