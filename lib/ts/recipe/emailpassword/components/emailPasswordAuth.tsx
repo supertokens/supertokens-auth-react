@@ -20,9 +20,10 @@ import * as React from "react";
 import { PureComponent } from "react";
 
 import EmailPassword from "../emailPassword";
-import { FeatureBaseProps, ReactComponentClass, WithRouterType } from "../../../types";
+import { FeatureBaseProps } from "../../../types";
 import SessionAuth from "../../session/sessionAuth";
 import EmailVerificationAuth from "../../emailverification/emailVerificationAuth";
+import SuperTokens from "../../../superTokens";
 
 /*
  * Component.
@@ -45,12 +46,12 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps> {
     };
 }
 
-export default (function(): ReactComponentClass {
-    try {
-        // eslint-disable-next-line
-        const withRouter: WithRouterType = require("react-router-dom").withRouter;
-        return withRouter(EmailPasswordAuth);
-    } catch (e) {
-        return EmailPasswordAuth;
+export default function EmailPasswordAuthWrapper(props: FeatureBaseProps): JSX.Element {
+    const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
+    if (reactRouterDom === undefined) {
+        return <EmailPasswordAuth {...props} />;
     }
-})();
+
+    const Component = reactRouterDom.withRouter(EmailPasswordAuth);
+    return <Component {...props} />;
+}

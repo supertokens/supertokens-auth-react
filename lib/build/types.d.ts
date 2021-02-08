@@ -7,6 +7,7 @@ import { History, LocationState } from "history";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction[];
+    useReactRouterDom?: boolean;
 };
 export declare type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule;
 export declare type AppInfoUserInput = {

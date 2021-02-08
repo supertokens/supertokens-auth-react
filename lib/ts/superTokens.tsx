@@ -48,6 +48,8 @@ export default class SuperTokens {
     appInfo: NormalisedAppInfo;
     recipeList: RecipeModule[] = [];
     private pathsToComponentWithRecipeIdMap?: PathToComponentWithRecipeIdMap;
+    private useReactRouterDom: boolean;
+    private reactRouterDom?: any;
 
     /*
      * Constructor.
@@ -64,6 +66,16 @@ export default class SuperTokens {
         this.recipeList = config.recipeList.map(recipe => {
             return recipe(this.appInfo);
         });
+
+        // Get react router dom if present and not disabled by user.
+        this.useReactRouterDom = config.useReactRouterDom === false ? false : true;
+        if (this.useReactRouterDom) {
+            try {
+                this.reactRouterDom = require("react-router-dom");
+            } catch (e) {
+                this.useReactRouterDom = false;
+            }
+        }
     }
 
     /*
@@ -183,6 +195,14 @@ export default class SuperTokens {
 
         return recipe;
     }
+
+    getReactRouterDom = (): { Route: any; withRouter: any } | undefined => {
+        if (!this.useReactRouterDom) {
+            return undefined;
+        }
+
+        return this.reactRouterDom;
+    };
 
     getDefaultSessionRecipe = (): Session | undefined => {
         return this.recipeList.find(recipe => {
