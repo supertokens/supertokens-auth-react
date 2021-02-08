@@ -119,7 +119,6 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
             return "provider_unknown";
         }
 
-        // http://localhost:3031/auth/callback/google?rid=thirdparty&code=test&state=
         return undefined;
     };
 

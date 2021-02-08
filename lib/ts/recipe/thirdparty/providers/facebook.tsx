@@ -22,11 +22,11 @@ import { BuiltInProviderConfig } from "./types";
 /*
  * Class.
  */
-export default class Google extends Provider {
+export default class Facebook extends Provider {
     /*
      * Static Attributes.
      */
-    private static instance?: Google;
+    private static instance?: Facebook;
 
     buttonComponent?: JSX.Element;
 
@@ -74,11 +74,11 @@ export default class Google extends Provider {
      * Static Methods
      */
     static init(config?: BuiltInProviderConfig): Provider {
-        if (Google.instance !== undefined) {
-            console.warn("Google Provider was already initialized");
-            return Google.instance;
+        if (Facebook.instance !== undefined) {
+            console.warn("Facebook Provider was already initialized");
+            return Facebook.instance;
         }
-        Google.instance = new Google(config);
-        return Google.instance;
+        Facebook.instance = new Facebook(config);
+        return Facebook.instance;
     }
 }

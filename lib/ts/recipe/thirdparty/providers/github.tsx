@@ -22,11 +22,11 @@ import { BuiltInProviderConfig } from "./types";
 /*
  * Class.
  */
-export default class Google extends Provider {
+export default class Github extends Provider {
     /*
      * Static Attributes.
      */
-    private static instance?: Google;
+    private static instance?: Github;
 
     buttonComponent?: JSX.Element;
 
@@ -71,11 +71,11 @@ export default class Google extends Provider {
      * Static Methods
      */
     static init(config?: BuiltInProviderConfig): Provider {
-        if (Google.instance !== undefined) {
-            console.warn("Google Provider was already initialized");
-            return Google.instance;
+        if (Github.instance !== undefined) {
+            console.warn("Github Provider was already initialized");
+            return Github.instance;
         }
-        Google.instance = new Google(config);
-        return Google.instance;
+        Github.instance = new Github(config);
+        return Github.instance;
     }
 }
