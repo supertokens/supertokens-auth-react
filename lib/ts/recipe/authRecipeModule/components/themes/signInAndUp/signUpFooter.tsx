@@ -39,7 +39,7 @@ export default function SignUpFooter({
         <div
             data-supertokens="secondaryText privacyPolicyAndTermsAndConditions"
             css={[styles.secondaryText, styles.privacyPolicyAndTermsAndConditions]}>
-            By signing up, you agree to our
+            By continuing, you agree to our
             {termsOfServiceLink !== undefined && (
                 <a data-supertokens="link" css={styles.link} target="_blank" href={termsOfServiceLink}>
                     Terms of Service
