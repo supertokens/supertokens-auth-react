@@ -19,26 +19,24 @@
 import * as React from "react";
 import { PureComponent } from "react";
 
-import EmailPassword from "../emailPassword";
-import { FeatureBaseProps } from "../../../types";
-import SessionAuth from "../../session/sessionAuth";
-import EmailVerificationAuth from "../../emailverification/emailVerificationAuth";
-import SuperTokens from "../../../superTokens";
+import ThirdParty from "./thirdparty";
+import { FeatureBaseProps } from "../../types";
+import SessionAuth from "../session/sessionAuth";
+import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
+import SuperTokens from "../../superTokens";
 
 /*
  * Component.
  */
 
-class EmailPasswordAuth extends PureComponent<FeatureBaseProps> {
+class ThirdPartyAuth extends PureComponent<FeatureBaseProps> {
     /*
      * Render.
      */
     render = (): JSX.Element | null => {
         return (
-            <SessionAuth recipeId={EmailPassword.getInstanceOrThrow().recipeId} history={this.props.history}>
-                <EmailVerificationAuth
-                    recipeId={EmailPassword.getInstanceOrThrow().recipeId}
-                    history={this.props.history}>
+            <SessionAuth recipeId={ThirdParty.getInstanceOrThrow().recipeId} history={this.props.history}>
+                <EmailVerificationAuth recipeId={ThirdParty.getInstanceOrThrow().recipeId} history={this.props.history}>
                     {this.props.children}
                 </EmailVerificationAuth>
             </SessionAuth>
@@ -46,12 +44,12 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps> {
     };
 }
 
-export default function EmailPasswordAuthWrapper({ children }: { children: JSX.Element }): JSX.Element {
+export default function ThirdPartyAuthWrapper({ children }: { children: JSX.Element }): JSX.Element {
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
     if (reactRouterDom === undefined) {
-        return <EmailPasswordAuth recipeId={EmailPassword.getInstanceOrThrow().recipeId}>{children}</EmailPasswordAuth>;
+        return <ThirdPartyAuth recipeId={ThirdParty.getInstanceOrThrow().recipeId}>{children}</ThirdPartyAuth>;
     }
 
-    const Component = reactRouterDom.withRouter(EmailPasswordAuth);
-    return <Component recipeId={EmailPassword.getInstanceOrThrow().recipeId}>{children}</Component>;
+    const Component = reactRouterDom.withRouter(ThirdPartyAuth);
+    return <Component recipeId={ThirdParty.getInstanceOrThrow().recipeId}>{children}</Component>;
 }
