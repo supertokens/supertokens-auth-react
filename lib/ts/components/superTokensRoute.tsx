@@ -28,23 +28,21 @@ import { getRecipeIdFromSearch, getWindowOrThrow } from "../utils";
  */
 
 export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
-    try {
-        // eslint-disable-next-line
-        const ReactRouterDom = require("react-router-dom");
-        const Route = ReactRouterDom.Route;
-        const withRouter: WithRouterType = ReactRouterDom.withRouter;
-        const pathsToComponentWithRecipeIdMap = SuperTokens.getInstanceOrThrow().getPathsToComponentWithRecipeIdMap();
-        return Object.keys(pathsToComponentWithRecipeIdMap).map(path => {
-            return (
-                <Route exact key={`st-${path}`} path={path}>
-                    <SuperTokensRouteWithRecipeId withRouter={withRouter} path={path} />
-                </Route>
-            );
-        });
-    } catch (e) {
-        // If react-router-dom is absent from dependencies, return [];
+    const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
+    if (reactRouterDom === undefined) {
         return [];
     }
+
+    const Route = reactRouterDom.Route;
+    const withRouter: WithRouterType = reactRouterDom.withRouter;
+    const pathsToComponentWithRecipeIdMap = SuperTokens.getInstanceOrThrow().getPathsToComponentWithRecipeIdMap();
+    return Object.keys(pathsToComponentWithRecipeIdMap).map(path => {
+        return (
+            <Route exact key={`st-${path}`} path={path}>
+                <SuperTokensRouteWithRecipeId withRouter={withRouter} path={path} />
+            </Route>
+        );
+    });
 }
 
 function SuperTokensRouteWithRecipeId({
