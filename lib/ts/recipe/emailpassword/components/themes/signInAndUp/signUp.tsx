@@ -22,7 +22,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import { SignUpThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
-import SignUpFooter from "./signUpFooter";
+import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";
 
 /*
  * Component.
