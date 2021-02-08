@@ -22,8 +22,9 @@ import { ThemeBase } from "../themeBase";
 
 import EnterEmail from "./enterEmail";
 import SubmitNewPassword from "./submitNewPassword";
-import { defaultPalette, getDefaultStyles } from "../styles/styles";
+import { getStyles } from "../styles/styles";
 import { StyleProvider } from "../../../../../styles/styleContext";
+import { defaultPalette } from "../../../../../styles/styles";
 
 /*
  * Component.
@@ -41,7 +42,7 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
                 rawPalette={props.rawPalette}
                 defaultPalette={defaultPalette}
                 styleFromInit={props.submitNewPasswordForm.styleFromInit}
-                getDefaultStyles={getDefaultStyles}>
+                getDefaultStyles={getStyles}>
                 <SubmitNewPassword {...props.submitNewPasswordForm} />
             </StyleProvider>
         );
@@ -53,7 +54,7 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
             rawPalette={props.rawPalette}
             defaultPalette={defaultPalette}
             styleFromInit={props.enterEmailForm.styleFromInit}
-            getDefaultStyles={getDefaultStyles}>
+            getDefaultStyles={getStyles}>
             <EnterEmail {...props.enterEmailForm} />
         </StyleProvider>
     );
