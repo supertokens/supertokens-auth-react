@@ -22,6 +22,17 @@ import { RecipeModuleConfig, RecipeModuleHooks } from "../recipeModule/types";
 /*
  * Types.
  */
+export type User = {
+    /*
+     * User id.
+     */
+    id: string;
+
+    /*
+     * User email.
+     */
+    email: string;
+};
 
 export type AuthRecipeModuleConfig<T, S, R> = AuthRecipeModuleUserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
 
@@ -76,4 +87,43 @@ export type AuthRecipeModuleGetRedirectionURLContext =
            * Get Redirection URL Context
            */
           action: "SIGN_IN_AND_UP" | "VERIFY_EMAIL";
+      };
+
+export type AuthRecipeModulePreAPIHookContext = {
+    /*
+     * Pre API Hook action.
+     */
+    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_OUT";
+
+    /*
+     * Request object containing query params, body, headers.
+     */
+    requestInit: RequestInit;
+};
+
+export type AuthRecipeModuleOnHandleEventContext =
+    | {
+          /*
+           * On Handle Event actions
+           */
+          action: "SESSION_ALREADY_EXISTS" | "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
+      }
+    | {
+          /*
+           * Sign In success.
+           */
+          action: "SIGN_IN_COMPLETE";
+          /*
+           * User returned from API.
+           */
+          user: { id: string; email: string };
+      };
+
+export type SignInAndUpState =
+    | {
+          status: "LOADING" | "READY";
+      }
+    | {
+          status: "SUCCESSFUL";
+          user: User;
       };

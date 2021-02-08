@@ -24,7 +24,13 @@ import {
 } from "../../types";
 import { RefObject } from "react";
 import { RecipeModuleConfig } from "../recipeModule/types";
-import { AuthRecipeModuleGetRedirectionURLContext, AuthRecipeModuleUserInput } from "../authRecipeModule/types";
+import {
+    AuthRecipeModuleGetRedirectionURLContext,
+    AuthRecipeModuleOnHandleEventContext,
+    AuthRecipeModulePreAPIHookContext,
+    AuthRecipeModuleUserInput,
+    User
+} from "../authRecipeModule/types";
 
 export type EmailPasswordUserInput = AuthRecipeModuleUserInput<
     EmailPasswordGetRedirectionURLContext,
@@ -34,7 +40,7 @@ export type EmailPasswordUserInput = AuthRecipeModuleUserInput<
     /*
      * Styling palette.
      */
-    palette?: PaletteUserInput;
+    palette?: Record<string, string>;
 
     /*
      * Use shadow Dom root.
@@ -419,25 +425,19 @@ export type SubmitNewPasswordAPIResponse =
           status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
       };
 
-export type EmailPasswordPreAPIHookContext = {
-    /*
-     * Pre API Hook action.
-     */
-    action:
-        | "SEND_RESET_PASSWORD_EMAIL"
-        | "SUBMIT_NEW_PASSWORD"
-        | "VERIFY_EMAIL"
-        | "SEND_VERIFY_EMAIL"
-        | "IS_EMAIL_VERIFIED"
-        | "SIGN_IN"
-        | "SIGN_UP"
-        | "SIGN_OUT";
+export type EmailPasswordPreAPIHookContext =
+    | AuthRecipeModulePreAPIHookContext
+    | {
+          /*
+           * Pre API Hook action.
+           */
+          action: "SIGN_IN" | "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
 
-    /*
-     * Request object containing query params, body, headers.
-     */
-    requestInit: RequestInit;
-};
+          /*
+           * Request object containing query params, body, headers.
+           */
+          requestInit: RequestInit;
+      };
 
 export type EmailPasswordGetRedirectionURLContext =
     | AuthRecipeModuleGetRedirectionURLContext
@@ -449,39 +449,23 @@ export type EmailPasswordGetRedirectionURLContext =
       };
 
 export type EmailPasswordOnHandleEventContext =
+    | AuthRecipeModuleOnHandleEventContext
     | {
           /*
            * On Handle Event actions
            */
-          action:
-              | "SESSION_ALREADY_EXISTS"
-              | "RESET_PASSWORD_EMAIL_SENT"
-              | "PASSWORD_RESET_SUCCESSFUL"
-              | "VERIFY_EMAIL_SENT"
-              | "EMAIL_VERIFIED_SUCCESSFUL";
+          action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
       }
     | {
           /*
            * Sign In / Sign Up success.
            */
-          action: "SIGN_IN_COMPLETE" | "SIGN_UP_COMPLETE";
+          action: "SIGN_UP_COMPLETE";
           /*
            * User returned from API.
            */
-          user: { id: string; email: string };
+          user: User;
       };
-
-export type User = {
-    /*
-     * User id.
-     */
-    id: string;
-
-    /*
-     * User email.
-     */
-    email: string;
-};
 
 export type ResetPasswordUsingTokenThemeProps = {
     /*
@@ -524,15 +508,6 @@ export type SubmitNewPasswordThemeProps = FormThemeBaseProps & {
     onSignInClicked: () => void;
 };
 
-export type SignInAndUpState =
-    | {
-          status: "LOADING" | "READY";
-      }
-    | {
-          status: "SUCCESSFUL";
-          user: User;
-      };
-
 export type EnterEmailThemeState = {
     /*
      * Enter Email Status
@@ -553,8 +528,6 @@ export type SendVerifyEmailThemeState = {
      */
     status: "READY" | "SUCCESS" | "ERROR";
 };
-
-export type PaletteUserInput = Record<string, string>;
 
 export type FormBaseState =
     | {
