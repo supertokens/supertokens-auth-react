@@ -255,7 +255,7 @@ function getThirdPartyConfigs () {
         ThirdParty.Custom.init({
           id: "custom",
           name: "Custom"
-        }),
+        })
       ]
     }
   })

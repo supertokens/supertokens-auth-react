@@ -55,6 +55,11 @@ export default class ThirdPartyAPIWrapper {
     static Twitter = Twitter;
     static Facebook = Facebook;
     static Github = Github;
+    static ThirdPartyAuth = ThirdPartyAuth;
+    static SignInAndUp = SignInAndUp;
+    static SignInAndUpTheme = SignInAndUpTheme;
+    static EmailVerification = EmailVerification;
+    static EmailVerificationTheme = EmailVerificationTheme;
 }
 
 const init = ThirdPartyAPIWrapper.init;
