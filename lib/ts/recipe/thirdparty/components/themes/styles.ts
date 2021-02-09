@@ -67,10 +67,10 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
 
         providerGoogle: getButtonStyle(providerColors.google),
-        providerGithub: getButtonStyle(providerColors.github),
+        providerGithub: getButtonStyle(providerColors.github, true),
         providerTwitter: getButtonStyle(providerColors.twitter),
         providerFacebook: getButtonStyle(providerColors.facebook),
-        providerApple: getButtonStyle(providerColors.apple),
+        providerApple: getButtonStyle(providerColors.apple, true),
 
         providerCustom: {
             ...getButtonStyle(providerColors.custom),
