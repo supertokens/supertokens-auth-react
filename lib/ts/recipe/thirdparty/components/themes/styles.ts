@@ -24,6 +24,7 @@ const providerColors = {
     github: "#000",
     facebook: "#274483",
     twitter: "#008dd1",
+    apple: "#07093c",
     custom: "#FFF"
 };
 
@@ -69,6 +70,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         providerGithub: getButtonStyle(providerColors.github),
         providerTwitter: getButtonStyle(providerColors.twitter),
         providerFacebook: getButtonStyle(providerColors.facebook),
+        providerApple: getButtonStyle(providerColors.apple),
 
         providerCustom: {
             ...getButtonStyle(providerColors.custom),

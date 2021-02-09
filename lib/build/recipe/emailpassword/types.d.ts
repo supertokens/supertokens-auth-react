@@ -1,9 +1,9 @@
 import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, ThemeBaseProps } from "../../types";
 import { RefObject } from "react";
 import { RecipeModuleConfig } from "../recipeModule/types";
-import { AuthRecipeModuleGetRedirectionURLContext, AuthRecipeModuleUserInput } from "../authRecipeModule/types";
+import { AuthRecipeModuleGetRedirectionURLContext, AuthRecipeModuleOnHandleEventContext, AuthRecipeModulePreAPIHookContext, AuthRecipeModuleUserInput, User } from "../authRecipeModule/types";
 export declare type EmailPasswordUserInput = AuthRecipeModuleUserInput<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext> & {
-    palette?: PaletteUserInput;
+    palette?: Record<string, string>;
     useShadowDom?: boolean;
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
@@ -125,25 +125,18 @@ export declare type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
 export declare type SubmitNewPasswordAPIResponse = BaseResetPasswordAPIResponse | {
     status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
 };
-export declare type EmailPasswordPreAPIHookContext = {
-    action: "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD" | "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_IN" | "SIGN_UP" | "SIGN_OUT";
+export declare type EmailPasswordPreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
+    action: "SIGN_IN" | "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
     requestInit: RequestInit;
 };
 export declare type EmailPasswordGetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext | {
     action: "RESET_PASSWORD";
 };
-export declare type EmailPasswordOnHandleEventContext = {
-    action: "SESSION_ALREADY_EXISTS" | "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL" | "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
+export declare type EmailPasswordOnHandleEventContext = AuthRecipeModuleOnHandleEventContext | {
+    action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
 } | {
-    action: "SIGN_IN_COMPLETE" | "SIGN_UP_COMPLETE";
-    user: {
-        id: string;
-        email: string;
-    };
-};
-export declare type User = {
-    id: string;
-    email: string;
+    action: "SIGN_UP_COMPLETE";
+    user: User;
 };
 export declare type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailThemeProps;
@@ -158,12 +151,6 @@ export declare type SubmitNewPasswordThemeProps = FormThemeBaseProps & {
     submitNewPasswordAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
     onSignInClicked: () => void;
 };
-export declare type SignInAndUpState = {
-    status: "LOADING" | "READY";
-} | {
-    status: "SUCCESSFUL";
-    user: User;
-};
 export declare type EnterEmailThemeState = {
     status: "READY" | "SENT";
 };
@@ -173,7 +160,6 @@ export declare type SubmitNewPasswordThemeState = {
 export declare type SendVerifyEmailThemeState = {
     status: "READY" | "SUCCESS" | "ERROR";
 };
-export declare type PaletteUserInput = Record<string, string>;
 export declare type FormBaseState = {
     formFields: FormFieldState[];
     status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";

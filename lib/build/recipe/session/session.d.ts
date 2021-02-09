@@ -5,7 +5,7 @@ export default class Session extends RecipeModule {
     static instance?: Session;
     static RECIPE_ID: string;
     constructor(config: SessionConfig);
-    getFeatures: () => Record<string, import("../../types").ReactComponentClass>;
+    getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getRefreshURLDomain: () => string | undefined;
     getUserId: () => string;
     getJWTPayloadSecurely: () => Promise<any>;

@@ -24,12 +24,13 @@ export declare type NormalisedAppInfo = {
     apiBasePath: NormalisedURLPath;
     websiteBasePath: NormalisedURLPath;
 };
-export declare type RouteToFeatureComponentMap = Record<string, ReactComponentClass>;
-export declare type ComponentWithRecipeId = {
+export declare type ComponentWithRecipeAndMatchingMethod = {
     rid: string;
     component: ReactComponentClass;
+    matches: () => boolean;
 };
-export declare type PathToComponentWithRecipeIdMap = Record<string, ComponentWithRecipeId[]>;
+export declare type RecipeFeatureComponentMap = Record<string, ComponentWithRecipeAndMatchingMethod>;
+export declare type BaseFeatureComponentMap = Record<string, ComponentWithRecipeAndMatchingMethod[]>;
 export declare type FormFieldBaseConfig = {
     id: string;
     label: string;
