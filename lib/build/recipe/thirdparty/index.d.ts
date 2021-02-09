@@ -21,6 +21,11 @@ export default class ThirdPartyAPIWrapper {
     static Twitter: typeof Twitter;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
+    static ThirdPartyAuth: typeof ThirdPartyAuth;
+    static SignInAndUp: typeof SignInAndUp;
+    static SignInAndUpTheme: typeof SignInAndUpTheme;
+    static EmailVerification: typeof EmailVerification;
+    static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
 declare const init: typeof ThirdPartyAPIWrapper.init;
 declare const signOut: typeof ThirdPartyAPIWrapper.signOut;

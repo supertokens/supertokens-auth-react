@@ -12,6 +12,11 @@ import HydrogenTheme from "./Themes/Hydrogen";
 import DarkTheme from "./Themes/Dark";
 import { CSSObject } from '@emotion/react';
 
+/*
+ * This application is used with the purpose of illustrating Supertokens with typescript.
+ * It is also used internally for deploy previews, hence a lot of code you will see
+ * in this file is not directly linked to initialising SuperTokens in a typescript environement.
+ */
 
 export function getApiDomain() {
   const apiPort = process.env.REACT_APP_API_PORT || 8082;
@@ -25,6 +30,12 @@ export function getWebsiteDomain() {
   return websiteUrl;
 }
 
+
+const authRecipeParams = getQueryParams("authRecipe");
+if (authRecipeParams !== null) {
+  window.localStorage.setItem("authRecipe", authRecipeParams);
+}
+
 const mode = getQueryParams('mode');
 
 if (mode !== null) {
@@ -32,6 +43,9 @@ if (mode !== null) {
 }
 
 const theme = getTheme();
+
+const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+
 
 const recipeList = getRecipeList();
 
@@ -53,14 +67,14 @@ function App() {
           <Switch>
             {getSuperTokensRoutesForReactRouterDom()}
             <Route path="/">
-              <EmailPassword.EmailPasswordAuth>
+              <Auth>
                 <Home />
-              </EmailPassword.EmailPasswordAuth>
+              </Auth>
             </Route>
             <Route path="/redirect-to-this-custom-path">
-              <EmailPassword.EmailPasswordAuth>
+              <Auth>
                 <Home />
-              </EmailPassword.EmailPasswordAuth>
+              </Auth>
             </Route>
           </Switch>
         </div>
@@ -113,13 +127,6 @@ function getTheme(): {
 }
 
 function getRecipeList () {
-  const authRecipeParams = getQueryParams("authRecipe");
-  if (authRecipeParams !== null) {
-    window.localStorage.setItem("authRecipe", authRecipeParams);
-  }
-  
-  const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
-
   if (authRecipe === "thirdparty") {
     return[
       getThirdPartyConfigs(),
@@ -204,7 +211,9 @@ function getEmailPasswordConfigs () {
 }
 function getThirdPartyConfigs () {
   return ThirdParty.init({
+    palette: theme.colors,
     signInAndUpFeature: {
+      style: theme.style,
       privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
       termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
       providers: [
@@ -220,4 +229,17 @@ function getThirdPartyConfigs () {
       ]
     }
   })
+}
+
+function Auth (props: any) {
+  if (authRecipe === "thirdparty") {
+    return <ThirdParty.ThirdPartyAuth>
+        {props.children}
+    </ThirdParty.ThirdPartyAuth>;
+  }
+
+  return <EmailPassword.EmailPasswordAuth>
+    {props.children}
+  </EmailPassword.EmailPasswordAuth>;
+
 }

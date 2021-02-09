@@ -69,7 +69,7 @@ const HeliumTheme = {
           margin: "0 auto",
           border: "none",
           boxShadow: "none",
-          width: "420px",
+          width: "380px",
           textAlign: "center",
           "@media (max-width: 440px)": {
             margin: "0px auto",

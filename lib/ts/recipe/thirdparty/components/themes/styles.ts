@@ -31,6 +31,10 @@ const providerColors = {
 export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     const baseStyles = getDefaultStyles(palette);
     const recipeStyles = {
+        row: {
+            paddingBottom: "30px"
+        },
+
         providerContainer: {
             paddingTop: "9px",
             paddingBottom: "9px"

@@ -139,6 +139,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
                 <StyleProvider
                     rawPalette={ThirdParty.getInstanceOrThrow().config.palette}
                     defaultPalette={defaultPalette}
+                    styleFromInit={signInAndUpFeature.style}
                     getDefaultStyles={getStyles}>
                     <Fragment>
                         {/* No custom theme, use default. */}
