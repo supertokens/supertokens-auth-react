@@ -253,25 +253,25 @@ describe("SuperTokens SignIn feature/theme", function() {
             // Test that sessionInfo was fetched successfully using axios and fetch (i.e. Interceptors work)
             const axiosUserId = await page.evaluate(
                 () =>
-                    document.querySelector("#root > div > div.page > div > div.axios > ul > li.sessionInfo-user-id")
+                    document.querySelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-user-id")
                         .innerText
             );
             const axiosSessionHandle = await page.evaluate(
                 () =>
                     document.querySelector(
-                        "#root > div > div.page > div > div.axios > ul > li.sessionInfo-session-handle"
+                        "#root > div > div.fill > div > div.axios > ul > li.sessionInfo-session-handle"
                     ).innerText
             );
 
             const fetchUserId = await page.evaluate(
                 () =>
-                    document.querySelector("#root > div > div.page > div > div.fetch > ul > li.sessionInfo-user-id")
+                    document.querySelector("#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-user-id")
                         .innerText
             );
             const fetchSessionHandle = await page.evaluate(
                 () =>
                     document.querySelector(
-                        "#root > div > div.page > div > div.fetch > ul > li.sessionInfo-session-handle"
+                        "#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-session-handle"
                     ).innerText
             );
 

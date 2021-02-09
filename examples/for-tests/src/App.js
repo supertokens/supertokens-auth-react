@@ -10,8 +10,27 @@ import EmailPassword, {signOut} from 'supertokens-auth-react/recipe/emailpasswor
 import ThirdParty from 'supertokens-auth-react/recipe/thirdparty';
 import axios from "axios";
 
+
 import Session from 'supertokens-auth-react/recipe/session';
+import Button from "./Button";
+import DarkTheme from "./Themes/Dark";
+import HeliumTheme from "./Themes/Helium";
+import HydrogenTheme from "./Themes/Hydrogen";
+
 Session.addAxiosInterceptors(axios);
+
+
+export function getApiDomain() {
+  const apiPort = process.env.REACT_APP_API_PORT || 8082;
+  const apiUrl = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
+  return apiUrl;
+}
+
+export function getWebsiteDomain() {
+  const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3031;
+  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
+  return websiteUrl;
+}
 
 /*
  * Use localStorage for tests configurations.
@@ -53,6 +72,35 @@ const useReactRouterDom = window.localStorage.getItem('useReactRouterDom') !== "
 
 const defaultToSignUp = window.localStorage.getItem('defaultToSignUp') !== "false";
 
+
+const theme = getTheme();
+
+
+function getTheme() {
+
+  let theme = {
+    colors: {},
+    style: {}
+  };
+
+  const themeParams = getQueryParams('theme');
+
+  if (themeParams === "dark") {
+    window.document.body.style.backgroundColor = "#1a1a1a"
+    return DarkTheme;
+  }
+
+  if (themeParams === "helium") {
+    return HeliumTheme;
+  }
+
+  if (themeParams === "hydrogen") {
+    return HydrogenTheme;
+  }
+
+  return theme;
+}
+
 let recipeList = [Session.init()];
 if (authRecipe === "thirdparty") {
   recipeList = [
@@ -69,8 +117,8 @@ if (authRecipe === "thirdparty") {
 SuperTokens.init({
   appInfo: {
     appName: "SuperTokens",
-    websiteDomain: "localhost:3031",
-    apiDomain: "localhost:8082",
+    websiteDomain: getWebsiteDomain(),
+    apiDomain: getApiDomain(),
     websiteBasePath
   },
   useReactRouterDom,
@@ -98,7 +146,7 @@ export default App;
 export function BaseComponent ({children}) {
   return (
        <Fragment>
-       <div className="page">
+       <div className="fill">
           {children}
        </div>
         <Footer/>
@@ -108,9 +156,10 @@ export function BaseComponent ({children}) {
 
 
 export function Home () {
-  return (
-      <h2>/Home</h2>
-    )
+  return (<>
+    <h2>/Home</h2>
+    <Button onClick={() => window.location.href = websiteBasePath || "/auth"} label="LOGIN"/>
+  </>);
 }
 
 export function About () {
@@ -138,11 +187,11 @@ export function Dashboard () {
   }
 
   async function fetchSessionInfoUsingAxios() {
-    return (await axios.get('http://localhost:8082/sessionInfo')).data;
+    return (await axios.get(`${getApiDomain()}/sessionInfo`)).data;
   }
 
   async function fetchSessionInfoUsingFetch() {
-    const res = await fetch('http://localhost:8082/sessionInfo');
+    const res = await fetch(`${getApiDomain()}/sessionInfo`);
     return await res.json();
   }
 
@@ -157,9 +206,8 @@ export function Dashboard () {
   }, []);
 
   return (
-    <div>
-      <h2>/Dashboard</h2>
-      <button className="logout" onClick={logout} >Logout</button>
+    <div className="dashboard">
+      <Button onClick={logout} label="LOGOUT" className="logoutButton" />
       <div className="axios">
           <SessionInfoTable sessionInfo={sessionInfoUsingAxios} />
       </div>
@@ -177,8 +225,8 @@ function SessionInfoTable({sessionInfo}) {
   }
   return (
     <ul>
-        <li className={`sessionInfo-user-id`} >{sessionInfo['userId']}</li>
-        <li className={`sessionInfo-session-handle`} >{sessionInfo['sessionHandle']}</li>
+        <li className="sessionInfo-user-id" >{sessionInfo['userId']}</li>
+        <li className="sessionInfo-session-handle" >{sessionInfo['sessionHandle']}</li>
     </ul>
   )
 }
@@ -200,11 +248,29 @@ function getEmailPasswordConfigs () {
     },
     useShadowDom,
     emailVerificationFeature: {
+      sendVerifyEmailScreen: {
+        style: theme.style
+      },
+      verifyEmailLinkClickedScreen: {
+        style: theme.style
+      },
       mode: emailVerificationMode
     },
+    resetPasswordUsingTokenFeature: {
+      enterEmailForm: {
+        style: theme.style
+      },
+      submitNewPasswordForm: {
+        style: theme.style
+      }
+    }, 
     signInAndUpFeature: {
       defaultToSignUp,
+      signInForm: {
+        style: theme.style
+      },
       signUpForm: {
+        style: theme.style,
         privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
         termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
         formFields: [{
