@@ -18,17 +18,11 @@
  */
 import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
-import { ComponentWithRecipeId, NormalisedAppInfo, SuperTokensConfig } from "./types";
-import {
-    getCurrentNormalisedUrlPath,
-    getRecipeIdFromSearch,
-    getWindowOrThrow,
-    isTest,
-    normaliseInputAppInfoOrThrowError
-} from "./utils";
+import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensConfig } from "./types";
+import { getCurrentNormalisedUrlPath, isTest, normaliseInputAppInfoOrThrowError } from "./utils";
 import NormalisedURLPath from "./normalisedURLPath";
 const { getSuperTokensRoutesForReactRouterDom } = require("./components/superTokensRoute");
-import { PathToComponentWithRecipeIdMap } from "./types";
+import { BaseFeatureComponentMap } from "./types";
 import Session from "./recipe/session/session";
 import { SSR_ERROR } from "./constants";
 
@@ -47,7 +41,7 @@ export default class SuperTokens {
      */
     appInfo: NormalisedAppInfo;
     recipeList: RecipeModule[] = [];
-    private pathsToComponentWithRecipeIdMap?: PathToComponentWithRecipeIdMap;
+    private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
     private useReactRouterDom: boolean;
     private reactRouterDom?: any;
 
@@ -118,27 +112,26 @@ export default class SuperTokens {
     /*
      * Instance Methods.
      */
-
     canHandleRoute = (): boolean => {
         return this.getRoutingComponent() !== undefined;
     };
 
     getRoutingComponent = (): JSX.Element | undefined => {
         const normalisedPath = getCurrentNormalisedUrlPath();
-        const recipeId = getRecipeIdFromSearch(getWindowOrThrow().location.search);
-        const componentWithRecipeId = this.getMatchingComponentForRouteAndRecipeId(normalisedPath, recipeId);
-        if (componentWithRecipeId === undefined) {
+        const FeatureComponentWithRecipeId = this.getMatchingComponentForRouteAndRecipeId(normalisedPath);
+        if (FeatureComponentWithRecipeId === undefined) {
             return undefined;
         }
-        return <componentWithRecipeId.component recipeId={componentWithRecipeId.rid} />;
+        return <FeatureComponentWithRecipeId.component recipeId={FeatureComponentWithRecipeId.rid} />;
     };
 
-    getPathsToComponentWithRecipeIdMap = (): PathToComponentWithRecipeIdMap => {
-        if (this.pathsToComponentWithRecipeIdMap !== undefined) {
-            return this.pathsToComponentWithRecipeIdMap;
+    getPathsToFeatureComponentWithRecipeIdMap = (): BaseFeatureComponentMap => {
+        // Memoized version of the map.
+        if (this.pathsToFeatureComponentWithRecipeIdMap !== undefined) {
+            return this.pathsToFeatureComponentWithRecipeIdMap;
         }
 
-        const pathsToComponentWithRecipeIdMap: PathToComponentWithRecipeIdMap = {};
+        const pathsToFeatureComponentWithRecipeIdMap: BaseFeatureComponentMap = {};
         for (let i = 0; i < this.recipeList.length; i++) {
             const recipe = this.recipeList[i];
             const features = recipe.getFeatures();
@@ -146,38 +139,30 @@ export default class SuperTokens {
             for (let j = 0; j < featurePaths.length; j++) {
                 // If no components yet for this route, initialize empty array.
                 const featurePath = featurePaths[j];
-                if (pathsToComponentWithRecipeIdMap[featurePath] === undefined) {
-                    pathsToComponentWithRecipeIdMap[featurePath] = [];
+                if (pathsToFeatureComponentWithRecipeIdMap[featurePath] === undefined) {
+                    pathsToFeatureComponentWithRecipeIdMap[featurePath] = [];
                 }
 
-                pathsToComponentWithRecipeIdMap[featurePath].push({
-                    rid: recipe.recipeId,
-                    component: features[featurePath]
-                });
+                pathsToFeatureComponentWithRecipeIdMap[featurePath].push(features[featurePath]);
             }
         }
 
-        this.pathsToComponentWithRecipeIdMap = pathsToComponentWithRecipeIdMap;
-        return this.pathsToComponentWithRecipeIdMap;
+        this.pathsToFeatureComponentWithRecipeIdMap = pathsToFeatureComponentWithRecipeIdMap;
+        return this.pathsToFeatureComponentWithRecipeIdMap;
     };
 
     getMatchingComponentForRouteAndRecipeId = (
-        normalisedUrl: NormalisedURLPath,
-        recipeId: string | null
-    ): ComponentWithRecipeId | undefined => {
+        normalisedUrl: NormalisedURLPath
+    ): ComponentWithRecipeAndMatchingMethod | undefined => {
         const path = normalisedUrl.getAsStringDangerous();
-        const routeComponents = this.getPathsToComponentWithRecipeIdMap()[path];
+        const routeComponents = this.getPathsToFeatureComponentWithRecipeIdMap()[path];
         if (routeComponents === undefined) {
             return undefined;
         }
 
-        // If recipeId provided, try to find a match.
-        if (recipeId !== null) {
-            for (let i = 0; i < routeComponents.length; i++) {
-                if (recipeId === routeComponents[i].rid) {
-                    return routeComponents[i];
-                }
-            }
+        const component = routeComponents.find(c => c.matches());
+        if (component !== undefined) {
+            return component;
         }
 
         // Otherwise, If no recipe Id provided, or if no recipe id matches, return the first matching component.

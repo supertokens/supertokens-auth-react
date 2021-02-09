@@ -225,7 +225,16 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
     };
 }
 
-export function getButtonStyle(color: string): CSSObject {
+export function getButtonStyle(color: string, brighten?: boolean): CSSObject {
+    const backgroundColor =
+        brighten === true
+            ? chroma(color)
+                  .brighten(0.4)
+                  .hex()
+            : chroma(color)
+                  .darken(0.2)
+                  .hex();
+
     return {
         width: "100%",
         height: "34px",
@@ -246,21 +255,15 @@ export function getButtonStyle(color: string): CSSObject {
         },
         "&:active": {
             outline: "none",
-            border: "none",
-            backgroundColor: chroma(color)
-                .darken(0.1)
-                .hex(),
+            backgroundColor,
             transition: "background 0s",
             backgroundSize: "100%"
         },
         "&:hover": {
-            backgroundColor: chroma(color)
-                .darken(0.1)
-                .hex()
+            backgroundColor
         },
         "&:focus": {
-            outline: "none",
-            border: "none"
+            outline: "none"
         },
         cursor: "pointer"
     };

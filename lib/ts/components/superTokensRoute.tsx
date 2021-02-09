@@ -21,7 +21,6 @@ import * as React from "react";
 import NormalisedURLPath from "../normalisedURLPath";
 import SuperTokens from "../superTokens";
 import { WithRouterType } from "../types";
-import { getRecipeIdFromSearch, getWindowOrThrow } from "../utils";
 
 /*
  * Component.
@@ -35,8 +34,8 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
 
     const Route = reactRouterDom.Route;
     const withRouter: WithRouterType = reactRouterDom.withRouter;
-    const pathsToComponentWithRecipeIdMap = SuperTokens.getInstanceOrThrow().getPathsToComponentWithRecipeIdMap();
-    return Object.keys(pathsToComponentWithRecipeIdMap).map(path => {
+    const pathsToFeatureComponentWithRecipeIdMap = SuperTokens.getInstanceOrThrow().getPathsToFeatureComponentWithRecipeIdMap();
+    return Object.keys(pathsToFeatureComponentWithRecipeIdMap).map(path => {
         return (
             <Route exact key={`st-${path}`} path={path}>
                 <SuperTokensRouteWithRecipeId withRouter={withRouter} path={path} />
@@ -52,17 +51,15 @@ function SuperTokensRouteWithRecipeId({
     path: string;
     withRouter: WithRouterType;
 }): JSX.Element | null {
-    const recipeId = getRecipeIdFromSearch(getWindowOrThrow().location.search);
     const normalisedPath = new NormalisedURLPath(path);
-    const componentWithRecipeId = SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(
-        normalisedPath,
-        recipeId
+    const featureComponentWithRecipeId = SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(
+        normalisedPath
     );
 
-    if (componentWithRecipeId === undefined) {
+    if (featureComponentWithRecipeId === undefined) {
         return null;
     }
 
-    const WithRouterComponent = withRouter(componentWithRecipeId.component);
-    return <WithRouterComponent recipeId={componentWithRecipeId.rid} />;
+    const WithRouterComponent = withRouter(featureComponentWithRecipeId.component);
+    return <WithRouterComponent recipeId={featureComponentWithRecipeId.rid} />;
 }

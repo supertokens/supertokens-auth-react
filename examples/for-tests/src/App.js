@@ -7,6 +7,7 @@ import Footer from "./Footer";
 /* SuperTokens imports */
 import SuperTokens from 'supertokens-auth-react';
 import EmailPassword, {signOut} from 'supertokens-auth-react/recipe/emailpassword';
+import ThirdParty from 'supertokens-auth-react/recipe/thirdparty';
 import axios from "axios";
 
 import Session from 'supertokens-auth-react/recipe/session';
@@ -30,7 +31,15 @@ const useShadowDom = window.localStorage.getItem('useShadowDom') !== "false";
 if (getQueryParams('mode')) {
   window.localStorage.setItem('mode', getQueryParams('mode'));
 }
+
 const emailVerificationMode = window.localStorage.getItem('mode') || "OFF";
+
+
+if (getQueryParams('authRecipe')) {
+  window.localStorage.setItem('authRecipe', getQueryParams('authRecipe'));
+}
+
+const authRecipe = window.localStorage.getItem('authRecipe') || "emailpassword";
 
 if (getQueryParams('defaultToSignUp')) {
   window.localStorage.setItem('defaultToSignUp', getQueryParams('defaultToSignUp') === "true");
@@ -44,6 +53,19 @@ const useReactRouterDom = window.localStorage.getItem('useReactRouterDom') !== "
 
 const defaultToSignUp = window.localStorage.getItem('defaultToSignUp') !== "false";
 
+let recipeList = [Session.init()];
+if (authRecipe === "thirdparty") {
+  recipeList = [
+    getThirdPartyConfigs(),
+    ...recipeList
+  ]
+} else {
+  recipeList = [
+    getEmailPasswordConfigs(),
+    ...recipeList
+  ]
+}
+
 SuperTokens.init({
   appInfo: {
     appName: "SuperTokens",
@@ -52,60 +74,7 @@ SuperTokens.init({
     websiteBasePath
   },
   useReactRouterDom,
-  recipeList: [
-    EmailPassword.init({
-      preAPIHook: async (context) => {
-        console.log(`ST_LOGS PRE_API_HOOKS ${context.action}`);
-        return context.requestInit;
-      },
-      getRedirectionURL: async (context) => {
-        console.log(`ST_LOGS GET_REDIRECTION_URL ${context.action}`);
-        if (context.action === "SUCCESS") {
-          return context.redirectToPath || "/dashboard";
-        }
-      },
-      onHandleEvent: async (context) => {
-        console.log(`ST_LOGS ON_HANDLE_EVENT ${context.action}`);
-      },
-      useShadowDom,
-      emailVerificationFeature: {
-        mode: emailVerificationMode
-      },
-      signInAndUpFeature: {
-        defaultToSignUp,
-        signUpForm: {
-          privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-          termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-          formFields: [{
-                id: "email",
-                label: "Your Email",
-                placeholder: "Your work email"
-            },{
-                id: "name",
-                label: "Full name",
-                placeholder: "First name and last name",
-            },{
-                id: "age",
-                label: "Your age",
-                placeholder: "How old are you?",
-                validate: async (value) => {
-                  if (parseInt(value) > 18) {
-                      return undefined;
-                  }
-
-                  return "You must be over 18 to register";;
-                }
-              }, {
-                id: "country",
-                label: "Your Country",
-                placeholder: "Where do you live?",
-                optional: true
-            }]
-          }
-      }
-    }),
-    Session.init()
-  ]
+  recipeList
 });
 
 /* App */
@@ -212,4 +181,82 @@ function SessionInfoTable({sessionInfo}) {
         <li className={`sessionInfo-session-handle`} >{sessionInfo['sessionHandle']}</li>
     </ul>
   )
+}
+
+function getEmailPasswordConfigs () {
+  return EmailPassword.init({
+    preAPIHook: async (context) => {
+      console.log(`ST_LOGS PRE_API_HOOKS ${context.action}`);
+      return context.requestInit;
+    },
+    getRedirectionURL: async (context) => {
+      console.log(`ST_LOGS GET_REDIRECTION_URL ${context.action}`);
+      if (context.action === "SUCCESS") {
+        return context.redirectToPath || "/dashboard";
+      }
+    },
+    onHandleEvent: async (context) => {
+      console.log(`ST_LOGS ON_HANDLE_EVENT ${context.action}`);
+    },
+    useShadowDom,
+    emailVerificationFeature: {
+      mode: emailVerificationMode
+    },
+    signInAndUpFeature: {
+      defaultToSignUp,
+      signUpForm: {
+        privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+        termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+        formFields: [{
+              id: "email",
+              label: "Your Email",
+              placeholder: "Your work email"
+          },{
+              id: "name",
+              label: "Full name",
+              placeholder: "First name and last name",
+          },{
+              id: "age",
+              label: "Your age",
+              placeholder: "How old are you?",
+              validate: async (value) => {
+                if (parseInt(value) > 18) {
+                    return undefined;
+                }
+
+                return "You must be over 18 to register";;
+              }
+            }, {
+              id: "country",
+              label: "Your Country",
+              placeholder: "Where do you live?",
+              optional: true
+          }]
+        }
+    }
+  })
+}
+
+function getThirdPartyConfigs () {
+  return ThirdParty.init({
+    useShadowDom,
+    emailVerificationFeature: {
+      mode: emailVerificationMode
+    },
+    signInAndUpFeature: {
+      privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+      termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+      providers: [
+        ThirdParty.Github.init(),
+        ThirdParty.Google.init(),
+        ThirdParty.Facebook.init(),
+        ThirdParty.Twitter.init(),
+        ThirdParty.Apple.init(),
+        ThirdParty.Custom.init({
+          id: "custom",
+          name: "Custom"
+        }),
+      ]
+    }
+  })
 }

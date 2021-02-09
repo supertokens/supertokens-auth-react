@@ -1,6 +1,7 @@
 import { PureComponent } from "react";
-import { SignInAndUpState, FormFieldThemeProps, FormBaseAPIResponse } from "../../../types";
+import { FormFieldThemeProps, FormBaseAPIResponse } from "../../../types";
 import { APIFormField, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
+import { SignInAndUpState } from "../../../../authRecipeModule/types";
 declare class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     constructor(props: FeatureBaseProps);
     signIn: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse>;

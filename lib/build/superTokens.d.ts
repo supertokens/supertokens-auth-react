@@ -1,13 +1,13 @@
 /// <reference types="react" />
 import RecipeModule from "./recipe/recipeModule";
-import { ComponentWithRecipeId, NormalisedAppInfo, SuperTokensConfig } from "./types";
+import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensConfig } from "./types";
 import NormalisedURLPath from "./normalisedURLPath";
 import Session from "./recipe/session/session";
 export default class SuperTokens {
     private static instance?;
     appInfo: NormalisedAppInfo;
     recipeList: RecipeModule[];
-    private pathsToComponentWithRecipeIdMap?;
+    private pathsToFeatureComponentWithRecipeIdMap?;
     private useReactRouterDom;
     private reactRouterDom?;
     constructor(config: SuperTokensConfig);
@@ -18,8 +18,8 @@ export default class SuperTokens {
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[];
     canHandleRoute: () => boolean;
     getRoutingComponent: () => JSX.Element | undefined;
-    getPathsToComponentWithRecipeIdMap: () => Record<string, ComponentWithRecipeId[]>;
-    getMatchingComponentForRouteAndRecipeId: (normalisedUrl: NormalisedURLPath, recipeId: string | null) => ComponentWithRecipeId | undefined;
+    getPathsToFeatureComponentWithRecipeIdMap: () => Record<string, ComponentWithRecipeAndMatchingMethod[]>;
+    getMatchingComponentForRouteAndRecipeId: (normalisedUrl: NormalisedURLPath) => ComponentWithRecipeAndMatchingMethod | undefined;
     getRecipeOrThrow(recipeId: string): RecipeModule;
     getReactRouterDom: () => {
         Route: any;

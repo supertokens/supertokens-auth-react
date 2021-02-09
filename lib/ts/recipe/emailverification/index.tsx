@@ -18,13 +18,14 @@
  */
 
 import RecipeModule from "../recipeModule";
-import { RouteToFeatureComponentMap, SuccessAPIResponse } from "../../types";
+import { RecipeFeatureComponentMap, SuccessAPIResponse } from "../../types";
 import { EmailVerificationConfig } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
 import { isEmailVerifiedAPI } from "./components/features/emailVerification/api";
 import SuperTokens from "../../superTokens";
+import { matchRecipeIdUsingQueryParams } from "../../utils";
 
 /*
  * Class.
@@ -47,13 +48,17 @@ export default class EmailVerification extends RecipeModule {
      * Instance methods.
      */
 
-    getFeatures = (): RouteToFeatureComponentMap => {
-        const features: RouteToFeatureComponentMap = {};
+    getFeatures = (): RecipeFeatureComponentMap => {
+        const features: RecipeFeatureComponentMap = {};
         if (this.config.mode !== "OFF" && this.config.disableDefaultImplementation !== true) {
             const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
             );
-            features[normalisedFullPath.getAsStringDangerous()] = EmailVerificationFeature;
+            features[normalisedFullPath.getAsStringDangerous()] = {
+                matches: matchRecipeIdUsingQueryParams(this.recipeId),
+                rid: this.recipeId,
+                component: EmailVerificationFeature
+            };
         }
         return features;
     };

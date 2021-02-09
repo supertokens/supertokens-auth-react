@@ -17,7 +17,7 @@
  * Imports.
  */
 import HttpRequest from "../../httpRequest";
-import { NormalisedAppInfo, RouteToFeatureComponentMap } from "../../types";
+import { NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { History, LocationState } from "history";
 
 import { appendQueryParamsToURL, getWindowOrThrow, normalisedRecipeModuleHooks } from "../../utils";
@@ -93,5 +93,5 @@ export default abstract class RecipeModule {
         throw new Error("getDefaultRedirectionURL is not implemented.");
     }
 
-    abstract getFeatures(): RouteToFeatureComponentMap;
+    abstract getFeatures(): RecipeFeatureComponentMap;
 }

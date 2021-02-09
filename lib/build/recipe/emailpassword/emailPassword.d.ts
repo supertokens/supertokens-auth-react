@@ -7,7 +7,7 @@ export default class EmailPassword extends AuthRecipeModule {
     static RECIPE_ID: string;
     config: NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig;
     constructor(config: EmailPasswordConfig);
-    getFeatures: () => Record<string, import("../../types").ReactComponentClass>;
+    getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getDefaultRedirectionURL: (context: EmailPasswordGetRedirectionURLContext) => Promise<string>;
     static init(config?: EmailPasswordUserInput): CreateRecipeFunction;
     static signOut(): Promise<SuccessAPIResponse>;
