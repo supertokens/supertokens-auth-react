@@ -41,13 +41,23 @@ export default function SignUpFooter({
             css={[styles.secondaryText, styles.privacyPolicyAndTermsAndConditions]}>
             By continuing, you agree to our
             {termsOfServiceLink !== undefined && (
-                <a data-supertokens="link" css={styles.link} target="_blank" href={termsOfServiceLink}>
+                <a
+                    data-supertokens="link"
+                    css={styles.link}
+                    href={termsOfServiceLink}
+                    target="_blank"
+                    rel="noopener noreferer">
                     Terms of Service
                 </a>
             )}
             {termsOfServiceLink !== undefined && privacyPolicyLink !== undefined && "and"}
             {privacyPolicyLink !== undefined && (
-                <a data-supertokens="link" css={styles.link} href={privacyPolicyLink} target="_blank">
+                <a
+                    data-supertokens="link"
+                    css={styles.link}
+                    href={privacyPolicyLink}
+                    target="_blank"
+                    rel="noopener noreferer">
                     Privacy Policy
                 </a>
             )}

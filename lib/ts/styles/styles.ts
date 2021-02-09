@@ -139,6 +139,9 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         privacyPolicyAndTermsAndConditions: {
+            a: {
+                lineHeight: "21px"
+            },
             maxWidth: "300px",
             marginTop: "10px"
         },
@@ -229,7 +232,7 @@ export function getButtonStyle(color: string, brighten?: boolean): CSSObject {
     const backgroundColor =
         brighten === true
             ? chroma(color)
-                  .brighten(0.4)
+                  .brighten(0.6)
                   .hex()
             : chroma(color)
                   .darken(0.2)
