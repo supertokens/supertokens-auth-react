@@ -28,7 +28,7 @@ const HydrogenTheme = {
           border: "none",
           boxShadow: "none",
           width: "100vw",
-          height: "95vh",
+          minHeight: "95vh",
           textAlign: "center",
           display: "flex",
           flexDirection: "column",
@@ -65,7 +65,8 @@ const HydrogenTheme = {
         },
 
         row: {
-          marginTop: "0px",
+          marginTop: "20px",
+          marginBottom: "20px",
           backgroundColor: "rgba(255, 255, 255, 0.5)",
           background: "linear-gradient(to right bottom,rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.2))",
           backdropFilter: "blur(2rem)",

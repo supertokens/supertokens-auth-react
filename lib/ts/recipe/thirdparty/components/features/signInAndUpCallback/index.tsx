@@ -24,7 +24,6 @@ import ThirdParty from "../../../thirdparty";
 import { FeatureBaseProps } from "../../../../../types";
 import { getQueryParams, getWindowOrThrow } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import Provider from "../../../providers";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
@@ -56,7 +55,7 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
         const code = getQueryParams("code");
         if (code === null) {
             return ThirdParty.getInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
-                error: "error"
+                error: "no_code"
             });
         }
 
@@ -109,14 +108,6 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
         // 6. Third party provider mismatch between route and state object.
         if (stateObject.thirdPartyId !== providerIdFromPath) {
             return "provider_mismatch";
-        }
-
-        // 7. Third Party provider not found
-        const provider = ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.find(
-            provider => provider.id === stateObject.thirdPartyId
-        ) as Provider;
-        if (provider === undefined) {
-            return "provider_unknown";
         }
 
         return undefined;

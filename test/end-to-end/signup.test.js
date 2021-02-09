@@ -61,6 +61,13 @@ describe("SuperTokens SignUp feature/theme", function() {
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true
         });
+        page = await browser.newPage();
+        page.on("console", consoleObj => {
+            const log = consoleObj.text();
+            if (log.startsWith("ST_LOGS")) {
+                consoleLogs.push(log);
+            }
+        });
     });
 
     after(async function() {
@@ -75,14 +82,7 @@ describe("SuperTokens SignUp feature/theme", function() {
     });
 
     beforeEach(async function() {
-        page = await browser.newPage();
         consoleLogs = [];
-        page.on("console", consoleObj => {
-            const log = consoleObj.text();
-            if (log.startsWith("ST_LOGS")) {
-                consoleLogs.push(log);
-            }
-        });
         clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
     });
@@ -193,14 +193,14 @@ describe("SuperTokens SignUp feature/theme", function() {
             formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, []);
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS PRE_API_HOOKS EMAIL_EXISTS",
-                "ST_LOGS PRE_API_HOOKS SIGN_UP",
-                "ST_LOGS ON_HANDLE_EVENT SIGN_UP_COMPLETE",
-                "ST_LOGS GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
-                "ST_LOGS GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS PRE_API_HOOKS EMAIL_EXISTS",
-                "ST_LOGS PRE_API_HOOKS EMAIL_EXISTS"
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SIGN_UP_COMPLETE",
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS"
             ]);
         });
     });

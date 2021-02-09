@@ -5,10 +5,11 @@ import {
   Route,
 } from "react-router-dom";
 import {getSuperTokensRoutesForReactRouterDom} from 'supertokens-auth-react';
-import {SignInAndUp, EmailPasswordAuth} from 'supertokens-auth-react/recipe/emailpassword';
+import {SignInAndUp} from 'supertokens-auth-react/recipe/emailpassword';
 import {BaseComponent, Home, Contact, Dashboard} from './App';
+import Auth from "./Auth";
 
-function AppWithReactDomRouter() {
+function AppWithReactDomRouter(props) {
 
   return (
     <div className="App">
@@ -22,14 +23,14 @@ function AppWithReactDomRouter() {
 
             {/* Logged In Components */}
             <Route path="/dashboard">
-              <EmailPasswordAuth>
+              <Auth {...props}>
                 <Dashboard />
-              </EmailPasswordAuth>
+              </Auth>
             </Route>
             <Route path="/redirect-to-this-custom-path">
-              <EmailPasswordAuth>
+              <Auth {...props}>
                 <Dashboard />
-              </EmailPasswordAuth>
+              </Auth>
             </Route>
 
             <Route path="/contact">

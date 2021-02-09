@@ -165,8 +165,8 @@ describe("SuperTokens Reset password feature/theme", function() {
             const buttonLabel = await getSubmitFormButtonLabel(page);
             assert.deepStrictEqual(buttonLabel, "Email me");
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL",
-                "ST_LOGS ON_HANDLE_EVENT RESET_PASSWORD_EMAIL_SENT"
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT RESET_PASSWORD_EMAIL_SENT"
             ]);
         });
     });
@@ -260,7 +260,7 @@ describe("SuperTokens Reset password feature/theme", function() {
             assert.strictEqual(response.status, "RESET_PASSWORD_INVALID_TOKEN_ERROR");
             const generalError = await getGeneralError(page);
             assert.deepStrictEqual(generalError, RESET_PASSWORD_INVALID_TOKEN_ERROR);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS SUBMIT_NEW_PASSWORD"]);
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SUBMIT_NEW_PASSWORD"]);
         });
 
         it("Should reset password successfully and redirect to success URL if token is defined", async function() {

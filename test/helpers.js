@@ -47,6 +47,15 @@ export async function getSubmitFormButtonLabel(page) {
     )
 }
 
+export async function getProvidersLabels(page) {
+    return await page.evaluate(({ST_ROOT_SELECTOR}) => 
+        Array.from(
+            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll("[data-supertokens~='providerButtonText']"),
+            i => i.innerText
+        )
+    , {ST_ROOT_SELECTOR})
+}
+
 export async function getSubmitFormButtonLabelWithoutShadowDom(page) {
     return  await page.evaluate(
         () => document.querySelector("form > div > button").innerText,
@@ -327,4 +336,15 @@ export async function getLatestURLWithToken() {
     const response = await fetch(`${TEST_SERVER_BASE_URL}/token`);
     const {latestURLWithToken} = await response.json();
     return latestURLWithToken;
+}
+export async function assertProviders(page) {
+    const providers = await getProvidersLabels(page);
+    assert.deepStrictEqual(providers, [
+        "Continue with Github",
+        "Continue with Google",
+        "Continue with Facebook",
+        "Continue with Twitter",
+        "Continue with Apple",
+        "Continue with Custom"
+    ]);
 }
