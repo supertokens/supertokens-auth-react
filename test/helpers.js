@@ -68,7 +68,7 @@ export async function submitForm(page) {
 }
 
 export async function getLogoutButton(page) {
-    return await page.evaluateHandle("document.querySelector('button.logout')");
+    return await page.evaluateHandle("document.querySelector('.logoutButton')");
 }
 
 
