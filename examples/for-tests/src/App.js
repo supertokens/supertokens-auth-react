@@ -107,6 +107,12 @@ if (authRecipe === "thirdparty") {
     getThirdPartyConfigs(),
     ...recipeList
   ]
+} else if (authRecipe === "both") {
+  recipeList = [
+    getEmailPasswordConfigs(),
+    getThirdPartyConfigs(),
+    ...recipeList
+  ]
 } else {
   recipeList = [
     getEmailPasswordConfigs(),
@@ -132,7 +138,7 @@ function App() {
     return <AppWithoutRouter />
   }
   
-  return <AppWithReactDomRouter/>
+  return <AppWithReactDomRouter authRecipe={authRecipe}/>
 }
 
 
@@ -233,18 +239,19 @@ function SessionInfoTable({sessionInfo}) {
 
 function getEmailPasswordConfigs () {
   return EmailPassword.init({
+    palette: theme.colors,
     preAPIHook: async (context) => {
-      console.log(`ST_LOGS PRE_API_HOOKS ${context.action}`);
+      console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
       return context.requestInit;
     },
     getRedirectionURL: async (context) => {
-      console.log(`ST_LOGS GET_REDIRECTION_URL ${context.action}`);
+      console.log(`ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
       if (context.action === "SUCCESS") {
         return context.redirectToPath || "/dashboard";
       }
     },
     onHandleEvent: async (context) => {
-      console.log(`ST_LOGS ON_HANDLE_EVENT ${context.action}`);
+      console.log(`ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
     },
     useShadowDom,
     emailVerificationFeature: {
@@ -305,11 +312,27 @@ function getEmailPasswordConfigs () {
 
 function getThirdPartyConfigs () {
   return ThirdParty.init({
+    preAPIHook: async (context) => {
+      console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
+      return context.requestInit;
+    },
+    getRedirectionURL: async (context) => {
+      console.log(`ST_LOGS THIRD_PARTY GET_REDIRECTION_URL ${context.action}`);
+      if (context.action === "SUCCESS") {
+        return context.redirectToPath || "/dashboard";
+      }
+    },
+    onHandleEvent: async (context) => {
+      console.log(`ST_LOGS THIRD_PARTY ON_HANDLE_EVENT ${context.action}`);
+    },
+
     useShadowDom,
+    palette: theme.colors,
     emailVerificationFeature: {
       mode: emailVerificationMode
     },
     signInAndUpFeature: {
+      style: theme.style,
       privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
       termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
       providers: [

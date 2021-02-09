@@ -63,7 +63,12 @@ export function normaliseSignInAndUpFeature(config: SignInAndUpFeatureUserInput)
  */
 export function getOAuthState(): StateObject | undefined {
     try {
-        return JSON.parse(getWindowOrThrow().sessionStorage.getItem(SESSION_STORAGE_STATE_KEY));
+        const state = JSON.parse(getWindowOrThrow().sessionStorage.getItem(SESSION_STORAGE_STATE_KEY));
+        if (state === null) {
+            return undefined;
+        }
+
+        return state;
     } catch (e) {
         return undefined;
     }

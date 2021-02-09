@@ -133,7 +133,7 @@ describe("SuperTokens SignIn feature/theme", function() {
             await clickForgotPasswordLink(page);
             const buttonLabel = await getSubmitFormButtonLabel(page);
             assert.strictEqual(buttonLabel, "Email me");
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS GET_REDIRECTION_URL RESET_PASSWORD"]);
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL RESET_PASSWORD"]);
         });
 
         it("Should show error messages with incorrect inputs", async function() {
@@ -182,7 +182,7 @@ describe("SuperTokens SignIn feature/theme", function() {
             assert.deepStrictEqual(formFieldsErrors, []);
             const generalError = await getGeneralError(page);
             assert.strictEqual(generalError, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS SIGN_IN"]);
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN"]);
         });
 
         it("Successful Sign In", async function() {
@@ -291,14 +291,14 @@ describe("SuperTokens SignIn feature/theme", function() {
             cookies = await page.cookies();
             assert.deepStrictEqual(cookies, []); // Make sure cookies were removed on logout.
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS PRE_API_HOOKS EMAIL_EXISTS",
-                "ST_LOGS PRE_API_HOOKS SIGN_UP",
-                "ST_LOGS ON_HANDLE_EVENT SIGN_UP_COMPLETE",
-                "ST_LOGS GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS PRE_API_HOOKS SIGN_IN",
-                "ST_LOGS ON_HANDLE_EVENT SIGN_IN_COMPLETE",
-                "ST_LOGS GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS PRE_API_HOOKS SIGN_OUT"
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SIGN_UP_COMPLETE",
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SIGN_IN_COMPLETE",
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_OUT"
             ]);
         });
 
@@ -363,10 +363,10 @@ describe("SuperTokens SignIn feature/theme", function() {
             let pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/redirect-to-this-custom-path");
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS PRE_API_HOOKS SIGN_IN",
-                "ST_LOGS ON_HANDLE_EVENT SIGN_IN_COMPLETE",
-                "ST_LOGS GET_REDIRECTION_URL SUCCESS"
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SIGN_IN_COMPLETE",
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS"
             ]);
 
             // Logout
@@ -440,7 +440,7 @@ describe("SuperTokens SignIn feature/theme => Server Error", function() {
         // Assert server Error
         const generalError = await getGeneralError(page);
         assert.strictEqual(generalError, SOMETHING_WENT_WRONG_ERROR);
-        assert.deepStrictEqual(consoleLogs, ["ST_LOGS PRE_API_HOOKS SIGN_IN"]);
+        assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN"]);
     });
 });
 
