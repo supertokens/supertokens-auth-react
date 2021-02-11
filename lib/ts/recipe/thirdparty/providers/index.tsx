@@ -14,9 +14,7 @@
  */
 
 import React, { Fragment } from "react";
-import NormalisedURLPath from "../../../normalisedURLPath";
 import ProviderButton from "../components/library/providerButton";
-import ThirdParty from "../thirdparty";
 import { ProviderConfig } from "./types";
 
 /*
@@ -53,15 +51,6 @@ export default abstract class Provider {
                 <Fragment>Continue with {this.name}</Fragment>
             </ProviderButton>
         );
-    }
-
-    getRedirectURI(): string {
-        const domain = ThirdParty.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
-        const callbackPath = new NormalisedURLPath(`/callback/${this.id}`);
-        const path = ThirdParty.getInstanceOrThrow()
-            .appInfo.websiteBasePath.appendPath(callbackPath)
-            .getAsStringDangerous();
-        return `${domain}${path}`;
     }
 
     abstract getButton(): JSX.Element;
