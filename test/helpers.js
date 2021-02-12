@@ -343,7 +343,6 @@ export async function assertProviders(page) {
         "Continue with Github",
         "Continue with Google",
         "Continue with Facebook",
-        "Continue with Twitter",
         "Continue with Apple",
         "Continue with Custom"
     ]);

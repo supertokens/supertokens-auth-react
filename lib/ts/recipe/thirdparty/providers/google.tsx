@@ -17,6 +17,7 @@
  */
 import React from "react";
 import Provider from ".";
+import { isTest } from "../../../utils";
 import { BuiltInProviderConfig } from "./types";
 
 /*
@@ -97,5 +98,16 @@ export default class Google extends Provider {
         }
         Google.instance = new Google(config);
         return Google.instance;
+    }
+
+    /*
+     * Tests methods.
+     */
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+        Google.instance = undefined;
+        return;
     }
 }

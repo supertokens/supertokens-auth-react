@@ -22,7 +22,6 @@ import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import Apple from "./providers/apple";
 import Google from "./providers/google";
-import Twitter from "./providers/twitter";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import Custom from "./providers/custom";
@@ -50,9 +49,8 @@ export default class ThirdPartyAPIWrapper {
      * Providers
      */
     static Custom = Custom;
-    static Apple = Apple;
     static Google = Google;
-    static Twitter = Twitter;
+    static Apple = Apple;
     static Facebook = Facebook;
     static Github = Github;
     static ThirdPartyAuth = ThirdPartyAuth;
@@ -72,7 +70,6 @@ export {
     init,
     Apple,
     Google,
-    Twitter,
     Facebook,
     Github,
     Custom,

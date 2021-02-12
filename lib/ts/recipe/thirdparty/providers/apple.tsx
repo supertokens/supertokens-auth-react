@@ -17,6 +17,7 @@
  */
 import React from "react";
 import Provider from ".";
+import { isTest } from "../../../utils";
 import { BuiltInProviderConfig } from "./types";
 
 /*
@@ -114,5 +115,16 @@ export default class Apple extends Provider {
         }
         Apple.instance = new Apple(config);
         return Apple.instance;
+    }
+
+    /*
+     * Tests methods.
+     */
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+        Apple.instance = undefined;
+        return;
     }
 }

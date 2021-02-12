@@ -8,4 +8,5 @@ export default class Google extends Provider {
     getButton: () => JSX.Element;
     getLogo: () => JSX.Element;
     static init(config?: BuiltInProviderConfig): Provider;
+    static reset(): void;
 }

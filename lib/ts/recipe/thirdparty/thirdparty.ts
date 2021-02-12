@@ -144,7 +144,6 @@ export default class ThirdParty extends AuthRecipeModule {
         if (!isTest()) {
             return;
         }
-
         ThirdParty.instance = undefined;
         return;
     }

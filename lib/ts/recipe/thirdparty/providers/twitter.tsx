@@ -17,6 +17,7 @@
  */
 import React from "react";
 import Provider from ".";
+import { isTest } from "../../../utils";
 import { BuiltInProviderConfig } from "./types";
 
 /*
@@ -80,5 +81,16 @@ export default class Twitter extends Provider {
         }
         Twitter.instance = new Twitter(config);
         return Twitter.instance;
+    }
+
+    /*
+     * Tests methods.
+     */
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+        Twitter.instance = undefined;
+        return;
     }
 }
