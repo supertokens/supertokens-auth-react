@@ -8,4 +8,5 @@ export default class Github extends Provider {
     getButton: () => JSX.Element;
     getLogo: () => JSX.Element;
     static init(config?: BuiltInProviderConfig): Provider;
+    static reset(): void;
 }

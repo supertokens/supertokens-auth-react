@@ -17,6 +17,7 @@
  */
 import React from "react";
 import Provider from ".";
+import { isTest } from "../../../utils";
 import { BuiltInProviderConfig } from "./types";
 
 /*
@@ -80,5 +81,16 @@ export default class Facebook extends Provider {
         }
         Facebook.instance = new Facebook(config);
         return Facebook.instance;
+    }
+
+    /*
+     * Tests methods.
+     */
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+        Facebook.instance = undefined;
+        return;
     }
 }

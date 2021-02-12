@@ -18,6 +18,7 @@
  */
 import { getWindowOrThrow } from "../../utils";
 import { SESSION_STORAGE_STATE_KEY } from "./constants";
+import Provider from "./providers";
 import {
     NormalisedSignInAndUpFeatureConfig,
     NormalisedThirdPartyConfig,
@@ -39,15 +40,33 @@ export function normaliseThirdPartyConfig(config: ThirdPartyConfig): NormalisedT
 }
 
 export function normaliseSignInAndUpFeature(config: SignInAndUpFeatureUserInput): NormalisedSignInAndUpFeatureConfig {
-    if (config.providers.length === 0) {
-        throw new Error("ThirdParty configs providers cannot be empty.");
+    if (config === undefined || config.providers === undefined || config.providers.length === 0) {
+        throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
     }
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
     const style = config.style !== undefined ? config.style : {};
     const privacyPolicyLink = config.privacyPolicyLink;
     const termsOfServiceLink = config.termsOfServiceLink;
-    const providers = config.providers;
+
+    /*
+     * Make sure providers array is unique, filter duplicate values.
+     * First, create a new set with unique ids from the configs.
+     * Then map over those ids to find the first provider that matches from the configs.
+     */
+    const providers = Array.from(new Set(config.providers.map(provider => provider.id))).map(
+        id => config.providers.find(provider => provider.id === id) as Provider
+    );
+
+    /*
+     * Make sure providers array contains only Provider instances, throw otherwise.
+     */
+    const providersOnly = providers.some(provider => provider instanceof Provider === false) === false;
+    if (providersOnly !== true) {
+        throw new Error(
+            "ThridParty providers must all be instances of Providers. If you are adding a custom provider, make sure to use ThirdParty.Custom({...})"
+        );
+    }
 
     return {
         disableDefaultImplementation,

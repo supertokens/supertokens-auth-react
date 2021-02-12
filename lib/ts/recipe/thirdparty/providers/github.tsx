@@ -17,6 +17,7 @@
  */
 import React from "react";
 import Provider from ".";
+import { isTest } from "../../../utils";
 import { BuiltInProviderConfig } from "./types";
 
 /*
@@ -77,5 +78,16 @@ export default class Github extends Provider {
         }
         Github.instance = new Github(config);
         return Github.instance;
+    }
+
+    /*
+     * Tests methods.
+     */
+    static reset(): void {
+        if (!isTest()) {
+            return;
+        }
+        Github.instance = undefined;
+        return;
     }
 }
