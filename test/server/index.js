@@ -12,9 +12,11 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+require('dotenv').config();
 let SuperTokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
+let ThirdParty = require("supertokens-node/recipe/thirdparty");
 let express = require("express");
 let cookieParser = require("cookie-parser");
 let bodyParser = require("body-parser");
@@ -78,6 +80,24 @@ SuperTokens.init({
                 }
             }
             
+        }),
+        ThirdParty.init({
+            signInAndUpFeature: {
+                providers: [
+                    ThirdParty.Google({
+                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                        clientId: process.env.GOOGLE_CLIENT_ID
+                    }),
+                    ThirdParty.Github({
+                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                        clientId: process.env.GITHUB_CLIENT_ID
+                    }),
+                    ThirdParty.Facebook({
+                        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+                        clientId: process.env.FACEBOOK_CLIENT_ID
+                    })
+                ]
+            }
         }),
         Session.init({})
     ]

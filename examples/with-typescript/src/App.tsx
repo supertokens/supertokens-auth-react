@@ -31,9 +31,9 @@ export function getWebsiteDomain() {
 }
 
 
-const authRecipeParams = getQueryParams("authRecipe");
-if (authRecipeParams !== null) {
-  window.localStorage.setItem("authRecipe", authRecipeParams);
+const ridParams = getQueryParams("rid");
+if (ridParams !== null) {
+  window.localStorage.setItem("rid", ridParams);
 }
 
 const mode = getQueryParams('mode');
@@ -44,7 +44,7 @@ if (mode !== null) {
 
 const theme = getTheme();
 
-const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+const rid = window.localStorage.getItem("rid") || "emailpassword";
 
 
 const recipeList = getRecipeList();
@@ -127,17 +127,11 @@ function getTheme(): {
 }
 
 function getRecipeList () {
-  if (authRecipe === "thirdparty") {
-    return[
+    return [
+      getEmailPasswordConfigs(),
       getThirdPartyConfigs(),
       Session.init()
     ]
-  } else {
-    return [
-      getEmailPasswordConfigs(),
-      Session.init()
-    ]
-  }
 }
 
 function getEmailPasswordConfigs () {
@@ -220,7 +214,6 @@ function getThirdPartyConfigs () {
         ThirdParty.Github.init(),
         ThirdParty.Google.init(),
         ThirdParty.Facebook.init(),
-        ThirdParty.Twitter.init(),
         ThirdParty.Apple.init(),
         ThirdParty.Custom.init({
           id: "custom",
@@ -232,7 +225,7 @@ function getThirdPartyConfigs () {
 }
 
 function Auth (props: any) {
-  if (authRecipe === "thirdparty") {
+  if (rid === "thirdparty") {
     return <ThirdParty.ThirdPartyAuth>
         {props.children}
     </ThirdParty.ThirdPartyAuth>;
