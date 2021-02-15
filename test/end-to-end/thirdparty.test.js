@@ -41,7 +41,7 @@ import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../c
 /*
  * Tests.
  */
-describe("SuperTokens Third Party feature/theme", function() {
+describe("SuperTokens Third Party", function() {
     let browser;
     let page;
     let consoleLogs;
@@ -91,7 +91,7 @@ describe("SuperTokens Third Party feature/theme", function() {
             return;
         }
 
-        it("Successful signup with github", async function() {
+        it("Successful signin with github", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
             await clickOnProviderButton(page, "Github");
@@ -104,12 +104,12 @@ describe("SuperTokens Third Party feature/theme", function() {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
-                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SIGN_IN",
+                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SIGN_IN_COMPLETE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS"
             ]);
         });
 
-        it("Successful signup with facebook", async function() {
+        it("Successful signin with facebook", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
             await clickOnProviderButton(page, "Facebook");
@@ -123,12 +123,12 @@ describe("SuperTokens Third Party feature/theme", function() {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
-                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SIGN_IN",
+                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SIGN_IN_COMPLETE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS"
             ]);
         });
 
-        it("Successful signup with google", async function() {
+        it("Successful signin with google", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
             await clickOnProviderButton(page, "Google");
@@ -141,7 +141,7 @@ describe("SuperTokens Third Party feature/theme", function() {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
-                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SIGN_IN",
+                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SIGN_IN_COMPLETE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS"
             ]);
         });

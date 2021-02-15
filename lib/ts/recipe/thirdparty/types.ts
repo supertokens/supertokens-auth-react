@@ -110,7 +110,18 @@ export type ThirdPartyPreAPIHookContext =
            */
           action: "GET_AUTHORISATION_URL" | "SIGN_IN";
       };
-export type ThirdPartyOnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
+export type ThirdPartyOnHandleEventContext =
+    | AuthRecipeModuleOnHandleEventContext
+    | {
+          /*
+           * Sign In success.
+           */
+          action: "SIGN_UP_COMPLETE";
+          /*
+           * User returned from API.
+           */
+          user: { id: string; email: string };
+      };
 
 export type SignInAndUpThemeProps = {
     /*

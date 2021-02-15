@@ -43,7 +43,7 @@ import { EMAIL_EXISTS_API, SIGN_UP_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_U
 /*
  * Tests.
  */
-describe("SuperTokens SignUp feature/theme", function() {
+describe("SuperTokens SignUp", function() {
     let browser;
     let page;
     let consoleLogs;
@@ -87,7 +87,7 @@ describe("SuperTokens SignUp feature/theme", function() {
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
     });
 
-    describe("SignUp test (default)", function() {
+    describe("SignUp test ", function() {
         it("Should contain form fields as defined in SuperTokens.init call", async function() {
             const inputNames = await getInputNames(page);
             assert.deepStrictEqual(inputNames, ["email", "password", "name", "age", "country"]);

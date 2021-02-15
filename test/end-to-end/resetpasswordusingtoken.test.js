@@ -56,7 +56,7 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe("SuperTokens Reset password feature/theme", function() {
+describe("SuperTokens Reset password", function() {
     let browser;
     let page;
     let consoleLogs;

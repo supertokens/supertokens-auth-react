@@ -54,7 +54,7 @@ import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_U
 /*
  * Tests.
  */
-describe("SuperTokens SignIn feature/theme", function() {
+describe("SuperTokens SignIn", function() {
     let browser;
     let page;
     let consoleLogs;
@@ -100,7 +100,7 @@ describe("SuperTokens SignIn feature/theme", function() {
         assert.deepStrictEqual(consoleLogs, []);
     });
 
-    describe("SignIn test (default)", function() {
+    describe("SignIn test ", function() {
         it("Should contain email and password fields only", async function() {
             const inputNames = await getInputNames(page);
             assert.deepStrictEqual(inputNames, ["email", "password"]);
@@ -393,7 +393,7 @@ describe("SuperTokens SignIn feature/theme", function() {
     });
 });
 
-describe("SuperTokens SignIn feature/theme => Server Error", function() {
+describe("SuperTokens SignIn => Server Error", function() {
     let browser;
     let page;
     let consoleLogs;
