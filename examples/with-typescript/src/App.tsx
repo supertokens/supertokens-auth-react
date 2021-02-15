@@ -215,10 +215,10 @@ function getThirdPartyConfigs () {
         ThirdParty.Google.init(),
         ThirdParty.Facebook.init(),
         ThirdParty.Apple.init(),
-        ThirdParty.Custom.init({
+        {
           id: "custom",
           name: "Custom"
-        }),
+        },
       ]
     }
   })

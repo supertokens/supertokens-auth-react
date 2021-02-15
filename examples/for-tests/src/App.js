@@ -6,7 +6,7 @@ import AppWithReactDomRouter from './AppWithReactDomRouter';
 import Footer from "./Footer";
 /* SuperTokens imports */
 import SuperTokens from 'supertokens-auth-react';
-import EmailPassword, {signOut} from 'supertokens-auth-react/recipe/emailpassword';
+import EmailPassword from 'supertokens-auth-react/recipe/emailpassword';
 import ThirdParty from 'supertokens-auth-react/recipe/thirdparty';
 import axios from "axios";
 
@@ -188,7 +188,13 @@ export function Dashboard () {
   const [sessionInfoUsingFetch, setSessionInfoUsingFetch] = useState(undefined);
 
   async function logout() {
-    await signOut();
+    const useRecipe = getQueryParams('rid') || authRecipe;
+    debugger;
+    if (useRecipe === "thirdparty") {
+      await ThirdParty.signOut();
+    } else {
+      await EmailPassword.signOut();
+    }
     window.location.href = "/auth";
   }
 
@@ -340,10 +346,10 @@ function getThirdPartyConfigs () {
         ThirdParty.Google.init(),
         ThirdParty.Facebook.init(),
         ThirdParty.Apple.init(),
-        ThirdParty.Custom.init({
+        {
           id: "custom",
           name: "Custom"
-        })
+        }
       ]
     }
   })

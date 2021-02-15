@@ -19,6 +19,7 @@
 import { getWindowOrThrow } from "../../utils";
 import { SESSION_STORAGE_STATE_KEY } from "./constants";
 import Provider from "./providers";
+import Custom from "./providers/custom";
 import {
     NormalisedSignInAndUpFeatureConfig,
     NormalisedThirdPartyConfig,
@@ -50,23 +51,23 @@ export function normaliseSignInAndUpFeature(config: SignInAndUpFeatureUserInput)
     const termsOfServiceLink = config.termsOfServiceLink;
 
     /*
+     * Convert custom configs to custom providers.
+     */
+    const providersWithCustom = config.providers.map(provider => {
+        if (provider instanceof Provider) {
+            return provider;
+        }
+        return Custom.init(provider);
+    });
+
+    /*
      * Make sure providers array is unique, filter duplicate values.
      * First, create a new set with unique ids from the configs.
      * Then map over those ids to find the first provider that matches from the configs.
      */
-    const providers = Array.from(new Set(config.providers.map(provider => provider.id))).map(
-        id => config.providers.find(provider => provider.id === id) as Provider
+    const providers = Array.from(new Set(providersWithCustom.map(provider => provider.id))).map(
+        id => providersWithCustom.find(provider => provider.id === id) as Provider
     );
-
-    /*
-     * Make sure providers array contains only Provider instances, throw otherwise.
-     */
-    const providersOnly = providers.some(provider => provider instanceof Provider === false) === false;
-    if (providersOnly !== true) {
-        throw new Error(
-            "ThridParty providers must all be instances of Providers. If you are adding a custom provider, make sure to use ThirdParty.Custom({...})"
-        );
-    }
 
     return {
         disableDefaultImplementation,

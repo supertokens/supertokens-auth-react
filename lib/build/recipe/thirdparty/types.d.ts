@@ -3,6 +3,7 @@ import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { AuthRecipeModuleGetRedirectionURLContext, AuthRecipeModuleOnHandleEventContext, AuthRecipeModulePreAPIHookContext, AuthRecipeModuleUserInput, SignInAndUpState, User } from "../authRecipeModule/types";
 import { RecipeModuleConfig } from "../recipeModule/types";
 import Provider from "./providers";
+import { CustomProviderConfig } from "./providers/types";
 export declare type ThirdPartyUserInput = AuthRecipeModuleUserInput<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext> & {
     palette?: Record<string, string>;
     useShadowDom?: boolean;
@@ -16,7 +17,7 @@ export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     disableDefaultImplementation?: boolean;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
-    providers: Provider[];
+    providers: (Provider | CustomProviderConfig)[];
 };
 export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     disableDefaultImplementation: boolean;

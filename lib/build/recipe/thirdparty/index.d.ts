@@ -9,12 +9,10 @@ import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-import Custom from "./providers/custom";
 export default class ThirdPartyAPIWrapper {
     static init(config: ThirdPartyUserInput): CreateRecipeFunction;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
-    static Custom: typeof Custom;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
@@ -28,4 +26,4 @@ export default class ThirdPartyAPIWrapper {
 declare const init: typeof ThirdPartyAPIWrapper.init;
 declare const signOut: typeof ThirdPartyAPIWrapper.signOut;
 declare const isEmailVerified: typeof ThirdPartyAPIWrapper.isEmailVerified;
-export { ThirdPartyAuth, ThirdPartyAPIWrapper, init, Apple, Google, Facebook, Github, Custom, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, EmailVerification, EmailVerificationTheme };
+export { ThirdPartyAuth, ThirdPartyAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, EmailVerification, EmailVerificationTheme };

@@ -28,4 +28,5 @@ export const RESET_PASSWORD_TOKEN_API = `${TEST_SERVER_BASE_URL}/auth/user/passw
 export const RESET_PASSWORD_API = `${TEST_SERVER_BASE_URL}/auth/user/password/reset`;
 export const SEND_VERIFY_EMAIL_API = `${TEST_SERVER_BASE_URL}/auth/user/email/verify/token`;
 export const VERIFY_EMAIL_API = `${TEST_SERVER_BASE_URL}/auth/user/email/verify`;
+export const SIGN_IN_UP_API = `${TEST_SERVER_BASE_URL}/auth/signinup`;
 export const ST_ROOT_SELECTOR = `#${ST_ROOT_ID}`;

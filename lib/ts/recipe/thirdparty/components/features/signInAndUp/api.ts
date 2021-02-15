@@ -36,8 +36,6 @@ export async function getOAuthAuthorisationURLAPI(
         { thirdPartyId }
     );
 
-    console.log(response);
-
     // If success.
     if (response.status === "OK") {
         return {

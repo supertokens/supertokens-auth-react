@@ -28,12 +28,13 @@ import { SignInAndUpAPIResponse } from "../../../types";
 export async function signInAndUpAPI(
     thirdPartyId: string,
     code: string,
-    recipe: RecipeModule
+    recipe: RecipeModule,
+    redirectURI: string
 ): Promise<SignInAndUpAPIResponse> {
     const response: SignInAndUpAPIResponse = await recipe.httpRequest.post(
         "/signinup",
         {
-            body: JSON.stringify({ code, thirdPartyId })
+            body: JSON.stringify({ code, thirdPartyId, redirectURI })
         },
         "SIGN_IN"
     );

@@ -336,61 +336,59 @@ describe("SuperTokens SignIn feature/theme", function() {
             );
         });
 
-        it("Successful Sign In with redirect to, with EmailPasswordAuth", async function() {
-            await clearBrowserCookies(page);
+        describe("Successful Sign In with redirect to, with EmailPasswordAuth", async function() {
+            it("First sign in", async function() {
+                await clearBrowserCookies(page);
+                let cookies = await page.cookies();
+                assert.deepStrictEqual(cookies, []); // Make sure cookies were removed.
 
-            let cookies = await page.cookies();
-            assert.deepStrictEqual(cookies, []); // Make sure cookies were removed.
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/redirect-to-this-custom-path`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" })
+                ]);
 
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/redirect-to-this-custom-path`),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
-            ]);
+                await toggleSignInSignUp(page);
 
-            await toggleSignInSignUp(page);
+                // Set correct values.
+                await setInputValues(page, [
+                    { name: "email", value: "john.doe@supertokens.io" },
+                    { name: "password", value: "Str0ngP@ssw0rd" }
+                ]);
+                // Submit.
+                await Promise.all([
+                    submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                    page.waitForNavigation({ waitUntil: "networkidle0" })
+                ]);
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/redirect-to-this-custom-path");
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                    "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
+                    "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SIGN_IN_COMPLETE",
+                    "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS"
+                ]);
+            });
 
-            // Set correct values.
-            await setInputValues(page, [
-                { name: "email", value: "john.doe@supertokens.io" },
-                { name: "password", value: "Str0ngP@ssw0rd" }
-            ]);
+            it("Login in again without redirectToPath params, make sure redirectToPath was clean up from session storage", async function() {
+                await page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    // Login again will not redirect to custom path.
+                    await toggleSignInSignUp(page);
 
-            // Submit.
-            await Promise.all([
-                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
-            ]);
-            let pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/redirect-to-this-custom-path");
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
-                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SIGN_IN_COMPLETE",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS"
-            ]);
+                // Set correct values.
+                await setInputValues(page, [
+                    { name: "email", value: "john.doe@supertokens.io" },
+                    { name: "password", value: "Str0ngP@ssw0rd" }
+                ]);
 
-            // Logout
-            const logoutButton = await getLogoutButton(page);
-            await logoutButton.click();
-            await page.waitForNavigation();
+                // Submit.
+                await Promise.all([
+                    submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                    page.waitForNavigation({ waitUntil: "networkidle0" })
+                ]);
 
-            // Login again will not redirect to custom path.
-            await toggleSignInSignUp(page);
-
-            // Set correct values.
-            await setInputValues(page, [
-                { name: "email", value: "john.doe@supertokens.io" },
-                { name: "password", value: "Str0ngP@ssw0rd" }
-            ]);
-
-            // Submit.
-            await Promise.all([
-                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
-            ]);
-
-            pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/dashboard");
+            });
         });
     });
 });

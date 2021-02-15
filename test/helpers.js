@@ -347,3 +347,57 @@ export async function assertProviders(page) {
         "Continue with Custom"
     ]);
 }
+
+
+export async function clickOnProviderButton(page, provider) {
+    return await Promise.all([
+        page.evaluate(({ST_ROOT_SELECTOR, provider}) => {
+            Array.from(document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelectorAll("[data-supertokens~='providerButton']")).find(button => { return button.innerText === `Continue with ${provider}`}).click();
+        }, {ST_ROOT_SELECTOR, provider}),
+        page.waitForNavigation({ waitUntil: "networkidle0" })
+    ]);
+}
+
+export async function loginWithGoogle(page) {
+    await page.focus('input[type=email]');
+    await page.keyboard.type(process.env.GOOGLE_EMAIL);
+    await Promise.all([
+        page.click('input[name="signIn"]'),
+        page.waitForNavigation()
+    ]);
+    await page.focus('input[type=password]');
+    await page.keyboard.type(process.env.GOOGLE_PASSWORD);
+    // Submit login
+    await Promise.all([
+        page.keyboard.press('Enter'),
+        page.waitForNavigation({ waitUntil: "networkidle0" })
+    ]);
+    // Accept OAuth terms
+    await Promise.all([
+        page.click('button'),
+        page.waitForNavigation({ waitUntil: "networkidle0" })
+    ]);
+}
+
+export async function loginWithFacebook(page) {
+    await page.click('button[data-cookiebanner="accept_button"'),
+    await page.focus('input[name=email]');
+    await page.keyboard.type(process.env.FACEBOOK_EMAIL);
+    await page.focus('input[name=pass]');
+    await page.keyboard.type(process.env.FACEBOOK_PASSWORD);
+    await Promise.all([
+        page.keyboard.press('Enter'),
+        page.waitForNavigation({ waitUntil: "networkidle0" })
+    ]);
+}
+
+export async function loginWithGithub(page) {
+    await page.focus('input[type=text]');
+    await page.keyboard.type(process.env.GITHUB_EMAIL);
+    await page.focus('input[type=password]');
+    await page.keyboard.type(process.env.GITHUB_PASSWORD);
+    await Promise.all([
+        page.keyboard.press('Enter'),
+        page.waitForNavigation({ waitUntil: "networkidle0" })
+    ]);
+}

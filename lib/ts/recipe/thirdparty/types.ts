@@ -24,6 +24,7 @@ import {
 } from "../authRecipeModule/types";
 import { RecipeModuleConfig } from "../recipeModule/types";
 import Provider from "./providers";
+import { CustomProviderConfig } from "./providers/types";
 
 export type ThirdPartyUserInput = AuthRecipeModuleUserInput<
     ThirdPartyGetRedirectionURLContext,
@@ -75,7 +76,7 @@ export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
      * Providers
      */
-    providers: Provider[];
+    providers: (Provider | CustomProviderConfig)[];
 };
 
 export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
