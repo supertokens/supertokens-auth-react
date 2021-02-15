@@ -103,7 +103,8 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
         // 3. Store state in Session Storage.
         const redirectToPath = getRedirectToPathFromURL();
         const urlWithState = appendQueryParamsToURL(url, {
-            state
+            state,
+            redirect_uri: provider.getRedirectURI()
         });
         const expiresAt = Date.now() + 1000 * 60 * 10; // 10 minutes expiry.
         const value = JSON.stringify({
