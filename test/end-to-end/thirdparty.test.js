@@ -85,7 +85,7 @@ describe("SuperTokens Third Party feature/theme", function() {
         clearBrowserCookies(page);
     });
 
-    describe.only("Third Party test", function() {
+    describe("Third Party test", function() {
         // In case OAuth configs are not set locally.
         if (process.env.SKIP_OAUTH === "true") {
             return;
