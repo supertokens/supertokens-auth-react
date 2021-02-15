@@ -10,3 +10,4 @@ screenshot.jpeg
 /examples/**/**/yarn.lock
 /examples/**/package-lock.json
 /examples/**/yarn.lock
+/test/.env.js

@@ -31,6 +31,7 @@ import { signInAndUpAPI } from "./api";
 import { ThirdPartySignInAndUpState } from "../../../types";
 import SignInAndUpCallbackTheme from "../../themes/signInAndUpCallback";
 import { getOAuthState } from "../../../utils";
+import Provider from "../../../providers";
 
 /*
  * Component.
@@ -60,7 +61,18 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
         }
 
         try {
-            const response = await signInAndUpAPI(providerId, code, ThirdParty.getInstanceOrThrow());
+            const provider = ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.find(
+                p => p.id === providerId
+            ) as Provider;
+            if (provider === undefined) {
+                throw new Error();
+            }
+            const response = await signInAndUpAPI(
+                providerId,
+                code,
+                ThirdParty.getInstanceOrThrow(),
+                provider.getRedirectURI()
+            );
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
                 return ThirdParty.getInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
                     error: "no_email_present"

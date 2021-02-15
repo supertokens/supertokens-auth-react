@@ -64,9 +64,20 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 
 5. Open a new terminal in `supertokens-auth-react` and run all tests
 
+   **If you'd like to skip oauth tests**
+   ```
+   SKIP_OAUTH=true npm run test
+   ```
+
+   **Otherwise**
+
+   - Make sure you copy `test/.env.example/.env.example.js` to `test/.env.example/.env.js` and add correct values.
+   - Make sure you copy `test/server/.env.example` to `test/server/.env` and add correct values.
+  
    ```
    npm run test
    ```
+
 
 ## Run the test application.
 

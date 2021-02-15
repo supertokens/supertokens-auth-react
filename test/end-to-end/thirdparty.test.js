@@ -22,13 +22,21 @@ import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
-import { clearBrowserCookies, assertProviders, assertNoSTComponents } from "../helpers";
+import {
+    clearBrowserCookies,
+    assertProviders,
+    assertNoSTComponents,
+    clickOnProviderButton,
+    loginWithGithub,
+    loginWithFacebook,
+    loginWithGoogle
+} from "../helpers";
 
 import { SESSION_STORAGE_STATE_KEY } from "../../lib/build/recipe/thirdparty/constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
 
 /*
  * Tests.
@@ -77,35 +85,65 @@ describe("SuperTokens Third Party feature/theme", function() {
         clearBrowserCookies(page);
     });
 
-    describe("Third Party test (default)", function() {
+    describe.only("Third Party test", function() {
+        // In case OAuth configs are not set locally.
+        if (process.env.SKIP_OAUTH === "true") {
+            return;
+        }
+
         it("Successful signup with github", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
-            assert.deepStrictEqual(consoleLogs, []);
-        });
-
-        it("Successful signup with twitter", async function() {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            await assertProviders(page);
-            assert.deepStrictEqual(consoleLogs, []);
+            await clickOnProviderButton(page, "Github");
+            await Promise.all([
+                loginWithGithub(page),
+                page.waitForResponse(response => response.url() === SIGN_IN_UP_API && response.status() === 200)
+            ]);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SIGN_IN",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS"
+            ]);
         });
 
         it("Successful signup with facebook", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
-            assert.deepStrictEqual(consoleLogs, []);
+            await clickOnProviderButton(page, "Facebook");
+            await Promise.all([
+                loginWithFacebook(page),
+                page.waitForResponse(response => response.url() === SIGN_IN_UP_API && response.status() === 200)
+            ]);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SIGN_IN",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS"
+            ]);
         });
 
         it("Successful signup with google", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
-            assert.deepStrictEqual(consoleLogs, []);
-        });
-
-        it("Successful signup with apple", async function() {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            await assertProviders(page);
-            assert.deepStrictEqual(consoleLogs, []);
+            await clickOnProviderButton(page, "Google");
+            await Promise.all([
+                loginWithGoogle(page),
+                page.waitForResponse(response => response.url() === SIGN_IN_UP_API && response.status() === 200)
+            ]);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SIGN_IN",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS"
+            ]);
         });
     });
 

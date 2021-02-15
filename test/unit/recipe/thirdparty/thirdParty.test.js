@@ -20,7 +20,7 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import ThirdParty from "../../../../lib/build/recipe/thirdparty/thirdparty";
-import {Google, Github, Facebook, Custom} from "../../../../lib/build/recipe/thirdparty/";
+import {Google, Github, Facebook} from "../../../../lib/build/recipe/thirdparty";
 import assert from "assert";
 import SuperTokens from "../../../../lib/build/superTokens";
 
@@ -119,7 +119,7 @@ describe("ThirdParty", function() {
         assert.throws(() => ThirdParty.init({
             signInAndUpFeature: {
                 providers: [
-                    Custom.init(),
+                    {}
                 ]
             }
         })(SuperTokens.getInstanceOrThrow().appInfo), new Error("Custom provider config should contain id and name attributes"));
@@ -129,9 +129,9 @@ describe("ThirdParty", function() {
         assert.throws(() => ThirdParty.init({
             signInAndUpFeature: {
                 providers: [
-                    Custom.init({
+                    {
                         name: "Twitch"
-                    }),
+                    },
                 ]
             }
         })(SuperTokens.getInstanceOrThrow().appInfo), new Error("Custom provider config should contain id and name attributes"));
@@ -141,9 +141,9 @@ describe("ThirdParty", function() {
         assert.throws(() => ThirdParty.init({
             signInAndUpFeature: {
                 providers: [
-                    Custom.init({
+                    {
                         id: "twitch"
-                    }),
+                    },
                 ]
             }
         })(SuperTokens.getInstanceOrThrow().appInfo), new Error("Custom provider config should contain id and name attributes"));
@@ -153,10 +153,10 @@ describe("ThirdParty", function() {
         ThirdParty.init({
             signInAndUpFeature: {
                 providers: [
-                    Custom.init({
+                    {
                         id: "twitch",
                         name: "Twitch"
-                    }),
+                    },
                 ]
             }
         })(SuperTokens.getInstanceOrThrow().appInfo);
@@ -175,14 +175,14 @@ describe("ThirdParty", function() {
         ThirdParty.init({
             signInAndUpFeature: {
                 providers: [
-                    Custom.init({
+                    {
                         id: "slack",
                         name: "Slack First Provider"
-                    }),
-                    Custom.init({
+                    },
+                    {
                         id: "slack",
                         name: "Slack Second Provider"
-                    }),
+                    },
                 ]
             }
         })(SuperTokens.getInstanceOrThrow().appInfo);
@@ -200,11 +200,11 @@ describe("ThirdParty", function() {
         ThirdParty.init({
             signInAndUpFeature: {
                 providers: [
-                    Custom.init({
+                    {
                         id: "slack",
                         name: "Slack",
                         buttonComponent: "LOGIN WITH SLACK"
-                    }),
+                    }
                 ]
             }
         })(SuperTokens.getInstanceOrThrow().appInfo);
@@ -244,7 +244,7 @@ describe("ThirdParty", function() {
                     "facebook"
                 ]
             }
-        })(SuperTokens.getInstanceOrThrow().appInfo), new Error("ThridParty providers must all be instances of Providers. If you are adding a custom provider, make sure to use ThirdParty.Custom({...})"));
+        })(SuperTokens.getInstanceOrThrow().appInfo), new Error("Custom provider config should contain id and name attributes"));
     });
 
 

@@ -26,14 +26,14 @@ import { AuthorisationURLAPIResponse } from "../../../types";
  */
 
 export async function getOAuthAuthorisationURLAPI(
-    providerId: string,
+    thirdPartyId: string,
     recipe: RecipeModule
 ): Promise<AuthorisationURLAPIResponse> {
     const response: AuthorisationURLAPIResponse = await recipe.httpRequest.get(
         "/authorisationurl",
         {},
         "GET_AUTHORISATION_URL",
-        { providerId }
+        { thirdPartyId }
     );
 
     // If success.

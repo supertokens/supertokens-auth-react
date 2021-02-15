@@ -24,7 +24,6 @@ import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-import Custom from "./providers/custom";
 /*
  * Class.
  */
@@ -48,7 +47,6 @@ export default class ThirdPartyAPIWrapper {
     /*
      * Providers
      */
-    static Custom = Custom;
     static Google = Google;
     static Apple = Apple;
     static Facebook = Facebook;
@@ -72,7 +70,6 @@ export {
     Google,
     Facebook,
     Github,
-    Custom,
     isEmailVerified,
     SignInAndUp,
     SignInAndUpTheme,
