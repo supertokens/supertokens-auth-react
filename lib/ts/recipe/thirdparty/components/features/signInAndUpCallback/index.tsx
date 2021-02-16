@@ -67,12 +67,11 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
             if (provider === undefined) {
                 throw new Error();
             }
-            const response = await signInAndUpAPI(
-                providerId,
-                code,
-                ThirdParty.getInstanceOrThrow(),
-                provider.getRedirectURI()
-            );
+            const redirectUrl = await ThirdParty.getInstanceOrThrow().getRedirectUrl({
+                action: "GET_REDIRECT_URL",
+                provider
+            });
+            const response = await signInAndUpAPI(providerId, code, ThirdParty.getInstanceOrThrow(), redirectUrl);
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
                 return ThirdParty.getInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
                     error: "no_email_present"

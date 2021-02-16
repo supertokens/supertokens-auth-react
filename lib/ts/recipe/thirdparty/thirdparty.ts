@@ -100,7 +100,12 @@ export default class ThirdParty extends AuthRecipeModule<
     };
 
     getDefaultRedirectionURL = async (context: ThirdPartyGetRedirectionURLContext): Promise<string> => {
-        return this.getAuthRecipeModuleDefaultRedirectionURL(context);
+        switch (context.action) {
+            case "GET_REDIRECT_URL":
+                return context.provider.getRedirectURL();
+            default:
+                return this.getAuthRecipeModuleDefaultRedirectionURL(context);
+        }
     };
 
     /*

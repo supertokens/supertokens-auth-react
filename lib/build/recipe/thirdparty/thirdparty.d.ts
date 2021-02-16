@@ -8,7 +8,7 @@ export default class ThirdParty extends AuthRecipeModule<ThirdPartyGetRedirectio
     config: NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig;
     constructor(config: ThirdPartyConfig);
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
-    getDefaultRedirectionURL: (context: import("../authRecipeModule/types").AuthRecipeModuleGetRedirectionURLContext) => Promise<string>;
+    getDefaultRedirectionURL: (context: ThirdPartyGetRedirectionURLContext) => Promise<string>;
     static init(config: ThirdPartyUserInput): CreateRecipeFunction;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;

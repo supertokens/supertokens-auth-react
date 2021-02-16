@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.6.0] - 2020-02-15
+## [0.6.0] - 2020-02-16
 
 ### Added
 - Third Party recipe with Google/Github/Facebook/Apple
@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 - Introduce AuthRecipeModule to abstract common functions (hooks, signout, isEmailVerified)
 - Email Verification as a recipe
+- Email Password context from `{action: "SIGN_IN_COMPLETE" | "SIGN_UP_COMPLETE"}` to `{action: "SUCCESS", isNewUser: boolean}`
 
 ## [0.5.6] - 2020-02-06
 
