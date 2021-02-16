@@ -55,7 +55,7 @@ export default abstract class Provider {
         );
     }
 
-    getRedirectURI(): string {
+    getRedirectURL(): string {
         const domain = ThirdParty.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
         const callbackPath = new NormalisedURLPath(`/callback/${this.id}`);
         const path = ThirdParty.getInstanceOrThrow()

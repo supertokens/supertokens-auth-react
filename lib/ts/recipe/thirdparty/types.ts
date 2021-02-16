@@ -101,7 +101,20 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     providers: Provider[];
 };
 
-export type ThirdPartyGetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
+export type ThirdPartyGetRedirectionURLContext =
+    | AuthRecipeModuleGetRedirectionURLContext
+    | {
+          /*
+           * action
+           */
+          action: "GET_REDIRECT_URL";
+
+          /*
+           * Provider Id
+           */
+          provider: Provider;
+      };
+
 export type ThirdPartyPreAPIHookContext =
     | AuthRecipeModulePreAPIHookContext
     | {

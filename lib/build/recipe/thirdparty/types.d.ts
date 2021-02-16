@@ -25,7 +25,10 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
     termsOfServiceLink?: string;
     providers: Provider[];
 };
-export declare type ThirdPartyGetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
+export declare type ThirdPartyGetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext | {
+    action: "GET_REDIRECT_URL";
+    provider: Provider;
+};
 export declare type ThirdPartyPreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
     action: "GET_AUTHORISATION_URL";
 };
