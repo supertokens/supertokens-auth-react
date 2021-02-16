@@ -40,7 +40,7 @@ export type SuperTokensConfig = {
     useReactRouterDom?: boolean;
 };
 
-export type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule;
+export type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule<unknown, unknown, unknown>;
 
 export type AppInfoUserInput = {
     /*

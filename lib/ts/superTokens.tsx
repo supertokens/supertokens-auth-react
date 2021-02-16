@@ -40,7 +40,7 @@ export default class SuperTokens {
      * Instance Attributes.
      */
     appInfo: NormalisedAppInfo;
-    recipeList: RecipeModule[] = [];
+    recipeList: RecipeModule<unknown, unknown, unknown>[] = [];
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
     private useReactRouterDom: boolean;
     private reactRouterDom?: any;
@@ -169,7 +169,7 @@ export default class SuperTokens {
         return routeComponents[0];
     };
 
-    getRecipeOrThrow(recipeId: string): RecipeModule {
+    getRecipeOrThrow(recipeId: string): RecipeModule<unknown, unknown, unknown> {
         const recipe = this.recipeList.find(recipe => {
             return recipe.recipeId === recipeId;
         });

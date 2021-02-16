@@ -31,7 +31,7 @@ export default class EmailVerificationAuth extends PureComponent<FeatureBaseProp
     /*
      * Methods.
      */
-    getRecipeInstanceOrThrow = (): AuthRecipeModule => {
+    getRecipeInstanceOrThrow = (): AuthRecipeModule<unknown, unknown, unknown> => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to EmailVerificationAuth component");
         }
@@ -43,7 +43,7 @@ export default class EmailVerificationAuth extends PureComponent<FeatureBaseProp
             );
         }
 
-        return recipe as AuthRecipeModule;
+        return recipe as AuthRecipeModule<unknown, unknown, unknown>;
     };
 
     isEmailVerifiedAPI = async (): Promise<boolean> => {

@@ -2,7 +2,7 @@ import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 import { RecipeModuleHooks, NormalisedRecipeModuleHooks } from "./recipe/recipeModule/types";
-export declare function normalisedRecipeModuleHooks(config: RecipeModuleHooks<unknown, unknown, unknown>): NormalisedRecipeModuleHooks;
+export declare function normalisedRecipeModuleHooks(config: RecipeModuleHooks<unknown, unknown, unknown>): NormalisedRecipeModuleHooks<unknown, unknown, unknown>;
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function getQueryParams(param: string): string | null;
 export declare function getRedirectToPathFromURL(): string | undefined;

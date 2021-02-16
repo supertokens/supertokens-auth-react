@@ -431,7 +431,7 @@ export type EmailPasswordPreAPIHookContext =
           /*
            * Pre API Hook action.
            */
-          action: "SIGN_IN" | "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
+          action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
 
           /*
            * Request object containing query params, body, headers.
@@ -455,16 +455,6 @@ export type EmailPasswordOnHandleEventContext =
            * On Handle Event actions
            */
           action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
-      }
-    | {
-          /*
-           * Sign In / Sign Up success.
-           */
-          action: "SIGN_UP_COMPLETE";
-          /*
-           * User returned from API.
-           */
-          user: User;
       };
 
 export type ResetPasswordUsingTokenThemeProps = {

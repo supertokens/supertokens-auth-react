@@ -30,16 +30,16 @@ import { matchRecipeIdUsingQueryParams } from "../../utils";
 /*
  * Class.
  */
-export default class EmailVerification extends RecipeModule {
+export default class EmailVerification<T, S, R> extends RecipeModule<T, S, R> {
     /*
      * Instance Attributes.
      */
-    config: EmailVerificationConfig;
+    config: EmailVerificationConfig<T, S, R>;
 
     /*
      * Constructor.
      */
-    constructor(config: EmailVerificationConfig) {
+    constructor(config: EmailVerificationConfig<T, S, R>) {
         super(config);
         this.config = config;
     }

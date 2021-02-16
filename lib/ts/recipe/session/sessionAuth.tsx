@@ -44,7 +44,7 @@ export default class SessionAuth extends PureComponent<FeatureBaseProps, Session
     /*
      * Methods.
      */
-    getRecipeInstanceOrThrow = (): AuthRecipeModule => {
+    getRecipeInstanceOrThrow = (): AuthRecipeModule<unknown, unknown, unknown> => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SessionAuth component");
         }

@@ -1,7 +1,7 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction } from "../../types";
 import { SessionUserInput, SessionConfig } from "./types";
-export default class Session extends RecipeModule {
+export default class Session extends RecipeModule<unknown, unknown, unknown> {
     static instance?: Session;
     static RECIPE_ID: string;
     constructor(config: SessionConfig);

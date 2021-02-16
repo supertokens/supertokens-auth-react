@@ -9,7 +9,7 @@ export declare type SuperTokensConfig = {
     recipeList: CreateRecipeFunction[];
     useReactRouterDom?: boolean;
 };
-export declare type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule;
+export declare type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule<unknown, unknown, unknown>;
 export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;

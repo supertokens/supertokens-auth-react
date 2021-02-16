@@ -7,6 +7,7 @@ import ResetPasswordUsingToken from "./components/features/resetPasswordUsingTok
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { EmailVerification } from "./components/features/emailVerification";
+import { EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext } from "./types";
 export default class EmailPasswordAPIWrapper {
     static EmailPasswordAuth: typeof EmailPasswordAuth;
     static SignInAndUp: typeof SignInAndUp;
@@ -22,4 +23,4 @@ export default class EmailPasswordAPIWrapper {
 declare const init: typeof EmailPasswordAPIWrapper.init;
 declare const signOut: typeof EmailPasswordAPIWrapper.signOut;
 declare const isEmailVerified: typeof EmailPasswordAPIWrapper.isEmailVerified;
-export { EmailPasswordAuth, EmailPasswordAPIWrapper, init, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, EmailVerification, EmailVerificationTheme };
+export { EmailPasswordAuth, EmailPasswordAPIWrapper, init, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, EmailVerification, EmailVerificationTheme, EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext };

@@ -78,6 +78,11 @@ export type AuthRecipeModuleGetRedirectionURLContext =
           action: "SUCCESS";
 
           /*
+           * isNewUser
+           */
+          isNewUser: boolean;
+
+          /*
            * Redirect To Path represents the intended path the user wanted to access.
            */
           redirectToPath?: string;
@@ -93,7 +98,7 @@ export type AuthRecipeModulePreAPIHookContext = {
     /*
      * Pre API Hook action.
      */
-    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_OUT";
+    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_OUT" | "SIGN_IN";
 
     /*
      * Request object containing query params, body, headers.
@@ -112,7 +117,13 @@ export type AuthRecipeModuleOnHandleEventContext =
           /*
            * Sign In success.
            */
-          action: "SIGN_IN_COMPLETE";
+          action: "SUCCESS";
+
+          /*
+           * isNewUser
+           */
+          isNewUser: boolean;
+
           /*
            * User returned from API.
            */

@@ -21,12 +21,12 @@ export default class HttpRequest {
     /*
      * Instance Attributes.
      */
-    private recipe: RecipeModule;
+    private recipe: RecipeModule<unknown, unknown, unknown>;
 
     /*
      * Constructor.
      */
-    constructor(recipe: RecipeModule) {
+    constructor(recipe: RecipeModule<unknown, unknown, unknown>) {
         this.recipe = recipe;
     }
 

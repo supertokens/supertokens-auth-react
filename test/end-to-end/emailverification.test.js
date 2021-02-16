@@ -102,7 +102,7 @@ describe("SuperTokens Email Verification", function() {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP",
-                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SIGN_UP_COMPLETE",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL"
             ]);
@@ -132,7 +132,7 @@ describe("SuperTokens Email Verification", function() {
             assert.deepStrictEqual(pathname, "/auth");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
-                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SIGN_IN_COMPLETE",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",
@@ -316,7 +316,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP",
-                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SIGN_UP_COMPLETE",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED"

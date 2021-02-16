@@ -70,7 +70,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
             ThirdParty.getInstanceOrThrow().hooks.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS"
             });
-            await ThirdParty.getInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history);
+            await ThirdParty.getInstanceOrThrow().redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
             return;
         }
 

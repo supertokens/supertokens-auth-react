@@ -27,6 +27,11 @@ import ResetPasswordUsingToken from "./components/features/resetPasswordUsingTok
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { EmailVerification } from "./components/features/emailVerification";
+import {
+    EmailPasswordGetRedirectionURLContext,
+    EmailPasswordPreAPIHookContext,
+    EmailPasswordOnHandleEventContext
+} from "./types";
 /*
  * Class.
  */
@@ -44,6 +49,10 @@ export default class EmailPasswordAPIWrapper {
 
     static EmailVerification = EmailVerification;
     static EmailVerificationTheme = EmailVerificationTheme;
+
+    /*
+     * Methods.
+     */
 
     static init(config?: EmailPasswordUserInput): CreateRecipeFunction {
         return EmailPassword.init(config);
@@ -73,5 +82,8 @@ export {
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
     EmailVerification,
-    EmailVerificationTheme
+    EmailVerificationTheme,
+    EmailPasswordGetRedirectionURLContext,
+    EmailPasswordPreAPIHookContext,
+    EmailPasswordOnHandleEventContext
 };

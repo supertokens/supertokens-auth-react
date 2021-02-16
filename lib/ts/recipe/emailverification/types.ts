@@ -60,7 +60,7 @@ export type NormalisedEmailVerificationConfig = {
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
 };
 
-export type EmailVerificationConfig = RecipeModuleConfig<unknown, unknown, unknown> &
+export type EmailVerificationConfig<T, S, R> = RecipeModuleConfig<T, S, R> &
     NormalisedEmailVerificationConfig & {
         /*
          * SignOut

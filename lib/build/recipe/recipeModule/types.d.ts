@@ -1,5 +1,5 @@
 import { NormalisedAppInfo } from "../../types";
-export declare type RecipeModuleConfig<T, S, R> = RecipeModuleHooks<T, S, R> & {
+export declare type RecipeModuleConfig<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext> = RecipeModuleHooks<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext> & {
     recipeId: string;
     /**
      *
@@ -7,13 +7,13 @@ export declare type RecipeModuleConfig<T, S, R> = RecipeModuleHooks<T, S, R> & {
      */
     appInfo: NormalisedAppInfo;
 };
-export declare type RecipeModuleHooks<T, S, R> = {
-    preAPIHook?: (context: S) => Promise<RequestInit>;
-    onHandleEvent?: (context: R) => void;
-    getRedirectionURL?: (context: T) => Promise<string | undefined>;
+export declare type RecipeModuleHooks<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext> = {
+    getRedirectionURL?: (context: RecipeModuleGetRedirectionURLContext) => Promise<string | undefined>;
+    preAPIHook?: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit>;
+    onHandleEvent?: (context: RecipeModuleOnHandleEventContext) => void;
 };
-export declare type NormalisedRecipeModuleHooks = {
-    preAPIHook: (context: unknown) => Promise<RequestInit>;
-    onHandleEvent: (context: unknown) => void;
-    getRedirectionURL: (context: unknown) => Promise<string | undefined>;
+export declare type NormalisedRecipeModuleHooks<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext> = {
+    getRedirectionURL: (context: RecipeModuleGetRedirectionURLContext) => Promise<string | undefined>;
+    preAPIHook: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit>;
+    onHandleEvent: (context: RecipeModuleOnHandleEventContext) => void;
 };

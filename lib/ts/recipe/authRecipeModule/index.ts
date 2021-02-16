@@ -28,13 +28,13 @@ import EmailVerification from "../emailverification";
 /*
  * Class.
  */
-export default abstract class AuthRecipeModule extends RecipeModule {
+export default abstract class AuthRecipeModule<T, S, R> extends RecipeModule<T, S, R> {
     /*
      * Instance attributes.
      */
 
     config: NormalisedAuthRecipeConfig;
-    emailVerification?: EmailVerification;
+    emailVerification?: EmailVerification<T, S, R>;
 
     /*
      * Constructor.

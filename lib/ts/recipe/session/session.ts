@@ -25,7 +25,7 @@ import sessionSdk from "supertokens-website";
 /*
  * Class.
  */
-export default class Session extends RecipeModule {
+export default class Session extends RecipeModule<unknown, unknown, unknown> {
     /*
      * Static Attributes.
      */
@@ -95,7 +95,7 @@ export default class Session extends RecipeModule {
      */
 
     static init(config?: SessionUserInput): CreateRecipeFunction {
-        return (appInfo: NormalisedAppInfo): RecipeModule => {
+        return (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown> => {
             Session.instance = new Session({
                 ...config,
                 appInfo,
