@@ -126,7 +126,7 @@ export declare type SubmitNewPasswordAPIResponse = BaseResetPasswordAPIResponse 
     status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
 };
 export declare type EmailPasswordPreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
-    action: "SIGN_IN" | "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
+    action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
     requestInit: RequestInit;
 };
 export declare type EmailPasswordGetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext | {
@@ -134,9 +134,6 @@ export declare type EmailPasswordGetRedirectionURLContext = AuthRecipeModuleGetR
 };
 export declare type EmailPasswordOnHandleEventContext = AuthRecipeModuleOnHandleEventContext | {
     action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
-} | {
-    action: "SIGN_UP_COMPLETE";
-    user: User;
 };
 export declare type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailThemeProps;

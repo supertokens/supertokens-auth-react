@@ -1,7 +1,7 @@
 import RecipeModule from "./recipe/recipeModule";
 export default class HttpRequest {
     private recipe;
-    constructor(recipe: RecipeModule);
+    constructor(recipe: RecipeModule<unknown, unknown, unknown>);
     get: <T>(path: string, config: RequestInit, action: string, queryParams?: Record<string, string> | undefined) => Promise<T>;
     post: <T>(path: string, config: RequestInit, action: string) => Promise<T>;
     delete: <T>(path: string, action: string, config: RequestInit) => Promise<T>;

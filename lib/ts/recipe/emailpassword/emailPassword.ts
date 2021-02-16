@@ -22,6 +22,8 @@ import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, Suc
 import {
     EmailPasswordConfig,
     EmailPasswordGetRedirectionURLContext,
+    EmailPasswordOnHandleEventContext,
+    EmailPasswordPreAPIHookContext,
     EmailPasswordUserInput,
     NormalisedEmailPasswordConfig
 } from "./types";
@@ -37,7 +39,11 @@ import { NormalisedAuthRecipeConfig } from "../authRecipeModule/types";
 /*
  * Class.
  */
-export default class EmailPassword extends AuthRecipeModule {
+export default class EmailPassword extends AuthRecipeModule<
+    EmailPasswordGetRedirectionURLContext,
+    EmailPasswordPreAPIHookContext,
+    EmailPasswordOnHandleEventContext
+> {
     /*
      * Static Attributes.
      */
@@ -108,7 +114,13 @@ export default class EmailPassword extends AuthRecipeModule {
      */
 
     static init(config?: EmailPasswordUserInput): CreateRecipeFunction {
-        return (appInfo: NormalisedAppInfo): RecipeModule => {
+        return (
+            appInfo: NormalisedAppInfo
+        ): RecipeModule<
+            EmailPasswordGetRedirectionURLContext,
+            EmailPasswordPreAPIHookContext,
+            EmailPasswordOnHandleEventContext
+        > => {
             EmailPassword.instance = new EmailPassword({
                 ...config,
                 appInfo,

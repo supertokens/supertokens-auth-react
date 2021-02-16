@@ -1,6 +1,14 @@
 import { NormalisedAppInfo } from "../../types";
 
-export type RecipeModuleConfig<T, S, R> = RecipeModuleHooks<T, S, R> & {
+export type RecipeModuleConfig<
+    RecipeModuleGetRedirectionURLContext,
+    RecipeModulePreAPIHookContext,
+    RecipeModuleOnHandleEventContext
+> = RecipeModuleHooks<
+    RecipeModuleGetRedirectionURLContext,
+    RecipeModulePreAPIHookContext,
+    RecipeModuleOnHandleEventContext
+> & {
     /*
      * Unique Identifier of a module.
      */
@@ -13,36 +21,44 @@ export type RecipeModuleConfig<T, S, R> = RecipeModuleHooks<T, S, R> & {
     appInfo: NormalisedAppInfo;
 };
 
-export type RecipeModuleHooks<T, S, R> = {
+export type RecipeModuleHooks<
+    RecipeModuleGetRedirectionURLContext,
+    RecipeModulePreAPIHookContext,
+    RecipeModuleOnHandleEventContext
+> = {
+    /*
+     * Method used for redirections.
+     */
+    getRedirectionURL?: (context: RecipeModuleGetRedirectionURLContext) => Promise<string | undefined>;
+
     /*
      * Optional pre API Hook.
      */
-    preAPIHook?: (context: S) => Promise<RequestInit>;
+    preAPIHook?: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit>;
 
     /*
      * Optional method used for handling event success.
      */
-    onHandleEvent?: (context: R) => void;
-
-    /*
-     * Method used for redirections.
-     */
-    getRedirectionURL?: (context: T) => Promise<string | undefined>;
+    onHandleEvent?: (context: RecipeModuleOnHandleEventContext) => void;
 };
 
-export type NormalisedRecipeModuleHooks = {
+export type NormalisedRecipeModuleHooks<
+    RecipeModuleGetRedirectionURLContext,
+    RecipeModulePreAPIHookContext,
+    RecipeModuleOnHandleEventContext
+> = {
+    /*
+     * Optional method used for redirections.
+     */
+    getRedirectionURL: (context: RecipeModuleGetRedirectionURLContext) => Promise<string | undefined>;
+
     /*
      * Optional pre API Hook.
      */
-    preAPIHook: (context: unknown) => Promise<RequestInit>;
+    preAPIHook: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit>;
 
     /*
      * Method used for handling event success.
      */
-    onHandleEvent: (context: unknown) => void;
-
-    /*
-     * Optional method used for redirections.
-     */
-    getRedirectionURL: (context: unknown) => Promise<string | undefined>;
+    onHandleEvent: (context: RecipeModuleOnHandleEventContext) => void;
 };

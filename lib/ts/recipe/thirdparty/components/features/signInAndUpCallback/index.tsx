@@ -79,12 +79,15 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
                 });
             }
             if (response.status === "OK") {
-                if (response.createdNewUser === true) {
-                    ThirdParty.getInstanceOrThrow().hooks.onHandleEvent({ action: "SIGN_IN_COMPLETE" });
-                } else {
-                    ThirdParty.getInstanceOrThrow().hooks.onHandleEvent({ action: "SIGN_UP_COMPLETE" });
-                }
-                return ThirdParty.getInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history);
+                ThirdParty.getInstanceOrThrow().hooks.onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: response.createdNewUser,
+                    user: response.user
+                });
+                return ThirdParty.getInstanceOrThrow().redirect(
+                    { action: "SUCCESS", isNewUser: response.createdNewUser },
+                    this.props.history
+                );
             }
         } catch (e) {
             return ThirdParty.getInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {

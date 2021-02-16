@@ -4,7 +4,7 @@ import { SessionAuthState } from "./types";
 import AuthRecipeModule from "../authRecipeModule";
 export default class SessionAuth extends PureComponent<FeatureBaseProps, SessionAuthState> {
     constructor(props: FeatureBaseProps);
-    getRecipeInstanceOrThrow: () => AuthRecipeModule;
+    getRecipeInstanceOrThrow: () => AuthRecipeModule<unknown, unknown, unknown>;
     componentDidMount(): Promise<void>;
     render: () => JSX.Element | null;
 }

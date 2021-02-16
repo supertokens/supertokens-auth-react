@@ -27,15 +27,9 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
 };
 export declare type ThirdPartyGetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 export declare type ThirdPartyPreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
-    action: "GET_AUTHORISATION_URL" | "SIGN_IN";
+    action: "GET_AUTHORISATION_URL";
 };
-export declare type ThirdPartyOnHandleEventContext = AuthRecipeModuleOnHandleEventContext | {
-    action: "SIGN_UP_COMPLETE";
-    user: {
-        id: string;
-        email: string;
-    };
-};
+export declare type ThirdPartyOnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
 export declare type SignInAndUpThemeProps = {
     providers: {
         id: string;

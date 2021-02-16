@@ -27,7 +27,11 @@ import NormalisedURLDomain from "../../normalisedURLDomain";
 /*
  * Class.
  */
-export default abstract class RecipeModule {
+export default abstract class RecipeModule<
+    RecipeModuleGetRedirectionURLContext,
+    RecipeModulePreAPIHookContext,
+    RecipeModuleOnHandleEventContext
+> {
     /*
      * Instance attributes.
      */
@@ -35,12 +39,22 @@ export default abstract class RecipeModule {
     recipeId: string;
     appInfo: NormalisedAppInfo;
     httpRequest: HttpRequest;
-    hooks: NormalisedRecipeModuleHooks;
+    hooks: NormalisedRecipeModuleHooks<
+        RecipeModuleGetRedirectionURLContext,
+        RecipeModulePreAPIHookContext,
+        RecipeModuleOnHandleEventContext
+    >;
 
     /*
      * Constructor.
      */
-    constructor(config: RecipeModuleConfig<unknown, unknown, unknown>) {
+    constructor(
+        config: RecipeModuleConfig<
+            RecipeModuleGetRedirectionURLContext,
+            RecipeModulePreAPIHookContext,
+            RecipeModuleOnHandleEventContext
+        >
+    ) {
         this.recipeId = config.recipeId;
         this.appInfo = config.appInfo;
         this.httpRequest = new HttpRequest(this);
@@ -48,7 +62,7 @@ export default abstract class RecipeModule {
     }
 
     redirect = async (
-        context: unknown,
+        context: RecipeModuleGetRedirectionURLContext,
         history?: History<LocationState>,
         queryParams?: Record<string, string>
     ): Promise<void> => {
@@ -77,7 +91,7 @@ export default abstract class RecipeModule {
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    getRedirectUrl = async (context: any): Promise<string> => {
+    getRedirectUrl = async (context: RecipeModuleGetRedirectionURLContext): Promise<string> => {
         // If getRedirectionURL provided by user.
         const redirectUrl = await this.hooks.getRedirectionURL(context);
         if (redirectUrl !== undefined) {
@@ -89,7 +103,7 @@ export default abstract class RecipeModule {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async getDefaultRedirectionURL(context: unknown): Promise<string> {
+    async getDefaultRedirectionURL(context: RecipeModuleGetRedirectionURLContext): Promise<string> {
         throw new Error("getDefaultRedirectionURL is not implemented.");
     }
 

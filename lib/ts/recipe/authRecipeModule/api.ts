@@ -25,7 +25,7 @@ import { SuccessAPIResponse } from "../../types";
  * Methods.
  */
 
-export async function signOut(recipe: AuthRecipeModule): Promise<SuccessAPIResponse> {
+export async function signOut(recipe: AuthRecipeModule<unknown, unknown, unknown>): Promise<SuccessAPIResponse> {
     const sessionExpiredStatusCode = sessionSdk.sessionExpiredStatusCode;
 
     const result = await recipe.httpRequest.fetch(

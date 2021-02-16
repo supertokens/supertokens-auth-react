@@ -1,12 +1,11 @@
 import './App.css';
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react"
-import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import EmailPassword, { EmailPasswordGetRedirectionURLContext, EmailPasswordOnHandleEventContext, EmailPasswordPreAPIHookContext }  from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import ThirdParty from 'supertokens-auth-react/recipe/thirdparty';
 import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
-import { EmailPasswordGetRedirectionURLContext, EmailPasswordOnHandleEventContext, EmailPasswordPreAPIHookContext } from '../../../lib/ts/recipe/emailpassword/types';
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import DarkTheme from "./Themes/Dark";

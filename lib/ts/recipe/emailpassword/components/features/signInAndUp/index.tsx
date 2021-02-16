@@ -76,13 +76,15 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         }
 
         EmailPassword.getInstanceOrThrow().hooks.onHandleEvent({
-            action: "SIGN_IN_COMPLETE",
+            action: "SUCCESS",
+            isNewUser: false,
             user: this.state.user
         });
 
         return await EmailPassword.getInstanceOrThrow().redirect(
             {
                 action: "SUCCESS",
+                isNewUser: false,
                 redirectToPath: getRedirectToPathFromURL()
             },
             this.props.history
@@ -137,13 +139,15 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         }
 
         EmailPassword.getInstanceOrThrow().hooks.onHandleEvent({
-            action: "SIGN_UP_COMPLETE",
+            action: "SUCCESS",
+            isNewUser: false,
             user: this.state.user
         });
 
         // Redirect to email verification screen if sign up and email verification mode is required.
         let context: EmailPasswordGetRedirectionURLContext = {
             redirectToPath: getRedirectToPathFromURL(),
+            isNewUser: true,
             action: "SUCCESS"
         };
 
@@ -206,7 +210,10 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             EmailPassword.getInstanceOrThrow().hooks.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS"
             });
-            return await EmailPassword.getInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history);
+            return await EmailPassword.getInstanceOrThrow().redirect(
+                { action: "SUCCESS", isNewUser: false },
+                this.props.history
+            );
         }
 
         this.setState(oldState => {

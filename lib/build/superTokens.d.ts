@@ -6,7 +6,7 @@ import Session from "./recipe/session/session";
 export default class SuperTokens {
     private static instance?;
     appInfo: NormalisedAppInfo;
-    recipeList: RecipeModule[];
+    recipeList: RecipeModule<unknown, unknown, unknown>[];
     private pathsToFeatureComponentWithRecipeIdMap?;
     private useReactRouterDom;
     private reactRouterDom?;
@@ -20,7 +20,7 @@ export default class SuperTokens {
     getRoutingComponent: () => JSX.Element | undefined;
     getPathsToFeatureComponentWithRecipeIdMap: () => Record<string, ComponentWithRecipeAndMatchingMethod[]>;
     getMatchingComponentForRouteAndRecipeId: (normalisedUrl: NormalisedURLPath) => ComponentWithRecipeAndMatchingMethod | undefined;
-    getRecipeOrThrow(recipeId: string): RecipeModule;
+    getRecipeOrThrow(recipeId: string): RecipeModule<unknown, unknown, unknown>;
     getReactRouterDom: () => {
         Route: any;
         withRouter: any;

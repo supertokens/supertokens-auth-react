@@ -56,7 +56,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
     /*
      * Methods.
      */
-    getRecipeInstanceOrThrow = (): EmailVerificationRecipe => {
+    getRecipeInstanceOrThrow = (): EmailVerificationRecipe<unknown, unknown, unknown> => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to EmailVerification component");
         }
@@ -91,7 +91,10 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
         try {
             const response = await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow());
             if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                return await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history);
+                return await this.getRecipeInstanceOrThrow().redirect(
+                    { action: "SUCCESS", isNewUser: false },
+                    this.props.history
+                );
             }
         } catch (e) {}
 
@@ -113,7 +116,10 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             if (hasToken === false) {
                 const response = await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow());
                 if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                    return await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history);
+                    return await this.getRecipeInstanceOrThrow().redirect(
+                        { action: "SUCCESS", isNewUser: false },
+                        this.props.history
+                    );
                 }
             }
         } catch (e) {}
@@ -131,7 +137,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
                     action: "VERIFY_EMAIL_SENT"
                 }),
             onEmailAlreadyVerified: () =>
-                this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history)
+                this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS", isNewUser: false }, this.props.history)
         };
 
         const verifyEmailLinkClickedScreenFeature = this.getRecipeInstanceOrThrow().config.verifyEmailLinkClickedScreen;

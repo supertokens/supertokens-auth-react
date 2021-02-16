@@ -23,7 +23,9 @@ import {
     ThirdPartyConfig,
     ThirdPartyGetRedirectionURLContext,
     ThirdPartyUserInput,
-    NormalisedThirdPartyConfig
+    NormalisedThirdPartyConfig,
+    ThirdPartyPreAPIHookContext,
+    ThirdPartyOnHandleEventContext
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { matchRecipeIdUsingState, normaliseThirdPartyConfig } from "./utils";
@@ -37,7 +39,11 @@ import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 /*
  * Class.
  */
-export default class ThirdParty extends AuthRecipeModule {
+export default class ThirdParty extends AuthRecipeModule<
+    ThirdPartyGetRedirectionURLContext,
+    ThirdPartyPreAPIHookContext,
+    ThirdPartyOnHandleEventContext
+> {
     /*
      * Static Attributes.
      */
@@ -102,7 +108,13 @@ export default class ThirdParty extends AuthRecipeModule {
      */
 
     static init(config: ThirdPartyUserInput): CreateRecipeFunction {
-        return (appInfo: NormalisedAppInfo): RecipeModule => {
+        return (
+            appInfo: NormalisedAppInfo
+        ): RecipeModule<
+            ThirdPartyGetRedirectionURLContext,
+            ThirdPartyPreAPIHookContext,
+            ThirdPartyOnHandleEventContext
+        > => {
             ThirdParty.instance = new ThirdParty({
                 ...config,
                 appInfo,

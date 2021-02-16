@@ -22,7 +22,7 @@ import { normaliseEmailVerificationFeature } from "../emailverification/utils";
 import { AuthRecipeModuleConfig, NormalisedAuthRecipeConfig } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function isAuthRecipeModule(x: any): x is AuthRecipeModule {
+export function isAuthRecipeModule(x: any): x is AuthRecipeModule<unknown, unknown, unknown> {
     return x instanceof AuthRecipeModule;
 }
 

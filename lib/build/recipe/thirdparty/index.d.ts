@@ -1,7 +1,7 @@
 import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { EmailVerification } from "./components/features/emailVerification";
-import { ThirdPartyUserInput } from "./types";
+import { ThirdPartyUserInput, ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
@@ -26,4 +26,4 @@ export default class ThirdPartyAPIWrapper {
 declare const init: typeof ThirdPartyAPIWrapper.init;
 declare const signOut: typeof ThirdPartyAPIWrapper.signOut;
 declare const isEmailVerified: typeof ThirdPartyAPIWrapper.isEmailVerified;
-export { ThirdPartyAuth, ThirdPartyAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, EmailVerification, EmailVerificationTheme };
+export { ThirdPartyAuth, ThirdPartyAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, EmailVerification, EmailVerificationTheme, ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext };

@@ -24,7 +24,7 @@ import { EnterEmailAPIResponse, FormBaseAPIResponse, SubmitNewPasswordAPIRespons
 
 export async function handleSubmitNewPasswordAPI(
     formFields: APIFormField[],
-    recipe: RecipeModule,
+    recipe: RecipeModule<unknown, unknown, unknown>,
     token: string
 ): Promise<FormBaseAPIResponse> {
     const response: SubmitNewPasswordAPIResponse = await recipe.httpRequest.post(
@@ -61,7 +61,10 @@ export async function handleSubmitNewPasswordAPI(
     throw Error(SOMETHING_WENT_WRONG_ERROR);
 }
 
-export async function enterEmailAPI(formFields: APIFormField[], recipe: RecipeModule): Promise<FormBaseAPIResponse> {
+export async function enterEmailAPI(
+    formFields: APIFormField[],
+    recipe: RecipeModule<unknown, unknown, unknown>
+): Promise<FormBaseAPIResponse> {
     const response: EnterEmailAPIResponse = await recipe.httpRequest.post(
         "/user/password/reset/token",
         {
