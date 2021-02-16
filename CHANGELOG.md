@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix react-router-dom issue with EmailPasswordAuth in NextJS.
 
 ### Added
-- Supertokens config `userReactRouterDom`.
+- Supertokens config `useReactRouterDom`.
 ## [0.5.5] - 2020-02-04
 
 ### Fixes
