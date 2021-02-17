@@ -2,7 +2,7 @@ import './App.css';
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react"
 import EmailPassword, { EmailPasswordGetRedirectionURLContext, EmailPasswordOnHandleEventContext, EmailPasswordPreAPIHookContext }  from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
-import ThirdParty from 'supertokens-auth-react/recipe/thirdparty';
+import ThirdParty, { ThirdPartyGetRedirectionURLContext, ThirdPartyOnHandleEventContext, ThirdPartyPreAPIHookContext } from 'supertokens-auth-react/recipe/thirdparty';
 import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -204,6 +204,16 @@ function getEmailPasswordConfigs () {
 }
 function getThirdPartyConfigs () {
   return ThirdParty.init({
+    onHandleEvent(context: ThirdPartyOnHandleEventContext) {
+    },
+
+    async preAPIHook(context: ThirdPartyPreAPIHookContext) {
+      return context.requestInit;
+    },
+
+    async getRedirectionURL(context: ThirdPartyGetRedirectionURLContext) {
+      return undefined;
+    },
     palette: theme.colors,
     signInAndUpFeature: {
       style: theme.style,

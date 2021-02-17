@@ -122,6 +122,11 @@ export type ThirdPartyPreAPIHookContext =
            * action
            */
           action: "GET_AUTHORISATION_URL";
+
+          /*
+           * Request object containing query params, body, headers.
+           */
+          requestInit: RequestInit;
       };
 
 export type ThirdPartyOnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
