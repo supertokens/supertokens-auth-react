@@ -20,49 +20,51 @@
 import AuthRecipeModule from "../authRecipeModule";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, SuccessAPIResponse } from "../../types";
 import {
-    ThirdPartyConfig,
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyUserInput,
-    NormalisedThirdPartyConfig,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext
+    ThirdPartyEmailPasswordConfig,
+    ThirdPartyEmailPasswordGetRedirectionURLContext,
+    ThirdPartyEmailPasswordUserInput,
+    NormalisedThirdPartyEmailPasswordConfig,
+    ThirdPartyEmailPasswordPreAPIHookContext,
+    ThirdPartyEmailPasswordOnHandleEventContext
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import { matchRecipeIdUsingState, normaliseThirdPartyConfig } from "./utils";
+import { matchRecipeIdUsingState, normaliseThirdPartyEmailPasswordConfig } from "./utils";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import { NormalisedAuthRecipeConfig } from "../authRecipeModule/types";
 import SignInAndUp from "./components/features/signInAndUp";
-import SignInAndUpCallback from "./components/features/signInAndUpCallback";
+import SignInAndUpCallback from "../thirdparty/components/features/signInAndUpCallback";
+import { DEFAULT_RESET_PASSWORD_PATH } from "../emailpassword/constants";
+import { ResetPasswordUsingToken } from "../emailpassword";
 
 /*
  * Class.
  */
-export default class ThirdParty extends AuthRecipeModule<
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext
+export default class ThirdPartyEmailPassword extends AuthRecipeModule<
+    ThirdPartyEmailPasswordGetRedirectionURLContext,
+    ThirdPartyEmailPasswordPreAPIHookContext,
+    ThirdPartyEmailPasswordOnHandleEventContext
 > {
     /*
      * Static Attributes.
      */
-    static instance?: ThirdParty;
-    static RECIPE_ID = "thirdparty";
+    static instance?: ThirdPartyEmailPassword;
+    static RECIPE_ID = "thirdpartyemailpassword";
 
     /*
      * Instance Attributes.
      */
-    config: NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig;
+    config: NormalisedThirdPartyEmailPasswordConfig & NormalisedAuthRecipeConfig;
 
     /*
      * Constructor.
      */
-    constructor(config: ThirdPartyConfig) {
+    constructor(config: ThirdPartyEmailPasswordConfig) {
         super(config);
         this.config = {
             ...this.config,
-            ...normaliseThirdPartyConfig(config)
+            ...normaliseThirdPartyEmailPasswordConfig(config)
         };
     }
 
@@ -78,6 +80,17 @@ export default class ThirdParty extends AuthRecipeModule<
                 matches: matchRecipeIdUsingQueryParams(this.recipeId),
                 rid: this.recipeId,
                 component: SignInAndUp
+            };
+        }
+
+        if (this.config.resetPasswordUsingTokenFeature.disableDefaultImplementation !== true) {
+            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
+                new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH)
+            );
+            features[normalisedFullPath.getAsStringDangerous()] = {
+                matches: matchRecipeIdUsingQueryParams(this.recipeId),
+                rid: this.recipeId,
+                component: ResetPasswordUsingToken
             };
         }
 
@@ -99,10 +112,16 @@ export default class ThirdParty extends AuthRecipeModule<
         };
     };
 
-    getDefaultRedirectionURL = async (context: ThirdPartyGetRedirectionURLContext): Promise<string> => {
+    getDefaultRedirectionURL = async (context: ThirdPartyEmailPasswordGetRedirectionURLContext): Promise<string> => {
         switch (context.action) {
             case "GET_REDIRECT_URL":
                 return context.provider.getRedirectURL();
+            case "RESET_PASSWORD": {
+                const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
+                return `${this.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
+                    this.recipeId
+                }`;
+            }
             default:
                 return this.getAuthRecipeModuleDefaultRedirectionURL(context);
         }
@@ -112,37 +131,36 @@ export default class ThirdParty extends AuthRecipeModule<
      * Static methods.
      */
 
-    static init(config: ThirdPartyUserInput): CreateRecipeFunction {
+    static init(config: ThirdPartyEmailPasswordUserInput): CreateRecipeFunction {
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<
-            ThirdPartyGetRedirectionURLContext,
-            ThirdPartyPreAPIHookContext,
-            ThirdPartyOnHandleEventContext
+            ThirdPartyEmailPasswordGetRedirectionURLContext,
+            ThirdPartyEmailPasswordPreAPIHookContext,
+            ThirdPartyEmailPasswordOnHandleEventContext
         > => {
-            ThirdParty.instance = new ThirdParty({
+            ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword({
                 ...config,
                 appInfo,
-                recipeId: ThirdParty.RECIPE_ID
+                recipeId: ThirdPartyEmailPassword.RECIPE_ID
             });
-            return ThirdParty.instance;
+            return ThirdPartyEmailPassword.instance;
         };
     }
 
     static signOut(): Promise<SuccessAPIResponse> {
-        return ThirdParty.getInstanceOrThrow().signOut();
+        return ThirdPartyEmailPassword.getInstanceOrThrow().signOut();
     }
 
     static async isEmailVerified(): Promise<boolean> {
-        return await ThirdParty.getInstanceOrThrow().isEmailVerified();
+        return await ThirdPartyEmailPassword.getInstanceOrThrow().isEmailVerified();
     }
 
-    static getInstanceOrThrow(): ThirdParty {
-        if (ThirdParty.instance === undefined) {
-            // TODO Use correct doc link.
+    static getInstanceOrThrow(): ThirdPartyEmailPassword {
+        if (ThirdPartyEmailPassword.instance === undefined) {
             let error =
-                "No instance of ThirdParty found. Make sure to call the ThirdParty.init method." +
-                "See https://supertokens.io/docs/thirdparty/quick-setup/frontend";
+                "No instance of ThirdPartyEmailPassword found. Make sure to call the ThirdPartyEmailPassword.init method." +
+                "See https://supertokens.io/docs/thirdpartyemailpassword/quick-setup/frontend";
 
             // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
             if (typeof window === "undefined") {
@@ -151,7 +169,7 @@ export default class ThirdParty extends AuthRecipeModule<
             throw Error(error);
         }
 
-        return ThirdParty.instance;
+        return ThirdPartyEmailPassword.instance;
     }
 
     /*
@@ -161,7 +179,7 @@ export default class ThirdParty extends AuthRecipeModule<
         if (!isTest()) {
             return;
         }
-        ThirdParty.instance = undefined;
+        ThirdPartyEmailPassword.instance = undefined;
         return;
     }
 }

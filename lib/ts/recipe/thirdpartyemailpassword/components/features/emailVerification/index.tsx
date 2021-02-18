@@ -12,5 +12,14 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export const package_version = "0.7.0";
-export const supported_fdi = ["1.6"];
+
+/*
+ * Imports.
+ */
+import React from "react";
+import { default as EmailVerificationBase } from "../../../../emailverification/components/features/emailVerification";
+import ThirdPartyEmailPassword from "../../../thirdpartyEmailpassword";
+
+export function EmailVerification(): JSX.Element {
+    return <EmailVerificationBase recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId} />;
+}

@@ -12,5 +12,38 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export const package_version = "0.7.0";
-export const supported_fdi = ["1.6"];
+export type ProviderConfig = {
+    /*
+     * Provider Id
+     */
+    id: string;
+
+    /*
+     * Provider Name
+     */
+    name: string;
+};
+
+export type BuiltInProviderConfig = {
+    /*
+     * Button Component
+     */
+    buttonComponent?: JSX.Element;
+};
+
+export type CustomProviderConfig = {
+    /*
+     * Provider Id
+     */
+    id: string;
+
+    /*
+     * Provider Name
+     */
+    name: string;
+
+    /*
+     * Button Component
+     */
+    buttonComponent?: JSX.Element;
+};

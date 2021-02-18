@@ -12,5 +12,22 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export const package_version = "0.7.0";
-export const supported_fdi = ["1.6"];
+
+import React from "react";
+import { Fragment } from "react";
+
+/*
+ * Component
+ */
+
+export function ThemeBase({ children }: { children: JSX.Element }): JSX.Element {
+    return (
+        <Fragment>
+            {children}
+            <link
+                href="//fonts.googleapis.com/css?family=Rubik:wght@300;400;600;500;700"
+                rel="stylesheet"
+                type="text/css"></link>
+        </Fragment>
+    );
+}
