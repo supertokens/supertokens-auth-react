@@ -11,6 +11,7 @@ import EmailPasswordNode from "supertokens-node/recipe/emailpassword"
 
 if (typeof window !== "undefined") {
     SuperTokensReact.init({
+        useReactRouterDom: false,
         appInfo: {
             appName: "SuperTokens Demo Blitz",
             websiteDomain: "http://localhost:3000",
