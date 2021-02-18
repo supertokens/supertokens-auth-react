@@ -3,6 +3,7 @@ import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-
 import EmailPassword, { EmailPasswordGetRedirectionURLContext, EmailPasswordOnHandleEventContext, EmailPasswordPreAPIHookContext }  from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import ThirdParty, { ThirdPartyGetRedirectionURLContext, ThirdPartyOnHandleEventContext, ThirdPartyPreAPIHookContext } from 'supertokens-auth-react/recipe/thirdparty';
+import ThirdPartyEmailPassword, { ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordOnHandleEventContext, ThirdPartyEmailPasswordPreAPIHookContext } from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
 import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -129,6 +130,7 @@ function getRecipeList () {
     return [
       getEmailPasswordConfigs(),
       getThirdPartyConfigs(),
+      getThirdPartyEmailPasswordConfigs(),
       Session.init()
     ]
 }
@@ -233,11 +235,47 @@ function getThirdPartyConfigs () {
   })
 }
 
+
+function getThirdPartyEmailPasswordConfigs () {
+  return ThirdPartyEmailPassword.init({
+    onHandleEvent(context: ThirdPartyEmailPasswordOnHandleEventContext) {
+    },
+
+    async preAPIHook(context: ThirdPartyEmailPasswordPreAPIHookContext) {
+      return context.requestInit;
+    },
+
+    async getRedirectionURL(context: ThirdPartyEmailPasswordGetRedirectionURLContext) {
+      return undefined;
+    },
+    palette: theme.colors,
+    signInAndUpFeature: {
+      style: theme.style,
+      privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+      termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+      providers: [
+        ThirdPartyEmailPassword.Github.init(),
+        ThirdPartyEmailPassword.Google.init(),
+        ThirdPartyEmailPassword.Facebook.init(),
+        ThirdPartyEmailPassword.Apple.init(),
+        {
+          id: "custom",
+          name: "Custom"
+        },
+      ]
+    }
+  })
+}
+
 function Auth (props: any) {
   if (rid === "thirdparty") {
     return <ThirdParty.ThirdPartyAuth>
         {props.children}
     </ThirdParty.ThirdPartyAuth>;
+  } else  if (rid === "thirdpartyemailpassword") {
+    return <ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>
+        {props.children}
+    </ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>;
   }
 
   return <EmailPassword.EmailPasswordAuth>

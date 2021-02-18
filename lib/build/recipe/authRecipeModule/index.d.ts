@@ -8,6 +8,7 @@ export default abstract class AuthRecipeModule<T, S, R> extends RecipeModule<T, 
     constructor(config: AuthRecipeModuleConfig<unknown, unknown, unknown>);
     getAuthRecipeModuleDefaultRedirectionURL: (context: AuthRecipeModuleGetRedirectionURLContext) => Promise<string>;
     getAuthRecipeModuleFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
+    getConfig: <T_1>() => T_1;
     signOut: () => Promise<SuccessAPIResponse>;
     isEmailVerified(): Promise<boolean>;
     isEmailVerificationRequired(): boolean;

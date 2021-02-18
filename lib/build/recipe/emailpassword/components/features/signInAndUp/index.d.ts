@@ -1,9 +1,13 @@
 import { PureComponent } from "react";
-import { FormFieldThemeProps, FormBaseAPIResponse } from "../../../types";
+import { FormFieldThemeProps, FormBaseAPIResponse, EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext, NormalisedEmailPasswordConfig } from "../../../types";
 import { APIFormField, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
-import { SignInAndUpState } from "../../../../authRecipeModule/types";
+import { NormalisedAuthRecipeConfig, SignInAndUpState } from "../../../../authRecipeModule/types";
+import AuthRecipeModule from "../../../../authRecipeModule";
 declare class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     constructor(props: FeatureBaseProps);
+    getRecipeInstanceOrThrow: () => AuthRecipeModule<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext>;
+    getRecipeConfigOrThrow: () => NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig;
+    getIsEmbedded: () => boolean;
     signIn: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse>;
     onSignInSuccess: () => Promise<void>;
     signUp: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse>;
@@ -13,4 +17,5 @@ declare class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpSta
     componentDidMount: () => Promise<void>;
     render: () => JSX.Element;
 }
+export declare function SignInAndUpFeature(): JSX.Element;
 export default SignInAndUp;

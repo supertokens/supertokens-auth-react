@@ -25,10 +25,7 @@ import {
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
-import Apple from "./providers/apple";
-import Google from "./providers/google";
-import Facebook from "./providers/facebook";
-import Github from "./providers/github";
+import { Apple, Google, Facebook, Github } from "../thirdparty/";
 /*
  * Class.
  */

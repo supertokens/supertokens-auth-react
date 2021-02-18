@@ -453,7 +453,6 @@ async function assertSignInRedirectTo(page, startUrl, finalUrl) {
         { name: "password", value: "Str0ngP@ssw0rd" }
     ]);
 
-    await page.screenshot({ path: "screenshot.jpeg" });
     // Submit.
     await Promise.all([
         submitFormReturnRequestAndResponse(page, SIGN_IN_API),

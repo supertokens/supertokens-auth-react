@@ -28,7 +28,7 @@ import {
     ThirdPartyEmailPasswordOnHandleEventContext
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import { matchRecipeIdUsingState, normaliseThirdPartyEmailPasswordConfig } from "./utils";
+import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
@@ -37,6 +37,7 @@ import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "../thirdparty/components/features/signInAndUpCallback";
 import { DEFAULT_RESET_PASSWORD_PATH } from "../emailpassword/constants";
 import { ResetPasswordUsingToken } from "../emailpassword";
+import { matchRecipeIdUsingState } from "../thirdparty/utils";
 
 /*
  * Class.

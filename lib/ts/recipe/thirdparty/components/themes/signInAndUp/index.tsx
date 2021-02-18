@@ -18,7 +18,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import * as React from "react";
-import { PureComponent, Fragment } from "react";
+import { PureComponent, Fragment, useContext } from "react";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import StyleContext from "../../../../../styles/styleContext";
 import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";
@@ -28,7 +28,7 @@ import { ThemeBase } from "../themeBase";
  * Component.
  */
 
-class SignInAndUpTheme extends PureComponent<SignInAndUpThemeProps, ThirdPartySignInAndUpThemeState> {
+export class SignInAndUpProvidersTheme extends PureComponent<SignInAndUpThemeProps, ThirdPartySignInAndUpThemeState> {
     static contextType = StyleContext;
 
     /*
@@ -77,46 +77,45 @@ class SignInAndUpTheme extends PureComponent<SignInAndUpThemeProps, ThirdPartySi
          */
         return (
             <Fragment>
-                <div data-supertokens="container" css={styles.container}>
-                    <div data-supertokens="row" css={styles.row}>
-                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                            Sign Up / Sign In
-                        </div>
-                        <div data-supertokens="divider" css={styles.divider}></div>
-                        {this.state.status === "GENERAL_ERROR" && (
-                            <div data-supertokens="generalError" css={styles.generalError}>
-                                {this.state.generalError}
-                            </div>
-                        )}
-                        {this.props.providers.map(provider => {
-                            return (
-                                <div
-                                    key={`provider-${provider.id}`}
-                                    style={styles.providerContainer}
-                                    data-supertokens="providerContainer">
-                                    <span onClick={() => this.signInClick(provider.id)}>
-                                        {provider.buttonComponent}
-                                    </span>
-                                </div>
-                            );
-                        })}
-                        <SignUpFooter
-                            privacyPolicyLink={this.props.privacyPolicyLink}
-                            termsOfServiceLink={this.props.termsOfServiceLink}
-                        />
+                {this.state.status === "GENERAL_ERROR" && (
+                    <div data-supertokens="generalError" css={styles.generalError}>
+                        {this.state.generalError}
                     </div>
-                </div>
+                )}
+                {this.props.providers.map(provider => {
+                    return (
+                        <div
+                            key={`provider-${provider.id}`}
+                            style={styles.providerContainer}
+                            data-supertokens="providerContainer">
+                            <span onClick={() => this.signInClick(provider.id)}>{provider.buttonComponent}</span>
+                        </div>
+                    );
+                })}
             </Fragment>
         );
     };
 }
 
-function SignInAndUpThemeWrapper(props: SignInAndUpThemeProps): JSX.Element {
+function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
+    const styles = useContext(StyleContext);
     return (
         <ThemeBase>
-            <SignInAndUpTheme {...props} />
+            <div data-supertokens="container" css={styles.container}>
+                <div data-supertokens="row" css={styles.row}>
+                    <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                        Sign Up / Sign In
+                    </div>
+                    <div data-supertokens="divider" css={styles.divider}></div>
+                    <SignInAndUpProvidersTheme {...props} />
+                    <SignUpFooter
+                        privacyPolicyLink={props.privacyPolicyLink}
+                        termsOfServiceLink={props.termsOfServiceLink}
+                    />
+                </div>
+            </div>
         </ThemeBase>
     );
 }
 
-export default SignInAndUpThemeWrapper;
+export default SignInAndUpTheme;

@@ -20,14 +20,24 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import { FormBaseAPIResponse, SubmitNewPasswordThemeProps } from "../../../types";
-import EmailPassword from "../../../emailPassword";
+import {
+    EmailPasswordGetRedirectionURLContext,
+    EmailPasswordOnHandleEventContext,
+    EmailPasswordPreAPIHookContext,
+    FormBaseAPIResponse,
+    NormalisedEmailPasswordConfig,
+    SubmitNewPasswordThemeProps
+} from "../../../types";
 import { ResetPasswordUsingTokenTheme } from "../../..";
 import { APIFormField, FeatureBaseProps } from "../../../../../types";
 
 import { getWindowOrThrow, validateForm } from "../../../../../utils";
 import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import AuthRecipeModule from "../../../../authRecipeModule";
+import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
+import SuperTokens from "../../../../../superTokens";
+import EmailPassword from "../../../emailPassword";
 
 /*
  * Component.
@@ -51,6 +61,38 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         };
     }
 
+    getRecipeInstanceOrThrow = (): AuthRecipeModule<
+        EmailPasswordGetRedirectionURLContext,
+        EmailPasswordPreAPIHookContext,
+        EmailPasswordOnHandleEventContext
+    > => {
+        if (this.props.recipeId === undefined) {
+            throw new Error("No recipeId props given to SignInAndUp component");
+        }
+
+        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
+        if (recipe instanceof AuthRecipeModule === false) {
+            throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
+        }
+
+        return recipe as AuthRecipeModule<
+            EmailPasswordGetRedirectionURLContext,
+            EmailPasswordPreAPIHookContext,
+            EmailPasswordOnHandleEventContext
+        >;
+    };
+
+    getRecipeConfigOrThrow = (): NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig => {
+        return this.getRecipeInstanceOrThrow().getConfig<NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig>();
+    };
+
+    getIsEmbedded = (): boolean => {
+        if (this.props.isEmbedded !== undefined) {
+            return this.props.isEmbedded;
+        }
+        return false;
+    };
+
     /*
      * Methods.
      */
@@ -59,7 +101,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            EmailPassword.getInstanceOrThrow().config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+            this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
         );
 
         // If errors, return.
@@ -84,14 +126,14 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         }
 
         // Call API, only send first password.
-        return await handleSubmitNewPasswordAPI([formFields[0]], EmailPassword.getInstanceOrThrow(), this.state.token);
+        return await handleSubmitNewPasswordAPI([formFields[0]], this.getRecipeInstanceOrThrow(), this.state.token);
     };
 
     enterEmail = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            EmailPassword.getInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
+            this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature.enterEmailForm.formFields
         );
 
         // If errors, return.
@@ -102,14 +144,13 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             };
         }
 
-        return await enterEmailAPI(formFields, EmailPassword.getInstanceOrThrow());
+        return await enterEmailAPI(formFields, this.getRecipeInstanceOrThrow());
     };
 
     render = (): JSX.Element => {
-        const enterEmailFormFeature = EmailPassword.getInstanceOrThrow().config.resetPasswordUsingTokenFeature
-            .enterEmailForm;
+        const enterEmailFormFeature = this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature.enterEmailForm;
 
-        const submitNewPasswordFormFeature = EmailPassword.getInstanceOrThrow().config.resetPasswordUsingTokenFeature
+        const submitNewPasswordFormFeature = this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature
             .submitNewPasswordForm;
 
         const submitNewPasswordForm: SubmitNewPasswordThemeProps = {
@@ -117,12 +158,12 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             formFields: submitNewPasswordFormFeature.formFields,
             submitNewPasswordAPI: this.submitNewPassword,
             onSuccess: () => {
-                EmailPassword.getInstanceOrThrow().hooks.onHandleEvent({
+                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL"
                 });
             },
             onSignInClicked: () => {
-                EmailPassword.getInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
+                this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
             }
         };
 
@@ -130,13 +171,12 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             styleFromInit: enterEmailFormFeature.style,
             formFields: enterEmailFormFeature.formFields,
             onSuccess: () => {
-                EmailPassword.getInstanceOrThrow().hooks.onHandleEvent({
+                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                     action: "RESET_PASSWORD_EMAIL_SENT"
                 });
             },
             enterEmailAPI: this.enterEmail
         };
-        const useShadowDom = EmailPassword.getInstanceOrThrow().config.useShadowDom;
 
         const hasToken = this.state.token.length !== 0;
 
@@ -144,12 +184,12 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={useShadowDom}>
+            <FeatureWrapper isEmbedded={this.getIsEmbedded()} useShadowDom={this.getRecipeConfigOrThrow().useShadowDom}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <ResetPasswordUsingTokenTheme
-                            rawPalette={EmailPassword.getInstanceOrThrow().config.palette}
+                            rawPalette={this.getRecipeConfigOrThrow().palette}
                             submitNewPasswordForm={submitNewPasswordForm}
                             enterEmailForm={enterEmailForm}
                             hasToken={hasToken}
@@ -158,7 +198,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
                     {/* Otherwise, custom theme is provided, propagate props. */}
                     {this.props.children &&
                         React.cloneElement(this.props.children, {
-                            rawPalette: EmailPassword.getInstanceOrThrow().config.palette,
+                            rawPalette: this.getRecipeConfigOrThrow().palette,
                             submitNewPasswordForm,
                             enterEmailForm,
                             hasToken
@@ -167,6 +207,13 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             </FeatureWrapper>
         );
     };
+}
+
+/*
+ * Used for embedding in page.
+ */
+export function ResetPasswordUsingTokenFeature(): JSX.Element {
+    return <ResetPasswordUsingToken recipeId={EmailPassword.getInstanceOrThrow().recipeId} />;
 }
 
 export default ResetPasswordUsingToken;

@@ -12,38 +12,30 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export type ProviderConfig = {
-    /*
-     * Provider Id
-     */
-    id: string;
 
-    /*
-     * Provider Name
-     */
-    name: string;
-};
+/*
+ * Imports
+ */
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
+import React, { useContext } from "react";
+import StyleContext from "../../../../../styles/styleContext";
 
-export type BuiltInProviderConfig = {
+/*
+ * Component
+ */
+export default function SignInFooter({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
     /*
-     * Button Component
+     * Render.
      */
-    buttonComponent?: JSX.Element;
-};
 
-export type CustomProviderConfig = {
-    /*
-     * Provider Id
-     */
-    id: string;
-
-    /*
-     * Provider Name
-     */
-    name: string;
-
-    /*
-     * Button Component
-     */
-    buttonComponent?: JSX.Element;
-};
+    const styles = useContext(StyleContext);
+    return (
+        <div
+            data-supertokens="link secondaryText forgotPasswordLink"
+            css={[styles.link, styles.secondaryText, styles.forgotPasswordLink]}
+            onClick={onClick}>
+            Forgot password?
+        </div>
+    );
+}

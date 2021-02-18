@@ -1,9 +1,9 @@
 import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
 import { EmailPasswordUserInput } from "./types";
 import EmailPasswordAuth from "./components/emailPasswordAuth";
-import SignInAndUp from "./components/features/signInAndUp";
+import { SignInAndUpFeature as SignInAndUp } from "./components/features/signInAndUp";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
-import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
+import { ResetPasswordUsingTokenFeature as ResetPasswordUsingToken } from "./components/features/resetPasswordUsingToken";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { EmailVerification } from "./components/features/emailVerification";

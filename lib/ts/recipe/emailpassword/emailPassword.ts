@@ -142,7 +142,7 @@ export default class EmailPassword extends AuthRecipeModule<
         if (EmailPassword.instance === undefined) {
             let error =
                 "No instance of EmailPassword found. Make sure to call the EmailPassword.init method." +
-                "See https://supertokens.io/docs/emailpassword/starter-guide/frontend";
+                "See https://supertokens.io/docs/emailpassword/quick-setup/frontend";
 
             // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
             if (typeof window === "undefined") {

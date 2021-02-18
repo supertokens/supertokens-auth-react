@@ -23,7 +23,7 @@ import {
     ThirdPartyOnHandleEventContext
 } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
-import SignInAndUp from "./components/features/signInAndUp";
+import { SignInAndUpFeature as SignInAndUp } from "./components/features/signInAndUp";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import Apple from "./providers/apple";
 import Google from "./providers/google";

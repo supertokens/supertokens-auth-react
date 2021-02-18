@@ -79,4 +79,5 @@ export declare type FeatureBaseProps = {
     recipeId: string;
     children?: JSX.Element;
     history?: History<LocationState>;
+    isEmbedded?: boolean;
 };

@@ -17,16 +17,37 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { PureComponent, Fragment } from "react";
-import StyleContext from "../../../../../styles/styleContext";
+import React, { PureComponent } from "react";
 import { SignUpThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";
+import SignUpHeader from "./signUpHeader";
+import StyleContext from "../../../../../styles/styleContext";
 
 /*
  * Component.
  */
+
+export function SignUpForm(
+    props: SignUpThemeProps & {
+        header?: JSX.Element;
+        footer?: JSX.Element;
+    }
+): JSX.Element {
+    return (
+        <FormBase
+            formFields={props.formFields}
+            buttonLabel={"SIGN UP"}
+            onSuccess={props.onSuccess}
+            callAPI={props.signUpAPI}
+            validateOnBlur={true}
+            showLabels={true}
+            header={props.header}
+            footer={props.footer}
+        />
+    );
+}
 
 export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
     static contextType = StyleContext;
@@ -36,34 +57,21 @@ export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
      */
     render(): JSX.Element {
         const styles = this.context;
-        const { privacyPolicyLink, termsOfServiceLink, signInClicked, onSuccess, signUpAPI } = this.props;
-        const { formFields } = this.props;
         return (
-            <FormBase
-                formFields={formFields}
-                buttonLabel={"SIGN UP"}
-                onSuccess={onSuccess}
-                callAPI={signUpAPI}
-                validateOnBlur={true}
-                showLabels={true}
-                header={
-                    <Fragment>
-                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                            Sign Up
-                        </div>
-                        <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                            <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                                Already have an account?
-                                <span data-supertokens="link" onClick={signInClicked} css={styles.link}>
-                                    Sign In
-                                </span>
-                            </div>
-                        </div>
-                        <div data-supertokens="divider" css={styles.divider}></div>
-                    </Fragment>
-                }
-                footer={<SignUpFooter privacyPolicyLink={privacyPolicyLink} termsOfServiceLink={termsOfServiceLink} />}
-            />
+            <div data-supertokens="container" css={styles.container}>
+                <div data-supertokens="row" css={styles.row}>
+                    <SignUpForm
+                        {...this.props}
+                        header={<SignUpHeader onClick={this.props.signInClicked} />}
+                        footer={
+                            <SignUpFooter
+                                privacyPolicyLink={this.props.privacyPolicyLink}
+                                termsOfServiceLink={this.props.termsOfServiceLink}
+                            />
+                        }
+                    />
+                </div>
+            </div>
         );
     }
 }

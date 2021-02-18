@@ -263,4 +263,10 @@ export type FeatureBaseProps = {
      * History provided by react-router
      */
     history?: History<LocationState>;
+
+    /*
+     * Nested Features
+     * This is used to avoid reinitialising feature wrapper for nested features.
+     */
+    isEmbedded?: boolean;
 };

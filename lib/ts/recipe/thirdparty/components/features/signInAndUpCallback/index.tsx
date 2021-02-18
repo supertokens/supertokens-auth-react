@@ -20,7 +20,6 @@ import { jsx } from "@emotion/react";
 import * as React from "react";
 import { Fragment, PureComponent } from "react";
 
-import ThirdParty from "../../../thirdparty";
 import { FeatureBaseProps } from "../../../../../types";
 import { getQueryParams, getWindowOrThrow } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
@@ -28,10 +27,19 @@ import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
 import { signInAndUpAPI } from "./api";
-import { ThirdPartySignInAndUpState } from "../../../types";
+import {
+    NormalisedThirdPartyConfig,
+    ThirdPartyGetRedirectionURLContext,
+    ThirdPartyOnHandleEventContext,
+    ThirdPartyPreAPIHookContext,
+    ThirdPartySignInAndUpState
+} from "../../../types";
 import SignInAndUpCallbackTheme from "../../themes/signInAndUpCallback";
 import { getOAuthState } from "../../../utils";
 import Provider from "../../../providers";
+import AuthRecipeModule from "../../../../authRecipeModule";
+import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
+import SuperTokens from "../../../../../superTokens";
 
 /*
  * Component.
@@ -42,54 +50,86 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
      * Methods.
      */
 
+    getRecipeInstanceOrThrow = (): AuthRecipeModule<
+        ThirdPartyGetRedirectionURLContext,
+        ThirdPartyPreAPIHookContext,
+        ThirdPartyOnHandleEventContext
+    > => {
+        if (this.props.recipeId === undefined) {
+            throw new Error("No recipeId props given to SignInAndUp component");
+        }
+
+        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
+        if (recipe instanceof AuthRecipeModule === false) {
+            throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
+        }
+
+        return recipe as AuthRecipeModule<
+            ThirdPartyGetRedirectionURLContext,
+            ThirdPartyPreAPIHookContext,
+            ThirdPartyOnHandleEventContext
+        >;
+    };
+
+    getRecipeConfigOrThrow = (): NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig => {
+        return this.getRecipeInstanceOrThrow().getConfig<NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig>();
+    };
+
+    getIsEmbedded = (): boolean => {
+        if (this.props.isEmbedded !== undefined) {
+            return this.props.isEmbedded;
+        }
+        return false;
+    };
+
     componentDidMount = async (): Promise<void> => {
         const providerId = getWindowOrThrow().location.pathname.split("/")[
             getWindowOrThrow().location.pathname.split("/").length - 1
         ];
         const oauthCallbackError = this.getOAuthCallbackError(providerId);
         if (oauthCallbackError !== undefined) {
-            return ThirdParty.getInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
+            return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
                 error: oauthCallbackError
             });
         }
         // If no code params, redirect with error.
         const code = getQueryParams("code");
         if (code === null) {
-            return ThirdParty.getInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
+            return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
                 error: "no_code"
             });
         }
 
         try {
-            const provider = ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.find(
+            const provider = this.getRecipeConfigOrThrow().signInAndUpFeature.providers.find(
                 p => p.id === providerId
             ) as Provider;
             if (provider === undefined) {
                 throw new Error();
             }
-            const redirectUrl = await ThirdParty.getInstanceOrThrow().getRedirectUrl({
+            const redirectUrl = await this.getRecipeInstanceOrThrow().getRedirectUrl({
                 action: "GET_REDIRECT_URL",
                 provider
             });
-            const response = await signInAndUpAPI(providerId, code, ThirdParty.getInstanceOrThrow(), redirectUrl);
+            const response = await signInAndUpAPI(providerId, code, this.getRecipeInstanceOrThrow(), redirectUrl);
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
-                return ThirdParty.getInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
+                return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
                     error: "no_email_present"
                 });
             }
             if (response.status === "OK") {
-                ThirdParty.getInstanceOrThrow().hooks.onHandleEvent({
+                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: response.createdNewUser,
                     user: response.user
                 });
-                return ThirdParty.getInstanceOrThrow().redirect(
+                return this.getRecipeInstanceOrThrow().redirect(
                     { action: "SUCCESS", isNewUser: response.createdNewUser },
                     this.props.history
                 );
             }
         } catch (e) {
-            return ThirdParty.getInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
+            return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
                 error: "signin"
             });
         }
@@ -132,15 +172,13 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
     };
 
     render = (): JSX.Element => {
-        const useShadowDom = ThirdParty.getInstanceOrThrow().config.useShadowDom;
-
         /*
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={useShadowDom}>
+            <FeatureWrapper useShadowDom={this.getRecipeConfigOrThrow().useShadowDom} isEmbedded={this.getIsEmbedded()}>
                 <StyleProvider
-                    rawPalette={ThirdParty.getInstanceOrThrow().config.palette}
+                    rawPalette={this.getRecipeConfigOrThrow().palette}
                     defaultPalette={defaultPalette}
                     getDefaultStyles={getStyles}>
                     <Fragment>

@@ -18,16 +18,38 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
 import { SignInThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
+import SignInFooter from "./signInFooter";
+import SignInHeader from "./signInHeader";
 
 /*
  * Component.
  */
+
+export function SignInForm(
+    props: SignInThemeProps & {
+        header?: JSX.Element;
+        footer?: JSX.Element;
+    }
+): JSX.Element {
+    return (
+        <FormBase
+            formFields={props.formFields}
+            buttonLabel={"SIGN IN"}
+            onSuccess={props.onSuccess}
+            callAPI={props.signInAPI}
+            validateOnBlur={false}
+            showLabels={true}
+            header={props.header}
+            footer={props.footer}
+        />
+    );
+}
 
 export default class SignInTheme extends PureComponent<SignInThemeProps> {
     static contextType = StyleContext;
@@ -39,41 +61,16 @@ export default class SignInTheme extends PureComponent<SignInThemeProps> {
     render(): JSX.Element {
         const styles = this.context;
 
-        const { signUpClicked, forgotPasswordClick, onSuccess, signInAPI } = this.props;
-        const { formFields } = this.props;
-
         return (
-            <FormBase
-                formFields={formFields}
-                buttonLabel={"SIGN IN"}
-                onSuccess={onSuccess}
-                callAPI={signInAPI}
-                showLabels={true}
-                header={
-                    <Fragment>
-                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                            Sign In
-                        </div>
-                        <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                            <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                                Not registered yet?
-                                <span data-supertokens="link" onClick={signUpClicked} css={styles.link}>
-                                    Sign Up
-                                </span>
-                            </div>
-                        </div>
-                        <div data-supertokens="divider" css={styles.divider}></div>
-                    </Fragment>
-                }
-                footer={
-                    <div
-                        data-supertokens="link secondaryText forgotPasswordLink"
-                        css={[styles.link, styles.secondaryText, styles.forgotPasswordLink]}
-                        onClick={forgotPasswordClick}>
-                        Forgot password?
-                    </div>
-                }
-            />
+            <div data-supertokens="container" css={styles.container}>
+                <div data-supertokens="row" css={styles.row}>
+                    <SignInForm
+                        {...this.props}
+                        header={<SignInHeader onClick={this.props.signUpClicked} />}
+                        footer={<SignInFooter onClick={this.props.forgotPasswordClick} />}
+                    />
+                </div>
+            </div>
         );
     }
 }
