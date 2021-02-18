@@ -4,10 +4,7 @@
   "private": true,
   "scripts": {
     "link": "(cd ../../ && npm link) && npm link supertokens-auth-react && (cd ../../ && SRC=./examples/with-next npm run link-dependencies)",
-    "postinstall": "npm run link",
-    "predev": "mv ../../node_modules/react-router-dom  ../../node_modules/react-router-dom-tmp",
-    "dev": "trap 'exit 0' SIGINT; next dev",
-    "postdev": "mv ../../node_modules/react-router-dom-tmp  ../../node_modules/react-router-dom",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start"
   },
@@ -17,7 +14,7 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "regenerator-runtime": "^0.13.7",
-    "supertokens-auth-react": "^0.5.0",
-    "supertokens-node": "^3.4.0"
+    "supertokens-auth-react": "^0.6.0",
+    "supertokens-node": "^4.0.0"
   }
 }
