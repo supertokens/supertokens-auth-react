@@ -84,26 +84,30 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
 
         // Otherwise, return Form.
         return (
-            <FormBase
-                formFields={formFields}
-                buttonLabel={"Email me"}
-                onSuccess={this.onSuccess}
-                callAPI={enterEmailAPI}
-                showLabels={false}
-                validateOnBlur={true}
-                header={
-                    <Fragment>
-                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                            Reset your password
-                        </div>
-                        <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                            <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                                We will send you an email to reset your password
-                            </div>
-                        </div>
-                    </Fragment>
-                }
-            />
+            <div data-supertokens="container" css={styles.container}>
+                <div data-supertokens="row" css={styles.row}>
+                    <FormBase
+                        formFields={formFields}
+                        buttonLabel={"Email me"}
+                        onSuccess={this.onSuccess}
+                        callAPI={enterEmailAPI}
+                        showLabels={false}
+                        validateOnBlur={true}
+                        header={
+                            <Fragment>
+                                <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                                    Reset your password
+                                </div>
+                                <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                                    <div data-supertokens="secondaryText" css={styles.secondaryText}>
+                                        We will send you an email to reset your password
+                                    </div>
+                                </div>
+                            </Fragment>
+                        }
+                    />
+                </div>
+            </div>
         );
     }
 }

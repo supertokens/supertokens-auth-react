@@ -22,13 +22,22 @@ import * as React from "react";
 import { PureComponent, Fragment } from "react";
 
 import { signInAPI, signUpAPI, emailExistsAPI } from "./api";
-import EmailPassword from "../../../emailPassword";
-import { FormFieldThemeProps, FormBaseAPIResponse, EmailPasswordGetRedirectionURLContext } from "../../../types";
+import {
+    FormFieldThemeProps,
+    FormBaseAPIResponse,
+    EmailPasswordGetRedirectionURLContext,
+    EmailPasswordPreAPIHookContext,
+    EmailPasswordOnHandleEventContext,
+    NormalisedEmailPasswordConfig
+} from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { APIFormField, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import { getRedirectToPathFromURL, validateForm } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { SignInAndUpState } from "../../../../authRecipeModule/types";
+import { NormalisedAuthRecipeConfig, SignInAndUpState } from "../../../../authRecipeModule/types";
+import AuthRecipeModule from "../../../../authRecipeModule";
+import SuperTokens from "../../../../../superTokens";
+import EmailPassword from "../../../emailPassword";
 /*
  * Component.
  */
@@ -45,6 +54,38 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         };
     }
 
+    getRecipeInstanceOrThrow = (): AuthRecipeModule<
+        EmailPasswordGetRedirectionURLContext,
+        EmailPasswordPreAPIHookContext,
+        EmailPasswordOnHandleEventContext
+    > => {
+        if (this.props.recipeId === undefined) {
+            throw new Error("No recipeId props given to SignInAndUp component");
+        }
+
+        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
+        if (recipe instanceof AuthRecipeModule === false) {
+            throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
+        }
+
+        return recipe as AuthRecipeModule<
+            EmailPasswordGetRedirectionURLContext,
+            EmailPasswordPreAPIHookContext,
+            EmailPasswordOnHandleEventContext
+        >;
+    };
+
+    getRecipeConfigOrThrow = (): NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig => {
+        return this.getRecipeInstanceOrThrow().getConfig<NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig>();
+    };
+
+    getIsEmbedded = (): boolean => {
+        if (this.props.isEmbedded !== undefined) {
+            return this.props.isEmbedded;
+        }
+        return false;
+    };
+
     /*
      * Methods.
      */
@@ -53,7 +94,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signInForm.formFields
+            this.getRecipeConfigOrThrow().signInAndUpFeature.signInForm.formFields
         );
         // If errors, return.
         if (validationErrors.length > 0) {
@@ -63,7 +104,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             };
         }
 
-        const normalisedAPIResponse = await signInAPI(formFields, EmailPassword.getInstanceOrThrow());
+        const normalisedAPIResponse = await signInAPI(formFields, this.getRecipeInstanceOrThrow());
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
 
@@ -75,13 +116,13 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             return;
         }
 
-        EmailPassword.getInstanceOrThrow().hooks.onHandleEvent({
+        this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
             action: "SUCCESS",
             isNewUser: false,
             user: this.state.user
         });
 
-        return await EmailPassword.getInstanceOrThrow().redirect(
+        return await this.getRecipeInstanceOrThrow().redirect(
             {
                 action: "SUCCESS",
                 isNewUser: false,
@@ -95,7 +136,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields
+            this.getRecipeConfigOrThrow().signInAndUpFeature.signUpForm.formFields
         );
 
         // If errors, return.
@@ -106,7 +147,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             };
         }
 
-        const normalisedAPIResponse = await signUpAPI(formFields, EmailPassword.getInstanceOrThrow());
+        const normalisedAPIResponse = await signUpAPI(formFields, this.getRecipeInstanceOrThrow());
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
 
@@ -138,7 +179,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             return;
         }
 
-        EmailPassword.getInstanceOrThrow().hooks.onHandleEvent({
+        this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
             action: "SUCCESS",
             isNewUser: false,
             user: this.state.user
@@ -151,14 +192,14 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             action: "SUCCESS"
         };
 
-        if (EmailPassword.getInstanceOrThrow().isEmailVerificationRequired() === true) {
+        if (this.getRecipeInstanceOrThrow().isEmailVerificationRequired() === true) {
             // Or if sign up and email verification mode is not required, redirect to success screen.
             context = {
                 action: "VERIFY_EMAIL"
             };
         }
 
-        return await EmailPassword.getInstanceOrThrow().redirect(context, this.props.history);
+        return await this.getRecipeInstanceOrThrow().redirect(context, this.props.history);
     };
 
     getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {
@@ -191,7 +232,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
                         return "Email must be of type string";
                     }
                     try {
-                        return await emailExistsAPI(value, EmailPassword.getInstanceOrThrow());
+                        return await emailExistsAPI(value, this.getRecipeInstanceOrThrow());
                     } catch (e) {
                         // Fail silently.
                         return undefined;
@@ -205,12 +246,12 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
      * Init.
      */
     componentDidMount = async (): Promise<void> => {
-        const sessionExists = EmailPassword.getInstanceOrThrow().doesSessionExist();
+        const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists) {
-            EmailPassword.getInstanceOrThrow().hooks.onHandleEvent({
+            this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS"
             });
-            return await EmailPassword.getInstanceOrThrow().redirect(
+            return await this.getRecipeInstanceOrThrow().redirect(
                 { action: "SUCCESS", isNewUser: false },
                 this.props.history
             );
@@ -229,7 +270,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     };
 
     render = (): JSX.Element => {
-        const signInAndUpFeature = EmailPassword.getInstanceOrThrow().config.signInAndUpFeature;
+        const signInAndUpFeature = this.getRecipeConfigOrThrow().signInAndUpFeature;
         const signUpFeature = signInAndUpFeature.signUpForm;
         const signInFeature = signInAndUpFeature.signInForm;
 
@@ -239,7 +280,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             signInAPI: this.signIn,
             onSuccess: this.onSignInSuccess,
             forgotPasswordClick: () =>
-                EmailPassword.getInstanceOrThrow().redirect({ action: "RESET_PASSWORD" }, this.props.history)
+                this.getRecipeInstanceOrThrow().redirect({ action: "RESET_PASSWORD" }, this.props.history)
         };
 
         const signUpForm = {
@@ -251,8 +292,6 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             signUpAPI: this.signUp
         };
 
-        const useShadowDom = EmailPassword.getInstanceOrThrow().config.useShadowDom;
-
         // Before session is verified, return empty fragment, prevent UI glitch.
         if (this.state.status === "LOADING") {
             return <Fragment />;
@@ -262,12 +301,12 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={useShadowDom}>
+            <FeatureWrapper useShadowDom={this.getRecipeConfigOrThrow().useShadowDom} isEmbedded={this.getIsEmbedded()}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <SignInAndUpTheme
-                            rawPalette={EmailPassword.getInstanceOrThrow().config.palette}
+                            rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                             defaultToSignUp={signInAndUpFeature.defaultToSignUp}
                             signInForm={signInForm}
                             signUpForm={signUpForm}
@@ -276,7 +315,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
                     {/* Otherwise, custom theme is provided, propagate props. */}
                     {this.props.children &&
                         React.cloneElement(this.props.children, {
-                            rawPalette: EmailPassword.getInstanceOrThrow().config.palette,
+                            rawPalette: this.getRecipeInstanceOrThrow().config.palette,
                             defaultToSignUp: signInAndUpFeature.defaultToSignUp,
                             signInForm,
                             signUpForm
@@ -285,6 +324,13 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             </FeatureWrapper>
         );
     };
+}
+
+/*
+ * Used for embedding in page.
+ */
+export function SignInAndUpFeature(): JSX.Element {
+    return <SignInAndUp recipeId={EmailPassword.getInstanceOrThrow().recipeId} />;
 }
 
 export default SignInAndUp;

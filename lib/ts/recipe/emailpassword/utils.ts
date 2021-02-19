@@ -72,7 +72,7 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
 
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
     const signUpForm: NormalisedSignUpFormFeatureConfig = normaliseSignUpFormFeatureConfig(config.signUpForm);
-    const defaultToSignUp = config.defaultToSignUp !== undefined ? config.defaultToSignUp : true;
+    const defaultToSignUp = config.defaultToSignUp !== undefined ? config.defaultToSignUp : false;
 
     /*
      * Default Sign In corresponds to computed Sign Up fields filtered by email and password only.

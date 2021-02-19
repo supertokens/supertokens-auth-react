@@ -30,6 +30,12 @@ import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
 import { isAuthRecipeModule } from "../../../../authRecipeModule/utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import AuthRecipeModule from "../../../../authRecipeModule";
+import {
+    AuthRecipeModuleGetRedirectionURLContext,
+    AuthRecipeModuleOnHandleEventContext,
+    AuthRecipeModulePreAPIHookContext
+} from "../../../../authRecipeModule/types";
 
 /*
  * Component.
@@ -56,12 +62,32 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
     /*
      * Methods.
      */
-    getRecipeInstanceOrThrow = (): EmailVerificationRecipe<unknown, unknown, unknown> => {
+
+    getAuthRecipeOrThrow = (): AuthRecipeModule<
+        AuthRecipeModuleGetRedirectionURLContext,
+        AuthRecipeModulePreAPIHookContext,
+        AuthRecipeModuleOnHandleEventContext
+    > => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to EmailVerification component");
         }
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
+        if (recipe instanceof AuthRecipeModule === false) {
+            throw new Error(
+                `${recipe.recipeId} must be an instance of AuthRecipeModule to use EmailVerification component.`
+            );
+        }
+
+        return recipe as AuthRecipeModule<
+            AuthRecipeModuleGetRedirectionURLContext,
+            AuthRecipeModulePreAPIHookContext,
+            AuthRecipeModuleOnHandleEventContext
+        >;
+    };
+
+    getRecipeInstanceOrThrow = (): EmailVerificationRecipe<unknown, unknown, unknown> => {
+        const recipe = this.getAuthRecipeOrThrow();
         if (isAuthRecipeModule(recipe)) {
             if (recipe.emailVerification === undefined) {
                 throw new Error(
@@ -72,7 +98,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
         }
 
         throw new Error(
-            `${recipe.recipeId} must be an instance of AuthRecipeModule to use EmailVerification component.`
+            `${this.props.recipeId} must be an instance of AuthRecipeModule to use EmailVerification component.`
         );
     };
 
@@ -154,15 +180,13 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             verifyEmailAPI: async () => await verifyEmailAPI(this.getRecipeInstanceOrThrow(), this.state.token)
         };
 
-        const useShadowDom = this.getRecipeInstanceOrThrow().config.useShadowDom;
-
         const hasToken = this.state.token.length !== 0;
 
         /*
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={useShadowDom}>
+            <FeatureWrapper useShadowDom={this.getAuthRecipeOrThrow().config.useShadowDom}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (

@@ -53,7 +53,7 @@ export default class SuperTokens {
 
         if (config.recipeList === undefined || config.recipeList.length === 0) {
             throw new Error(
-                "Please provide at least one recipe to the supertokens.init function call. See https://supertokens.io/docs/emailpassword/starter-guide/frontend"
+                "Please provide at least one recipe to the supertokens.init function call. See https://supertokens.io/docs/emailpassword/quick-setup/frontend"
             );
         }
 

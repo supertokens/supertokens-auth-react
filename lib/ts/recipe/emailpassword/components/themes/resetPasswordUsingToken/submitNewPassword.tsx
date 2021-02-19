@@ -90,26 +90,30 @@ export default class SubmitNewPasswordTheme extends PureComponent<
         }
 
         return (
-            <FormBase
-                formFields={formFields}
-                buttonLabel={"Change password"}
-                onSuccess={this.onSuccess}
-                validateOnBlur={true}
-                callAPI={submitNewPasswordAPI}
-                showLabels={true}
-                header={
-                    <Fragment>
-                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                            Change your password
-                        </div>
-                        <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                            <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                                Enter a new password below to change your password
-                            </div>
-                        </div>
-                    </Fragment>
-                }
-            />
+            <div data-supertokens="container" css={styles.container}>
+                <div data-supertokens="row" css={styles.row}>
+                    <FormBase
+                        formFields={formFields}
+                        buttonLabel={"Change password"}
+                        onSuccess={this.onSuccess}
+                        validateOnBlur={true}
+                        callAPI={submitNewPasswordAPI}
+                        showLabels={true}
+                        header={
+                            <Fragment>
+                                <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                                    Change your password
+                                </div>
+                                <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                                    <div data-supertokens="secondaryText" css={styles.secondaryText}>
+                                        Enter a new password below to change your password
+                                    </div>
+                                </div>
+                            </Fragment>
+                        }
+                    />
+                </div>
+            </div>
         );
     }
 }

@@ -88,6 +88,13 @@ export default abstract class AuthRecipeModule<T, S, R> extends RecipeModule<T, 
     };
 
     /*
+     * getConfig
+     */
+    getConfig = <T>(): T => {
+        return (this.config as unknown) as T;
+    };
+
+    /*
      * SignOut.
      */
     signOut = async (): Promise<SuccessAPIResponse> => {

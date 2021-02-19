@@ -8,6 +8,7 @@ import Footer from "./Footer";
 import SuperTokens from 'supertokens-auth-react';
 import EmailPassword from 'supertokens-auth-react/recipe/emailpassword';
 import ThirdParty from 'supertokens-auth-react/recipe/thirdparty';
+import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
 import axios from "axios";
 
 
@@ -70,7 +71,7 @@ if (getQueryParams('useReactRouterDom')) {
 const useReactRouterDom = window.localStorage.getItem('useReactRouterDom') !== "false";
 
 
-const defaultToSignUp = window.localStorage.getItem('defaultToSignUp') !== "false";
+const defaultToSignUp = window.localStorage.getItem('defaultToSignUp') === "true";
 
 
 const theme = getTheme();
@@ -101,10 +102,42 @@ function getTheme() {
   return theme;
 }
 
+const formFields = [{
+  id: "email",
+  label: "Your Email",
+  placeholder: "Your work email"
+},{
+  id: "name",
+  label: "Full name",
+  placeholder: "First name and last name",
+},{
+  id: "age",
+  label: "Your age",
+  placeholder: "How old are you?",
+  validate: async (value) => {
+    if (parseInt(value) > 18) {
+        return undefined;
+    }
+
+    return "You must be over 18 to register";;
+  }
+}, {
+  id: "country",
+  label: "Your Country",
+  placeholder: "Where do you live?",
+  optional: true
+}]
+
 let recipeList = [Session.init()];
+
 if (authRecipe === "thirdparty") {
   recipeList = [
     getThirdPartyConfigs(),
+    ...recipeList
+  ]
+} else if (authRecipe === "emailpassword") {
+  recipeList = [
+    getEmailPasswordConfigs(),
     ...recipeList
   ]
 } else if (authRecipe === "both") {
@@ -113,9 +146,9 @@ if (authRecipe === "thirdparty") {
     getThirdPartyConfigs(),
     ...recipeList
   ]
-} else {
+} else if (authRecipe === "thirdpartyemailpassword") {
   recipeList = [
-    getEmailPasswordConfigs(),
+    getThirdPartyEmailPasswordConfigs(),
     ...recipeList
   ]
 }
@@ -286,31 +319,7 @@ function getEmailPasswordConfigs () {
         style: theme.style,
         privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
         termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-        formFields: [{
-              id: "email",
-              label: "Your Email",
-              placeholder: "Your work email"
-          },{
-              id: "name",
-              label: "Full name",
-              placeholder: "First name and last name",
-          },{
-              id: "age",
-              label: "Your age",
-              placeholder: "How old are you?",
-              validate: async (value) => {
-                if (parseInt(value) > 18) {
-                    return undefined;
-                }
-
-                return "You must be over 18 to register";;
-              }
-            }, {
-              id: "country",
-              label: "Your Country",
-              placeholder: "Where do you live?",
-              optional: true
-          }]
+        formFields
         }
     }
   })
@@ -346,6 +355,55 @@ function getThirdPartyConfigs () {
         ThirdParty.Google.init(),
         ThirdParty.Facebook.init(),
         ThirdParty.Apple.init(),
+        {
+          id: "custom",
+          name: "Custom"
+        }
+      ]
+    }
+  })
+}
+
+
+function getThirdPartyEmailPasswordConfigs () {
+  return ThirdPartyEmailPassword.init({
+    preAPIHook: async (context) => {
+      console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
+      return context.requestInit;
+    },
+    getRedirectionURL: async (context) => {
+      console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
+      if (context.action === "SUCCESS") {
+        return context.redirectToPath || "/dashboard";
+      }
+    },
+    onHandleEvent: async (context) => {
+      console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
+    },
+
+    useShadowDom,
+    palette: theme.colors,
+    emailVerificationFeature: {
+      mode: emailVerificationMode
+    },
+    resetPasswordUsingTokenFeature: {
+
+    },
+    signInAndUpFeature: {
+      signInForm: {
+
+      },
+      signUpForm: {
+        formFields,
+        privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+        termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+      },
+      style: theme.style,
+      providers: [
+        ThirdPartyEmailPassword.Github.init(),
+        ThirdPartyEmailPassword.Google.init(),
+        ThirdPartyEmailPassword.Facebook.init(),
+        ThirdPartyEmailPassword.Apple.init(),
         {
           id: "custom",
           name: "Custom"

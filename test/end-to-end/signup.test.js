@@ -33,7 +33,8 @@ import {
     hasMethodBeenCalled,
     setInputValues,
     submitFormReturnRequestAndResponse,
-    submitForm
+    submitForm,
+    toggleSignInSignUp
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -85,6 +86,7 @@ describe("SuperTokens SignUp", function() {
         consoleLogs = [];
         clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+        await toggleSignInSignUp(page);
     });
 
     describe("SignUp test ", function() {
@@ -178,6 +180,8 @@ describe("SuperTokens SignUp", function() {
             // Clear cookies, try to signup with same address.
             await clearBrowserCookies(page);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, { waitUntil: "domcontentloaded" });
+            await toggleSignInSignUp(page);
+
             // Set values.
             const [, hasEmailExistMethodBeenCalled] = await Promise.all([
                 setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]),
