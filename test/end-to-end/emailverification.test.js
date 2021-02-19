@@ -96,6 +96,7 @@ describe("SuperTokens Email Verification", function() {
 
         it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await toggleSignInSignUp(page);
             await successfulSignUp(page);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
@@ -110,7 +111,6 @@ describe("SuperTokens Email Verification", function() {
 
         it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            await toggleSignInSignUp(page);
             await setInputValues(page, [
                 { name: "email", value: "john.doe@supertokens.io" },
                 { name: "password", value: "Str0ngP@ssw0rd" }
@@ -301,6 +301,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
 
         it("Should ignore email verification when isEmailVerified server request fails", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
+            await toggleSignInSignUp(page);
             await successfulSignUp(page);
 
             // Stop server.

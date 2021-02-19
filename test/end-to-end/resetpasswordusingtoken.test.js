@@ -46,7 +46,8 @@ import {
     sendEmailResetPasswordSuccessMessage,
     setInputValues,
     submitForm,
-    submitFormReturnRequestAndResponse
+    submitFormReturnRequestAndResponse,
+    toggleSignInSignUp
 } from "../helpers";
 import { successfulSignUp } from "./signup.test";
 
@@ -79,6 +80,7 @@ describe("SuperTokens Reset password", function() {
 
         // Sign Up first.
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+        await toggleSignInSignUp(page);
         await successfulSignUp(page);
     });
 

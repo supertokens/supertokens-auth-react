@@ -71,7 +71,7 @@ if (getQueryParams('useReactRouterDom')) {
 const useReactRouterDom = window.localStorage.getItem('useReactRouterDom') !== "false";
 
 
-const defaultToSignUp = window.localStorage.getItem('defaultToSignUp') !== "false";
+const defaultToSignUp = window.localStorage.getItem('defaultToSignUp') === "true";
 
 
 const theme = getTheme();

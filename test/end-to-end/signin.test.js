@@ -96,7 +96,6 @@ describe("SuperTokens SignIn", function() {
         });
         await clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-        await toggleSignInSignUp(page);
         assert.deepStrictEqual(consoleLogs, []);
     });
 
@@ -194,7 +193,6 @@ describe("SuperTokens SignIn", function() {
             assert.deepStrictEqual(cookies, []); // Make sure cookies were removed.
 
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-            await toggleSignInSignUp(page);
 
             let showPasswordIcon = await getShowPasswordIcon(page);
             assert.strictEqual(showPasswordIcon, null);
@@ -347,8 +345,6 @@ describe("SuperTokens SignIn", function() {
                     page.waitForNavigation({ waitUntil: "networkidle0" })
                 ]);
 
-                await toggleSignInSignUp(page);
-
                 // Set correct values.
                 await setInputValues(page, [
                     { name: "email", value: "john.doe@supertokens.io" },
@@ -372,13 +368,12 @@ describe("SuperTokens SignIn", function() {
             it("Login in again without redirectToPath params, make sure redirectToPath was clean up from session storage", async function() {
                 await page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     // Login again will not redirect to custom path.
-                    await toggleSignInSignUp(page);
 
-                // Set correct values.
-                await setInputValues(page, [
-                    { name: "email", value: "john.doe@supertokens.io" },
-                    { name: "password", value: "Str0ngP@ssw0rd" }
-                ]);
+                    // Set correct values.
+                    await setInputValues(page, [
+                        { name: "email", value: "john.doe@supertokens.io" },
+                        { name: "password", value: "Str0ngP@ssw0rd" }
+                    ]);
 
                 // Submit.
                 await Promise.all([
@@ -420,7 +415,6 @@ describe("SuperTokens SignIn => Server Error", function() {
             }
         });
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-        await toggleSignInSignUp(page);
     });
 
     it("Server Error shows Something went wrong general error", async function() {
@@ -446,7 +440,6 @@ async function assertSignInRedirectTo(page, startUrl, finalUrl) {
     await clearBrowserCookies(page);
     await Promise.all([page.goto(startUrl), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
-    await toggleSignInSignUp(page);
     // Set correct values.
     await setInputValues(page, [
         { name: "email", value: "john.doe@supertokens.io" },
