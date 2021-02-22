@@ -17,7 +17,7 @@ export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     disableDefaultImplementation?: boolean;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
-    providers: (Provider | CustomProviderConfig)[];
+    providers?: (Provider | CustomProviderConfig)[];
 };
 export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     disableDefaultImplementation: boolean;

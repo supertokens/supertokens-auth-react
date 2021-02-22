@@ -409,6 +409,7 @@ function getThirdPartyEmailPasswordConfigs () {
           name: "Custom"
         }
       ]
-    }
+    },
+    disableEmailPassword: false
   })
 }

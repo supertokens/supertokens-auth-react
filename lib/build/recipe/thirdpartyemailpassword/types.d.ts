@@ -1,4 +1,4 @@
-/// <reference types="react" />
+import { History, LocationState } from "history";
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 import { EmailPasswordGetRedirectionURLContext, EmailPasswordOnHandleEventContext, EmailPasswordPreAPIHookContext } from "../emailpassword";
@@ -10,13 +10,15 @@ import { CustomProviderConfig } from "../thirdparty/providers/types";
 export declare type ThirdPartyEmailPasswordUserInput = AuthRecipeModuleUserInput<ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext> & {
     palette?: Record<string, string>;
     useShadowDom?: boolean;
-    signInAndUpFeature: SignInAndUpFeatureUserInput;
+    signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
+    disableEmailPassword?: boolean;
 };
 export declare type ThirdPartyEmailPasswordConfig = ThirdPartyEmailPasswordUserInput & RecipeModuleConfig<ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext>;
 export declare type NormalisedThirdPartyEmailPasswordConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
+    disableEmailPassword: boolean;
 };
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     disableDefaultImplementation?: boolean;
@@ -38,8 +40,10 @@ export declare type ThirdPartyEmailPasswordGetRedirectionURLContext = EmailPassw
 export declare type ThirdPartyEmailPasswordPreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
 export declare type ThirdPartyEmailPasswordOnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
-    thirdParty: JSX.Element;
-    emailPassword: JSX.Element;
+    recipeId: string;
+    history?: History<LocationState>;
     status: "SIGN_IN" | "SIGN_UP";
+    hideThirdParty?: boolean;
+    hideEmailPassword?: boolean;
     toggleStatus: (status: "SIGN_IN" | "SIGN_UP") => void;
 };

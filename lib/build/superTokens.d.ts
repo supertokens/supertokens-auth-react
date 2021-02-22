@@ -2,7 +2,6 @@
 import RecipeModule from "./recipe/recipeModule";
 import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensConfig } from "./types";
 import NormalisedURLPath from "./normalisedURLPath";
-import Session from "./recipe/session/session";
 export default class SuperTokens {
     private static instance?;
     appInfo: NormalisedAppInfo;
@@ -25,6 +24,5 @@ export default class SuperTokens {
         Route: any;
         withRouter: any;
     } | undefined;
-    getDefaultSessionRecipe: () => Session | undefined;
     static reset(): void;
 }

@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { ST_ROOT_SELECTOR, TEST_SERVER_BASE_URL } from "./constants";
+import { ST_ROOT_SELECTOR, TEST_SERVER_BASE_URL, SIGN_UP_API, EMAIL_EXISTS_API } from "./constants";
 import assert from "assert";
 
 /*
@@ -400,4 +400,38 @@ export async function loginWithGithub(page) {
         page.keyboard.press('Enter'),
         page.waitForNavigation({ waitUntil: "networkidle0" })
     ]);
+}
+
+export async function successfulSignUp(page) {
+    // Set values.
+    await setInputValues(page, [
+        { name: "email", value: "john.doe@supertokens.io" },
+        { name: "password", value: "Str0ngP@ssw0rd" },
+        { name: "name", value: "John Doe" },
+        { name: "age", value: "20" }
+    ]);
+
+    const successAdornments = await getInputAdornmentsSuccess(page);
+    assert.strictEqual(successAdornments.length, 4);
+
+    const errorAdornments = await getInputAdornmentsError(page);
+    assert.strictEqual(errorAdornments.length, 0);
+
+    let [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
+        submitFormReturnRequestAndResponse(page, SIGN_UP_API),
+        hasMethodBeenCalled(page, EMAIL_EXISTS_API)
+    ]);
+
+    // Verify that email exists API has not been called.
+    assert.strictEqual(hasEmailExistMethodBeenCalled, false);
+
+    assert.strictEqual(request.headers().rid, "emailpassword");
+    assert.strictEqual(
+        request.postData(),
+        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}'
+    );
+
+    assert.strictEqual(response.status, "OK");
+    await page.setRequestInterception(false);
+    await new Promise(r => setTimeout(r, 500)); // Make sure to wait for navigation. TODO Make more robust.
 }

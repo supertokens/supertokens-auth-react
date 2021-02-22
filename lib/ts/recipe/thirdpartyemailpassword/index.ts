@@ -15,7 +15,10 @@
 import ThirdPartyEmailPassword from "./thirdpartyEmailpassword";
 import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { EmailVerification } from "./components/features/emailVerification";
+import EmailVerification from "./components/features/emailVerification";
+import ResetPasswordUsingToken from "./components/features/resetPaswsordUsingToken";
+import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
+
 import {
     ThirdPartyEmailPasswordUserInput,
     ThirdPartyEmailPasswordGetRedirectionURLContext,
@@ -56,6 +59,8 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
     static ThirdPartyEmailPasswordAuth = ThirdPartyEmailPasswordAuth;
     static SignInAndUp = SignInAndUp;
     static SignInAndUpTheme = SignInAndUpTheme;
+    static ResetPasswordUsingToken = ResetPasswordUsingToken;
+    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
     static EmailVerification = EmailVerification;
     static EmailVerificationTheme = EmailVerificationTheme;
 }
@@ -78,6 +83,8 @@ export {
     signOut,
     EmailVerification,
     EmailVerificationTheme,
+    ResetPasswordUsingToken,
+    ResetPasswordUsingTokenTheme,
     ThirdPartyEmailPasswordGetRedirectionURLContext,
     ThirdPartyEmailPasswordPreAPIHookContext,
     ThirdPartyEmailPasswordOnHandleEventContext

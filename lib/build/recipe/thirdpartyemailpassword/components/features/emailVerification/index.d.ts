@@ -1,2 +1,2 @@
 /// <reference types="react" />
-export declare function EmailVerification(): JSX.Element;
+export default function EmailVerification(): JSX.Element;

@@ -20,6 +20,8 @@ import { NormalisedThirdPartyEmailPasswordConfig, ThirdPartyEmailPasswordConfig 
 
 import { normaliseEmailPasswordConfig } from "../emailpassword/utils";
 import { normaliseThirdPartyConfig } from "../thirdparty/utils";
+import { ThirdPartyConfig } from "../thirdparty/types";
+import { EmailPasswordConfig } from "../emailpassword/types";
 
 /*
  * Methods.
@@ -27,13 +29,38 @@ import { normaliseThirdPartyConfig } from "../thirdparty/utils";
 export function normaliseThirdPartyEmailPasswordConfig(
     config: ThirdPartyEmailPasswordConfig
 ): NormalisedThirdPartyEmailPasswordConfig {
-    const emailPasswordConfig = normaliseEmailPasswordConfig(config);
-    const thirdPartyConfig = normaliseThirdPartyConfig(config);
+    const thirdPartyUserInput = isThirdPartyConfig(config);
+    const emailPasswordUserInput = isEmailPasswordConfig(config);
+
+    const emailPasswordConfig = normaliseEmailPasswordConfig(emailPasswordUserInput);
+    const thirdPartyConfig = normaliseThirdPartyConfig(thirdPartyUserInput, true);
+    const disableEmailPassword = config.disableEmailPassword === true;
+
+    if (disableEmailPassword && thirdPartyConfig.signInAndUpFeature.providers.length === 0) {
+        throw new Error("You need to enable either email password or third party providers login.");
+    }
     return {
         signInAndUpFeature: {
             ...thirdPartyConfig.signInAndUpFeature,
             ...emailPasswordConfig.signInAndUpFeature
         },
-        resetPasswordUsingTokenFeature: emailPasswordConfig.resetPasswordUsingTokenFeature
+        resetPasswordUsingTokenFeature: emailPasswordConfig.resetPasswordUsingTokenFeature,
+        disableEmailPassword
     };
+}
+
+export function isEmailPasswordConfig(config: ThirdPartyEmailPasswordConfig): EmailPasswordConfig {
+    return config as EmailPasswordConfig;
+}
+
+export function isThirdPartyConfig(config: ThirdPartyEmailPasswordConfig): ThirdPartyConfig {
+    if (config.signInAndUpFeature === undefined) {
+        config.signInAndUpFeature = {
+            providers: []
+        };
+    }
+    if (config.signInAndUpFeature.providers === undefined) {
+        config.signInAndUpFeature.providers = [];
+    }
+    return (config as unknown) as ThirdPartyConfig;
 }

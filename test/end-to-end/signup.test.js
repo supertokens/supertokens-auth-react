@@ -24,7 +24,6 @@ import { spawn } from "child_process";
 import puppeteer from "puppeteer";
 import {
     clearBrowserCookies,
-    getInputAdornmentsError,
     getLabelsText,
     getInputNames,
     getPlaceholders,
@@ -32,14 +31,14 @@ import {
     getFieldErrors,
     hasMethodBeenCalled,
     setInputValues,
-    submitFormReturnRequestAndResponse,
     submitForm,
-    toggleSignInSignUp
+    toggleSignInSignUp,
+    successfulSignUp
 } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { EMAIL_EXISTS_API, SIGN_UP_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import { EMAIL_EXISTS_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 
 /*
  * Tests.
@@ -209,37 +208,3 @@ describe("SuperTokens SignUp", function() {
         });
     });
 });
-
-export async function successfulSignUp(page) {
-    // Set values.
-    await setInputValues(page, [
-        { name: "email", value: "john.doe@supertokens.io" },
-        { name: "password", value: "Str0ngP@ssw0rd" },
-        { name: "name", value: "John Doe" },
-        { name: "age", value: "20" }
-    ]);
-
-    const successAdornments = await getInputAdornmentsSuccess(page);
-    assert.strictEqual(successAdornments.length, 4);
-
-    const errorAdornments = await getInputAdornmentsError(page);
-    assert.strictEqual(errorAdornments.length, 0);
-
-    let [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
-        submitFormReturnRequestAndResponse(page, SIGN_UP_API),
-        hasMethodBeenCalled(page, EMAIL_EXISTS_API)
-    ]);
-
-    // Verify that email exists API has not been called.
-    assert.strictEqual(hasEmailExistMethodBeenCalled, false);
-
-    assert.strictEqual(request.headers().rid, "emailpassword");
-    assert.strictEqual(
-        request.postData(),
-        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}'
-    );
-
-    assert.strictEqual(response.status, "OK");
-    await page.setRequestInterception(false);
-    await new Promise(r => setTimeout(r, 500)); // Make sure to wait for navigation. TODO Make more robust.
-}
