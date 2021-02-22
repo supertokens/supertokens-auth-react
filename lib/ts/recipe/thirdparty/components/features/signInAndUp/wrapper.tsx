@@ -1,10 +1,3 @@
-"use strict";
-var __importDefault =
-    (this && this.__importDefault) ||
-    function(mod) {
-        return mod && mod.__esModule ? mod : { default: mod };
-    };
-Object.defineProperty(exports, "__esModule", { value: true });
 /* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
@@ -23,17 +16,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Imports.
  */
 /** @jsx jsx */
-var react_1 = require("@emotion/react");
-var react_2 = require("react");
-var styleContext_1 = __importDefault(require("../../../../../styles/styleContext"));
+import { jsx } from "@emotion/react";
+import * as React from "react";
+import SignInAndUpBase from ".";
+import ThirdParty from "../../../thirdparty";
+
 /*
  * Component.
  */
-function EmailPasswordSignInAndUpTheme(props) {
-    /*
-     * Render.
-     */
-    var styles = react_2.useContext(styleContext_1.default);
-    return react_1.jsx("div", null, "EmailPasswordSignInAndUpTheme");
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function SignInAndUp(props: any): JSX.Element {
+    return <SignInAndUpBase recipeId={ThirdParty.getInstanceOrThrow().recipeId} {...props} />;
 }
-exports.default = EmailPasswordSignInAndUpTheme;
+
+export default SignInAndUp;

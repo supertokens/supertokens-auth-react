@@ -23,6 +23,7 @@ import EmailPassword from "../../../emailPassword";
 /*
  * Used for embedding in page.
  */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function SignInAndUp(props: any): JSX.Element {
     return <SignInAndUpBase recipeId={EmailPassword.getInstanceOrThrow().recipeId} {...props} />;
 }

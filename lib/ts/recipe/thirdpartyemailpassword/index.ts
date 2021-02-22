@@ -16,7 +16,7 @@ import ThirdPartyEmailPassword from "./thirdpartyEmailpassword";
 import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import EmailVerification from "./components/features/emailVerification";
-import ResetPasswordUsingToken from "./components/features/resetPaswsordUsingToken";
+import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 
 import {
@@ -26,7 +26,7 @@ import {
     ThirdPartyEmailPasswordOnHandleEventContext
 } from "./types";
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
-import SignInAndUp from "./components/features/signInAndUp";
+import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 /*

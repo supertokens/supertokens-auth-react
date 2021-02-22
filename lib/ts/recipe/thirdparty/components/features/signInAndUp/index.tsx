@@ -36,7 +36,6 @@ import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 import { getStyles } from "../../../components/themes/styles";
 import { SESSION_STORAGE_STATE_KEY } from "../../../constants";
 import Provider from "../../../providers";
-import ThirdParty from "../../../thirdparty";
 import {
     NormalisedThirdPartyConfig,
     ThirdPartyGetRedirectionURLContext,
@@ -214,13 +213,6 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
             </FeatureWrapper>
         );
     };
-}
-
-/*
- * Used for embedding in page.
- */
-export function SignInAndUpFeature(): JSX.Element {
-    return <SignInAndUp recipeId={ThirdParty.getInstanceOrThrow().recipeId} />;
 }
 
 export default SignInAndUp;

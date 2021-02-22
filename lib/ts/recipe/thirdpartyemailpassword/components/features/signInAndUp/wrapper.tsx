@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
@@ -14,4 +12,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-exports.SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
+/*
+ * Imports.
+ */
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
+import * as React from "react";
+import SignInAndUpBase from ".";
+import ThirdPartyEmailPassword from "../../../thirdpartyEmailpassword";
+
+/*
+ * Component.
+ */
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function SignInAndUp(props: any): JSX.Element {
+    return <SignInAndUpBase recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId} {...props} />;
+}
+
+export default SignInAndUp;
