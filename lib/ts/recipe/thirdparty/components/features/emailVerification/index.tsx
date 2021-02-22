@@ -20,6 +20,7 @@ import React from "react";
 import { default as EmailVerificationBase } from "../../../../emailverification/components/features/emailVerification";
 import ThirdParty from "../../../thirdparty";
 
-export default function EmailVerification(): JSX.Element {
-    return <EmailVerificationBase recipeId={ThirdParty.getInstanceOrThrow().recipeId} />;
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export default function EmailVerification(props: any): JSX.Element {
+    return <EmailVerificationBase recipeId={ThirdParty.getInstanceOrThrow().recipeId} {...props} />;
 }

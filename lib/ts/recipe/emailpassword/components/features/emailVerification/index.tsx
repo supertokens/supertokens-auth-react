@@ -20,6 +20,7 @@ import React from "react";
 import { default as EmailVerificationBase } from "../../../../emailverification/components/features/emailVerification";
 import EmailPassword from "../../../emailPassword";
 
-export default function EmailVerification(): JSX.Element {
-    return <EmailVerificationBase recipeId={EmailPassword.getInstanceOrThrow().recipeId} />;
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export default function EmailVerification(props: any): JSX.Element {
+    return <EmailVerificationBase recipeId={EmailPassword.getInstanceOrThrow().recipeId} {...props} />;
 }

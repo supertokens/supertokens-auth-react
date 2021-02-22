@@ -1,10 +1,3 @@
-"use strict";
-var __importDefault =
-    (this && this.__importDefault) ||
-    function(mod) {
-        return mod && mod.__esModule ? mod : { default: mod };
-    };
-Object.defineProperty(exports, "__esModule", { value: true });
 /* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
@@ -19,21 +12,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 /*
  * Imports.
  */
-/** @jsx jsx */
-var react_1 = require("@emotion/react");
-var react_2 = require("react");
-var styleContext_1 = __importDefault(require("../../../../../styles/styleContext"));
-/*
- * Component.
- */
-function EmailPasswordSignInAndUpTheme(props) {
-    /*
-     * Render.
-     */
-    var styles = react_2.useContext(styleContext_1.default);
-    return react_1.jsx("div", null, "EmailPasswordSignInAndUpTheme");
+import React from "react";
+import ResetPasswordUsingTokenBase from "../../../../emailpassword/components/features/resetPasswordUsingToken";
+import ThirdPartyEmailPassword from "../../../thirdpartyEmailpassword";
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export default function ResetPasswordUsingToken(props: any): JSX.Element {
+    return <ResetPasswordUsingTokenBase recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId} {...props} />;
 }
-exports.default = EmailPasswordSignInAndUpTheme;
