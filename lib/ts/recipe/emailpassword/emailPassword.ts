@@ -29,12 +29,13 @@ import {
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
-import { ResetPasswordUsingToken, SignInAndUp } from ".";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import { NormalisedAuthRecipeConfig } from "../authRecipeModule/types";
+import SignInAndUp from "./components/features/signInAndUp/wrapper";
+import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
 
 /*
  * Class.

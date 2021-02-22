@@ -37,7 +37,6 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 import SuperTokens from "../../../../../superTokens";
-import EmailPassword from "../../../emailPassword";
 
 /*
  * Component.
@@ -207,13 +206,6 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             </FeatureWrapper>
         );
     };
-}
-
-/*
- * Used for embedding in page.
- */
-export function ResetPasswordUsingTokenFeature(): JSX.Element {
-    return <ResetPasswordUsingToken recipeId={EmailPassword.getInstanceOrThrow().recipeId} />;
 }
 
 export default ResetPasswordUsingToken;

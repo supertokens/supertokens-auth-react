@@ -12,6 +12,12 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
+/*
+ * Import
+ */
+
+// /!\ ThirdParty must be imported before any of the providers to prevent circular dependencies.
 import ThirdParty from "./thirdparty";
 import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
