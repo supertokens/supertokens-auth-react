@@ -37,7 +37,6 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { NormalisedAuthRecipeConfig, SignInAndUpState } from "../../../../authRecipeModule/types";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import SuperTokens from "../../../../../superTokens";
-import EmailPassword from "../../../emailPassword";
 /*
  * Component.
  */
@@ -324,13 +323,6 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             </FeatureWrapper>
         );
     };
-}
-
-/*
- * Used for embedding in page.
- */
-export function SignInAndUpFeature(): JSX.Element {
-    return <SignInAndUp recipeId={EmailPassword.getInstanceOrThrow().recipeId} />;
 }
 
 export default SignInAndUp;

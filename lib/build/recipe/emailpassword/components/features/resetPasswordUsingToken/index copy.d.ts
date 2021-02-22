@@ -14,4 +14,5 @@ declare class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, {
     enterEmail: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse>;
     render: () => JSX.Element;
 }
+export declare function ResetPasswordUsingTokenFeature(): JSX.Element;
 export default ResetPasswordUsingToken;

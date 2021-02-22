@@ -21,9 +21,7 @@ import * as React from "react";
 import root from "react-shadow/emotion";
 import { ST_ROOT_ID } from "../constants";
 import ErrorBoundary from "./errorBoundary";
-
-/** @jsx jsx */
-import { CacheProvider, jsx } from "@emotion/react";
+import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
 const superTokensEmotionCache = createCache({

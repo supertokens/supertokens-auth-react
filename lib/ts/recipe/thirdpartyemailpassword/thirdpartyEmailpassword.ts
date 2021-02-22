@@ -36,8 +36,8 @@ import { NormalisedAuthRecipeConfig } from "../authRecipeModule/types";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "../thirdparty/components/features/signInAndUpCallback";
 import { DEFAULT_RESET_PASSWORD_PATH } from "../emailpassword/constants";
-import { ResetPasswordUsingToken } from "../emailpassword";
 import { matchRecipeIdUsingState } from "../thirdparty/utils";
+import ResetPasswordUsingToken from "../emailpassword/components/features/resetPasswordUsingToken";
 
 /*
  * Class.

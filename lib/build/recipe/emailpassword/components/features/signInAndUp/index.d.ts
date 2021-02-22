@@ -17,5 +17,4 @@ declare class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpSta
     componentDidMount: () => Promise<void>;
     render: () => JSX.Element;
 }
-export declare function SignInAndUpFeature(): JSX.Element;
 export default SignInAndUp;
