@@ -31,17 +31,32 @@ import {
 /*
  * Methods.
  */
-export function normaliseThirdPartyConfig(config: ThirdPartyConfig): NormalisedThirdPartyConfig {
+export function normaliseThirdPartyConfig(
+    config: ThirdPartyConfig,
+    allowEmptyProviders = false
+): NormalisedThirdPartyConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
-        config.signInAndUpFeature
+        config.signInAndUpFeature,
+        allowEmptyProviders
     );
     return {
         signInAndUpFeature
     };
 }
 
-export function normaliseSignInAndUpFeature(config: SignInAndUpFeatureUserInput): NormalisedSignInAndUpFeatureConfig {
-    if (config === undefined || config.providers === undefined || config.providers.length === 0) {
+export function normaliseSignInAndUpFeature(
+    config: SignInAndUpFeatureUserInput,
+    allowEmptyProviders: boolean
+): NormalisedSignInAndUpFeatureConfig {
+    if (config === undefined) {
+        config = {};
+    }
+
+    if (config.providers === undefined) {
+        config.providers = [];
+    }
+
+    if (allowEmptyProviders === false && config.providers.length === 0) {
         throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
     }
 

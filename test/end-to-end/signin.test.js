@@ -40,10 +40,10 @@ import {
     submitFormReturnRequestAndResponse,
     toggleShowPasswordIcon,
     toggleSignInSignUp,
-    getInputAdornmentsError
+    getInputAdornmentsError,
+    successfulSignUp
 } from "../helpers";
 import fetch from "isomorphic-fetch";
-import { successfulSignUp } from "./signup.test";
 import { SOMETHING_WENT_WRONG_ERROR, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR } from "../../lib/build/constants";
 
 // Run the tests in a DOM environment.

@@ -33,10 +33,9 @@ import {
     submitForm,
     sendVerifyEmail,
     getGeneralSuccess,
-    toggleSignInSignUp
+    toggleSignInSignUp,
+    successfulSignUp
 } from "../helpers";
-
-import { successfulSignUp } from "./signup.test";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();

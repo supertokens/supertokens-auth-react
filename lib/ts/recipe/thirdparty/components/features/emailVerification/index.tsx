@@ -20,6 +20,6 @@ import React from "react";
 import { default as EmailVerificationBase } from "../../../../emailverification/components/features/emailVerification";
 import ThirdParty from "../../../thirdparty";
 
-export function EmailVerification(): JSX.Element {
+export default function EmailVerification(): JSX.Element {
     return <EmailVerificationBase recipeId={ThirdParty.getInstanceOrThrow().recipeId} />;
 }

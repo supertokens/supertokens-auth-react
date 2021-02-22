@@ -6,7 +6,7 @@ import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { ResetPasswordUsingTokenFeature as ResetPasswordUsingToken } from "./components/features/resetPasswordUsingToken";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { EmailVerification } from "./components/features/emailVerification";
+import EmailVerification from "./components/features/emailVerification";
 import { EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext } from "./types";
 export default class EmailPasswordAPIWrapper {
     static EmailPasswordAuth: typeof EmailPasswordAuth;

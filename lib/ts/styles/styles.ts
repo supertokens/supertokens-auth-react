@@ -175,7 +175,6 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             marginTop: "1em",
             marginBottom: "1em",
             borderBottom: "0.3px solid #dddddd",
-            display: "flex",
             alignItems: "center",
             paddingBottom: "5px"
         },

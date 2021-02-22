@@ -14,7 +14,7 @@
  */
 
 /** @jsx jsx */
-import { jsx } from "@emotion/react";
+import { CSSObject, jsx } from "@emotion/react";
 import { getDefaultStyles, getMergedStyles } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";
 import { getStyles as getEmailPasswordStyles } from "../../../emailpassword/components/themes/styles/styles";
@@ -24,6 +24,23 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     const baseStyles = getDefaultStyles(palette);
     const emailPasswordStyles = getEmailPasswordStyles(palette);
     const thirdPartyStyles = getThirdPartyStyles(palette);
-    const recipeStyles = getMergedStyles(emailPasswordStyles, thirdPartyStyles);
+    const baseRecipeStyles = getMergedStyles(emailPasswordStyles, thirdPartyStyles);
+    const thirdPartyEmailPasswordStyle: Record<string, CSSObject> = {
+        thirdPartyEmailPasswordDivider: {
+            paddingTop: "5px",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            color: palette.colors.textPrimary
+        },
+        thirdPartyEmailPasswordDividerOr: {
+            flex: "1 1",
+            marginTop: "0.75em"
+        },
+        divider: {
+            flex: "3 3"
+        }
+    };
+    const recipeStyles = getMergedStyles(baseRecipeStyles, thirdPartyEmailPasswordStyle);
     return getMergedStyles(baseStyles, recipeStyles);
 }

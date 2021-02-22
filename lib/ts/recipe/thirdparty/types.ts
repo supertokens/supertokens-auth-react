@@ -76,7 +76,7 @@ export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
      * Providers
      */
-    providers: (Provider | CustomProviderConfig)[];
+    providers?: (Provider | CustomProviderConfig)[];
 };
 
 export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {

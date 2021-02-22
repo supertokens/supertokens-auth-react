@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-
+import { History, LocationState } from "history";
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 import {
@@ -62,12 +62,17 @@ export type ThirdPartyEmailPasswordUserInput = AuthRecipeModuleUserInput<
     /*
      * Sign In and Sign Up feature.
      */
-    signInAndUpFeature: SignInAndUpFeatureUserInput;
+    signInAndUpFeature?: SignInAndUpFeatureUserInput;
 
     /*
      * Reset password Using Token feature.
      */
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
+
+    /*
+     * Disable Email Password.
+     */
+    disableEmailPassword?: boolean;
 };
 
 export type ThirdPartyEmailPasswordConfig = ThirdPartyEmailPasswordUserInput &
@@ -87,6 +92,11 @@ export type NormalisedThirdPartyEmailPasswordConfig = {
      * Reset password Using Token feature.
      */
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
+
+    /*
+     * Disable Email Password.
+     */
+    disableEmailPassword: boolean;
 };
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
@@ -167,19 +177,29 @@ export type ThirdPartyEmailPasswordOnHandleEventContext =
 
 export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     /*
-     * JSX Element for Third Party buttons
+     * RecipeId
      */
-    thirdParty: JSX.Element;
+    recipeId: string;
 
     /*
-     * JSX Element for Email Password buttons
+     * History provided by react-router
      */
-    emailPassword: JSX.Element;
+    history?: History<LocationState>;
 
     /*
      * Status
      */
     status: "SIGN_IN" | "SIGN_UP";
+
+    /*
+     * hideThirdParty
+     */
+    hideThirdParty?: boolean;
+
+    /*
+     * hideEmailPassword
+     */
+    hideEmailPassword?: boolean;
 
     /*
      * Toggle status.

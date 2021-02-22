@@ -31,15 +31,9 @@ import {
 } from "../../..";
 import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { default as ThirdPartySignInAndUp } from "../../../../thirdparty/components/features/signInAndUp";
-import { default as EmailPasswordSignInAndUp } from "../../../../emailpassword/components/features/signInAndUp";
-import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
-import { SignInAndUpProvidersTheme } from "../../../../thirdparty/components/themes/signInAndUp";
-import { SignInAndUpThemeProps as ThirdPartySignInAndUpThemeProps } from "../../../../thirdparty/types";
-import EmailPasswordSignInAndUpForm from "../../themes/signInAndUp/signInAndUpForm";
-import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
+import { StyleProvider } from "../../../../../styles/styleContext";
 
 /*
  * Component.
@@ -104,6 +98,9 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, { status: "SIGN_IN" | 
         /*
          * Render.
          */
+
+        const hideEmailPassword = this.getRecipeConfigOrThrow().disableEmailPassword;
+        const hideThirdParty = this.getRecipeConfigOrThrow().signInAndUpFeature.providers.length === 0;
         return (
             <FeatureWrapper useShadowDom={this.getRecipeConfigOrThrow().useShadowDom}>
                 <StyleProvider
@@ -115,41 +112,23 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, { status: "SIGN_IN" | 
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && (
                             <SignInAndUpTheme
+                                hideThirdParty={hideThirdParty}
+                                hideEmailPassword={hideEmailPassword}
                                 status={this.state.status}
                                 toggleStatus={this.toggleStatus}
-                                thirdParty={
-                                    <ThirdPartySignInAndUp
-                                        history={this.props.history}
-                                        recipeId={this.getRecipeInstanceOrThrow().recipeId}
-                                        isEmbedded={true}>
-                                        <SignInAndUpProvidersTheme
-                                            // Seed props. Real props will be given by parent feature.
-                                            {...({} as ThirdPartySignInAndUpThemeProps)}
-                                        />
-                                    </ThirdPartySignInAndUp>
-                                }
-                                emailPassword={
-                                    <EmailPasswordSignInAndUp
-                                        history={this.props.history}
-                                        recipeId={this.getRecipeInstanceOrThrow().recipeId}
-                                        isEmbedded={true}>
-                                        <EmailPasswordSignInAndUpForm
-                                            // Seed props. Real props will be given by parent feature.
-                                            {...({} as EmailPasswordSignInAndUpThemeProps)}
-                                            status={this.state.status}
-                                        />
-                                    </EmailPasswordSignInAndUp>
-                                }
+                                history={this.props.history}
+                                recipeId={this.getRecipeInstanceOrThrow().recipeId}
                             />
                         )}
                         {/* Otherwise, custom theme is provided, propagate props. */}
                         {this.props.children &&
                             React.cloneElement(this.props.children, {
-                                rawPalette: this.getRecipeConfigOrThrow().palette,
-                                defaultToSignUp: this.getRecipeConfigOrThrow().signInAndUpFeature.defaultToSignUp,
-                                providers: this.getRecipeConfigOrThrow().signInAndUpFeature.providers,
-                                signInForm: this.getRecipeConfigOrThrow().signInAndUpFeature.signInForm,
-                                signUpForm: this.getRecipeConfigOrThrow().signInAndUpFeature.signUpForm
+                                hideThirdParty,
+                                hideEmailPassword,
+                                status: this.state.status,
+                                toggleStatus: this.toggleStatus,
+                                history: this.props.history,
+                                recipeId: this.getRecipeInstanceOrThrow().recipeId
                             })}
                     </Fragment>
                 </StyleProvider>
