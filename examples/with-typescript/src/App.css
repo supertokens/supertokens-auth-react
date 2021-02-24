@@ -5,19 +5,18 @@
   width: 100vw;
   height: 100vh;
   font-family: Rubik;
-  /* background-color: #292929; */
 }
 
 .fill {
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
   flex: 1 1 auto;
 }
 
 .footer {
   align-self: "flex-end"
-
 }
 
 .sessionButton {
