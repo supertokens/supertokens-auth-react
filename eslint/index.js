@@ -1,3 +1,6 @@
+/*
+ * Use https://astexplorer.net/ to build rules.
+ */
 module.exports = {
     rules: {
 
