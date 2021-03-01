@@ -19,9 +19,9 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";
-import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signIn";
 import SignInFooter from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
-import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUp";
+import SignInForm from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
+import SignUpForm from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
 import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
 
 /*

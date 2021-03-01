@@ -15,8 +15,8 @@
 
 import React, { Fragment } from "react";
 import NormalisedURLPath from "../../../normalisedURLPath";
+import SuperTokens from "../../../superTokens";
 import ProviderButton from "../components/library/providerButton";
-import ThirdParty from "../thirdparty";
 import { ProviderConfig } from "./types";
 
 /*
@@ -56,9 +56,9 @@ export default abstract class Provider {
     }
 
     getRedirectURL(): string {
-        const domain = ThirdParty.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
+        const domain = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
         const callbackPath = new NormalisedURLPath(`/callback/${this.id}`);
-        const path = ThirdParty.getInstanceOrThrow()
+        const path = SuperTokens.getInstanceOrThrow()
             .appInfo.websiteBasePath.appendPath(callbackPath)
             .getAsStringDangerous();
         return `${domain}${path}`;

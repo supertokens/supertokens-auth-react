@@ -20,36 +20,16 @@ import { jsx } from "@emotion/react";
 import React, { PureComponent } from "react";
 import { SignUpThemeProps } from "../../../types";
 
-import FormBase from "../../library/formBase";
 import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";
 import SignUpHeader from "./signUpHeader";
 import StyleContext from "../../../../../styles/styleContext";
+import SignUpForm from "./signUpForm";
 
 /*
  * Component.
  */
 
-export function SignUpForm(
-    props: SignUpThemeProps & {
-        header?: JSX.Element;
-        footer?: JSX.Element;
-    }
-): JSX.Element {
-    return (
-        <FormBase
-            formFields={props.formFields}
-            buttonLabel={"SIGN UP"}
-            onSuccess={props.onSuccess}
-            callAPI={props.signUpAPI}
-            validateOnBlur={true}
-            showLabels={true}
-            header={props.header}
-            footer={props.footer}
-        />
-    );
-}
-
-export default class SignUpTheme extends PureComponent<SignUpThemeProps> {
+export default class SignUp extends PureComponent<SignUpThemeProps> {
     static contextType = StyleContext;
 
     /*

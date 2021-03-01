@@ -23,35 +23,15 @@ import StyleContext from "../../../../../styles/styleContext";
 
 import { SignInThemeProps } from "../../../types";
 
-import FormBase from "../../library/formBase";
 import SignInFooter from "./signInFooter";
+import SignInForm from "./signInForm";
 import SignInHeader from "./signInHeader";
 
 /*
  * Component.
  */
 
-export function SignInForm(
-    props: SignInThemeProps & {
-        header?: JSX.Element;
-        footer?: JSX.Element;
-    }
-): JSX.Element {
-    return (
-        <FormBase
-            formFields={props.formFields}
-            buttonLabel={"SIGN IN"}
-            onSuccess={props.onSuccess}
-            callAPI={props.signInAPI}
-            validateOnBlur={false}
-            showLabels={true}
-            header={props.header}
-            footer={props.footer}
-        />
-    );
-}
-
-export default class SignInTheme extends PureComponent<SignInThemeProps> {
+export default class SignIn extends PureComponent<SignInThemeProps> {
     static contextType = StyleContext;
 
     /*
