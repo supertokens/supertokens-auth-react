@@ -25,8 +25,6 @@ export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     defaultToSignUp?: boolean;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;
-    termsOfServiceLink?: string;
-    privacyPolicyLink?: string;
     providers: (Provider | CustomProviderConfig)[];
 };
 export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {

@@ -21,7 +21,7 @@
 import ThirdParty from "./thirdparty";
 import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import EmailVerification from "./components/features/emailVerification";
+import EmailVerification from "./components/features/emailVerification/wrapper";
 import {
     ThirdPartyUserInput,
     ThirdPartyGetRedirectionURLContext,
