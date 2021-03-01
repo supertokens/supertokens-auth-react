@@ -1,5 +1,5 @@
 /// <reference types="react" />
-export default function Header({ status, toggleStatus }: {
-    status: "SIGN_IN" | "SIGN_UP";
-    toggleStatus: (status: "SIGN_IN" | "SIGN_UP") => void;
+export default function Header({ isSignUp, setIsSignUp }: {
+    isSignUp: boolean;
+    setIsSignUp: (isSignUp: boolean) => void;
 }): JSX.Element;

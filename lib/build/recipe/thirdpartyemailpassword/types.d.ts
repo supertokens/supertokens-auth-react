@@ -40,8 +40,7 @@ export declare type ThirdPartyEmailPasswordOnHandleEventContext = ThirdPartyOnHa
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     recipeId: string;
     history?: History<LocationState>;
-    status: "SIGN_IN" | "SIGN_UP";
+    defaultToSignUp: boolean;
     hideThirdParty?: boolean;
     hideEmailPassword?: boolean;
-    toggleStatus: (status: "SIGN_IN" | "SIGN_UP") => void;
 };
