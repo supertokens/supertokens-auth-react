@@ -15,7 +15,7 @@
 import ThirdPartyEmailPassword from "./thirdpartyEmailpassword";
 import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import EmailVerification from "./components/features/emailVerification";
+import EmailVerification from "./components/features/emailVerification/wrapper";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 

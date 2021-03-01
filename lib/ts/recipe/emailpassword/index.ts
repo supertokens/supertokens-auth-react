@@ -26,7 +26,7 @@ import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import EmailVerification from "./components/features/emailVerification";
+import EmailVerification from "./components/features/emailVerification/wrapper";
 import {
     EmailPasswordGetRedirectionURLContext,
     EmailPasswordPreAPIHookContext,
