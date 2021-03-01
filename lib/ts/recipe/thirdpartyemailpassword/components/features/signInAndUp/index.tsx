@@ -39,21 +39,7 @@ import { StyleProvider } from "../../../../../styles/styleContext";
  * Component.
  */
 
-class SignInAndUp extends PureComponent<FeatureBaseProps, { status: "SIGN_IN" | "SIGN_UP" }> {
-    /*
-     * Constructor.
-     */
-    constructor(props: FeatureBaseProps) {
-        super(props);
-
-        const status: "SIGN_IN" | "SIGN_UP" = this.getRecipeConfigOrThrow().signInAndUpFeature.defaultToSignUp
-            ? "SIGN_UP"
-            : "SIGN_IN";
-        this.state = {
-            status
-        };
-    }
-
+class SignInAndUp extends PureComponent<FeatureBaseProps> {
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
         ThirdPartyEmailPasswordGetRedirectionURLContext,
         ThirdPartyEmailPasswordPreAPIHookContext,
@@ -88,12 +74,6 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, { status: "SIGN_IN" | 
         return false;
     };
 
-    toggleStatus = (status: "SIGN_IN" | "SIGN_UP"): void => {
-        this.setState({
-            status
-        });
-    };
-
     render = (): JSX.Element => {
         /*
          * Render.
@@ -114,8 +94,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, { status: "SIGN_IN" | 
                             <SignInAndUpTheme
                                 hideThirdParty={hideThirdParty}
                                 hideEmailPassword={hideEmailPassword}
-                                status={this.state.status}
-                                toggleStatus={this.toggleStatus}
+                                defaultToSignUp={this.getRecipeConfigOrThrow().signInAndUpFeature.defaultToSignUp}
                                 history={this.props.history}
                                 recipeId={this.getRecipeInstanceOrThrow().recipeId}
                             />
@@ -125,8 +104,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, { status: "SIGN_IN" | 
                             React.cloneElement(this.props.children, {
                                 hideThirdParty,
                                 hideEmailPassword,
-                                status: this.state.status,
-                                toggleStatus: this.toggleStatus,
+                                defaultToSignUp: this.getRecipeConfigOrThrow().signInAndUpFeature.defaultToSignUp,
                                 history: this.props.history,
                                 recipeId: this.getRecipeInstanceOrThrow().recipeId
                             })}

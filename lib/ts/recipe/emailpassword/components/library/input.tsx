@@ -43,7 +43,6 @@ type InputProps = {
     validated: boolean;
     hasError: boolean;
     placeholder: string;
-    ref: RefObject<any>;
     onInputBlur?: (field: APIFormField) => void;
     onInputFocus?: (field: APIFormField) => void;
 };

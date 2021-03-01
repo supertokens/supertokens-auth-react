@@ -18,7 +18,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { Fragment, useContext } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
@@ -32,12 +32,12 @@ import SignInAndUpProvidersForm from "../../../../thirdparty/components/themes/s
 
 export default function SignInAndUpTheme(props: ThirdPartyEmailPasswordSignInAndUpThemeProps): JSX.Element {
     const styles = useContext(StyleContext);
-
+    const [isSignUp, setIsSignUp] = useState(props.defaultToSignUp);
     return (
         <ThemeBase>
             <div data-supertokens="container" css={styles.container}>
                 <div data-supertokens="row" css={styles.row}>
-                    <Header status={props.status} toggleStatus={props.toggleStatus} />
+                    <Header isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
                     {props.hideThirdParty !== true && (
                         <Fragment>
                             <ThirdPartySignInAndUp history={props.history} recipeId={props.recipeId} isEmbedded={true}>
@@ -66,7 +66,7 @@ export default function SignInAndUpTheme(props: ThirdPartyEmailPasswordSignInAnd
                             <EmailPasswordSignInAndUpForm
                                 // Seed props. Real props will be given by parent feature.
                                 {...({} as EmailPasswordSignInAndUpThemeProps)}
-                                status={props.status}
+                                isSignUp={isSignUp}
                             />
                         </EmailPasswordSignInAndUp>
                     )}

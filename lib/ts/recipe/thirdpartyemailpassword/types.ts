@@ -177,9 +177,9 @@ export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     history?: History<LocationState>;
 
     /*
-     * Status
+     * Default To Sign Up
      */
-    status: "SIGN_IN" | "SIGN_UP";
+    defaultToSignUp: boolean;
 
     /*
      * hideThirdParty
@@ -190,9 +190,4 @@ export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
      * hideEmailPassword
      */
     hideEmailPassword?: boolean;
-
-    /*
-     * Toggle status.
-     */
-    toggleStatus: (status: "SIGN_IN" | "SIGN_UP") => void;
 };

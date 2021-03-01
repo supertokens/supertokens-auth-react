@@ -29,14 +29,14 @@ import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../
  */
 export default function SignInAndUpForm(
     props: EmailPasswordSignInAndUpThemeProps & {
-        status: "SIGN_IN" | "SIGN_UP";
+        isSignUp: boolean;
     }
 ): JSX.Element {
     /*
      * Render.
      */
 
-    if (props.status === "SIGN_UP") {
+    if (props.isSignUp === true) {
         return (
             <SignUpForm
                 {...props.signUpForm}

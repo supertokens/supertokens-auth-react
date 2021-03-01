@@ -25,18 +25,18 @@ import SignUpHeader from "../../../../emailpassword/components/themes/signInAndU
  * Component.
  */
 export default function Header({
-    status,
-    toggleStatus
+    isSignUp,
+    setIsSignUp
 }: {
-    status: "SIGN_IN" | "SIGN_UP";
-    toggleStatus: (status: "SIGN_IN" | "SIGN_UP") => void;
+    isSignUp: boolean;
+    setIsSignUp: (isSignUp: boolean) => void;
 }): JSX.Element {
     /*
      * Render.
      */
-    if (status === "SIGN_UP") {
-        return <SignUpHeader onClick={() => toggleStatus("SIGN_IN")} />;
+    if (isSignUp === true) {
+        return <SignUpHeader onClick={() => setIsSignUp(false)} />;
     } else {
-        return <SignInHeader onClick={() => toggleStatus("SIGN_UP")} />;
+        return <SignInHeader onClick={() => setIsSignUp(true)} />;
     }
 }
