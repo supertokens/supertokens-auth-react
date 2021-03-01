@@ -123,16 +123,6 @@ export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     signInForm?: SignInFormFeatureUserInput;
 
     /*
-     * Terms and conditions link for sign up form.
-     */
-    termsOfServiceLink?: string;
-
-    /*
-     * Privacy policy link for sign up form.
-     */
-    privacyPolicyLink?: string;
-
-    /*
      * Providers
      */
     providers: (Provider | CustomProviderConfig)[];
