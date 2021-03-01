@@ -19,7 +19,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import React, { Fragment, useContext, useState } from "react";
-import StyleContext from "../../../../../styles/styleContext";
+import StyleContext, { StyleProvider } from "../../../../../styles/styleContext";
 import { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 import Header from "./header";
@@ -29,49 +29,61 @@ import EmailPasswordSignInAndUpForm from "../../themes/signInAndUp/signInAndUpFo
 import { SignInAndUpThemeProps as ThirdPartySignInAndUpThemeProps } from "../../../../thirdparty/types";
 import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
 import SignInAndUpProvidersForm from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
+import { defaultPalette } from "../../../../../styles/styles";
+import { getStyles } from "../styles";
 
-export default function SignInAndUpTheme(props: ThirdPartyEmailPasswordSignInAndUpThemeProps): JSX.Element {
+function SignInAndUpTheme(props: ThirdPartyEmailPasswordSignInAndUpThemeProps): JSX.Element {
     const styles = useContext(StyleContext);
     const [isSignUp, setIsSignUp] = useState(props.defaultToSignUp);
     return (
-        <ThemeBase>
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row" css={styles.row}>
-                    <Header isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
-                    {props.hideThirdParty !== true && (
-                        <Fragment>
-                            <ThirdPartySignInAndUp history={props.history} recipeId={props.recipeId} isEmbedded={true}>
-                                <SignInAndUpProvidersForm
-                                    // Seed props. Real props will be given by parent feature.
-                                    {...({} as ThirdPartySignInAndUpThemeProps)}
-                                />
-                            </ThirdPartySignInAndUp>
-                        </Fragment>
-                    )}
-                    {props.hideEmailPassword !== true && props.hideThirdParty !== true && (
-                        <div
-                            data-supertokens="thirdPartyEmailPasswordDivider"
-                            css={styles.thirdPartyEmailPasswordDivider}>
-                            <div data-supertokens="divider" css={styles.divider}></div>
-                            <div
-                                data-supertokens="thirdPartyEmailPasswordDividerOr"
-                                css={styles.thirdPartyEmailPasswordDividerOr}>
-                                or
-                            </div>
-                            <div data-supertokens="divider" css={styles.divider}></div>
-                        </div>
-                    )}
-                    {props.hideEmailPassword !== true && (
-                        <EmailPasswordSignInAndUp history={props.history} recipeId={props.recipeId} isEmbedded={true}>
-                            <EmailPasswordSignInAndUpForm
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                <Header isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
+                {props.hideThirdParty !== true && (
+                    <Fragment>
+                        <ThirdPartySignInAndUp history={props.history} recipeId={props.recipeId} isEmbedded={true}>
+                            <SignInAndUpProvidersForm
                                 // Seed props. Real props will be given by parent feature.
-                                {...({} as EmailPasswordSignInAndUpThemeProps)}
-                                isSignUp={isSignUp}
+                                {...({} as ThirdPartySignInAndUpThemeProps)}
                             />
-                        </EmailPasswordSignInAndUp>
-                    )}
-                </div>
+                        </ThirdPartySignInAndUp>
+                    </Fragment>
+                )}
+                {props.hideEmailPassword !== true && props.hideThirdParty !== true && (
+                    <div data-supertokens="thirdPartyEmailPasswordDivider" css={styles.thirdPartyEmailPasswordDivider}>
+                        <div data-supertokens="divider" css={styles.divider}></div>
+                        <div
+                            data-supertokens="thirdPartyEmailPasswordDividerOr"
+                            css={styles.thirdPartyEmailPasswordDividerOr}>
+                            or
+                        </div>
+                        <div data-supertokens="divider" css={styles.divider}></div>
+                    </div>
+                )}
+                {props.hideEmailPassword !== true && (
+                    <EmailPasswordSignInAndUp history={props.history} recipeId={props.recipeId} isEmbedded={true}>
+                        <EmailPasswordSignInAndUpForm
+                            // Seed props. Real props will be given by parent feature.
+                            {...({} as EmailPasswordSignInAndUpThemeProps)}
+                            isSignUp={isSignUp}
+                        />
+                    </EmailPasswordSignInAndUp>
+                )}
             </div>
+        </div>
+    );
+}
+
+export default function SignInAndUpThemeWrapper(props: ThirdPartyEmailPasswordSignInAndUpThemeProps): JSX.Element {
+    return (
+        <ThemeBase>
+            <StyleProvider
+                rawPalette={props.rawPalette}
+                defaultPalette={defaultPalette}
+                styleFromInit={props.styleFromInit}
+                getDefaultStyles={getStyles}>
+                <SignInAndUpTheme {...props} />
+            </StyleProvider>
         </ThemeBase>
     );
 }

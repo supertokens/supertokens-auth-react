@@ -31,9 +31,6 @@ import {
 } from "../../..";
 import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { defaultPalette } from "../../../../../styles/styles";
-import { getStyles } from "../../themes/styles";
-import { StyleProvider } from "../../../../../styles/styleContext";
 
 /*
  * Component.
@@ -83,33 +80,31 @@ class SignInAndUp extends PureComponent<FeatureBaseProps> {
         const hideThirdParty = this.getRecipeConfigOrThrow().signInAndUpFeature.providers.length === 0;
         return (
             <FeatureWrapper useShadowDom={this.getRecipeConfigOrThrow().useShadowDom}>
-                <StyleProvider
-                    rawPalette={this.getRecipeConfigOrThrow().palette}
-                    defaultPalette={defaultPalette}
-                    styleFromInit={this.getRecipeConfigOrThrow().signInAndUpFeature.style}
-                    getDefaultStyles={getStyles}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {this.props.children === undefined && (
-                            <SignInAndUpTheme
-                                hideThirdParty={hideThirdParty}
-                                hideEmailPassword={hideEmailPassword}
-                                defaultToSignUp={this.getRecipeConfigOrThrow().signInAndUpFeature.defaultToSignUp}
-                                history={this.props.history}
-                                recipeId={this.getRecipeInstanceOrThrow().recipeId}
-                            />
-                        )}
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children &&
-                            React.cloneElement(this.props.children, {
-                                hideThirdParty,
-                                hideEmailPassword,
-                                defaultToSignUp: this.getRecipeConfigOrThrow().signInAndUpFeature.defaultToSignUp,
-                                history: this.props.history,
-                                recipeId: this.getRecipeInstanceOrThrow().recipeId
-                            })}
-                    </Fragment>
-                </StyleProvider>
+                <Fragment>
+                    {/* No custom theme, use default. */}
+                    {this.props.children === undefined && (
+                        <SignInAndUpTheme
+                            rawPalette={this.getRecipeConfigOrThrow().palette}
+                            styleFromInit={this.getRecipeConfigOrThrow().signInAndUpFeature.style}
+                            hideThirdParty={hideThirdParty}
+                            hideEmailPassword={hideEmailPassword}
+                            defaultToSignUp={this.getRecipeConfigOrThrow().signInAndUpFeature.defaultToSignUp}
+                            history={this.props.history}
+                            recipeId={this.getRecipeInstanceOrThrow().recipeId}
+                        />
+                    )}
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {this.props.children &&
+                        React.cloneElement(this.props.children, {
+                            hideThirdParty,
+                            hideEmailPassword,
+                            rawPalette: this.getRecipeConfigOrThrow().palette,
+                            styleFromInit: this.getRecipeConfigOrThrow().signInAndUpFeature.style,
+                            defaultToSignUp: this.getRecipeConfigOrThrow().signInAndUpFeature.defaultToSignUp,
+                            history: this.props.history,
+                            recipeId: this.getRecipeInstanceOrThrow().recipeId
+                        })}
+                </Fragment>
             </FeatureWrapper>
         );
     };
