@@ -1,5 +1,5 @@
 import { History, LocationState } from "history";
-import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
 import { AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 import { EmailPasswordGetRedirectionURLContext, EmailPasswordOnHandleEventContext, EmailPasswordPreAPIHookContext } from "../emailpassword";
 import { NormalisedResetPasswordUsingTokenFeatureConfig, NormalisedSignInFormFeatureConfig, NormalisedSignUpFormFeatureConfig, ResetPasswordUsingTokenUserInput, SignInFormFeatureUserInput, SignUpFormFeatureUserInput } from "../emailpassword/types";
@@ -43,4 +43,6 @@ export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     defaultToSignUp: boolean;
     hideThirdParty?: boolean;
     hideEmailPassword?: boolean;
+    rawPalette: Record<string, string>;
+    styleFromInit: Styles;
 };

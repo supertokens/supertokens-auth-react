@@ -1,3 +1,3 @@
 /// <reference types="react" />
 import { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
-export default function SignInAndUpTheme(props: ThirdPartyEmailPasswordSignInAndUpThemeProps): JSX.Element;
+export default function SignInAndUpThemeWrapper(props: ThirdPartyEmailPasswordSignInAndUpThemeProps): JSX.Element;

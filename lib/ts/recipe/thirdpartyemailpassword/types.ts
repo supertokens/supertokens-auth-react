@@ -17,7 +17,7 @@
  * Imports.
  */
 import { History, LocationState } from "history";
-import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
 import { AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 import {
     EmailPasswordGetRedirectionURLContext,
@@ -190,4 +190,14 @@ export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
      * hideEmailPassword
      */
     hideEmailPassword?: boolean;
+
+    /*
+     * Raw Palette
+     */
+    rawPalette: Record<string, string>;
+
+    /*
+     * StyleFromInit
+     */
+    styleFromInit: Styles;
 };
