@@ -39,6 +39,7 @@ function AppWithReactDomRouter(props) {
             <Route path="/custom-supertokens-login">
               <SignInAndUp />
             </Route>
+
           </Switch>
         </BaseComponent>
       </Router>

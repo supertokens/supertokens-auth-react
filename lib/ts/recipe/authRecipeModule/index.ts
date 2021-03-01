@@ -41,10 +41,7 @@ export default abstract class AuthRecipeModule<T, S, R> extends RecipeModule<T, 
      */
     constructor(config: AuthRecipeModuleConfig<unknown, unknown, unknown>) {
         super(config);
-        this.config = {
-            ...this.config,
-            ...normaliseAuthRecipeModuleConfig(config)
-        };
+        this.config = normaliseAuthRecipeModuleConfig(config);
 
         if (this.config.emailVerificationFeature.mode === "REQUIRED") {
             this.emailVerification = new EmailVerification({

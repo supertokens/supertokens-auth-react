@@ -25,10 +25,10 @@ import { ThemeBase } from "../themeBase";
 import Header from "./header";
 import { default as ThirdPartySignInAndUp } from "../../../../thirdparty/components/features/signInAndUp";
 import { default as EmailPasswordSignInAndUp } from "../../../../emailpassword/components/features/signInAndUp";
-import { SignInAndUpProvidersTheme } from "../../../../thirdparty/components/themes/signInAndUp";
 import EmailPasswordSignInAndUpForm from "../../themes/signInAndUp/signInAndUpForm";
 import { SignInAndUpThemeProps as ThirdPartySignInAndUpThemeProps } from "../../../../thirdparty/types";
 import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
+import SignInAndUpProvidersForm from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 
 export default function SignInAndUpTheme(props: ThirdPartyEmailPasswordSignInAndUpThemeProps): JSX.Element {
     const styles = useContext(StyleContext);
@@ -41,7 +41,7 @@ export default function SignInAndUpTheme(props: ThirdPartyEmailPasswordSignInAnd
                     {props.hideThirdParty !== true && (
                         <Fragment>
                             <ThirdPartySignInAndUp history={props.history} recipeId={props.recipeId} isEmbedded={true}>
-                                <SignInAndUpProvidersTheme
+                                <SignInAndUpProvidersForm
                                     // Seed props. Real props will be given by parent feature.
                                     {...({} as ThirdPartySignInAndUpThemeProps)}
                                 />

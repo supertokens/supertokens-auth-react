@@ -18,84 +18,15 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import * as React from "react";
-import { PureComponent, Fragment, useContext } from "react";
-import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
+import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";
-import { SignInAndUpThemeProps, ThirdPartySignInAndUpThemeState } from "../../../types";
+import { SignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
+import SignInAndUpProvidersForm from "./providersForm";
 /*
  * Component.
  */
-
-export class SignInAndUpProvidersTheme extends PureComponent<SignInAndUpThemeProps, ThirdPartySignInAndUpThemeState> {
-    static contextType = StyleContext;
-
-    /*
-     * Constructor
-     */
-    constructor(props: SignInAndUpThemeProps) {
-        super(props);
-        if (this.props.status === "GENERAL_ERROR") {
-            this.state = {
-                status: this.props.status,
-                generalError: SOMETHING_WENT_WRONG_ERROR
-            };
-        } else {
-            this.state = {
-                status: this.props.status
-            };
-        }
-    }
-
-    signInClick = async (providerId: string): Promise<void> => {
-        try {
-            const generalError = await this.props.signInAndUpClick(providerId);
-            if (generalError !== undefined) {
-                this.setState(() => ({
-                    status: "GENERAL_ERROR",
-                    generalError
-                }));
-            }
-        } catch (e) {
-            this.setState(() => ({
-                status: "GENERAL_ERROR",
-                generalError: SOMETHING_WENT_WRONG_ERROR
-            }));
-        }
-    };
-
-    /*
-     * Methods.
-     */
-
-    render = (): JSX.Element => {
-        const styles = this.context;
-
-        /*
-         * Render.
-         */
-        return (
-            <Fragment>
-                {this.state.status === "GENERAL_ERROR" && (
-                    <div data-supertokens="generalError" css={styles.generalError}>
-                        {this.state.generalError}
-                    </div>
-                )}
-                {this.props.providers.map(provider => {
-                    return (
-                        <div
-                            key={`provider-${provider.id}`}
-                            style={styles.providerContainer}
-                            data-supertokens="providerContainer">
-                            <span onClick={() => this.signInClick(provider.id)}>{provider.buttonComponent}</span>
-                        </div>
-                    );
-                })}
-            </Fragment>
-        );
-    };
-}
 
 function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
     const styles = useContext(StyleContext);
@@ -107,7 +38,7 @@ function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
                         Sign Up / Sign In
                     </div>
                     <div data-supertokens="divider" css={styles.divider}></div>
-                    <SignInAndUpProvidersTheme {...props} />
+                    <SignInAndUpProvidersForm {...props} />
                     <SignUpFooter
                         privacyPolicyLink={props.privacyPolicyLink}
                         termsOfServiceLink={props.termsOfServiceLink}
