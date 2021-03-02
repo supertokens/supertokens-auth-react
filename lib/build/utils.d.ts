@@ -14,3 +14,7 @@ export declare function appendQueryParamsToURL(stringUrl: string, queryParams?: 
 export declare function getWindowOrThrow(): any;
 export declare function getShouldUseShadowDom(useShadowDom?: boolean): boolean;
 export declare function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean;
+export declare function isRequestInit(x: RequestInit | {
+    url?: string;
+    requestInit: RequestInit;
+}): x is RequestInit;

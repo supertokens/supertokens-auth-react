@@ -15,6 +15,7 @@
 import { SOMETHING_WENT_WRONG_ERROR } from "./constants";
 import NormalisedURLPath from "./normalisedURLPath";
 import RecipeModule from "./recipe/recipeModule";
+import { isRequestInit } from "./utils";
 import { supported_fdi } from "./version";
 
 export default class HttpRequest {
@@ -82,7 +83,7 @@ export default class HttpRequest {
         );
     };
 
-    fetch = async (url: RequestInfo, config: RequestInit, action: string): Promise<Response> => {
+    fetch = async (baseUrl: string, config: RequestInit, action: string): Promise<Response> => {
         let headers;
         if (config === undefined) {
             headers = {};
@@ -90,7 +91,7 @@ export default class HttpRequest {
             headers = config.headers;
         }
 
-        const requestInit = await this.recipe.hooks.preAPIHook({
+        const { requestInit, url } = await this.preAPIHook({
             action,
             requestInit: {
                 ...config,
@@ -100,13 +101,40 @@ export default class HttpRequest {
                     "Content-Type": "application/json",
                     rid: this.recipe.recipeId
                 }
-            }
+            },
+            url: baseUrl
         });
 
         return await fetch(url, requestInit);
     };
 
-    fetchResponseJsonOrThrowAbove300 = async <T>(url: RequestInfo, config: RequestInit, action: string): Promise<T> => {
+    /*
+     * For backward compatibility
+     */
+    preAPIHook = async ({
+        action,
+        url,
+        requestInit
+    }: {
+        action: string;
+        url: string;
+        requestInit: RequestInit;
+    }): Promise<{ url: string; requestInit: RequestInit }> => {
+        const result = await this.recipe.hooks.preAPIHook({ action, url, requestInit });
+        if (isRequestInit(result)) {
+            return {
+                url,
+                requestInit: result as RequestInit
+            };
+        } else {
+            return {
+                url,
+                ...result
+            };
+        }
+    };
+
+    fetchResponseJsonOrThrowAbove300 = async <T>(url: string, config: RequestInit, action: string): Promise<T> => {
         const result = await this.fetch(url, config, action);
         if (result.status >= 300) {
             throw Error(SOMETHING_WENT_WRONG_ERROR);

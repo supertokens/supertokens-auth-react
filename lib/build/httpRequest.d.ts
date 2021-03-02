@@ -6,7 +6,15 @@ export default class HttpRequest {
     post: <T>(path: string, config: RequestInit, action: string) => Promise<T>;
     delete: <T>(path: string, action: string, config: RequestInit) => Promise<T>;
     put: <T>(path: string, action: string, config: RequestInit) => Promise<T>;
-    fetch: (url: RequestInfo, config: RequestInit, action: string) => Promise<Response>;
-    fetchResponseJsonOrThrowAbove300: <T>(url: RequestInfo, config: RequestInit, action: string) => Promise<T>;
+    fetch: (baseUrl: string, config: RequestInit, action: string) => Promise<Response>;
+    preAPIHook: ({ action, url, requestInit }: {
+        action: string;
+        url: string;
+        requestInit: RequestInit;
+    }) => Promise<{
+        url: string;
+        requestInit: RequestInit;
+    }>;
+    fetchResponseJsonOrThrowAbove300: <T>(url: string, config: RequestInit, action: string) => Promise<T>;
     getFullUrl: (pathStr: string, queryParams?: Record<string, string> | undefined) => string;
 }

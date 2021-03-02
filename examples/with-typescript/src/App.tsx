@@ -210,7 +210,15 @@ function getThirdPartyConfigs () {
     },
 
     async preAPIHook(context: ThirdPartyPreAPIHookContext) {
-      return context.requestInit;
+      if (context.action === "GET_AUTHORISATION_URL") {
+          // You need to authorize `x-custom` in node for the following to work
+          context.requestInit.headers = {
+            ...context.requestInit.headers,
+            "x-custom": "custom"
+          }
+      }
+      context.url = `${context.url}&custom=custom`;
+      return context;
     },
 
     async getRedirectionURL(context: ThirdPartyGetRedirectionURLContext) {
@@ -251,8 +259,10 @@ function getThirdPartyEmailPasswordConfigs () {
     palette: theme.colors,
     signInAndUpFeature: {
       style: theme.style,
-      privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-      termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+      signUpForm: {
+        privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+        termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+      },
       providers: [
         ThirdPartyEmailPassword.Github.init(),
         ThirdPartyEmailPassword.Google.init(),

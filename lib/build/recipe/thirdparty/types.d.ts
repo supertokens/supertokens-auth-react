@@ -32,6 +32,7 @@ export declare type ThirdPartyGetRedirectionURLContext = AuthRecipeModuleGetRedi
 export declare type ThirdPartyPreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
     action: "GET_AUTHORISATION_URL";
     requestInit: RequestInit;
+    url: string;
 };
 export declare type ThirdPartyOnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
 export declare type SignInAndUpThemeProps = {
