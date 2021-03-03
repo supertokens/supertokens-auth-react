@@ -250,7 +250,7 @@ function getThirdPartyEmailPasswordConfigs () {
     },
 
     async preAPIHook(context: ThirdPartyEmailPasswordPreAPIHookContext) {
-      return context.requestInit;
+      return context;
     },
 
     async getRedirectionURL(context: ThirdPartyEmailPasswordGetRedirectionURLContext) {
