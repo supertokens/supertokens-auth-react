@@ -34,7 +34,7 @@ import {
     sendVerifyEmail,
     getGeneralSuccess,
     toggleSignInSignUp,
-    successfulSignUp
+    defaultSignUp
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -96,7 +96,7 @@ describe("SuperTokens Email Verification", function() {
         it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await toggleSignInSignUp(page);
-            await successfulSignUp(page);
+            await defaultSignUp(page);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
             assert.deepStrictEqual(consoleLogs, [
@@ -301,7 +301,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
         it("Should ignore email verification when isEmailVerified server request fails", async function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
             await toggleSignInSignUp(page);
-            await successfulSignUp(page);
+            await defaultSignUp(page);
 
             // Stop server.
             await fetch(`${TEST_SERVER_BASE_URL}/stop`, {

@@ -48,7 +48,7 @@ import {
     submitForm,
     submitFormReturnRequestAndResponse,
     toggleSignInSignUp,
-    successfulSignUp
+    defaultSignUp
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -81,7 +81,7 @@ describe("SuperTokens Reset password", function() {
         // Sign Up first.
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
         await toggleSignInSignUp(page);
-        await successfulSignUp(page);
+        await defaultSignUp(page);
     });
 
     after(async function() {

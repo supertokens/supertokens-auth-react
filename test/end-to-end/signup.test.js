@@ -33,7 +33,7 @@ import {
     setInputValues,
     submitForm,
     toggleSignInSignUp,
-    successfulSignUp
+    defaultSignUp
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -157,7 +157,7 @@ describe("SuperTokens SignUp", function() {
         });
 
         it("Successful signup", async function() {
-            await successfulSignUp(page);
+            await defaultSignUp(page);
             const onSuccessFulRedirectUrl = "/dashboard";
             let pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, onSuccessFulRedirectUrl);

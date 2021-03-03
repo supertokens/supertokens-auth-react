@@ -18,6 +18,7 @@
  */
 import { ST_ROOT_SELECTOR, TEST_SERVER_BASE_URL, SIGN_UP_API, EMAIL_EXISTS_API } from "./constants";
 import assert from "assert";
+import { SESSION_STORAGE_STATE_KEY } from "../lib/build/recipe/thirdparty/constants";
 
 /*
  * General Helpers.
@@ -64,7 +65,7 @@ export async function getSubmitFormButtonLabelWithoutShadowDom(page) {
  }
 
 export async function getSubmitFormButton(page) {
-    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("button")`);
+    return await page.evaluateHandle(`document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("[data-supertokens='button']")`);
 }
 
 export async function getInputField(page, name) {
@@ -402,21 +403,23 @@ export async function loginWithGithub(page) {
     ]);
 }
 
-export async function successfulSignUp(page) {
-    // Set values.
-    await setInputValues(page, [
+export async function defaultSignUp(page, rid = "emailpassword") {
+    return await signUp(page, [
         { name: "email", value: "john.doe@supertokens.io" },
         { name: "password", value: "Str0ngP@ssw0rd" },
         { name: "name", value: "John Doe" },
         { name: "age", value: "20" }
-    ]);
+    ], '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}', rid);
+}
+export async function signUp(page, values, postValues, rid = "emailpassword") {
+    // Set values.
+    await setInputValues(page, values);
 
     const successAdornments = await getInputAdornmentsSuccess(page);
     assert.strictEqual(successAdornments.length, 4);
 
     const errorAdornments = await getInputAdornmentsError(page);
     assert.strictEqual(errorAdornments.length, 0);
-
     let [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
         submitFormReturnRequestAndResponse(page, SIGN_UP_API),
         hasMethodBeenCalled(page, EMAIL_EXISTS_API)
@@ -425,13 +428,56 @@ export async function successfulSignUp(page) {
     // Verify that email exists API has not been called.
     assert.strictEqual(hasEmailExistMethodBeenCalled, false);
 
-    assert.strictEqual(request.headers().rid, "emailpassword");
+    assert.strictEqual(request.headers().rid, rid);
     assert.strictEqual(
         request.postData(),
-        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}'
+        postValues
     );
 
     assert.strictEqual(response.status, "OK");
     await page.setRequestInterception(false);
     await new Promise(r => setTimeout(r, 500)); // Make sure to wait for navigation. TODO Make more robust.
+}
+
+export async function generateState(state, page) {
+    await page.evaluate(
+        ({ state, SESSION_STORAGE_STATE_KEY }) => {
+            window.sessionStorage.setItem(SESSION_STORAGE_STATE_KEY, JSON.stringify(state));
+        },
+        { state, SESSION_STORAGE_STATE_KEY }
+    );
+}
+
+export async function getUserIdWithAxios (page) {
+    return await page.evaluate(
+        () =>
+            document.querySelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-user-id")
+                .innerText
+    );
+}
+
+export async function getSessionHandleWithAxios(page) {
+    return await page.evaluate(
+        () =>
+            document.querySelector(
+                "#root > div > div.fill > div > div.axios > ul > li.sessionInfo-session-handle"
+            ).innerText
+    );
+}
+
+export async function getUserIdWithFetch(page) {
+    return await page.evaluate(
+        () =>
+            document.querySelector("#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-user-id")
+                .innerText
+    );
+}
+
+export async function getSessionHandleWithFetch(page) {
+    return await page.evaluate(
+        () =>
+            document.querySelector(
+                "#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-session-handle"
+            ).innerText
+    );
 }

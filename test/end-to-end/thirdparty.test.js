@@ -26,13 +26,12 @@ import {
     clearBrowserCookies,
     assertProviders,
     assertNoSTComponents,
+    generateState,
     clickOnProviderButton,
     loginWithGithub,
     loginWithFacebook,
     loginWithGoogle
 } from "../helpers";
-
-import { SESSION_STORAGE_STATE_KEY } from "../../lib/build/recipe/thirdparty/constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -275,16 +274,3 @@ describe("SuperTokens Third Party", function() {
         });
     });
 });
-
-/*
- * Helpers
- */
-
-async function generateState(state, page) {
-    await page.evaluate(
-        ({ state, SESSION_STORAGE_STATE_KEY }) => {
-            window.sessionStorage.setItem(SESSION_STORAGE_STATE_KEY, JSON.stringify(state));
-        },
-        { state, SESSION_STORAGE_STATE_KEY }
-    );
-}

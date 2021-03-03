@@ -222,9 +222,10 @@ export function Dashboard () {
 
   async function logout() {
     const useRecipe = getQueryParams('rid') || authRecipe;
-    debugger;
     if (useRecipe === "thirdparty") {
       await ThirdParty.signOut();
+    } else if (useRecipe === "thirdpartyemailpassword") {
+        await ThirdPartyEmailPassword.signOut();
     } else {
       await EmailPassword.signOut();
     }
