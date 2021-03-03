@@ -10,11 +10,12 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "next": "10.0.3",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "regenerator-runtime": "^0.13.7",
-    "supertokens-auth-react": "^0.6.0",
-    "supertokens-node": "^4.0.0"
+    "supertokens-auth-react": "supertokens/supertokens-auth-react#0.7",
+    "supertokens-node": "supertokens/supertokens-node#4.1"
   }
 }
