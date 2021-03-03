@@ -11,7 +11,7 @@ const ThirdPartyEmailPasswordAuthNoSSR = dynamic(() => Promise.resolve().then(()
 
 export default function Home() {
   async function logoutClicked() {
-    await EmailPassword.signOut();
+    await ThirdPartyEmailPassword.signOut();
     window.location.href = "/auth";
   }
 
