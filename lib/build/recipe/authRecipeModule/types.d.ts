@@ -25,6 +25,7 @@ export declare type AuthRecipeModuleGetRedirectionURLContext = {
 export declare type AuthRecipeModulePreAPIHookContext = {
     action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_OUT" | "SIGN_IN";
     requestInit: RequestInit;
+    url: string;
 };
 export declare type AuthRecipeModuleOnHandleEventContext = {
     action: "SESSION_ALREADY_EXISTS" | "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";

@@ -11,6 +11,7 @@ import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import DarkTheme from "./Themes/Dark";
 import { CSSObject } from '@emotion/react';
+import {appendQueryParamsToURL} from "supertokens-auth-react/lib/build/utils";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -210,7 +211,13 @@ function getThirdPartyConfigs () {
     },
 
     async preAPIHook(context: ThirdPartyPreAPIHookContext) {
-      return context.requestInit;
+      // You need to authorize `x-app` in node for the following to work
+      // context.requestInit.headers = {
+      //   ...context.requestInit.headers,
+      //   "x-app": "with-typescript"
+      // }
+      context.url = appendQueryParamsToURL(context.url, {app: 'with-typescript'});
+      return context;
     },
 
     async getRedirectionURL(context: ThirdPartyGetRedirectionURLContext) {
@@ -242,7 +249,7 @@ function getThirdPartyEmailPasswordConfigs () {
     },
 
     async preAPIHook(context: ThirdPartyEmailPasswordPreAPIHookContext) {
-      return context.requestInit;
+      return context;
     },
 
     async getRedirectionURL(context: ThirdPartyEmailPasswordGetRedirectionURLContext) {
@@ -251,8 +258,10 @@ function getThirdPartyEmailPasswordConfigs () {
     palette: theme.colors,
     signInAndUpFeature: {
       style: theme.style,
-      privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-      termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+      signUpForm: {
+        privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+        termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+      },
       providers: [
         ThirdPartyEmailPassword.Github.init(),
         ThirdPartyEmailPassword.Google.init(),

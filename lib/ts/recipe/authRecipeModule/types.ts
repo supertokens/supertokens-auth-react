@@ -104,6 +104,11 @@ export type AuthRecipeModulePreAPIHookContext = {
      * Request object containing query params, body, headers.
      */
     requestInit: RequestInit;
+
+    /*
+     * URL
+     */
+    url: string;
 };
 
 export type AuthRecipeModuleOnHandleEventContext =

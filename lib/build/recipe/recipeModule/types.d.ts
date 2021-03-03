@@ -9,11 +9,17 @@ export declare type RecipeModuleConfig<RecipeModuleGetRedirectionURLContext, Rec
 };
 export declare type RecipeModuleHooks<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext> = {
     getRedirectionURL?: (context: RecipeModuleGetRedirectionURLContext) => Promise<string | undefined>;
-    preAPIHook?: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit>;
+    preAPIHook?: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit | {
+        url?: string;
+        requestInit: RequestInit;
+    }>;
     onHandleEvent?: (context: RecipeModuleOnHandleEventContext) => void;
 };
 export declare type NormalisedRecipeModuleHooks<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext> = {
     getRedirectionURL: (context: RecipeModuleGetRedirectionURLContext) => Promise<string | undefined>;
-    preAPIHook: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit>;
+    preAPIHook: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit | {
+        url?: string;
+        requestInit: RequestInit;
+    }>;
     onHandleEvent: (context: RecipeModuleOnHandleEventContext) => void;
 };

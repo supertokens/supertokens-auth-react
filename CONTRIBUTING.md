@@ -78,6 +78,7 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
    npm run test
    ```
 
+   VSCode User snippets to use with puppeteer: https://gist.github.com/NkxxkN/ae6c0ba190c0a1fda7a4a11f9d59235c
 
 ## Run the test application.
 

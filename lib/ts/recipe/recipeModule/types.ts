@@ -34,7 +34,9 @@ export type RecipeModuleHooks<
     /*
      * Optional pre API Hook.
      */
-    preAPIHook?: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit>;
+    preAPIHook?: (
+        context: RecipeModulePreAPIHookContext
+    ) => Promise<RequestInit | { url?: string; requestInit: RequestInit }>;
 
     /*
      * Optional method used for handling event success.
@@ -55,7 +57,9 @@ export type NormalisedRecipeModuleHooks<
     /*
      * Optional pre API Hook.
      */
-    preAPIHook: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit>;
+    preAPIHook: (
+        context: RecipeModulePreAPIHookContext
+    ) => Promise<RequestInit | { url?: string; requestInit: RequestInit }>;
 
     /*
      * Method used for handling event success.

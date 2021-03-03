@@ -128,6 +128,7 @@ export declare type SubmitNewPasswordAPIResponse = BaseResetPasswordAPIResponse 
 export declare type EmailPasswordPreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
     action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
     requestInit: RequestInit;
+    url: string;
 };
 export declare type EmailPasswordGetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext | {
     action: "RESET_PASSWORD";
