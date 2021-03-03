@@ -11,6 +11,7 @@ import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import DarkTheme from "./Themes/Dark";
 import { CSSObject } from '@emotion/react';
+import {appendQueryParamsToURL} from "supertokens-auth-react/lib/build/utils";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -210,14 +211,12 @@ function getThirdPartyConfigs () {
     },
 
     async preAPIHook(context: ThirdPartyPreAPIHookContext) {
-      if (context.action === "GET_AUTHORISATION_URL") {
-          // You need to authorize `x-custom` in node for the following to work
-          context.requestInit.headers = {
-            ...context.requestInit.headers,
-            "x-custom": "custom"
-          }
-      }
-      context.url = `${context.url}&custom=custom`;
+      // You need to authorize `x-app` in node for the following to work
+      // context.requestInit.headers = {
+      //   ...context.requestInit.headers,
+      //   "x-app": "with-typescript"
+      // }
+      context.url = appendQueryParamsToURL(context.url, {app: 'with-typescript'});
       return context;
     },
 
