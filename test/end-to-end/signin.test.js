@@ -31,6 +31,10 @@ import {
     getLogoutButton,
     getLabelsText,
     getPlaceholders,
+    getUserIdWithAxios,
+    getSessionHandleWithAxios,
+    getUserIdWithFetch,
+    getSessionHandleWithFetch,
     getShowPasswordIcon,
     getSubmitFormButtonLabel,
     getInputAdornmentsSuccess,
@@ -41,7 +45,7 @@ import {
     toggleShowPasswordIcon,
     toggleSignInSignUp,
     getInputAdornmentsError,
-    successfulSignUp
+    defaultSignUp
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR } from "../../lib/build/constants";
@@ -186,7 +190,7 @@ describe("SuperTokens SignIn", function() {
 
         it("Successful Sign In", async function() {
             await toggleSignInSignUp(page);
-            await successfulSignUp(page);
+            await defaultSignUp(page);
             await clearBrowserCookies(page);
 
             let cookies = await page.cookies();
@@ -249,29 +253,11 @@ describe("SuperTokens SignIn", function() {
             assert.deepStrictEqual(pathname, onSuccessFulRedirectUrl);
 
             // Test that sessionInfo was fetched successfully using axios and fetch (i.e. Interceptors work)
-            const axiosUserId = await page.evaluate(
-                () =>
-                    document.querySelector("#root > div > div.fill > div > div.axios > ul > li.sessionInfo-user-id")
-                        .innerText
-            );
-            const axiosSessionHandle = await page.evaluate(
-                () =>
-                    document.querySelector(
-                        "#root > div > div.fill > div > div.axios > ul > li.sessionInfo-session-handle"
-                    ).innerText
-            );
+            const axiosUserId = await getUserIdWithAxios(page);
+            const axiosSessionHandle = await getSessionHandleWithAxios(page);
 
-            const fetchUserId = await page.evaluate(
-                () =>
-                    document.querySelector("#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-user-id")
-                        .innerText
-            );
-            const fetchSessionHandle = await page.evaluate(
-                () =>
-                    document.querySelector(
-                        "#root > div > div.fill > div > div.fetch > ul > li.sessionInfo-session-handle"
-                    ).innerText
-            );
+            const fetchUserId = await getUserIdWithFetch(page);
+            const fetchSessionHandle = await getSessionHandleWithFetch(page);
 
             assert.deepStrictEqual(axiosUserId, fetchUserId);
             assert.deepStrictEqual(axiosSessionHandle, fetchSessionHandle);
@@ -282,8 +268,7 @@ describe("SuperTokens SignIn", function() {
 
             // Logout
             const logoutButton = await getLogoutButton(page);
-            await logoutButton.click();
-            await page.waitForNavigation();
+            await Promise.all([await logoutButton.click(), page.waitForNavigation()]);
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             cookies = await page.cookies();
