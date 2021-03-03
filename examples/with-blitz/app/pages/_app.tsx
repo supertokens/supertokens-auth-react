@@ -2,11 +2,11 @@ import { AppProps, ErrorComponent, useRouter, AuthenticationError, Authorization
 import { ErrorBoundary, FallbackProps } from "react-error-boundary"
 import { queryCache } from "react-query"
 import SuperTokensReact from "supertokens-auth-react";
-import EmailPasswordReact from "supertokens-auth-react/recipe/emailpassword";
+import ThirdPartyEmailPasswordReact from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import SessionReact from "supertokens-auth-react/recipe/session";
 import SuperTokensNode from "supertokens-node"
 import SessionNode from "supertokens-node/recipe/session"
-import EmailPasswordNode from "supertokens-node/recipe/emailpassword"
+import ThirdPartyEmailPasswordNode from "supertokens-node/recipe/thirdpartyemailpassword"
 
 
 if (typeof window !== "undefined") {
@@ -19,10 +19,17 @@ if (typeof window !== "undefined") {
             apiBasePath: "/api/auth"
         },
         recipeList: [
-            EmailPasswordReact.init({
+            ThirdPartyEmailPasswordReact.init({
+                signInAndUpFeature: {
+                  providers: [
+                    ThirdPartyEmailPasswordReact.Facebook.init(),
+                    ThirdPartyEmailPasswordReact.Google.init(),
+                    ThirdPartyEmailPasswordReact.Github.init()
+                  ]
+                },
                 emailVerificationFeature: {
                     mode: "REQUIRED"
-                }
+                },
             }),
             SessionReact.init()
         ]
@@ -39,7 +46,21 @@ if (typeof window !== "undefined") {
       apiBasePath: "/api/auth"
     },
     recipeList: [
-      EmailPasswordNode.init({
+      ThirdPartyEmailPasswordNode.init({
+        providers: [
+          ThirdPartyEmailPasswordNode.Google({
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+            clientId: process.env.GOOGLE_CLIENT_ID as string
+          }),
+          ThirdPartyEmailPasswordNode.Github({
+              clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+              clientId: process.env.GITHUB_CLIENT_ID as string
+          }),
+          ThirdPartyEmailPasswordNode.Facebook({
+              clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
+              clientId: process.env.FACEBOOK_CLIENT_ID as string
+          })
+        ]
       }),
       SessionNode.init()
     ],

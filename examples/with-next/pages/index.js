@@ -2,10 +2,10 @@
 import React from "react";
 import Head from 'next/head';
 import styles from '../styles/Home.module.css'
-import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import dynamic from 'next/dynamic';
 
-const EmailPasswordAuthNoSSR = dynamic(() => Promise.resolve().then(() => EmailPassword.EmailPasswordAuth), {
+const ThirdPartyEmailPasswordAuthNoSSR = dynamic(() => Promise.resolve().then(() => ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth), {
   ssr: false
 });
 
@@ -32,7 +32,7 @@ export default function Home() {
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
-        <EmailPasswordAuthNoSSR>
+        <ThirdPartyEmailPasswordAuthNoSSR>
             <p className={styles.description}>
               You are authenticated with SuperTokens!
             </p>
@@ -92,7 +92,7 @@ export default function Home() {
             <p>
               <a href="https://github.com/supertokens/supertokens-nextjs-demo" rel="noreferer" target="_blank">View the code on GitHub</a>
             </p>
-        </EmailPasswordAuthNoSSR>
+        </ThirdPartyEmailPasswordAuthNoSSR>
         
         <div className={styles.grid}>
 
