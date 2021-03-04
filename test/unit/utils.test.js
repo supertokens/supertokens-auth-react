@@ -80,6 +80,18 @@ describe("Config tests", function() {
         assert.strictEqual(normaliseURLPathOrThrowError("127.0.0.1/one/two"), "/one/two");
         assert.strictEqual(normaliseURLPathOrThrowError("https://127.0.0.1:80/one/two"), "/one/two");
         assert.strictEqual(normaliseURLPathOrThrowError("/"), "");
+
+        assert.strictEqual(normaliseURLPathOrThrowError("/.netlify/functions/api"), "/.netlify/functions/api");
+        assert.strictEqual(normaliseURLPathOrThrowError("/netlify/.functions/api"), "/netlify/.functions/api");
+        assert.strictEqual(
+            normaliseURLPathOrThrowError("app.example.com/.netlify/functions/api"),
+            "/.netlify/functions/api"
+        );
+        assert.strictEqual(
+            normaliseURLPathOrThrowError("app.example.com/netlify/.functions/api"),
+            "/netlify/.functions/api"
+        );
+        assert.strictEqual(normaliseURLPathOrThrowError("/app.example.com"), "/app.example.com");
     });
 
     it("testing URL domain normalisation", async function() {
