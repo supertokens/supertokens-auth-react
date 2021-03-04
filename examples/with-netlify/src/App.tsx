@@ -21,7 +21,8 @@ SuperTokens.init({
   appInfo: {
     appName: "SuperTokens Demo App",
     apiDomain: window.location.hostname,
-    websiteDomain: window.location.hostname
+    websiteDomain: window.location.hostname,
+    apiBasePath: "/.netlify/functions/api"
   },
   recipeList: [EmailPassword.init(), Session.init()]
 });
