@@ -6,22 +6,21 @@ import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 
-export function getApiDomain() {
-  const apiUrl = process.env.REACT_APP_API_URL || `http://localhost:8082`;
-  return apiUrl;
-}
-
-export function getWebsiteDomain() {
-  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://localhost:3002`;
-  return websiteUrl;
+export function getDomain() {
+  let host = window.location.hostname;
+  let port = window.location.port;
+  if (port !== "0" && port !== "80" && port !== "443") {
+    return host + ":" + port;
+  }
+  return host;
 }
 
 
 SuperTokens.init({
   appInfo: {
     appName: "SuperTokens Demo App",
-    apiDomain: window.location.hostname,
-    websiteDomain: window.location.hostname,
+    apiDomain: getDomain(),
+    websiteDomain: getDomain(),
     apiBasePath: "/.netlify/functions/api"
   },
   recipeList: [EmailPassword.init(), Session.init()]
