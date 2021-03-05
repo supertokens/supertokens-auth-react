@@ -10,7 +10,7 @@ export default function CallAPIView() {
     async function callAPIClicked() {
         // this will also automatically refresh the session if needed
         try {
-            let response = await axios.get(getDomain() + "/sessioninfo");
+            let response = await axios.get("https://" + getDomain() + "/.netlify/functions/api/sessioninfo");
             window.alert("Session Information:\n" + JSON.stringify(response.data, null, 2))
         } catch (err) {
             if (err.status === 401) {

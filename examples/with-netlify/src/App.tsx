@@ -9,7 +9,7 @@ import Footer from "./Footer";
 export function getDomain() {
   let host = window.location.hostname;
   let port = window.location.port;
-  if (port !== "0" && port !== "80" && port !== "443") {
+  if (port !== "0" && port !== "80" && port !== "443" && port !== "") {
     return host + ":" + port;
   }
   return host;
