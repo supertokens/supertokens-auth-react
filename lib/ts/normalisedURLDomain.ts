@@ -50,6 +50,10 @@ export function normaliseURLDomainOrThrowError(input: string, ignoreProtocol = f
         // eslint-disable-next-line no-empty
     } catch (err) {}
 
+    if (input.startsWith("/")) {
+        throw new Error("Please provide a valid domain name");
+    }
+
     // not a valid URL
     if (input.indexOf(".") === 0) {
         input = input.substr(1);
