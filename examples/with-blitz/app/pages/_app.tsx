@@ -40,7 +40,7 @@ if (typeof window !== "undefined") {
       connectionURI: "https://try.supertokens.io",
     },
     appInfo: {
-      appName: "SuperTokens Demo App",
+      appName: "SuperTokens Demo Blitz",
       apiDomain: "http://localhost:3000",
       websiteDomain: "http://localhost:3000",
       apiBasePath: "/api/auth"
