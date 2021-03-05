@@ -62,7 +62,11 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
    npm i git+https://github.com:supertokens/supertokens-node.git
    ```
 
-5. Open a new terminal in `supertokens-auth-react` and run all tests
+5. Set OAuth secrets
+   - Make sure you copy `test/.env.example.js` to `test/.env.js` and add correct values.
+   - Make sure you copy `test/server/.env.example` to `test/server/.env` and add correct values.
+
+6. Open a new terminal in `supertokens-auth-react` and run all tests
 
    **If you'd like to skip oauth tests**
    ```
@@ -70,9 +74,6 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
    ```
 
    **Otherwise**
-
-   - Make sure you copy `test/.env.example/.env.example.js` to `test/.env.example/.env.js` and add correct values.
-   - Make sure you copy `test/server/.env.example` to `test/server/.env` and add correct values.
   
    ```
    npm run test
