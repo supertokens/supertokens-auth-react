@@ -2,7 +2,18 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+
+
+## [0.7.2] - 2020-03-05
+
+### Fix
+- Fix URL Normalisation with "/.netlify/functions/api".
+
+## [0.7.1] - 2020-03-04
+
+### Fix
+- Fix Path Normalisation with "/.netlify/functions/api" given as apiBasePath
 
 ## [0.7.0] - 2020-02-20
 
