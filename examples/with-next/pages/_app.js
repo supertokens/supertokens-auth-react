@@ -15,7 +15,7 @@ if (typeof window !== "undefined") {
     SuperTokensReact.init({
         useReactRouterDom: false,
         appInfo: {
-            appName: "SuperTokens Demo Blitz",
+            appName: "SuperTokens Demo Next",
             websiteDomain,
             apiDomain: websiteDomain,
             apiBasePath
