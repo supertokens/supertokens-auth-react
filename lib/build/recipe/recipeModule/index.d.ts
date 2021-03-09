@@ -8,7 +8,7 @@ export default abstract class RecipeModule<RecipeModuleGetRedirectionURLContext,
     httpRequest: HttpRequest;
     hooks: NormalisedRecipeModuleHooks<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext>;
     constructor(config: RecipeModuleConfig<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext>);
-    redirect: (context: RecipeModuleGetRedirectionURLContext, history?: History<unknown> | undefined, queryParams?: Record<string, string> | undefined) => Promise<void>;
+    redirect: (context: RecipeModuleGetRedirectionURLContext, history?: History<any> | undefined, queryParams?: Record<string, string> | undefined) => Promise<void>;
     getRedirectUrl: (context: RecipeModuleGetRedirectionURLContext) => Promise<string>;
     getDefaultRedirectionURL(context: RecipeModuleGetRedirectionURLContext): Promise<string>;
     abstract getFeatures(): RecipeFeatureComponentMap;

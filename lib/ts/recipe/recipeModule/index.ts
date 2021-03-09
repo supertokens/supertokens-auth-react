@@ -18,7 +18,7 @@
  */
 import HttpRequest from "../../httpRequest";
 import { NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
-import { History, LocationState } from "history";
+import { History } from "history";
 
 import { appendQueryParamsToURL, getWindowOrThrow, normalisedRecipeModuleHooks } from "../../utils";
 import { NormalisedRecipeModuleHooks, RecipeModuleConfig } from "./types";
@@ -63,7 +63,7 @@ export default abstract class RecipeModule<
 
     redirect = async (
         context: RecipeModuleGetRedirectionURLContext,
-        history?: History<LocationState>,
+        history?: History<any>,
         queryParams?: Record<string, string>
     ): Promise<void> => {
         let redirectUrl = await this.getRedirectUrl(context);
