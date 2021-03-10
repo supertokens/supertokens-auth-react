@@ -97,23 +97,14 @@ export default class SuperTokens {
     }
 
     static canHandleRoute(): boolean {
-        if (SuperTokens.instance === undefined) {
-            return false;
-        }
         return SuperTokens.getInstanceOrThrow().canHandleRoute();
     }
 
     static getRoutingComponent(): JSX.Element | undefined {
-        if (SuperTokens.instance === undefined) {
-            return undefined;
-        }
         return SuperTokens.getInstanceOrThrow().getRoutingComponent();
     }
 
     static getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
-        if (SuperTokens.instance === undefined) {
-            return [];
-        }
         return getSuperTokensRoutesForReactRouterDom();
     }
 
