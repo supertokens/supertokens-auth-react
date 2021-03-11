@@ -22,7 +22,7 @@ supertokens.init({
     apiBasePath: "/.netlify/functions/api",
   },
   recipeList: [EmailPassword.init(), Session.init()],
-  isInServerlessEnv: true,
+  //   isInServerlessEnv: true, TODO: need to uncomment afer pull request is merged to 4.2 for supertokens-node package
 });
 
 app.use(supertokens.middleware());
