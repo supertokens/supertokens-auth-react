@@ -45,13 +45,13 @@ export default class VerifyEmailLinkClicked extends PureComponent<
     constructor(props: VerifyEmailLinkClickedThemeProps) {
         super(props);
         this.state = {
-            status: "LOADING"
+            status: "LOADING",
         };
     }
 
     onSuccess = (): void => {
         this.setState(() => ({
-            status: "SUCCESSFUL"
+            status: "SUCCESSFUL",
         }));
 
         this.props.onSuccess();
@@ -61,11 +61,11 @@ export default class VerifyEmailLinkClicked extends PureComponent<
         try {
             const response = await this.props.verifyEmailAPI();
             this.setState(() => ({
-                status: response.status
+                status: response.status,
             }));
         } catch (e) {
             this.setState(() => ({
-                status: "GENERAL_ERROR"
+                status: "GENERAL_ERROR",
             }));
         }
     };

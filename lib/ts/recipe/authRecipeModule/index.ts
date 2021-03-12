@@ -51,7 +51,7 @@ export default abstract class AuthRecipeModule<T, S, R> extends RecipeModule<T, 
                 ...this.hooks,
                 appInfo: this.appInfo,
                 recipeId: this.recipeId,
-                signOut: this.signOut
+                signOut: this.signOut,
             });
         }
     }

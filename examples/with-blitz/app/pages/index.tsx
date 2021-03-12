@@ -1,12 +1,14 @@
-import { Link, BlitzPage } from "blitz";
-import Layout from "app/layouts/Layout";
-import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import dynamic from 'next/dynamic';
+import { Link, BlitzPage } from "blitz"
+import Layout from "app/layouts/Layout"
+import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword"
+import dynamic from "next/dynamic"
 
-const ThirdPartyEmailPasswordAuthNoSSR = dynamic(() => Promise.resolve().then(() => ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth), {
-  ssr: false
-});
-
+const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
+  () => Promise.resolve().then(() => ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth),
+  {
+    ssr: false,
+  }
+)
 
 /*
  * This file is just for a pleasant getting started page for your new app.
@@ -14,8 +16,8 @@ const ThirdPartyEmailPasswordAuthNoSSR = dynamic(() => Promise.resolve().then(()
  */
 const Home: BlitzPage = () => {
   async function logoutClicked() {
-    await ThirdPartyEmailPassword.signOut();
-    window.location.href = "/auth";
+    await ThirdPartyEmailPassword.signOut()
+    window.location.href = "/auth"
   }
 
   return (
@@ -27,13 +29,10 @@ const Home: BlitzPage = () => {
         <p>
           <strong>Congrats!</strong> Your blitz app is ready with SuperTokens!
         </p>
-        
+
         <ThirdPartyEmailPasswordAuthNoSSR>
           <div className="buttons" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-            <button
-              className="button small"
-              onClick={async () => logoutClicked()}
-            >
+            <button className="button small" onClick={async () => logoutClicked()}>
               Logout
             </button>
           </div>

@@ -43,7 +43,7 @@ export default function FormRow({ children, hasError }: FormRowProps): JSX.Eleme
     const errorStyle =
         hasError === true
             ? {
-                  paddingBottom: "0px"
+                  paddingBottom: "0px",
               }
             : {};
     return (

@@ -1,8 +1,8 @@
 // pages/auth/[[...path]].js
-import React, { useEffect } from "react";
-import dynamic from "next/dynamic";
-import Layout from "app/layouts/Layout";
-import SuperTokens from "supertokens-auth-react";
+import React, { useEffect } from "react"
+import dynamic from "next/dynamic"
+import Layout from "app/layouts/Layout"
+import SuperTokens from "supertokens-auth-react"
 
 const SuperTokensComponentNoSSR = dynamic(
   () =>
@@ -23,9 +23,9 @@ export default function Auth() {
 
   return (
     <div>
-        <Layout>
-            <SuperTokensComponentNoSSR />
-        </Layout>
+      <Layout>
+        <SuperTokensComponentNoSSR />
+      </Layout>
     </div>
   )
 }

@@ -20,7 +20,7 @@ import {
     FormFieldBaseConfig,
     NormalisedBaseConfig,
     NormalisedFormField,
-    ThemeBaseProps
+    ThemeBaseProps,
 } from "../../types";
 import { RefObject } from "react";
 import { RecipeModuleConfig } from "../recipeModule/types";
@@ -29,7 +29,7 @@ import {
     AuthRecipeModuleOnHandleEventContext,
     AuthRecipeModulePreAPIHookContext,
     AuthRecipeModuleUserInput,
-    User
+    User,
 } from "../authRecipeModule/types";
 
 export type EmailPasswordUserInput = AuthRecipeModuleUserInput<

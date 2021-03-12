@@ -1,5 +1,5 @@
-import React, {PropsWithoutRef} from "react"
-import {useField} from "react-final-form"
+import React, { PropsWithoutRef } from "react"
+import { useField } from "react-final-form"
 
 export interface LabeledTextFieldProps extends PropsWithoutRef<JSX.IntrinsicElements["input"]> {
   /** Field name. */
@@ -12,12 +12,12 @@ export interface LabeledTextFieldProps extends PropsWithoutRef<JSX.IntrinsicElem
 }
 
 export const LabeledTextField = React.forwardRef<HTMLInputElement, LabeledTextFieldProps>(
-  ({name, label, outerProps, ...props}, ref) => {
+  ({ name, label, outerProps, ...props }, ref) => {
     const {
       input,
-      meta: {touched, error, submitError, submitting},
+      meta: { touched, error, submitError, submitting },
     } = useField(name, {
-      parse: props.type === "number" ? Number : undefined
+      parse: props.type === "number" ? Number : undefined,
     })
 
     const normalizedError = Array.isArray(error) ? error.join(", ") : error || submitError
@@ -30,7 +30,7 @@ export const LabeledTextField = React.forwardRef<HTMLInputElement, LabeledTextFi
         </label>
 
         {touched && normalizedError && (
-          <div role="alert" style={{color: "red"}}>
+          <div role="alert" style={{ color: "red" }}>
             {normalizedError}
           </div>
         )}
@@ -53,7 +53,7 @@ export const LabeledTextField = React.forwardRef<HTMLInputElement, LabeledTextFi
         `}</style>
       </div>
     )
-  },
+  }
 )
 
 export default LabeledTextField

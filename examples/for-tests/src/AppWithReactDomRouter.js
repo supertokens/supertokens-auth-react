@@ -1,16 +1,11 @@
-import React from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-} from "react-router-dom";
-import {getSuperTokensRoutesForReactRouterDom} from 'supertokens-auth-react';
-import {SignInAndUp} from 'supertokens-auth-react/recipe/emailpassword';
-import {BaseComponent, Home, Contact, Dashboard} from './App';
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword";
+import { BaseComponent, Home, Contact, Dashboard } from "./App";
 import Auth from "./Auth";
 
 function AppWithReactDomRouter(props) {
-
   return (
     <div className="App">
       <Router>
@@ -39,7 +34,6 @@ function AppWithReactDomRouter(props) {
             <Route path="/custom-supertokens-login">
               <SignInAndUp />
             </Route>
-
           </Switch>
         </BaseComponent>
       </Router>

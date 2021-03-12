@@ -37,7 +37,7 @@ export default class Google extends Provider {
     constructor(config?: BuiltInProviderConfig) {
         super({
             id: "google",
-            name: "Google"
+            name: "Google",
         });
 
         if (config === undefined) {
