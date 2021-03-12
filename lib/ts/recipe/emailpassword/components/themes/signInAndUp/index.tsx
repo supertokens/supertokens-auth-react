@@ -35,7 +35,7 @@ export function SignInAndUpTheme({
     signInForm,
     rawPalette,
     signUpForm,
-    defaultToSignUp
+    defaultToSignUp,
 }: SignInAndUpThemeProps): JSX.Element {
     /*
      * State.

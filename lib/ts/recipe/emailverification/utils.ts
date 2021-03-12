@@ -31,7 +31,7 @@ export function normaliseEmailVerificationFeature(
             : {};
 
     const sendVerifyEmailScreen: NormalisedBaseConfig = {
-        style: sendVerifyEmailScreenStyle
+        style: sendVerifyEmailScreenStyle,
     };
 
     const verifyEmailLinkClickedScreenStyle =
@@ -40,13 +40,13 @@ export function normaliseEmailVerificationFeature(
             : {};
 
     const verifyEmailLinkClickedScreen: NormalisedBaseConfig = {
-        style: verifyEmailLinkClickedScreenStyle
+        style: verifyEmailLinkClickedScreenStyle,
     };
 
     return {
         disableDefaultImplementation,
         mode,
         sendVerifyEmailScreen,
-        verifyEmailLinkClickedScreen
+        verifyEmailLinkClickedScreen,
     };
 }

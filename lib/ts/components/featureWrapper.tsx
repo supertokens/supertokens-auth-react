@@ -25,7 +25,7 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
 const superTokensEmotionCache = createCache({
-    key: "supertokens"
+    key: "supertokens",
 });
 
 /*

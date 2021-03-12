@@ -1,32 +1,36 @@
-import './App.css';
-import { useEffect } from "react"
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react"
+import "./App.css";
+import { useEffect } from "react";
+import SuperTokens, {
+  getSuperTokensRoutesForReactRouterDom,
+} from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
 import Footer from "./Footer";
-import { getApiDomain, getAuthDomain, redirectIfOnWrongSubdomain } from "./utils"
-
+import {
+  getApiDomain,
+  getAuthDomain,
+  redirectIfOnWrongSubdomain,
+} from "./utils";
 
 SuperTokens.init({
   appInfo: {
     appName: "SuperTokens Demo App",
     apiDomain: getApiDomain(),
-    websiteDomain: getAuthDomain()
+    websiteDomain: getAuthDomain(),
   },
   recipeList: [
     EmailPassword.init({
       emailVerificationFeature: {
-        mode: "REQUIRED"
-      }
+        mode: "REQUIRED",
+      },
     }),
     Session.init({
-      sessionScope: ".example.com"
-    })
-  ]
+      sessionScope: ".example.com",
+    }),
+  ],
 });
-
 
 function App() {
   useEffect(() => {
@@ -49,7 +53,7 @@ function App() {
           </Switch>
         </div>
         <Footer />
-      </Router >
+      </Router>
     </div>
   );
 }

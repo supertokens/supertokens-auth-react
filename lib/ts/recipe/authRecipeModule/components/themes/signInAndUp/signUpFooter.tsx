@@ -24,7 +24,7 @@ import StyleContext from "../../../../../styles/styleContext";
 
 export default function SignUpFooter({
     termsOfServiceLink,
-    privacyPolicyLink
+    privacyPolicyLink,
 }: {
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;

@@ -1,39 +1,38 @@
 import { AppProps, ErrorComponent, useRouter, AuthenticationError, AuthorizationError } from "blitz"
 import { ErrorBoundary, FallbackProps } from "react-error-boundary"
 import { queryCache } from "react-query"
-import SuperTokensReact from "supertokens-auth-react";
-import ThirdPartyEmailPasswordReact from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import SessionReact from "supertokens-auth-react/recipe/session";
+import SuperTokensReact from "supertokens-auth-react"
+import ThirdPartyEmailPasswordReact from "supertokens-auth-react/recipe/thirdpartyemailpassword"
+import SessionReact from "supertokens-auth-react/recipe/session"
 import SuperTokensNode from "supertokens-node"
 import SessionNode from "supertokens-node/recipe/session"
 import ThirdPartyEmailPasswordNode from "supertokens-node/recipe/thirdpartyemailpassword"
 
-
 if (typeof window !== "undefined") {
-    SuperTokensReact.init({
-        useReactRouterDom: false,
-        appInfo: {
-            appName: "SuperTokens Demo Blitz",
-            websiteDomain: "http://localhost:3000",
-            apiDomain: "http://localhost:3000",
-            apiBasePath: "/api/auth"
+  SuperTokensReact.init({
+    useReactRouterDom: false,
+    appInfo: {
+      appName: "SuperTokens Demo Blitz",
+      websiteDomain: "http://localhost:3000",
+      apiDomain: "http://localhost:3000",
+      apiBasePath: "/api/auth",
+    },
+    recipeList: [
+      ThirdPartyEmailPasswordReact.init({
+        signInAndUpFeature: {
+          providers: [
+            ThirdPartyEmailPasswordReact.Facebook.init(),
+            ThirdPartyEmailPasswordReact.Google.init(),
+            ThirdPartyEmailPasswordReact.Github.init(),
+          ],
         },
-        recipeList: [
-            ThirdPartyEmailPasswordReact.init({
-                signInAndUpFeature: {
-                  providers: [
-                    ThirdPartyEmailPasswordReact.Facebook.init(),
-                    ThirdPartyEmailPasswordReact.Google.init(),
-                    ThirdPartyEmailPasswordReact.Github.init()
-                  ]
-                },
-                emailVerificationFeature: {
-                    mode: "REQUIRED"
-                },
-            }),
-            SessionReact.init()
-        ]
-    });
+        emailVerificationFeature: {
+          mode: "REQUIRED",
+        },
+      }),
+      SessionReact.init(),
+    ],
+  })
 } else {
   SuperTokensNode.init({
     supertokens: {
@@ -43,28 +42,29 @@ if (typeof window !== "undefined") {
       appName: "SuperTokens Demo Blitz",
       apiDomain: "http://localhost:3000",
       websiteDomain: "http://localhost:3000",
-      apiBasePath: "/api/auth"
+      apiBasePath: "/api/auth",
     },
     recipeList: [
       ThirdPartyEmailPasswordNode.init({
         providers: [
           ThirdPartyEmailPasswordNode.Google({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-            clientId: process.env.GOOGLE_CLIENT_ID as string
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
           }),
           ThirdPartyEmailPasswordNode.Github({
-              clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-              clientId: process.env.GITHUB_CLIENT_ID as string
+            clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+            clientId: process.env.GITHUB_CLIENT_ID as string,
           }),
           ThirdPartyEmailPasswordNode.Facebook({
-              clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
-              clientId: process.env.FACEBOOK_CLIENT_ID as string
-          })
-        ]
+            clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
+            clientId: process.env.FACEBOOK_CLIENT_ID as string,
+          }),
+        ],
       }),
-      SessionNode.init()
+      SessionNode.init(),
     ],
-  });
+    isInServerlessEnv: true,
+  })
 }
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -88,8 +88,8 @@ export default function App({ Component, pageProps }: AppProps) {
 
 function RootErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   if (error instanceof AuthenticationError) {
-    window.location.href = "/auth"; // Redirect to login form.
-    return null;
+    window.location.href = "/auth" // Redirect to login form.
+    return null
   } else if (error instanceof AuthorizationError) {
     return (
       <ErrorComponent

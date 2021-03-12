@@ -13,14 +13,14 @@ const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain =
   process.env.REACT_APP_WEBSITE_URL || `http://auth.example.com:${websitePort}`;
 
-const domainWhiteList =/^(http?:\/\/([a-z0-9]+[.])example[.]com(?::\d{1,5})?)$/
+const domainWhiteList = /^(http?:\/\/([a-z0-9]+[.])example[.]com(?::\d{1,5})?)$/;
 
-function getUserDomain (email) {
+function getUserDomain(email) {
   // extracts the userDomain from the email used to sign up
   // ex. from employee@supertokens.com, "supertokens" will be extracted as the userDomain
   let userDomain = email.split("@")[1].split(".")[0];
   return userDomain;
-};
+}
 
 supertokens.init({
   supertokens: {
@@ -32,10 +32,7 @@ supertokens.init({
     websiteDomain,
     websiteBasePath: "/",
   },
-  recipeList: [
-    EmailPassword.init(),
-    Session.init(),
-  ],
+  recipeList: [EmailPassword.init(), Session.init()],
 });
 
 const app = express();
@@ -72,7 +69,7 @@ app.get("/user-subdomain", Session.verifySession(), async (req, res) => {
   const session = req.session;
   const userDetails = await EmailPassword.getUserById(session.getUserId());
   const subdomain = getUserDomain(userDetails.email);
-  res.send({ subdomain })
+  res.send({ subdomain });
 });
 
 app.use(supertokens.errorHandler());

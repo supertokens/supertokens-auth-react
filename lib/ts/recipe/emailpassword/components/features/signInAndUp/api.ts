@@ -32,7 +32,7 @@ export async function signUpAPI(
     const response: SignUpAPIResponse = await recipe.httpRequest.post(
         "/signup",
         {
-            body: JSON.stringify({ formFields })
+            body: JSON.stringify({ formFields }),
         },
         "SIGN_UP"
     );
@@ -41,7 +41,7 @@ export async function signUpAPI(
     if (response.status === "OK") {
         return {
             status: "OK",
-            user: response.user
+            user: response.user,
         };
     }
 
@@ -49,7 +49,7 @@ export async function signUpAPI(
     if (response.status === "FIELD_ERROR") {
         return {
             status: "FIELD_ERROR",
-            formFields: response.formFields
+            formFields: response.formFields,
         };
     }
 
@@ -63,7 +63,7 @@ export async function signInAPI(
     const response: SignInAPIResponse = await recipe.httpRequest.post(
         "/signin",
         {
-            body: JSON.stringify({ formFields })
+            body: JSON.stringify({ formFields }),
         },
         "SIGN_IN"
     );
@@ -72,7 +72,7 @@ export async function signInAPI(
     if (response.status === "OK") {
         return {
             status: "OK",
-            user: response.user
+            user: response.user,
         };
     }
 
@@ -80,7 +80,7 @@ export async function signInAPI(
     if (response.status === "FIELD_ERROR") {
         return {
             status: "FIELD_ERROR",
-            formFields: response.formFields
+            formFields: response.formFields,
         };
     }
 
@@ -88,7 +88,7 @@ export async function signInAPI(
     if (response.status === "WRONG_CREDENTIALS_ERROR") {
         return {
             status: "GENERAL_ERROR",
-            message: INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR
+            message: INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR,
         };
     }
 
@@ -100,7 +100,7 @@ export async function emailExistsAPI(
     recipe: RecipeModule<unknown, unknown, unknown>
 ): Promise<string | undefined> {
     const response: EmailExistsAPIResponse = await recipe.httpRequest.get("/signup/email/exists", {}, "EMAIL_EXISTS", {
-        email
+        email,
     });
 
     // If email already exists.

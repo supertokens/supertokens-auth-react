@@ -1,17 +1,31 @@
-import './App.css';
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react"
-import EmailPassword, { EmailPasswordGetRedirectionURLContext, EmailPasswordOnHandleEventContext, EmailPasswordPreAPIHookContext }  from "supertokens-auth-react/recipe/emailpassword";
+import "./App.css";
+import SuperTokens, {
+  getSuperTokensRoutesForReactRouterDom,
+} from "supertokens-auth-react";
+import EmailPassword, {
+  EmailPasswordGetRedirectionURLContext,
+  EmailPasswordOnHandleEventContext,
+  EmailPasswordPreAPIHookContext,
+} from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
-import ThirdParty, { ThirdPartyGetRedirectionURLContext, ThirdPartyOnHandleEventContext, ThirdPartyPreAPIHookContext } from 'supertokens-auth-react/recipe/thirdparty';
-import ThirdPartyEmailPassword, { ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordOnHandleEventContext, ThirdPartyEmailPasswordPreAPIHookContext } from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
+import ThirdParty, {
+  ThirdPartyGetRedirectionURLContext,
+  ThirdPartyOnHandleEventContext,
+  ThirdPartyPreAPIHookContext,
+} from "supertokens-auth-react/recipe/thirdparty";
+import ThirdPartyEmailPassword, {
+  ThirdPartyEmailPasswordGetRedirectionURLContext,
+  ThirdPartyEmailPasswordOnHandleEventContext,
+  ThirdPartyEmailPasswordPreAPIHookContext,
+} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import DarkTheme from "./Themes/Dark";
-import { CSSObject } from '@emotion/react';
-import {appendQueryParamsToURL} from "supertokens-auth-react/lib/build/utils";
+import { CSSObject } from "@emotion/react";
+import { appendQueryParamsToURL } from "supertokens-auth-react/lib/build/utils";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -27,26 +41,25 @@ export function getApiDomain() {
 
 export function getWebsiteDomain() {
   const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3002;
-  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
+  const websiteUrl =
+    process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
   return websiteUrl;
 }
-
 
 const ridParams = getQueryParams("rid");
 if (ridParams !== null) {
   window.localStorage.setItem("rid", ridParams);
 }
 
-const mode = getQueryParams('mode');
+const mode = getQueryParams("mode");
 
 if (mode !== null) {
-  window.localStorage.setItem('mode', mode);
+  window.localStorage.setItem("mode", mode);
 }
 
 const theme = getTheme();
 
 const rid = window.localStorage.getItem("rid") || "emailpassword";
-
 
 const recipeList = getRecipeList();
 
@@ -54,11 +67,10 @@ SuperTokens.init({
   appInfo: {
     appName: "SuperTokens Demo App",
     apiDomain: getApiDomain(),
-    websiteDomain: window.location.origin
+    websiteDomain: window.location.origin,
   },
-  recipeList
+  recipeList,
 });
-
 
 function App() {
   return (
@@ -82,7 +94,7 @@ function App() {
         <div className="footer">
           <Footer />
         </div>
-      </Router >
+      </Router>
     </div>
   );
 }
@@ -95,23 +107,22 @@ function getQueryParams(param: string): string | null {
 }
 
 export type Theme = {
-  colors: Record<string, string>,
-  style: Record<string, CSSObject>,
-}
+  colors: Record<string, string>;
+  style: Record<string, CSSObject>;
+};
 function getTheme(): {
-  colors: Record<string, string>,
-  style?: Record<string, CSSObject>,
+  colors: Record<string, string>;
+  style?: Record<string, CSSObject>;
 } {
-
   let theme = {
     colors: {},
-    style: {}
+    style: {},
   };
 
-  const themeParams = getQueryParams('theme');
+  const themeParams = getQueryParams("theme");
 
   if (themeParams === "dark") {
-    window.document.body.style.backgroundColor = "#1a1a1a"
+    window.document.body.style.backgroundColor = "#1a1a1a";
     return DarkTheme;
   }
 
@@ -124,41 +135,40 @@ function getTheme(): {
   }
 
   return theme;
-
 }
 
-function getRecipeList () {
-    return [
-      getEmailPasswordConfigs(),
-      getThirdPartyConfigs(),
-      getThirdPartyEmailPasswordConfigs(),
-      Session.init()
-    ]
+function getRecipeList() {
+  return [
+    getEmailPasswordConfigs(),
+    getThirdPartyConfigs(),
+    getThirdPartyEmailPasswordConfigs(),
+    Session.init(),
+  ];
 }
 
-function getEmailPasswordConfigs () {
+function getEmailPasswordConfigs() {
   return EmailPassword.init({
     palette: theme.colors,
     emailVerificationFeature: {
       sendVerifyEmailScreen: {
-        style: theme.style
+        style: theme.style,
       },
       verifyEmailLinkClickedScreen: {
-        style: theme.style
+        style: theme.style,
       },
-      mode: "REQUIRED"
+      mode: "REQUIRED",
     },
     resetPasswordUsingTokenFeature: {
       enterEmailForm: {
-        style: theme.style
+        style: theme.style,
       },
       submitNewPasswordForm: {
-        style: theme.style
-      }
-    }, 
+        style: theme.style,
+      },
+    },
     signInAndUpFeature: {
       signInForm: {
-        style: theme.style
+        style: theme.style,
       },
       signUpForm: {
         style: theme.style,
@@ -189,11 +199,10 @@ function getEmailPasswordConfigs () {
         //     placeholder: "Where do you live?",
         //     optional: true
         // }]
-      }
+      },
     },
 
-    onHandleEvent(context: EmailPasswordOnHandleEventContext) {
-    },
+    onHandleEvent(context: EmailPasswordOnHandleEventContext) {},
 
     async preAPIHook(context: EmailPasswordPreAPIHookContext) {
       return context.requestInit;
@@ -201,14 +210,12 @@ function getEmailPasswordConfigs () {
 
     async getRedirectionURL(context: EmailPasswordGetRedirectionURLContext) {
       return undefined;
-    }
-    
-  })
-}
-function getThirdPartyConfigs () {
-  return ThirdParty.init({
-    onHandleEvent(context: ThirdPartyOnHandleEventContext) {
     },
+  });
+}
+function getThirdPartyConfigs() {
+  return ThirdParty.init({
+    onHandleEvent(context: ThirdPartyOnHandleEventContext) {},
 
     async preAPIHook(context: ThirdPartyPreAPIHookContext) {
       // You need to authorize `x-app` in node for the following to work
@@ -216,7 +223,9 @@ function getThirdPartyConfigs () {
       //   ...context.requestInit.headers,
       //   "x-app": "with-typescript"
       // }
-      context.url = appendQueryParamsToURL(context.url, {app: 'with-typescript'});
+      context.url = appendQueryParamsToURL(context.url, {
+        app: "with-typescript",
+      });
       return context;
     },
 
@@ -235,24 +244,24 @@ function getThirdPartyConfigs () {
         ThirdParty.Apple.init(),
         {
           id: "custom",
-          name: "Custom"
+          name: "Custom",
         },
-      ]
-    }
-  })
+      ],
+    },
+  });
 }
 
-
-function getThirdPartyEmailPasswordConfigs () {
+function getThirdPartyEmailPasswordConfigs() {
   return ThirdPartyEmailPassword.init({
-    onHandleEvent(context: ThirdPartyEmailPasswordOnHandleEventContext) {
-    },
+    onHandleEvent(context: ThirdPartyEmailPasswordOnHandleEventContext) {},
 
     async preAPIHook(context: ThirdPartyEmailPasswordPreAPIHookContext) {
       return context;
     },
 
-    async getRedirectionURL(context: ThirdPartyEmailPasswordGetRedirectionURLContext) {
+    async getRedirectionURL(
+      context: ThirdPartyEmailPasswordGetRedirectionURLContext
+    ) {
       return undefined;
     },
     palette: theme.colors,
@@ -269,26 +278,29 @@ function getThirdPartyEmailPasswordConfigs () {
         ThirdPartyEmailPassword.Apple.init(),
         {
           id: "custom",
-          name: "Custom"
+          name: "Custom",
         },
-      ]
-    }
-  })
+      ],
+    },
+  });
 }
 
-function Auth (props: any) {
+function Auth(props: any) {
   if (rid === "thirdparty") {
-    return <ThirdParty.ThirdPartyAuth>
+    return (
+      <ThirdParty.ThirdPartyAuth>{props.children}</ThirdParty.ThirdPartyAuth>
+    );
+  } else if (rid === "thirdpartyemailpassword") {
+    return (
+      <ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>
         {props.children}
-    </ThirdParty.ThirdPartyAuth>;
-  } else  if (rid === "thirdpartyemailpassword") {
-    return <ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>
-        {props.children}
-    </ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>;
+      </ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>
+    );
   }
 
-  return <EmailPassword.EmailPasswordAuth>
-    {props.children}
-  </EmailPassword.EmailPasswordAuth>;
-
+  return (
+    <EmailPassword.EmailPasswordAuth>
+      {props.children}
+    </EmailPassword.EmailPasswordAuth>
+  );
 }
