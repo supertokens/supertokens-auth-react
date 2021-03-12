@@ -1,6 +1,10 @@
-import './App.css';
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react"
-import EmailPassword, { EmailPasswordAuth } from "supertokens-auth-react/recipe/emailpassword";
+import "./App.css";
+import SuperTokens, {
+  getSuperTokensRoutesForReactRouterDom,
+} from "supertokens-auth-react";
+import EmailPassword, {
+  EmailPasswordAuth,
+} from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
@@ -15,17 +19,15 @@ export function getDomain() {
   return host;
 }
 
-
 SuperTokens.init({
   appInfo: {
     appName: "SuperTokens Demo App",
     apiDomain: getDomain(),
     websiteDomain: getDomain(),
-    apiBasePath: "/.netlify/functions/api"
+    apiBasePath: "/.netlify/functions/api",
   },
-  recipeList: [EmailPassword.init(), Session.init()]
+  recipeList: [EmailPassword.init(), Session.init()],
 });
-
 
 function App() {
   return (
@@ -45,7 +47,7 @@ function App() {
           <Footer />
         </div>
       </div>
-    </Router >
+    </Router>
   );
 }
 

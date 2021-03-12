@@ -37,7 +37,7 @@ export default class Apple extends Provider {
     constructor(config?: BuiltInProviderConfig) {
         super({
             id: "apple",
-            name: "Apple"
+            name: "Apple",
         });
 
         if (config === undefined) {

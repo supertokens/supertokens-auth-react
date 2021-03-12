@@ -1,25 +1,23 @@
-import React, {Fragment, useEffect, useState} from 'react';
-import './App.css';
+import React, { Fragment, useEffect, useState } from "react";
+import "./App.css";
 
-import AppWithoutRouter from './AppWithoutRouter';
-import AppWithReactDomRouter from './AppWithReactDomRouter';
+import AppWithoutRouter from "./AppWithoutRouter";
+import AppWithReactDomRouter from "./AppWithReactDomRouter";
 import Footer from "./Footer";
 /* SuperTokens imports */
-import SuperTokens from 'supertokens-auth-react';
-import EmailPassword from 'supertokens-auth-react/recipe/emailpassword';
-import ThirdParty from 'supertokens-auth-react/recipe/thirdparty';
-import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
+import SuperTokens from "supertokens-auth-react";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
+import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import axios from "axios";
 
-
-import Session from 'supertokens-auth-react/recipe/session';
+import Session from "supertokens-auth-react/recipe/session";
 import Button from "./Button";
 import DarkTheme from "./Themes/Dark";
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 
 Session.addAxiosInterceptors(axios);
-
 
 export function getApiDomain() {
   const apiPort = process.env.REACT_APP_API_PORT || 8082;
@@ -29,65 +27,74 @@ export function getApiDomain() {
 
 export function getWebsiteDomain() {
   const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3031;
-  const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
+  const websiteUrl =
+    process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
   return websiteUrl;
 }
 
 /*
  * Use localStorage for tests configurations.
  */
-if (getQueryParams('websiteBasePath')) {
-  window.localStorage.setItem('websiteBasePath', getQueryParams('websiteBasePath'));
+if (getQueryParams("websiteBasePath")) {
+  window.localStorage.setItem(
+    "websiteBasePath",
+    getQueryParams("websiteBasePath")
+  );
 }
-const websiteBasePath = window.localStorage.getItem('websiteBasePath') || undefined;
+const websiteBasePath =
+  window.localStorage.getItem("websiteBasePath") || undefined;
 
-
-if (getQueryParams('useShadowDom')) {
-  window.localStorage.setItem('useShadowDom', getQueryParams('useShadowDom') === "true");
+if (getQueryParams("useShadowDom")) {
+  window.localStorage.setItem(
+    "useShadowDom",
+    getQueryParams("useShadowDom") === "true"
+  );
 }
-const useShadowDom = window.localStorage.getItem('useShadowDom') !== "false";
+const useShadowDom = window.localStorage.getItem("useShadowDom") !== "false";
 
-
-if (getQueryParams('mode')) {
-  window.localStorage.setItem('mode', getQueryParams('mode'));
-}
-
-const emailVerificationMode = window.localStorage.getItem('mode') || "OFF";
-
-
-if (getQueryParams('authRecipe')) {
-  window.localStorage.setItem('authRecipe', getQueryParams('authRecipe'));
+if (getQueryParams("mode")) {
+  window.localStorage.setItem("mode", getQueryParams("mode"));
 }
 
-const authRecipe = window.localStorage.getItem('authRecipe') || "emailpassword";
+const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
-if (getQueryParams('defaultToSignUp')) {
-  window.localStorage.setItem('defaultToSignUp', getQueryParams('defaultToSignUp') === "true");
+if (getQueryParams("authRecipe")) {
+  window.localStorage.setItem("authRecipe", getQueryParams("authRecipe"));
 }
 
-if (getQueryParams('useReactRouterDom')) {
-  window.localStorage.setItem('useReactRouterDom', getQueryParams('useReactRouterDom') === "true");
+const authRecipe = window.localStorage.getItem("authRecipe") || "emailpassword";
+
+if (getQueryParams("defaultToSignUp")) {
+  window.localStorage.setItem(
+    "defaultToSignUp",
+    getQueryParams("defaultToSignUp") === "true"
+  );
 }
-const useReactRouterDom = window.localStorage.getItem('useReactRouterDom') !== "false";
 
+if (getQueryParams("useReactRouterDom")) {
+  window.localStorage.setItem(
+    "useReactRouterDom",
+    getQueryParams("useReactRouterDom") === "true"
+  );
+}
+const useReactRouterDom =
+  window.localStorage.getItem("useReactRouterDom") !== "false";
 
-const defaultToSignUp = window.localStorage.getItem('defaultToSignUp') === "true";
-
+const defaultToSignUp =
+  window.localStorage.getItem("defaultToSignUp") === "true";
 
 const theme = getTheme();
 
-
 function getTheme() {
-
   let theme = {
     colors: {},
-    style: {}
+    style: {},
   };
 
-  const themeParams = getQueryParams('theme');
+  const themeParams = getQueryParams("theme");
 
   if (themeParams === "dark") {
-    window.document.body.style.backgroundColor = "#1a1a1a"
+    window.document.body.style.backgroundColor = "#1a1a1a";
     return DarkTheme;
   }
 
@@ -102,55 +109,51 @@ function getTheme() {
   return theme;
 }
 
-const formFields = [{
-  id: "email",
-  label: "Your Email",
-  placeholder: "Your work email"
-},{
-  id: "name",
-  label: "Full name",
-  placeholder: "First name and last name",
-},{
-  id: "age",
-  label: "Your age",
-  placeholder: "How old are you?",
-  validate: async (value) => {
-    if (parseInt(value) > 18) {
+const formFields = [
+  {
+    id: "email",
+    label: "Your Email",
+    placeholder: "Your work email",
+  },
+  {
+    id: "name",
+    label: "Full name",
+    placeholder: "First name and last name",
+  },
+  {
+    id: "age",
+    label: "Your age",
+    placeholder: "How old are you?",
+    validate: async (value) => {
+      if (parseInt(value) > 18) {
         return undefined;
-    }
+      }
 
-    return "You must be over 18 to register";;
-  }
-}, {
-  id: "country",
-  label: "Your Country",
-  placeholder: "Where do you live?",
-  optional: true
-}]
+      return "You must be over 18 to register";
+    },
+  },
+  {
+    id: "country",
+    label: "Your Country",
+    placeholder: "Where do you live?",
+    optional: true,
+  },
+];
 
 let recipeList = [Session.init()];
 
 if (authRecipe === "thirdparty") {
-  recipeList = [
-    getThirdPartyConfigs(),
-    ...recipeList
-  ]
+  recipeList = [getThirdPartyConfigs(), ...recipeList];
 } else if (authRecipe === "emailpassword") {
-  recipeList = [
-    getEmailPasswordConfigs(),
-    ...recipeList
-  ]
+  recipeList = [getEmailPasswordConfigs(), ...recipeList];
 } else if (authRecipe === "both") {
   recipeList = [
     getEmailPasswordConfigs(),
     getThirdPartyConfigs(),
-    ...recipeList
-  ]
+    ...recipeList,
+  ];
 } else if (authRecipe === "thirdpartyemailpassword") {
-  recipeList = [
-    getThirdPartyEmailPasswordConfigs(),
-    ...recipeList
-  ]
+  recipeList = [getThirdPartyEmailPasswordConfigs(), ...recipeList];
 }
 
 SuperTokens.init({
@@ -158,22 +161,21 @@ SuperTokens.init({
     appName: "SuperTokens",
     websiteDomain: getWebsiteDomain(),
     apiDomain: getApiDomain(),
-    websiteBasePath
+    websiteBasePath,
   },
   useReactRouterDom,
-  recipeList
+  recipeList,
 });
 
 /* App */
 function App() {
-  const router = getQueryParams('router');
-  if (router === 'no-router') {
-    return <AppWithoutRouter />
+  const router = getQueryParams("router");
+  if (router === "no-router") {
+    return <AppWithoutRouter />;
   }
-  
-  return <AppWithReactDomRouter authRecipe={authRecipe}/>
-}
 
+  return <AppWithReactDomRouter authRecipe={authRecipe} />;
+}
 
 function getQueryParams(param) {
   const urlParams = new URLSearchParams(window.location.search);
@@ -182,50 +184,45 @@ function getQueryParams(param) {
 
 export default App;
 
-export function BaseComponent ({children}) {
+export function BaseComponent({ children }) {
   return (
-       <Fragment>
-       <div className="fill">
-          {children}
-       </div>
-        <Footer/>
-      </Fragment>
-  )
+    <Fragment>
+      <div className="fill">{children}</div>
+      <Footer />
+    </Fragment>
+  );
 }
 
-
-export function Home () {
-  return (<>
-    <h2>/Home</h2>
-    <Button onClick={() => window.location.href = websiteBasePath || "/auth"} label="LOGIN"/>
-  </>);
-}
-
-export function About () {
+export function Home() {
   return (
-      <h2>/About</h2>
-
-    )
+    <>
+      <h2>/Home</h2>
+      <Button
+        onClick={() => (window.location.href = websiteBasePath || "/auth")}
+        label="LOGIN"
+      />
+    </>
+  );
 }
 
-export function Contact () {
-  return (
-      <h2>/Contact</h2>
-
-    )
+export function About() {
+  return <h2>/About</h2>;
 }
 
-export function Dashboard () {
+export function Contact() {
+  return <h2>/Contact</h2>;
+}
 
+export function Dashboard() {
   const [sessionInfoUsingAxios, setSessionInfoUsingAxios] = useState(undefined);
   const [sessionInfoUsingFetch, setSessionInfoUsingFetch] = useState(undefined);
 
   async function logout() {
-    const useRecipe = getQueryParams('rid') || authRecipe;
+    const useRecipe = getQueryParams("rid") || authRecipe;
     if (useRecipe === "thirdparty") {
       await ThirdParty.signOut();
     } else if (useRecipe === "thirdpartyemailpassword") {
-        await ThirdPartyEmailPassword.signOut();
+      await ThirdPartyEmailPassword.signOut();
     } else {
       await EmailPassword.signOut();
     }
@@ -255,29 +252,30 @@ export function Dashboard () {
     <div className="dashboard">
       <Button onClick={logout} label="LOGOUT" className="logoutButton" />
       <div className="axios">
-          <SessionInfoTable sessionInfo={sessionInfoUsingAxios} />
+        <SessionInfoTable sessionInfo={sessionInfoUsingAxios} />
       </div>
       <div className="fetch">
         <SessionInfoTable sessionInfo={sessionInfoUsingFetch} />
       </div>
     </div>
-    )
+  );
 }
 
-function SessionInfoTable({sessionInfo}) {
-
+function SessionInfoTable({ sessionInfo }) {
   if (sessionInfo === undefined) {
-    return <div className="sessionInfo" />
+    return <div className="sessionInfo" />;
   }
   return (
     <ul>
-        <li className="sessionInfo-user-id" >{sessionInfo['userId']}</li>
-        <li className="sessionInfo-session-handle" >{sessionInfo['sessionHandle']}</li>
+      <li className="sessionInfo-user-id">{sessionInfo["userId"]}</li>
+      <li className="sessionInfo-session-handle">
+        {sessionInfo["sessionHandle"]}
+      </li>
     </ul>
-  )
+  );
 }
 
-function getEmailPasswordConfigs () {
+function getEmailPasswordConfigs() {
   return EmailPassword.init({
     palette: theme.colors,
     preAPIHook: async (context) => {
@@ -285,7 +283,9 @@ function getEmailPasswordConfigs () {
       return context.requestInit;
     },
     getRedirectionURL: async (context) => {
-      console.log(`ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
+      console.log(
+        `ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`
+      );
       if (context.action === "SUCCESS") {
         return context.redirectToPath || "/dashboard";
       }
@@ -296,37 +296,37 @@ function getEmailPasswordConfigs () {
     useShadowDom,
     emailVerificationFeature: {
       sendVerifyEmailScreen: {
-        style: theme.style
+        style: theme.style,
       },
       verifyEmailLinkClickedScreen: {
-        style: theme.style
+        style: theme.style,
       },
-      mode: emailVerificationMode
+      mode: emailVerificationMode,
     },
     resetPasswordUsingTokenFeature: {
       enterEmailForm: {
-        style: theme.style
+        style: theme.style,
       },
       submitNewPasswordForm: {
-        style: theme.style
-      }
-    }, 
+        style: theme.style,
+      },
+    },
     signInAndUpFeature: {
       defaultToSignUp,
       signInForm: {
-        style: theme.style
+        style: theme.style,
       },
       signUpForm: {
         style: theme.style,
         privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
         termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-        formFields
-        }
-    }
-  })
+        formFields,
+      },
+    },
+  });
 }
 
-function getThirdPartyConfigs () {
+function getThirdPartyConfigs() {
   return ThirdParty.init({
     preAPIHook: async (context) => {
       console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
@@ -345,7 +345,7 @@ function getThirdPartyConfigs () {
     useShadowDom,
     palette: theme.colors,
     emailVerificationFeature: {
-      mode: emailVerificationMode
+      mode: emailVerificationMode,
     },
     signInAndUpFeature: {
       style: theme.style,
@@ -358,42 +358,43 @@ function getThirdPartyConfigs () {
         ThirdParty.Apple.init(),
         {
           id: "custom",
-          name: "Custom"
-        }
-      ]
-    }
-  })
+          name: "Custom",
+        },
+      ],
+    },
+  });
 }
 
-
-function getThirdPartyEmailPasswordConfigs () {
+function getThirdPartyEmailPasswordConfigs() {
   return ThirdPartyEmailPassword.init({
     preAPIHook: async (context) => {
-      console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
+      console.log(
+        `ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`
+      );
       return context.requestInit;
     },
     getRedirectionURL: async (context) => {
-      console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
+      console.log(
+        `ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`
+      );
       if (context.action === "SUCCESS") {
         return context.redirectToPath || "/dashboard";
       }
     },
     onHandleEvent: async (context) => {
-      console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
+      console.log(
+        `ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`
+      );
     },
 
     useShadowDom,
     palette: theme.colors,
     emailVerificationFeature: {
-      mode: emailVerificationMode
+      mode: emailVerificationMode,
     },
-    resetPasswordUsingTokenFeature: {
-
-    },
+    resetPasswordUsingTokenFeature: {},
     signInAndUpFeature: {
-      signInForm: {
-
-      },
+      signInForm: {},
       signUpForm: {
         formFields,
         privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
@@ -407,10 +408,10 @@ function getThirdPartyEmailPasswordConfigs () {
         ThirdPartyEmailPassword.Apple.init(),
         {
           id: "custom",
-          name: "Custom"
-        }
-      ]
+          name: "Custom",
+        },
+      ],
     },
-    disableEmailPassword: false
-  })
+    disableEmailPassword: false,
+  });
 }

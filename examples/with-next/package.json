@@ -15,6 +15,6 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "supertokens-auth-react": "supertokens/supertokens-auth-react#0.7",
-    "supertokens-node": "supertokens/supertokens-node#4.1"
+    "supertokens-node": "supertokens/supertokens-node#4.2"
   }
 }

@@ -29,7 +29,7 @@ import {
     getQueryParams,
     getRedirectToPathFromURL,
     appendQueryParamsToURL,
-    getWindowOrThrow
+    getWindowOrThrow,
 } from "../../../../../utils";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
@@ -41,7 +41,7 @@ import {
     ThirdPartyGetRedirectionURLContext,
     ThirdPartyOnHandleEventContext,
     ThirdPartyPreAPIHookContext,
-    ThirdPartySignInAndUpState
+    ThirdPartySignInAndUpState,
 } from "../../../types";
 import { getOAuthAuthorisationURLAPI } from "./api";
 
@@ -64,7 +64,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
         }
 
         this.state = {
-            status
+            status,
         };
     }
 
@@ -108,27 +108,27 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists) {
             this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-                action: "SESSION_ALREADY_EXISTS"
+                action: "SESSION_ALREADY_EXISTS",
             });
             await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
             return;
         }
 
-        this.setState(oldState => {
+        this.setState((oldState) => {
             if (oldState.status !== "LOADING") {
                 return oldState;
             }
 
             return {
                 ...oldState,
-                status: "READY"
+                status: "READY",
             };
         });
     };
 
     signInAndUpClick = async (providerId: string): Promise<string | void> => {
         const provider = this.getRecipeConfigOrThrow().signInAndUpFeature.providers.find(
-            p => p.id === providerId
+            (p) => p.id === providerId
         ) as Provider;
         if (provider === undefined) {
             return "Unknown Provider";
@@ -144,11 +144,11 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
         const redirectToPath = getRedirectToPathFromURL();
         const redirect_uri = await this.getRecipeInstanceOrThrow().getRedirectUrl({
             action: "GET_REDIRECT_URL",
-            provider
+            provider,
         });
         const urlWithState = appendQueryParamsToURL(url, {
             state,
-            redirect_uri
+            redirect_uri,
         });
         const expiresAt = Date.now() + 1000 * 60 * 10; // 10 minutes expiry.
         const value = JSON.stringify({
@@ -156,7 +156,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
             state,
             thirdPartyId: provider.id,
             rid: this.getRecipeInstanceOrThrow().recipeId,
-            expiresAt
+            expiresAt,
         });
         getWindowOrThrow().sessionStorage.setItem(SESSION_STORAGE_STATE_KEY, value);
 
@@ -172,9 +172,9 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
 
         const signInAndUpFeature = this.getRecipeConfigOrThrow().signInAndUpFeature;
 
-        const providers = signInAndUpFeature.providers.map(provider => ({
+        const providers = signInAndUpFeature.providers.map((provider) => ({
             id: provider.id,
-            buttonComponent: provider.getButton()
+            buttonComponent: provider.getButton(),
         }));
 
         /*
@@ -206,7 +206,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
                                 termsOfServiceLink: signInAndUpFeature.termsOfServiceLink,
                                 privacyPolicyLink: signInAndUpFeature.privacyPolicyLink,
                                 signInAndUpClick: this.signInAndUpClick,
-                                providers: providers
+                                providers: providers,
                             })}
                     </Fragment>
                 </StyleProvider>
