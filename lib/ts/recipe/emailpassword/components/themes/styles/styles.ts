@@ -14,7 +14,6 @@
  */
 
 /** @jsx jsx */
-import { jsx } from "@emotion/react";
 import chroma from "chroma-js";
 import { getDefaultStyles, getMergedStyles, slideTop } from "../../../../../styles/styles";
 import { NormalisedDefaultStyles, NormalisedPalette } from "../../../../../types";
@@ -23,7 +22,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     const baseStyles = getDefaultStyles(palette);
     const recipeStyles = {
         inputContainer: {
-            marginTop: "6px",
+            marginTop: "6px"
         },
 
         inputWrapper: {
@@ -38,8 +37,8 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
                 backgroundColor: `${chroma(palette.colors.inputBackground).alpha(0.25)}`,
                 border: `1px solid ${palette.colors.primary}`,
                 boxShadow: `0 0 0 0.2rem ${chroma(palette.colors.primary).alpha(0.25)}`,
-                outline: "none",
-            },
+                outline: "none"
+            }
         },
 
         inputError: {
@@ -49,8 +48,8 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             "&:focus-within": {
                 border: `1px solid ${palette.colors.error}`,
                 boxShadow: `0 0 0 0.2rem ${chroma(palette.colors.error).alpha(0.25)}`,
-                outline: "none",
-            },
+                outline: "none"
+            }
         },
 
         input: {
@@ -69,33 +68,33 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             height: "32px",
             "&:focus": {
                 border: "none",
-                outline: "none",
-            },
+                outline: "none"
+            }
         },
 
         inputAdornment: {
             justifyContent: "center",
             position: "relative",
             top: "7px",
-            marginRight: "5px",
+            marginRight: "5px"
         },
 
         showPassword: {
-            cursor: "pointer",
+            cursor: "pointer"
         },
 
         forgotPasswordLink: {
-            marginTop: "10px",
+            marginTop: "10px"
         },
 
         enterEmailSuccessMessage: {
             marginTop: "15px",
-            marginBottom: "15px",
+            marginBottom: "15px"
         },
 
         submitNewPasswordSuccessMessage: {
             marginTop: "15px",
-            marginBottom: "15px",
+            marginBottom: "15px"
         },
 
         inputErrorMessage: {
@@ -109,15 +108,15 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             animation: `${slideTop} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`,
             maxWidth: "330px",
             "@media (max-width: 440px)": {
-                maxWidth: "250px",
-            },
+                maxWidth: "250px"
+            }
         },
 
         inputErrorSymbol: {
             marginRight: "5px",
             top: "1px",
             position: "relative",
-            left: "2px",
+            left: "2px"
         },
 
         label: {
@@ -125,18 +124,18 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             fontWeight: 600,
             fontSize: palette.fonts.size[0],
             lineHeight: "24px",
-            color: palette.colors.textLabel,
+            color: palette.colors.textLabel
         },
 
         formRow: {
             display: "flex",
             flexDirection: "column",
             paddingTop: "0px",
-            paddingBottom: "34px",
+            paddingBottom: "34px"
         },
 
         sendVerifyEmailIcon: {
-            marginTop: "11px",
+            marginTop: "11px"
         },
 
         headerTinyTitle: {
@@ -144,7 +143,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             fontSize: palette.fonts.size[2],
             letterSpacing: "1.1px",
             fontWeight: 500,
-            lineHeight: "28px",
+            lineHeight: "28px"
         },
 
         sendVerifyEmailText: {
@@ -152,7 +151,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             fontSize: palette.fonts.size[0],
             textAlign: "center",
             fontWeight: 300,
-            letterSpacing: "0.8px",
+            letterSpacing: "0.8px"
         },
 
         secondaryLinkWithArrow: {
@@ -162,27 +161,27 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             "&:hover": {
                 position: "relative",
                 left: "2px",
-                wordSpacing: "4px",
-            },
+                wordSpacing: "4px"
+            }
         },
 
         sendVerifyEmailResend: {
             marginTop: "13px",
             fontWeight: 300,
             "&:hover": {
-                textDecoration: "underline",
-            },
+                textDecoration: "underline"
+            }
         },
 
         noFormRow: {
-            paddingBottom: "25px",
+            paddingBottom: "25px"
         },
 
         emailVerificationButtonWrapper: {
             paddingTop: "25px",
             maxWidth: "96px",
-            margin: "0 auto",
-        },
+            margin: "0 auto"
+        }
     } as NormalisedDefaultStyles;
     return getMergedStyles(baseStyles, recipeStyles);
 }

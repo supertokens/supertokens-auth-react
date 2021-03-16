@@ -27,13 +27,13 @@ import {
     ResetPasswordUsingTokenUserInput,
     SignInAndUpFeatureUserInput,
     SignInFormFeatureUserInput,
-    SignUpFormFeatureUserInput,
+    SignUpFormFeatureUserInput
 } from "./types";
 import {
     defaultLoginPasswordValidator,
     defaultEmailValidator,
     defaultPasswordValidator,
-    defaultValidate,
+    defaultValidate
 } from "./validators";
 
 export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): NormalisedEmailPasswordConfig {
@@ -61,7 +61,7 @@ export function normaliseEmailPasswordConfig(config: EmailPasswordConfig): Norma
 
     return {
         signInAndUpFeature,
-        resetPasswordUsingTokenFeature,
+        resetPasswordUsingTokenFeature
     };
 }
 
@@ -80,7 +80,9 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
      * Exception made of the password validator which only verifies that the value is not empty for login
      * https://github.com/supertokens/supertokens-auth-react/issues/21
      */
+    // @ts-ignore
     const defaultSignInFields: NormalisedFormField[] = signUpForm.formFields.reduce(
+        // @ts-ignore
         (signInFieldsAccumulator, field) => {
             if (field.id === "email") {
                 return [...signInFieldsAccumulator, field];
@@ -91,8 +93,8 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
                     {
                         ...field,
                         autoComplete: "current-password",
-                        validate: defaultLoginPasswordValidator,
-                    },
+                        validate: defaultLoginPasswordValidator
+                    }
                 ];
             }
 
@@ -109,7 +111,7 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
         disableDefaultImplementation,
         defaultToSignUp,
         signUpForm,
-        signInForm,
+        signInForm
     };
 }
 
@@ -135,7 +137,7 @@ export function normaliseSignUpFormFeatureConfig(
         style,
         formFields,
         privacyPolicyLink,
-        termsOfServiceLink,
+        termsOfServiceLink
     };
 }
 
@@ -151,11 +153,11 @@ export function normaliseSignInFormFeatureConfig(
     if (config.formFields !== undefined) {
         userFormFields = config.formFields
             // Filter on email and password only.
-            .filter((field) => MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id))
+            .filter(field => MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id))
             // Sign In fields are never optional.
             .map((field: FormFieldBaseConfig) => ({
                 ...field,
-                optional: false,
+                optional: false
             }));
     }
     const formFields = mergeFormFields(defaultFormFields, userFormFields);
@@ -164,7 +166,7 @@ export function normaliseSignInFormFeatureConfig(
 
     return {
         style,
-        formFields,
+        formFields
     };
 }
 
@@ -179,7 +181,7 @@ function getDefaultEmailFormField(): NormalisedFormField {
         placeholder: "Email address",
         validate: defaultEmailValidator,
         optional: false,
-        autoComplete: "email",
+        autoComplete: "email"
     };
 }
 
@@ -190,7 +192,7 @@ function getDefaultPasswordFormField(): NormalisedFormField {
         placeholder: "Password",
         validate: defaultPasswordValidator,
         optional: false,
-        autoComplete: "new-password",
+        autoComplete: "new-password"
     };
 }
 
@@ -219,7 +221,7 @@ export function normaliseResetPasswordUsingTokenFeature(
                 placeholder: "New password",
                 validate: signUpPasswordFieldValidate,
                 optional: false,
-                autoComplete: "new-password",
+                autoComplete: "new-password"
             },
             {
                 id: "confirm-password",
@@ -227,9 +229,9 @@ export function normaliseResetPasswordUsingTokenFeature(
                 placeholder: "Confirm your password",
                 validate: signUpPasswordFieldValidate,
                 optional: false,
-                autoComplete: "new-password",
-            },
-        ],
+                autoComplete: "new-password"
+            }
+        ]
     };
 
     const enterEmailFormStyle =
@@ -239,13 +241,13 @@ export function normaliseResetPasswordUsingTokenFeature(
 
     const enterEmailForm: NormalisedEnterEmailForm = {
         style: enterEmailFormStyle,
-        formFields: [signUpEmailField],
+        formFields: [signUpEmailField]
     };
 
     return {
         disableDefaultImplementation,
         submitNewPasswordForm,
-        enterEmailForm,
+        enterEmailForm
     };
 }
 
@@ -287,7 +289,7 @@ export function mergeFormFields(
                 mergedFormFields[j] = {
                     ...mergedFormFields[j],
                     ...userField,
-                    optional,
+                    optional
                 };
 
                 isNewField = false;
@@ -301,12 +303,12 @@ export function mergeFormFields(
                 optional: false,
                 placeholder: userField.label,
                 validate: defaultValidate,
-                ...userField,
+                ...userField
             });
         }
     }
 
-    return mergedFormFields.map((field) => getFormattedFormField(field));
+    return mergedFormFields.map(field => getFormattedFormField(field));
 }
 
 export function getFormattedFormField(field: NormalisedFormField): NormalisedFormField {
@@ -319,6 +321,6 @@ export function getFormattedFormField(field: NormalisedFormField): NormalisedFor
             }
 
             return await field.validate(value);
-        },
+        }
     };
 }

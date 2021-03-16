@@ -19,7 +19,7 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import StyleContext from "../../../../styles/styleContext";
 
 /*
@@ -43,7 +43,7 @@ export default function FormRow({ children, hasError }: FormRowProps): JSX.Eleme
     const errorStyle =
         hasError === true
             ? {
-                  paddingBottom: "0px",
+                  paddingBottom: "0px"
               }
             : {};
     return (

@@ -17,7 +17,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { PureComponent, Fragment } from "react";
+import { PureComponent, Fragment } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
 import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../types";
@@ -36,7 +36,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
     constructor(props: EnterEmailThemeProps) {
         super(props);
         this.state = {
-            status: "READY",
+            status: "READY"
         };
     }
 
@@ -46,14 +46,14 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
 
     onSuccess = (): void => {
         this.setState(() => ({
-            status: "SENT",
+            status: "SENT"
         }));
         this.props.onSuccess();
     };
 
     resend = (): void => {
         this.setState(() => ({
-            status: "READY",
+            status: "READY"
         }));
     };
 

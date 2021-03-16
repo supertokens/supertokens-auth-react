@@ -25,9 +25,9 @@ const StyleContext = React.createContext<NormalisedStyle>({
     palette: {
         colors: {} as Record<string, string>,
         fonts: {
-            size: [],
-        },
-    },
+            size: []
+        }
+    }
 });
 
 export function StyleProvider({
@@ -35,7 +35,7 @@ export function StyleProvider({
     styleFromInit,
     getDefaultStyles,
     defaultPalette,
-    rawPalette,
+    rawPalette
 }: {
     children: JSX.Element;
     styleFromInit?: Styles;
@@ -47,17 +47,17 @@ export function StyleProvider({
 
     const styles: NormalisedStyle = {
         palette,
-        ...getDefaultStyles(palette),
+        ...getDefaultStyles(palette)
     };
     if (styleFromInit !== undefined) {
         // Palette is a reserved word, delete it if exists.
         delete styleFromInit.palette;
 
-        Object.keys(styleFromInit).forEach((key) => [
+        Object.keys(styleFromInit).forEach(key => [
             (styles[key] = {
                 ...styles[key],
-                ...styleFromInit[key],
-            }),
+                ...styleFromInit[key]
+            })
         ]);
     }
 

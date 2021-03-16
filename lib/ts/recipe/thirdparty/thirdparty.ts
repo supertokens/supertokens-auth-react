@@ -25,7 +25,7 @@ import {
     ThirdPartyUserInput,
     NormalisedThirdPartyConfig,
     ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext,
+    ThirdPartyOnHandleEventContext
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { matchRecipeIdUsingState, normaliseThirdPartyConfig } from "./utils";
@@ -59,10 +59,12 @@ export default class ThirdParty extends AuthRecipeModule<
      * Constructor.
      */
     constructor(config: ThirdPartyConfig) {
+        // @ts-ignore
         super(config);
         this.config = {
+            // @ts-ignore
             ...this.config,
-            ...normaliseThirdPartyConfig(config),
+            ...normaliseThirdPartyConfig(config)
         };
     }
 
@@ -77,25 +79,27 @@ export default class ThirdParty extends AuthRecipeModule<
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeId),
                 rid: this.recipeId,
-                component: SignInAndUp,
+                // @ts-ignore
+                component: SignInAndUp
             };
         }
 
         // Add callback route for each provider.
-        this.config.signInAndUpFeature.providers.forEach((provider) => {
+        this.config.signInAndUpFeature.providers.forEach(provider => {
             const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
+                // @ts-ignore
                 component: SignInAndUpCallback,
                 rid: this.recipeId,
-                matches: matchRecipeIdUsingState(this.recipeId),
+                matches: matchRecipeIdUsingState(this.recipeId)
             };
         });
 
         return {
             ...features,
-            ...this.getAuthRecipeModuleFeatures(),
+            ...this.getAuthRecipeModuleFeatures()
         };
     };
 
@@ -113,6 +117,7 @@ export default class ThirdParty extends AuthRecipeModule<
      */
 
     static init(config: ThirdPartyUserInput): CreateRecipeFunction {
+        // @ts-ignore
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<
@@ -123,7 +128,7 @@ export default class ThirdParty extends AuthRecipeModule<
             ThirdParty.instance = new ThirdParty({
                 ...config,
                 appInfo,
-                recipeId: ThirdParty.RECIPE_ID,
+                recipeId: ThirdParty.RECIPE_ID
             });
             return ThirdParty.instance;
         };

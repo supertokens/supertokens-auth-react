@@ -8,9 +8,9 @@
  * realistic data.
  */
 const seed = async () => {
-  // for (let i = 0; i < 5; i++) {
-  //   await db.project.create({ data: { name: "Project " + i } })
-  // }
-}
+    // for (let i = 0; i < 5; i++) {
+    //   await db.project.create({ data: { name: "Project " + i } })
+    // }
+};
 
-export default seed
+export default seed;

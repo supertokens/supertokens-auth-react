@@ -20,7 +20,7 @@
 /** @jsx jsx */
 import { jsx, CSSObject } from "@emotion/react";
 
-import React, { useContext } from "react";
+import { ForwardRefRenderFunction, useContext } from "react";
 
 import { forwardRef, RefObject } from "react";
 import { APIFormField } from "../../../../types";
@@ -74,7 +74,7 @@ function Input(
         if (onInputFocus !== undefined) {
             onInputFocus({
                 id: ref.current.name,
-                value: ref.current.value,
+                value: ref.current.value
             });
         }
     }
@@ -87,7 +87,7 @@ function Input(
         ref.current.isFocused = false;
         onInputBlur({
             id: ref.current.name,
-            value: ref.current.value,
+            value: ref.current.value
         });
     }
 
@@ -158,4 +158,4 @@ function Input(
     );
 }
 
-export default forwardRef(Input);
+export default forwardRef(Input as ForwardRefRenderFunction<InputRef, InputProps>);

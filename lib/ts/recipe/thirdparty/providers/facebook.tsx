@@ -37,7 +37,7 @@ export default class Facebook extends Provider {
     constructor(config?: BuiltInProviderConfig) {
         super({
             id: "facebook",
-            name: "Facebook",
+            name: "Facebook"
         });
 
         if (config === undefined) {

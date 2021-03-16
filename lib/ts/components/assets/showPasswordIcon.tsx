@@ -20,8 +20,6 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 
-import * as React from "react";
-
 /*
  * Component.
  */
@@ -29,7 +27,7 @@ import * as React from "react";
 export default function ShowPasswordIcon({
     primaryColor,
     secondaryColor,
-    showPassword,
+    showPassword
 }: {
     primaryColor: string;
     secondaryColor: string;

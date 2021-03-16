@@ -57,7 +57,9 @@ export default abstract class RecipeModule<
     ) {
         this.recipeId = config.recipeId;
         this.appInfo = config.appInfo;
+        // @ts-ignore
         this.httpRequest = new HttpRequest(this);
+        // @ts-ignore
         this.hooks = normalisedRecipeModuleHooks(config);
     }
 
@@ -103,7 +105,7 @@ export default abstract class RecipeModule<
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async getDefaultRedirectionURL(context: RecipeModuleGetRedirectionURLContext): Promise<string> {
+    async getDefaultRedirectionURL(_: RecipeModuleGetRedirectionURLContext): Promise<string> {
         throw new Error("getDefaultRedirectionURL is not implemented.");
     }
 

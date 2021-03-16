@@ -22,7 +22,7 @@ import { AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 import {
     EmailPasswordGetRedirectionURLContext,
     EmailPasswordOnHandleEventContext,
-    EmailPasswordPreAPIHookContext,
+    EmailPasswordPreAPIHookContext
 } from "../emailpassword";
 import {
     NormalisedResetPasswordUsingTokenFeatureConfig,
@@ -30,13 +30,13 @@ import {
     NormalisedSignUpFormFeatureConfig,
     ResetPasswordUsingTokenUserInput,
     SignInFormFeatureUserInput,
-    SignUpFormFeatureUserInput,
+    SignUpFormFeatureUserInput
 } from "../emailpassword/types";
 import { RecipeModuleConfig } from "../recipeModule/types";
 import {
     ThirdPartyGetRedirectionURLContext,
     ThirdPartyOnHandleEventContext,
-    ThirdPartyPreAPIHookContext,
+    ThirdPartyPreAPIHookContext
 } from "../thirdparty";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";

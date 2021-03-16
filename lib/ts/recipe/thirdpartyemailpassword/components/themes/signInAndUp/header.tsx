@@ -17,7 +17,6 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import * as React from "react";
 import SignInHeader from "../../../../emailpassword/components/themes/signInAndUp/signInHeader";
 import SignUpHeader from "../../../../emailpassword/components/themes/signInAndUp/signUpHeader";
 
@@ -26,7 +25,7 @@ import SignUpHeader from "../../../../emailpassword/components/themes/signInAndU
  */
 export default function Header({
     isSignUp,
-    setIsSignUp,
+    setIsSignUp
 }: {
     isSignUp: boolean;
     setIsSignUp: (isSignUp: boolean) => void;

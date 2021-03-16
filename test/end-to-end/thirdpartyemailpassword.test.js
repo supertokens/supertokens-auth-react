@@ -23,21 +23,17 @@ import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
 import {
-  clearBrowserCookies,
-  assertProviders,
-  clickOnProviderButton,
-  defaultSignUp,
-  getUserIdWithFetch,
-  getLogoutButton,
-  signUp,
-  toggleSignInSignUp,
-  loginWithGithub,
+    clearBrowserCookies,
+    assertProviders,
+    clickOnProviderButton,
+    defaultSignUp,
+    getUserIdWithFetch,
+    getLogoutButton,
+    signUp,
+    toggleSignInSignUp,
+    loginWithGithub
 } from "../helpers";
-import {
-  TEST_CLIENT_BASE_URL,
-  TEST_SERVER_BASE_URL,
-  SIGN_IN_UP_API,
-} from "../constants";
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -45,143 +41,132 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe("SuperTokens Third Party Email Password", function () {
-  let browser;
-  let page;
-  let consoleLogs;
+describe("SuperTokens Third Party Email Password", function() {
+    let browser;
+    let page;
+    let consoleLogs;
 
-  before(async function () {
-    await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-      method: "POST",
-    }).catch(console.error);
+    before(async function() {
+        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+            method: "POST"
+        }).catch(console.error);
 
-    await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-      method: "POST",
-    }).catch(console.error);
+        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+            method: "POST"
+        }).catch(console.error);
 
-    browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      headless: true,
-    });
-    page = await browser.newPage();
-    page.on("console", (consoleObj) => {
-      const log = consoleObj.text();
-      if (log.startsWith("ST_LOGS")) {
-        consoleLogs.push(log);
-      }
-    });
-  });
-
-  after(async function () {
-    await browser.close();
-    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-      method: "POST",
-    }).catch(console.error);
-
-    await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
-      method: "POST",
-    }).catch(console.error);
-  });
-
-  beforeEach(async function () {
-    consoleLogs = [];
-    clearBrowserCookies(page);
-    await page.goto(
-      `${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`
-    );
-  });
-
-  describe("Third Party Email Password test", function () {
-    it("Successful signup with credentials", async function () {
-      await toggleSignInSignUp(page);
-      await defaultSignUp(page, "thirdpartyemailpassword");
-      const pathname = await page.evaluate(() => window.location.pathname);
-      assert.deepStrictEqual(pathname, "/dashboard");
+        browser = await puppeteer.launch({
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            headless: true
+        });
+        page = await browser.newPage();
+        page.on("console", consoleObj => {
+            const log = consoleObj.text();
+            if (log.startsWith("ST_LOGS")) {
+                consoleLogs.push(log);
+            }
+        });
     });
 
-    // In case OAuth configs are not set locally.
-    if (process.env.SKIP_OAUTH === "true") {
-      return;
-    }
+    after(async function() {
+        await browser.close();
+        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+            method: "POST"
+        }).catch(console.error);
 
-    it("Successful signin/up with github", async function () {
-      await assertProviders(page);
-      await clickOnProviderButton(page, "Github");
-      await Promise.all([
-        loginWithGithub(page),
-        page.waitForResponse(
-          (response) =>
-            response.url() === SIGN_IN_UP_API && response.status() === 200
-        ),
-      ]);
-      const pathname = await page.evaluate(() => window.location.pathname);
-      assert.deepStrictEqual(pathname, "/dashboard");
-      assert.deepStrictEqual(consoleLogs, [
-        "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS GET_AUTHORISATION_URL",
-        "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL GET_REDIRECT_URL", // to append to authorisation url
-        "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
-        "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
-        "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-        "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-      ]);
+        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+            method: "POST"
+        }).catch(console.error);
     });
 
-    it("No account consolidation", async function () {
-      // 1. Sign up with credentials
-      await toggleSignInSignUp(page);
-      await signUp(
-        page,
-        [
-          { name: "email", value: "bradparishdoh@gmail.com" },
-          { name: "password", value: "Str0ngP@ssw0rd" },
-          { name: "name", value: "John Doe" },
-          { name: "age", value: "20" },
-        ],
-        '{"formFields":[{"id":"email","value":"bradparishdoh@gmail.com"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
-        "thirdpartyemailpassword"
-      );
-      let pathname = await page.evaluate(() => window.location.pathname);
-      assert.deepStrictEqual(pathname, "/dashboard");
-      const emailPasswordUserId = await getUserIdWithFetch(page);
-      const logoutButton = await getLogoutButton(page);
-      await Promise.all([await logoutButton.click(), page.waitForNavigation()]);
-
-      pathname = await page.evaluate(() => window.location.pathname);
-      assert.deepStrictEqual(pathname, "/auth");
-      // 2. Sign in with github with same address.
-      await clickOnProviderButton(page, "Github");
-      await Promise.all([
-        loginWithGithub(page),
-        page.waitForResponse(
-          (response) =>
-            response.url() === SIGN_IN_UP_API && response.status() === 200
-        ),
-      ]);
-      pathname = await page.evaluate(() => window.location.pathname);
-      assert.deepStrictEqual(pathname, "/dashboard");
-      const thirdPartyUserId = await getUserIdWithFetch(page);
-
-      // 3. Compare userIds
-      assert.notDeepStrictEqual(thirdPartyUserId, emailPasswordUserId);
+    beforeEach(async function() {
+        consoleLogs = [];
+        clearBrowserCookies(page);
+        await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`);
     });
-  });
 
-  describe("Third Party callback error tests", function () {
-    it("No state (Duplicate from third party)", async function () {
-      await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github`),
-        page.waitForNavigation({ waitUntil: "networkidle0" }),
-      ]);
-      assert.deepStrictEqual(consoleLogs, [
-        "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-      ]);
-      const pathname = await page.evaluate(() => window.location.pathname);
-      const search = await page.evaluate(() => window.location.search);
-      assert.deepStrictEqual(pathname, "/auth");
-      assert.deepStrictEqual(
-        search,
-        "?rid=thirdpartyemailpassword&error=no_query_state"
-      );
+    describe("Third Party Email Password test", function() {
+        it("Successful signup with credentials", async function() {
+            await toggleSignInSignUp(page);
+            await defaultSignUp(page, "thirdpartyemailpassword");
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+        });
+
+        // In case OAuth configs are not set locally.
+        if (process.env.SKIP_OAUTH === "true") {
+            return;
+        }
+
+        it("Successful signin/up with github", async function() {
+            await assertProviders(page);
+            await clickOnProviderButton(page, "Github");
+            await Promise.all([
+                loginWithGithub(page),
+                page.waitForResponse(response => response.url() === SIGN_IN_UP_API && response.status() === 200)
+            ]);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS GET_AUTHORISATION_URL",
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL GET_REDIRECT_URL", // to append to authorisation url
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS"
+            ]);
+        });
+
+        it("No account consolidation", async function() {
+            // 1. Sign up with credentials
+            await toggleSignInSignUp(page);
+            await signUp(
+                page,
+                [
+                    { name: "email", value: "bradparishdoh@gmail.com" },
+                    { name: "password", value: "Str0ngP@ssw0rd" },
+                    { name: "name", value: "John Doe" },
+                    { name: "age", value: "20" }
+                ],
+                '{"formFields":[{"id":"email","value":"bradparishdoh@gmail.com"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+                "thirdpartyemailpassword"
+            );
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+            const emailPasswordUserId = await getUserIdWithFetch(page);
+            const logoutButton = await getLogoutButton(page);
+            await Promise.all([await logoutButton.click(), page.waitForNavigation()]);
+
+            pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth");
+            // 2. Sign in with github with same address.
+            await clickOnProviderButton(page, "Github");
+            await Promise.all([
+                loginWithGithub(page),
+                page.waitForResponse(response => response.url() === SIGN_IN_UP_API && response.status() === 200)
+            ]);
+            pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+            const thirdPartyUserId = await getUserIdWithFetch(page);
+
+            // 3. Compare userIds
+            assert.notDeepStrictEqual(thirdPartyUserId, emailPasswordUserId);
+        });
     });
-  });
+
+    describe("Third Party callback error tests", function() {
+        it("No state (Duplicate from third party)", async function() {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github`),
+                page.waitForNavigation({ waitUntil: "networkidle0" })
+            ]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP"
+            ]);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            const search = await page.evaluate(() => window.location.search);
+            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(search, "?rid=thirdpartyemailpassword&error=no_query_state");
+        });
+    });
 });

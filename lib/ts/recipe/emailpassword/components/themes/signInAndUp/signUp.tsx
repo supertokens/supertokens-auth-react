@@ -17,7 +17,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { PureComponent } from "react";
+import { PureComponent } from "react";
 import { SignUpThemeProps } from "../../../types";
 
 import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";

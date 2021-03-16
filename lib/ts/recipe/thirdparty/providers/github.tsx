@@ -37,7 +37,7 @@ export default class Github extends Provider {
     constructor(config?: BuiltInProviderConfig) {
         super({
             id: "github",
-            name: "Github",
+            name: "Github"
         });
 
         if (config === undefined) {

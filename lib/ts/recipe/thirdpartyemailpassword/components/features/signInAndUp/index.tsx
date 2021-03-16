@@ -27,7 +27,7 @@ import {
     SignInAndUpTheme,
     ThirdPartyEmailPasswordGetRedirectionURLContext,
     ThirdPartyEmailPasswordOnHandleEventContext,
-    ThirdPartyEmailPasswordPreAPIHookContext,
+    ThirdPartyEmailPasswordPreAPIHookContext
 } from "../../..";
 import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
@@ -102,7 +102,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps> {
                             styleFromInit: this.getRecipeConfigOrThrow().signInAndUpFeature.style,
                             defaultToSignUp: this.getRecipeConfigOrThrow().signInAndUpFeature.defaultToSignUp,
                             history: this.props.history,
-                            recipeId: this.getRecipeInstanceOrThrow().recipeId,
+                            recipeId: this.getRecipeInstanceOrThrow().recipeId
                         })}
                 </Fragment>
             </FeatureWrapper>

@@ -25,7 +25,7 @@ import {
     ThirdPartyEmailPasswordUserInput,
     NormalisedThirdPartyEmailPasswordConfig,
     ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdPartyEmailPasswordOnHandleEventContext,
+    ThirdPartyEmailPasswordOnHandleEventContext
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
@@ -62,10 +62,12 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
      * Constructor.
      */
     constructor(config: ThirdPartyEmailPasswordConfig) {
+        // @ts-ignore
         super(config);
         this.config = {
+            // @ts-ignore
             ...this.config,
-            ...normaliseThirdPartyEmailPasswordConfig(config),
+            ...normaliseThirdPartyEmailPasswordConfig(config)
         };
     }
 
@@ -80,7 +82,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeId),
                 rid: this.recipeId,
-                component: SignInAndUp,
+                // @ts-ignore
+                component: SignInAndUp
             };
         }
 
@@ -91,25 +94,27 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeId),
                 rid: this.recipeId,
-                component: ResetPasswordUsingToken,
+                // @ts-ignore
+                component: ResetPasswordUsingToken
             };
         }
 
         // Add callback route for each provider.
-        this.config.signInAndUpFeature.providers.forEach((provider) => {
+        this.config.signInAndUpFeature.providers.forEach(provider => {
             const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
+                // @ts-ignore
                 component: SignInAndUpCallback,
                 rid: this.recipeId,
-                matches: matchRecipeIdUsingState(this.recipeId),
+                matches: matchRecipeIdUsingState(this.recipeId)
             };
         });
 
         return {
             ...features,
-            ...this.getAuthRecipeModuleFeatures(),
+            ...this.getAuthRecipeModuleFeatures()
         };
     };
 
@@ -133,6 +138,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
      */
 
     static init(config: ThirdPartyEmailPasswordUserInput): CreateRecipeFunction {
+        // @ts-ignore
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<
@@ -143,7 +149,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword({
                 ...config,
                 appInfo,
-                recipeId: ThirdPartyEmailPassword.RECIPE_ID,
+                recipeId: ThirdPartyEmailPassword.RECIPE_ID
             });
             return ThirdPartyEmailPassword.instance;
         };

@@ -14,7 +14,7 @@
  */
 
 /** @jsx jsx */
-import { CSSObject, jsx, keyframes } from "@emotion/react";
+import { CSSObject, keyframes } from "@emotion/react";
 import chroma from "chroma-js";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../types";
 
@@ -32,11 +32,11 @@ export const defaultPalette: NormalisedPalette = {
         textLabel: "#222222",
         textInput: "#222222",
         textPrimary: "#656565",
-        textLink: "#0076ff",
+        textLink: "#0076ff"
     },
     fonts: {
-        size: ["14px", "16px", "19px", "24px"],
-    },
+        size: ["14px", "16px", "19px", "24px"]
+    }
 };
 
 /*
@@ -97,19 +97,22 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             boxShadow: "1px 1px 10px rgba(0,0,0,0.16)",
             backgroundColor: palette.colors.background,
             "@media (max-width: 440px)": {
-                width: "95vw",
-            },
+                width: "95vw"
+            }
         },
 
         row: {
             margin: "0 auto",
             width: "76%",
             paddingTop: "30px",
-            paddingBottom: "10px",
+            paddingBottom: "10px"
         },
 
         generalError: {
-            backgroundColor: chroma(palette.colors.error).brighten(2).luminance(0.9).hex(),
+            backgroundColor: chroma(palette.colors.error)
+                .brighten(2)
+                .luminance(0.9)
+                .hex(),
             paddingTop: "10px",
             paddingBottom: "10px",
             marginBottom: "15px",
@@ -119,7 +122,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             fontSize: palette.fonts.size[0],
             borderRadius: "8px",
             color: palette.colors.error,
-            animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`,
+            animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`
         },
 
         headerTitle: {
@@ -128,19 +131,19 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             letterSpacing: "0.58px",
             fontWeight: 800,
             marginBottom: "2px",
-            color: palette.colors.textTitle,
+            color: palette.colors.textTitle
         },
 
         headerSubtitle: {
-            marginBottom: "21px",
+            marginBottom: "21px"
         },
 
         privacyPolicyAndTermsAndConditions: {
             a: {
-                lineHeight: "21px",
+                lineHeight: "21px"
             },
             maxWidth: "300px",
-            marginTop: "10px",
+            marginTop: "10px"
         },
 
         primaryText: {
@@ -148,14 +151,14 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             fontWeight: 500,
             letterSpacing: "0.4px",
             lineHeight: "21px",
-            color: palette.colors.textLabel,
+            color: palette.colors.textLabel
         },
 
         secondaryText: {
             fontSize: palette.fonts.size[0],
             fontWeight: 300,
             letterSpacing: "0.4px",
-            color: palette.colors.textPrimary,
+            color: palette.colors.textPrimary
         },
 
         link: {
@@ -165,7 +168,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             fontSize: palette.fonts.size[0],
             cursor: "pointer",
             letterSpacing: "0.16px",
-            lineHeight: "26px",
+            lineHeight: "26px"
         },
 
         divider: {
@@ -173,7 +176,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             marginBottom: "1em",
             borderBottom: "0.3px solid #dddddd",
             alignItems: "center",
-            paddingBottom: "5px",
+            paddingBottom: "5px"
         },
 
         headerTinyTitle: {
@@ -181,7 +184,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             fontSize: palette.fonts.size[2],
             letterSpacing: "1.1px",
             fontWeight: 500,
-            lineHeight: "28px",
+            lineHeight: "28px"
         },
 
         secondaryLinkWithArrow: {
@@ -191,18 +194,21 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             "&:hover": {
                 position: "relative",
                 left: "2px",
-                wordSpacing: "4px",
-            },
+                wordSpacing: "4px"
+            }
         },
 
         generalSuccess: {
             color: palette.colors.success,
             fontSize: palette.fonts.size[0],
-            backgroundColor: chroma(palette.colors.success).brighten(2).luminance(0.9).hex(),
+            backgroundColor: chroma(palette.colors.success)
+                .brighten(2)
+                .luminance(0.9)
+                .hex(),
             animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`,
             padding: "9px 15px 9px 15px",
             borderRadius: "6px",
-            display: "inline-block",
+            display: "inline-block"
         },
 
         spinner: {
@@ -210,19 +216,26 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             height: "auto",
             paddingTop: "20px",
             paddingBottom: "40px",
-            margin: "0 auto",
+            margin: "0 auto"
         },
 
         error: {
-            color: palette.colors.error,
+            color: palette.colors.error
         },
 
-        button: getButtonStyle(palette.colors.primary),
+        button: getButtonStyle(palette.colors.primary)
     };
 }
 
 export function getButtonStyle(color: string, brighten?: boolean): CSSObject {
-    const backgroundColor = brighten === true ? chroma(color).brighten(0.6).hex() : chroma(color).darken(0.2).hex();
+    const backgroundColor =
+        brighten === true
+            ? chroma(color)
+                  .brighten(0.6)
+                  .hex()
+            : chroma(color)
+                  .darken(0.2)
+                  .hex();
 
     return {
         width: "100%",
@@ -230,7 +243,9 @@ export function getButtonStyle(color: string, brighten?: boolean): CSSObject {
         backgroundColor: color,
         color: "white",
         fontWeight: 700,
-        border: `1px solid ${chroma(color).darken(0.3).hex()}`,
+        border: `1px solid ${chroma(color)
+            .darken(0.3)
+            .hex()}`,
         borderRadius: "6px",
         backgroundPosition: "center",
         backgroundImage: `radial-gradient(circle, transparent 1%, ${color} 1%)`,
@@ -238,21 +253,21 @@ export function getButtonStyle(color: string, brighten?: boolean): CSSObject {
         backgroundSize: "12000%",
         "&:disabled": {
             border: "none",
-            cursor: "no-drop",
+            cursor: "no-drop"
         },
         "&:active": {
             outline: "none",
             backgroundColor,
             transition: "background 0s",
-            backgroundSize: "100%",
+            backgroundSize: "100%"
         },
         "&:hover": {
-            backgroundColor,
+            backgroundColor
         },
         "&:focus": {
-            outline: "none",
+            outline: "none"
         },
-        cursor: "pointer",
+        cursor: "pointer"
     };
 }
 
@@ -264,7 +279,7 @@ export function getMergedStyles(
     for (const key in themeStyles) {
         styles[key] = {
             ...styles[key],
-            ...themeStyles[key],
+            ...themeStyles[key]
         };
     }
 

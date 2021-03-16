@@ -17,7 +17,7 @@ import {
     DEFAULT_API_BASE_PATH,
     DEFAULT_WEBSITE_BASE_PATH,
     RECIPE_ID_QUERY_PARAM,
-    WINDOW_UNDEFINED_ERROR,
+    WINDOW_UNDEFINED_ERROR
 } from "./constants";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
@@ -39,18 +39,18 @@ export function normalisedRecipeModuleHooks(
 
     if (onHandleEvent === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-        onHandleEvent = (context: unknown): void => {};
+        onHandleEvent = (_: unknown): void => {};
     }
 
     if (getRedirectionURL === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        getRedirectionURL = async (context: unknown): Promise<string | undefined> => undefined;
+        getRedirectionURL = async (_: unknown): Promise<string | undefined> => undefined;
     }
 
     return {
         preAPIHook,
         getRedirectionURL,
-        onHandleEvent,
+        onHandleEvent
     };
 }
 
@@ -110,7 +110,7 @@ export function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): No
         apiDomain: new NormalisedURLDomain(appInfo.apiDomain),
         websiteDomain: new NormalisedURLDomain(appInfo.websiteDomain),
         apiBasePath: getNormalisedURLPathOrDefault(DEFAULT_API_BASE_PATH, appInfo.apiBasePath),
-        websiteBasePath: getNormalisedURLPathOrDefault(DEFAULT_WEBSITE_BASE_PATH, appInfo.websiteBasePath),
+        websiteBasePath: getNormalisedURLPathOrDefault(DEFAULT_WEBSITE_BASE_PATH, appInfo.websiteBasePath)
     };
 }
 
@@ -143,7 +143,7 @@ export async function validateForm(
         const field = configFormFields[i];
 
         // Find corresponding input value.
-        const input = <APIFormField>inputs.find((i) => i.id === field.id);
+        const input = <APIFormField>inputs.find(i => i.id === field.id);
 
         // Otherwise, use validate function.
 
@@ -158,7 +158,7 @@ export async function validateForm(
         if (error !== undefined) {
             validationErrors.push({
                 error,
-                id: field.id,
+                id: field.id
             });
         }
     }

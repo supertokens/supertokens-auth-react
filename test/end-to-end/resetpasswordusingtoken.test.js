@@ -22,33 +22,33 @@ import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
 import {
-  EMAIL_EXISTS_API,
-  RESET_PASSWORD_API,
-  RESET_PASSWORD_TOKEN_API,
-  TEST_CLIENT_BASE_URL,
-  TEST_SERVER_BASE_URL,
+    EMAIL_EXISTS_API,
+    RESET_PASSWORD_API,
+    RESET_PASSWORD_TOKEN_API,
+    TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL
 } from "../constants";
 import { RESET_PASSWORD_INVALID_TOKEN_ERROR } from "../../lib/build/constants";
 import {
-  clearBrowserCookies,
-  getInputAdornmentsError,
-  getFieldErrors,
-  getGeneralError,
-  getInputNames,
-  getLabelsText,
-  getLatestURLWithToken,
-  getPlaceholders,
-  getInputAdornmentsSuccess,
-  getSubmitFormButtonLabel,
-  getTextByDataSupertokens,
-  getResendResetPasswordEmailLink,
-  hasMethodBeenCalled,
-  sendEmailResetPasswordSuccessMessage,
-  setInputValues,
-  submitForm,
-  submitFormReturnRequestAndResponse,
-  toggleSignInSignUp,
-  defaultSignUp,
+    clearBrowserCookies,
+    getInputAdornmentsError,
+    getFieldErrors,
+    getGeneralError,
+    getInputNames,
+    getLabelsText,
+    getLatestURLWithToken,
+    getPlaceholders,
+    getInputAdornmentsSuccess,
+    getSubmitFormButtonLabel,
+    getTextByDataSupertokens,
+    getResendResetPasswordEmailLink,
+    hasMethodBeenCalled,
+    sendEmailResetPasswordSuccessMessage,
+    setInputValues,
+    submitForm,
+    submitFormReturnRequestAndResponse,
+    toggleSignInSignUp,
+    defaultSignUp
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -57,268 +57,235 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe("SuperTokens Reset password", function () {
-  let browser;
-  let page;
-  let consoleLogs;
+describe("SuperTokens Reset password", function() {
+    let browser;
+    let page;
+    let consoleLogs;
 
-  before(async function () {
-    await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-      method: "POST",
-    }).catch(console.error);
+    before(async function() {
+        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+            method: "POST"
+        }).catch(console.error);
 
-    await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-      method: "POST",
-    }).catch(console.error);
+        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+            method: "POST"
+        }).catch(console.error);
 
-    browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      headless: true,
+        browser = await puppeteer.launch({
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            headless: true
+        });
+
+        page = await browser.newPage();
+
+        // Sign Up first.
+        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+        await toggleSignInSignUp(page);
+        await defaultSignUp(page);
     });
 
-    page = await browser.newPage();
+    after(async function() {
+        await browser.close();
 
-    // Sign Up first.
-    await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-    await toggleSignInSignUp(page);
-    await defaultSignUp(page);
-  });
+        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+            method: "POST"
+        }).catch(console.error);
 
-  after(async function () {
-    await browser.close();
-
-    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-      method: "POST",
-    }).catch(console.error);
-
-    await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
-      method: "POST",
-    }).catch(console.error);
-  });
-
-  describe("Reset password enter email form test", function () {
-    beforeEach(async function () {
-      page = await browser.newPage();
-      clearBrowserCookies(page);
-      // Catch console.log sent from PRE API HOOKS.
-      consoleLogs = [];
-      page.on("console", (consoleObj) => {
-        const log = consoleObj.text();
-        if (log.startsWith("ST_LOGS")) {
-          consoleLogs.push(log);
-        }
-      });
-      await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
+        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+            method: "POST"
+        }).catch(console.error);
     });
 
-    it("Should send reset password for valid email", async function () {
-      const inputNames = await getInputNames(page);
-      assert.deepStrictEqual(inputNames, ["email"]);
+    describe("Reset password enter email form test", function() {
+        beforeEach(async function() {
+            page = await browser.newPage();
+            clearBrowserCookies(page);
+            // Catch console.log sent from PRE API HOOKS.
+            consoleLogs = [];
+            page.on("console", consoleObj => {
+                const log = consoleObj.text();
+                if (log.startsWith("ST_LOGS")) {
+                    consoleLogs.push(log);
+                }
+            });
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
+        });
 
-      const labelNames = await getLabelsText(page);
-      assert.deepStrictEqual(labelNames, []); // No labels.
+        it("Should send reset password for valid email", async function() {
+            const inputNames = await getInputNames(page);
+            assert.deepStrictEqual(inputNames, ["email"]);
 
-      const placeholders = await getPlaceholders(page);
-      assert.deepStrictEqual(placeholders, ["Your work email"]); // Email placeholder as defined in signUpForm.formFields.
+            const labelNames = await getLabelsText(page);
+            assert.deepStrictEqual(labelNames, []); // No labels.
 
-      // Set incorrect email.
-      await setInputValues(page, [{ name: "email", value: "john.doe.io" }]);
+            const placeholders = await getPlaceholders(page);
+            assert.deepStrictEqual(placeholders, ["Your work email"]); // Email placeholder as defined in signUpForm.formFields.
 
-      const formFieldsErrors = await getFieldErrors(page);
-      assert.deepStrictEqual(formFieldsErrors, ["Email is invalid"]);
+            // Set incorrect email.
+            await setInputValues(page, [{ name: "email", value: "john.doe.io" }]);
 
-      let successAdornments = await getInputAdornmentsSuccess(page);
-      assert.strictEqual(successAdornments.length, 0);
+            const formFieldsErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldsErrors, ["Email is invalid"]);
 
-      let errorAdornments = await getInputAdornmentsError(page);
-      assert.strictEqual(errorAdornments.length, 1);
+            let successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 0);
 
-      // Set values.
-      await setInputValues(page, [
-        { name: "email", value: "john.doe@supertokens.io" },
-      ]);
+            let errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 1);
 
-      successAdornments = await getInputAdornmentsSuccess(page);
-      assert.strictEqual(successAdornments.length, 1);
+            // Set values.
+            await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
 
-      errorAdornments = await getInputAdornmentsError(page);
-      assert.strictEqual(errorAdornments.length, 0);
+            successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 1);
 
-      // Submit.
-      const [
-        { request, response },
-        hasEmailExistMethodBeenCalled,
-      ] = await Promise.all([
-        submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API),
-        hasMethodBeenCalled(page, EMAIL_EXISTS_API),
-      ]);
+            errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 0);
 
-      // Assert Request.
-      assert.strictEqual(hasEmailExistMethodBeenCalled, false);
-      assert.strictEqual(request.headers().rid, "emailpassword");
-      assert.strictEqual(
-        request.postData(),
-        '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"}]}'
-      );
+            // Submit.
+            const [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
+                submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API),
+                hasMethodBeenCalled(page, EMAIL_EXISTS_API)
+            ]);
 
-      // Assert Response.
-      assert.strictEqual(response.status, "OK");
+            // Assert Request.
+            assert.strictEqual(hasEmailExistMethodBeenCalled, false);
+            assert.strictEqual(request.headers().rid, "emailpassword");
+            assert.strictEqual(request.postData(), '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"}]}');
 
-      // Assert success page.
-      const successMessage = await sendEmailResetPasswordSuccessMessage(page);
+            // Assert Response.
+            assert.strictEqual(response.status, "OK");
 
-      assert.deepStrictEqual(
-        successMessage,
-        "Please check your email for the password recovery link. Resend"
-      );
+            // Assert success page.
+            const successMessage = await sendEmailResetPasswordSuccessMessage(page);
 
-      // Click on "resend => go back to form.
-      const resendResetPasswordEmailLink = await getResendResetPasswordEmailLink(
-        page
-      );
-      await resendResetPasswordEmailLink.click();
-      const buttonLabel = await getSubmitFormButtonLabel(page);
-      assert.deepStrictEqual(buttonLabel, "Email me");
-      assert.deepStrictEqual(consoleLogs, [
-        "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL",
-        "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT RESET_PASSWORD_EMAIL_SENT",
-      ]);
-    });
-  });
+            assert.deepStrictEqual(successMessage, "Please check your email for the password recovery link. Resend");
 
-  describe("Reset password new password form test", function () {
-    beforeEach(async function () {
-      page = await browser.newPage();
-      // Catch console.log sent from PRE API HOOKS.
-      consoleLogs = [];
-      page.on("console", (consoleObj) => {
-        const log = consoleObj.text();
-        if (log.startsWith("ST_LOGS")) {
-          consoleLogs.push(log);
-        }
-      });
-      clearBrowserCookies(page);
-      await page.goto(
-        `${TEST_CLIENT_BASE_URL}/auth/reset-password?token=TOKEN`
-      );
+            // Click on "resend => go back to form.
+            const resendResetPasswordEmailLink = await getResendResetPasswordEmailLink(page);
+            await resendResetPasswordEmailLink.click();
+            const buttonLabel = await getSubmitFormButtonLabel(page);
+            assert.deepStrictEqual(buttonLabel, "Email me");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT RESET_PASSWORD_EMAIL_SENT"
+            ]);
+        });
     });
 
-    it("Should return error form fields if password is in incorrect format", async function () {
-      const inputNames = await getInputNames(page);
-      assert.deepStrictEqual(inputNames, ["password", "confirm-password"]);
+    describe("Reset password new password form test", function() {
+        beforeEach(async function() {
+            page = await browser.newPage();
+            // Catch console.log sent from PRE API HOOKS.
+            consoleLogs = [];
+            page.on("console", consoleObj => {
+                const log = consoleObj.text();
+                if (log.startsWith("ST_LOGS")) {
+                    consoleLogs.push(log);
+                }
+            });
+            clearBrowserCookies(page);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?token=TOKEN`);
+        });
 
-      const labelNames = await getLabelsText(page);
-      assert.deepStrictEqual(labelNames, [
-        "New password:",
-        "Confirm password:",
-      ]);
+        it("Should return error form fields if password is in incorrect format", async function() {
+            const inputNames = await getInputNames(page);
+            assert.deepStrictEqual(inputNames, ["password", "confirm-password"]);
 
-      const placeholders = await getPlaceholders(page);
-      assert.deepStrictEqual(placeholders, [
-        "New password",
-        "Confirm your password",
-      ]); // Email placeholder as defined in signUpForm.formFields.
+            const labelNames = await getLabelsText(page);
+            assert.deepStrictEqual(labelNames, ["New password:", "Confirm password:"]);
 
-      let successAdornments = await getInputAdornmentsSuccess(page);
-      assert.strictEqual(successAdornments.length, 0);
+            const placeholders = await getPlaceholders(page);
+            assert.deepStrictEqual(placeholders, ["New password", "Confirm your password"]); // Email placeholder as defined in signUpForm.formFields.
 
-      let errorAdornments = await getInputAdornmentsError(page);
-      assert.strictEqual(errorAdornments.length, 0);
+            let successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 0);
 
-      // Set incorrect values.
-      await setInputValues(page, [
-        { name: "password", value: "password" },
-        { name: "confirm-password", value: "password" },
-      ]);
+            let errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 0);
 
-      successAdornments = await getInputAdornmentsSuccess(page);
-      assert.strictEqual(successAdornments.length, 0);
+            // Set incorrect values.
+            await setInputValues(page, [
+                { name: "password", value: "password" },
+                { name: "confirm-password", value: "password" }
+            ]);
 
-      // Front end validation
-      let formFieldsErrors = await getFieldErrors(page);
-      assert.deepStrictEqual(formFieldsErrors, [
-        "Password must contain at least one number",
-        "Password must contain at least one number",
-      ]);
+            successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 0);
 
-      errorAdornments = await getInputAdornmentsError(page);
-      assert.strictEqual(errorAdornments.length, 2);
+            // Front end validation
+            let formFieldsErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldsErrors, [
+                "Password must contain at least one number",
+                "Password must contain at least one number"
+            ]);
 
-      // Set password mismatch
-      await setInputValues(page, [
-        { name: "password", value: "Str0ngP@ssw0rd" },
-        { name: "confirm-password", value: "Str0ngP@ssw0rdButMismatch" },
-      ]);
+            errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 2);
 
-      successAdornments = await getInputAdornmentsSuccess(page);
-      assert.strictEqual(successAdornments.length, 2);
+            // Set password mismatch
+            await setInputValues(page, [
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "confirm-password", value: "Str0ngP@ssw0rdButMismatch" }
+            ]);
 
-      // Submit.
-      await submitForm(page);
+            successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 2);
 
-      formFieldsErrors = await getFieldErrors(page);
-      assert.deepStrictEqual(formFieldsErrors, [
-        "Confirmation password doesn't match",
-      ]);
-      errorAdornments = await getInputAdornmentsError(page);
-      assert.strictEqual(errorAdornments.length, 1);
-      // Set correct values.
-      await setInputValues(page, [
-        { name: "password", value: "Str0ngP@ssw0rd" },
-        { name: "confirm-password", value: "Str0ngP@ssw0rd" },
-      ]);
+            // Submit.
+            await submitForm(page);
 
-      successAdornments = await getInputAdornmentsSuccess(page);
-      assert.strictEqual(successAdornments.length, 2);
+            formFieldsErrors = await getFieldErrors(page);
+            assert.deepStrictEqual(formFieldsErrors, ["Confirmation password doesn't match"]);
+            errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 1);
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "confirm-password", value: "Str0ngP@ssw0rd" }
+            ]);
 
-      // Submit.
-      const { request, response } = await submitFormReturnRequestAndResponse(
-        page,
-        RESET_PASSWORD_API
-      );
+            successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 2);
 
-      // Assert Request.
-      assert.strictEqual(request.headers().rid, "emailpassword");
-      assert.deepStrictEqual(
-        request.postData(),
-        '{"formFields":[{"id":"password","value":"Str0ngP@ssw0rd"}],"token":"TOKEN"}'
-      );
+            // Submit.
+            const { request, response } = await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
 
-      // Assert Invalid token response.
-      assert.strictEqual(response.status, "RESET_PASSWORD_INVALID_TOKEN_ERROR");
-      const generalError = await getGeneralError(page);
-      assert.deepStrictEqual(generalError, RESET_PASSWORD_INVALID_TOKEN_ERROR);
-      assert.deepStrictEqual(consoleLogs, [
-        "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SUBMIT_NEW_PASSWORD",
-      ]);
+            // Assert Request.
+            assert.strictEqual(request.headers().rid, "emailpassword");
+            assert.deepStrictEqual(
+                request.postData(),
+                '{"formFields":[{"id":"password","value":"Str0ngP@ssw0rd"}],"token":"TOKEN"}'
+            );
+
+            // Assert Invalid token response.
+            assert.strictEqual(response.status, "RESET_PASSWORD_INVALID_TOKEN_ERROR");
+            const generalError = await getGeneralError(page);
+            assert.deepStrictEqual(generalError, RESET_PASSWORD_INVALID_TOKEN_ERROR);
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SUBMIT_NEW_PASSWORD"]);
+        });
+
+        it("Should reset password successfully and redirect to success URL if token is defined", async function() {
+            // Send reset password email.
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
+            await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
+            await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API);
+            // Get valid token.
+            const latestURLWithToken = await getLatestURLWithToken();
+            await page.goto(latestURLWithToken),
+                // Submit new password
+                await setInputValues(page, [
+                    { name: "password", value: "NEW_Str0ngP@ssw0rd" },
+                    { name: "confirm-password", value: "NEW_Str0ngP@ssw0rd" }
+                ]);
+            await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
+
+            const title = await getTextByDataSupertokens(page, "headerTitle");
+            assert.deepStrictEqual(title, "Success!");
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth");
+        });
     });
-
-    it("Should reset password successfully and redirect to success URL if token is defined", async function () {
-      // Send reset password email.
-      await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
-      await setInputValues(page, [
-        { name: "email", value: "john.doe@supertokens.io" },
-      ]);
-      await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API);
-      // Get valid token.
-      const latestURLWithToken = await getLatestURLWithToken();
-      await page.goto(latestURLWithToken),
-        // Submit new password
-        await setInputValues(page, [
-          { name: "password", value: "NEW_Str0ngP@ssw0rd" },
-          { name: "confirm-password", value: "NEW_Str0ngP@ssw0rd" },
-        ]);
-      await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
-
-      const title = await getTextByDataSupertokens(page, "headerTitle");
-      assert.deepStrictEqual(title, "Success!");
-      await Promise.all([
-        submitForm(page),
-        page.waitForNavigation({ waitUntil: "networkidle0" }),
-      ]);
-
-      const pathname = await page.evaluate(() => window.location.pathname);
-      assert.deepStrictEqual(pathname, "/auth");
-    });
-  });
 });

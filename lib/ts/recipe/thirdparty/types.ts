@@ -20,7 +20,7 @@ import {
     AuthRecipeModulePreAPIHookContext,
     AuthRecipeModuleUserInput,
     SignInAndUpState,
-    User,
+    User
 } from "../authRecipeModule/types";
 import { RecipeModuleConfig } from "../recipeModule/types";
 import Provider from "./providers";

@@ -26,7 +26,7 @@ import {
     EmailPasswordPreAPIHookContext,
     FormBaseAPIResponse,
     NormalisedEmailPasswordConfig,
-    SubmitNewPasswordThemeProps,
+    SubmitNewPasswordThemeProps
 } from "../../../types";
 import { ResetPasswordUsingTokenTheme } from "../../..";
 import { APIFormField, FeatureBaseProps } from "../../../../../types";
@@ -37,6 +37,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 import SuperTokens from "../../../../../superTokens";
+import RecipeModule from "../../../../recipeModule";
 
 /*
  * Component.
@@ -56,7 +57,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         }
 
         this.state = {
-            token,
+            token
         };
     }
 
@@ -107,7 +108,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         if (validationErrors.length > 0) {
             return {
                 status: "FIELD_ERROR",
-                formFields: validationErrors,
+                formFields: validationErrors
             };
         }
 
@@ -118,14 +119,18 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
                 formFields: [
                     {
                         id: "confirm-password",
-                        error: "Confirmation password doesn't match",
-                    },
-                ],
+                        error: "Confirmation password doesn't match"
+                    }
+                ]
             };
         }
 
         // Call API, only send first password.
-        return await handleSubmitNewPasswordAPI([formFields[0]], this.getRecipeInstanceOrThrow(), this.state.token);
+        return await handleSubmitNewPasswordAPI(
+            [formFields[0]],
+            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>,
+            this.state.token
+        );
     };
 
     enterEmail = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
@@ -139,11 +144,15 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         if (validationErrors.length > 0) {
             return {
                 status: "FIELD_ERROR",
-                formFields: validationErrors,
+                formFields: validationErrors
             };
         }
 
-        return await enterEmailAPI(formFields, this.getRecipeInstanceOrThrow());
+        return await enterEmailAPI(formFields, this.getRecipeInstanceOrThrow() as RecipeModule<
+            unknown,
+            unknown,
+            unknown
+        >);
     };
 
     render = (): JSX.Element => {
@@ -158,12 +167,12 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             submitNewPasswordAPI: this.submitNewPassword,
             onSuccess: () => {
                 this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-                    action: "PASSWORD_RESET_SUCCESSFUL",
+                    action: "PASSWORD_RESET_SUCCESSFUL"
                 });
             },
             onSignInClicked: () => {
                 this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
-            },
+            }
         };
 
         const enterEmailForm = {
@@ -171,10 +180,10 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             formFields: enterEmailFormFeature.formFields,
             onSuccess: () => {
                 this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-                    action: "RESET_PASSWORD_EMAIL_SENT",
+                    action: "RESET_PASSWORD_EMAIL_SENT"
                 });
             },
-            enterEmailAPI: this.enterEmail,
+            enterEmailAPI: this.enterEmail
         };
 
         const hasToken = this.state.token.length !== 0;
@@ -200,7 +209,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
                             rawPalette: this.getRecipeConfigOrThrow().palette,
                             submitNewPasswordForm,
                             enterEmailForm,
-                            hasToken,
+                            hasToken
                         })}
                 </Fragment>
             </FeatureWrapper>

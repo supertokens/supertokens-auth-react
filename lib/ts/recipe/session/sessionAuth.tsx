@@ -16,7 +16,6 @@
 /*
  * Imports.
  */
-import * as React from "react";
 import { PureComponent, ReactElement } from "react";
 
 import { getWindowOrThrow } from "supertokens-website/lib/build/utils";
@@ -37,7 +36,7 @@ export default class SessionAuth extends PureComponent<FeatureBaseProps, Session
     constructor(props: FeatureBaseProps) {
         super(props);
         this.state = {
-            status: "LOADING",
+            status: "LOADING"
         };
     }
 
@@ -62,13 +61,13 @@ export default class SessionAuth extends PureComponent<FeatureBaseProps, Session
         if (sessionExists === false) {
             const redirectToPath = getWindowOrThrow().location.pathname;
             return await this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
-                redirectToPath,
+                redirectToPath
             });
         }
 
         // Update status to ready.
         this.setState({
-            status: "READY",
+            status: "READY"
         });
     }
 

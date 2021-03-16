@@ -16,7 +16,6 @@
 /*
  * Imports.
  */
-import * as React from "react";
 import { PureComponent, ReactElement } from "react";
 
 import { FeatureBaseProps } from "../../types";

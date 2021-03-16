@@ -25,7 +25,7 @@ import {
     NormalisedThirdPartyConfig,
     SignInAndUpFeatureUserInput,
     StateObject,
-    ThirdPartyConfig,
+    ThirdPartyConfig
 } from "./types";
 
 /*
@@ -40,7 +40,7 @@ export function normaliseThirdPartyConfig(
         allowEmptyProviders
     );
     return {
-        signInAndUpFeature,
+        signInAndUpFeature
     };
 }
 
@@ -68,7 +68,7 @@ export function normaliseSignInAndUpFeature(
     /*
      * Convert custom configs to custom providers.
      */
-    const providersWithCustom = config.providers.map((provider) => {
+    const providersWithCustom = config.providers.map(provider => {
         if (provider instanceof Provider) {
             return provider;
         }
@@ -80,8 +80,8 @@ export function normaliseSignInAndUpFeature(
      * First, create a new set with unique ids from the configs.
      * Then map over those ids to find the first provider that matches from the configs.
      */
-    const providers = Array.from(new Set(providersWithCustom.map((provider) => provider.id))).map(
-        (id) => providersWithCustom.find((provider) => provider.id === id) as Provider
+    const providers = Array.from(new Set(providersWithCustom.map(provider => provider.id))).map(
+        id => providersWithCustom.find(provider => provider.id === id) as Provider
     );
 
     return {
@@ -89,7 +89,7 @@ export function normaliseSignInAndUpFeature(
         privacyPolicyLink,
         termsOfServiceLink,
         style,
-        providers,
+        providers
     };
 }
 

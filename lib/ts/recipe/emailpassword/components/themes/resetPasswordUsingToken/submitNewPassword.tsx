@@ -18,7 +18,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { PureComponent, Fragment } from "react";
+import { PureComponent, Fragment } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
 import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../types";
@@ -41,13 +41,13 @@ export default class SubmitNewPasswordTheme extends PureComponent<
     constructor(props: SubmitNewPasswordThemeProps) {
         super(props);
         this.state = {
-            status: "READY",
+            status: "READY"
         };
     }
 
     onSuccess = (): void => {
         this.setState(() => ({
-            status: "SUCCESS",
+            status: "SUCCESS"
         }));
         this.props.onSuccess();
     };
