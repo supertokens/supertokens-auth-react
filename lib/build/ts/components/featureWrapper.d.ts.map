@@ -1,1 +1,0 @@
-{"version":3,"file":"featureWrapper.d.ts","sourceRoot":"","sources":["../../../ts/components/featureWrapper.tsx"],"names":[],"mappings":";AAkCA,aAAK,mBAAmB,GAAG;IACvB,QAAQ,EAAE,GAAG,CAAC,OAAO,CAAC;IACtB,YAAY,CAAC,EAAE,OAAO,CAAC;IACvB,UAAU,CAAC,EAAE,OAAO,CAAC;CACxB,CAAC;AAMF,MAAM,CAAC,OAAO,UAAU,cAAc,CAAC,EAAE,UAAU,EAAE,QAAQ,EAAE,YAAY,EAAE,EAAE,mBAAmB,GAAG,GAAG,CAAC,OAAO,CAgB/G"}

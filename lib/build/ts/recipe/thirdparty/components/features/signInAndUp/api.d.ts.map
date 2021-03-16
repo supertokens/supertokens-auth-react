@@ -1,1 +1,0 @@
-{"version":3,"file":"api.d.ts","sourceRoot":"","sources":["../../../../../../../ts/recipe/thirdparty/components/features/signInAndUp/api.ts"],"names":[],"mappings":"AAoBA,OAAO,YAAY,MAAM,0BAA0B,CAAC;AACpD,OAAO,EAAE,2BAA2B,EAAE,MAAM,gBAAgB,CAAC;AAM7D,wBAAsB,2BAA2B,CAC7C,YAAY,EAAE,MAAM,EACpB,MAAM,EAAE,YAAY,CAAC,OAAO,EAAE,OAAO,EAAE,OAAO,CAAC,GAChD,OAAO,CAAC,2BAA2B,CAAC,CAiBtC"}

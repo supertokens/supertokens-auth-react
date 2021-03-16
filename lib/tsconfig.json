@@ -11,18 +11,6 @@
         "declaration": true,
         "jsx": "react",
         "esModuleInterop": true,
-        "declarationMap": true,
-        "emitDeclarationOnly": true,
-        "sourceMap": true,
-        "composite": true,
-        "strict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
-        "plugins": [
-            { "transform": "typescript-transform-paths", "afterDeclarations": true }
-        ],
         "types": ["node", "react", "@emotion/react/types/css-prop"]
     },
     "compileOnSave": true
