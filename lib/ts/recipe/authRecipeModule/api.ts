@@ -31,8 +31,7 @@ export async function signOut(recipe: AuthRecipeModule<unknown, unknown, unknown
     const result = await recipe.httpRequest.fetch(
         recipe.httpRequest.getFullUrl("/signout"),
         {
-            method: "POST",
-            body: JSON.stringify({})
+            method: "POST"
         },
         "SIGN_OUT"
     );
