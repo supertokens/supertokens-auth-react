@@ -31,14 +31,15 @@ export async function signOut(recipe: AuthRecipeModule<unknown, unknown, unknown
     const result = await recipe.httpRequest.fetch(
         recipe.httpRequest.getFullUrl("/signout"),
         {
-            method: "POST"
+            method: "POST",
+            body: JSON.stringify({}),
         },
         "SIGN_OUT"
     );
 
     if (result.status === sessionExpiredStatusCode) {
         return {
-            status: "OK"
+            status: "OK",
         };
     }
     if (result.status >= 300) {
