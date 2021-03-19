@@ -32,14 +32,14 @@ export async function signOut(recipe: AuthRecipeModule<unknown, unknown, unknown
         recipe.httpRequest.getFullUrl("/signout"),
         {
             method: "POST",
-            body: JSON.stringify({}),
+            body: JSON.stringify({})
         },
         "SIGN_OUT"
     );
 
     if (result.status === sessionExpiredStatusCode) {
         return {
-            status: "OK",
+            status: "OK"
         };
     }
     if (result.status >= 300) {
