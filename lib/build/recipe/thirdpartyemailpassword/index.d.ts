@@ -27,4 +27,4 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
 declare const init: typeof ThirdPartyEmailPasswordAPIWrapper.init;
 declare const signOut: typeof ThirdPartyEmailPasswordAPIWrapper.signOut;
 declare const isEmailVerified: typeof ThirdPartyEmailPasswordAPIWrapper.isEmailVerified;
-export { ThirdPartyEmailPasswordAuth, ThirdPartyEmailPasswordAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, EmailVerification, EmailVerificationTheme, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext, };
+export { ThirdPartyEmailPasswordAuth, ThirdPartyEmailPasswordAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, EmailVerification, EmailVerificationTheme, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext };
