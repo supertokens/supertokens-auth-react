@@ -31,15 +31,15 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
-            color: palette.colors.textPrimary,
+            color: palette.colors.textPrimary
         },
         thirdPartyEmailPasswordDividerOr: {
             flex: "1 1",
-            marginTop: "0.75em",
+            marginTop: "0.75em"
         },
         divider: {
-            flex: "3 3",
-        },
+            flex: "3 3"
+        }
     };
     const recipeStyles = getMergedStyles(baseRecipeStyles, thirdPartyEmailPasswordStyle);
     return getMergedStyles(baseStyles, recipeStyles);

@@ -42,10 +42,10 @@ export function normaliseThirdPartyEmailPasswordConfig(
     return {
         signInAndUpFeature: {
             ...thirdPartyConfig.signInAndUpFeature,
-            ...emailPasswordConfig.signInAndUpFeature,
+            ...emailPasswordConfig.signInAndUpFeature
         },
         resetPasswordUsingTokenFeature: emailPasswordConfig.resetPasswordUsingTokenFeature,
-        disableEmailPassword,
+        disableEmailPassword
     };
 }
 
@@ -56,7 +56,7 @@ export function isEmailPasswordConfig(config: ThirdPartyEmailPasswordConfig): Em
 export function isThirdPartyConfig(config: ThirdPartyEmailPasswordConfig): ThirdPartyConfig {
     if (config.signInAndUpFeature === undefined) {
         config.signInAndUpFeature = {
-            providers: [],
+            providers: []
         };
     }
     if (config.signInAndUpFeature.providers === undefined) {

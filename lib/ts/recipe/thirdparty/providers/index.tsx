@@ -73,7 +73,7 @@ export default abstract class Provider {
 
     generateState = (): string => {
         // Generate state using algorithm described in https://github.com/supertokens/supertokens-auth-react/issues/154#issue-796867579
-        return `${1e20}`.replace(/[018]/g, (c) =>
+        return `${1e20}`.replace(/[018]/g, c =>
             (parseInt(c) ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (parseInt(c) / 4)))).toString(16)
         );
     };

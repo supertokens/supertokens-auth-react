@@ -26,7 +26,7 @@ import SignUpHeader from "../../../../emailpassword/components/themes/signInAndU
  */
 export default function Header({
     isSignUp,
-    setIsSignUp,
+    setIsSignUp
 }: {
     isSignUp: boolean;
     setIsSignUp: (isSignUp: boolean) => void;

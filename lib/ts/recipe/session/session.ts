@@ -45,12 +45,12 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
             sessionScope: config.sessionScope,
             refreshAPICustomHeaders: {
                 rid: this.recipeId,
-                ...usersHeaders,
+                ...usersHeaders
             },
             autoAddCredentials: config.autoAddCredentials,
             sessionExpiredStatusCode: config.sessionExpiredStatusCode,
             apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),
-            apiBasePath: config.appInfo.apiBasePath.getAsStringDangerous(),
+            apiBasePath: config.appInfo.apiBasePath.getAsStringDangerous()
         });
     }
 
@@ -99,7 +99,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
             Session.instance = new Session({
                 ...config,
                 appInfo,
-                recipeId: Session.RECIPE_ID,
+                recipeId: Session.RECIPE_ID
             });
             return Session.instance;
         };

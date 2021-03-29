@@ -74,7 +74,7 @@ function Input(
         if (onInputFocus !== undefined) {
             onInputFocus({
                 id: ref.current.name,
-                value: ref.current.value,
+                value: ref.current.value
             });
         }
     }
@@ -87,7 +87,7 @@ function Input(
         ref.current.isFocused = false;
         onInputBlur({
             id: ref.current.name,
-            value: ref.current.value,
+            value: ref.current.value
         });
     }
 

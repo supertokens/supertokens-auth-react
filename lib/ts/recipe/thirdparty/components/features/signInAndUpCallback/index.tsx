@@ -32,7 +32,7 @@ import {
     ThirdPartyGetRedirectionURLContext,
     ThirdPartyOnHandleEventContext,
     ThirdPartyPreAPIHookContext,
-    ThirdPartySignInAndUpState,
+    ThirdPartySignInAndUpState
 } from "../../../types";
 import SignInAndUpCallbackTheme from "../../themes/signInAndUpCallback";
 import { getOAuthState } from "../../../utils";
@@ -89,39 +89,39 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
         const oauthCallbackError = this.getOAuthCallbackError(providerId);
         if (oauthCallbackError !== undefined) {
             return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
-                error: oauthCallbackError,
+                error: oauthCallbackError
             });
         }
         // If no code params, redirect with error.
         const code = getQueryParams("code");
         if (code === null) {
             return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
-                error: "no_code",
+                error: "no_code"
             });
         }
 
         try {
             const provider = this.getRecipeConfigOrThrow().signInAndUpFeature.providers.find(
-                (p) => p.id === providerId
+                p => p.id === providerId
             ) as Provider;
             if (provider === undefined) {
                 throw new Error();
             }
             const redirectUrl = await this.getRecipeInstanceOrThrow().getRedirectUrl({
                 action: "GET_REDIRECT_URL",
-                provider,
+                provider
             });
             const response = await signInAndUpAPI(providerId, code, this.getRecipeInstanceOrThrow(), redirectUrl);
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
                 return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
-                    error: "no_email_present",
+                    error: "no_email_present"
                 });
             }
             if (response.status === "OK") {
                 this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: response.createdNewUser,
-                    user: response.user,
+                    user: response.user
                 });
                 return this.getRecipeInstanceOrThrow().redirect(
                     { action: "SUCCESS", isNewUser: response.createdNewUser },
@@ -130,7 +130,7 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
             }
         } catch (e) {
             return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
-                error: "signin",
+                error: "signin"
             });
         }
     };

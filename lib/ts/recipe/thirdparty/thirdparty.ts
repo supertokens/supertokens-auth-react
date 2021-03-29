@@ -25,7 +25,7 @@ import {
     ThirdPartyUserInput,
     NormalisedThirdPartyConfig,
     ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext,
+    ThirdPartyOnHandleEventContext
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { matchRecipeIdUsingState, normaliseThirdPartyConfig } from "./utils";
@@ -62,7 +62,7 @@ export default class ThirdParty extends AuthRecipeModule<
         super(config);
         this.config = {
             ...this.config,
-            ...normaliseThirdPartyConfig(config),
+            ...normaliseThirdPartyConfig(config)
         };
     }
 
@@ -77,25 +77,25 @@ export default class ThirdParty extends AuthRecipeModule<
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeId),
                 rid: this.recipeId,
-                component: SignInAndUp,
+                component: SignInAndUp
             };
         }
 
         // Add callback route for each provider.
-        this.config.signInAndUpFeature.providers.forEach((provider) => {
+        this.config.signInAndUpFeature.providers.forEach(provider => {
             const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 component: SignInAndUpCallback,
                 rid: this.recipeId,
-                matches: matchRecipeIdUsingState(this.recipeId),
+                matches: matchRecipeIdUsingState(this.recipeId)
             };
         });
 
         return {
             ...features,
-            ...this.getAuthRecipeModuleFeatures(),
+            ...this.getAuthRecipeModuleFeatures()
         };
     };
 
@@ -123,7 +123,7 @@ export default class ThirdParty extends AuthRecipeModule<
             ThirdParty.instance = new ThirdParty({
                 ...config,
                 appInfo,
-                recipeId: ThirdParty.RECIPE_ID,
+                recipeId: ThirdParty.RECIPE_ID
             });
             return ThirdParty.instance;
         };

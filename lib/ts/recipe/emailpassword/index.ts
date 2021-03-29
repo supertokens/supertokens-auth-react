@@ -30,7 +30,7 @@ import EmailVerification from "./components/features/emailVerification/wrapper";
 import {
     EmailPasswordGetRedirectionURLContext,
     EmailPasswordPreAPIHookContext,
-    EmailPasswordOnHandleEventContext,
+    EmailPasswordOnHandleEventContext
 } from "./types";
 /*
  * Class.
@@ -85,5 +85,5 @@ export {
     EmailVerificationTheme,
     EmailPasswordGetRedirectionURLContext,
     EmailPasswordPreAPIHookContext,
-    EmailPasswordOnHandleEventContext,
+    EmailPasswordOnHandleEventContext
 };

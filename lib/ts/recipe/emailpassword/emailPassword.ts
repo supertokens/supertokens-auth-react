@@ -25,7 +25,7 @@ import {
     EmailPasswordOnHandleEventContext,
     EmailPasswordPreAPIHookContext,
     EmailPasswordUserInput,
-    NormalisedEmailPasswordConfig,
+    NormalisedEmailPasswordConfig
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
@@ -63,7 +63,7 @@ export default class EmailPassword extends AuthRecipeModule<
         super(config);
         this.config = {
             ...this.config,
-            ...normaliseEmailPasswordConfig(config),
+            ...normaliseEmailPasswordConfig(config)
         };
     }
 
@@ -78,7 +78,7 @@ export default class EmailPassword extends AuthRecipeModule<
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeId),
                 rid: this.recipeId,
-                component: SignInAndUp,
+                component: SignInAndUp
             };
         }
 
@@ -89,13 +89,13 @@ export default class EmailPassword extends AuthRecipeModule<
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeId),
                 rid: this.recipeId,
-                component: ResetPasswordUsingToken,
+                component: ResetPasswordUsingToken
             };
         }
 
         return {
             ...features,
-            ...this.getAuthRecipeModuleFeatures(),
+            ...this.getAuthRecipeModuleFeatures()
         };
     };
 
@@ -125,7 +125,7 @@ export default class EmailPassword extends AuthRecipeModule<
             EmailPassword.instance = new EmailPassword({
                 ...config,
                 appInfo,
-                recipeId: EmailPassword.RECIPE_ID,
+                recipeId: EmailPassword.RECIPE_ID
             });
             return EmailPassword.instance;
         };

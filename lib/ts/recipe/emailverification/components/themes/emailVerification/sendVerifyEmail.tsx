@@ -39,7 +39,7 @@ export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeP
     constructor(props: SendVerifyEmailThemeProps) {
         super(props);
         this.state = {
-            status: "READY",
+            status: "READY"
         };
     }
 
@@ -49,7 +49,7 @@ export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeP
 
     onSuccess = (): void => {
         this.setState(() => ({
-            status: "SUCCESS",
+            status: "SUCCESS"
         }));
         this.props.onSuccess();
     };
@@ -65,13 +65,13 @@ export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeP
 
             if (response.status === "OK") {
                 this.setState({
-                    status: "SUCCESS",
+                    status: "SUCCESS"
                 });
                 return;
             }
         } catch (e) {
             this.setState({
-                status: "ERROR",
+                status: "ERROR"
             });
         }
     };

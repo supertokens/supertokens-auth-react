@@ -25,38 +25,38 @@ const providerColors = {
     facebook: "#274483",
     twitter: "#008dd1",
     apple: "#07093c",
-    custom: "#FFF",
+    custom: "#FFF"
 };
 
 export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     const baseStyles = getDefaultStyles(palette);
     const recipeStyles = {
         row: {
-            paddingBottom: "30px",
+            paddingBottom: "30px"
         },
 
         providerContainer: {
             paddingTop: "9px",
-            paddingBottom: "9px",
+            paddingBottom: "9px"
         },
 
         providerButton: {
             display: "flex",
-            flexDirection: "row",
+            flexDirection: "row"
         },
 
         providerButtonLeft: {
-            width: "34px",
+            width: "34px"
         },
 
         providerButtonLogo: {
             height: "30px",
             display: "flex",
-            borderRight: "1px solid rgba(255, 255, 255, 0.6)",
+            borderRight: "1px solid rgba(255, 255, 255, 0.6)"
         },
 
         providerButtonLogoCenter: {
-            margin: "auto",
+            margin: "auto"
         },
 
         providerButtonText: {
@@ -66,8 +66,8 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             marginLeft: "20%",
             justifyContent: "center",
             "@media (max-width: 380px)": {
-                marginLeft: "10%",
-            },
+                marginLeft: "10%"
+            }
         },
 
         providerGoogle: getButtonStyle(providerColors.google),
@@ -83,15 +83,17 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             "&:active": {
                 outline: "none",
                 border: "1px solid #000",
-                backgroundColor: chroma(providerColors.custom).darken(0.1).hex(),
+                backgroundColor: chroma(providerColors.custom)
+                    .darken(0.1)
+                    .hex(),
                 transition: "background 0s",
-                backgroundSize: "100%",
+                backgroundSize: "100%"
             },
             "&:focus": {
                 outline: "none",
-                border: "1px solid #000",
-            },
-        },
+                border: "1px solid #000"
+            }
+        }
     } as NormalisedDefaultStyles;
     return getMergedStyles(baseStyles, recipeStyles);
 }

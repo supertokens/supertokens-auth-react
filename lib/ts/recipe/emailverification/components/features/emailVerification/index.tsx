@@ -34,7 +34,7 @@ import AuthRecipeModule from "../../../../authRecipeModule";
 import {
     AuthRecipeModuleGetRedirectionURLContext,
     AuthRecipeModuleOnHandleEventContext,
-    AuthRecipeModulePreAPIHookContext,
+    AuthRecipeModulePreAPIHookContext
 } from "../../../../authRecipeModule/types";
 
 /*
@@ -55,7 +55,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
         }
 
         this.state = {
-            token,
+            token
         };
     }
 
@@ -125,7 +125,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
         } catch (e) {}
 
         this.setState(() => ({
-            token: "",
+            token: ""
         }));
     };
 
@@ -160,10 +160,10 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             signOut: this.signOut,
             onSuccess: () =>
                 this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-                    action: "VERIFY_EMAIL_SENT",
+                    action: "VERIFY_EMAIL_SENT"
                 }),
             onEmailAlreadyVerified: () =>
-                this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS", isNewUser: false }, this.props.history),
+                this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS", isNewUser: false }, this.props.history)
         };
 
         const verifyEmailLinkClickedScreenFeature = this.getRecipeInstanceOrThrow().config.verifyEmailLinkClickedScreen;
@@ -173,11 +173,11 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             onTokenInvalidRedirect: this.onTokenInvalidRedirect,
             onSuccess: () =>
                 this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-                    action: "EMAIL_VERIFIED_SUCCESSFUL",
+                    action: "EMAIL_VERIFIED_SUCCESSFUL"
                 }),
             onContinueClicked: () =>
                 this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history),
-            verifyEmailAPI: async () => await verifyEmailAPI(this.getRecipeInstanceOrThrow(), this.state.token),
+            verifyEmailAPI: async () => await verifyEmailAPI(this.getRecipeInstanceOrThrow(), this.state.token)
         };
 
         const hasToken = this.state.token.length !== 0;
@@ -203,7 +203,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
                             rawPalette: this.getRecipeInstanceOrThrow().config.palette,
                             sendVerifyEmailScreen,
                             verifyEmailLinkClickedScreen,
-                            hasToken,
+                            hasToken
                         })}
                 </Fragment>
             </FeatureWrapper>

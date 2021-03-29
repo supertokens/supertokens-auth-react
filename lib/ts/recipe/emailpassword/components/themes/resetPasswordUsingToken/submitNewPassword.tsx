@@ -41,13 +41,13 @@ export default class SubmitNewPasswordTheme extends PureComponent<
     constructor(props: SubmitNewPasswordThemeProps) {
         super(props);
         this.state = {
-            status: "READY",
+            status: "READY"
         };
     }
 
     onSuccess = (): void => {
         this.setState(() => ({
-            status: "SUCCESS",
+            status: "SUCCESS"
         }));
         this.props.onSuccess();
     };

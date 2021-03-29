@@ -29,7 +29,7 @@ import * as React from "react";
 export default function ShowPasswordIcon({
     primaryColor,
     secondaryColor,
-    showPassword,
+    showPassword
 }: {
     primaryColor: string;
     secondaryColor: string;

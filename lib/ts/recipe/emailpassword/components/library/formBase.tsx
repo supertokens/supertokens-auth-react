@@ -41,12 +41,12 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         super(props);
 
         this.state = {
-            formFields: props.formFields.map((field) => ({
+            formFields: props.formFields.map(field => ({
                 ...field,
                 validated: false,
-                ref: createRef<InputRef>(),
+                ref: createRef<InputRef>()
             })),
-            status: "IN_PROGRESS",
+            status: "IN_PROGRESS"
         };
     }
 
@@ -55,7 +55,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
      */
 
     handleInputFocus = async (field: APIFormField): Promise<void> => {
-        this.setState((oldState) => {
+        this.setState(oldState => {
             return this.getNewState(oldState.formFields, field, "focus", undefined);
         });
     };
@@ -73,7 +73,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             }
         }
 
-        this.setState((oldState) => {
+        this.setState(oldState => {
             // Do not update status asynchronously on blur if backend error already came in.
             if (oldState.status === "GENERAL_ERROR") {
                 return oldState;
@@ -89,14 +89,14 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         error: string | undefined
     ): FormBaseState {
         // Add error to formFields array for corresponding field.
-        formFields = formFields.map((formField) => {
+        formFields = formFields.map(formField => {
             if (formField.id !== field.id) {
                 return formField;
             }
             return {
                 ...formField,
                 validated: event === "blur" && error === undefined && field.value.length !== 0,
-                error,
+                error
             };
         });
 
@@ -122,7 +122,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
 
         return {
             status,
-            formFields,
+            formFields
         };
     }
 
@@ -131,16 +131,16 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         e.preventDefault();
 
         // Set loading state.
-        this.setState((oldState) => ({
+        this.setState(oldState => ({
             ...oldState,
-            status: "LOADING",
+            status: "LOADING"
         }));
 
         // Get the fields values from form.
-        const fields = this.state.formFields.map((field) => {
+        const fields = this.state.formFields.map(field => {
             return {
                 id: field.id,
-                value: field.ref.current !== null ? field.ref.current.value : "",
+                value: field.ref.current !== null ? field.ref.current.value : ""
             };
         });
 
@@ -151,9 +151,9 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             if (result.status === "OK") {
                 // Set Success state.
                 this.setState(
-                    (oldState) => ({
+                    oldState => ({
                         ...oldState,
-                        status: "SUCCESS",
+                        status: "SUCCESS"
                     }),
                     () => {
                         if (this.props.onSuccess !== undefined) {
@@ -169,7 +169,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                 const errorFields = result.formFields;
 
                 // Update formFields state with errors.
-                const formFields = this.state.formFields.map((field) => {
+                const formFields = this.state.formFields.map(field => {
                     for (let i = 0; i < errorFields.length; i++) {
                         if (field.id === errorFields[i].id) {
                             field.error = errorFields[i].error;
@@ -179,24 +179,24 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                 });
                 this.setState(() => ({
                     status: "FIELD_ERRORS",
-                    formFields: formFields,
+                    formFields: formFields
                 }));
                 return;
             }
 
             // Otherwise if message, set generalError
             if (result.status === "GENERAL_ERROR") {
-                this.setState((oldState) => ({
+                this.setState(oldState => ({
                     ...oldState,
                     status: "GENERAL_ERROR",
-                    generalError: result.message,
+                    generalError: result.message
                 }));
             }
         } catch (e) {
-            this.setState((oldState) => ({
+            this.setState(oldState => ({
                 ...oldState,
                 status: "GENERAL_ERROR",
-                generalError: SOMETHING_WENT_WRONG_ERROR,
+                generalError: SOMETHING_WENT_WRONG_ERROR
             }));
         }
     };
@@ -220,7 +220,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                 )}
 
                 <form autoComplete="on" noValidate onSubmit={this.onFormSubmit}>
-                    {formFields.map((field) => {
+                    {formFields.map(field => {
                         let type = "text";
                         // If email or password, replace field type.
                         if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
