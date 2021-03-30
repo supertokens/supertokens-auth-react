@@ -2,6 +2,7 @@ import { RecipeModuleConfig } from "../recipeModule/types";
 export declare type SessionUserInput = {
     sessionScope?: string;
     refreshAPICustomHeaders?: any;
+    signoutAPICustomHeaders?: any;
     sessionExpiredStatusCode?: number;
     autoAddCredentials?: boolean;
 };

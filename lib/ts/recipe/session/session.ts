@@ -37,15 +37,23 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
      */
     constructor(config: SessionConfig) {
         super(config);
-        let usersHeaders = {};
+        let usersHeadersForRefreshAPI = {};
         if (config.refreshAPICustomHeaders !== undefined) {
-            usersHeaders = config.refreshAPICustomHeaders;
+            usersHeadersForRefreshAPI = config.refreshAPICustomHeaders;
+        }
+        let usersHeadersForSignoutAPI = {};
+        if (config.signoutAPICustomHeaders !== undefined) {
+            usersHeadersForSignoutAPI = config.signoutAPICustomHeaders;
         }
         sessionSdk.init({
             sessionScope: config.sessionScope,
             refreshAPICustomHeaders: {
                 rid: this.recipeId,
-                ...usersHeaders,
+                ...usersHeadersForRefreshAPI,
+            },
+            signoutAPICustomHeaders: {
+                rid: this.recipeId,
+                ...usersHeadersForSignoutAPI,
             },
             autoAddCredentials: config.autoAddCredentials,
             sessionExpiredStatusCode: config.sessionExpiredStatusCode,
