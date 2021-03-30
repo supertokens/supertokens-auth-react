@@ -72,7 +72,7 @@ export default class EmailPasswordAPIWrapper {
         return EmailPassword.isEmailVerified();
     }
 
-    static redirectToAuth(show?: "signin" | "signup") {
+    static redirectToAuth(show?: "signin" | "signup"): void {
         return EmailPassword.redirectToAuth(show);
     }
 }

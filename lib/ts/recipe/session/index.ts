@@ -62,7 +62,7 @@ export default class SessionAPIWrapper {
         return Session.getAuth0API();
     };
 
-    static signOut = () => {
+    static signOut = (): Promise<void> => {
         return Session.signOut();
     };
 }

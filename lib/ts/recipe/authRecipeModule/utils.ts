@@ -21,7 +21,7 @@ import { getShouldUseShadowDom } from "../../utils";
 import { normaliseEmailVerificationFeature } from "../emailverification/utils";
 import { AuthRecipeModuleConfig, NormalisedAuthRecipeConfig } from "./types";
 
-export function isAuthRecipeModule<T, S, R, N>(x: any): x is AuthRecipeModule<T, S, R, N> {
+export function isAuthRecipeModule<T, S, R, N>(x: unknown): x is AuthRecipeModule<T, S, R, N> {
     return x instanceof AuthRecipeModule;
 }
 

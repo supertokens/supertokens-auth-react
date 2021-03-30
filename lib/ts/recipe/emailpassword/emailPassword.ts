@@ -101,7 +101,7 @@ export default class EmailPassword extends AuthRecipeModule<
         return this.getAuthRecipeModuleDefaultRedirectionURL(context);
     };
 
-    redirectToAuth = (show?: "signin" | "signup") => {
+    redirectToAuth = (show?: "signin" | "signup"): void => {
         this.redirect(
             {
                 action: "SIGN_IN_AND_UP",
@@ -166,7 +166,7 @@ export default class EmailPassword extends AuthRecipeModule<
         return EmailPassword.instance;
     }
 
-    static redirectToAuth(show?: "signin" | "signup") {
+    static redirectToAuth(show?: "signin" | "signup"): void {
         return EmailPassword.getInstanceOrThrow().redirectToAuth(show);
     }
 

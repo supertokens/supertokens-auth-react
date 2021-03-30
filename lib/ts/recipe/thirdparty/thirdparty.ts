@@ -99,7 +99,7 @@ export default class ThirdParty extends AuthRecipeModule<
         }
     };
 
-    redirectToAuth = (show?: "signin" | "signup") => {
+    redirectToAuth = (show?: "signin" | "signup"): void => {
         this.redirect(
             {
                 action: "SIGN_IN_AND_UP",
@@ -165,7 +165,7 @@ export default class ThirdParty extends AuthRecipeModule<
         return ThirdParty.instance;
     }
 
-    static redirectToAuth(show?: "signin" | "signup") {
+    static redirectToAuth(show?: "signin" | "signup"): void {
         return ThirdParty.getInstanceOrThrow().redirectToAuth(show);
     }
 

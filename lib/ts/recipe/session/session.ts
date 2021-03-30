@@ -98,7 +98,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
         return sessionSdk.getAuth0API();
     };
 
-    signOut = () => {
+    signOut = (): Promise<void> => {
         return sessionSdk.signOut();
     };
 
@@ -160,7 +160,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
         return Session.getInstanceOrThrow().getAuth0API();
     }
 
-    static signOut() {
+    static signOut(): Promise<void> {
         return Session.getInstanceOrThrow().signOut();
     }
 

@@ -61,7 +61,7 @@ export default class ThirdPartyAPIWrapper {
         return ThirdParty.isEmailVerified();
     }
 
-    static redirectToAuth(show?: "signin" | "signup") {
+    static redirectToAuth(show?: "signin" | "signup"): void {
         return ThirdParty.redirectToAuth(show);
     }
 

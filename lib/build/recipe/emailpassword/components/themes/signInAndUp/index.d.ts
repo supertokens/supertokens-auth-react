@@ -1,5 +1,10 @@
-/// <reference types="react" />
+import * as React from "react";
 import { SignInAndUpThemeProps } from "../../../types";
-export declare function SignInAndUpTheme({ signInForm, rawPalette, signUpForm, defaultToSignUp, }: SignInAndUpThemeProps): JSX.Element;
+export declare class SignInAndUpTheme extends React.PureComponent<SignInAndUpThemeProps, {
+    isSignUp: boolean;
+}> {
+    constructor(props: SignInAndUpThemeProps);
+    render(): JSX.Element;
+}
 declare function SignInAndUpThemeWrapper(props: SignInAndUpThemeProps): JSX.Element;
 export default SignInAndUpThemeWrapper;

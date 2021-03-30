@@ -17,7 +17,6 @@
  * Imports.
  */
 import * as React from "react";
-import { useState } from "react";
 import { SignInAndUpThemeProps } from "../../../types";
 
 import SignUp from "./signUp";
@@ -26,50 +25,77 @@ import { ThemeBase } from "../themeBase";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../styles/styles";
+import { getWindowOrThrow } from "../../../../../utils";
 
 /*
  * Component.
  */
+export class SignInAndUpTheme extends React.PureComponent<
+    SignInAndUpThemeProps,
+    {
+        isSignUp: boolean;
+    }
+> {
+    constructor(props: SignInAndUpThemeProps) {
+        super(props);
 
-export function SignInAndUpTheme({
-    signInForm,
-    rawPalette,
-    signUpForm,
-    defaultToSignUp,
-}: SignInAndUpThemeProps): JSX.Element {
-    /*
-     * State.
-     */
+        const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
+        const show = urlParams.get("show");
+        let isSignUp = props.defaultToSignUp;
+        if (show !== null) {
+            isSignUp = show === "signup";
+        }
 
-    const [isSignUp, setSignUp] = useState(defaultToSignUp);
+        this.state = {
+            isSignUp,
+        };
+    }
 
-    /*
-     * Render.
-     */
+    render(): JSX.Element {
+        // If isSignUp, return signUp.
+        if (this.state.isSignUp) {
+            return (
+                <StyleProvider
+                    rawPalette={this.props.rawPalette}
+                    defaultPalette={defaultPalette}
+                    styleFromInit={this.props.signUpForm.styleFromInit}
+                    getDefaultStyles={getStyles}>
+                    <SignUp
+                        {...this.props.signUpForm}
+                        signInClicked={() => {
+                            this.setState(() => {
+                                return {
+                                    ...this.state,
+                                    isSignUp: false,
+                                };
+                            });
+                        }}
+                    />
+                </StyleProvider>
+            );
+        }
 
-    // If isSignUp, return signUp.
-    if (isSignUp) {
+        // Otherwise, return SignIn.
         return (
             <StyleProvider
-                rawPalette={rawPalette}
+                rawPalette={this.props.rawPalette}
                 defaultPalette={defaultPalette}
-                styleFromInit={signUpForm.styleFromInit}
+                styleFromInit={this.props.signInForm.styleFromInit}
                 getDefaultStyles={getStyles}>
-                <SignUp {...signUpForm} signInClicked={() => setSignUp(false)} />
+                <SignIn
+                    {...this.props.signInForm}
+                    signUpClicked={() => {
+                        this.setState(() => {
+                            return {
+                                ...this.state,
+                                isSignUp: true,
+                            };
+                        });
+                    }}
+                />
             </StyleProvider>
         );
     }
-
-    // Otherwise, return SignIn.
-    return (
-        <StyleProvider
-            rawPalette={rawPalette}
-            defaultPalette={defaultPalette}
-            styleFromInit={signInForm.styleFromInit}
-            getDefaultStyles={getStyles}>
-            <SignIn {...signInForm} signUpClicked={() => setSignUp(true)} />
-        </StyleProvider>
-    );
 }
 
 function SignInAndUpThemeWrapper(props: SignInAndUpThemeProps): JSX.Element {
