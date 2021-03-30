@@ -26,7 +26,7 @@ import {
     RESET_PASSWORD_API,
     RESET_PASSWORD_TOKEN_API,
     TEST_CLIENT_BASE_URL,
-    TEST_SERVER_BASE_URL
+    TEST_SERVER_BASE_URL,
 } from "../constants";
 import { RESET_PASSWORD_INVALID_TOKEN_ERROR } from "../../lib/build/constants";
 import {
@@ -48,7 +48,7 @@ import {
     submitForm,
     submitFormReturnRequestAndResponse,
     toggleSignInSignUp,
-    defaultSignUp
+    defaultSignUp,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -57,23 +57,23 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe("SuperTokens Reset password", function() {
+describe("SuperTokens Reset password", function () {
     let browser;
     let page;
     let consoleLogs;
 
-    before(async function() {
+    before(async function () {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true
+            headless: true,
         });
 
         page = await browser.newPage();
@@ -84,25 +84,25 @@ describe("SuperTokens Reset password", function() {
         await defaultSignUp(page);
     });
 
-    after(async function() {
+    after(async function () {
         await browser.close();
 
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
 
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
     });
 
-    describe("Reset password enter email form test", function() {
-        beforeEach(async function() {
+    describe("Reset password enter email form test", function () {
+        beforeEach(async function () {
             page = await browser.newPage();
             clearBrowserCookies(page);
             // Catch console.log sent from PRE API HOOKS.
             consoleLogs = [];
-            page.on("console", consoleObj => {
+            page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
                 if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
@@ -111,7 +111,7 @@ describe("SuperTokens Reset password", function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
         });
 
-        it("Should send reset password for valid email", async function() {
+        it("Should send reset password for valid email", async function () {
             const inputNames = await getInputNames(page);
             assert.deepStrictEqual(inputNames, ["email"]);
 
@@ -145,7 +145,7 @@ describe("SuperTokens Reset password", function() {
             // Submit.
             const [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
                 submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API),
-                hasMethodBeenCalled(page, EMAIL_EXISTS_API)
+                hasMethodBeenCalled(page, EMAIL_EXISTS_API),
             ]);
 
             // Assert Request.
@@ -168,17 +168,17 @@ describe("SuperTokens Reset password", function() {
             assert.deepStrictEqual(buttonLabel, "Email me");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL",
-                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT RESET_PASSWORD_EMAIL_SENT"
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT RESET_PASSWORD_EMAIL_SENT",
             ]);
         });
     });
 
-    describe("Reset password new password form test", function() {
-        beforeEach(async function() {
+    describe("Reset password new password form test", function () {
+        beforeEach(async function () {
             page = await browser.newPage();
             // Catch console.log sent from PRE API HOOKS.
             consoleLogs = [];
-            page.on("console", consoleObj => {
+            page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
                 if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
@@ -188,7 +188,7 @@ describe("SuperTokens Reset password", function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?token=TOKEN`);
         });
 
-        it("Should return error form fields if password is in incorrect format", async function() {
+        it("Should return error form fields if password is in incorrect format", async function () {
             const inputNames = await getInputNames(page);
             assert.deepStrictEqual(inputNames, ["password", "confirm-password"]);
 
@@ -207,7 +207,7 @@ describe("SuperTokens Reset password", function() {
             // Set incorrect values.
             await setInputValues(page, [
                 { name: "password", value: "password" },
-                { name: "confirm-password", value: "password" }
+                { name: "confirm-password", value: "password" },
             ]);
 
             successAdornments = await getInputAdornmentsSuccess(page);
@@ -217,7 +217,7 @@ describe("SuperTokens Reset password", function() {
             let formFieldsErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldsErrors, [
                 "Password must contain at least one number",
-                "Password must contain at least one number"
+                "Password must contain at least one number",
             ]);
 
             errorAdornments = await getInputAdornmentsError(page);
@@ -226,7 +226,7 @@ describe("SuperTokens Reset password", function() {
             // Set password mismatch
             await setInputValues(page, [
                 { name: "password", value: "Str0ngP@ssw0rd" },
-                { name: "confirm-password", value: "Str0ngP@ssw0rdButMismatch" }
+                { name: "confirm-password", value: "Str0ngP@ssw0rdButMismatch" },
             ]);
 
             successAdornments = await getInputAdornmentsSuccess(page);
@@ -242,7 +242,7 @@ describe("SuperTokens Reset password", function() {
             // Set correct values.
             await setInputValues(page, [
                 { name: "password", value: "Str0ngP@ssw0rd" },
-                { name: "confirm-password", value: "Str0ngP@ssw0rd" }
+                { name: "confirm-password", value: "Str0ngP@ssw0rd" },
             ]);
 
             successAdornments = await getInputAdornmentsSuccess(page);
@@ -265,7 +265,7 @@ describe("SuperTokens Reset password", function() {
             assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SUBMIT_NEW_PASSWORD"]);
         });
 
-        it("Should reset password successfully and redirect to success URL if token is defined", async function() {
+        it("Should reset password successfully and redirect to success URL if token is defined", async function () {
             // Send reset password email.
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
             await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
@@ -276,7 +276,7 @@ describe("SuperTokens Reset password", function() {
                 // Submit new password
                 await setInputValues(page, [
                     { name: "password", value: "NEW_Str0ngP@ssw0rd" },
-                    { name: "confirm-password", value: "NEW_Str0ngP@ssw0rd" }
+                    { name: "confirm-password", value: "NEW_Str0ngP@ssw0rd" },
                 ]);
             await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
 

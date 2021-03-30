@@ -30,7 +30,7 @@ export async function handleSubmitNewPasswordAPI(
     const response: SubmitNewPasswordAPIResponse = await recipe.httpRequest.post(
         "/user/password/reset",
         {
-            body: JSON.stringify({ formFields, token })
+            body: JSON.stringify({ formFields, token }),
         },
         "SUBMIT_NEW_PASSWORD"
     );
@@ -39,7 +39,7 @@ export async function handleSubmitNewPasswordAPI(
     if (response.status === "FIELD_ERROR") {
         return {
             status: "FIELD_ERROR",
-            formFields: response.formFields
+            formFields: response.formFields,
         };
     }
 
@@ -47,14 +47,14 @@ export async function handleSubmitNewPasswordAPI(
     if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
         return {
             status: "GENERAL_ERROR",
-            message: RESET_PASSWORD_INVALID_TOKEN_ERROR
+            message: RESET_PASSWORD_INVALID_TOKEN_ERROR,
         };
     }
 
     // Otherwise, status === OK
     if (response.status === "OK") {
         return {
-            status: "OK"
+            status: "OK",
         };
     }
 
@@ -68,7 +68,7 @@ export async function enterEmailAPI(
     const response: EnterEmailAPIResponse = await recipe.httpRequest.post(
         "/user/password/reset/token",
         {
-            body: JSON.stringify({ formFields })
+            body: JSON.stringify({ formFields }),
         },
         "SEND_RESET_PASSWORD_EMAIL"
     );
@@ -77,14 +77,14 @@ export async function enterEmailAPI(
     if (response.status === "FIELD_ERROR") {
         return {
             status: "FIELD_ERROR",
-            formFields: response.formFields
+            formFields: response.formFields,
         };
     }
 
     // Otherwise, success.
     if (response.status === "OK") {
         return {
-            status: "OK"
+            status: "OK",
         };
     }
 

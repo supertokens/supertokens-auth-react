@@ -26,7 +26,7 @@ import {
     ThirdPartyUserInput,
     ThirdPartyGetRedirectionURLContext,
     ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext
+    ThirdPartyOnHandleEventContext,
 } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUp from "./components/features/signInAndUp/wrapper";
@@ -95,5 +95,5 @@ export {
     EmailVerificationTheme,
     ThirdPartyGetRedirectionURLContext,
     ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext
+    ThirdPartyOnHandleEventContext,
 };

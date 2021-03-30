@@ -37,7 +37,7 @@ export default class Twitter extends Provider {
     constructor(config?: BuiltInProviderConfig) {
         super({
             id: "twitter",
-            name: "Twitter"
+            name: "Twitter",
         });
 
         if (config === undefined) {

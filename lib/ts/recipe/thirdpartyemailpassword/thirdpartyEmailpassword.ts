@@ -25,7 +25,7 @@ import {
     ThirdPartyEmailPasswordUserInput,
     NormalisedThirdPartyEmailPasswordConfig,
     ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdPartyEmailPasswordOnHandleEventContext
+    ThirdPartyEmailPasswordOnHandleEventContext,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
@@ -70,7 +70,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeId),
                 rid: this.recipeId,
-                component: SignInAndUp
+                component: SignInAndUp,
             };
         }
 
@@ -81,25 +81,25 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeId),
                 rid: this.recipeId,
-                component: ResetPasswordUsingToken
+                component: ResetPasswordUsingToken,
             };
         }
 
         // Add callback route for each provider.
-        this.config.signInAndUpFeature.providers.forEach(provider => {
+        this.config.signInAndUpFeature.providers.forEach((provider) => {
             const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 component: SignInAndUpCallback,
                 rid: this.recipeId,
-                matches: matchRecipeIdUsingState(this.recipeId)
+                matches: matchRecipeIdUsingState(this.recipeId),
             };
         });
 
         return {
             ...features,
-            ...this.getAuthRecipeModuleFeatures()
+            ...this.getAuthRecipeModuleFeatures(),
         };
     };
 
@@ -139,7 +139,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword({
                 ...config,
                 appInfo,
-                recipeId: ThirdPartyEmailPassword.RECIPE_ID
+                recipeId: ThirdPartyEmailPassword.RECIPE_ID,
             });
             return ThirdPartyEmailPassword.instance;
         };

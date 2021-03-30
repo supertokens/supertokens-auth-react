@@ -31,7 +31,7 @@ import {
     getLogoutButton,
     signUp,
     toggleSignInSignUp,
-    loginWithGithub
+    loginWithGithub,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
 
@@ -41,26 +41,26 @@ require("jsdom-global")();
 /*
  * Tests.
  */
-describe("SuperTokens Third Party Email Password", function() {
+describe("SuperTokens Third Party Email Password", function () {
     let browser;
     let page;
     let consoleLogs;
 
-    before(async function() {
+    before(async function () {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true
+            headless: true,
         });
         page = await browser.newPage();
-        page.on("console", consoleObj => {
+        page.on("console", (consoleObj) => {
             const log = consoleObj.text();
             if (log.startsWith("ST_LOGS")) {
                 consoleLogs.push(log);
@@ -68,25 +68,25 @@ describe("SuperTokens Third Party Email Password", function() {
         });
     });
 
-    after(async function() {
+    after(async function () {
         await browser.close();
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
 
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
     });
 
-    beforeEach(async function() {
+    beforeEach(async function () {
         consoleLogs = [];
         clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`);
     });
 
-    describe("Third Party Email Password test", function() {
-        it("Successful signup with credentials", async function() {
+    describe("Third Party Email Password test", function () {
+        it("Successful signup with credentials", async function () {
             await toggleSignInSignUp(page);
             await defaultSignUp(page, "thirdpartyemailpassword");
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -98,12 +98,12 @@ describe("SuperTokens Third Party Email Password", function() {
             return;
         }
 
-        it("Successful signin/up with github", async function() {
+        it("Successful signin/up with github", async function () {
             await assertProviders(page);
             await clickOnProviderButton(page, "Github");
             await Promise.all([
                 loginWithGithub(page),
-                page.waitForResponse(response => response.url() === SIGN_IN_UP_API && response.status() === 200)
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
@@ -113,11 +113,11 @@ describe("SuperTokens Third Party Email Password", function() {
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS"
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
             ]);
         });
 
-        it("No account consolidation", async function() {
+        it("No account consolidation", async function () {
             // 1. Sign up with credentials
             await toggleSignInSignUp(page);
             await signUp(
@@ -126,7 +126,7 @@ describe("SuperTokens Third Party Email Password", function() {
                     { name: "email", value: "bradparishdoh@gmail.com" },
                     { name: "password", value: "Str0ngP@ssw0rd" },
                     { name: "name", value: "John Doe" },
-                    { name: "age", value: "20" }
+                    { name: "age", value: "20" },
                 ],
                 '{"formFields":[{"id":"email","value":"bradparishdoh@gmail.com"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
                 "thirdpartyemailpassword"
@@ -143,7 +143,7 @@ describe("SuperTokens Third Party Email Password", function() {
             await clickOnProviderButton(page, "Github");
             await Promise.all([
                 loginWithGithub(page),
-                page.waitForResponse(response => response.url() === SIGN_IN_UP_API && response.status() === 200)
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
@@ -154,14 +154,14 @@ describe("SuperTokens Third Party Email Password", function() {
         });
     });
 
-    describe("Third Party callback error tests", function() {
-        it("No state (Duplicate from third party)", async function() {
+    describe("Third Party callback error tests", function () {
+        it("No state (Duplicate from third party)", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github`),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP"
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);

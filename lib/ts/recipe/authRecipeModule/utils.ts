@@ -37,6 +37,6 @@ export function normaliseAuthRecipeModuleConfig<T, S, R>(
     return {
         useShadowDom: getShouldUseShadowDom(useShadowDom),
         palette,
-        emailVerificationFeature
+        emailVerificationFeature,
     };
 }

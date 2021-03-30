@@ -35,20 +35,20 @@ const defaultConfigs = {
     appInfo: {
         appName: "SuperTokens",
         websiteDomain: "supertokens.io",
-        apiDomain: "api.supertokens.io"
+        apiDomain: "api.supertokens.io",
     },
-    recipeList: [EmailPassword.init()]
+    recipeList: [EmailPassword.init()],
 };
 
 /*
  * Tests.
  */
-describe("SuperTokens", function() {
-    afterEach(async function() {
+describe("SuperTokens", function () {
+    afterEach(async function () {
         SuperTokens.reset();
     });
 
-    it("Initializing SuperTokens config with default values", async function() {
+    it("Initializing SuperTokens config with default values", async function () {
         SuperTokens.init(defaultConfigs);
         assert.strictEqual(SuperTokens.getInstanceOrThrow().appInfo.appName, defaultConfigs.appInfo.appName);
         assert.strictEqual(
@@ -69,38 +69,38 @@ describe("SuperTokens", function() {
         );
     });
 
-    it("Initializing SuperTokens twice should ignore new config", async function() {
+    it("Initializing SuperTokens twice should ignore new config", async function () {
         SuperTokens.init(defaultConfigs);
         SuperTokens.init({
             ...defaultConfigs,
             appInfo: {
                 ...defaultConfigs.appInfo,
-                appName: "NewAppName"
-            }
+                appName: "NewAppName",
+            },
         });
         assert.strictEqual(SuperTokens.getInstanceOrThrow().appInfo.appName, defaultConfigs.appInfo.appName);
     });
 
-    it("Initializing SuperTokens without appInfo name should throw", async function() {
+    it("Initializing SuperTokens without appInfo name should throw", async function () {
         assert.throws(() => {
             SuperTokens.init({
                 ...defaultConfigs,
                 appInfo: {
                     ...defaultConfigs.appInfo,
-                    appName: undefined
-                }
+                    appName: undefined,
+                },
             });
         }, new Error("Please provide your appName inside the appInfo object when calling supertokens.init"));
     });
 
-    it("Initializing SuperTokens with corrupted URL should throw", async function() {
+    it("Initializing SuperTokens with corrupted URL should throw", async function () {
         assert.throws(() => {
             SuperTokens.init({
                 ...defaultConfigs,
                 appInfo: {
                     ...defaultConfigs.appInfo,
-                    apiDomain: ":"
-                }
+                    apiDomain: ":",
+                },
             });
         }, Error("Please provide a valid domain name"));
         assert.throws(() => {
@@ -108,13 +108,13 @@ describe("SuperTokens", function() {
                 ...defaultConfigs,
                 appInfo: {
                     ...defaultConfigs.appInfo,
-                    websiteDomain: "http:://malformed.url"
-                }
+                    websiteDomain: "http:://malformed.url",
+                },
             });
         }, Error("Please provide a valid domain name"));
     });
 
-    it("Initializing SuperTokens with localhost and unsecure protocol", async function() {
+    it("Initializing SuperTokens with localhost and unsecure protocol", async function () {
         const websiteDomain = "localhost:4000";
         const apiDomain = "http://api.supertokens.io";
         SuperTokens.init({
@@ -122,8 +122,8 @@ describe("SuperTokens", function() {
             appInfo: {
                 ...defaultConfigs.appInfo,
                 websiteDomain,
-                apiDomain
-            }
+                apiDomain,
+            },
         });
         assert.strictEqual(
             SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous(),
@@ -132,18 +132,18 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.getInstanceOrThrow().appInfo.apiDomain.getAsStringDangerous(), apiDomain);
     });
 
-    it("Initializing SuperTokens with EmailPassword module", async function() {
+    it("Initializing SuperTokens with EmailPassword module", async function () {
         SuperTokens.init({
             ...defaultConfigs,
-            recipeList: [EmailPassword.init()]
+            recipeList: [EmailPassword.init()],
         });
         assert.strictEqual(SuperTokens.getInstanceOrThrow().recipeList.length, 1);
     });
 
-    it("SuperTokens canHandleRoute should work appropriately", async function() {
+    it("SuperTokens canHandleRoute should work appropriately", async function () {
         SuperTokens.init({
             ...defaultConfigs,
-            recipeList: [EmailPassword.init()]
+            recipeList: [EmailPassword.init()],
         });
 
         const randomWebsitePath = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
@@ -169,16 +169,16 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.canHandleRoute(), true);
     });
 
-    it("SuperTokens disable default Implementation should disable default routes for Sign In and Up", async function() {
+    it("SuperTokens disable default Implementation should disable default routes for Sign In and Up", async function () {
         SuperTokens.init({
             ...defaultConfigs,
             recipeList: [
                 EmailPassword.init({
                     signInAndUpFeature: {
-                        disableDefaultImplementation: true
-                    }
-                })
-            ]
+                        disableDefaultImplementation: true,
+                    },
+                }),
+            ],
         });
 
         const randomWebsitePath = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
@@ -191,10 +191,10 @@ describe("SuperTokens", function() {
         assert.strictEqual(SuperTokens.canHandleRoute(), false);
     });
 
-    it("SuperTokens getRoutingComponent should work approriately", async function() {
+    it("SuperTokens getRoutingComponent should work approriately", async function () {
         SuperTokens.init({
             ...defaultConfigs,
-            recipeList: [EmailPassword.init()]
+            recipeList: [EmailPassword.init()],
         });
 
         const randomWebsitePath = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();

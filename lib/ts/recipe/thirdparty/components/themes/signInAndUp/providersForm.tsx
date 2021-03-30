@@ -39,11 +39,11 @@ export default class SignInAndUpProvidersForm extends PureComponent<
         if (this.props.status === "GENERAL_ERROR") {
             this.state = {
                 status: this.props.status,
-                generalError: SOMETHING_WENT_WRONG_ERROR
+                generalError: SOMETHING_WENT_WRONG_ERROR,
             };
         } else {
             this.state = {
-                status: this.props.status
+                status: this.props.status,
             };
         }
     }
@@ -54,13 +54,13 @@ export default class SignInAndUpProvidersForm extends PureComponent<
             if (generalError !== undefined) {
                 this.setState(() => ({
                     status: "GENERAL_ERROR",
-                    generalError
+                    generalError,
                 }));
             }
         } catch (e) {
             this.setState(() => ({
                 status: "GENERAL_ERROR",
-                generalError: SOMETHING_WENT_WRONG_ERROR
+                generalError: SOMETHING_WENT_WRONG_ERROR,
             }));
         }
     };
@@ -82,7 +82,7 @@ export default class SignInAndUpProvidersForm extends PureComponent<
                         {this.state.generalError}
                     </div>
                 )}
-                {this.props.providers.map(provider => {
+                {this.props.providers.map((provider) => {
                     return (
                         <div
                             key={`provider-${provider.id}`}

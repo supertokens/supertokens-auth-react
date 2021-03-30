@@ -34,7 +34,7 @@ import {
     sendVerifyEmail,
     getGeneralSuccess,
     toggleSignInSignUp,
-    defaultSignUp
+    defaultSignUp,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -44,41 +44,41 @@ require("jsdom-global")();
  * Tests.
  */
 
-describe("SuperTokens Email Verification", function() {
+describe("SuperTokens Email Verification", function () {
     let browser;
     let page;
     let consoleLogs;
 
-    before(async function() {
+    before(async function () {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true
+            headless: true,
         });
         page = await browser.newPage();
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
     });
 
-    after(async function() {
+    after(async function () {
         await browser.close();
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
     });
 
-    describe("Email verification screen", function() {
-        beforeEach(async function() {
+    describe("Email verification screen", function () {
+        beforeEach(async function () {
             page = await browser.newPage();
             consoleLogs = [];
-            page.on("console", consoleObj => {
+            page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
                 if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
@@ -87,13 +87,13 @@ describe("SuperTokens Email Verification", function() {
             clearBrowserCookies(page);
         });
 
-        it("Should redirect to login page when email verification screen is accessed without a valid session", async function() {
+        it("Should redirect to login page when email verification screen is accessed without a valid session", async function () {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
         });
 
-        it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified", async function() {
+        it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified", async function () {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await toggleSignInSignUp(page);
             await defaultSignUp(page);
@@ -104,15 +104,15 @@ describe("SuperTokens Email Verification", function() {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",
-                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL"
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL",
             ]);
         });
 
-        it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function() {
+        it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function () {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await setInputValues(page, [
                 { name: "email", value: "john.doe@supertokens.io" },
-                { name: "password", value: "Str0ngP@ssw0rd" }
+                { name: "password", value: "Str0ngP@ssw0rd" },
             ]);
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             let pathname = await page.evaluate(() => window.location.pathname);
@@ -120,7 +120,7 @@ describe("SuperTokens Email Verification", function() {
             // Click on resend email should show "Email Resent" success message
             await sendVerifyEmail(page);
             await page.waitForResponse(
-                response => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
+                (response) => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
             );
             const generalSuccess = await getGeneralSuccess(page);
             assert.deepStrictEqual(generalSuccess, "Email resent");
@@ -138,15 +138,15 @@ describe("SuperTokens Email Verification", function() {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_OUT",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP"
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
             ]);
         });
     });
-    describe("Verify Email with token screen", function() {
-        beforeEach(async function() {
+    describe("Verify Email with token screen", function () {
+        beforeEach(async function () {
             page = await browser.newPage();
             consoleLogs = [];
-            page.on("console", consoleObj => {
+            page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
                 if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
@@ -155,12 +155,12 @@ describe("SuperTokens Email Verification", function() {
             clearBrowserCookies(page);
         });
 
-        it("Should show invalid token screen when token is invalid or expired", async function() {
+        it("Should show invalid token screen when token is invalid or expired", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`),
-                page.waitForResponse(response => response.url() === VERIFY_EMAIL_API && response.status() === 200)
+                page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200),
             ]);
-            await new Promise(r => setTimeout(r, 50)); // Make sure to wait for status to update.
+            await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
             const verificationEmailInvalidTokenText = await getVerificationEmailTitle(page);
             assert.deepStrictEqual(verificationEmailInvalidTokenText, "The email verification link has expired");
             // Click Continue should redirect to /auth when no session is present
@@ -170,11 +170,11 @@ describe("SuperTokens Email Verification", function() {
             assert.deepStrictEqual(pathname, "/auth");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS VERIFY_EMAIL",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP"
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
             ]);
         });
 
-        it('Should show "Email Verification successful" screen when token is valid', async function() {
+        it('Should show "Email Verification successful" screen when token is valid', async function () {
             const latestURLWithToken = await getLatestURLWithToken();
             await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
             const title = await getTextByDataSupertokens(page, "headerTitle");
@@ -185,11 +185,11 @@ describe("SuperTokens Email Verification", function() {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP"
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
             ]);
         });
 
-        it("Should allow to verify an email without a valid session", async function() {
+        it("Should allow to verify an email without a valid session", async function () {
             clearBrowserCookies(page);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -197,11 +197,11 @@ describe("SuperTokens Email Verification", function() {
             assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS VERIFY_EMAIL"]);
         });
     });
-    describe("Email Verified", function() {
-        beforeEach(async function() {
+    describe("Email Verified", function () {
+        beforeEach(async function () {
             page = await browser.newPage();
             consoleLogs = [];
-            page.on("console", consoleObj => {
+            page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
                 if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
@@ -210,35 +210,35 @@ describe("SuperTokens Email Verification", function() {
             clearBrowserCookies(page);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?mode=REQUIRED`);
         });
-        it("Should redirect to onSuccessfulRedirect when email is already verified", async function() {
+        it("Should redirect to onSuccessfulRedirect when email is already verified", async function () {
             // TODO.
         });
     });
 });
 
-describe("SuperTokens Email Verification server errors", function() {
+describe("SuperTokens Email Verification server errors", function () {
     let browser;
     let page;
     let consoleLogs;
 
-    before(async function() {
+    before(async function () {
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true
+            headless: true,
         });
         page = await browser.newPage();
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
     });
 
-    after(async function() {
+    after(async function () {
         await browser.close();
     });
 
-    describe("Verify Email with token screen", function() {
-        beforeEach(async function() {
+    describe("Verify Email with token screen", function () {
+        beforeEach(async function () {
             page = await browser.newPage();
             consoleLogs = [];
-            page.on("console", consoleObj => {
+            page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
                 if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
@@ -248,9 +248,9 @@ describe("SuperTokens Email Verification server errors", function() {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
         });
 
-        it('Should show "Something went wrong" screen when API failure', async function() {
-            await page.waitForResponse(response => response.url() === VERIFY_EMAIL_API && response.status() === 500);
-            await new Promise(r => setTimeout(r, 50)); // Make sure to wait for status to update.
+        it('Should show "Something went wrong" screen when API failure', async function () {
+            await page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 500);
+            await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
             const verificationEmailErrorTitle = await getVerificationEmailErrorTitle(page);
             assert.deepStrictEqual(verificationEmailErrorTitle, "!\n Something went wrong");
             assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS VERIFY_EMAIL"]);
@@ -258,38 +258,38 @@ describe("SuperTokens Email Verification server errors", function() {
     });
 });
 
-describe("SuperTokens Email Verification isEmailVerified server error", function() {
+describe("SuperTokens Email Verification isEmailVerified server error", function () {
     let browser;
     let page;
     let consoleLogs;
 
-    before(async function() {
+    before(async function () {
         // Start server.
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true
+            headless: true,
         });
     });
 
-    after(async function() {
+    after(async function () {
         await browser.close();
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
     });
 
-    describe("Verify Email with token screen", function() {
-        beforeEach(async function() {
+    describe("Verify Email with token screen", function () {
+        beforeEach(async function () {
             page = await browser.newPage();
             consoleLogs = [];
-            page.on("console", consoleObj => {
+            page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
                 if (log.startsWith("ST_LOGS")) {
                     consoleLogs.push(log);
@@ -298,14 +298,14 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
             clearBrowserCookies(page);
         });
 
-        it("Should ignore email verification when isEmailVerified server request fails", async function() {
+        it("Should ignore email verification when isEmailVerified server request fails", async function () {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
             await toggleSignInSignUp(page);
             await defaultSignUp(page);
 
             // Stop server.
             await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
-                method: "POST"
+                method: "POST",
             }).catch(console.error);
 
             // No redirection to /auth/veirfy-email if API call fails.
@@ -319,7 +319,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL",
-                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED"
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED",
             ]);
         });
     });

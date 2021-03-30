@@ -30,7 +30,7 @@ import {
     clickOnProviderButton,
     loginWithGithub,
     loginWithFacebook,
-    loginWithGoogle
+    loginWithGoogle,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -40,26 +40,26 @@ import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../c
 /*
  * Tests.
  */
-describe("SuperTokens Third Party", function() {
+describe("SuperTokens Third Party", function () {
     let browser;
     let page;
     let consoleLogs;
 
-    before(async function() {
+    before(async function () {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
 
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
 
         browser = await puppeteer.launch({
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: true
+            headless: true,
         });
         page = await browser.newPage();
-        page.on("console", consoleObj => {
+        page.on("console", (consoleObj) => {
             const log = consoleObj.text();
             if (log.startsWith("ST_LOGS")) {
                 consoleLogs.push(log);
@@ -68,35 +68,35 @@ describe("SuperTokens Third Party", function() {
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdparty`);
     });
 
-    after(async function() {
+    after(async function () {
         await browser.close();
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
 
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
-            method: "POST"
+            method: "POST",
         }).catch(console.error);
     });
 
-    beforeEach(async function() {
+    beforeEach(async function () {
         consoleLogs = [];
         clearBrowserCookies(page);
     });
 
-    describe("Third Party test", function() {
+    describe("Third Party test", function () {
         // In case OAuth configs are not set locally.
         if (process.env.SKIP_OAUTH === "true") {
             return;
         }
 
-        it("Successful signin with github", async function() {
+        it("Successful signin with github", async function () {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
             await clickOnProviderButton(page, "Github");
             await Promise.all([
                 loginWithGithub(page),
-                page.waitForResponse(response => response.url() === SIGN_IN_UP_API && response.status() === 200)
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
@@ -106,17 +106,17 @@ describe("SuperTokens Third Party", function() {
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS"
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
             ]);
         });
 
-        it("Successful signin with facebook", async function() {
+        it("Successful signin with facebook", async function () {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
             await clickOnProviderButton(page, "Facebook");
             await Promise.all([
                 loginWithFacebook(page),
-                page.waitForResponse(response => response.url() === SIGN_IN_UP_API && response.status() === 200)
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
@@ -126,17 +126,17 @@ describe("SuperTokens Third Party", function() {
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS"
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
             ]);
         });
 
-        it("Successful signin with google", async function() {
+        it("Successful signin with google", async function () {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
             await clickOnProviderButton(page, "Google");
             await Promise.all([
                 loginWithGoogle(page),
-                page.waitForResponse(response => response.url() === SIGN_IN_UP_API && response.status() === 200)
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
@@ -146,16 +146,16 @@ describe("SuperTokens Third Party", function() {
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS"
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
             ]);
         });
     });
 
-    describe("Third Party callback error tests", function() {
-        it("No state", async function() {
+    describe("Third Party callback error tests", function () {
+        it("No state", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github`),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -164,20 +164,20 @@ describe("SuperTokens Third Party", function() {
             assert.deepStrictEqual(search, "?rid=thirdparty&error=no_query_state");
         });
 
-        it("Invalid nonce", async function() {
+        it("Invalid nonce", async function () {
             await generateState(
                 {
                     state: "NONCE",
                     rid: "thirdparty",
                     thirdPartyId: "github",
-                    expiresAt: Date.now() + 10000
+                    expiresAt: Date.now() + 10000,
                 },
                 page
             );
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NOT_NONCE`),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -186,20 +186,20 @@ describe("SuperTokens Third Party", function() {
             assert.deepStrictEqual(search, "?rid=thirdparty&error=state_mismatch");
         });
 
-        it("Wrong provider", async function() {
+        it("Wrong provider", async function () {
             await generateState(
                 {
                     state: "NONCE",
                     rid: "thirdparty",
                     thirdPartyId: "google",
-                    expiresAt: Date.now() + 10000
+                    expiresAt: Date.now() + 10000,
                 },
                 page
             );
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NONCE`),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -208,20 +208,20 @@ describe("SuperTokens Third Party", function() {
             assert.deepStrictEqual(search, "?rid=thirdparty&error=provider_mismatch");
         });
 
-        it("Unknown provider", async function() {
+        it("Unknown provider", async function () {
             await generateState(
                 {
                     state: "NONCE",
                     rid: "thirdparty",
                     thirdPartyId: "github",
-                    expiresAt: Date.now() + 10000
+                    expiresAt: Date.now() + 10000,
                 },
                 page
             );
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/unknown?state=NONCE`),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             assert.deepStrictEqual(consoleLogs, []);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -229,20 +229,20 @@ describe("SuperTokens Third Party", function() {
             await assertNoSTComponents(page);
         });
 
-        it("Expired state", async function() {
+        it("Expired state", async function () {
             await generateState(
                 {
                     state: "NONCE",
                     rid: "thirdparty",
                     thirdPartyId: "google",
-                    expiresAt: Date.now() - 10000
+                    expiresAt: Date.now() - 10000,
                 },
                 page
             );
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NONCE`),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -251,20 +251,20 @@ describe("SuperTokens Third Party", function() {
             assert.deepStrictEqual(search, "?rid=thirdparty&error=state_expired");
         });
 
-        it("No code params", async function() {
+        it("No code params", async function () {
             await generateState(
                 {
                     state: "NONCE",
                     rid: "thirdparty",
                     thirdPartyId: "github",
-                    expiresAt: Date.now() + 10000
+                    expiresAt: Date.now() + 10000,
                 },
                 page
             );
 
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NONCE`),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
             const pathname = await page.evaluate(() => window.location.pathname);

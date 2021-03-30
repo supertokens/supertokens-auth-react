@@ -20,13 +20,13 @@ import { normaliseURLDomainOrThrowError } from "../../lib/build/normalisedURLDom
 const assert = require("assert");
 import { mockWindowLocation } from "../helpers";
 
-describe("Config tests", function() {
-    beforeEach(async function() {
+describe("Config tests", function () {
+    beforeEach(async function () {
         global.document = {};
         mockWindowLocation("http://localhost.org");
     });
 
-    it("testing URL path normalisation", async function() {
+    it("testing URL path normalisation", async function () {
         assert.strictEqual(normaliseURLPathOrThrowError("exists?email=john.doe%40gmail.com"), "/exists");
         assert.strictEqual(
             normaliseURLPathOrThrowError("/auth/email/exists?email=john.doe%40gmail.com"),
@@ -94,7 +94,7 @@ describe("Config tests", function() {
         assert.strictEqual(normaliseURLPathOrThrowError("/app.example.com"), "/app.example.com");
     });
 
-    it("testing URL domain normalisation", async function() {
+    it("testing URL domain normalisation", async function () {
         assert(normaliseURLDomainOrThrowError("http://api.example.com") === "http://api.example.com");
         assert(normaliseURLDomainOrThrowError("https://api.example.com") === "https://api.example.com");
         assert(normaliseURLDomainOrThrowError("http://api.example.com?hello=1") === "http://api.example.com");
@@ -142,7 +142,7 @@ describe("Config tests", function() {
         }
     });
 
-    it("append search params to absolute/relative URL", async function() {
+    it("append search params to absolute/relative URL", async function () {
         assert.strictEqual(appendQueryParamsToURL("/"), "/");
         assert.strictEqual(appendQueryParamsToURL("/relativepath"), "/relativepath");
         assert.strictEqual(appendQueryParamsToURL("/relativepath", {}), "/relativepath");
@@ -155,7 +155,7 @@ describe("Config tests", function() {
         );
         assert.strictEqual(
             appendQueryParamsToURL("https://example.com/one/two?blue=green", {
-                foo: "bar"
+                foo: "bar",
             }),
             "https://example.com/one/two?blue=green&foo=bar"
         );
@@ -166,7 +166,7 @@ describe("Config tests", function() {
         assert.strictEqual(appendQueryParamsToURL("/relative/path", { foo: "bar" }), "/relative/path?foo=bar");
         assert.strictEqual(
             appendQueryParamsToURL("/relative/path?blue=green#with-hash", {
-                foo: "bar"
+                foo: "bar",
             }),
             "/relative/path?blue=green&foo=bar"
         );
@@ -178,13 +178,13 @@ describe("Config tests", function() {
         // Overwrite already existing params
         assert.strictEqual(
             appendQueryParamsToURL("/auth?rid=emailpassword", {
-                rid: "thirdparty_emailpassword"
+                rid: "thirdparty_emailpassword",
             }),
             "/auth?rid=thirdparty_emailpassword"
         );
     });
 
-    it("get recipe Id from URL search", async function() {
+    it("get recipe Id from URL search", async function () {
         assert.strictEqual(getRecipeIdFromSearch(""), null);
         assert.strictEqual(getRecipeIdFromSearch("?rid=test"), "test");
         assert.strictEqual(getRecipeIdFromSearch("?rid=2"), "2");
@@ -193,7 +193,7 @@ describe("Config tests", function() {
         assert.strictEqual(getRecipeIdFromSearch("?rId=blue&foo=bar"), null);
     });
 
-    it("validateForm (TODO)", async function() {
+    it("validateForm (TODO)", async function () {
         /*
          * TODO
          * - Test that no error return empty array [].
@@ -208,38 +208,38 @@ describe("Config tests", function() {
                 id: "email",
                 label: "Email",
                 placeholder: "youremail@example.com",
-                validate: async email => {
+                validate: async (email) => {
                     return undefined;
                 },
-                optional: false
+                optional: false,
             },
             {
                 id: "password",
                 label: "Password",
                 placeholder: "Enter your password",
-                validate: async password => {
+                validate: async (password) => {
                     return "Error validating your password";
                 },
-                optional: false
-            }
+                optional: false,
+            },
         ];
 
         const input = [
             {
                 id: "email",
-                value: "john@doe.com"
+                value: "john@doe.com",
             },
             {
                 id: "password",
-                value: "anything will throw"
-            }
+                value: "anything will throw",
+            },
         ];
         const errors = await validateForm(input, formFields);
         assert.deepStrictEqual(errors, [
             {
                 id: "password",
-                error: "Error validating your password"
-            }
+                error: "Error validating your password",
+            },
         ]);
     });
 });

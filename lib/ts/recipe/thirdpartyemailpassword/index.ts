@@ -23,7 +23,7 @@ import {
     ThirdPartyEmailPasswordUserInput,
     ThirdPartyEmailPasswordGetRedirectionURLContext,
     ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdPartyEmailPasswordOnHandleEventContext
+    ThirdPartyEmailPasswordOnHandleEventContext,
 } from "./types";
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUp from "./components/features/signInAndUp/wrapper";
@@ -93,5 +93,5 @@ export {
     ResetPasswordUsingTokenTheme,
     ThirdPartyEmailPasswordGetRedirectionURLContext,
     ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdPartyEmailPasswordOnHandleEventContext
+    ThirdPartyEmailPasswordOnHandleEventContext,
 };

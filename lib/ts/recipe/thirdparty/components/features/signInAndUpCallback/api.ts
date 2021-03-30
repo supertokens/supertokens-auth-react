@@ -34,7 +34,7 @@ export async function signInAndUpAPI<T, S, R>(
     const response: SignInAndUpAPIResponse = await recipe.httpRequest.post(
         "/signinup",
         {
-            body: JSON.stringify({ code, thirdPartyId, redirectURI })
+            body: JSON.stringify({ code, thirdPartyId, redirectURI }),
         },
         "SIGN_IN"
     );
@@ -44,13 +44,13 @@ export async function signInAndUpAPI<T, S, R>(
         return {
             status: "OK",
             user: response.user,
-            createdNewUser: response.createdNewUser
+            createdNewUser: response.createdNewUser,
         };
     }
     // If no email given by provider.
     if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
         return {
-            status: "NO_EMAIL_GIVEN_BY_PROVIDER"
+            status: "NO_EMAIL_GIVEN_BY_PROVIDER",
         };
     }
 

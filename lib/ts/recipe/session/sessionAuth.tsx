@@ -36,7 +36,7 @@ export default class SessionAuth<T, S, R, N> extends PureComponent<FeatureBasePr
     constructor(props: FeatureBaseProps) {
         super(props);
         this.state = {
-            status: "LOADING"
+            status: "LOADING",
         };
     }
 
@@ -64,14 +64,14 @@ export default class SessionAuth<T, S, R, N> extends PureComponent<FeatureBasePr
                 ({ action: "SIGN_IN_AND_UP" } as unknown) as T,
                 this.props.history,
                 {
-                    redirectToPath
+                    redirectToPath,
                 }
             );
         }
 
         // Update status to ready.
         this.setState({
-            status: "READY"
+            status: "READY",
         });
     }
 

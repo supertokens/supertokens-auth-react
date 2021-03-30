@@ -56,7 +56,7 @@ export default class SuperTokens {
             );
         }
 
-        this.recipeList = config.recipeList.map(recipe => {
+        this.recipeList = config.recipeList.map((recipe) => {
             return recipe(this.appInfo);
         });
 
@@ -159,7 +159,7 @@ export default class SuperTokens {
             return undefined;
         }
 
-        const component = routeComponents.find(c => c.matches());
+        const component = routeComponents.find((c) => c.matches());
         if (component !== undefined) {
             return component;
         }
@@ -169,7 +169,7 @@ export default class SuperTokens {
     };
 
     getRecipeOrThrow<T, S, R>(recipeId: string): RecipeModule<T, S, R> {
-        const recipe = this.recipeList.find(recipe => {
+        const recipe = this.recipeList.find((recipe) => {
             return recipe.recipeId === recipeId;
         });
 

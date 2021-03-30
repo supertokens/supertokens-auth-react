@@ -28,7 +28,7 @@ import {
     EmailPasswordGetRedirectionURLContext,
     EmailPasswordPreAPIHookContext,
     EmailPasswordOnHandleEventContext,
-    NormalisedEmailPasswordConfig
+    NormalisedEmailPasswordConfig,
 } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { APIFormField, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
@@ -50,7 +50,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         super(props);
 
         this.state = {
-            status: "LOADING"
+            status: "LOADING",
         };
     }
 
@@ -102,15 +102,14 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         if (validationErrors.length > 0) {
             return {
                 status: "FIELD_ERROR",
-                formFields: validationErrors
+                formFields: validationErrors,
             };
         }
 
-        const normalisedAPIResponse = await signInAPI(formFields, this.getRecipeInstanceOrThrow() as RecipeModule<
-            unknown,
-            unknown,
-            unknown
-        >);
+        const normalisedAPIResponse = await signInAPI(
+            formFields,
+            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
+        );
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
 
@@ -125,14 +124,14 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
             action: "SUCCESS",
             isNewUser: false,
-            user: this.state.user
+            user: this.state.user,
         });
 
         return await this.getRecipeInstanceOrThrow().redirect(
             {
                 action: "SUCCESS",
                 isNewUser: false,
-                redirectToPath: getRedirectToPathFromURL()
+                redirectToPath: getRedirectToPathFromURL(),
             },
             this.props.history
         );
@@ -149,15 +148,14 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         if (validationErrors.length > 0) {
             return {
                 status: "FIELD_ERROR",
-                formFields: validationErrors
+                formFields: validationErrors,
             };
         }
 
-        const normalisedAPIResponse = await signUpAPI(formFields, this.getRecipeInstanceOrThrow() as RecipeModule<
-            unknown,
-            unknown,
-            unknown
-        >);
+        const normalisedAPIResponse = await signUpAPI(
+            formFields,
+            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
+        );
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
 
@@ -165,7 +163,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     };
 
     setStateOnSuccessfulAPICall(normalisedAPIResponse: FormBaseAPIResponse): void {
-        this.setState(oldState => {
+        this.setState((oldState) => {
             if (
                 oldState.status !== "READY" ||
                 normalisedAPIResponse.status !== "OK" ||
@@ -178,8 +176,8 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
                 status: "SUCCESSFUL",
                 user: {
                     id: normalisedAPIResponse.user.id,
-                    email: normalisedAPIResponse.user.email
-                }
+                    email: normalisedAPIResponse.user.email,
+                },
             };
         });
     }
@@ -192,20 +190,20 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
             action: "SUCCESS",
             isNewUser: false,
-            user: this.state.user
+            user: this.state.user,
         });
 
         // Redirect to email verification screen if sign up and email verification mode is required.
         let context: EmailPasswordGetRedirectionURLContext = {
             redirectToPath: getRedirectToPathFromURL(),
             isNewUser: true,
-            action: "SUCCESS"
+            action: "SUCCESS",
         };
 
         if (this.getRecipeInstanceOrThrow().isEmailVerificationRequired() === true) {
             // Or if sign up and email verification mode is not required, redirect to success screen.
             context = {
-                action: "VERIFY_EMAIL"
+                action: "VERIFY_EMAIL",
             };
         }
 
@@ -214,7 +212,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
 
     getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {
         const emailPasswordOnly = formFields.length === 2;
-        return formFields.map(field => ({
+        return formFields.map((field) => ({
             ...field,
             showIsRequired: (() => {
                 // If email and password only, do not show required indicator (*).
@@ -242,17 +240,16 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
                         return "Email must be of type string";
                     }
                     try {
-                        return await emailExistsAPI(value, this.getRecipeInstanceOrThrow() as RecipeModule<
-                            unknown,
-                            unknown,
-                            unknown
-                        >);
+                        return await emailExistsAPI(
+                            value,
+                            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
+                        );
                     } catch (e) {
                         // Fail silently.
                         return undefined;
                     }
                 };
-            })()
+            })(),
         }));
     }
 
@@ -263,7 +260,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists) {
             this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-                action: "SESSION_ALREADY_EXISTS"
+                action: "SESSION_ALREADY_EXISTS",
             });
             return await this.getRecipeInstanceOrThrow().redirect(
                 { action: "SUCCESS", isNewUser: false },
@@ -271,14 +268,14 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             );
         }
 
-        this.setState(oldState => {
+        this.setState((oldState) => {
             if (oldState.status !== "LOADING") {
                 return oldState;
             }
 
             return {
                 ...oldState,
-                status: "READY"
+                status: "READY",
             };
         });
     };
@@ -294,7 +291,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             signInAPI: this.signIn,
             onSuccess: this.onSignInSuccess,
             forgotPasswordClick: () =>
-                this.getRecipeInstanceOrThrow().redirect({ action: "RESET_PASSWORD" }, this.props.history)
+                this.getRecipeInstanceOrThrow().redirect({ action: "RESET_PASSWORD" }, this.props.history),
         };
 
         const signUpForm = {
@@ -303,7 +300,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             privacyPolicyLink: signUpFeature.privacyPolicyLink,
             termsOfServiceLink: signUpFeature.termsOfServiceLink,
             onSuccess: this.onSignUpSuccess,
-            signUpAPI: this.signUp
+            signUpAPI: this.signUp,
         };
 
         // Before session is verified, return empty fragment, prevent UI glitch.
@@ -332,7 +329,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
                             rawPalette: this.getRecipeInstanceOrThrow().config.palette,
                             defaultToSignUp: signInAndUpFeature.defaultToSignUp,
                             signInForm,
-                            signUpForm
+                            signUpForm,
                         })}
                 </Fragment>
             </FeatureWrapper>

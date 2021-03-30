@@ -40,7 +40,7 @@ export async function getOAuthAuthorisationURLAPI<T, S, R>(
     if (response.status === "OK") {
         return {
             status: "OK",
-            url: response.url
+            url: response.url,
         };
     }
 

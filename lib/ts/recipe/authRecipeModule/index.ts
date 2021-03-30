@@ -43,7 +43,7 @@ export default abstract class AuthRecipeModule<T, S, R, N> extends RecipeModule<
         super(config);
         this.config = {
             ...normaliseAuthRecipeModuleConfig(config),
-            ...normalisedChildClassConfig
+            ...normalisedChildClassConfig,
         };
 
         if (this.config.emailVerificationFeature.mode === "REQUIRED") {
@@ -54,7 +54,7 @@ export default abstract class AuthRecipeModule<T, S, R, N> extends RecipeModule<
                 ...this.hooks,
                 appInfo: this.appInfo,
                 recipeId: this.recipeId,
-                signOut: this.signOut
+                signOut: this.signOut,
             });
         }
     }

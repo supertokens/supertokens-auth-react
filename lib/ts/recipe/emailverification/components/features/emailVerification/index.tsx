@@ -50,7 +50,7 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
         }
 
         this.state = {
-            token
+            token,
         };
     }
 
@@ -112,7 +112,7 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
         } catch (e) {}
 
         this.setState(() => ({
-            token: ""
+            token: "",
         }));
     };
 
@@ -147,10 +147,10 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
             signOut: this.signOut,
             onSuccess: () =>
                 this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-                    action: "VERIFY_EMAIL_SENT"
+                    action: "VERIFY_EMAIL_SENT",
                 }),
             onEmailAlreadyVerified: () =>
-                this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS", isNewUser: false }, this.props.history)
+                this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS", isNewUser: false }, this.props.history),
         };
 
         const verifyEmailLinkClickedScreenFeature = this.getRecipeInstanceOrThrow().config.verifyEmailLinkClickedScreen;
@@ -160,11 +160,11 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
             onTokenInvalidRedirect: this.onTokenInvalidRedirect,
             onSuccess: () =>
                 this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-                    action: "EMAIL_VERIFIED_SUCCESSFUL"
+                    action: "EMAIL_VERIFIED_SUCCESSFUL",
                 }),
             onContinueClicked: () =>
                 this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history),
-            verifyEmailAPI: async () => await verifyEmailAPI(this.getRecipeInstanceOrThrow(), this.state.token)
+            verifyEmailAPI: async () => await verifyEmailAPI(this.getRecipeInstanceOrThrow(), this.state.token),
         };
 
         const hasToken = this.state.token.length !== 0;
@@ -190,7 +190,7 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
                             rawPalette: this.getRecipeInstanceOrThrow().config.palette,
                             sendVerifyEmailScreen,
                             verifyEmailLinkClickedScreen,
-                            hasToken
+                            hasToken,
                         })}
                 </Fragment>
             </FeatureWrapper>

@@ -44,7 +44,7 @@ export default class HttpRequest<T, S, R> {
             this.getFullUrl(path, queryParams),
             {
                 method: "GET",
-                ...config
+                ...config,
             },
             action
         );
@@ -55,7 +55,7 @@ export default class HttpRequest<T, S, R> {
             this.getFullUrl(path),
             {
                 method: "POST",
-                ...config
+                ...config,
             },
             action
         );
@@ -66,7 +66,7 @@ export default class HttpRequest<T, S, R> {
             this.getFullUrl(path),
             {
                 method: "DELETE",
-                ...config
+                ...config,
             },
             action
         );
@@ -77,7 +77,7 @@ export default class HttpRequest<T, S, R> {
             this.getFullUrl(path),
             {
                 method: "PUT",
-                ...config
+                ...config,
             },
             action
         );
@@ -99,10 +99,10 @@ export default class HttpRequest<T, S, R> {
                     ...headers,
                     "fdi-version": supported_fdi.join(","),
                     "Content-Type": "application/json",
-                    rid: this.recipe.recipeId
-                }
+                    rid: this.recipe.recipeId,
+                },
             },
-            url: baseUrl
+            url: baseUrl,
         });
 
         return await fetch(url, requestInit);
@@ -114,7 +114,7 @@ export default class HttpRequest<T, S, R> {
     preAPIHook = async ({
         action,
         url,
-        requestInit
+        requestInit,
     }: {
         action: string;
         url: string;
@@ -124,12 +124,12 @@ export default class HttpRequest<T, S, R> {
         if (isRequestInit(result)) {
             return {
                 url,
-                requestInit: result as RequestInit
+                requestInit: result as RequestInit,
             };
         } else {
             return {
                 url,
-                ...result
+                ...result,
             };
         }
     };

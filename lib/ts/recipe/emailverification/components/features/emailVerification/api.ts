@@ -20,7 +20,7 @@ import {
     VerifyEmailAPIResponse,
     SendVerifyEmailThemeResponse,
     SendVerifyEmailAPIResponse,
-    IsEmailVerifiedAPIResponse
+    IsEmailVerifiedAPIResponse,
 } from "../../../types";
 
 /*
@@ -36,8 +36,8 @@ export async function verifyEmailAPI(
         {
             body: JSON.stringify({
                 method: "token",
-                token
-            })
+                token,
+            }),
         },
         "VERIFY_EMAIL"
     );
@@ -45,14 +45,14 @@ export async function verifyEmailAPI(
     // Otherwise, if email verification invalid token error.
     if (response.status === "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR") {
         return {
-            status: "INVALID"
+            status: "INVALID",
         };
     }
 
     // Otherwise, status === OK
     if (response.status === "OK") {
         return {
-            status: "SUCCESSFUL"
+            status: "SUCCESSFUL",
         };
     }
 
@@ -71,14 +71,14 @@ export async function sendVerifyEmailAPI(
     // If email already verified.
     if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
         return {
-            status: "EMAIL_ALREADY_VERIFIED_ERROR"
+            status: "EMAIL_ALREADY_VERIFIED_ERROR",
         };
     }
 
     // Otherwise, success.
     if (response.status === "OK") {
         return {
-            status: "OK"
+            status: "OK",
         };
     }
 
