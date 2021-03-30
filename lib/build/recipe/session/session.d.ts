@@ -15,6 +15,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
     getAuth0API: () => {
         apiPath: string | undefined;
     };
+    signOut: () => Promise<void>;
     static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown>;
     static getInstanceOrThrow(): Session;
     static getRefreshURLDomain(): string | undefined;
@@ -27,5 +28,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
     static getAuth0API(): {
         apiPath: string | undefined;
     };
+    static signOut(): Promise<void>;
     static reset(): void;
 }
