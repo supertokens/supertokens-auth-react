@@ -7,9 +7,11 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<ThirdParty
     constructor(config: ThirdPartyEmailPasswordConfig);
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getDefaultRedirectionURL: (context: ThirdPartyEmailPasswordGetRedirectionURLContext) => Promise<string>;
+    redirectToAuth: (show?: "signin" | "signup" | undefined) => void;
     static init(config: ThirdPartyEmailPasswordUserInput): CreateRecipeFunction<ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext>;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
     static getInstanceOrThrow(): ThirdPartyEmailPassword;
+    static redirectToAuth(show?: "signin" | "signup"): void;
     static reset(): void;
 }

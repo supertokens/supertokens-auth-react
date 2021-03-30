@@ -101,6 +101,20 @@ export default class EmailPassword extends AuthRecipeModule<
         return this.getAuthRecipeModuleDefaultRedirectionURL(context);
     };
 
+    redirectToAuth = (show?: "signin" | "signup") => {
+        this.redirect(
+            {
+                action: "SIGN_IN_AND_UP",
+            },
+            undefined,
+            show === undefined
+                ? undefined
+                : {
+                      show,
+                  }
+        );
+    };
+
     /*
      * Static methods.
      */
@@ -150,6 +164,10 @@ export default class EmailPassword extends AuthRecipeModule<
         }
 
         return EmailPassword.instance;
+    }
+
+    static redirectToAuth(show?: "signin" | "signup") {
+        return EmailPassword.getInstanceOrThrow().redirectToAuth(show);
     }
 
     /*

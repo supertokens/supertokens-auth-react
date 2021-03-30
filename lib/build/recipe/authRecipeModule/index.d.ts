@@ -13,4 +13,5 @@ export default abstract class AuthRecipeModule<T, S, R, N> extends RecipeModule<
     isEmailVerified(): Promise<boolean>;
     isEmailVerificationRequired(): boolean;
     doesSessionExist: () => boolean;
+    abstract redirectToAuth(show?: "signin" | "signup"): void;
 }

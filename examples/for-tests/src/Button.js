@@ -23,7 +23,9 @@ export default function Logout({ onClick, label, className }) {
                     alignItems: "center",
                     justifyContent: "center",
                     color: "#ffffff",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    padding: "10px"
                 }}>
                 {label}
             </div>

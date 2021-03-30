@@ -124,4 +124,6 @@ export default abstract class AuthRecipeModule<T, S, R, N> extends RecipeModule<
     doesSessionExist = (): boolean => {
         return Session.getInstanceOrThrow().doesSessionExist();
     };
+
+    abstract redirectToAuth(show?: "signin" | "signup"): void;
 }

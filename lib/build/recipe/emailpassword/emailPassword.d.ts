@@ -7,9 +7,11 @@ export default class EmailPassword extends AuthRecipeModule<EmailPasswordGetRedi
     constructor(config: EmailPasswordConfig);
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getDefaultRedirectionURL: (context: EmailPasswordGetRedirectionURLContext) => Promise<string>;
+    redirectToAuth: (show?: "signin" | "signup" | undefined) => void;
     static init(config?: EmailPasswordUserInput): CreateRecipeFunction<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext>;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
     static getInstanceOrThrow(): EmailPassword;
+    static redirectToAuth(show?: "signin" | "signup"): void;
     static reset(): void;
 }

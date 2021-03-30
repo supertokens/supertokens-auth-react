@@ -118,6 +118,20 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         }
     };
 
+    redirectToAuth = (show?: "signin" | "signup") => {
+        this.redirect(
+            {
+                action: "SIGN_IN_AND_UP",
+            },
+            undefined,
+            show === undefined
+                ? undefined
+                : {
+                      show,
+                  }
+        );
+    };
+
     /*
      * Static methods.
      */
@@ -167,6 +181,10 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         }
 
         return ThirdPartyEmailPassword.instance;
+    }
+
+    static redirectToAuth(show?: "signin" | "signup") {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuth(show);
     }
 
     /*

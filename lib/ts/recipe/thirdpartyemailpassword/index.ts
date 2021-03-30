@@ -55,6 +55,10 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
         return ThirdPartyEmailPassword.isEmailVerified();
     }
 
+    static redirectToAuth(show?: "signin" | "signup") {
+        return ThirdPartyEmailPassword.redirectToAuth(show);
+    }
+
     /*
      * Providers
      */
@@ -74,6 +78,7 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
 const init = ThirdPartyEmailPasswordAPIWrapper.init;
 const signOut = ThirdPartyEmailPasswordAPIWrapper.signOut;
 const isEmailVerified = ThirdPartyEmailPasswordAPIWrapper.isEmailVerified;
+const redirectToAuth = ThirdPartyEmailPasswordAPIWrapper.redirectToAuth;
 
 export {
     ThirdPartyEmailPasswordAuth,
@@ -87,6 +92,7 @@ export {
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
+    redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
     ResetPasswordUsingToken,

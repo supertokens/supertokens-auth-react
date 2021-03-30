@@ -99,6 +99,20 @@ export default class ThirdParty extends AuthRecipeModule<
         }
     };
 
+    redirectToAuth = (show?: "signin" | "signup") => {
+        this.redirect(
+            {
+                action: "SIGN_IN_AND_UP",
+            },
+            undefined,
+            show === undefined
+                ? undefined
+                : {
+                      show,
+                  }
+        );
+    };
+
     /*
      * Static methods.
      */
@@ -149,6 +163,10 @@ export default class ThirdParty extends AuthRecipeModule<
         }
 
         return ThirdParty.instance;
+    }
+
+    static redirectToAuth(show?: "signin" | "signup") {
+        return ThirdParty.getInstanceOrThrow().redirectToAuth(show);
     }
 
     /*

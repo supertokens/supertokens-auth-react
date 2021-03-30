@@ -177,9 +177,34 @@ export function Home() {
     return (
         <>
             <h2>/Home</h2>
-            <Button onClick={() => (window.location.href = websiteBasePath || "/auth")} label="LOGIN" />
+            <Button onClick={() => {
+                goToAuth();
+            }} label="LOGIN to default" />
+            <Button onClick={() => {
+                goToAuth("signin");
+            }} label="LOGIN with redirect to sign in" />
+            <Button onClick={() => {
+                goToAuth("signup");
+            }} label="LOGIN with redirect to sign up" />
         </>
     );
+}
+
+function goToAuth(show) {
+    let recipe = "emailpassword";
+    let fromLocalstorage = localStorage.getItem("authRecipe");
+    if (fromLocalstorage !== undefined && fromLocalstorage !== null) {
+        recipe = fromLocalstorage;
+    }
+    if (recipe === "emailpassword") {
+        EmailPassword.redirectToAuth(show);
+    } else if (recipe === "thirdparty") {
+        ThirdParty.redirectToAuth(show);
+    } else if (recipe === "thirdpartyemailpassword") {
+        ThirdPartyEmailPassword.redirectToAuth(show);
+    } else {
+        window.location.href = websiteBasePath || "/auth"
+    }
 }
 
 export function About() {

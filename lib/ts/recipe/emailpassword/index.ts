@@ -71,11 +71,16 @@ export default class EmailPasswordAPIWrapper {
     static async isEmailVerified(): Promise<boolean> {
         return EmailPassword.isEmailVerified();
     }
+
+    static redirectToAuth(show?: "signin" | "signup") {
+        return EmailPassword.redirectToAuth(show);
+    }
 }
 
 const init = EmailPasswordAPIWrapper.init;
 const signOut = EmailPasswordAPIWrapper.signOut;
 const isEmailVerified = EmailPasswordAPIWrapper.isEmailVerified;
+const redirectToAuth = EmailPasswordAPIWrapper.redirectToAuth;
 
 export {
     EmailPasswordAuth,
@@ -85,6 +90,7 @@ export {
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
+    redirectToAuth,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
     EmailVerification,

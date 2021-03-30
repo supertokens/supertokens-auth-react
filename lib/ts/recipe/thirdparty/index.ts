@@ -61,6 +61,10 @@ export default class ThirdPartyAPIWrapper {
         return ThirdParty.isEmailVerified();
     }
 
+    static redirectToAuth(show?: "signin" | "signup") {
+        return ThirdParty.redirectToAuth(show);
+    }
+
     /*
      * Providers
      */
@@ -78,6 +82,7 @@ export default class ThirdPartyAPIWrapper {
 const init = ThirdPartyAPIWrapper.init;
 const signOut = ThirdPartyAPIWrapper.signOut;
 const isEmailVerified = ThirdPartyAPIWrapper.isEmailVerified;
+const redirectToAuth = ThirdPartyAPIWrapper.redirectToAuth;
 
 export {
     ThirdPartyAuth,
@@ -91,6 +96,7 @@ export {
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
+    redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
     ThirdPartyGetRedirectionURLContext,
