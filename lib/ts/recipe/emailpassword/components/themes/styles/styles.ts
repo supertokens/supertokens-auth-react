@@ -14,7 +14,6 @@
  */
 
 /** @jsx jsx */
-import { jsx } from "@emotion/react";
 import chroma from "chroma-js";
 import { getDefaultStyles, getMergedStyles, slideTop } from "../../../../../styles/styles";
 import { NormalisedDefaultStyles, NormalisedPalette } from "../../../../../types";

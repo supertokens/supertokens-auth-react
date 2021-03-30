@@ -54,7 +54,13 @@ export default class EmailPasswordAPIWrapper {
      * Methods.
      */
 
-    static init(config?: EmailPasswordUserInput): CreateRecipeFunction {
+    static init(
+        config?: EmailPasswordUserInput
+    ): CreateRecipeFunction<
+        EmailPasswordGetRedirectionURLContext,
+        EmailPasswordPreAPIHookContext,
+        EmailPasswordOnHandleEventContext
+    > {
         return EmailPassword.init(config);
     }
 

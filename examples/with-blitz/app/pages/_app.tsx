@@ -93,14 +93,18 @@ function RootErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   } else if (error instanceof AuthorizationError) {
     return (
       <ErrorComponent
+        /* prettier-ignore */
         statusCode={(error as any).statusCode}
+        /* prettier-ignore */
         title="Sorry, you are not authorized to access this"
       />
     )
   } else {
     return (
       <ErrorComponent
+      /* prettier-ignore */
         statusCode={(error as any)?.statusCode || 400}
+        /* prettier-ignore */
         title={error?.message || error?.name}
       />
     )

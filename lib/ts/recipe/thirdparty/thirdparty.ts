@@ -32,7 +32,6 @@ import { matchRecipeIdUsingState, normaliseThirdPartyConfig } from "./utils";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
-import { NormalisedAuthRecipeConfig } from "../authRecipeModule/types";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 
@@ -42,7 +41,8 @@ import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 export default class ThirdParty extends AuthRecipeModule<
     ThirdPartyGetRedirectionURLContext,
     ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext
+    ThirdPartyOnHandleEventContext,
+    NormalisedThirdPartyConfig
 > {
     /*
      * Static Attributes.
@@ -51,19 +51,10 @@ export default class ThirdParty extends AuthRecipeModule<
     static RECIPE_ID = "thirdparty";
 
     /*
-     * Instance Attributes.
-     */
-    config: NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig;
-
-    /*
      * Constructor.
      */
     constructor(config: ThirdPartyConfig) {
-        super(config);
-        this.config = {
-            ...this.config,
-            ...normaliseThirdPartyConfig(config),
-        };
+        super(config, normaliseThirdPartyConfig(config));
     }
 
     /*
@@ -112,7 +103,13 @@ export default class ThirdParty extends AuthRecipeModule<
      * Static methods.
      */
 
-    static init(config: ThirdPartyUserInput): CreateRecipeFunction {
+    static init(
+        config: ThirdPartyUserInput
+    ): CreateRecipeFunction<
+        ThirdPartyGetRedirectionURLContext,
+        ThirdPartyPreAPIHookContext,
+        ThirdPartyOnHandleEventContext
+    > {
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<

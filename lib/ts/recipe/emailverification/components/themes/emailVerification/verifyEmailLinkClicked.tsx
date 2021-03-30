@@ -19,7 +19,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 
-import React, { PureComponent } from "react";
+import { PureComponent } from "react";
 import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
 import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
 import ErrorLargeIcon from "../../../../../components/assets/errorLargeIcon";

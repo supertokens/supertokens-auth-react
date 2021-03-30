@@ -37,6 +37,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 import SuperTokens from "../../../../../superTokens";
+import RecipeModule from "../../../../recipeModule";
 
 /*
  * Component.
@@ -63,7 +64,8 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
         EmailPasswordGetRedirectionURLContext,
         EmailPasswordPreAPIHookContext,
-        EmailPasswordOnHandleEventContext
+        EmailPasswordOnHandleEventContext,
+        NormalisedEmailPasswordConfig
     > => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SignInAndUp component");
@@ -77,7 +79,8 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         return recipe as AuthRecipeModule<
             EmailPasswordGetRedirectionURLContext,
             EmailPasswordPreAPIHookContext,
-            EmailPasswordOnHandleEventContext
+            EmailPasswordOnHandleEventContext,
+            NormalisedEmailPasswordConfig
         >;
     };
 
@@ -125,7 +128,11 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         }
 
         // Call API, only send first password.
-        return await handleSubmitNewPasswordAPI([formFields[0]], this.getRecipeInstanceOrThrow(), this.state.token);
+        return await handleSubmitNewPasswordAPI(
+            [formFields[0]],
+            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>,
+            this.state.token
+        );
     };
 
     enterEmail = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
@@ -143,7 +150,10 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             };
         }
 
-        return await enterEmailAPI(formFields, this.getRecipeInstanceOrThrow());
+        return await enterEmailAPI(
+            formFields,
+            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
+        );
     };
 
     render = (): JSX.Element => {

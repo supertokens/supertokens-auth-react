@@ -37,6 +37,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { NormalisedAuthRecipeConfig, SignInAndUpState } from "../../../../authRecipeModule/types";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import SuperTokens from "../../../../../superTokens";
+import RecipeModule from "../../../../recipeModule";
 /*
  * Component.
  */
@@ -56,7 +57,8 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
         EmailPasswordGetRedirectionURLContext,
         EmailPasswordPreAPIHookContext,
-        EmailPasswordOnHandleEventContext
+        EmailPasswordOnHandleEventContext,
+        NormalisedEmailPasswordConfig
     > => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SignInAndUp component");
@@ -70,7 +72,8 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         return recipe as AuthRecipeModule<
             EmailPasswordGetRedirectionURLContext,
             EmailPasswordPreAPIHookContext,
-            EmailPasswordOnHandleEventContext
+            EmailPasswordOnHandleEventContext,
+            NormalisedEmailPasswordConfig
         >;
     };
 
@@ -103,7 +106,10 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             };
         }
 
-        const normalisedAPIResponse = await signInAPI(formFields, this.getRecipeInstanceOrThrow());
+        const normalisedAPIResponse = await signInAPI(
+            formFields,
+            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
+        );
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
 
@@ -146,7 +152,10 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             };
         }
 
-        const normalisedAPIResponse = await signUpAPI(formFields, this.getRecipeInstanceOrThrow());
+        const normalisedAPIResponse = await signUpAPI(
+            formFields,
+            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
+        );
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
 
@@ -231,7 +240,10 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
                         return "Email must be of type string";
                     }
                     try {
-                        return await emailExistsAPI(value, this.getRecipeInstanceOrThrow());
+                        return await emailExistsAPI(
+                            value,
+                            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
+                        );
                     } catch (e) {
                         // Fail silently.
                         return undefined;

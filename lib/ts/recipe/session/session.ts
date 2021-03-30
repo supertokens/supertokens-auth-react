@@ -94,7 +94,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
      * Static methods.
      */
 
-    static init(config?: SessionUserInput): CreateRecipeFunction {
+    static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown> {
         return (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown> => {
             Session.instance = new Session({
                 ...config,

@@ -19,7 +19,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 
-import React, { useContext } from "react";
+import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
 export default function SignUpFooter({

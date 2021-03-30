@@ -6,10 +6,10 @@ import { ComponentClass } from "react";
 import { History } from "history";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
-    recipeList: CreateRecipeFunction[];
+    recipeList: CreateRecipeFunction<unknown, unknown, unknown>[];
     useReactRouterDom?: boolean;
 };
-export declare type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule<unknown, unknown, unknown>;
+export declare type CreateRecipeFunction<T, S, R> = (appInfo: NormalisedAppInfo) => RecipeModule<T, S, R>;
 export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;
@@ -52,7 +52,7 @@ export declare type NormalisedFormField = {
     optional: boolean;
     autoComplete?: string;
 };
-export declare type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);
+export declare type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
 export declare type WithRouterType = (Component: ReactComponentClass) => ReactComponentClass;
 export declare type Styles = Record<string, CSSObject>;
 export declare type FeatureBaseConfig = {

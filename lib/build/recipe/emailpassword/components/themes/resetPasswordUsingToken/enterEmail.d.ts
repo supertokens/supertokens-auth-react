@@ -1,7 +1,8 @@
-import React, { PureComponent } from "react";
+/// <reference types="@emotion/react/types/css-prop" />
+import { PureComponent } from "react";
 import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../types";
 export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps, EnterEmailThemeState> {
-    static contextType: React.Context<{
+    static contextType: import("react").Context<{
         [x: string]: import("@emotion/serialize").CSSObject;
         palette: import("../../../../../types").NormalisedPalette;
     }>;

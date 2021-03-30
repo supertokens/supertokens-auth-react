@@ -26,7 +26,7 @@
     "jsdom-global": "3.0.2",
     "mocha": "6.1.4",
     "npm-run-all": "^4.1.5",
-    "prettier": "1.18.2",
+    "prettier": "2.2.1",
     "puppeteer": "5.3.1",
     "react": "16.14.0",
     "react-dom": ">=16.0.0",
@@ -61,11 +61,11 @@
     "tsc": "cd lib && npx tsc -p tsconfig.json",
     "build": "cd lib && rm -rf build && npx tsc -p tsconfig.json",
     "watch": "cd lib && npx tsc -w -p tsconfig.json",
-    "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"ts/**/*.tsx\" \"build/**/*.js\" \"ts/**/*.tsx\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\" \"../examples/*/**/*.js\" \"../examples/*/**/*.ts\" \"../examples/*/**/*.tsx\"",
+    "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"ts/**/*.tsx\" \"build/**/*.js\" \"ts/**/*.tsx\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\"",
     "build-pretty": "npm run build && npm run pretty",
     "lint": "cd lib && eslint ./ts --ext .ts,.tsx",
     "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$' && exit 1 || exit 0",
-    "pretty-check": "cd lib && npx prettier --check --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\" \"../examples/*/**/*.js\" \"../examples/*/**/*.ts\" \"../examples/*/**/*.tsx\"",
+    "pretty-check": "cd lib && npx prettier --check --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\"",
     "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
   },
   "repository": {

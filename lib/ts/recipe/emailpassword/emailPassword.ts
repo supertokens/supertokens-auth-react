@@ -33,7 +33,6 @@ import NormalisedURLPath from "../../normalisedURLPath";
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
-import { NormalisedAuthRecipeConfig } from "../authRecipeModule/types";
 import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
 
@@ -43,7 +42,8 @@ import ResetPasswordUsingToken from "./components/features/resetPasswordUsingTok
 export default class EmailPassword extends AuthRecipeModule<
     EmailPasswordGetRedirectionURLContext,
     EmailPasswordPreAPIHookContext,
-    EmailPasswordOnHandleEventContext
+    EmailPasswordOnHandleEventContext,
+    NormalisedEmailPasswordConfig
 > {
     /*
      * Static Attributes.
@@ -52,19 +52,10 @@ export default class EmailPassword extends AuthRecipeModule<
     static RECIPE_ID = "emailpassword";
 
     /*
-     * Instance Attributes.
-     */
-    config: NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig;
-
-    /*
      * Constructor.
      */
     constructor(config: EmailPasswordConfig) {
-        super(config);
-        this.config = {
-            ...this.config,
-            ...normaliseEmailPasswordConfig(config),
-        };
+        super(config, normaliseEmailPasswordConfig(config));
     }
 
     /*
@@ -114,7 +105,13 @@ export default class EmailPassword extends AuthRecipeModule<
      * Static methods.
      */
 
-    static init(config?: EmailPasswordUserInput): CreateRecipeFunction {
+    static init(
+        config?: EmailPasswordUserInput
+    ): CreateRecipeFunction<
+        EmailPasswordGetRedirectionURLContext,
+        EmailPasswordPreAPIHookContext,
+        EmailPasswordOnHandleEventContext
+    > {
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<

@@ -7,7 +7,7 @@ declare class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, {
     token: string;
 }> {
     constructor(props: FeatureBaseProps);
-    getRecipeInstanceOrThrow: () => AuthRecipeModule<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext>;
+    getRecipeInstanceOrThrow: () => AuthRecipeModule<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext, NormalisedEmailPasswordConfig>;
     getRecipeConfigOrThrow: () => NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig;
     getIsEmbedded: () => boolean;
     submitNewPassword: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse>;

@@ -98,7 +98,7 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
 
             return signInFieldsAccumulator;
         },
-        []
+        [] as NormalisedFormField[]
     );
 
     const signInForm: NormalisedSignInFormFeatureConfig = normaliseSignInFormFeatureConfig(

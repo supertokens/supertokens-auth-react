@@ -18,7 +18,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { Fragment, useContext } from "react";
+import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
 /*

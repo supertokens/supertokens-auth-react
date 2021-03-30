@@ -85,7 +85,7 @@ export async function sendVerifyEmailAPI(
     throw Error(SOMETHING_WENT_WRONG_ERROR);
 }
 
-export async function isEmailVerifiedAPI(recipe: RecipeModule<unknown, unknown, unknown>): Promise<boolean> {
+export async function isEmailVerifiedAPI<T, S, R>(recipe: RecipeModule<T, S, R>): Promise<boolean> {
     const response: IsEmailVerifiedAPIResponse = await recipe.httpRequest.get(
         "/user/email/verify",
         {},
