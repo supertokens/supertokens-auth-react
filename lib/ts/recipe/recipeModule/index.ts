@@ -57,9 +57,7 @@ export default abstract class RecipeModule<
     ) {
         this.recipeId = config.recipeId;
         this.appInfo = config.appInfo;
-        // @ts-ignore
         this.httpRequest = new HttpRequest(this);
-        // @ts-ignore
         this.hooks = normalisedRecipeModuleHooks(config);
     }
 

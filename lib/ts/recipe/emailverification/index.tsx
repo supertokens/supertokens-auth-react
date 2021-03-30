@@ -57,8 +57,7 @@ export default class EmailVerification<T, S, R> extends RecipeModule<T, S, R> {
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeId),
                 rid: this.recipeId,
-                // @ts-ignore
-                component: EmailVerificationFeature
+                component: EmailVerificationFeature,
             };
         }
         return features;
@@ -69,7 +68,6 @@ export default class EmailVerification<T, S, R> extends RecipeModule<T, S, R> {
      */
 
     async isEmailVerified(): Promise<boolean> {
-        // @ts-ignore
         return await isEmailVerifiedAPI(this);
     }
 
@@ -78,9 +76,7 @@ export default class EmailVerification<T, S, R> extends RecipeModule<T, S, R> {
     }
 
     async getDefaultRedirectionURL(context: unknown): Promise<string> {
-        return await SuperTokens.getInstanceOrThrow()
-            .getRecipeOrThrow(this.recipeId)
-            .getDefaultRedirectionURL(context);
+        return await SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.recipeId).getDefaultRedirectionURL(context);
     }
 
     async getEmailVerificationDefaultURL(context: { action: string }): Promise<string> {
