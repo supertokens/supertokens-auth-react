@@ -26,4 +26,4 @@ export default class ThirdPartyAPIWrapper {
 declare const init: typeof ThirdPartyAPIWrapper.init;
 declare const signOut: typeof ThirdPartyAPIWrapper.signOut;
 declare const isEmailVerified: typeof ThirdPartyAPIWrapper.isEmailVerified;
-export { ThirdPartyAuth, ThirdPartyAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, EmailVerification, EmailVerificationTheme, ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext };
+export { ThirdPartyAuth, ThirdPartyAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, EmailVerification, EmailVerificationTheme, ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext, };

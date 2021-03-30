@@ -7,7 +7,7 @@ export default class HttpRequest<T, S, R> {
     delete: <T_1>(path: string, action: string, config: RequestInit) => Promise<T_1>;
     put: <T_1>(path: string, action: string, config: RequestInit) => Promise<T_1>;
     fetch: (baseUrl: string, config: RequestInit, action: string) => Promise<Response>;
-    preAPIHook: ({ action, url, requestInit }: {
+    preAPIHook: ({ action, url, requestInit, }: {
         action: string;
         url: string;
         requestInit: RequestInit;
