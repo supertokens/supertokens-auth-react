@@ -31,17 +31,12 @@ import { FeatureBaseProps } from "../../../../../types";
 import { isAuthRecipeModule } from "../../../../authRecipeModule/utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import AuthRecipeModule from "../../../../authRecipeModule";
-import {
-    AuthRecipeModuleGetRedirectionURLContext,
-    AuthRecipeModuleOnHandleEventContext,
-    AuthRecipeModulePreAPIHookContext
-} from "../../../../authRecipeModule/types";
 
 /*
  * Component.
  */
 
-class EmailVerification extends PureComponent<FeatureBaseProps, { token: string }> {
+class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { token: string }> {
     /*
      * Constructor.
      */
@@ -63,11 +58,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
      * Methods.
      */
 
-    getAuthRecipeOrThrow = (): AuthRecipeModule<
-        AuthRecipeModuleGetRedirectionURLContext,
-        AuthRecipeModulePreAPIHookContext,
-        AuthRecipeModuleOnHandleEventContext
-    > => {
+    getAuthRecipeOrThrow = (): AuthRecipeModule<T, S, R, N> => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to EmailVerification component");
         }
@@ -79,11 +70,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             );
         }
 
-        return recipe as AuthRecipeModule<
-            AuthRecipeModuleGetRedirectionURLContext,
-            AuthRecipeModulePreAPIHookContext,
-            AuthRecipeModuleOnHandleEventContext
-        >;
+        return recipe as AuthRecipeModule<T, S, R, N>;
     };
 
     getRecipeInstanceOrThrow = (): EmailVerificationRecipe<unknown, unknown, unknown> => {

@@ -37,7 +37,13 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
      * Static attributes.
      */
 
-    static init(config: ThirdPartyEmailPasswordUserInput): CreateRecipeFunction {
+    static init(
+        config: ThirdPartyEmailPasswordUserInput
+    ): CreateRecipeFunction<
+        ThirdPartyEmailPasswordGetRedirectionURLContext,
+        ThirdPartyEmailPasswordPreAPIHookContext,
+        ThirdPartyEmailPasswordOnHandleEventContext
+    > {
         return ThirdPartyEmailPassword.init(config);
     }
 

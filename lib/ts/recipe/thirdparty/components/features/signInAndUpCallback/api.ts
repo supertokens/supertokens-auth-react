@@ -25,10 +25,10 @@ import { SignInAndUpAPIResponse } from "../../../types";
  * Methods.
  */
 
-export async function signInAndUpAPI(
+export async function signInAndUpAPI<T, S, R>(
     thirdPartyId: string,
     code: string,
-    recipe: RecipeModule<unknown, unknown, unknown>,
+    recipe: RecipeModule<T, S, R>,
     redirectURI: string
 ): Promise<SignInAndUpAPIResponse> {
     const response: SignInAndUpAPIResponse = await recipe.httpRequest.post(

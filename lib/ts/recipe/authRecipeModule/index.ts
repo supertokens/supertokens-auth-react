@@ -28,20 +28,23 @@ import EmailVerification from "../emailverification";
 /*
  * Class.
  */
-export default abstract class AuthRecipeModule<T, S, R> extends RecipeModule<T, S, R> {
+export default abstract class AuthRecipeModule<T, S, R, N> extends RecipeModule<T, S, R> {
     /*
      * Instance attributes.
      */
 
-    config: NormalisedAuthRecipeConfig;
+    config: NormalisedAuthRecipeConfig & N;
     emailVerification?: EmailVerification<T, S, R>;
 
     /*
      * Constructor.
      */
-    constructor(config: AuthRecipeModuleConfig<unknown, unknown, unknown>) {
+    constructor(config: AuthRecipeModuleConfig<T, S, R>, normalisedChildClassConfig: N) {
         super(config);
-        this.config = normaliseAuthRecipeModuleConfig(config);
+        this.config = {
+            ...normaliseAuthRecipeModuleConfig(config),
+            ...normalisedChildClassConfig
+        };
 
         if (this.config.emailVerificationFeature.mode === "REQUIRED") {
             this.emailVerification = new EmailVerification({
@@ -95,7 +98,7 @@ export default abstract class AuthRecipeModule<T, S, R> extends RecipeModule<T, 
      * SignOut.
      */
     signOut = async (): Promise<SuccessAPIResponse> => {
-        return await signOut(this as AuthRecipeModule<unknown, unknown, unknown>);
+        return await signOut(this);
     };
 
     /*

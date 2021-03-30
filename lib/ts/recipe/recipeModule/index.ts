@@ -27,45 +27,27 @@ import NormalisedURLDomain from "../../normalisedURLDomain";
 /*
  * Class.
  */
-export default abstract class RecipeModule<
-    RecipeModuleGetRedirectionURLContext,
-    RecipeModulePreAPIHookContext,
-    RecipeModuleOnHandleEventContext
-> {
+export default abstract class RecipeModule<T, S, R> {
     /*
      * Instance attributes.
      */
 
     recipeId: string;
     appInfo: NormalisedAppInfo;
-    httpRequest: HttpRequest;
-    hooks: NormalisedRecipeModuleHooks<
-        RecipeModuleGetRedirectionURLContext,
-        RecipeModulePreAPIHookContext,
-        RecipeModuleOnHandleEventContext
-    >;
+    httpRequest: HttpRequest<T, S, R>;
+    hooks: NormalisedRecipeModuleHooks<T, S, R>;
 
     /*
      * Constructor.
      */
-    constructor(
-        config: RecipeModuleConfig<
-            RecipeModuleGetRedirectionURLContext,
-            RecipeModulePreAPIHookContext,
-            RecipeModuleOnHandleEventContext
-        >
-    ) {
+    constructor(config: RecipeModuleConfig<T, S, R>) {
         this.recipeId = config.recipeId;
         this.appInfo = config.appInfo;
         this.httpRequest = new HttpRequest(this);
         this.hooks = normalisedRecipeModuleHooks(config);
     }
 
-    redirect = async (
-        context: RecipeModuleGetRedirectionURLContext,
-        history?: History<any>,
-        queryParams?: Record<string, string>
-    ): Promise<void> => {
+    redirect = async (context: T, history?: History<any>, queryParams?: Record<string, string>): Promise<void> => {
         let redirectUrl = await this.getRedirectUrl(context);
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
 
@@ -91,7 +73,7 @@ export default abstract class RecipeModule<
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    getRedirectUrl = async (context: RecipeModuleGetRedirectionURLContext): Promise<string> => {
+    getRedirectUrl = async (context: T): Promise<string> => {
         // If getRedirectionURL provided by user.
         const redirectUrl = await this.hooks.getRedirectionURL(context);
         if (redirectUrl !== undefined) {
@@ -103,7 +85,7 @@ export default abstract class RecipeModule<
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async getDefaultRedirectionURL(_: RecipeModuleGetRedirectionURLContext): Promise<string> {
+    async getDefaultRedirectionURL(_: T): Promise<string> {
         throw new Error("getDefaultRedirectionURL is not implemented.");
     }
 

@@ -4,7 +4,7 @@ import { NormalisedThirdPartyConfig, ThirdPartyGetRedirectionURLContext, ThirdPa
 import AuthRecipeModule from "../../../../authRecipeModule";
 import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 declare class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpState> {
-    getRecipeInstanceOrThrow: () => AuthRecipeModule<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, import("../../../../authRecipeModule/types").AuthRecipeModuleOnHandleEventContext>;
+    getRecipeInstanceOrThrow: () => AuthRecipeModule<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, import("../../../../authRecipeModule/types").AuthRecipeModuleOnHandleEventContext, NormalisedThirdPartyConfig>;
     getRecipeConfigOrThrow: () => NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig;
     getIsEmbedded: () => boolean;
     componentDidMount: () => Promise<void>;

@@ -21,16 +21,15 @@ import { getShouldUseShadowDom } from "../../utils";
 import { normaliseEmailVerificationFeature } from "../emailverification/utils";
 import { AuthRecipeModuleConfig, NormalisedAuthRecipeConfig } from "./types";
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function isAuthRecipeModule(x: any): x is AuthRecipeModule<unknown, unknown, unknown> {
+export function isAuthRecipeModule<T, S, R, N>(x: any): x is AuthRecipeModule<T, S, R, N> {
     return x instanceof AuthRecipeModule;
 }
 
 /*
  * normaliseAuthRecipeModuleConfig
  */
-export function normaliseAuthRecipeModuleConfig(
-    config: AuthRecipeModuleConfig<unknown, unknown, unknown>
+export function normaliseAuthRecipeModuleConfig<T, S, R>(
+    config: AuthRecipeModuleConfig<T, S, R>
 ): NormalisedAuthRecipeConfig {
     const useShadowDom = config.useShadowDom === undefined ? true : config.useShadowDom;
     const palette = config.palette === undefined ? {} : config.palette;

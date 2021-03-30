@@ -16,7 +16,7 @@ export default class EmailPasswordAPIWrapper {
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static EmailVerification: typeof EmailVerification;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
-    static init(config?: EmailPasswordUserInput): CreateRecipeFunction;
+    static init(config?: EmailPasswordUserInput): CreateRecipeFunction<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext>;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
 }

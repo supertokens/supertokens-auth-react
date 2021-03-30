@@ -25,14 +25,13 @@ import {
     ThirdPartyUserInput,
     NormalisedThirdPartyConfig,
     ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext,
+    ThirdPartyOnHandleEventContext
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { matchRecipeIdUsingState, normaliseThirdPartyConfig } from "./utils";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
-import { NormalisedAuthRecipeConfig } from "../authRecipeModule/types";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 
@@ -42,7 +41,8 @@ import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 export default class ThirdParty extends AuthRecipeModule<
     ThirdPartyGetRedirectionURLContext,
     ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext
+    ThirdPartyOnHandleEventContext,
+    NormalisedThirdPartyConfig
 > {
     /*
      * Static Attributes.
@@ -51,19 +51,10 @@ export default class ThirdParty extends AuthRecipeModule<
     static RECIPE_ID = "thirdparty";
 
     /*
-     * Instance Attributes.
-     */
-    config: NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig;
-
-    /*
      * Constructor.
      */
     constructor(config: ThirdPartyConfig) {
-        super(config);
-        this.config = {
-            ...this.config,
-            ...normaliseThirdPartyConfig(config),
-        };
+        super(config, normaliseThirdPartyConfig(config));
     }
 
     /*
@@ -77,25 +68,25 @@ export default class ThirdParty extends AuthRecipeModule<
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.recipeId),
                 rid: this.recipeId,
-                component: SignInAndUp,
+                component: SignInAndUp
             };
         }
 
         // Add callback route for each provider.
-        this.config.signInAndUpFeature.providers.forEach((provider) => {
+        this.config.signInAndUpFeature.providers.forEach(provider => {
             const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 component: SignInAndUpCallback,
                 rid: this.recipeId,
-                matches: matchRecipeIdUsingState(this.recipeId),
+                matches: matchRecipeIdUsingState(this.recipeId)
             };
         });
 
         return {
             ...features,
-            ...this.getAuthRecipeModuleFeatures(),
+            ...this.getAuthRecipeModuleFeatures()
         };
     };
 
@@ -112,7 +103,13 @@ export default class ThirdParty extends AuthRecipeModule<
      * Static methods.
      */
 
-    static init(config: ThirdPartyUserInput): CreateRecipeFunction {
+    static init(
+        config: ThirdPartyUserInput
+    ): CreateRecipeFunction<
+        ThirdPartyGetRedirectionURLContext,
+        ThirdPartyPreAPIHookContext,
+        ThirdPartyOnHandleEventContext
+    > {
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<
@@ -123,7 +120,7 @@ export default class ThirdParty extends AuthRecipeModule<
             ThirdParty.instance = new ThirdParty({
                 ...config,
                 appInfo,
-                recipeId: ThirdParty.RECIPE_ID,
+                recipeId: ThirdParty.RECIPE_ID
             });
             return ThirdParty.instance;
         };

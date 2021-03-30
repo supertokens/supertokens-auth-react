@@ -1,7 +1,7 @@
 import { CreateRecipeFunction } from "../../types";
 import { SessionUserInput } from "./types";
 export default class SessionAPIWrapper {
-    static init(config?: SessionUserInput): CreateRecipeFunction;
+    static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown>;
     static getRefreshURLDomain(): string | undefined;
     static getUserId(): string;
     static getJWTPayloadSecurely(): Promise<any>;

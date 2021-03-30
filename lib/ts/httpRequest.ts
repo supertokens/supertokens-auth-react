@@ -18,16 +18,16 @@ import RecipeModule from "./recipe/recipeModule";
 import { isRequestInit } from "./utils";
 import { supported_fdi } from "./version";
 
-export default class HttpRequest {
+export default class HttpRequest<T, S, R> {
     /*
      * Instance Attributes.
      */
-    private recipe: RecipeModule<unknown, unknown, unknown>;
+    private recipe: RecipeModule<T, S, R>;
 
     /*
      * Constructor.
      */
-    constructor(recipe: RecipeModule<unknown, unknown, unknown>) {
+    constructor(recipe: RecipeModule<T, S, R>) {
         this.recipe = recipe;
     }
 
@@ -120,7 +120,7 @@ export default class HttpRequest {
         url: string;
         requestInit: RequestInit;
     }): Promise<{ url: string; requestInit: RequestInit }> => {
-        const result = await this.recipe.hooks.preAPIHook({ action, url, requestInit });
+        const result = await this.recipe.hooks.preAPIHook(({ action, url, requestInit } as unknown) as S);
         if (isRequestInit(result)) {
             return {
                 url,

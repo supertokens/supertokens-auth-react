@@ -29,7 +29,7 @@ import { isAuthRecipeModule } from "../authRecipeModule/utils";
  * Component.
  */
 
-export default class SessionAuth extends PureComponent<FeatureBaseProps, SessionAuthState> {
+export default class SessionAuth<T, S, R, N> extends PureComponent<FeatureBaseProps, SessionAuthState> {
     /*
      * Constructor.
      */
@@ -43,13 +43,13 @@ export default class SessionAuth extends PureComponent<FeatureBaseProps, Session
     /*
      * Methods.
      */
-    getRecipeInstanceOrThrow = (): AuthRecipeModule<unknown, unknown, unknown> => {
+    getRecipeInstanceOrThrow = (): AuthRecipeModule<T, S, R, N> => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SessionAuth component");
         }
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (isAuthRecipeModule(recipe)) {
+        if (isAuthRecipeModule<T, S, R, N>(recipe)) {
             return recipe;
         }
 
@@ -60,9 +60,13 @@ export default class SessionAuth extends PureComponent<FeatureBaseProps, Session
         const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists === false) {
             const redirectToPath = getWindowOrThrow().location.pathname;
-            return await this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
-                redirectToPath
-            });
+            return await this.getRecipeInstanceOrThrow().redirect(
+                ({ action: "SIGN_IN_AND_UP" } as unknown) as T,
+                this.props.history,
+                {
+                    redirectToPath
+                }
+            );
         }
 
         // Update status to ready.

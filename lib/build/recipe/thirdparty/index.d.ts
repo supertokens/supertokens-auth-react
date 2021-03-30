@@ -10,7 +10,7 @@ import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 export default class ThirdPartyAPIWrapper {
-    static init(config: ThirdPartyUserInput): CreateRecipeFunction;
+    static init(config: ThirdPartyUserInput): CreateRecipeFunction<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext>;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
     static Google: typeof Google;

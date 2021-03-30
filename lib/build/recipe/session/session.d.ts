@@ -15,7 +15,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
     getAuth0API: () => {
         apiPath: string | undefined;
     };
-    static init(config?: SessionUserInput): CreateRecipeFunction;
+    static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown>;
     static getInstanceOrThrow(): Session;
     static getRefreshURLDomain(): string | undefined;
     static getUserId(): string;

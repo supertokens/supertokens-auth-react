@@ -43,7 +43,13 @@ export default class ThirdPartyAPIWrapper {
      * Static attributes.
      */
 
-    static init(config: ThirdPartyUserInput): CreateRecipeFunction {
+    static init(
+        config: ThirdPartyUserInput
+    ): CreateRecipeFunction<
+        ThirdPartyGetRedirectionURLContext,
+        ThirdPartyPreAPIHookContext,
+        ThirdPartyOnHandleEventContext
+    > {
         return ThirdParty.init(config);
     }
 

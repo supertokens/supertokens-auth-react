@@ -28,9 +28,9 @@ import { RecipeModuleHooks, NormalisedRecipeModuleHooks } from "./recipe/recipeM
 /*
  * NormalisedRecipeModuleHooks
  */
-export function normalisedRecipeModuleHooks(
-    config: RecipeModuleHooks<unknown, unknown, unknown>
-): NormalisedRecipeModuleHooks<unknown, unknown, unknown> {
+export function normalisedRecipeModuleHooks<T, S, R>(
+    config: RecipeModuleHooks<T, S, R>
+): NormalisedRecipeModuleHooks<T, S, R> {
     let { preAPIHook, onHandleEvent, getRedirectionURL } = config;
     if (preAPIHook === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

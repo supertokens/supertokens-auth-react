@@ -9,7 +9,7 @@ import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 export default class ThirdPartyEmailPasswordAPIWrapper {
-    static init(config: ThirdPartyEmailPasswordUserInput): CreateRecipeFunction;
+    static init(config: ThirdPartyEmailPasswordUserInput): CreateRecipeFunction<ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext>;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
     static Google: typeof Google;

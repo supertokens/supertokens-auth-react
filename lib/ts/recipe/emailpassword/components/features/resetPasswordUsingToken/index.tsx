@@ -64,7 +64,8 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
         EmailPasswordGetRedirectionURLContext,
         EmailPasswordPreAPIHookContext,
-        EmailPasswordOnHandleEventContext
+        EmailPasswordOnHandleEventContext,
+        NormalisedEmailPasswordConfig
     > => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SignInAndUp component");
@@ -78,7 +79,8 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         return recipe as AuthRecipeModule<
             EmailPasswordGetRedirectionURLContext,
             EmailPasswordPreAPIHookContext,
-            EmailPasswordOnHandleEventContext
+            EmailPasswordOnHandleEventContext,
+            NormalisedEmailPasswordConfig
         >;
     };
 

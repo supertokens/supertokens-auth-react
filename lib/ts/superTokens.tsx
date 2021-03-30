@@ -168,7 +168,7 @@ export default class SuperTokens {
         return routeComponents[0];
     };
 
-    getRecipeOrThrow(recipeId: string): RecipeModule<unknown, unknown, unknown> {
+    getRecipeOrThrow<T, S, R>(recipeId: string): RecipeModule<T, S, R> {
         const recipe = this.recipeList.find(recipe => {
             return recipe.recipeId === recipeId;
         });
@@ -177,7 +177,7 @@ export default class SuperTokens {
             throw new Error(`Missing recipe: ${recipeId}`);
         }
 
-        return recipe;
+        return recipe as RecipeModule<T, S, R>;
     }
 
     getReactRouterDom = (): { Route: any; withRouter: any } | undefined => {
