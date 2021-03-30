@@ -61,6 +61,10 @@ export default class SessionAPIWrapper {
     static getAuth0API = (): { apiPath: string | undefined } => {
         return Session.getAuth0API();
     };
+
+    static signOut = () => {
+        return Session.signOut();
+    };
 }
 
 export const init = SessionAPIWrapper.init;
@@ -72,3 +76,4 @@ export const doesSessionExist = SessionAPIWrapper.doesSessionExist;
 export const addAxiosInterceptors = SessionAPIWrapper.addAxiosInterceptors;
 export const setAuth0API = SessionAPIWrapper.setAuth0API;
 export const getAuth0API = SessionAPIWrapper.getAuth0API;
+export const signOut = SessionAPIWrapper.signOut;

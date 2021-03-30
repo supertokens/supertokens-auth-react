@@ -90,6 +90,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
         return sessionSdk.getAuth0API();
     };
 
+    signOut = () => {
+        return sessionSdk.signOut();
+    };
+
     /*
      * Static methods.
      */
@@ -146,6 +150,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
 
     static getAuth0API(): { apiPath: string | undefined } {
         return Session.getInstanceOrThrow().getAuth0API();
+    }
+
+    static signOut() {
+        return Session.getInstanceOrThrow().signOut();
     }
 
     /*
