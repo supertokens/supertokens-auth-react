@@ -32,6 +32,9 @@ import {
     signUp,
     toggleSignInSignUp,
     loginWithGithub,
+    getLoginWithRedirectToSignIn,
+    getLoginWithRedirectToSignUp,
+    getAuthPageHeaderText,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
 
@@ -83,6 +86,26 @@ describe("SuperTokens Third Party Email Password", function () {
         consoleLogs = [];
         clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`);
+    });
+
+    describe("redirectToAuth test", function () {
+        it("Show signin first", async function () {
+            await page.goto(`${TEST_CLIENT_BASE_URL}`);
+            let elem = await getLoginWithRedirectToSignIn(page);
+            await page.evaluate((e) => e.click(), elem);
+            await page.waitForNavigation();
+            let text = await getAuthPageHeaderText(page);
+            assert.deepStrictEqual(text, "Sign In");
+        });
+
+        it("Show signup first", async function () {
+            await page.goto(`${TEST_CLIENT_BASE_URL}`);
+            let elem = await getLoginWithRedirectToSignUp(page);
+            await page.evaluate((e) => e.click(), elem);
+            await page.waitForNavigation();
+            let text = await getAuthPageHeaderText(page);
+            assert.deepStrictEqual(text, "Sign Up");
+        });
     });
 
     describe("Third Party Email Password test", function () {

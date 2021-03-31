@@ -34,6 +34,9 @@ import {
     submitForm,
     toggleSignInSignUp,
     defaultSignUp,
+    getLoginWithRedirectToSignIn,
+    getAuthPageHeaderText,
+    getLoginWithRedirectToSignUp,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -86,6 +89,26 @@ describe("SuperTokens SignUp", function () {
         clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
         await toggleSignInSignUp(page);
+    });
+
+    describe("redirectToAuth test", function () {
+        it("Show signin first", async function () {
+            await page.goto(`${TEST_CLIENT_BASE_URL}`);
+            let elem = await getLoginWithRedirectToSignIn(page);
+            await page.evaluate((e) => e.click(), elem);
+            await page.waitForNavigation();
+            let text = await getAuthPageHeaderText(page);
+            assert.deepStrictEqual(text, "Sign In");
+        });
+
+        it("Show signup first", async function () {
+            await page.goto(`${TEST_CLIENT_BASE_URL}`);
+            let elem = await getLoginWithRedirectToSignUp(page);
+            await page.evaluate((e) => e.click(), elem);
+            await page.waitForNavigation();
+            let text = await getAuthPageHeaderText(page);
+            assert.deepStrictEqual(text, "Sign Up");
+        });
     });
 
     describe("SignUp test ", function () {

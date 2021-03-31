@@ -1,5 +1,5 @@
 import React from "react";
-export default function Logout({ onClick, label, className }) {
+export default function Logout({ id, onClick, label, className }) {
     return (
         <div
             className={className}
@@ -12,6 +12,7 @@ export default function Logout({ onClick, label, className }) {
                 paddingRight: "75px"
             }}>
             <div
+                id={id}
                 onClick={onClick}
                 style={{
                     display: "flex",

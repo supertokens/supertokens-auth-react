@@ -177,13 +177,13 @@ export function Home() {
     return (
         <>
             <h2>/Home</h2>
-            <Button onClick={() => {
+            <Button id="login" onClick={() => {
                 goToAuth();
             }} label="LOGIN to default" />
-            <Button onClick={() => {
+            <Button id="login-signin" onClick={() => {
                 goToAuth("signin");
             }} label="LOGIN with redirect to sign in" />
-            <Button onClick={() => {
+            <Button id="login-signup" onClick={() => {
                 goToAuth("signup");
             }} label="LOGIN with redirect to sign up" />
         </>

@@ -112,6 +112,26 @@ export async function sendEmailResetPasswordSuccessMessage(page) {
     );
 }
 
+export async function getLoginWithRedirectToSignIn(page) {
+    return await page.evaluateHandle(() => {
+        return document.getElementById("login-signin");
+    });
+}
+
+export async function getLoginWithRedirectToSignUp(page) {
+    return await page.evaluateHandle(() => {
+        return document.getElementById("login-signup");
+    });
+}
+
+export async function getAuthPageHeaderText(page) {
+    // returns the big header text in /auth page
+    return await page.evaluate(() => {
+        return document.querySelector("#supertokens-root")
+            .shadowRoot.querySelector("[data-supertokens~=headerTitle]").innerText
+    })
+}
+
 export async function assertNoSTComponents(page) {
     const superTokensComponent = await page.$(ST_ROOT_SELECTOR);
     assert.strictEqual(superTokensComponent, null);
