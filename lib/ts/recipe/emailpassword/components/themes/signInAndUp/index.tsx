@@ -63,9 +63,9 @@ export class SignInAndUpTheme extends React.PureComponent<
                     <SignUp
                         {...this.props.signUpForm}
                         signInClicked={() => {
-                            this.setState(() => {
+                            this.setState((oldState) => {
                                 return {
-                                    ...this.state,
+                                    ...oldState,
                                     isSignUp: false,
                                 };
                             });
@@ -85,9 +85,9 @@ export class SignInAndUpTheme extends React.PureComponent<
                 <SignIn
                     {...this.props.signInForm}
                     signUpClicked={() => {
-                        this.setState(() => {
+                        this.setState((oldState) => {
                             return {
-                                ...this.state,
+                                ...oldState,
                                 isSignUp: true,
                             };
                         });
