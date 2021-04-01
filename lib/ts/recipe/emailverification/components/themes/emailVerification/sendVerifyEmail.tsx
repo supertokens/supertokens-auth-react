@@ -18,7 +18,7 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { PureComponent } from "react";
+import { PureComponent } from "react";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 
 import StyleContext from "../../../../../styles/styleContext";

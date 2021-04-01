@@ -43,7 +43,13 @@ export default class ThirdPartyAPIWrapper {
      * Static attributes.
      */
 
-    static init(config: ThirdPartyUserInput): CreateRecipeFunction {
+    static init(
+        config: ThirdPartyUserInput
+    ): CreateRecipeFunction<
+        ThirdPartyGetRedirectionURLContext,
+        ThirdPartyPreAPIHookContext,
+        ThirdPartyOnHandleEventContext
+    > {
         return ThirdParty.init(config);
     }
 
@@ -53,6 +59,10 @@ export default class ThirdPartyAPIWrapper {
 
     static async isEmailVerified(): Promise<boolean> {
         return ThirdParty.isEmailVerified();
+    }
+
+    static redirectToAuth(show?: "signin" | "signup"): void {
+        return ThirdParty.redirectToAuth(show);
     }
 
     /*
@@ -72,6 +82,7 @@ export default class ThirdPartyAPIWrapper {
 const init = ThirdPartyAPIWrapper.init;
 const signOut = ThirdPartyAPIWrapper.signOut;
 const isEmailVerified = ThirdPartyAPIWrapper.isEmailVerified;
+const redirectToAuth = ThirdPartyAPIWrapper.redirectToAuth;
 
 export {
     ThirdPartyAuth,
@@ -85,6 +96,7 @@ export {
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
+    redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
     ThirdPartyGetRedirectionURLContext,

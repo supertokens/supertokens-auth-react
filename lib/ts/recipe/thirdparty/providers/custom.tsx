@@ -15,7 +15,6 @@
 /*
  * Imports.
  */
-import React from "react";
 import Provider from ".";
 import { CustomProviderConfig } from "./types";
 

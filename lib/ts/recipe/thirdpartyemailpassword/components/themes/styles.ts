@@ -14,7 +14,7 @@
  */
 
 /** @jsx jsx */
-import { CSSObject, jsx } from "@emotion/react";
+import { CSSObject } from "@emotion/react";
 import { getDefaultStyles, getMergedStyles } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";
 import { getStyles as getEmailPasswordStyles } from "../../../emailpassword/components/themes/styles/styles";

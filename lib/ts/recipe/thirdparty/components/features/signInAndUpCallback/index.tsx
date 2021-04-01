@@ -17,7 +17,6 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import * as React from "react";
 import { Fragment, PureComponent } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
@@ -53,7 +52,8 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
         ThirdPartyGetRedirectionURLContext,
         ThirdPartyPreAPIHookContext,
-        ThirdPartyOnHandleEventContext
+        ThirdPartyOnHandleEventContext,
+        NormalisedThirdPartyConfig
     > => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SignInAndUp component");
@@ -67,7 +67,8 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
         return recipe as AuthRecipeModule<
             ThirdPartyGetRedirectionURLContext,
             ThirdPartyPreAPIHookContext,
-            ThirdPartyOnHandleEventContext
+            ThirdPartyOnHandleEventContext,
+            NormalisedThirdPartyConfig
         >;
     };
 

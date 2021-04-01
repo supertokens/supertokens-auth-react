@@ -19,7 +19,7 @@ export default class SuperTokens {
     getRoutingComponent: () => JSX.Element | undefined;
     getPathsToFeatureComponentWithRecipeIdMap: () => Record<string, ComponentWithRecipeAndMatchingMethod[]>;
     getMatchingComponentForRouteAndRecipeId: (normalisedUrl: NormalisedURLPath) => ComponentWithRecipeAndMatchingMethod | undefined;
-    getRecipeOrThrow(recipeId: string): RecipeModule<unknown, unknown, unknown>;
+    getRecipeOrThrow<T, S, R>(recipeId: string): RecipeModule<T, S, R>;
     getReactRouterDom: () => {
         Route: any;
         withRouter: any;

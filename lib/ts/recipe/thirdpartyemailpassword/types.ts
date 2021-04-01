@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { History, LocationState } from "history";
+import { History } from "history";
 import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
 import { AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 import {
@@ -174,7 +174,7 @@ export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     /*
      * History provided by react-router
      */
-    history?: History<LocationState>;
+    history?: History<any>;
 
     /*
      * Default To Sign Up

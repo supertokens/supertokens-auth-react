@@ -11,6 +11,13 @@
         "declaration": true,
         "jsx": "react",
         "esModuleInterop": true,
+        "sourceMap": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
         "types": ["node", "react", "@emotion/react/types/css-prop"]
     },
     "compileOnSave": true

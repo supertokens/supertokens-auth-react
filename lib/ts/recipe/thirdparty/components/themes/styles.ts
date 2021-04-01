@@ -14,7 +14,6 @@
  */
 
 /** @jsx jsx */
-import { jsx } from "@emotion/react";
 import chroma from "chroma-js";
 import { getButtonStyle, getDefaultStyles, getMergedStyles } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";

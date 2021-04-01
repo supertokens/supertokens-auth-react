@@ -71,7 +71,8 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
         ThirdPartyGetRedirectionURLContext,
         ThirdPartyPreAPIHookContext,
-        ThirdPartyOnHandleEventContext
+        ThirdPartyOnHandleEventContext,
+        NormalisedThirdPartyConfig
     > => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SignInAndUp component");
@@ -85,7 +86,8 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
         return recipe as AuthRecipeModule<
             ThirdPartyGetRedirectionURLContext,
             ThirdPartyPreAPIHookContext,
-            ThirdPartyOnHandleEventContext
+            ThirdPartyOnHandleEventContext,
+            NormalisedThirdPartyConfig
         >;
     };
 

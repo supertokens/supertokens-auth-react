@@ -35,7 +35,7 @@ function startEndToEnd () {
     echo "Start mocha testing"
     TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 15000
     testPassed=$?;
-    echo "testPassed $testPassed"
+    echo "testPassed exit code: $testPassed"
     killServers
     if [[ $testPassed -ne 0 ]]
     then

@@ -28,9 +28,9 @@ import { RecipeModuleHooks, NormalisedRecipeModuleHooks } from "./recipe/recipeM
 /*
  * NormalisedRecipeModuleHooks
  */
-export function normalisedRecipeModuleHooks(
-    config: RecipeModuleHooks<unknown, unknown, unknown>
-): NormalisedRecipeModuleHooks<unknown, unknown, unknown> {
+export function normalisedRecipeModuleHooks<T, S, R>(
+    config: RecipeModuleHooks<T, S, R>
+): NormalisedRecipeModuleHooks<T, S, R> {
     let { preAPIHook, onHandleEvent, getRedirectionURL } = config;
     if (preAPIHook === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -39,12 +39,12 @@ export function normalisedRecipeModuleHooks(
 
     if (onHandleEvent === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-        onHandleEvent = (context: unknown): void => {};
+        onHandleEvent = (_: unknown): void => {};
     }
 
     if (getRedirectionURL === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        getRedirectionURL = async (context: unknown): Promise<string | undefined> => undefined;
+        getRedirectionURL = async (_: unknown): Promise<string | undefined> => undefined;
     }
 
     return {

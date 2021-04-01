@@ -18,7 +18,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { PureComponent } from "react";
+import { PureComponent } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
 import { SignInThemeProps } from "../../../types";

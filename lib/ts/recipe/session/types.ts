@@ -32,6 +32,11 @@ export type SessionUserInput = {
     refreshAPICustomHeaders?: any;
 
     /*
+     * signoutAPICustomHeaders
+     */
+    signoutAPICustomHeaders?: any;
+
+    /*
      * sessionExpiredStatusCode
      */
     sessionExpiredStatusCode?: number;

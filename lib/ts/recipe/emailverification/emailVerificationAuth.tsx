@@ -16,7 +16,6 @@
 /*
  * Imports.
  */
-import * as React from "react";
 import { PureComponent, ReactElement } from "react";
 
 import { FeatureBaseProps } from "../../types";
@@ -27,23 +26,23 @@ import SuperTokens from "../../superTokens";
  * Component.
  */
 
-export default class EmailVerificationAuth extends PureComponent<FeatureBaseProps> {
+export default class EmailVerificationAuth<T, S, R, N> extends PureComponent<FeatureBaseProps> {
     /*
      * Methods.
      */
-    getRecipeInstanceOrThrow = (): AuthRecipeModule<unknown, unknown, unknown> => {
+    getRecipeInstanceOrThrow = (): AuthRecipeModule<T, S, R, N> => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to EmailVerificationAuth component");
         }
 
-        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
+        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow<T, S, R>(this.props.recipeId);
         if (recipe instanceof AuthRecipeModule === false) {
             throw new Error(
                 `${recipe.recipeId} must be an instance of AuthRecipeModule to use EmailVerificationAuth component.`
             );
         }
 
-        return recipe as AuthRecipeModule<unknown, unknown, unknown>;
+        return recipe as AuthRecipeModule<T, S, R, N>;
     };
 
     isEmailVerifiedAPI = async (): Promise<boolean> => {
@@ -63,7 +62,10 @@ export default class EmailVerificationAuth extends PureComponent<FeatureBaseProp
         // Otherwise, make sure that the email is valid, otherwise, redirect to email validation screen.
         const isEmailVerified = await this.isEmailVerifiedAPI();
         if (isEmailVerified === false) {
-            return await this.getRecipeInstanceOrThrow().redirect({ action: "VERIFY_EMAIL" }, this.props.history);
+            return await this.getRecipeInstanceOrThrow().redirect(
+                ({ action: "VERIFY_EMAIL" } as unknown) as T,
+                this.props.history
+            );
         }
     }
 

@@ -18,7 +18,6 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React from "react";
 
 import { SignInThemeProps } from "../../../types";
 

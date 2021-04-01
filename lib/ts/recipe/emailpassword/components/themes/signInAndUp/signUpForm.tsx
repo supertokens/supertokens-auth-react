@@ -17,7 +17,6 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React from "react";
 import { SignUpThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";

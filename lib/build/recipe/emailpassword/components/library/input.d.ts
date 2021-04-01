@@ -1,6 +1,7 @@
+/// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
 /** @jsx jsx */
 import { CSSObject } from "@emotion/react";
-import React from "react";
 import { APIFormField } from "../../../../types";
 import { InputRef } from "../../types";
 declare type InputProps = {
@@ -14,5 +15,5 @@ declare type InputProps = {
     onInputBlur?: (field: APIFormField) => void;
     onInputFocus?: (field: APIFormField) => void;
 };
-declare const _default: React.ForwardRefExoticComponent<InputProps & React.RefAttributes<InputRef>>;
+declare const _default: import("react").ForwardRefExoticComponent<InputProps & import("react").RefAttributes<InputRef>>;
 export default _default;

@@ -17,7 +17,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { PureComponent, Fragment } from "react";
+import { PureComponent, Fragment } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
 import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../types";

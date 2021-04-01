@@ -14,7 +14,7 @@
  */
 
 /** @jsx jsx */
-import { CSSObject, jsx, keyframes } from "@emotion/react";
+import { CSSObject, keyframes } from "@emotion/react";
 import chroma from "chroma-js";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../types";
 

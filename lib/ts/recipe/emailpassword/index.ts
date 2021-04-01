@@ -54,7 +54,13 @@ export default class EmailPasswordAPIWrapper {
      * Methods.
      */
 
-    static init(config?: EmailPasswordUserInput): CreateRecipeFunction {
+    static init(
+        config?: EmailPasswordUserInput
+    ): CreateRecipeFunction<
+        EmailPasswordGetRedirectionURLContext,
+        EmailPasswordPreAPIHookContext,
+        EmailPasswordOnHandleEventContext
+    > {
         return EmailPassword.init(config);
     }
 
@@ -65,11 +71,16 @@ export default class EmailPasswordAPIWrapper {
     static async isEmailVerified(): Promise<boolean> {
         return EmailPassword.isEmailVerified();
     }
+
+    static redirectToAuth(show?: "signin" | "signup"): void {
+        return EmailPassword.redirectToAuth(show);
+    }
 }
 
 const init = EmailPasswordAPIWrapper.init;
 const signOut = EmailPasswordAPIWrapper.signOut;
 const isEmailVerified = EmailPasswordAPIWrapper.isEmailVerified;
+const redirectToAuth = EmailPasswordAPIWrapper.redirectToAuth;
 
 export {
     EmailPasswordAuth,
@@ -79,6 +90,7 @@ export {
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
+    redirectToAuth,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
     EmailVerification,

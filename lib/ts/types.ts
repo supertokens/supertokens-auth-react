@@ -17,7 +17,7 @@ import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
-import { History, LocationState } from "history";
+import { History } from "history";
 
 /*
  * Recipe Module Manager Config Types.
@@ -32,7 +32,7 @@ export type SuperTokensConfig = {
     /*
      * List of recipes for authentication and session management.
      */
-    recipeList: CreateRecipeFunction[];
+    recipeList: CreateRecipeFunction<unknown, unknown, unknown>[];
 
     /*
      * useReactRouterDom
@@ -40,7 +40,7 @@ export type SuperTokensConfig = {
     useReactRouterDom?: boolean;
 };
 
-export type CreateRecipeFunction = (appInfo: NormalisedAppInfo) => RecipeModule<unknown, unknown, unknown>;
+export type CreateRecipeFunction<T, S, R> = (appInfo: NormalisedAppInfo) => RecipeModule<T, S, R>;
 
 export type AppInfoUserInput = {
     /*
@@ -197,7 +197,7 @@ export type NormalisedFormField = {
     autoComplete?: string;
 };
 
-export type ReactComponentClass = ComponentClass | (<T>(props: T) => JSX.Element);
+export type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
 export type WithRouterType = (Component: ReactComponentClass) => ReactComponentClass;
 
 export type Styles = Record<string, CSSObject>;
@@ -262,7 +262,7 @@ export type FeatureBaseProps = {
     /*
      * History provided by react-router
      */
-    history?: History<LocationState>;
+    history?: History<any>;
 
     /*
      * Nested Features

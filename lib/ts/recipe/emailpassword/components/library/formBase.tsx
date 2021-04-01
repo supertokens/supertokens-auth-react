@@ -18,7 +18,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { createRef, FormEvent, Fragment, PureComponent } from "react";
+import { createRef, FormEvent, Fragment, PureComponent } from "react";
 import { Button, FormRow, Input, InputError, Label } from ".";
 
 import { APIFormField } from "../../../../types";

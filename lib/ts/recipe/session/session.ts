@@ -37,15 +37,23 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
      */
     constructor(config: SessionConfig) {
         super(config);
-        let usersHeaders = {};
+        let usersHeadersForRefreshAPI = {};
         if (config.refreshAPICustomHeaders !== undefined) {
-            usersHeaders = config.refreshAPICustomHeaders;
+            usersHeadersForRefreshAPI = config.refreshAPICustomHeaders;
+        }
+        let usersHeadersForSignoutAPI = {};
+        if (config.signoutAPICustomHeaders !== undefined) {
+            usersHeadersForSignoutAPI = config.signoutAPICustomHeaders;
         }
         sessionSdk.init({
             sessionScope: config.sessionScope,
             refreshAPICustomHeaders: {
                 rid: this.recipeId,
-                ...usersHeaders,
+                ...usersHeadersForRefreshAPI,
+            },
+            signoutAPICustomHeaders: {
+                rid: this.recipeId,
+                ...usersHeadersForSignoutAPI,
             },
             autoAddCredentials: config.autoAddCredentials,
             sessionExpiredStatusCode: config.sessionExpiredStatusCode,
@@ -90,11 +98,15 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
         return sessionSdk.getAuth0API();
     };
 
+    signOut = (): Promise<void> => {
+        return sessionSdk.signOut();
+    };
+
     /*
      * Static methods.
      */
 
-    static init(config?: SessionUserInput): CreateRecipeFunction {
+    static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown> {
         return (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown> => {
             Session.instance = new Session({
                 ...config,
@@ -146,6 +158,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
 
     static getAuth0API(): { apiPath: string | undefined } {
         return Session.getInstanceOrThrow().getAuth0API();
+    }
+
+    static signOut(): Promise<void> {
+        return Session.getInstanceOrThrow().signOut();
     }
 
     /*

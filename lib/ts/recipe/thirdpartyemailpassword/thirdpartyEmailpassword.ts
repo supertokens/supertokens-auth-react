@@ -32,7 +32,6 @@ import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
-import { NormalisedAuthRecipeConfig } from "../authRecipeModule/types";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "../thirdparty/components/features/signInAndUpCallback";
 import { DEFAULT_RESET_PASSWORD_PATH } from "../emailpassword/constants";
@@ -45,28 +44,19 @@ import ResetPasswordUsingToken from "../emailpassword/components/features/resetP
 export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     ThirdPartyEmailPasswordGetRedirectionURLContext,
     ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdPartyEmailPasswordOnHandleEventContext
+    ThirdPartyEmailPasswordOnHandleEventContext,
+    NormalisedThirdPartyEmailPasswordConfig
 > {
     /*
      * Static Attributes.
      */
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID = "thirdpartyemailpassword";
-
-    /*
-     * Instance Attributes.
-     */
-    config: NormalisedThirdPartyEmailPasswordConfig & NormalisedAuthRecipeConfig;
-
     /*
      * Constructor.
      */
     constructor(config: ThirdPartyEmailPasswordConfig) {
-        super(config);
-        this.config = {
-            ...this.config,
-            ...normaliseThirdPartyEmailPasswordConfig(config),
-        };
+        super(config, normaliseThirdPartyEmailPasswordConfig(config));
     }
 
     /*
@@ -128,11 +118,31 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         }
     };
 
+    redirectToAuth = (show?: "signin" | "signup"): void => {
+        this.redirect(
+            {
+                action: "SIGN_IN_AND_UP",
+            },
+            undefined,
+            show === undefined
+                ? undefined
+                : {
+                      show,
+                  }
+        );
+    };
+
     /*
      * Static methods.
      */
 
-    static init(config: ThirdPartyEmailPasswordUserInput): CreateRecipeFunction {
+    static init(
+        config: ThirdPartyEmailPasswordUserInput
+    ): CreateRecipeFunction<
+        ThirdPartyEmailPasswordGetRedirectionURLContext,
+        ThirdPartyEmailPasswordPreAPIHookContext,
+        ThirdPartyEmailPasswordOnHandleEventContext
+    > {
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<
@@ -171,6 +181,10 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         }
 
         return ThirdPartyEmailPassword.instance;
+    }
+
+    static redirectToAuth(show?: "signin" | "signup"): void {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuth(show);
     }
 
     /*

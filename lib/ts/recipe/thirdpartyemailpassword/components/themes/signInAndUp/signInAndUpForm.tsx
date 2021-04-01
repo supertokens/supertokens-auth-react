@@ -17,7 +17,6 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import * as React from "react";
 import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";
 import SignInFooter from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
 import SignInForm from "../../../../emailpassword/components/themes/signInAndUp/signInForm";

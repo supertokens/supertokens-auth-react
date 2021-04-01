@@ -17,7 +17,6 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import * as React from "react";
 import { PureComponent } from "react";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import StyleContext from "../../../../../styles/styleContext";

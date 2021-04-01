@@ -37,7 +37,13 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
      * Static attributes.
      */
 
-    static init(config: ThirdPartyEmailPasswordUserInput): CreateRecipeFunction {
+    static init(
+        config: ThirdPartyEmailPasswordUserInput
+    ): CreateRecipeFunction<
+        ThirdPartyEmailPasswordGetRedirectionURLContext,
+        ThirdPartyEmailPasswordPreAPIHookContext,
+        ThirdPartyEmailPasswordOnHandleEventContext
+    > {
         return ThirdPartyEmailPassword.init(config);
     }
 
@@ -47,6 +53,10 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
 
     static async isEmailVerified(): Promise<boolean> {
         return ThirdPartyEmailPassword.isEmailVerified();
+    }
+
+    static redirectToAuth(show?: "signin" | "signup"): void {
+        return ThirdPartyEmailPassword.redirectToAuth(show);
     }
 
     /*
@@ -68,6 +78,7 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
 const init = ThirdPartyEmailPasswordAPIWrapper.init;
 const signOut = ThirdPartyEmailPasswordAPIWrapper.signOut;
 const isEmailVerified = ThirdPartyEmailPasswordAPIWrapper.isEmailVerified;
+const redirectToAuth = ThirdPartyEmailPasswordAPIWrapper.redirectToAuth;
 
 export {
     ThirdPartyEmailPasswordAuth,
@@ -81,6 +92,7 @@ export {
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
+    redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
     ResetPasswordUsingToken,

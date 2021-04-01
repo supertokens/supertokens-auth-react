@@ -5,7 +5,7 @@ import { NormalisedAuthRecipeConfig, SignInAndUpState } from "../../../../authRe
 import AuthRecipeModule from "../../../../authRecipeModule";
 declare class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     constructor(props: FeatureBaseProps);
-    getRecipeInstanceOrThrow: () => AuthRecipeModule<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext>;
+    getRecipeInstanceOrThrow: () => AuthRecipeModule<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext, NormalisedEmailPasswordConfig>;
     getRecipeConfigOrThrow: () => NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig;
     getIsEmbedded: () => boolean;
     signIn: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse>;

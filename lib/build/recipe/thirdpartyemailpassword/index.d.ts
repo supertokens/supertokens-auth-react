@@ -9,9 +9,10 @@ import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 export default class ThirdPartyEmailPasswordAPIWrapper {
-    static init(config: ThirdPartyEmailPasswordUserInput): CreateRecipeFunction;
+    static init(config: ThirdPartyEmailPasswordUserInput): CreateRecipeFunction<ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext>;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
+    static redirectToAuth(show?: "signin" | "signup"): void;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
@@ -27,4 +28,5 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
 declare const init: typeof ThirdPartyEmailPasswordAPIWrapper.init;
 declare const signOut: typeof ThirdPartyEmailPasswordAPIWrapper.signOut;
 declare const isEmailVerified: typeof ThirdPartyEmailPasswordAPIWrapper.isEmailVerified;
-export { ThirdPartyEmailPasswordAuth, ThirdPartyEmailPasswordAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, EmailVerification, EmailVerificationTheme, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext };
+declare const redirectToAuth: typeof ThirdPartyEmailPasswordAPIWrapper.redirectToAuth;
+export { ThirdPartyEmailPasswordAuth, ThirdPartyEmailPasswordAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, redirectToAuth, EmailVerification, EmailVerificationTheme, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext, };

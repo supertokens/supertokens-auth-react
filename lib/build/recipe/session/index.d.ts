@@ -1,7 +1,7 @@
 import { CreateRecipeFunction } from "../../types";
 import { SessionUserInput } from "./types";
 export default class SessionAPIWrapper {
-    static init(config?: SessionUserInput): CreateRecipeFunction;
+    static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown>;
     static getRefreshURLDomain(): string | undefined;
     static getUserId(): string;
     static getJWTPayloadSecurely(): Promise<any>;
@@ -12,6 +12,7 @@ export default class SessionAPIWrapper {
     static getAuth0API: () => {
         apiPath: string | undefined;
     };
+    static signOut: () => Promise<void>;
 }
 export declare const init: typeof SessionAPIWrapper.init;
 export declare const getRefreshURLDomain: typeof SessionAPIWrapper.getRefreshURLDomain;
@@ -24,3 +25,4 @@ export declare const setAuth0API: (apiPath: string) => void;
 export declare const getAuth0API: () => {
     apiPath: string | undefined;
 };
+export declare const signOut: () => Promise<void>;

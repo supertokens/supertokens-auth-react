@@ -1,22 +1,22 @@
-import { ReactNode } from "react"
-import { Head } from "blitz"
+import { ReactNode } from "react";
+import { Head } from "blitz";
 
 type LayoutProps = {
-  title?: string
-  children: ReactNode
-}
+    title?: string;
+    children: ReactNode;
+};
 
 const Layout = ({ title, children }: LayoutProps) => {
-  return (
-    <>
-      <Head>
-        <title>{title || "with-blitz"}</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    return (
+        <>
+            <Head>
+                <title>{title || "with-blitz"}</title>
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
 
-      {children}
-    </>
-  )
-}
+            {children}
+        </>
+    );
+};
 
-export default Layout
+export default Layout;
