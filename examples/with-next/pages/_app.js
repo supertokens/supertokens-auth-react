@@ -12,41 +12,43 @@ const websiteDomain = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || 
 const apiBasePath = '/api/auth/'
 
 if (typeof window !== "undefined") {
-    SuperTokensReact.init({
-        useReactRouterDom: false,
-        appInfo: {
-            appName: "SuperTokens Demo Next",
-            websiteDomain,
-            apiDomain: websiteDomain,
-            apiBasePath
+  // Here we initialise supertokens on the frontend.
+
+  SuperTokensReact.init({
+    useReactRouterDom: false,
+    appInfo: {
+      appName: "SuperTokens Demo Next", // your app name
+      websiteDomain, // the domain of your website. For example, "https://example.com"
+      apiDomain: websiteDomain,
+      apiBasePath // The path prefix to calling APIs on your backend. Value is /api/auth/.
+    },
+    recipeList: [
+      ThirdPartyEmailPasswordReact.init({
+        signInAndUpFeature: {
+          providers: [
+            ThirdPartyEmailPasswordReact.Facebook.init(),
+            ThirdPartyEmailPasswordReact.Google.init(),
+            ThirdPartyEmailPasswordReact.Github.init()
+          ]
         },
-        recipeList: [
-            ThirdPartyEmailPasswordReact.init({
-                signInAndUpFeature: {
-                  providers: [
-                    ThirdPartyEmailPasswordReact.Facebook.init(),
-                    ThirdPartyEmailPasswordReact.Google.init(),
-                    ThirdPartyEmailPasswordReact.Github.init()
-                  ]
-                },
-                emailVerificationFeature: {
-                    mode: "REQUIRED"
-                },
-            }),
-            SessionReact.init()
-        ]
-    });
+        emailVerificationFeature: {
+          mode: "REQUIRED"
+        },
+      }),
+      SessionReact.init()
+    ]
+  });
 } else {
-  /*
-   * Get .env variables.
-   */
+  // Here we initialise supertokens on the backend.
+
   require('dotenv').config();
 
   SuperTokensNode.init({
     supertokens: {
+      // info to connect to supertokens core
       connectionURI: "https://try.supertokens.io",
     },
-    appInfo: {
+    appInfo: { // this is the same as in the above init function call
       appName: "SuperTokens Demo App",
       apiDomain: websiteDomain,
       websiteDomain,
@@ -55,17 +57,19 @@ if (typeof window !== "undefined") {
     recipeList: [
       ThirdPartyEmailPasswordNode.init({
         providers: [
+
+          // we provide the various secrets for each of the social providers
           ThirdPartyEmailPasswordNode.Google({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             clientId: process.env.GOOGLE_CLIENT_ID
           }),
           ThirdPartyEmailPasswordNode.Github({
-              clientSecret: process.env.GITHUB_CLIENT_SECRET,
-              clientId: process.env.GITHUB_CLIENT_ID
+            clientSecret: process.env.GITHUB_CLIENT_SECRET,
+            clientId: process.env.GITHUB_CLIENT_ID
           }),
           ThirdPartyEmailPasswordNode.Facebook({
-              clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-              clientId: process.env.FACEBOOK_CLIENT_ID
+            clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+            clientId: process.env.FACEBOOK_CLIENT_ID
           })
         ]
       }),
