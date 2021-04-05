@@ -17,7 +17,6 @@ import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
-import { History } from "history";
 
 /*
  * Recipe Module Manager Config Types.
@@ -262,7 +261,7 @@ export type FeatureBaseProps = {
     /*
      * History provided by react-router
      */
-    history?: History<any>;
+    history?: any;
 
     /*
      * Nested Features

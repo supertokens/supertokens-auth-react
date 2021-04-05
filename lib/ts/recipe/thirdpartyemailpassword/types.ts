@@ -16,7 +16,6 @@
 /*
  * Imports.
  */
-import { History } from "history";
 import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
 import { AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 import {
@@ -174,7 +173,7 @@ export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     /*
      * History provided by react-router
      */
-    history?: History<any>;
+    history?: any;
 
     /*
      * Default To Sign Up

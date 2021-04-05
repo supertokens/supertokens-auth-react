@@ -1,4 +1,3 @@
-import { History } from "history";
 import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
 import { AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 import { EmailPasswordGetRedirectionURLContext, EmailPasswordOnHandleEventContext, EmailPasswordPreAPIHookContext } from "../emailpassword";
@@ -39,7 +38,7 @@ export declare type ThirdPartyEmailPasswordPreAPIHookContext = EmailPasswordPreA
 export declare type ThirdPartyEmailPasswordOnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     recipeId: string;
-    history?: History<any>;
+    history?: any;
     defaultToSignUp: boolean;
     hideThirdParty?: boolean;
     hideEmailPassword?: boolean;
