@@ -8,7 +8,7 @@
     "react-dom": "^16.14.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
-    "supertokens-auth-react": "supertokens/supertokens-auth-react#0.7"
+    "supertokens-auth-react": "supertokens/supertokens-auth-react#0.8"
   },
   "scripts": {
     "postinstall": "npm run link",
