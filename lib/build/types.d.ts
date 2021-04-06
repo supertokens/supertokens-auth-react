@@ -5,7 +5,7 @@ import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
-    recipeList: CreateRecipeFunction<unknown, unknown, unknown>[];
+    recipeList: CreateRecipeFunction<any, any, any>[];
     useReactRouterDom?: boolean;
 };
 export declare type CreateRecipeFunction<T, S, R> = (appInfo: NormalisedAppInfo) => RecipeModule<T, S, R>;

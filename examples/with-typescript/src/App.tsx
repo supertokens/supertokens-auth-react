@@ -194,7 +194,7 @@ function getEmailPasswordConfigs() {
             }
         },
 
-        onHandleEvent(context: EmailPasswordOnHandleEventContext) {},
+        onHandleEvent(context: EmailPasswordOnHandleEventContext) { },
 
         async preAPIHook(context: EmailPasswordPreAPIHookContext) {
             return context.requestInit;
@@ -207,7 +207,7 @@ function getEmailPasswordConfigs() {
 }
 function getThirdPartyConfigs() {
     return ThirdParty.init({
-        onHandleEvent(context: ThirdPartyOnHandleEventContext) {},
+        onHandleEvent(context: ThirdPartyOnHandleEventContext) { },
 
         async preAPIHook(context: ThirdPartyPreAPIHookContext) {
             // You need to authorize `x-app` in node for the following to work
@@ -245,7 +245,7 @@ function getThirdPartyConfigs() {
 
 function getThirdPartyEmailPasswordConfigs() {
     return ThirdPartyEmailPassword.init({
-        onHandleEvent(context: ThirdPartyEmailPasswordOnHandleEventContext) {},
+        onHandleEvent(context: ThirdPartyEmailPasswordOnHandleEventContext) { },
 
         async preAPIHook(context: ThirdPartyEmailPasswordPreAPIHookContext) {
             return context;
