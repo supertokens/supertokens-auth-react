@@ -44,7 +44,7 @@
     "chroma-js": "2.1.0",
     "emotion": "11.0.0",
     "react-shadow": "19.0.1",
-    "supertokens-website": "git://github.com/supertokens/supertokens-website.git#5.1"
+    "supertokens-website": "^5.1.0"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
