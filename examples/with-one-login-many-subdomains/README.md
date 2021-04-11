@@ -4,6 +4,7 @@
 - Run the command `npm i -d` in the `with-one-login-many-subdomains` directory.
 - Add the following to your hosts configs `/etc/hosts` to allow for multi tenancy locally:
 ```
+127.0.0.1   example.com
 127.0.0.1   auth.example.com
 127.0.0.1   gmail.example.com
 127.0.0.1   supertokens.example.com
@@ -23,9 +24,6 @@ In the project directory, you can run:
 
 Runs the app in the development mode.\
 Open [http://auth.example:3000](http://auth.example:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
 
 

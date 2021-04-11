@@ -20,9 +20,6 @@ SuperTokens.init({
     },
     recipeList: [
         EmailPassword.init({
-            emailVerificationFeature: {
-                mode: "REQUIRED"
-            },
             getRedirectionURL: async context => {
                 if (context.action === "SUCCESS") {
                     // redirect users to their associated subdomain e.g abc.example.com for user abc
