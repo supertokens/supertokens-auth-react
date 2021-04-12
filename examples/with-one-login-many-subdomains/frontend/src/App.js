@@ -31,7 +31,7 @@ SuperTokens.init({
         Session.init({
             sessionScope: {
                 scope: ".example.com",
-                authDomain: "http://auth.example.com"
+                authDomain: "http://auth.example.com:3000"
             }
         })
     ]
