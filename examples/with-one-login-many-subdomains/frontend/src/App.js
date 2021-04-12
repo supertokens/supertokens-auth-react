@@ -29,7 +29,10 @@ SuperTokens.init({
             }
         }),
         Session.init({
-            sessionScope: ".example.com"
+            sessionScope: {
+                scope: ".example.com",
+                authDomain: "http://auth.example.com"
+            }
         })
     ]
 });
