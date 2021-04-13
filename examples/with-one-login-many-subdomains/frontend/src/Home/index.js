@@ -4,9 +4,13 @@ import SuccessView from "./SuccessView";
 import Session from "supertokens-auth-react/recipe/session";
 import { signOut } from "supertokens-auth-react/recipe/emailpassword";
 import { getAuthDomain } from "../utils";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-    const userId = Session.getUserId();
+    let { userId, setUserId } = useState("");
+    useEffect(() => {
+        Session.getUserId().then(u => setUserId(u));
+    });
     async function logoutClicked() {
         await signOut();
         window.location.replace(getAuthDomain());
