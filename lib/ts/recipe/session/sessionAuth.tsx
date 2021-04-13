@@ -57,7 +57,7 @@ export default class SessionAuth<T, S, R, N> extends PureComponent<FeatureBasePr
     };
 
     async componentDidMount(): Promise<void> {
-        const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
+        const sessionExists = await this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists === false) {
             const redirectToPath = getWindowOrThrow().location.pathname;
             return await this.getRecipeInstanceOrThrow().redirect(

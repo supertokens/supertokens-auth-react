@@ -56,9 +56,9 @@ function App() {
                             getSuperTokensRoutesForReactRouterDom()
                         ) : (
                             <Route path="/">
-                                <EmailPassword.EmailPasswordAuth>
-                                    <Home />
-                                </EmailPassword.EmailPasswordAuth>
+                                {/* <EmailPassword.EmailPasswordAuth> */}
+                                <Home />
+                                {/* </EmailPassword.EmailPasswordAuth> */}
                             </Route>
                         )}
                     </Switch>

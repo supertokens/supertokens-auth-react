@@ -33,7 +33,7 @@ export default class SessionAPIWrapper {
         return Session.getRefreshURLDomain();
     }
 
-    static getUserId(): string {
+    static getUserId(): Promise<string> {
         return Session.getUserId();
     }
 
@@ -45,7 +45,7 @@ export default class SessionAPIWrapper {
         return Session.attemptRefreshingSession();
     }
 
-    static doesSessionExist(): boolean {
+    static doesSessionExist(): Promise<boolean> {
         return Session.doesSessionExist();
     }
 

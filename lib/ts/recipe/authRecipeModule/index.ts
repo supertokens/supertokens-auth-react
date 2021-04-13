@@ -121,7 +121,7 @@ export default abstract class AuthRecipeModule<T, S, R, N> extends RecipeModule<
      * Session
      */
 
-    doesSessionExist = (): boolean => {
+    doesSessionExist = (): Promise<boolean> => {
         return Session.getInstanceOrThrow().doesSessionExist();
     };
 

@@ -97,7 +97,7 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
     };
 
     onTokenInvalidRedirect = async (): Promise<void> => {
-        if (Session.doesSessionExist() !== true) {
+        if ((await Session.doesSessionExist()) !== true) {
             return await this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
         }
 
@@ -120,7 +120,7 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
         const hasToken = this.state.token.length !== 0;
 
         // Redirect to login if no existing session and no token in URL.
-        const sessionExists = Session.doesSessionExist();
+        const sessionExists = await Session.doesSessionExist();
         if (sessionExists === false && hasToken === false) {
             return await this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
         }

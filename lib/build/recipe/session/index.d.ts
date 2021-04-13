@@ -3,10 +3,10 @@ import { SessionUserInput } from "./types";
 export default class SessionAPIWrapper {
     static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown>;
     static getRefreshURLDomain(): string | undefined;
-    static getUserId(): string;
+    static getUserId(): Promise<string>;
     static getJWTPayloadSecurely(): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
-    static doesSessionExist(): boolean;
+    static doesSessionExist(): Promise<boolean>;
     static addAxiosInterceptors: (axiosInstance: any) => void;
     static setAuth0API: (apiPath: string) => void;
     static getAuth0API: () => {
