@@ -46,7 +46,13 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
             usersHeadersForSignoutAPI = config.signoutAPICustomHeaders;
         }
         sessionSdk.init({
-            sessionScope: config.sessionScope,
+            sessionScope:
+                config.sessionScope === undefined
+                    ? undefined
+                    : {
+                          scope: config.sessionScope,
+                          authDomain: config.appInfo.websiteDomain.getAsStringDangerous(),
+                      },
             refreshAPICustomHeaders: {
                 rid: this.recipeId,
                 ...usersHeadersForRefreshAPI,

@@ -29,10 +29,7 @@ SuperTokens.init({
             }
         }),
         Session.init({
-            sessionScope: {
-                scope: ".example.com",
-                authDomain: "http://auth.example.com:3000"
-            }
+            sessionScope: ".example.com"
         })
     ]
 });
@@ -56,9 +53,9 @@ function App() {
                             getSuperTokensRoutesForReactRouterDom()
                         ) : (
                             <Route path="/">
-                                {/* <EmailPassword.EmailPasswordAuth> */}
-                                <Home />
-                                {/* </EmailPassword.EmailPasswordAuth> */}
+                                <EmailPassword.EmailPasswordAuth>
+                                    <Home />
+                                </EmailPassword.EmailPasswordAuth>
                             </Route>
                         )}
                     </Switch>

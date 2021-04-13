@@ -24,10 +24,7 @@ export type SessionUserInput = {
      * Session scope defines the domain's range of the session.
      * Example: example.com, .example.com, api.example.com etc...
      */
-    sessionScope?: {
-        scope: string;
-        authDomain: string;
-    };
+    sessionScope?: string;
 
     /*
      * refreshAPICustomHeaders

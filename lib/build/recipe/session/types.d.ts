@@ -1,9 +1,6 @@
 import { RecipeModuleConfig } from "../recipeModule/types";
 export declare type SessionUserInput = {
-    sessionScope?: {
-        scope: string;
-        authDomain: string;
-    };
+    sessionScope?: string;
     refreshAPICustomHeaders?: any;
     signoutAPICustomHeaders?: any;
     sessionExpiredStatusCode?: number;

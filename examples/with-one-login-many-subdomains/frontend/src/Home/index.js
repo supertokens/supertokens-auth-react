@@ -7,9 +7,11 @@ import { getAuthDomain } from "../utils";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-    let { userId, setUserId } = useState("");
+    let [userId, setUserId] = useState("");
     useEffect(() => {
-        Session.getUserId().then(u => setUserId(u));
+        Session.getUserId().then(u => {
+            setUserId(u)
+        });
     });
     async function logoutClicked() {
         await signOut();
