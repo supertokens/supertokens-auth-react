@@ -49,9 +49,7 @@ export type SessionUserInput = {
 
 export type SessionConfig = RecipeModuleConfig<unknown, unknown, unknown> & SessionUserInput;
 
-export type SessionAuthState = {
-    /*
-     * Session Auth Status
-     */
-    status: "LOADING" | "READY";
+export type SessionContextType = {
+    doesSessionExist: boolean;
+    userId: string;
 };

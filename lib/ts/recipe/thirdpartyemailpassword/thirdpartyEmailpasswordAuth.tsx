@@ -29,13 +29,16 @@ import SuperTokens from "../../superTokens";
  * Component.
  */
 
-class ThirdPartyEmailPasswordAuth extends PureComponent<FeatureBaseProps> {
+class ThirdPartyEmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?: boolean }> {
     /*
      * Render.
      */
     render = (): JSX.Element | null => {
         return (
-            <SessionAuth recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId} history={this.props.history}>
+            <SessionAuth
+                requireAuth={this.props.requireAuth}
+                recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId}
+                history={this.props.history}>
                 <EmailVerificationAuth
                     recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId}
                     history={this.props.history}>
@@ -46,16 +49,28 @@ class ThirdPartyEmailPasswordAuth extends PureComponent<FeatureBaseProps> {
     };
 }
 
-export default function ThirdPartyAuthWrapper({ children }: { children: JSX.Element }): JSX.Element {
+export default function ThirdPartyAuthWrapper({
+    children,
+    requireAuth,
+}: {
+    children: JSX.Element;
+    requireAuth?: boolean;
+}): JSX.Element {
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
     if (reactRouterDom === undefined) {
         return (
-            <ThirdPartyEmailPasswordAuth recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId}>
+            <ThirdPartyEmailPasswordAuth
+                requireAuth={requireAuth}
+                recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId}>
                 {children}
             </ThirdPartyEmailPasswordAuth>
         );
     }
 
     const Component = reactRouterDom.withRouter(ThirdPartyEmailPasswordAuth);
-    return <Component recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId}>{children}</Component>;
+    return (
+        <Component requireAuth={requireAuth} recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId}>
+            {children}
+        </Component>
+    );
 }

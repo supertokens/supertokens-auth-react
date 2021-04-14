@@ -1,12 +1,15 @@
 import { CreateRecipeFunction } from "../../types";
 import { SessionUserInput } from "./types";
+import SessionAuthComponent from "./sessionAuth";
 export default class SessionAPIWrapper {
+    static useSessionContext: () => import("./types").SessionContextType;
+    static SessionAuth: typeof SessionAuthComponent;
     static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown>;
     static getRefreshURLDomain(): string | undefined;
-    static getUserId(): string;
+    static getUserId(): Promise<string>;
     static getJWTPayloadSecurely(): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
-    static doesSessionExist(): boolean;
+    static doesSessionExist(): Promise<boolean>;
     static addAxiosInterceptors: (axiosInstance: any) => void;
     static setAuth0API: (apiPath: string) => void;
     static getAuth0API: () => {
@@ -14,6 +17,8 @@ export default class SessionAPIWrapper {
     };
     static signOut: () => Promise<void>;
 }
+export declare const useSessionContext: () => import("./types").SessionContextType;
+export declare const SessionAuth: typeof SessionAuthComponent;
 export declare const init: typeof SessionAPIWrapper.init;
 export declare const getRefreshURLDomain: typeof SessionAPIWrapper.getRefreshURLDomain;
 export declare const getUserId: typeof SessionAPIWrapper.getUserId;

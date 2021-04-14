@@ -20,11 +20,17 @@ import { CreateRecipeFunction } from "../../types";
 
 import Session from "./session";
 import { SessionUserInput } from "./types";
+import SessionAuthComponent from "./sessionAuth";
+import useSessionContextFunc from "./useSessionContext";
 
 /*
  * Class.
  */
 export default class SessionAPIWrapper {
+    static useSessionContext = useSessionContextFunc;
+
+    static SessionAuth = SessionAuthComponent;
+
     static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown> {
         return Session.init(config);
     }
@@ -33,7 +39,7 @@ export default class SessionAPIWrapper {
         return Session.getRefreshURLDomain();
     }
 
-    static getUserId(): string {
+    static getUserId(): Promise<string> {
         return Session.getUserId();
     }
 
@@ -45,7 +51,7 @@ export default class SessionAPIWrapper {
         return Session.attemptRefreshingSession();
     }
 
-    static doesSessionExist(): boolean {
+    static doesSessionExist(): Promise<boolean> {
         return Session.doesSessionExist();
     }
 
@@ -67,6 +73,8 @@ export default class SessionAPIWrapper {
     };
 }
 
+export const useSessionContext = SessionAPIWrapper.useSessionContext;
+export const SessionAuth = SessionAPIWrapper.SessionAuth;
 export const init = SessionAPIWrapper.init;
 export const getRefreshURLDomain = SessionAPIWrapper.getRefreshURLDomain;
 export const getUserId = SessionAPIWrapper.getUserId;

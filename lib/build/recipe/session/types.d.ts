@@ -7,6 +7,7 @@ export declare type SessionUserInput = {
     autoAddCredentials?: boolean;
 };
 export declare type SessionConfig = RecipeModuleConfig<unknown, unknown, unknown> & SessionUserInput;
-export declare type SessionAuthState = {
-    status: "LOADING" | "READY";
+export declare type SessionContextType = {
+    doesSessionExist: boolean;
+    userId: string;
 };

@@ -16,20 +16,24 @@
 /*
  * Imports.
  */
-import { PureComponent, ReactElement } from "react";
+import React from "react";
 
 import { getWindowOrThrow } from "supertokens-website/lib/build/utils";
 import { FeatureBaseProps } from "../../types";
-import { SessionAuthState } from "./types";
 import AuthRecipeModule from "../authRecipeModule";
 import SuperTokens from "../../superTokens";
 import { isAuthRecipeModule } from "../authRecipeModule/utils";
+import SessionContext from "./sessionContext";
+import { getUserId } from "./";
 
 /*
  * Component.
  */
 
-export default class SessionAuth<T, S, R, N> extends PureComponent<FeatureBaseProps, SessionAuthState> {
+export default class SessionAuth<T, S, R, N> extends React.PureComponent<
+    FeatureBaseProps & { requireAuth?: boolean },
+    { status: "LOADING" } | { status: "READY"; userId: string; doesSessionExist: boolean }
+> {
     /*
      * Constructor.
      */
@@ -57,22 +61,39 @@ export default class SessionAuth<T, S, R, N> extends PureComponent<FeatureBasePr
     };
 
     async componentDidMount(): Promise<void> {
-        const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
+        const sessionExists = await this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists === false) {
-            const redirectToPath = getWindowOrThrow().location.pathname;
-            return await this.getRecipeInstanceOrThrow().redirect(
-                ({ action: "SIGN_IN_AND_UP" } as unknown) as T,
-                this.props.history,
-                {
-                    redirectToPath,
-                }
-            );
-        }
+            if (this.props.requireAuth === false) {
+                this.setState((oldState) => {
+                    return {
+                        ...oldState,
+                        status: "READY",
+                        userId: "",
+                        doesSessionExist: false,
+                    };
+                });
+            } else {
+                const redirectToPath = getWindowOrThrow().location.pathname;
+                return await this.getRecipeInstanceOrThrow().redirect(
+                    ({ action: "SIGN_IN_AND_UP" } as unknown) as T,
+                    this.props.history,
+                    {
+                        redirectToPath,
+                    }
+                );
+            }
+        } else {
+            const userId = await getUserId();
 
-        // Update status to ready.
-        this.setState({
-            status: "READY",
-        });
+            this.setState((oldState) => {
+                return {
+                    ...oldState,
+                    status: "READY",
+                    userId,
+                    doesSessionExist: true,
+                };
+            });
+        }
     }
 
     /*
@@ -83,6 +104,14 @@ export default class SessionAuth<T, S, R, N> extends PureComponent<FeatureBasePr
             return null;
         }
 
-        return this.props.children as ReactElement<any>;
+        return (
+            <SessionContext.Provider
+                value={{
+                    userId: this.state.userId,
+                    doesSessionExist: this.state.doesSessionExist,
+                }}>
+                {this.props.children}
+            </SessionContext.Provider>
+        );
     };
 }

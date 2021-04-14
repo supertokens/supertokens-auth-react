@@ -46,7 +46,13 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
             usersHeadersForSignoutAPI = config.signoutAPICustomHeaders;
         }
         sessionSdk.init({
-            sessionScope: config.sessionScope,
+            sessionScope:
+                config.sessionScope === undefined
+                    ? undefined
+                    : {
+                          scope: config.sessionScope,
+                          authDomain: config.appInfo.websiteDomain.getAsStringDangerous(),
+                      },
             refreshAPICustomHeaders: {
                 rid: this.recipeId,
                 ...usersHeadersForRefreshAPI,
@@ -74,7 +80,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
         return sessionSdk.getRefreshURLDomain();
     };
 
-    getUserId = (): string => {
+    getUserId = (): Promise<string> => {
         return sessionSdk.getUserId();
     };
 
@@ -86,7 +92,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
         return sessionSdk.attemptRefreshingSession();
     };
 
-    doesSessionExist = (): boolean => {
+    doesSessionExist = (): Promise<boolean> => {
         return sessionSdk.doesSessionExist();
     };
 
@@ -131,7 +137,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
         return Session.getInstanceOrThrow().getRefreshURLDomain();
     }
 
-    static getUserId(): string {
+    static getUserId(): Promise<string> {
         return Session.getInstanceOrThrow().getUserId();
     }
 
@@ -143,7 +149,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
         return Session.getInstanceOrThrow().attemptRefreshingSession();
     }
 
-    static doesSessionExist(): boolean {
+    static doesSessionExist(): Promise<boolean> {
         return Session.getInstanceOrThrow().doesSessionExist();
     }
 

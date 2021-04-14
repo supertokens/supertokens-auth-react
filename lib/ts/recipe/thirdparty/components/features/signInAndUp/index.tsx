@@ -107,7 +107,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
      */
 
     componentDidMount = async (): Promise<void> => {
-        const sessionExists = this.getRecipeInstanceOrThrow().doesSessionExist();
+        const sessionExists = await this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists) {
             this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS",
