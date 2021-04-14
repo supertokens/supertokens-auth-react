@@ -84,7 +84,7 @@ describe("SuperTokens Third Party Email Password", function () {
 
     beforeEach(async function () {
         consoleLogs = [];
-        clearBrowserCookies(page);
+        await clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`);
     });
 

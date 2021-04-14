@@ -10,6 +10,7 @@ import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import axios from "axios";
+import { useSessionContext } from "supertokens-auth-react/recipe/session"
 
 import Session from "supertokens-auth-react/recipe/session";
 import Button from "./Button";
@@ -215,6 +216,20 @@ export function Contact() {
     return <h2>/Contact</h2>;
 }
 
+export function DashboardNoAuthRequired() {
+    let sessionContext = useSessionContext();
+
+    if (sessionContext.doesSessionExist) {
+        return Dashboard();
+    } else {
+        return (
+            <div id="not-logged-in">
+                Not logged in
+            </div>
+        )
+    }
+}
+
 export function Dashboard() {
     const [sessionInfoUsingAxios, setSessionInfoUsingAxios] = useState(undefined);
     const [sessionInfoUsingFetch, setSessionInfoUsingFetch] = useState(undefined);
@@ -250,6 +265,7 @@ export function Dashboard() {
         fetchData();
     }, []);
 
+    let sessionContext = useSessionContext();
     return (
         <div className="dashboard">
             <Button onClick={logout} label="LOGOUT" className="logoutButton" />
@@ -258,6 +274,9 @@ export function Dashboard() {
             </div>
             <div className="fetch">
                 <SessionInfoTable sessionInfo={sessionInfoUsingFetch} />
+            </div>
+            <div id="session-context-userId">
+                session context userID: {sessionContext.userId}
             </div>
         </div>
     );

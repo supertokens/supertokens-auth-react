@@ -86,7 +86,7 @@ describe("SuperTokens SignUp", function () {
 
     beforeEach(async function () {
         consoleLogs = [];
-        clearBrowserCookies(page);
+        await clearBrowserCookies(page);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
         await toggleSignInSignUp(page);
     });
@@ -189,7 +189,7 @@ describe("SuperTokens SignUp", function () {
 
             assert.deepStrictEqual(
                 cookies.map((c) => c.name),
-                ["sIRTFrontend", "sFrontToken", "sIdRefreshToken", "sAccessToken"]
+                ["sIdRefreshToken", "sAccessToken"]
             );
             // doesSessionExist return true, hence, redirecting to success URL
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, {

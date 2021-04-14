@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword";
-import { BaseComponent, Home, Contact, Dashboard } from "./App";
+import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
 import Auth from "./Auth";
 
 function AppWithReactDomRouter(props) {
@@ -14,6 +14,12 @@ function AppWithReactDomRouter(props) {
                         {getSuperTokensRoutesForReactRouterDom()}
                         <Route exact path="/">
                             <Home />
+                        </Route>
+
+                        <Route path="/dashboard-no-auth">
+                            <Auth requireAuth={false}>
+                                <DashboardNoAuthRequired />
+                            </Auth>
                         </Route>
 
                         {/* Logged In Components */}

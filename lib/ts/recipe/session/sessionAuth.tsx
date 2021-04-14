@@ -37,7 +37,7 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: FeatureBaseProps & { requireAuth?: boolean }) {
         super(props);
         this.state = {
             status: "LOADING",

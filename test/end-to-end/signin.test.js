@@ -241,7 +241,7 @@ describe("SuperTokens SignIn", function () {
             cookies = await page.cookies();
             assert.deepStrictEqual(
                 cookies.map((c) => c.name),
-                ["sIRTFrontend", "sFrontToken", "sIdRefreshToken", "sAccessToken"]
+                ["sIdRefreshToken", "sAccessToken"]
             );
 
             // Redirected to onSuccessFulRedirectUrl

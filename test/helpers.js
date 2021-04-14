@@ -16,7 +16,8 @@
 /*
  * Imports.
  */
-import { ST_ROOT_SELECTOR, TEST_SERVER_BASE_URL, SIGN_UP_API, EMAIL_EXISTS_API } from "./constants";
+import { ST_ROOT_SELECTOR, TEST_SERVER_BASE_URL, SIGN_UP_API, EMAIL_EXISTS_API, TEST_CLIENT_BASE_URL } from "./constants";
+
 import assert from "assert";
 import { SESSION_STORAGE_STATE_KEY } from "../lib/build/recipe/thirdparty/constants";
 
@@ -282,6 +283,21 @@ export async function clearBrowserCookies(page) {
     const client = await page.target().createCDPSession();
     await client.send('Network.clearBrowserCookies');
     await client.send('Network.clearBrowserCache');
+    await page.goto(`${TEST_CLIENT_BASE_URL}`);
+    page.evaluate(() => {
+        localStorage.removeItem('sFrontToken')
+        localStorage.removeItem('sIRTFrontend')
+        localStorage.removeItem('sAntiCsrf')
+    });
+    // await client.send('Runtime.evaluate', {
+    //     expression: `localStorage.removeItem('sFrontToken')`,
+    // });
+    // await client.send('Runtime.evaluate', {
+    //     expression: `localStorage.removeItem('sIRTFrontend')`,
+    // });
+    // await client.send('Runtime.evaluate', {
+    //     expression: `localStorage.removeItem('sAntiCsrf')`,
+    // });
 }
 
 export async function clickForgotPasswordLink(page) {

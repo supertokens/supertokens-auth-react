@@ -13,7 +13,7 @@
   "scripts": {
     "postinstall": "npm run link",
     "link": "(cd ../../ && npm link) && npm link supertokens-auth-react && (cd ../../ && SRC=./examples/for-tests npm run link-dependencies)",
-    "start": "react-scripts start",
+    "start": "PORT=3031 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

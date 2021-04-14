@@ -99,7 +99,7 @@ describe("SuperTokens Reset password", function () {
     describe("Reset password enter email form test", function () {
         beforeEach(async function () {
             page = await browser.newPage();
-            clearBrowserCookies(page);
+            await clearBrowserCookies(page);
             // Catch console.log sent from PRE API HOOKS.
             consoleLogs = [];
             page.on("console", (consoleObj) => {
@@ -184,7 +184,7 @@ describe("SuperTokens Reset password", function () {
                     consoleLogs.push(log);
                 }
             });
-            clearBrowserCookies(page);
+            await clearBrowserCookies(page);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?token=TOKEN`);
         });
 

@@ -5,10 +5,10 @@ import { ThirdPartyEmailPasswordAuth } from "supertokens-auth-react/recipe/third
 
 export default function Auth(props) {
     if (props.authRecipe === "thirdparty") {
-        return <ThirdPartyAuth>{props.children}</ThirdPartyAuth>;
+        return <ThirdPartyAuth {...props}>{props.children}</ThirdPartyAuth>;
     } else if (props.authRecipe === "thirdpartyemailpassword") {
-        return <ThirdPartyEmailPasswordAuth>{props.children}</ThirdPartyEmailPasswordAuth>;
+        return <ThirdPartyEmailPasswordAuth {...props}>{props.children}</ThirdPartyEmailPasswordAuth>;
     }
 
-    return <EmailPasswordAuth>{props.children}</EmailPasswordAuth>;
+    return <EmailPasswordAuth {...props}>{props.children}</EmailPasswordAuth>;
 }

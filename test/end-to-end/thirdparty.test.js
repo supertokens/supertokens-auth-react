@@ -81,7 +81,7 @@ describe("SuperTokens Third Party", function () {
 
     beforeEach(async function () {
         consoleLogs = [];
-        clearBrowserCookies(page);
+        await clearBrowserCookies(page);
     });
 
     describe("Third Party test", function () {
