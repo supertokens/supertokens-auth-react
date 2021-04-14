@@ -29,7 +29,10 @@ import { isAuthRecipeModule } from "../authRecipeModule/utils";
  * Component.
  */
 
-export default class SessionAuth<T, S, R, N> extends PureComponent<FeatureBaseProps, SessionAuthState> {
+export default class SessionAuth<T, S, R, N> extends PureComponent<
+    FeatureBaseProps & { requireAuth?: boolean },
+    SessionAuthState
+> {
     /*
      * Constructor.
      */

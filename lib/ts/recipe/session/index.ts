@@ -20,11 +20,14 @@ import { CreateRecipeFunction } from "../../types";
 
 import Session from "./session";
 import { SessionUserInput } from "./types";
+import SessionAuthComponent from "./sessionAuth";
 
 /*
  * Class.
  */
 export default class SessionAPIWrapper {
+    static SessionAuth = SessionAuthComponent;
+
     static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown> {
         return Session.init(config);
     }
@@ -67,6 +70,7 @@ export default class SessionAPIWrapper {
     };
 }
 
+export const SessionAuth = SessionAPIWrapper.SessionAuth;
 export const init = SessionAPIWrapper.init;
 export const getRefreshURLDomain = SessionAPIWrapper.getRefreshURLDomain;
 export const getUserId = SessionAPIWrapper.getUserId;

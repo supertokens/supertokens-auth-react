@@ -29,13 +29,16 @@ import SuperTokens from "../../../superTokens";
  * Component.
  */
 
-class EmailPasswordAuth extends PureComponent<FeatureBaseProps> {
+class EmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?: boolean }> {
     /*
      * Render.
      */
     render = (): JSX.Element | null => {
         return (
-            <SessionAuth recipeId={EmailPassword.getInstanceOrThrow().recipeId} history={this.props.history}>
+            <SessionAuth
+                requireAuth={this.props.requireAuth}
+                recipeId={EmailPassword.getInstanceOrThrow().recipeId}
+                history={this.props.history}>
                 <EmailVerificationAuth
                     recipeId={EmailPassword.getInstanceOrThrow().recipeId}
                     history={this.props.history}>
@@ -46,12 +49,26 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps> {
     };
 }
 
-export default function EmailPasswordAuthWrapper({ children }: { children: JSX.Element }): JSX.Element {
+export default function EmailPasswordAuthWrapper({
+    children,
+    requireAuth,
+}: {
+    children: JSX.Element;
+    requireAuth?: boolean;
+}): JSX.Element {
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
     if (reactRouterDom === undefined) {
-        return <EmailPasswordAuth recipeId={EmailPassword.getInstanceOrThrow().recipeId}>{children}</EmailPasswordAuth>;
+        return (
+            <EmailPasswordAuth requireAuth={requireAuth} recipeId={EmailPassword.getInstanceOrThrow().recipeId}>
+                {children}
+            </EmailPasswordAuth>
+        );
     }
 
     const Component = reactRouterDom.withRouter(EmailPasswordAuth);
-    return <Component recipeId={EmailPassword.getInstanceOrThrow().recipeId}>{children}</Component>;
+    return (
+        <Component requireAuth={requireAuth} recipeId={EmailPassword.getInstanceOrThrow().recipeId}>
+            {children}
+        </Component>
+    );
 }
