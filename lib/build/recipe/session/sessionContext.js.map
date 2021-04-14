@@ -1,1 +1,1 @@
-{"version":3,"file":"sessionContext.js","sourceRoot":"","sources":["../../../ts/recipe/session/sessionContext.ts"],"names":[],"mappings":";;;;;AAAA,gDAA0B;AAG1B,IAAM,cAAc,GAAG,eAAK,CAAC,aAAa,CAAqB,EAAE,gBAAgB,EAAE,KAAK,EAAE,MAAM,EAAE,EAAE,EAAE,CAAC,CAAC;AAExG,kBAAe,cAAc,CAAC"}
+{"version":3,"file":"sessionContext.js","sourceRoot":"","sources":["../../../ts/recipe/session/sessionContext.ts"],"names":[],"mappings":";;;;;AAAA,gDAA0B;AAG1B,IAAM,cAAc,GAAG,eAAK,CAAC,aAAa,CAAqB;IAC3D,gBAAgB,EAAE,KAAK;IACvB,MAAM,EAAE,EAAE;IACV,UAAU,EAAE,EAAE;CACjB,CAAC,CAAC;AAEH,kBAAe,cAAc,CAAC"}

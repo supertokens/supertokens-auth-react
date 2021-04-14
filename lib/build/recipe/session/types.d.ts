@@ -10,4 +10,5 @@ export declare type SessionConfig = RecipeModuleConfig<unknown, unknown, unknown
 export declare type SessionContextType = {
     doesSessionExist: boolean;
     userId: string;
+    jwtPayload: any;
 };

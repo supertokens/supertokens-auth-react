@@ -24,7 +24,7 @@ import AuthRecipeModule from "../authRecipeModule";
 import SuperTokens from "../../superTokens";
 import { isAuthRecipeModule } from "../authRecipeModule/utils";
 import SessionContext from "./sessionContext";
-import { getUserId } from "./";
+import { getUserId, getJWTPayloadSecurely } from "./";
 
 /*
  * Component.
@@ -32,7 +32,13 @@ import { getUserId } from "./";
 
 export default class SessionAuth<T, S, R, N> extends React.PureComponent<
     FeatureBaseProps & { requireAuth?: boolean },
-    { status: "LOADING" } | { status: "READY"; userId: string; doesSessionExist: boolean }
+    | { status: "LOADING" }
+    | {
+          status: "READY";
+          userId: string;
+          doesSessionExist: boolean;
+          jwtPayload: any;
+      }
 > {
     /*
      * Constructor.
@@ -70,6 +76,7 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<
                         status: "READY",
                         userId: "",
                         doesSessionExist: false,
+                        jwtPayload: {},
                     };
                 });
             } else {
@@ -83,7 +90,13 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<
                 );
             }
         } else {
-            const userId = await getUserId();
+            const userIdPromise = getUserId();
+
+            const jwtPayloadPromise = getJWTPayloadSecurely();
+
+            const userId = await userIdPromise;
+
+            const jwtPayload = await jwtPayloadPromise;
 
             this.setState((oldState) => {
                 return {
@@ -91,6 +104,7 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<
                     status: "READY",
                     userId,
                     doesSessionExist: true,
+                    jwtPayload,
                 };
             });
         }
@@ -109,6 +123,7 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<
                 value={{
                     userId: this.state.userId,
                     doesSessionExist: this.state.doesSessionExist,
+                    jwtPayload: this.state.jwtPayload,
                 }}>
                 {this.props.children}
             </SessionContext.Provider>

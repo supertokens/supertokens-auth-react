@@ -9,6 +9,7 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<Feature
     status: "READY";
     userId: string;
     doesSessionExist: boolean;
+    jwtPayload: any;
 }> {
     constructor(props: FeatureBaseProps & {
         requireAuth?: boolean;
