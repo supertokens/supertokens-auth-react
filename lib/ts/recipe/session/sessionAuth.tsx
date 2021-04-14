@@ -16,22 +16,23 @@
 /*
  * Imports.
  */
-import { PureComponent, ReactElement } from "react";
+import React from "react";
 
 import { getWindowOrThrow } from "supertokens-website/lib/build/utils";
 import { FeatureBaseProps } from "../../types";
-import { SessionAuthState } from "./types";
 import AuthRecipeModule from "../authRecipeModule";
 import SuperTokens from "../../superTokens";
 import { isAuthRecipeModule } from "../authRecipeModule/utils";
+import SessionContext from "./sessionContext";
+import { getUserId } from "./";
 
 /*
  * Component.
  */
 
-export default class SessionAuth<T, S, R, N> extends PureComponent<
+export default class SessionAuth<T, S, R, N> extends React.PureComponent<
     FeatureBaseProps & { requireAuth?: boolean },
-    SessionAuthState
+    { status: "LOADING" } | { status: "READY"; userId: string }
 > {
     /*
      * Constructor.
@@ -72,9 +73,15 @@ export default class SessionAuth<T, S, R, N> extends PureComponent<
             );
         }
 
+        const userId = await getUserId();
+
         // Update status to ready.
-        this.setState({
-            status: "READY",
+        this.setState((oldState) => {
+            return {
+                ...oldState,
+                status: "READY",
+                userId,
+            };
         });
     }
 
@@ -86,6 +93,10 @@ export default class SessionAuth<T, S, R, N> extends PureComponent<
             return null;
         }
 
-        return this.props.children as ReactElement<any>;
+        return (
+            <SessionContext.Provider value={{ userId: this.state.userId, doesSessionExist: true }}>
+                {this.props.children}
+            </SessionContext.Provider>
+        );
     };
 }

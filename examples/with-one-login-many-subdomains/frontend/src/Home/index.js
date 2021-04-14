@@ -1,18 +1,12 @@
 import React from "react";
 import Logout from "./Logout";
 import SuccessView from "./SuccessView";
-import Session from "supertokens-auth-react/recipe/session";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { signOut } from "supertokens-auth-react/recipe/emailpassword";
 import { getAuthDomain } from "../utils";
-import { useEffect, useState } from "react";
 
 export default function Home() {
-    let [userId, setUserId] = useState("");
-    useEffect(() => {
-        Session.getUserId().then(u => {
-            setUserId(u)
-        });
-    });
+    let session = useSessionContext();
     async function logoutClicked() {
         await signOut();
         window.location.replace(getAuthDomain());
@@ -21,7 +15,7 @@ export default function Home() {
     return (
         <div className="fill">
             <Logout logoutClicked={logoutClicked} />
-            <SuccessView userId={userId} />
+            <SuccessView userId={session.userId} />
         </div>
     );
 }

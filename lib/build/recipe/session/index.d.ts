@@ -2,6 +2,7 @@ import { CreateRecipeFunction } from "../../types";
 import { SessionUserInput } from "./types";
 import SessionAuthComponent from "./sessionAuth";
 export default class SessionAPIWrapper {
+    static useSessionContext: () => import("./types").SessionContextType;
     static SessionAuth: typeof SessionAuthComponent;
     static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown>;
     static getRefreshURLDomain(): string | undefined;
@@ -16,6 +17,7 @@ export default class SessionAPIWrapper {
     };
     static signOut: () => Promise<void>;
 }
+export declare const useSessionContext: () => import("./types").SessionContextType;
 export declare const SessionAuth: typeof SessionAuthComponent;
 export declare const init: typeof SessionAPIWrapper.init;
 export declare const getRefreshURLDomain: typeof SessionAPIWrapper.getRefreshURLDomain;
