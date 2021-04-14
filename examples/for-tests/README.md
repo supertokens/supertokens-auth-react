@@ -1,4 +1,4 @@
-
+# This is only for development purpose. Please do not use this as a starting point for your project. Instead see any of the other examples.
 
 # Setup
 
