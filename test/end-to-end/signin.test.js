@@ -46,6 +46,8 @@ import {
     toggleSignInSignUp,
     getInputAdornmentsError,
     defaultSignUp,
+    getUserIdFromSessionContext,
+    getTextInDashboardNoAuth,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR } from "../../lib/build/constants";
@@ -103,7 +105,7 @@ describe("SuperTokens SignIn", function () {
         assert.deepStrictEqual(consoleLogs, []);
     });
 
-    describe("SignIn test ", function () {
+    describe.only("SignIn test ", function () {
         it("Should contain email and password fields only", async function () {
             const inputNames = await getInputNames(page);
             assert.deepStrictEqual(inputNames, ["email", "password"]);
@@ -188,9 +190,117 @@ describe("SuperTokens SignIn", function () {
             assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN"]);
         });
 
-        it("Successful Sign In", async function () {
+        it("Successful Sign In with no required session page", async function () {
             await toggleSignInSignUp(page);
             await defaultSignUp(page);
+            await clearBrowserCookies(page);
+
+            let cookies = await page.cookies();
+            assert.deepStrictEqual(cookies, []); // Make sure cookies were removed.
+
+            await page.goto(`${TEST_CLIENT_BASE_URL}/dashboard-no-auth`);
+
+            let text = await getTextInDashboardNoAuth(page);
+
+            assert.strictEqual(text, "Not logged in");
+
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            // sign in..
+
+            let showPasswordIcon = await getShowPasswordIcon(page);
+            assert.strictEqual(showPasswordIcon, null);
+            let types = await getInputTypes(page);
+            assert.deepStrictEqual(types, ["email", "password"]);
+
+            // Set correct values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            showPasswordIcon = await getShowPasswordIcon(page);
+            assert.notStrictEqual(showPasswordIcon, null);
+
+            await toggleShowPasswordIcon(page);
+            types = await getInputTypes(page);
+            assert.deepStrictEqual(types, ["email", "text"]);
+
+            const adornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(adornments.length, 0);
+
+            // Submit.
+            const [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
+                submitFormReturnRequestAndResponse(page, SIGN_IN_API),
+                hasMethodBeenCalled(page, EMAIL_EXISTS_API),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Verify that email exists API has not been called.
+            assert.strictEqual(hasEmailExistMethodBeenCalled, false);
+
+            assert.strictEqual(request.headers().rid, "emailpassword");
+            assert.strictEqual(
+                request.postData(),
+                '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"}]}'
+            );
+
+            assert.strictEqual(response.status, "OK");
+
+            // Verify cookies were set.
+            cookies = await page.cookies();
+            assert.deepStrictEqual(
+                cookies.map((c) => c.name),
+                ["sIdRefreshToken", "sAccessToken"]
+            );
+
+            // Redirected to onSuccessFulRedirectUrl
+            const onSuccessFulRedirectUrl = "/dashboard";
+            let pathname = await page.evaluate(() => window.location.pathname);
+            // Session.doesSessionExist returns true, allow to stay on /dashboard
+            assert.deepStrictEqual(pathname, onSuccessFulRedirectUrl);
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/dashboard-no-auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            // Test that sessionInfo was fetched successfully using axios and fetch (i.e. Interceptors work)
+            const axiosUserId = await getUserIdWithAxios(page);
+            const axiosSessionHandle = await getSessionHandleWithAxios(page);
+
+            const fetchUserId = await getUserIdWithFetch(page);
+            const fetchSessionHandle = await getSessionHandleWithFetch(page);
+
+            const sessionContextInfo = await getUserIdFromSessionContext(page);
+
+            assert.deepStrictEqual(axiosUserId, fetchUserId);
+            assert.deepStrictEqual(axiosSessionHandle, fetchSessionHandle);
+            assert.deepStrictEqual(sessionContextInfo, "session context userID: " + fetchUserId);
+
+            const isUUIDRegexp = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+            assert.deepStrictEqual(isUUIDRegexp.test(axiosUserId), true);
+            assert.deepStrictEqual(isUUIDRegexp.test(axiosSessionHandle), true);
+
+            // Logout
+            const logoutButton = await getLogoutButton(page);
+            await Promise.all([await logoutButton.click(), page.waitForNavigation()]);
+            pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth");
+            cookies = await page.cookies();
+            assert.deepStrictEqual(cookies, []); // Make sure cookies were removed on logout.
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_OUT",
+            ]);
+        });
+
+        it("Successful Sign In", async function () {
             await clearBrowserCookies(page);
 
             let cookies = await page.cookies();
@@ -257,8 +367,11 @@ describe("SuperTokens SignIn", function () {
             const fetchUserId = await getUserIdWithFetch(page);
             const fetchSessionHandle = await getSessionHandleWithFetch(page);
 
+            const sessionContextInfo = await getUserIdFromSessionContext(page);
+
             assert.deepStrictEqual(axiosUserId, fetchUserId);
             assert.deepStrictEqual(axiosSessionHandle, fetchSessionHandle);
+            assert.deepStrictEqual(sessionContextInfo, "session context userID: " + fetchUserId);
 
             const isUUIDRegexp = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
             assert.deepStrictEqual(isUUIDRegexp.test(axiosUserId), true);
@@ -272,10 +385,6 @@ describe("SuperTokens SignIn", function () {
             cookies = await page.cookies();
             assert.deepStrictEqual(cookies, []); // Make sure cookies were removed on logout.
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
-                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP",
-                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",

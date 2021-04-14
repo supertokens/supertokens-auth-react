@@ -517,3 +517,21 @@ export async function getSessionHandleWithFetch(page) {
             ).innerText
     );
 }
+
+export async function getUserIdFromSessionContext(page) {
+    return await page.evaluate(
+        () =>
+            document.querySelector(
+                "#root > div > div.fill > div > div.session-context-userId"
+            ).innerText
+    );
+}
+
+export async function getTextInDashboardNoAuth(page) {
+    return await page.evaluate(
+        () =>
+            document.querySelector(
+                "#root > div > div.fill > div.not-logged-in"
+            ).innerText
+    );
+}

@@ -223,7 +223,7 @@ export function DashboardNoAuthRequired() {
         return Dashboard();
     } else {
         return (
-            <div id="not-logged-in">
+            <div class="not-logged-in">
                 Not logged in
             </div>
         )
@@ -275,7 +275,7 @@ export function Dashboard() {
             <div className="fetch">
                 <SessionInfoTable sessionInfo={sessionInfoUsingFetch} />
             </div>
-            <div id="session-context-userId">
+            <div className="session-context-userId">
                 session context userID: {sessionContext.userId}
             </div>
         </div>
