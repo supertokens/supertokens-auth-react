@@ -8,6 +8,7 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<Feature
 } | {
     status: "READY";
     userId: string;
+    doesSessionExist: boolean;
 }> {
     constructor(props: FeatureBaseProps);
     getRecipeInstanceOrThrow: () => AuthRecipeModule<T, S, R, N>;

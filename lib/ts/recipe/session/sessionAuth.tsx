@@ -32,7 +32,7 @@ import { getUserId } from "./";
 
 export default class SessionAuth<T, S, R, N> extends React.PureComponent<
     FeatureBaseProps & { requireAuth?: boolean },
-    { status: "LOADING" } | { status: "READY"; userId: string }
+    { status: "LOADING" } | { status: "READY"; userId: string; doesSessionExist: boolean }
 > {
     /*
      * Constructor.
@@ -63,26 +63,37 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<
     async componentDidMount(): Promise<void> {
         const sessionExists = await this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists === false) {
-            const redirectToPath = getWindowOrThrow().location.pathname;
-            return await this.getRecipeInstanceOrThrow().redirect(
-                ({ action: "SIGN_IN_AND_UP" } as unknown) as T,
-                this.props.history,
-                {
-                    redirectToPath,
-                }
-            );
+            if (this.props.requireAuth === false) {
+                this.setState((oldState) => {
+                    return {
+                        ...oldState,
+                        status: "READY",
+                        userId: "",
+                        doesSessionExist: false,
+                    };
+                });
+            } else {
+                const redirectToPath = getWindowOrThrow().location.pathname;
+                return await this.getRecipeInstanceOrThrow().redirect(
+                    ({ action: "SIGN_IN_AND_UP" } as unknown) as T,
+                    this.props.history,
+                    {
+                        redirectToPath,
+                    }
+                );
+            }
+        } else {
+            const userId = await getUserId();
+
+            this.setState((oldState) => {
+                return {
+                    ...oldState,
+                    status: "READY",
+                    userId,
+                    doesSessionExist: true,
+                };
+            });
         }
-
-        const userId = await getUserId();
-
-        // Update status to ready.
-        this.setState((oldState) => {
-            return {
-                ...oldState,
-                status: "READY",
-                userId,
-            };
-        });
     }
 
     /*
@@ -94,7 +105,11 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<
         }
 
         return (
-            <SessionContext.Provider value={{ userId: this.state.userId, doesSessionExist: true }}>
+            <SessionContext.Provider
+                value={{
+                    userId: this.state.userId,
+                    doesSessionExist: this.state.doesSessionExist,
+                }}>
                 {this.props.children}
             </SessionContext.Provider>
         );
