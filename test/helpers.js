@@ -283,7 +283,7 @@ export async function clearBrowserCookies(page) {
     const client = await page.target().createCDPSession();
     await client.send('Network.clearBrowserCookies');
     await client.send('Network.clearBrowserCache');
-    await page.goto(`${TEST_CLIENT_BASE_URL}`);
+    await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}`), page.waitForNavigation({ waitUntil: "networkidle0" })]);
     page.evaluate(() => {
         localStorage.removeItem('sFrontToken')
         localStorage.removeItem('sIRTFrontend')
