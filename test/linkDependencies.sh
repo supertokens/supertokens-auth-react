@@ -4,7 +4,6 @@ dependencies=(
     react-router
     react-router-dom
     eslint
-    supertokens-website
 )
 
 
