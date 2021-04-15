@@ -105,7 +105,7 @@ describe("SuperTokens SignIn", function () {
         assert.deepStrictEqual(consoleLogs, []);
     });
 
-    describe.only("SignIn test ", function () {
+    describe("SignIn test ", function () {
         it("Should contain email and password fields only", async function () {
             const inputNames = await getInputNames(page);
             assert.deepStrictEqual(inputNames, ["email", "password"]);
