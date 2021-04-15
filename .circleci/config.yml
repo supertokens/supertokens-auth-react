@@ -17,6 +17,7 @@ jobs:
       - checkout
       - run: apt-get install lsof
       - run: npm run init
+      - run: cd ./examples/for-tests && npm i -d
       - run: (cd .circleci/ && ./doTests.sh)
       - slack/status
 
