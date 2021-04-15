@@ -269,3 +269,26 @@ export type FeatureBaseProps = {
      */
     isEmbedded?: boolean;
 };
+
+export type FeatureBaseOptionalRidProps = {
+    /*
+     * recipeId.
+     */
+    recipeId?: string;
+
+    /*
+     * Children element
+     */
+    children?: JSX.Element;
+
+    /*
+     * History provided by react-router
+     */
+    history?: any;
+
+    /*
+     * Nested Features
+     * This is used to avoid reinitialising feature wrapper for nested features.
+     */
+    isEmbedded?: boolean;
+};

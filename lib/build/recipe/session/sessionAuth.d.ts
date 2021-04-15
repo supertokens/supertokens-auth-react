@@ -1,7 +1,7 @@
 import React from "react";
-import { FeatureBaseProps } from "../../types";
+import { FeatureBaseOptionalRidProps } from "../../types";
 import AuthRecipeModule from "../authRecipeModule";
-export default class SessionAuth<T, S, R, N> extends React.PureComponent<FeatureBaseProps & {
+export default class SessionAuth<T, S, R, N> extends React.PureComponent<FeatureBaseOptionalRidProps & {
     requireAuth?: boolean;
 }, {
     status: "LOADING";
@@ -11,10 +11,11 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<Feature
     doesSessionExist: boolean;
     jwtPayload: any;
 }> {
-    constructor(props: FeatureBaseProps & {
+    constructor(props: FeatureBaseOptionalRidProps & {
         requireAuth?: boolean;
     });
     getRecipeInstanceOrThrow: () => AuthRecipeModule<T, S, R, N>;
+    redirectToLogin: () => Promise<void>;
     componentDidMount(): Promise<void>;
     render: () => JSX.Element | null;
 }

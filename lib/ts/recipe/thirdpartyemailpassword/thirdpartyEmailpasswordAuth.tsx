@@ -36,7 +36,7 @@ class ThirdPartyEmailPasswordAuth extends PureComponent<FeatureBaseProps & { req
     render = (): JSX.Element | null => {
         return (
             <SessionAuth
-                requireAuth={this.props.requireAuth}
+                requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}
                 recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId}
                 history={this.props.history}>
                 <EmailVerificationAuth

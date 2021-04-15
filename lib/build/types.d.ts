@@ -80,3 +80,9 @@ export declare type FeatureBaseProps = {
     history?: any;
     isEmbedded?: boolean;
 };
+export declare type FeatureBaseOptionalRidProps = {
+    recipeId?: string;
+    children?: JSX.Element;
+    history?: any;
+    isEmbedded?: boolean;
+};
