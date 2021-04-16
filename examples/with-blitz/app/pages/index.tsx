@@ -4,17 +4,26 @@ import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyema
 import dynamic from "next/dynamic";
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
-    () => Promise.resolve().then(() => ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth),
-    {
-        ssr: false
-    }
-);
+    new Promise((res) =>
+        res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)
+    ),
+    { ssr: false }
+)
+
+
+const Home: BlitzPage = () => {
+    return (
+        <ThirdPartyEmailPasswordAuthNoSSR>
+            <Page />
+        </ThirdPartyEmailPasswordAuthNoSSR>
+    );
+}
 
 /*
  * This file is just for a pleasant getting started page for your new app.
  * You can delete everything in here and start from scratch if you like.
  */
-const Home: BlitzPage = () => {
+const Page: BlitzPage = () => {
     async function logoutClicked() {
         await ThirdPartyEmailPassword.signOut();
         window.location.href = "/auth";
@@ -30,13 +39,11 @@ const Home: BlitzPage = () => {
                     <strong>Congrats!</strong> Your blitz app is ready with SuperTokens!
                 </p>
 
-                <ThirdPartyEmailPasswordAuthNoSSR>
-                    <div className="buttons" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-                        <button className="button small" onClick={async () => logoutClicked()}>
-                            Logout
+                <div className="buttons" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                    <button className="button small" onClick={async () => logoutClicked()}>
+                        Logout
                         </button>
-                    </div>
-                </ThirdPartyEmailPasswordAuthNoSSR>
+                </div>
                 <p>
                     <strong>
                         To add a new model to your app, <br />

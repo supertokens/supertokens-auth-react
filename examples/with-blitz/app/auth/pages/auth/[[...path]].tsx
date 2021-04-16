@@ -5,27 +5,20 @@ import Layout from "app/layouts/Layout";
 import SuperTokens from "supertokens-auth-react";
 
 const SuperTokensComponentNoSSR = dynamic(
-    () =>
-        Promise.resolve().then(() => {
-            return () => SuperTokens.getRoutingComponent() || null;
-        }),
-    {
-        ssr: false
-    }
-);
+    new Promise((res) => res(SuperTokens.getRoutingComponent)),
+    { ssr: false }
+)
 
 export default function Auth() {
     useEffect(() => {
         if (SuperTokens.canHandleRoute() === false) {
-            window.location.href = "/";
+            window.location.href = "/auth";
         }
     }, []);
 
     return (
-        <div>
-            <Layout>
-                <SuperTokensComponentNoSSR />
-            </Layout>
-        </div>
+        <Layout>
+            <SuperTokensComponentNoSSR />
+        </Layout>
     );
 }
