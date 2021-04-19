@@ -22,7 +22,7 @@ export async function getSubdomainForCurrentUser() {
     return res.data.subdomain;
 }
 
-export async function redirectIfOnWrongSubdomain() {
+export async function getRedirectToIfOnWrongSubdomain() {
     try {
         if (await Session.doesSessionExist()) {
             const currentSubdomain = window.location.hostname.split(".")[0];
@@ -30,8 +30,8 @@ export async function redirectIfOnWrongSubdomain() {
             // location.origin check ensures that user gets the option to click
             // the continue button on verify-email page
             if (currentSubdomain !== currentUserSubdomain) {
-                window.location.href = `http://${currentUserSubdomain}.example.com:${websitePort}`;
+                return `http://${currentUserSubdomain}.example.com:${websitePort}`;
             }
         }
-    } catch (error) {}
+    } catch (error) { }
 }

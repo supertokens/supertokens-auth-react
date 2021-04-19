@@ -1,12 +1,11 @@
 import "./App.css";
-import { useEffect } from "react";
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./Home";
 import Footer from "./Footer";
-import { getApiDomain, getAuthDomain, redirectIfOnWrongSubdomain } from "./utils";
+import { getApiDomain, getAuthDomain } from "./utils";
 
 SuperTokens.init({
     appInfo: {
@@ -15,24 +14,12 @@ SuperTokens.init({
         websiteDomain: getAuthDomain()
     },
     recipeList: [
-        EmailPassword.init({
-            emailVerificationFeature: {
-                mode: "REQUIRED"
-            }
-        }),
-        Session.init({
-            sessionScope: ".example.com"
-        })
+        EmailPassword.init(),
+        Session.init()
     ]
 });
 
 function App() {
-    useEffect(() => {
-        // If the user `abc` navigates to `xyz.example.com`, redirect them back to
-        // their correct subdomain i.e `abc.example.com`
-        redirectIfOnWrongSubdomain();
-    }, []);
-
     return (
         <div className="App">
             <Router>
