@@ -1,12 +1,12 @@
 import React from "react";
 import Logout from "./Logout";
 import SuccessView from "./SuccessView";
-import Session from "supertokens-auth-react/recipe/session";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { signOut } from "supertokens-auth-react/recipe/emailpassword";
 import { getAuthDomain } from "../utils";
 
 export default function Home() {
-    const userId = Session.getUserId();
+    const { userId } = useSessionContext();
 
     async function logoutClicked() {
         await signOut();
