@@ -38,8 +38,13 @@ export default class SignInAndUpProvidersForm extends PureComponent<
         super(props);
         if (this.props.status === "GENERAL_ERROR") {
             this.state = {
-                status: this.props.status,
-                generalError: SOMETHING_WENT_WRONG_ERROR,
+                status: "ERROR",
+                message: SOMETHING_WENT_WRONG_ERROR,
+            };
+        } else if (this.props.status === "CUSTOM_ERROR") {
+            this.state = {
+                status: "ERROR",
+                message: this.props.error,
             };
         } else {
             this.state = {
@@ -50,17 +55,17 @@ export default class SignInAndUpProvidersForm extends PureComponent<
 
     signInClick = async (providerId: string): Promise<void> => {
         try {
-            const generalError = await this.props.signInAndUpClick(providerId);
-            if (generalError !== undefined) {
+            const errorMessage = await this.props.signInAndUpClick(providerId);
+            if (errorMessage !== undefined) {
                 this.setState(() => ({
-                    status: "GENERAL_ERROR",
-                    generalError,
+                    status: "ERROR",
+                    message: errorMessage,
                 }));
             }
         } catch (e) {
             this.setState(() => ({
-                status: "GENERAL_ERROR",
-                generalError: SOMETHING_WENT_WRONG_ERROR,
+                status: "ERROR",
+                message: SOMETHING_WENT_WRONG_ERROR,
             }));
         }
     };
@@ -77,11 +82,11 @@ export default class SignInAndUpProvidersForm extends PureComponent<
          */
         return (
             <Fragment>
-                {this.state.status === "GENERAL_ERROR" && (
+                {this.state.status === "ERROR" ? (
                     <div data-supertokens="generalError" css={styles.generalError}>
-                        {this.state.generalError}
+                        {this.state.message}
                     </div>
-                )}
+                ) : null}
                 {this.props.providers.map((provider) => {
                     return (
                         <div

@@ -56,16 +56,35 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
     constructor(props: FeatureBaseProps) {
         super(props);
 
-        let status: ThirdPartySignInAndUpState["status"] = "LOADING";
-
         const error = getQueryParams("error");
         if (error !== null) {
-            status = "GENERAL_ERROR";
+            if (error === "signin") {
+                this.state = {
+                    status: "GENERAL_ERROR",
+                };
+            } else if (error === "no_email_present") {
+                this.state = {
+                    status: "CUSTOM_ERROR",
+                    error: "Could not retrieve email. Please try a different method.",
+                };
+            } else {
+                const customError = getQueryParams("message");
+                if (customError === null) {
+                    this.state = {
+                        status: "GENERAL_ERROR",
+                    };
+                } else {
+                    this.state = {
+                        status: "CUSTOM_ERROR",
+                        error: customError,
+                    };
+                }
+            }
+        } else {
+            this.state = {
+                status: "LOADING",
+            };
         }
-
-        this.state = {
-            status,
-        };
     }
 
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
@@ -191,19 +210,31 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
                     getDefaultStyles={getStyles}>
                     <Fragment>
                         {/* No custom theme, use default. */}
-                        {this.props.children === undefined && (
-                            <SignInAndUpTheme
-                                status={this.state.status}
-                                providers={providers}
-                                signInAndUpClick={this.signInAndUpClick}
-                                privacyPolicyLink={signInAndUpFeature.privacyPolicyLink}
-                                termsOfServiceLink={signInAndUpFeature.termsOfServiceLink}
-                            />
-                        )}
+                        {this.props.children === undefined &&
+                            (this.state.status === "CUSTOM_ERROR" ? (
+                                <SignInAndUpTheme
+                                    status={this.state.status}
+                                    error={this.state.error}
+                                    providers={providers}
+                                    signInAndUpClick={this.signInAndUpClick}
+                                    privacyPolicyLink={signInAndUpFeature.privacyPolicyLink}
+                                    termsOfServiceLink={signInAndUpFeature.termsOfServiceLink}
+                                />
+                            ) : (
+                                <SignInAndUpTheme
+                                    status={this.state.status}
+                                    providers={providers}
+                                    signInAndUpClick={this.signInAndUpClick}
+                                    privacyPolicyLink={signInAndUpFeature.privacyPolicyLink}
+                                    termsOfServiceLink={signInAndUpFeature.termsOfServiceLink}
+                                />
+                            ))}
 
                         {/* Otherwise, custom theme is provided, propagate props. */}
                         {this.props.children &&
                             React.cloneElement(this.props.children, {
+                                status: this.state.status,
+                                error: this.state.status === "CUSTOM_ERROR" ? this.state.error : undefined,
                                 rawPalette: this.getRecipeConfigOrThrow().palette,
                                 termsOfServiceLink: signInAndUpFeature.termsOfServiceLink,
                                 privacyPolicyLink: signInAndUpFeature.privacyPolicyLink,

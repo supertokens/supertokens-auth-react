@@ -43,13 +43,17 @@ export declare type SignInAndUpThemeProps = {
     signInAndUpClick: (id: string) => Promise<string | void>;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
+} & ({
     status: "READY" | "LOADING" | "SUCCESSFUL" | "GENERAL_ERROR";
-};
+} | {
+    status: "CUSTOM_ERROR";
+    error: string;
+});
 export declare type ThirdPartySignInAndUpThemeState = {
     status: "READY" | "LOADING" | "SUCCESSFUL";
 } | {
-    status: "GENERAL_ERROR";
-    generalError: string;
+    status: "ERROR";
+    message: string;
 };
 export declare type SignInAndUpAPIResponse = {
     status: "OK";
@@ -57,6 +61,9 @@ export declare type SignInAndUpAPIResponse = {
     user: User;
 } | {
     status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+} | {
+    status: "FIELD_ERROR";
+    error: string;
 };
 export declare type AuthorisationURLAPIResponse = {
     status: "OK";
@@ -64,6 +71,9 @@ export declare type AuthorisationURLAPIResponse = {
 };
 export declare type ThirdPartySignInAndUpState = SignInAndUpState | {
     status: "GENERAL_ERROR";
+} | {
+    status: "CUSTOM_ERROR";
+    error: string;
 };
 export declare type StateObject = {
     state: string;

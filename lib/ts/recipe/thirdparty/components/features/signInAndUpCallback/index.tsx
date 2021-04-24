@@ -118,6 +118,12 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
                     error: "no_email_present",
                 });
             }
+            if (response.status === "FIELD_ERROR") {
+                return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
+                    error: "custom",
+                    message: response.error,
+                });
+            }
             if (response.status === "OK") {
                 this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
                     action: "SUCCESS",

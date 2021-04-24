@@ -166,12 +166,15 @@ export type SignInAndUpThemeProps = {
      * Terms Of Service Link.
      */
     termsOfServiceLink?: string;
-
-    /*
-     * Initial status
-     */
-    status: "READY" | "LOADING" | "SUCCESSFUL" | "GENERAL_ERROR";
-};
+} & (
+    | {
+          status: "READY" | "LOADING" | "SUCCESSFUL" | "GENERAL_ERROR";
+      }
+    | {
+          status: "CUSTOM_ERROR";
+          error: string;
+      }
+);
 
 export type ThirdPartySignInAndUpThemeState =
     | {
@@ -184,12 +187,12 @@ export type ThirdPartySignInAndUpThemeState =
           /*
            * Status
            */
-          status: "GENERAL_ERROR";
+          status: "ERROR";
 
           /*
            * Error Message
            */
-          generalError: string;
+          message: string;
       };
 
 export type SignInAndUpAPIResponse =
@@ -211,6 +214,10 @@ export type SignInAndUpAPIResponse =
       }
     | {
           status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+      }
+    | {
+          status: "FIELD_ERROR";
+          error: string;
       };
 
 export type AuthorisationURLAPIResponse = {
@@ -232,6 +239,10 @@ export type ThirdPartySignInAndUpState =
            * Status.
            */
           status: "GENERAL_ERROR";
+      }
+    | {
+          status: "CUSTOM_ERROR";
+          error: string;
       };
 
 export type StateObject = {

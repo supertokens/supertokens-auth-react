@@ -54,5 +54,12 @@ export async function signInAndUpAPI<T, S, R>(
         };
     }
 
+    if (response.status === "FIELD_ERROR") {
+        return {
+            status: "FIELD_ERROR",
+            error: response.error,
+        };
+    }
+
     throw new Error(SOMETHING_WENT_WRONG_ERROR);
 }
