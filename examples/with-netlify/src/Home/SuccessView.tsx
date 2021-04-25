@@ -40,7 +40,7 @@ export default function SuccessView({ userId }: { userId: string }) {
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />
             <a
-                href="https://github.com/supertokens/supertokens-auth-react/examples/with-netlify"
+                href="https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-netlify"
                 target="_blank"
                 rel="noreferrer">
                 View the code on GitHub
