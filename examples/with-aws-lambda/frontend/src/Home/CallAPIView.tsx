@@ -1,7 +1,7 @@
 import axios from "axios";
 import Session from "supertokens-auth-react/recipe/session";
 import Emailpassword from "supertokens-auth-react/recipe/emailpassword";
-import { getDomain } from "../App";
+import { getAPIDomain } from "../App";
 Session.addAxiosInterceptors(axios);
 
 export default function CallAPIView() {
@@ -9,9 +9,7 @@ export default function CallAPIView() {
   async function callAPIClicked() {
     // this will also automatically refresh the session if needed
     try {
-      let response = await axios.get(
-        "https://" + getDomain() + "/.netlify/functions/user"
-      );
+      let response = await axios.get(getAPIDomain() + "/dev/user");
       window.alert(
         "Session Information:\n" + JSON.stringify(response.data, null, 2)
       );
