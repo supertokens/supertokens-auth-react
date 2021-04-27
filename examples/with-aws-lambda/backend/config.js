@@ -1,7 +1,7 @@
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 
-module.exports.getSupertokensConfig = () => {
+module.exports.getBackendConfig = () => {
   return {
     supertokens: {
       connectionURI: "https://try.supertokens.io",

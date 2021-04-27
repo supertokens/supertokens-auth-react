@@ -2,13 +2,13 @@
 const express = require("express");
 const serverless = require("serverless-http");
 let supertokens = require("supertokens-node");
-let { getSupertokensConfig } = require("./config");
+let { getBackendConfig } = require("./config");
 let Session = require("supertokens-node/recipe/session");
 const cors = require("cors");
 
 const app = express();
 
-supertokens.init(getSupertokensConfig());
+supertokens.init(getBackendConfig());
 
 app.use(
   cors({
