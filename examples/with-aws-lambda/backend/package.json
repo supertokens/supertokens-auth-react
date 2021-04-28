@@ -12,6 +12,6 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "serverless-http": "^2.7.0",
-    "supertokens-node": "^4.3.3"
+    "supertokens-node": "supertokens/supertokens-node#4.4"
   }
 }
