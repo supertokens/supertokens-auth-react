@@ -27,7 +27,8 @@ SuperTokens.init({
     appName: "SuperTokens Demo App",
     apiDomain: getAPIDomain(),
     websiteDomain: getDomain(),
-    apiBasePath: "/dev/auth",
+    apiBasePath: "/auth",
+    apiGatewayPath: "/dev"
   },
   recipeList: [EmailPassword.init(), Session.init()],
 });
