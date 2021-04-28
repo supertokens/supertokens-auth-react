@@ -19,3 +19,4 @@ frontendDriverInterfaceSupported.json
 .babelrc
 .gitattributes
 examples/
+.prettierignore

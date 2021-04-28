@@ -68,6 +68,12 @@ export type AppInfoUserInput = {
      * Default to `/auth`
      */
     websiteBasePath?: string;
+
+    /**
+     * An API gateway may be used which prepends a path to the API route.
+     * That path should be specified here.
+     */
+    apiGatewayPath?: string;
 };
 
 export type NormalisedAppInfo = {

@@ -69,6 +69,59 @@ describe("SuperTokens", function () {
         );
     });
 
+    it.only("Test apiGatewayPath", async function () {
+        {
+            SuperTokens.init({
+                appInfo: {
+                    appName: "SuperTokens",
+                    websiteDomain: "supertokens.io",
+                    apiDomain: "api.supertokens.io",
+                    apiGatewayPath: "/gateway",
+                },
+                recipeList: [EmailPassword.init()],
+            });
+            assert.strictEqual(
+                SuperTokens.getInstanceOrThrow().appInfo.apiBasePath.getAsStringDangerous(),
+                "/gateway/auth"
+            );
+
+            SuperTokens.reset();
+        }
+
+        {
+            SuperTokens.init({
+                appInfo: {
+                    appName: "SuperTokens",
+                    websiteDomain: "supertokens.io",
+                    apiDomain: "api.supertokens.io",
+                },
+                recipeList: [EmailPassword.init()],
+            });
+            assert.strictEqual(SuperTokens.getInstanceOrThrow().appInfo.apiBasePath.getAsStringDangerous(), "/auth");
+
+            SuperTokens.reset();
+        }
+
+        {
+            SuperTokens.init({
+                appInfo: {
+                    appName: "SuperTokens",
+                    websiteDomain: "supertokens.io",
+                    apiDomain: "api.supertokens.io",
+                    apiBasePath: "hello",
+                    apiGatewayPath: "gateway/one/",
+                },
+                recipeList: [EmailPassword.init()],
+            });
+            assert.strictEqual(
+                SuperTokens.getInstanceOrThrow().appInfo.apiBasePath.getAsStringDangerous(),
+                "/gateway/one/hello"
+            );
+
+            SuperTokens.reset();
+        }
+    });
+
     it("Initializing SuperTokens twice should ignore new config", async function () {
         SuperTokens.init(defaultConfigs);
         SuperTokens.init({

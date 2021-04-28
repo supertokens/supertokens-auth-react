@@ -105,11 +105,18 @@ export function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): No
         throw new Error("Please provide your websiteDomain inside the appInfo object when calling supertokens.init");
     }
 
+    let apiGatewayPath = new NormalisedURLPath("");
+    if (appInfo.apiGatewayPath !== undefined) {
+        apiGatewayPath = new NormalisedURLPath(appInfo.apiGatewayPath);
+    }
+
     return {
         appName: appInfo.appName,
         apiDomain: new NormalisedURLDomain(appInfo.apiDomain),
         websiteDomain: new NormalisedURLDomain(appInfo.websiteDomain),
-        apiBasePath: getNormalisedURLPathOrDefault(DEFAULT_API_BASE_PATH, appInfo.apiBasePath),
+        apiBasePath: apiGatewayPath.appendPath(
+            getNormalisedURLPathOrDefault(DEFAULT_API_BASE_PATH, appInfo.apiBasePath)
+        ),
         websiteBasePath: getNormalisedURLPathOrDefault(DEFAULT_WEBSITE_BASE_PATH, appInfo.websiteBasePath),
     };
 }
