@@ -15,6 +15,11 @@ export declare type AppInfoUserInput = {
     websiteDomain: string;
     apiBasePath?: string;
     websiteBasePath?: string;
+    /**
+     * An API gateway may be used which prepends a path to the API route.
+     * That path should be specified here.
+     */
+    apiGatewayPath?: string;
 };
 export declare type NormalisedAppInfo = {
     appName: string;
