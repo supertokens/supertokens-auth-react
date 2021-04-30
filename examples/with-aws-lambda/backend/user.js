@@ -19,7 +19,7 @@ app.use(
   })
 );
 
-app.use("/", Session.verifySession(), (req, res) => {
+app.use("/user", Session.verifySession(), (req, res) => {
   res.json({
     sessionHandle: req.session.getHandle(),
     userId: req.session.getUserId(),
