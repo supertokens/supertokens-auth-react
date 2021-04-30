@@ -3,7 +3,7 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import ThirdPartyEmailPassword from 'supertokens-auth-react/recipe/thirdpartyemailpassword'
 import dynamic from 'next/dynamic'
-import Session from 'supertokens-node/recipe/session'
+import Session from 'supertokens-auth-react/recipe/session'
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   new Promise((res) =>
@@ -12,41 +12,23 @@ const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
   { ssr: false }
 )
 
-export async function getServerSideProps(context) {
-  let session
-  try {
-    session = await Session.getSession(context.req, context.res)
-  } catch (err) {
-    if (err.type === Session.Error.TRY_REFRESH_TOKEN) {
-      return { props: { fromSupertokens: 'needs-refresh' } }
-    } else if (err.type === Session.Error.UNAUTHORISED) {
-      return { props: {} }
-    } else {
-      throw err
-    }
-  }
-
-  return {
-    props: { userId: session.getUserId() },
-  }
-}
-
 export default function Home(props) {
   return (
     <ThirdPartyEmailPasswordAuthNoSSR>
-      <ProtectedPage userId={props.userId} />
+      <ProtectedPage />
     </ThirdPartyEmailPasswordAuthNoSSR>
   )
 }
 
-function ProtectedPage({ userId }) {
+function ProtectedPage() {
+  let sessionContext = Session.useSessionContext();
   async function logoutClicked() {
     await ThirdPartyEmailPassword.signOut()
-    window.location.href = '/auth'
+    ThirdPartyEmailPassword.redirectToAuth();
   }
 
   async function fetchUserData() {
-    const res = await fetch('/api/user')
+    const res = await fetch('http://example.com:3000/api/user')
     const json = await res.json()
     alert(JSON.stringify(json))
   }
@@ -63,7 +45,7 @@ function ProtectedPage({ userId }) {
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
         <p className={styles.description}>
-          You are authenticated with SuperTokens! (UserID: {userId})
+          You are authenticated with SuperTokens! (UserID: {sessionContext.userId})
         </p>
 
         <div

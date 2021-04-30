@@ -61,7 +61,9 @@ export let frontendConfig = () => {
           ],
         },
       }),
-      SessionReact.init(),
+      SessionReact.init({
+        sessionScope: ".example.com:3000"
+      }),
     ],
   }
 }
