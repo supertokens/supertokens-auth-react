@@ -29,8 +29,12 @@ function ProtectedPage() {
 
   async function fetchUserData() {
     const res = await fetch('http://example.com:3000/api/user')
-    const json = await res.json()
-    alert(JSON.stringify(json))
+    if (res.status === 401) {
+      ThirdPartyEmailPassword.redirectToAuth();
+    } else {
+      const json = await res.json()
+      alert(JSON.stringify(json))
+    }
   }
 
   return (
