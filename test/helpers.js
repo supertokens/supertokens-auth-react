@@ -283,21 +283,7 @@ export async function clearBrowserCookies(page) {
     const client = await page.target().createCDPSession();
     await client.send('Network.clearBrowserCookies');
     await client.send('Network.clearBrowserCache');
-    await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}`), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-    page.evaluate(() => {
-        localStorage.removeItem('sFrontToken')
-        localStorage.removeItem('sIRTFrontend')
-        localStorage.removeItem('sAntiCsrf')
-    });
-    // await client.send('Runtime.evaluate', {
-    //     expression: `localStorage.removeItem('sFrontToken')`,
-    // });
-    // await client.send('Runtime.evaluate', {
-    //     expression: `localStorage.removeItem('sIRTFrontend')`,
-    // });
-    // await client.send('Runtime.evaluate', {
-    //     expression: `localStorage.removeItem('sAntiCsrf')`,
-    // });
+    await Promise.all([page.goto(`${TEST_CLIENT_BASE_URL}/auth`), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 }
 
 export async function clickForgotPasswordLink(page) {

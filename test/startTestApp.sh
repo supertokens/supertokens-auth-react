@@ -33,7 +33,7 @@ function startEndToEnd () {
     done
     sleep 2 # Because the server is responding does not mean the app is ready. Let's wait another 5secs to make sure the app is up.
     echo "Start mocha testing"
-    TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 25000
+    TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 35000
     testPassed=$?;
     echo "testPassed exit code: $testPassed"
     killServers

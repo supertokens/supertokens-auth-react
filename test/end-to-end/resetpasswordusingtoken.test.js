@@ -79,7 +79,10 @@ describe("SuperTokens Reset password", function () {
         page = await browser.newPage();
 
         // Sign Up first.
-        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
         await toggleSignInSignUp(page);
         await defaultSignUp(page);
     });
