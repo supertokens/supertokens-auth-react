@@ -110,6 +110,18 @@ describe("SuperTokens Third Party", function () {
             ]);
         });
 
+        it.only("Successful signin with github and redirectToPath", async function () {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=/hello`);
+            await assertProviders(page);
+            await clickOnProviderButton(page, "Github");
+            await Promise.all([
+                loginWithGithub(page),
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+            ]);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/hello");
+        });
+
         it("Successful signin with facebook", async function () {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
