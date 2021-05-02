@@ -110,7 +110,7 @@ describe("SuperTokens Third Party", function () {
             ]);
         });
 
-        it.only("Successful signin with github and redirectToPath", async function () {
+        it("Successful signin with github and redirectToPath", async function () {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=/hello`);
             await assertProviders(page);
             await clickOnProviderButton(page, "Github");
