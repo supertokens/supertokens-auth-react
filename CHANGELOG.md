@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refreshes session if the frontend set cookies are deleted (due to privacy features in Safari).
 - New FDI 1.8
 
+## [0.10.1] - 2020-05-02
+### Fixed
+- https://github.com/supertokens/supertokens-auth-react/issues/240
+
 ## [0.10.0] - 2020-04-28
 ### Changed
 - Adds `apiGatewayPath` in `appInfo`. Related to https://github.com/supertokens/supertokens-core/issues/234
