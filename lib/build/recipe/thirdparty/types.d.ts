@@ -80,4 +80,5 @@ export declare type StateObject = {
     expiresAt: number;
     rid: string;
     thirdPartyId: string;
+    redirectToPath: string | undefined;
 };
