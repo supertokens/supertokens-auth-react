@@ -91,7 +91,10 @@ describe("SuperTokens Third Party", function () {
         }
 
         it("Successful signin with github", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             await assertProviders(page);
             await clickOnProviderButton(page, "Github");
             await Promise.all([
@@ -111,7 +114,10 @@ describe("SuperTokens Third Party", function () {
         });
 
         it("Successful signin with github and redirectToPath", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=/hello`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=/hello`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             await assertProviders(page);
             await clickOnProviderButton(page, "Github");
             await Promise.all([
@@ -123,7 +129,10 @@ describe("SuperTokens Third Party", function () {
         });
 
         it("Successful signin with facebook", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             await assertProviders(page);
             await clickOnProviderButton(page, "Facebook");
             await Promise.all([
@@ -143,7 +152,10 @@ describe("SuperTokens Third Party", function () {
         });
 
         it("Successful signin with google", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             await assertProviders(page);
             await clickOnProviderButton(page, "Google");
             await Promise.all([
