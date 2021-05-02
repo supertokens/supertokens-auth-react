@@ -62,7 +62,7 @@
         "tsc": "cd lib && npx tsc -p tsconfig.json",
         "build": "cd lib && rm -rf build && npx tsc -p tsconfig.json",
         "watch": "cd lib && npx tsc -w -p tsconfig.json",
-        "pretty": "npx pretty-quick --write .",
+        "pretty": "npx pretty-quick .",
         "build-pretty": "npm run build && npm run pretty",
         "lint": "cd lib && eslint ./ts --ext .ts,.tsx",
         "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$' && exit 1 || exit 0",
