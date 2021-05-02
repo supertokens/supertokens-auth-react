@@ -196,7 +196,9 @@ describe("SuperTokens SignIn", function () {
             await clearBrowserCookies(page);
 
             let cookies = await page.cookies();
-            assert.deepStrictEqual(cookies, []); // Make sure cookies were removed.
+            assert.deepStrictEqual(cookies.length, 1);
+            assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
+            assert.deepStrictEqual(cookies[0].value, "remove");
 
             await page.goto(`${TEST_CLIENT_BASE_URL}/dashboard-no-auth`);
 
@@ -250,7 +252,7 @@ describe("SuperTokens SignIn", function () {
             cookies = await page.cookies();
             assert.deepStrictEqual(
                 cookies.map((c) => c.name),
-                ["sIdRefreshToken", "sAccessToken"]
+                ["sIRTFrontend", "sFrontToken", "sIdRefreshToken", "sAccessToken"]
             );
 
             // Redirected to onSuccessFulRedirectUrl
@@ -287,7 +289,9 @@ describe("SuperTokens SignIn", function () {
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             cookies = await page.cookies();
-            assert.deepStrictEqual(cookies, []); // Make sure cookies were removed on logout.
+            assert.deepStrictEqual(cookies.length, 1);
+            assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
+            assert.deepStrictEqual(cookies[0].value, "remove");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP",
@@ -304,7 +308,9 @@ describe("SuperTokens SignIn", function () {
             await clearBrowserCookies(page);
 
             let cookies = await page.cookies();
-            assert.deepStrictEqual(cookies, []); // Make sure cookies were removed.
+            assert.deepStrictEqual(cookies.length, 1);
+            assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
+            assert.deepStrictEqual(cookies[0].value, "remove");
 
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
 
@@ -351,7 +357,7 @@ describe("SuperTokens SignIn", function () {
             cookies = await page.cookies();
             assert.deepStrictEqual(
                 cookies.map((c) => c.name),
-                ["sIdRefreshToken", "sAccessToken"]
+                ["sIRTFrontend", "sFrontToken", "sIdRefreshToken", "sAccessToken"]
             );
 
             // Redirected to onSuccessFulRedirectUrl
@@ -383,7 +389,9 @@ describe("SuperTokens SignIn", function () {
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             cookies = await page.cookies();
-            assert.deepStrictEqual(cookies, []); // Make sure cookies were removed on logout.
+            assert.deepStrictEqual(cookies.length, 1);
+            assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
+            assert.deepStrictEqual(cookies[0].value, "remove");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
@@ -430,7 +438,9 @@ describe("SuperTokens SignIn", function () {
             it("First sign in", async function () {
                 await clearBrowserCookies(page);
                 let cookies = await page.cookies();
-                assert.deepStrictEqual(cookies, []); // Make sure cookies were removed.
+                assert.deepStrictEqual(cookies.length, 1);
+                assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
+                assert.deepStrictEqual(cookies[0].value, "remove");
 
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/redirect-to-this-custom-path`),

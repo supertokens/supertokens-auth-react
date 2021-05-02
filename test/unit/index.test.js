@@ -69,7 +69,7 @@ describe("SuperTokens", function () {
         );
     });
 
-    it.only("Test apiGatewayPath", async function () {
+    it("Test apiGatewayPath", async function () {
         {
             SuperTokens.init({
                 appInfo: {

@@ -189,7 +189,7 @@ describe("SuperTokens SignUp", function () {
 
             assert.deepStrictEqual(
                 cookies.map((c) => c.name),
-                ["sIdRefreshToken", "sAccessToken"]
+                ["sIRTFrontend", "sFrontToken", "sIdRefreshToken", "sAccessToken"]
             );
             // doesSessionExist return true, hence, redirecting to success URL
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, {
