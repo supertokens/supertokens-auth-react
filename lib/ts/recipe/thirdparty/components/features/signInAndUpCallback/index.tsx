@@ -130,8 +130,11 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
                     isNewUser: response.createdNewUser,
                     user: response.user,
                 });
+
+                const stateObject = getOAuthState();
+                const redirectToPath = stateObject === undefined ? undefined : stateObject.redirectToPath;
                 return this.getRecipeInstanceOrThrow().redirect(
-                    { action: "SUCCESS", isNewUser: response.createdNewUser },
+                    { action: "SUCCESS", isNewUser: response.createdNewUser, redirectToPath },
                     this.props.history
                 );
             }

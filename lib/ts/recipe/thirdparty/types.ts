@@ -265,4 +265,6 @@ export type StateObject = {
      * Third Party Id
      */
     thirdPartyId: string;
+
+    redirectToPath: string | undefined;
 };
