@@ -16,11 +16,11 @@ export default function SuccessView(props) {
                 fontWeight: "bold",
                 color: "#333333",
                 paddingTop: "10px",
-                paddingBottom: "40px"
+                paddingBottom: "40px",
             }}>
             <span
                 style={{
-                    fontSize: "50px"
+                    fontSize: "50px",
                 }}>
                 🥳🎉
             </span>

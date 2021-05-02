@@ -6,4 +6,7 @@ export declare const slideTop: import("@emotion/serialize").Keyframes;
 export declare const swingIn: import("@emotion/serialize").Keyframes;
 export declare function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultStyles;
 export declare function getButtonStyle(color: string, brighten?: boolean): CSSObject;
-export declare function getMergedStyles(defaultStyles: NormalisedDefaultStyles, themeStyles: NormalisedDefaultStyles): NormalisedDefaultStyles;
+export declare function getMergedStyles(
+    defaultStyles: NormalisedDefaultStyles,
+    themeStyles: NormalisedDefaultStyles
+): NormalisedDefaultStyles;

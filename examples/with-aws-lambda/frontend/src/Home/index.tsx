@@ -6,18 +6,18 @@ import { useHistory } from "react-router-dom";
 import { signOut } from "supertokens-auth-react/recipe/emailpassword";
 
 export default function Home() {
-  const { userId } = useSessionContext();
-  const history = useHistory();
+    const { userId } = useSessionContext();
+    const history = useHistory();
 
-  async function logoutClicked() {
-    await signOut();
-    history.push("/auth");
-  }
+    async function logoutClicked() {
+        await signOut();
+        history.push("/auth");
+    }
 
-  return (
-    <div className="fill">
-      <Logout logoutClicked={logoutClicked} />
-      <SuccessView userId={userId} />
-    </div>
-  );
+    return (
+        <div className="fill">
+            <Logout logoutClicked={logoutClicked} />
+            <SuccessView userId={userId} />
+        </div>
+    );
 }

@@ -3,18 +3,18 @@ import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-
 import EmailPassword, {
     EmailPasswordGetRedirectionURLContext,
     EmailPasswordOnHandleEventContext,
-    EmailPasswordPreAPIHookContext
+    EmailPasswordPreAPIHookContext,
 } from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import ThirdParty, {
     ThirdPartyGetRedirectionURLContext,
     ThirdPartyOnHandleEventContext,
-    ThirdPartyPreAPIHookContext
+    ThirdPartyPreAPIHookContext,
 } from "supertokens-auth-react/recipe/thirdparty";
 import ThirdPartyEmailPassword, {
     ThirdPartyEmailPasswordGetRedirectionURLContext,
     ThirdPartyEmailPasswordOnHandleEventContext,
-    ThirdPartyEmailPasswordPreAPIHookContext
+    ThirdPartyEmailPasswordPreAPIHookContext,
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
@@ -64,9 +64,9 @@ SuperTokens.init({
     appInfo: {
         appName: "SuperTokens Demo App",
         apiDomain: getApiDomain(),
-        websiteDomain: window.location.origin
+        websiteDomain: window.location.origin,
     },
-    recipeList
+    recipeList,
 });
 
 function App() {
@@ -113,7 +113,7 @@ function getTheme(): {
 } {
     let theme = {
         colors: {},
-        style: {}
+        style: {},
     };
 
     const themeParams = getQueryParams("theme");
@@ -143,29 +143,29 @@ function getEmailPasswordConfigs() {
         palette: theme.colors,
         emailVerificationFeature: {
             sendVerifyEmailScreen: {
-                style: theme.style
+                style: theme.style,
             },
             verifyEmailLinkClickedScreen: {
-                style: theme.style
+                style: theme.style,
             },
-            mode: "REQUIRED"
+            mode: "REQUIRED",
         },
         resetPasswordUsingTokenFeature: {
             enterEmailForm: {
-                style: theme.style
+                style: theme.style,
             },
             submitNewPasswordForm: {
-                style: theme.style
-            }
+                style: theme.style,
+            },
         },
         signInAndUpFeature: {
             signInForm: {
-                style: theme.style
+                style: theme.style,
             },
             signUpForm: {
                 style: theme.style,
                 privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions"
+                termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
                 // formFields: [{
                 //   id: "email",
                 //   label: "Your Email",
@@ -191,10 +191,10 @@ function getEmailPasswordConfigs() {
                 //     placeholder: "Where do you live?",
                 //     optional: true
                 // }]
-            }
+            },
         },
 
-        onHandleEvent(context: EmailPasswordOnHandleEventContext) { },
+        onHandleEvent(context: EmailPasswordOnHandleEventContext) {},
 
         async preAPIHook(context: EmailPasswordPreAPIHookContext) {
             return context.requestInit;
@@ -202,12 +202,12 @@ function getEmailPasswordConfigs() {
 
         async getRedirectionURL(context: EmailPasswordGetRedirectionURLContext) {
             return undefined;
-        }
+        },
     });
 }
 function getThirdPartyConfigs() {
     return ThirdParty.init({
-        onHandleEvent(context: ThirdPartyOnHandleEventContext) { },
+        onHandleEvent(context: ThirdPartyOnHandleEventContext) {},
 
         async preAPIHook(context: ThirdPartyPreAPIHookContext) {
             // You need to authorize `x-app` in node for the following to work
@@ -216,7 +216,7 @@ function getThirdPartyConfigs() {
             //   "x-app": "with-typescript"
             // }
             context.url = appendQueryParamsToURL(context.url, {
-                app: "with-typescript"
+                app: "with-typescript",
             });
             return context;
         },
@@ -236,16 +236,16 @@ function getThirdPartyConfigs() {
                 ThirdParty.Apple.init(),
                 {
                     id: "custom",
-                    name: "Custom"
-                }
-            ]
-        }
+                    name: "Custom",
+                },
+            ],
+        },
     });
 }
 
 function getThirdPartyEmailPasswordConfigs() {
     return ThirdPartyEmailPassword.init({
-        onHandleEvent(context: ThirdPartyEmailPasswordOnHandleEventContext) { },
+        onHandleEvent(context: ThirdPartyEmailPasswordOnHandleEventContext) {},
 
         async preAPIHook(context: ThirdPartyEmailPasswordPreAPIHookContext) {
             return context;
@@ -259,7 +259,7 @@ function getThirdPartyEmailPasswordConfigs() {
             style: theme.style,
             signUpForm: {
                 privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions"
+                termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
             },
             providers: [
                 ThirdPartyEmailPassword.Github.init(),
@@ -268,10 +268,10 @@ function getThirdPartyEmailPasswordConfigs() {
                 ThirdPartyEmailPassword.Apple.init(),
                 {
                     id: "custom",
-                    name: "Custom"
-                }
-            ]
-        }
+                    name: "Custom",
+                },
+            ],
+        },
     });
 }
 

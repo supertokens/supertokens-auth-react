@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-require('dotenv').config();
+require("dotenv").config();
 let SuperTokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
@@ -33,94 +33,96 @@ app.use(urlencodedParser);
 app.use(jsonParser);
 app.use(cookieParser());
 
-
 const WEB_PORT = process.env.WEB_PORT || 3031;
-const websiteDomain = `http://localhost:${WEB_PORT}`
+const websiteDomain = `http://localhost:${WEB_PORT}`;
 let latestURLWithToken = "";
 
-const formFields = process.env.MIN_FIELDS && [] || [{
-    id: "name"
-  }, {
-    id: "age",
-    validate: async (value) => {
-      if (parseInt(value) < 18) {
-          return "You must be over 18 to register";
-      }
+const formFields = (process.env.MIN_FIELDS && []) || [
+    {
+        id: "name",
+    },
+    {
+        id: "age",
+        validate: async (value) => {
+            if (parseInt(value) < 18) {
+                return "You must be over 18 to register";
+            }
 
-      // If no error, return undefined.
-      return undefined;
-    }
-  },  {
-    id: "country",
-    optional: true
-  }]
+            // If no error, return undefined.
+            return undefined;
+        },
+    },
+    {
+        id: "country",
+        optional: true,
+    },
+];
 SuperTokens.init({
     appInfo: {
         appName: "SuperTokens",
         apiDomain: "localhost:" + (process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT),
-        websiteDomain
+        websiteDomain,
     },
     supertokens: {
-        connectionURI: "http://localhost:9000"
+        connectionURI: "http://localhost:9000",
     },
     recipeList: [
         EmailPassword.init({
             signUpFeature: {
-                formFields
+                formFields,
             },
             resetPasswordUsingTokenFeature: {
                 createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
                     console.log(passwordResetURLWithToken);
                     latestURLWithToken = passwordResetURLWithToken;
-                }
+                },
             },
             emailVerificationFeature: {
                 createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
                     console.log(emailVerificationURLWithToken);
                     latestURLWithToken = emailVerificationURLWithToken;
-                }
-            }
-            
+                },
+            },
         }),
         ThirdParty.init({
             signInAndUpFeature: {
                 providers: [
                     ThirdParty.Google({
                         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                        clientId: process.env.GOOGLE_CLIENT_ID
+                        clientId: process.env.GOOGLE_CLIENT_ID,
                     }),
                     ThirdParty.Github({
                         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                        clientId: process.env.GITHUB_CLIENT_ID
+                        clientId: process.env.GITHUB_CLIENT_ID,
                     }),
                     ThirdParty.Facebook({
                         clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-                        clientId: process.env.FACEBOOK_CLIENT_ID
-                    })
-                ]
-            }
+                        clientId: process.env.FACEBOOK_CLIENT_ID,
+                    }),
+                ],
+            },
         }),
         ThirdPartyEmailPassword.init({
             signUpFeature: {
-                formFields
+                formFields,
             },
             providers: [
                 ThirdPartyEmailPassword.Google({
                     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                    clientId: process.env.GOOGLE_CLIENT_ID
+                    clientId: process.env.GOOGLE_CLIENT_ID,
                 }),
                 ThirdPartyEmailPassword.Github({
                     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                    clientId: process.env.GITHUB_CLIENT_ID
+                    clientId: process.env.GITHUB_CLIENT_ID,
                 }),
                 ThirdPartyEmailPassword.Facebook({
                     clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-                    clientId: process.env.FACEBOOK_CLIENT_ID
-                })
-            ]
+                    clientId: process.env.FACEBOOK_CLIENT_ID,
+                }),
+            ],
         }),
-        Session.init({})
-    ]
+        Session.init({}),
+    ],
 });
 
 app.use(
@@ -128,7 +130,7 @@ app.use(
         origin: websiteDomain,
         allowedHeaders: ["content-type", ...SuperTokens.getAllCORSHeaders()],
         methods: ["GET", "PUT", "POST", "DELETE"],
-        credentials: true
+        credentials: true,
     })
 );
 
@@ -171,9 +173,9 @@ app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
     });
 });
 
-app.get("/token",  async (_, res) => {
+app.get("/token", async (_, res) => {
     res.send({
-        latestURLWithToken
+        latestURLWithToken,
     });
 });
 
@@ -193,18 +195,17 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
  * or
  * npm run server
  */
-(
-    async function (shouldSpinUp) {
-        if (shouldSpinUp) {
-            console.log(`Start supertokens for test app`);
-            try {
-                await killAllST();
-                await cleanST();
-            } catch (e) {};
+(async function (shouldSpinUp) {
+    if (shouldSpinUp) {
+        console.log(`Start supertokens for test app`);
+        try {
+            await killAllST();
+            await cleanST();
+        } catch (e) {}
 
-            await setupST();
-            const pid = await startST();
-            console.log(`Application started on http://localhost:${process.env.NODE_PORT | 8080}`)
-            console.log(`processId: ${pid}`)
-        }
+        await setupST();
+        const pid = await startST();
+        console.log(`Application started on http://localhost:${process.env.NODE_PORT | 8080}`);
+        console.log(`processId: ${pid}`);
+    }
 })(process.env.START === "true");

@@ -11,12 +11,9 @@ SuperTokens.init({
     appInfo: {
         appName: "SuperTokens Demo App",
         apiDomain: getApiDomain(),
-        websiteDomain: getAuthDomain()
+        websiteDomain: getAuthDomain(),
     },
-    recipeList: [
-        EmailPassword.init(),
-        Session.init()
-    ]
+    recipeList: [EmailPassword.init(), Session.init()],
 });
 
 function App() {

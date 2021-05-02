@@ -20,9 +20,9 @@ SuperTokens.init({
         appName: "SuperTokens Demo App",
         apiDomain: getDomain(),
         websiteDomain: getDomain(),
-        apiBasePath: "/.netlify/functions/auth"
+        apiBasePath: "/.netlify/functions/auth",
     },
-    recipeList: [EmailPassword.init(), Session.init()]
+    recipeList: [EmailPassword.init(), Session.init()],
 });
 
 function App() {

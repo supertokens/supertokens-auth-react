@@ -9,7 +9,7 @@ export default function Logout({ id, onClick, label, className }) {
                 alignItems: "center",
                 justifyContent: "flex-end",
                 paddingLeft: "75px",
-                paddingRight: "75px"
+                paddingRight: "75px",
             }}>
             <div
                 id={id}
@@ -26,7 +26,7 @@ export default function Logout({ id, onClick, label, className }) {
                     color: "#ffffff",
                     fontWeight: "bold",
                     textAlign: "center",
-                    padding: "10px"
+                    padding: "10px",
                 }}>
                 {label}
             </div>

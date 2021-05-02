@@ -7,7 +7,7 @@ export default function Logout({ logoutClicked }: { logoutClicked: () => void })
                 alignItems: "center",
                 justifyContent: "flex-end",
                 paddingLeft: "75px",
-                paddingRight: "75px"
+                paddingRight: "75px",
             }}>
             <div
                 onClick={logoutClicked}
@@ -21,7 +21,7 @@ export default function Logout({ logoutClicked }: { logoutClicked: () => void })
                     alignItems: "center",
                     justifyContent: "center",
                     color: "#ffffff",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
                 }}>
                 SIGN OUT
             </div>

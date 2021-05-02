@@ -9,12 +9,12 @@ const HydrogenTheme = {
         textLabel: "#fafafa",
         textPrimary: "#fafafa",
         textInput: "#fff",
-        textLink: "#fefefe"
+        textLink: "#fefefe",
     },
 
     style: {
         divider: {
-            display: "none"
+            display: "none",
         },
 
         container: {
@@ -37,8 +37,8 @@ const HydrogenTheme = {
                 background: "rgba(16, 80, 147, 1)",
                 margin: "0px",
                 minWidth: "none",
-                with: "100vw"
-            }
+                with: "100vw",
+            },
         },
 
         inputWrapper: {
@@ -51,7 +51,7 @@ const HydrogenTheme = {
             transition: "border 200ms ease 0ms,box-shadow 200ms ease 0ms",
             borderRadius: "5px",
             lineHeight: "normal",
-            height: "45px"
+            height: "45px",
         },
 
         input: {
@@ -59,8 +59,8 @@ const HydrogenTheme = {
             borderRadius: "5px",
             height: "45px",
             "&::placeholder": {
-                color: "white"
-            }
+                color: "white",
+            },
         },
 
         row: {
@@ -81,12 +81,12 @@ const HydrogenTheme = {
             "@media (max-width: 440px)": {
                 boxShadow: "none",
                 paddingLeft: "1rem",
-                paddingRight: "1rem"
-            }
+                paddingRight: "1rem",
+            },
         },
 
         headerTitle: {
-            marginBottom: "2rem"
+            marginBottom: "2rem",
         },
 
         button: {
@@ -97,14 +97,14 @@ const HydrogenTheme = {
             letterSpacing: ".08rem",
             borderRadius: "4px",
             padding: ".7rem 1.4rem",
-            border: "none"
+            border: "none",
         },
 
         privacyPolicyAndTermsAndConditions: {
             maxWidth: "100%",
-            marginTop: "25px"
-        }
-    }
+            marginTop: "25px",
+        },
+    },
 };
 
 export default HydrogenTheme;

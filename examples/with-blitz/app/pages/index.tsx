@@ -4,12 +4,9 @@ import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyema
 import dynamic from "next/dynamic";
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
-    new Promise((res) =>
-        res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)
-    ),
+    new Promise((res) => res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)),
     { ssr: false }
-)
-
+);
 
 const Home: BlitzPage = () => {
     return (
@@ -17,7 +14,7 @@ const Home: BlitzPage = () => {
             <Page />
         </ThirdPartyEmailPasswordAuthNoSSR>
     );
-}
+};
 
 /*
  * This file is just for a pleasant getting started page for your new app.
@@ -42,7 +39,7 @@ const Page: BlitzPage = () => {
                 <div className="buttons" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
                     <button className="button small" onClick={async () => logoutClicked()}>
                         Logout
-                        </button>
+                    </button>
                 </div>
                 <p>
                     <strong>
@@ -243,6 +240,6 @@ const Page: BlitzPage = () => {
     );
 };
 
-Home.getLayout = page => <Layout title="Home">{page}</Layout>;
+Home.getLayout = (page) => <Layout title="Home">{page}</Layout>;
 
 export default Home;

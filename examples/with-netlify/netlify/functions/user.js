@@ -14,7 +14,7 @@ app.get("/.netlify/functions/user", Session.verifySession(), async (req, res) =>
     res.send({
         sessionHandle: session.getHandle(),
         userId: session.getUserId(),
-        jwtPayload: session.getJWTPayload()
+        jwtPayload: session.getJWTPayload(),
     });
 });
 

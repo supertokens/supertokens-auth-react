@@ -2,9 +2,12 @@ import { PureComponent } from "react";
 import EmailVerificationRecipe from "../../../";
 import { FeatureBaseProps } from "../../../../../types";
 import AuthRecipeModule from "../../../../authRecipeModule";
-declare class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, {
-    token: string;
-}> {
+declare class EmailVerification<T, S, R, N> extends PureComponent<
+    FeatureBaseProps,
+    {
+        token: string;
+    }
+> {
     constructor(props: FeatureBaseProps);
     getAuthRecipeOrThrow: () => AuthRecipeModule<T, S, R, N>;
     getRecipeInstanceOrThrow: () => EmailVerificationRecipe<unknown, unknown, unknown>;

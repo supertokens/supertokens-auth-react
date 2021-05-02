@@ -16,22 +16,22 @@ SuperTokens.init({
         appName: "SuperTokens Demo App",
         apiDomain: getApiDomain(),
         websiteDomain: getAuthDomain(),
-        websiteBasePath: "/"
+        websiteBasePath: "/",
     },
     recipeList: [
         EmailPassword.init({
-            getRedirectionURL: async context => {
+            getRedirectionURL: async (context) => {
                 if (context.action === "SUCCESS") {
                     // redirect users to their associated subdomain e.g abc.example.com for user abc
                     const redirectionUrl = await getRedirectionUrlForUser();
                     return redirectionUrl;
                 }
-            }
+            },
         }),
         Session.init({
-            sessionScope: ".example.com"
-        })
-    ]
+            sessionScope: ".example.com",
+        }),
+    ],
 });
 
 function App() {

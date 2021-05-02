@@ -10,7 +10,7 @@ import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import axios from "axios";
-import { useSessionContext } from "supertokens-auth-react/recipe/session"
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
 import Session from "supertokens-auth-react/recipe/session";
 import Button from "./Button";
@@ -73,7 +73,7 @@ const theme = getTheme();
 function getTheme() {
     let theme = {
         colors: {},
-        style: {}
+        style: {},
     };
 
     const themeParams = getQueryParams("theme");
@@ -98,31 +98,31 @@ const formFields = [
     {
         id: "email",
         label: "Your Email",
-        placeholder: "Your work email"
+        placeholder: "Your work email",
     },
     {
         id: "name",
         label: "Full name",
-        placeholder: "First name and last name"
+        placeholder: "First name and last name",
     },
     {
         id: "age",
         label: "Your age",
         placeholder: "How old are you?",
-        validate: async value => {
+        validate: async (value) => {
             if (parseInt(value) > 18) {
                 return undefined;
             }
 
             return "You must be over 18 to register";
-        }
+        },
     },
     {
         id: "country",
         label: "Your Country",
         placeholder: "Where do you live?",
-        optional: true
-    }
+        optional: true,
+    },
 ];
 
 let recipeList = [Session.init()];
@@ -142,10 +142,10 @@ SuperTokens.init({
         appName: "SuperTokens",
         websiteDomain: getWebsiteDomain(),
         apiDomain: getApiDomain(),
-        websiteBasePath
+        websiteBasePath,
     },
     useReactRouterDom,
-    recipeList
+    recipeList,
 });
 
 /* App */
@@ -178,15 +178,27 @@ export function Home() {
     return (
         <>
             <h2>/Home</h2>
-            <Button id="login" onClick={() => {
-                goToAuth();
-            }} label="LOGIN to default" />
-            <Button id="login-signin" onClick={() => {
-                goToAuth("signin");
-            }} label="LOGIN with redirect to sign in" />
-            <Button id="login-signup" onClick={() => {
-                goToAuth("signup");
-            }} label="LOGIN with redirect to sign up" />
+            <Button
+                id="login"
+                onClick={() => {
+                    goToAuth();
+                }}
+                label="LOGIN to default"
+            />
+            <Button
+                id="login-signin"
+                onClick={() => {
+                    goToAuth("signin");
+                }}
+                label="LOGIN with redirect to sign in"
+            />
+            <Button
+                id="login-signup"
+                onClick={() => {
+                    goToAuth("signup");
+                }}
+                label="LOGIN with redirect to sign up"
+            />
         </>
     );
 }
@@ -204,7 +216,7 @@ function goToAuth(show) {
     } else if (recipe === "thirdpartyemailpassword") {
         ThirdPartyEmailPassword.redirectToAuth(show);
     } else {
-        window.location.href = websiteBasePath || "/auth"
+        window.location.href = websiteBasePath || "/auth";
     }
 }
 
@@ -222,11 +234,7 @@ export function DashboardNoAuthRequired() {
     if (sessionContext.doesSessionExist) {
         return Dashboard();
     } else {
-        return (
-            <div class="not-logged-in">
-                Not logged in
-            </div>
-        )
+        return <div class="not-logged-in">Not logged in</div>;
     }
 }
 
@@ -275,9 +283,7 @@ export function Dashboard() {
             <div className="fetch">
                 <SessionInfoTable sessionInfo={sessionInfoUsingFetch} />
             </div>
-            <div className="session-context-userId">
-                session context userID: {sessionContext.userId}
-            </div>
+            <div className="session-context-userId">session context userID: {sessionContext.userId}</div>
         </div>
     );
 }
@@ -297,72 +303,72 @@ function SessionInfoTable({ sessionInfo }) {
 function getEmailPasswordConfigs() {
     return EmailPassword.init({
         palette: theme.colors,
-        preAPIHook: async context => {
+        preAPIHook: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
             return context.requestInit;
         },
-        getRedirectionURL: async context => {
+        getRedirectionURL: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
                 return context.redirectToPath || "/dashboard";
             }
         },
-        onHandleEvent: async context => {
+        onHandleEvent: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
         },
         useShadowDom,
         emailVerificationFeature: {
             sendVerifyEmailScreen: {
-                style: theme.style
+                style: theme.style,
             },
             verifyEmailLinkClickedScreen: {
-                style: theme.style
+                style: theme.style,
             },
-            mode: emailVerificationMode
+            mode: emailVerificationMode,
         },
         resetPasswordUsingTokenFeature: {
             enterEmailForm: {
-                style: theme.style
+                style: theme.style,
             },
             submitNewPasswordForm: {
-                style: theme.style
-            }
+                style: theme.style,
+            },
         },
         signInAndUpFeature: {
             defaultToSignUp,
             signInForm: {
-                style: theme.style
+                style: theme.style,
             },
             signUpForm: {
                 style: theme.style,
                 privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-                formFields
-            }
-        }
+                formFields,
+            },
+        },
     });
 }
 
 function getThirdPartyConfigs() {
     return ThirdParty.init({
-        preAPIHook: async context => {
+        preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
             return context.requestInit;
         },
-        getRedirectionURL: async context => {
+        getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
                 return context.redirectToPath || "/dashboard";
             }
         },
-        onHandleEvent: async context => {
+        onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY ON_HANDLE_EVENT ${context.action}`);
         },
 
         useShadowDom,
         palette: theme.colors,
         emailVerificationFeature: {
-            mode: emailVerificationMode
+            mode: emailVerificationMode,
         },
         signInAndUpFeature: {
             style: theme.style,
@@ -375,33 +381,33 @@ function getThirdPartyConfigs() {
                 ThirdParty.Apple.init(),
                 {
                     id: "custom",
-                    name: "Custom"
-                }
-            ]
-        }
+                    name: "Custom",
+                },
+            ],
+        },
     });
 }
 
 function getThirdPartyEmailPasswordConfigs() {
     return ThirdPartyEmailPassword.init({
-        preAPIHook: async context => {
+        preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
             return context.requestInit;
         },
-        getRedirectionURL: async context => {
+        getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
                 return context.redirectToPath || "/dashboard";
             }
         },
-        onHandleEvent: async context => {
+        onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
         },
 
         useShadowDom,
         palette: theme.colors,
         emailVerificationFeature: {
-            mode: emailVerificationMode
+            mode: emailVerificationMode,
         },
         resetPasswordUsingTokenFeature: {},
         signInAndUpFeature: {
@@ -409,7 +415,7 @@ function getThirdPartyEmailPasswordConfigs() {
             signUpForm: {
                 formFields,
                 privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions"
+                termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
             },
             style: theme.style,
             providers: [
@@ -419,10 +425,10 @@ function getThirdPartyEmailPasswordConfigs() {
                 ThirdPartyEmailPassword.Apple.init(),
                 {
                     id: "custom",
-                    name: "Custom"
-                }
-            ]
+                    name: "Custom",
+                },
+            ],
         },
-        disableEmailPassword: false
+        disableEmailPassword: false,
     });
 }

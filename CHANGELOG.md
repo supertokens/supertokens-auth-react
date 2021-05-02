@@ -1,192 +1,240 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-
 ## [0.11.0] - 2020-05-02
+
 ### Changed
-- Uses frontend set cookies instead of localstorage so that sub domain session works on Safari
-- Sends `rid` on each request - acts as a CSRF protection measure (see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#use-of-custom-request-headers)
-- Refreshes session if the frontend set cookies are deleted (due to privacy features in Safari).
-- New FDI 1.8
+
+-   Uses frontend set cookies instead of localstorage so that sub domain session works on Safari
+-   Sends `rid` on each request - acts as a CSRF protection measure (see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#use-of-custom-request-headers)
+-   Refreshes session if the frontend set cookies are deleted (due to privacy features in Safari).
+-   New FDI 1.8
 
 ## [0.10.1] - 2020-05-02
+
 ### Fixed
-- https://github.com/supertokens/supertokens-auth-react/issues/240
+
+-   https://github.com/supertokens/supertokens-auth-react/issues/240
 
 ## [0.10.0] - 2020-04-28
-### Changed
-- Adds `apiGatewayPath` in `appInfo`. Related to https://github.com/supertokens/supertokens-core/issues/234
 
+### Changed
+
+-   Adds `apiGatewayPath` in `appInfo`. Related to https://github.com/supertokens/supertokens-core/issues/234
 
 ## [0.9.1] - 2020-04-24
+
 ### Added
-- Ability to send custom error messages from signinup API for thirdparty login to show in the UI. Fixes issue https://github.com/supertokens/supertokens-core/issues/233
+
+-   Ability to send custom error messages from signinup API for thirdparty login to show in the UI. Fixes issue https://github.com/supertokens/supertokens-core/issues/233
 
 ## [0.9.0] - 2020-04-14
 
 ### Added
-- Exports `SessionAuth` wrapper
-- Adds `requireAuth` boolean to all Auth wrappers to protect pages optionally
-- Creates a session context that is passed to child components for easy access to session info.
+
+-   Exports `SessionAuth` wrapper
+-   Adds `requireAuth` boolean to all Auth wrappers to protect pages optionally
+-   Creates a session context that is passed to child components for easy access to session info.
 
 ### Changed
-- `getUserId` and `doesSessionExist` returning `Promises`
+
+-   `getUserId` and `doesSessionExist` returning `Promises`
 
 ## [0.8.0] - 2020-03-30
 
 ### Added
-- Signout function from session
-- Compatibility with FDI 1.7
-- Adds `redirectToAuth` function for all auth recipes
+
+-   Signout function from session
+-   Compatibility with FDI 1.7
+-   Adds `redirectToAuth` function for all auth recipes
 
 ### Changed
-- Removed type dependency on History
+
+-   Removed type dependency on History
 
 ## [0.7.2] - 2020-03-05
 
 ### Fix
-- Fix URL Normalisation with "/.netlify/functions/api".
+
+-   Fix URL Normalisation with "/.netlify/functions/api".
 
 ## [0.7.1] - 2020-03-04
 
 ### Fix
-- Fix Path Normalisation with "/.netlify/functions/api" given as apiBasePath
+
+-   Fix Path Normalisation with "/.netlify/functions/api" given as apiBasePath
 
 ## [0.7.0] - 2020-02-20
 
 ### Added
-- Third Party & Email Password recipe
-- Update preAPIHook type from `({RequestInit, action}) => Promise<RequestInit>` to `({url, RequestInit, action}) => Promise<RequestInit | {RequestInit, url}>`
+
+-   Third Party & Email Password recipe
+-   Update preAPIHook type from `({RequestInit, action}) => Promise<RequestInit>` to `({url, RequestInit, action}) => Promise<RequestInit | {RequestInit, url}>`
 
 ## [0.6.0] - 2020-02-16
 
 ### Added
-- Third Party recipe with Google/Github/Facebook/Apple
+
+-   Third Party recipe with Google/Github/Facebook/Apple
 
 ### Changes
-- Introduce AuthRecipeModule to abstract common functions (hooks, signout, isEmailVerified)
-- Email Verification as a recipe
-- Email Password context from `{action: "SIGN_IN_COMPLETE" | "SIGN_UP_COMPLETE"}` to `{action: "SUCCESS", isNewUser: boolean}`
+
+-   Introduce AuthRecipeModule to abstract common functions (hooks, signout, isEmailVerified)
+-   Email Verification as a recipe
+-   Email Password context from `{action: "SIGN_IN_COMPLETE" | "SIGN_UP_COMPLETE"}` to `{action: "SUCCESS", isNewUser: boolean}`
 
 ## [0.5.6] - 2020-02-06
 
 ### Fixes
-- Fix react-router-dom issue with EmailPasswordAuth in NextJS.
+
+-   Fix react-router-dom issue with EmailPasswordAuth in NextJS.
 
 ### Added
-- Supertokens config `useReactRouterDom`.
+
+-   Supertokens config `useReactRouterDom`.
+
 ## [0.5.5] - 2020-02-04
 
 ### Fixes
-- Compare window.location.origin to websiteDomain for redirection  => useful for multitenancy
+
+-   Compare window.location.origin to websiteDomain for redirection => useful for multitenancy
 
 ## [0.5.4] - 2020-02-03
 
 ### Fixes
-- Fix websiteBasePath = "/" routing issue.
+
+-   Fix websiteBasePath = "/" routing issue.
 
 ## [0.5.3] - 2020-02-02
 
 ### Fixes
-- Fix getRedirectionURL hook type
-- No redirectToPath in email verification screen
+
+-   Fix getRedirectionURL hook type
+-   No redirectToPath in email verification screen
 
 ## [0.5.2] - 2020-02-01
 
 ### Changed
-- Redirect to intended page post authentication
+
+-   Redirect to intended page post authentication
 
 ## [0.5.1] - 2020-01-27
 
 ### Fixes
-- Use tsconfig to compile instead of babel
+
+-   Use tsconfig to compile instead of babel
 
 ## [0.5.0] - 2020-01-22
 
 ### Changed
-- Success/Error ticks displayed in input
-- Show password displayed in inputs
-- Better password manager handling
-- Remove autofill browser styling
+
+-   Success/Error ticks displayed in input
+-   Show password displayed in inputs
+-   Better password manager handling
+-   Remove autofill browser styling
 
 ### Fixes
-- User Facing typescript definitions
-- setState race condition for redirecting to auth page on successful signup
+
+-   User Facing typescript definitions
+-   setState race condition for redirecting to auth page on successful signup
 
 ### Added
-- Examples folder
+
+-   Examples folder
+
 ## [0.4.3] - 2020-01-18
 
 ### Changed
-- Input border radius from 8 to 6px
-- Input padding from 20 to 16px
-- Input background colour from 1 to 0.25 opacity on focus
+
+-   Input border radius from 8 to 6px
+-   Input padding from 20 to 16px
+-   Input background colour from 1 to 0.25 opacity on focus
 
 ## [0.4.2] - 2020-01-18
 
 ### Changed
-- Add focus state box shadow
-- Show password icon only when password is not empty
+
+-   Add focus state box shadow
+-   Show password icon only when password is not empty
 
 ### Fixes
-- Fix width when wrapped in flex container
-- Fix right input padding
+
+-   Fix width when wrapped in flex container
+-   Fix right input padding
+
 ## [0.4.1] - 2020-01-16
 
 ### Fixes
-- Mobile responsiveness
+
+-   Mobile responsiveness
+
 ## [0.4.0] - 2020-01-07
 
 ### Added
-- Email Verification Feature
-- Show/Hide password
-- Success tick
+
+-   Email Verification Feature
+-   Show/Hide password
+-   Success tick
 
 ### Changed
-- Design revamp
+
+-   Design revamp
 
 ### Removed
-- Remove generalErrorBackground
+
+-   Remove generalErrorBackground
 
 ## [0.3.0] - 2020-12-30
 
 ### Added
-- Button ripple effect on click
-- Button colour change on hover
+
+-   Button ripple effect on click
+-   Button colour change on hover
 
 ### Fixed
-- Upgrade to Emotion v11 and react-shadow v19
-- Fix conflicting dependencies with npm link
-- No Shadow DOM for Internet Explorer
 
+-   Upgrade to Emotion v11 and react-shadow v19
+-   Fix conflicting dependencies with npm link
+-   No Shadow DOM for Internet Explorer
 
 ## [0.2.2] - 2020-12-16
+
 ### Fixed
-- Made config optional when calling init for recipes
+
+-   Made config optional when calling init for recipes
 
 ## [0.2.1] - 2020-12-10
+
 ### Added
-- Better error message for SSR.
+
+-   Better error message for SSR.
 
 ### Fixes
- - Add margin bottom for general Errors.
- - Move react-router-dom to optional dependencies.
+
+-   Add margin bottom for general Errors.
+-   Move react-router-dom to optional dependencies.
 
 ## [0.2.0] - 2020-11-27
+
 ### Added
-- Form validation on blur
-- verify if email exists on blur during signup
-- Autocomplete email and password
-- Move error/success ticks to leave space for password managers
-- `DefaultToSignUp` config and default widget to sign up form.
+
+-   Form validation on blur
+-   verify if email exists on blur during signup
+-   Autocomplete email and password
+-   Move error/success ticks to leave space for password managers
+-   `DefaultToSignUp` config and default widget to sign up form.
 
 ### Fixes
- - Remove all styles from feature wrapper
+
+-   Remove all styles from feature wrapper
 
 ## [0.1.0] - 2020-11-18
+
 ### Added
-- Email and password implementation
-- Session implementation
+
+-   Email and password implementation
+-   Session implementation

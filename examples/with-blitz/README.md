@@ -124,27 +124,27 @@ with-blitz
 
 These files are:
 
-- The `app/` directory is a container for most of your project. This is where you’ll put any pages or API routes.
+-   The `app/` directory is a container for most of your project. This is where you’ll put any pages or API routes.
 
-- `db`/ is where your database configuration goes. If you’re writing models or checking migrations, this is where to go.
+-   `db`/ is where your database configuration goes. If you’re writing models or checking migrations, this is where to go.
 
-- `node_modules/` is where your “dependencies” are stored. This directory is updated by your package manager, so you don’t have to worry too much about it.
+-   `node_modules/` is where your “dependencies” are stored. This directory is updated by your package manager, so you don’t have to worry too much about it.
 
-- `public/` is a directory where you will put any static assets. If you have images, files, or videos which you want to use in your app, this is where to put them.
+-   `public/` is a directory where you will put any static assets. If you have images, files, or videos which you want to use in your app, this is where to put them.
 
-- `test/` is a directory where you can put your unit and integration tests.
+-   `test/` is a directory where you can put your unit and integration tests.
 
-- `utils/` is a good place to put any shared utility files which you might use across different sections of your app.
+-   `utils/` is a good place to put any shared utility files which you might use across different sections of your app.
 
-- `.babelrc.js`, `.env`, etc. ("dotfiles") are configuration files for various bits of JavaScript tooling.
+-   `.babelrc.js`, `.env`, etc. ("dotfiles") are configuration files for various bits of JavaScript tooling.
 
-- `blitz.config.js` is for advanced custom configuration of Blitz. It extends [`next.config.js`](https://nextjs.org/docs/api-reference/next.config.js/introduction).
+-   `blitz.config.js` is for advanced custom configuration of Blitz. It extends [`next.config.js`](https://nextjs.org/docs/api-reference/next.config.js/introduction).
 
-- `jest.config.js` contains config for Jest tests. You can [customize it if needed](https://jestjs.io/docs/en/configuration).
+-   `jest.config.js` contains config for Jest tests. You can [customize it if needed](https://jestjs.io/docs/en/configuration).
 
-- `package.json` contains information about your dependencies and devDependencies. If you’re using a tool like `npm` or `yarn`, you won’t have to worry about this much.
+-   `package.json` contains information about your dependencies and devDependencies. If you’re using a tool like `npm` or `yarn`, you won’t have to worry about this much.
 
-- `tsconfig.json` is our recommended setup for TypeScript.
+-   `tsconfig.json` is our recommended setup for TypeScript.
 
 You can read more about it in the [File Structure](https://blitzjs.com/docs/file-structure) section of the documentation.
 
@@ -162,9 +162,9 @@ Blitz is built on Next.js. For more info on this see [Why use Blitz instead of N
 
 The Blitz community is warm, safe, diverse, inclusive, and fun! Feel free to reach out to us in any of our communication channels.
 
-- [Website](https://blitzjs.com/)
-- [Slack](https://slack.blitzjs.com/)
-- [Report an issue](https://github.com/blitz-js/blitz/issues/new/choose)
-- [Forum discussions](https://github.com/blitz-js/blitz/discussions)
-- [Sponsors and donations](https://github.com/blitz-js/blitz#sponsors-and-donations)
-- [Contributing Guide](https://blitzjs.com/docs/contributing)
+-   [Website](https://blitzjs.com/)
+-   [Slack](https://slack.blitzjs.com/)
+-   [Report an issue](https://github.com/blitz-js/blitz/issues/new/choose)
+-   [Forum discussions](https://github.com/blitz-js/blitz/discussions)
+-   [Sponsors and donations](https://github.com/blitz-js/blitz#sponsors-and-donations)
+-   [Contributing Guide](https://blitzjs.com/docs/contributing)

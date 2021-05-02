@@ -10,12 +10,12 @@ const app = express();
 supertokens.init(getBackendConfig());
 
 app.use(
-  cors({
-    origin: true,
-    allowedHeaders: ["Content-Type", ...supertokens.getAllCORSHeaders()],
-    credentials: true,
-    methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
-  })
+    cors({
+        origin: true,
+        allowedHeaders: ["Content-Type", ...supertokens.getAllCORSHeaders()],
+        credentials: true,
+        methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+    })
 );
 
 app.use(supertokens.middleware());
@@ -23,7 +23,7 @@ app.use(supertokens.middleware());
 app.use(supertokens.errorHandler());
 
 app.use((err, req, res, next) => {
-  res.status(500).send("Something went wrong");
+    res.status(500).send("Something went wrong");
 });
 
 module.exports.handler = serverless(app);

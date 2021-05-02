@@ -24,7 +24,7 @@ export function Form<S extends z.ZodType<any, any>>({
     return (
         <FinalForm
             initialValues={initialValues}
-            validate={values => {
+            validate={(values) => {
                 if (!schema) return;
                 try {
                     schema.parse(values);

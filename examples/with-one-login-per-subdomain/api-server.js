@@ -10,7 +10,7 @@ const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://example.com:${websitePort}`;
 let whitelist = /^(http?:\/\/([a-z0-9]+[.])example[.]com(?::\d{1,5})?)$/;
 
-let getUserDomain = email => {
+let getUserDomain = (email) => {
     // extracts the userDomain from the email used to sign up
     // ex. from employee@supertokens.com, "supertokens" will be extracted as the userDomain
     let userDomain = email.split("@")[1].split(".")[0];
@@ -18,38 +18,38 @@ let getUserDomain = email => {
 };
 supertokens.init({
     supertokens: {
-        connectionURI: "https://try.supertokens.io"
+        connectionURI: "https://try.supertokens.io",
     },
     appInfo: {
         appName: "SuperTokens Demo App",
         apiDomain,
-        websiteDomain
+        websiteDomain,
     },
     recipeList: [
         EmailPassword.init({
             resetPasswordUsingTokenFeature: {
-                getResetPasswordURL: async user => {
+                getResetPasswordURL: async (user) => {
                     let { id, email } = user;
 
                     // getUserDomain is your implementation
                     let userDomain = await getUserDomain(email);
 
                     return `http://${userDomain}.example.com:${websitePort}/auth/reset-password`;
-                }
+                },
             },
             emailVerificationFeature: {
-                getEmailVerificationURL: async user => {
+                getEmailVerificationURL: async (user) => {
                     let { id, email } = user;
 
                     // getUserDomain is your implementation
                     let userDomain = await getUserDomain(email);
 
                     return `http://${userDomain}.example.com:${websitePort}/auth/verify-email`;
-                }
-            }
+                },
+            },
         }),
-        Session.init()
-    ]
+        Session.init(),
+    ],
 });
 
 const app = express();
@@ -59,7 +59,7 @@ app.use(
         origin: whitelist,
         allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
         methods: ["GET", "PUT", "POST", "DELETE"],
-        credentials: true
+        credentials: true,
     })
 );
 
@@ -72,7 +72,7 @@ app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
         sessionHandle: session.getHandle(),
         userId: session.getUserId(),
         jwtPayload: session.getJWTPayload(),
-        sessionData: await session.getSessionData()
+        sessionData: await session.getSessionData(),
     });
 });
 

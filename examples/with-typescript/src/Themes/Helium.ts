@@ -11,12 +11,12 @@ const HeliumTheme = {
         textLabel: "#010d47",
         textPrimary: "#aeaeae",
         textInput: "#fff",
-        textLink: "#4949e4"
+        textLink: "#4949e4",
     },
 
     style: {
         divider: {
-            display: "none"
+            display: "none",
         },
 
         container: {
@@ -35,8 +35,8 @@ const HeliumTheme = {
             justifyContent: "center",
             "@media (max-width: 440px)": {
                 margin: "0px",
-                minWidth: "100%"
-            }
+                minWidth: "100%",
+            },
         },
 
         inputWrapper: {
@@ -49,17 +49,17 @@ const HeliumTheme = {
             transition: "border 200ms ease 0ms,box-shadow 200ms ease 0ms",
             borderRadius: "5px",
             lineHeight: "normal",
-            height: "45px"
+            height: "45px",
         },
 
         input: {
             boxShadow: "none",
             borderRadius: "5px",
-            height: "45px"
+            height: "45px",
         },
 
         label: {
-            display: "none"
+            display: "none",
         },
 
         row: {
@@ -72,12 +72,12 @@ const HeliumTheme = {
             textAlign: "center",
             "@media (max-width: 440px)": {
                 margin: "0px auto",
-                width: "90%"
-            }
+                width: "90%",
+            },
         },
 
         headerTitle: {
-            marginBottom: "2rem"
+            marginBottom: "2rem",
         },
 
         headerSubtitle: {
@@ -87,8 +87,8 @@ const HeliumTheme = {
             "@media (max-width: 440px)": {
                 margin: "0px auto",
                 width: "90%",
-                right: "none"
-            }
+                right: "none",
+            },
         },
 
         button: {
@@ -99,14 +99,14 @@ const HeliumTheme = {
             letterSpacing: ".08rem",
             borderRadius: "4px",
             padding: ".7rem 1.4rem",
-            border: "none"
+            border: "none",
         },
 
         privacyPolicyAndTermsAndConditions: {
             maxWidth: "100%",
-            marginTop: "25px"
-        }
-    } as Record<string, CSSObject>
+            marginTop: "25px",
+        },
+    } as Record<string, CSSObject>,
 };
 
 export default HeliumTheme;

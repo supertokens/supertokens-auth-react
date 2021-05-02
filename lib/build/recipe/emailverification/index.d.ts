@@ -8,7 +8,5 @@ export default class EmailVerification<T, S, R> extends RecipeModule<T, S, R> {
     isEmailVerified(): Promise<boolean>;
     signOut(): Promise<SuccessAPIResponse>;
     getDefaultRedirectionURL(context: unknown): Promise<string>;
-    getEmailVerificationDefaultURL(context: {
-        action: string;
-    }): Promise<string>;
+    getEmailVerificationDefaultURL(context: { action: string }): Promise<string>;
 }

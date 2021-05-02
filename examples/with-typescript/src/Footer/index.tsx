@@ -11,7 +11,7 @@ export default function Footer(): JSX.Element {
                 textAlign: "center",
                 alignSelf: "flex-end",
                 color: "#ffffff",
-                fontWeight: "bold"
+                fontWeight: "bold",
             }}>
             React Demo app. Made with ❤️ using SuperTokens.io
         </div>

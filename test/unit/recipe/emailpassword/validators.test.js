@@ -13,9 +13,9 @@
  * under the License.
  */
 import assert from "assert";
-import {defaultEmailValidator, defaultPasswordValidator} from "../../../../lib/build/recipe/emailpassword/validators";
+import { defaultEmailValidator, defaultPasswordValidator } from "../../../../lib/build/recipe/emailpassword/validators";
 
-describe("Email password validators tests", function() {
+describe("Email password validators tests", function () {
     it("checking email validator", async function () {
         assert.strictEqual(await defaultEmailValidator("test@supertokens.io"), undefined);
         assert.strictEqual(await defaultEmailValidator("nsdafa@gmail.com"), undefined);
@@ -54,7 +54,13 @@ describe("Email password validators tests", function() {
                 "asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4"
             )) === "Password's length must be lesser than 100 characters"
         );
-        assert.strictEqual(await defaultPasswordValidator("ascdvsdfvsIUOO"), "Password must contain at least one number");
-        assert.strictEqual(await defaultPasswordValidator("234235234523"),"Password must contain at least one alphabet");
+        assert.strictEqual(
+            await defaultPasswordValidator("ascdvsdfvsIUOO"),
+            "Password must contain at least one number"
+        );
+        assert.strictEqual(
+            await defaultPasswordValidator("234235234523"),
+            "Password must contain at least one alphabet"
+        );
     });
 });

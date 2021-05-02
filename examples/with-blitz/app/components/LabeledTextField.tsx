@@ -15,9 +15,9 @@ export const LabeledTextField = React.forwardRef<HTMLInputElement, LabeledTextFi
     ({ name, label, outerProps, ...props }, ref) => {
         const {
             input,
-            meta: { touched, error, submitError, submitting }
+            meta: { touched, error, submitError, submitting },
         } = useField(name, {
-            parse: props.type === "number" ? Number : undefined
+            parse: props.type === "number" ? Number : undefined,
         });
 
         const normalizedError = Array.isArray(error) ? error.join(", ") : error || submitError;

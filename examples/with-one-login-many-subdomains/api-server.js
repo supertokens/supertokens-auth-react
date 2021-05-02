@@ -22,15 +22,15 @@ function getUserDomain(email) {
 
 supertokens.init({
     supertokens: {
-        connectionURI: "https://try.supertokens.io"
+        connectionURI: "https://try.supertokens.io",
     },
     appInfo: {
         appName: "SuperTokens Demo App",
         apiDomain,
         websiteDomain,
-        websiteBasePath: "/"
+        websiteBasePath: "/",
     },
-    recipeList: [EmailPassword.init(), Session.init()]
+    recipeList: [EmailPassword.init(), Session.init()],
 });
 
 const app = express();
@@ -40,14 +40,14 @@ app.use(
         origin: domainWhiteList,
         allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
         methods: ["GET", "PUT", "POST", "DELETE"],
-        credentials: true
+        credentials: true,
     })
 );
 
 app.use(morgan("dev"));
 app.use(
     helmet({
-        contentSecurityPolicy: false
+        contentSecurityPolicy: false,
     })
 );
 app.use(supertokens.middleware());
@@ -59,7 +59,7 @@ app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
         sessionHandle: session.getHandle(),
         userId: session.getUserId(),
         jwtPayload: session.getJWTPayload(),
-        sessionData: await session.getSessionData()
+        sessionData: await session.getSessionData(),
     });
 });
 

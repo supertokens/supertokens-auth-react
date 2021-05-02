@@ -7,8 +7,8 @@ const DarkTheme = {
         textPrimary: "white",
         error: "#ad2e2e",
         textInput: "#a9a9a9",
-        textLink: "#a9a9a9"
-    }
+        textLink: "#a9a9a9",
+    },
 };
 
 export default DarkTheme;

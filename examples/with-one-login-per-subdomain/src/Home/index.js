@@ -5,7 +5,6 @@ import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { signOut, redirectToAuth } from "supertokens-auth-react/recipe/emailpassword";
 import { getRedirectToIfOnWrongSubdomain } from "../utils";
 
-
 export default function Home() {
     const { userId } = useSessionContext();
 
@@ -22,7 +21,6 @@ export default function Home() {
 
         checkRedirect();
     }, []);
-
 
     async function logoutClicked() {
         await signOut();

@@ -11,7 +11,7 @@ export default function Footer() {
                 justifyContent: "center",
                 alignSelf: "flex-end",
                 color: "#ffffff",
-                fontWeight: "bold"
+                fontWeight: "bold",
             }}>
             React Demo app. Made with{" "}
             <span role="img" aria-labelledby="love">

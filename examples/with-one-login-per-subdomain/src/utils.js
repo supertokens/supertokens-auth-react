@@ -33,5 +33,5 @@ export async function getRedirectToIfOnWrongSubdomain() {
                 return `http://${currentUserSubdomain}.example.com:${websitePort}`;
             }
         }
-    } catch (error) { }
+    } catch (error) {}
 }

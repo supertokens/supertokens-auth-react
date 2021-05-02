@@ -13,92 +13,89 @@
  * under the License.
  */
 import assert from "assert";
-import {mergeFormFields, getFormattedFormField} from "../../../../lib/build/recipe/emailpassword/utils";
-import {assertFormFieldsEqual} from "../../../helpers";
+import { mergeFormFields, getFormattedFormField } from "../../../../lib/build/recipe/emailpassword/utils";
+import { assertFormFieldsEqual } from "../../../helpers";
 
-describe("Email password utils tests", function() {
-    it("merge form fields", async function() {
+describe("Email password utils tests", function () {
+    it("merge form fields", async function () {
         const defaultEmailFormField = {
             id: "email",
             label: "Email",
             placeholder: "youremail@example.com",
-            validate: async email => {
+            validate: async (email) => {
                 return undefined;
             },
-            optional: false
+            optional: false,
         };
 
         const defaultPasswordFormField = {
             id: "password",
             label: "Password",
             placeholder: "Enter your password",
-            validate: async password => {
+            validate: async (password) => {
                 return undefined;
             },
-            optional: false
+            optional: false,
         };
 
         const customEmailFormField = {
             id: "email",
             label: " Custom Email Label",
             placeholder: "Custom Email Placeholder",
-            validate: async email => {
+            validate: async (email) => {
                 return undefined;
             },
-            optional: false
+            optional: false,
         };
 
         const optionalCustomEmailFormField = {
             id: "email",
             label: " Custom Email Label",
             placeholder: "Custom Email Placeholder",
-            validate: async email => {
+            validate: async (email) => {
                 return "Wrong email! Keep trying";
             },
-            optional: true
+            optional: true,
         };
 
         const customEmailFormFieldWithoutValidateMethod = {
             id: "email",
             label: " Custom Email Label Without Validate",
-            placeholder: "Custom Email Placeholder Without Validate"
+            placeholder: "Custom Email Placeholder Without Validate",
         };
 
         const customPasswordFormField = {
             id: "password",
             label: "Custom Password",
             placeholder: "Enter your password",
-            validate: async password => {
+            validate: async (password) => {
                 return undefined;
             },
-            optional: false
+            optional: false,
         };
 
         const randomCustomFormFieldWithValidate = {
             id: "random",
             label: "Custom Random",
             placeholder: "Enter whatever",
-            validate: async random => {
+            validate: async (random) => {
                 return "Always throw an error";
             },
-            optional: true
+            optional: true,
         };
 
         const randomCustomFormFieldWithoutOptionalProperties = {
             id: "random",
-            label: "Custom Random"
+            label: "Custom Random",
         };
 
         // No user input => default form fields.
         await assertFormFieldsEqual(
             mergeFormFields([defaultEmailFormField, defaultPasswordFormField], []),
-            [
-                defaultEmailFormField,
-                defaultPasswordFormField
-            ].map(getFormattedFormField),
+            [defaultEmailFormField, defaultPasswordFormField].map(getFormattedFormField),
             [
                 ["", "john", "john.doe@gmail.com"],
-                ["", "test", "test123", "Str0ngP@ssword"]
+                ["", "test", "test123", "Str0ngP@ssword"],
             ]
         );
 
@@ -108,7 +105,7 @@ describe("Email password utils tests", function() {
             [customEmailFormField, defaultPasswordFormField].map(getFormattedFormField),
             [
                 ["", "john", "john.doe@gmail.com"],
-                ["", "test", "test123", "Str0ngP@ssword"]
+                ["", "test", "test123", "Str0ngP@ssword"],
             ]
         );
 
@@ -118,7 +115,7 @@ describe("Email password utils tests", function() {
             [defaultEmailFormField, customPasswordFormField].map(getFormattedFormField),
             [
                 ["", "john", "john.doe@gmail.com"],
-                ["", "test", "test123", "Str0ngP@ssword"]
+                ["", "test", "test123", "Str0ngP@ssword"],
             ]
         );
 
@@ -131,18 +128,20 @@ describe("Email password utils tests", function() {
             [customEmailFormField, customPasswordFormField].map(getFormattedFormField),
             [
                 ["", "john", "john.doe@gmail.com"],
-                ["", "test", "test123", "Str0ngP@ssword"]
+                ["", "test", "test123", "Str0ngP@ssword"],
             ]
         );
 
         // custom field => default email, default password, custom field.
         await assertFormFieldsEqual(
             mergeFormFields([defaultEmailFormField, defaultPasswordFormField], [randomCustomFormFieldWithValidate]),
-            [defaultEmailFormField, defaultPasswordFormField, randomCustomFormFieldWithValidate].map(getFormattedFormField),
+            [defaultEmailFormField, defaultPasswordFormField, randomCustomFormFieldWithValidate].map(
+                getFormattedFormField
+            ),
             [
                 ["", "john", "john.doe@gmail.com"],
                 ["", "test", "test123", "Str0ngP@ssword"],
-                ["", "test", "1", "5", "john@email.com"]
+                ["", "test", "1", "5", "john@email.com"],
             ]
         );
 
@@ -159,11 +158,13 @@ describe("Email password utils tests", function() {
                 [defaultEmailFormField, defaultPasswordFormField],
                 [randomCustomFormFieldWithValidate, customPasswordFormField, customEmailFormField]
             ),
-            [customEmailFormField, customPasswordFormField, randomCustomFormFieldWithValidate].map(getFormattedFormField),
+            [customEmailFormField, customPasswordFormField, randomCustomFormFieldWithValidate].map(
+                getFormattedFormField
+            ),
             [
                 ["", "john", "john.doe@gmail.com"],
                 ["", "test", "test123", "Str0ngP@ssword"],
-                ["", "test", "1", "5", "john@email.com"]
+                ["", "test", "1", "5", "john@email.com"],
             ]
         );
 

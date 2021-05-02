@@ -5,7 +5,6 @@ import { getApiDomain } from "../utils";
 Session.addAxiosInterceptors(axios);
 
 export default function CallAPIView() {
-
     async function callAPIClicked() {
         // this will also automatically refresh the session if needed
         try {

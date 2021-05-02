@@ -14,7 +14,6 @@ Make sure to remove, or move the react-dom-router from `supertokens-auth-react` 
 
 `mv node_modules/react-router-dom node_modules/react-router-dom-test`
 
-
 And move it back if you are working on the main package:
 
 `mv node_modules/react-router-dom-test node_modules/react-router-dom`

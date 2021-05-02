@@ -1,94 +1,94 @@
 {
-  "name": "supertokens-auth-react",
-  "version": "0.11.0",
-  "description": "ReactJS SDK that provides login functionality with SuperTokens.",
-  "main": "./index.js",
-  "devDependencies": {
-    "@babel/core": "7.12.1",
-    "@babel/register": "7.12.1",
-    "@babel/preset-env": "7.12.1",
-    "@babel/preset-react": "7.12.1",
-    "@emotion/eslint-plugin": "^11.0.0",
-    "@types/chroma-js": "2.1.3",
-    "@types/node": "14.11.10",
-    "@types/react": ">=16.9.53",
-    "@types/react-router-dom": "5.1.6",
-    "@typescript-eslint/eslint-plugin": "4.6.0",
-    "@typescript-eslint/eslint-plugin-tslint": "4.6.0",
-    "@typescript-eslint/parser": "4.6.0",
-    "babel-plugin-inline-react-svg": "1.1.1",
-    "babel-plugin-transform-class-properties": "6.24.1",
-    "eslint": "6.8.0",
-    "eslint-plugin-react-hooks": "4.2.0",
-    "eslint-plugin-supertokens-auth-react": "file:eslint",
-    "isomorphic-fetch": "^3.0.0",
-    "jsdom": "16.4.0",
-    "jsdom-global": "3.0.2",
-    "mocha": "6.1.4",
-    "npm-run-all": "^4.1.5",
-    "prettier": "2.2.1",
-    "puppeteer": "5.3.1",
-    "react": "16.14.0",
-    "react-dom": ">=16.0.0",
-    "react-router-dom": "5.2.0",
-    "regenerator-runtime": "0.13.7",
-    "ts-prune": "^0.8.8",
-    "tslint": "6.1.3",
-    "typescript": "3.5.2"
-  },
-  "dependencies": {
-    "@emotion/babel-plugin": "11.1.2",
-    "@emotion/cache": "11.1.3",
-    "@emotion/react": "11.1.4",
-    "@emotion/server": "11.0.0",
-    "chroma-js": "2.1.0",
-    "emotion": "11.0.0",
-    "react-shadow": "19.0.1",
-    "supertokens-website": "git+https://github.com/supertokens/supertokens-website.git#7.0"
-  },
-  "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-router-dom": ">=5.0.0"
-  },
-  "scripts": {
-    "init": "npm i -d && (cd ./test/server && npm i ) && (cd ./examples/for-tests && npm i -d)",
-    "start": "npm-run-all --parallel front server watch",
-    "front": "(cd ./examples/for-tests/ && BROWSER=none PORT=3031 npm run start)",
-    "server": "cd test/server/ && START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
-    "test": "./test/startTestApp.sh",
-    "link-dependencies": "./test/linkDependencies.sh $SRC",
-    "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
-    "tsc": "cd lib && npx tsc -p tsconfig.json",
-    "build": "cd lib && rm -rf build && npx tsc -p tsconfig.json",
-    "watch": "cd lib && npx tsc -w -p tsconfig.json",
-    "pretty": "cd lib && npx prettier --write --config .prettierrc \"ts/**/*.ts\" \"ts/**/*.tsx\" \"build/**/*.js\" \"ts/**/*.tsx\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\"",
-    "build-pretty": "npm run build && npm run pretty",
-    "lint": "cd lib && eslint ./ts --ext .ts,.tsx",
-    "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$' && exit 1 || exit 0",
-    "pretty-check": "cd lib && npx prettier --check --config .prettierrc \"ts/**/*.ts\" \"build/**/*.js\" \"../test/unit/*.js\" \"../test/end-to-end/*.js\"",
-    "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/supertokens/supertokens-auth-react.git"
-  },
-  "keywords": [
-    "auth",
-    "authentication",
-    "authorisation",
-    "supertokens",
-    "chrome",
-    "firefox",
-    "IE",
-    "safari"
-  ],
-  "contributors": [
-    "rishabhpoddar",
-    "NkxxkN"
-  ],
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/supertokens/supertokens-auth-react/issues"
-  },
-  "homepage": "https://github.com/supertokens/supertokens-auth-react#readme"
+    "name": "supertokens-auth-react",
+    "version": "0.11.0",
+    "description": "ReactJS SDK that provides login functionality with SuperTokens.",
+    "main": "./index.js",
+    "devDependencies": {
+        "@babel/core": "7.12.1",
+        "@babel/register": "7.12.1",
+        "@babel/preset-env": "7.12.1",
+        "@babel/preset-react": "7.12.1",
+        "@emotion/eslint-plugin": "^11.0.0",
+        "@types/chroma-js": "2.1.3",
+        "@types/node": "14.11.10",
+        "@types/react": ">=16.9.53",
+        "@types/react-router-dom": "5.1.6",
+        "@typescript-eslint/eslint-plugin": "4.6.0",
+        "@typescript-eslint/eslint-plugin-tslint": "4.6.0",
+        "@typescript-eslint/parser": "4.6.0",
+        "babel-plugin-inline-react-svg": "1.1.1",
+        "babel-plugin-transform-class-properties": "6.24.1",
+        "eslint": "6.8.0",
+        "eslint-plugin-react-hooks": "4.2.0",
+        "eslint-plugin-supertokens-auth-react": "file:eslint",
+        "isomorphic-fetch": "^3.0.0",
+        "jsdom": "16.4.0",
+        "jsdom-global": "3.0.2",
+        "mocha": "6.1.4",
+        "npm-run-all": "^4.1.5",
+        "prettier": "2.2.1",
+        "puppeteer": "5.3.1",
+        "react": "16.14.0",
+        "react-dom": ">=16.0.0",
+        "react-router-dom": "5.2.0",
+        "regenerator-runtime": "0.13.7",
+        "ts-prune": "^0.8.8",
+        "tslint": "6.1.3",
+        "typescript": "3.5.2"
+    },
+    "dependencies": {
+        "@emotion/babel-plugin": "11.1.2",
+        "@emotion/cache": "11.1.3",
+        "@emotion/react": "11.1.4",
+        "@emotion/server": "11.0.0",
+        "chroma-js": "2.1.0",
+        "emotion": "11.0.0",
+        "react-shadow": "19.0.1",
+        "supertokens-website": "git+https://github.com/supertokens/supertokens-website.git#7.0"
+    },
+    "peerDependencies": {
+        "react": ">=16.8.0",
+        "react-router-dom": ">=5.0.0"
+    },
+    "scripts": {
+        "init": "npm i -d && (cd ./test/server && npm i ) && (cd ./examples/for-tests && npm i -d)",
+        "start": "npm-run-all --parallel front server watch",
+        "front": "(cd ./examples/for-tests/ && BROWSER=none PORT=3031 npm run start)",
+        "server": "cd test/server/ && START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
+        "test": "./test/startTestApp.sh",
+        "link-dependencies": "./test/linkDependencies.sh $SRC",
+        "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
+        "tsc": "cd lib && npx tsc -p tsconfig.json",
+        "build": "cd lib && rm -rf build && npx tsc -p tsconfig.json",
+        "watch": "cd lib && npx tsc -w -p tsconfig.json",
+        "pretty": "npx prettier --write --config .prettierrc.json .",
+        "build-pretty": "npm run build && npm run pretty",
+        "lint": "cd lib && eslint ./ts --ext .ts,.tsx",
+        "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$' && exit 1 || exit 0",
+        "pretty-check": "npx prettier --check --config .prettierrc.json .",
+        "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/supertokens/supertokens-auth-react.git"
+    },
+    "keywords": [
+        "auth",
+        "authentication",
+        "authorisation",
+        "supertokens",
+        "chrome",
+        "firefox",
+        "IE",
+        "safari"
+    ],
+    "contributors": [
+        "rishabhpoddar",
+        "NkxxkN"
+    ],
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/supertokens/supertokens-auth-react/issues"
+    },
+    "homepage": "https://github.com/supertokens/supertokens-auth-react#readme"
 }
