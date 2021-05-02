@@ -6,13 +6,7 @@ declare type NormalisedStyle = {
     [x: string]: CSSObject;
 };
 declare const StyleContext: React.Context<NormalisedStyle>;
-export declare function StyleProvider({
-    children,
-    styleFromInit,
-    getDefaultStyles,
-    defaultPalette,
-    rawPalette,
-}: {
+export declare function StyleProvider({ children, styleFromInit, getDefaultStyles, defaultPalette, rawPalette, }: {
     children: JSX.Element;
     styleFromInit?: Styles;
     getDefaultStyles: (palette: NormalisedPalette) => NormalisedDefaultStyles;

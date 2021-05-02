@@ -2,20 +2,10 @@ import { PureComponent } from "react";
 import { FeatureBaseProps } from "../../../../../types";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
-import {
-    NormalisedThirdPartyConfig,
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartySignInAndUpState,
-} from "../../../types";
+import { NormalisedThirdPartyConfig, ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartySignInAndUpState } from "../../../types";
 declare class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpState> {
     constructor(props: FeatureBaseProps);
-    getRecipeInstanceOrThrow: () => AuthRecipeModule<
-        ThirdPartyGetRedirectionURLContext,
-        ThirdPartyPreAPIHookContext,
-        import("../../../../authRecipeModule/types").AuthRecipeModuleOnHandleEventContext,
-        NormalisedThirdPartyConfig
-    >;
+    getRecipeInstanceOrThrow: () => AuthRecipeModule<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, import("../../../../authRecipeModule/types").AuthRecipeModuleOnHandleEventContext, NormalisedThirdPartyConfig>;
     getRecipeConfigOrThrow: () => NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig;
     getIsEmbedded: () => boolean;
     componentDidMount: () => Promise<void>;

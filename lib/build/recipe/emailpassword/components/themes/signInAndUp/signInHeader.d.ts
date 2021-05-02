@@ -1,2 +1,4 @@
 /// <reference types="react" />
-export default function SignInHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element;
+export default function SignInHeader({ onClick }: {
+    onClick: (() => void) | undefined;
+}): JSX.Element;

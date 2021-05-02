@@ -13,12 +13,11 @@ export declare type NormalisedEmailVerificationConfig = {
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
 };
-export declare type EmailVerificationConfig<T, S, R> = RecipeModuleConfig<T, S, R> &
-    NormalisedEmailVerificationConfig & {
-        signOut(): Promise<SuccessAPIResponse>;
-        useShadowDom: boolean;
-        palette: Record<string, string>;
-    };
+export declare type EmailVerificationConfig<T, S, R> = RecipeModuleConfig<T, S, R> & NormalisedEmailVerificationConfig & {
+    signOut(): Promise<SuccessAPIResponse>;
+    useShadowDom: boolean;
+    palette: Record<string, string>;
+};
 export declare type IsEmailVerifiedAPIResponse = {
     status: "OK";
     isVerified: boolean;
