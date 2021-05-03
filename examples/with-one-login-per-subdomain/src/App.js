@@ -13,7 +13,12 @@ SuperTokens.init({
         apiDomain: getApiDomain(),
         websiteDomain: getAuthDomain(),
     },
-    recipeList: [EmailPassword.init(), Session.init()],
+    recipeList: [
+        EmailPassword.init(),
+        Session.init({
+            sessionScope: ".example.com:3000",
+        }),
+    ],
 });
 
 function App() {

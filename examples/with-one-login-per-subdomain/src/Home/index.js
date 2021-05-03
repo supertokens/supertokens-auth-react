@@ -14,7 +14,6 @@ export default function Home() {
             // their correct subdomain i.e `abc.example.com`
             let redirectTo = await getRedirectToIfOnWrongSubdomain();
             if (redirectTo !== undefined) {
-                await signOut();
                 window.location.href = redirectTo;
             }
         }

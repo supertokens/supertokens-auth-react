@@ -39,8 +39,8 @@
     "react-dom": "0.0.0-experimental-3310209d0",
     "react-error-boundary": "3.1.0",
     "react-final-form": "6.5.2",
-    "supertokens-auth-react": "supertokens/supertokens-auth-react#0.10",
-    "supertokens-node": "supertokens/supertokens-node#4.4",
+    "supertokens-auth-react": "supertokens/supertokens-auth-react#0.11",
+    "supertokens-node": "supertokens/supertokens-node#5.0",
     "typescript": "4.1.3",
     "zod": "1.11.11"
   },
