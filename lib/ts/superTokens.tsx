@@ -95,6 +95,12 @@ export default class SuperTokens {
     }
 
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[] {
+        if (reactRouterDom === undefined) {
+            throw new Error(
+                // eslint-disable-next-line @typescript-eslint/quotes
+                'Please use getSuperTokensRoutesForReactRouterDom like getSuperTokensRoutesForReactRouterDom(require("react-router-dom")) in your render function'
+            );
+        }
         SuperTokens.reactRouterDom = reactRouterDom;
         return getSuperTokensRoutesForReactRouterDom();
     }
