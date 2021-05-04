@@ -21,7 +21,7 @@ import RecipeModule from "./recipe/recipeModule";
 import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensConfig } from "./types";
 import { getCurrentNormalisedUrlPath, isTest, normaliseInputAppInfoOrThrowError } from "./utils";
 import NormalisedURLPath from "./normalisedURLPath";
-const { getSuperTokensRoutesForReactRouterDom } = require("./components/superTokensRoute");
+import { getSuperTokensRoutesForReactRouterDom } from "./components/superTokensRoute";
 import { BaseFeatureComponentMap } from "./types";
 import { SSR_ERROR } from "./constants";
 
@@ -35,14 +35,14 @@ export default class SuperTokens {
      */
     private static instance?: SuperTokens;
 
+    private static reactRouterDom?: any;
+
     /*
      * Instance Attributes.
      */
     appInfo: NormalisedAppInfo;
     recipeList: RecipeModule<unknown, unknown, unknown>[] = [];
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
-    private useReactRouterDom: boolean;
-    private reactRouterDom?: any;
 
     /*
      * Constructor.
@@ -59,16 +59,6 @@ export default class SuperTokens {
         this.recipeList = config.recipeList.map((recipe) => {
             return recipe(this.appInfo);
         });
-
-        // Get react router dom if present and not disabled by user.
-        this.useReactRouterDom = config.useReactRouterDom === false ? false : true;
-        if (this.useReactRouterDom) {
-            try {
-                this.reactRouterDom = require("react-router-dom");
-            } catch (e) {
-                this.useReactRouterDom = false;
-            }
-        }
     }
 
     /*
@@ -104,7 +94,8 @@ export default class SuperTokens {
         return SuperTokens.getInstanceOrThrow().getRoutingComponent();
     }
 
-    static getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
+    static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[] {
+        SuperTokens.reactRouterDom = reactRouterDom;
         return getSuperTokensRoutesForReactRouterDom();
     }
 
@@ -181,11 +172,7 @@ export default class SuperTokens {
     }
 
     getReactRouterDom = (): { Route: any; withRouter: any } | undefined => {
-        if (!this.useReactRouterDom) {
-            return undefined;
-        }
-
-        return this.reactRouterDom;
+        return SuperTokens.reactRouterDom;
     };
 
     /*

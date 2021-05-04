@@ -36,8 +36,8 @@ export default class SuperTokensAPIWrapper {
         return SuperTokens.getRoutingComponent();
     }
 
-    static getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
-        return SuperTokens.getSuperTokensRoutesForReactRouterDom();
+    static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[] {
+        return SuperTokens.getSuperTokensRoutesForReactRouterDom(reactRouterDom);
     }
 }
 
