@@ -99,7 +99,7 @@ then
    git stash drop >/dev/null 2>/dev/null
 fi
 
-if [ $compiles -eq 0 ] && [ $formatted -eq 0 ] && [ $linted -eq 0 ] && [ $pruned -eq 0 ] && [ $dotOnly -eq 1]
+if [ $compiles -eq 0 ] && [ $formatted -eq 0 ] && [ $linted -eq 0 ] && [ $pruned -eq 0 ] && [ $dotOnly -eq 1 ]
 then
    echo "$(tput setaf 2)... done. Proceeding with commit.$(tput sgr 0)"
    echo ""
@@ -127,7 +127,7 @@ then
    echo "$(tput setaf 1)CANCELLING commit due to COMPILE ERROR.$(tput sgr 0)"
    echo ""
    exit 2
-elif [ $dotOnly -ne 1]
+elif [ $dotOnly -ne 1 ]
 then
    echo "$(tput setaf 1)... done.$(tput sgr 0)"
    echo "$(tput setaf 1)CANCELLING commit due to .only in test files $(tput sgr 0)"
