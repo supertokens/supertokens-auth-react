@@ -94,7 +94,7 @@ describe("SuperTokens Routing in Test App", function () {
                 assert.strictEqual(resetPasswordButtonLabel, "Email me");
             });
 
-            it("/auth/reset-password?token=TOKEN should load reset-password SuperTokens component with Change Password", async function () {
+            it.only("/auth/reset-password?token=TOKEN should load reset-password SuperTokens component with Change Password", async function () {
                 await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN`);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(resetPasswordButtonLabel, "Change password");
