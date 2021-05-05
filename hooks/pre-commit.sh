@@ -76,6 +76,18 @@ else
     echo ""
 fi
 
+echo "$(tput setaf 3)* Does not cntain .only in tests?$(tput sgr 0)"
+grep -ri "\.only" ./test
+dotOnly=$?
+
+if [ $dotOnly -eq 1 ]
+then
+   echo "$(tput setaf 2)* Yes$(tput sgr 0)"
+else
+   echo "$(tput setaf 1)* No$(tput sgr 0)"
+   echo ""
+fi
+
 if [ $no_of_files_to_stash -ne 0 ]
 then
    echo "$(tput setaf 3)* Undoing stashing$(tput sgr 0)"
