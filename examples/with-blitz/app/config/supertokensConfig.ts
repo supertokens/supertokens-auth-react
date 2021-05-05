@@ -18,7 +18,6 @@ let appInfo = {
 
 export let frontendConfig = () => {
   return {
-    useReactRouterDom: false,
     appInfo,
     recipeList: [
       ThirdPartyEmailPasswordReact.init({

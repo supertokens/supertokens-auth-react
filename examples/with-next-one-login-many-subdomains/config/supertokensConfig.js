@@ -46,7 +46,6 @@ export let backendConfig = () => {
 
 export let frontendConfig = () => {
     return {
-        useReactRouterDom: false,
         appInfo,
         recipeList: [
             ThirdPartyEmailPasswordReact.init({

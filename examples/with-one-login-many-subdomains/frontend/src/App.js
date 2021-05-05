@@ -50,7 +50,7 @@ function App() {
             If not try rendering our protected route. In case the user is unauthenticated 
             the auth wrapper will simply redirect them to the login page */}
                         {window.location.origin === getAuthDomain() ? (
-                            getSuperTokensRoutesForReactRouterDom()
+                            getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))
                         ) : (
                             <Route path="/">
                                 <EmailPassword.EmailPasswordAuth>
