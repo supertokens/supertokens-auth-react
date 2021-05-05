@@ -11,7 +11,7 @@ function AppWithReactDomRouter(props) {
             <Router>
                 <BaseComponent>
                     <Switch>
-                        {getSuperTokensRoutesForReactRouterDom()}
+                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
                         <Route exact path="/">
                             <Home />
                         </Route>

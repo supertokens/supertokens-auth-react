@@ -6,7 +6,6 @@ import { ComponentClass } from "react";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction<any, any, any>[];
-    useReactRouterDom?: boolean;
 };
 export declare type CreateRecipeFunction<T, S, R> = (appInfo: NormalisedAppInfo) => RecipeModule<T, S, R>;
 export declare type AppInfoUserInput = {

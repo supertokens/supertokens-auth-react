@@ -64,7 +64,6 @@ if (getQueryParams("defaultToSignUp")) {
 if (getQueryParams("useReactRouterDom")) {
     window.localStorage.setItem("useReactRouterDom", getQueryParams("useReactRouterDom") === "true");
 }
-const useReactRouterDom = window.localStorage.getItem("useReactRouterDom") !== "false";
 
 const defaultToSignUp = window.localStorage.getItem("defaultToSignUp") === "true";
 
@@ -144,7 +143,6 @@ SuperTokens.init({
         apiDomain: getApiDomain(),
         websiteBasePath,
     },
-    useReactRouterDom,
     recipeList,
 });
 

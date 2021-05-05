@@ -32,11 +32,6 @@ export type SuperTokensConfig = {
      * List of recipes for authentication and session management.
      */
     recipeList: CreateRecipeFunction<any, any, any>[];
-
-    /*
-     * useReactRouterDom
-     */
-    useReactRouterDom?: boolean;
 };
 
 export type CreateRecipeFunction<T, S, R> = (appInfo: NormalisedAppInfo) => RecipeModule<T, S, R>;
