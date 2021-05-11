@@ -5,6 +5,7 @@ export declare type SessionUserInput = {
     signoutAPICustomHeaders?: any;
     sessionExpiredStatusCode?: number;
     autoAddCredentials?: boolean;
+    isInIframe?: boolean;
 };
 export declare type SessionConfig = RecipeModuleConfig<unknown, unknown, unknown> & SessionUserInput;
 export declare type SessionContextType = {
