@@ -68,7 +68,7 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<
         throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SessionAuth component.`);
     };
 
-    redirectToLogin = async () => {
+    redirectToLogin = async (): Promise<void> => {
         const redirectToPath = getWindowOrThrow().location.pathname;
         await this.getRecipeInstanceOrThrow().redirect(
             ({ action: "SIGN_IN_AND_UP" } as unknown) as T,
