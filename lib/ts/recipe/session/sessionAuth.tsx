@@ -71,7 +71,7 @@ export default class SessionAuth<T, S, R, N> extends React.PureComponent<
     redirectToLogin = async (): Promise<void> => {
         const redirectToPath = getWindowOrThrow().location.pathname;
         await this.getRecipeInstanceOrThrow().redirect(
-            ({ action: "SIGN_IN_AND_UP" } as unknown) as T,
+            { action: "SIGN_IN_AND_UP" } as unknown as T,
             this.props.history,
             {
                 redirectToPath,
