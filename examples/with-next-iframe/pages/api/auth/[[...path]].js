@@ -10,7 +10,7 @@ export default async function superTokens(req, res) {
     await NextCors(req, res, {
         // Options
         methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-        origin: ["http://example.com:3000", "http://a.example.com:3000"],
+        origin: "*",
         credentials: true,
         allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
     });
