@@ -4,8 +4,8 @@ import SessionNode from "supertokens-node/recipe/session";
 import ThirdPartyEmailPasswordReact from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import SessionReact from "supertokens-auth-react/recipe/session";
 
-const port = process.env.APP_PORT || 3000;
-const websiteDomain = "http://localhost:" + port;
+// const port = process.env.APP_PORT || 3000;
+export const websiteDomain = "https://496230823747.ngrok.io";
 const apiBasePath = "/api/auth/";
 
 let appInfo = {
@@ -38,7 +38,10 @@ export let backendConfig = () => {
                     }),
                 ],
             }),
-            SessionNode.init(),
+            SessionNode.init({
+                cookieSameSite: "none",
+                antiCsrf: "VIA_TOKEN",
+            }),
         ],
         isInServerlessEnv: true,
     };
@@ -60,7 +63,9 @@ export let frontendConfig = () => {
                     ],
                 },
             }),
-            SessionReact.init(),
+            SessionReact.init({
+                isInIframe: true,
+            }),
         ],
     };
 };
