@@ -37,7 +37,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?:
         return (
             <SessionAuth
                 redirectToLogin={() => {
-                    EmailPassword.getInstanceOrThrow().redirectToAuth(undefined, this.props.history);
+                    EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, this.props.history);
                 }}
                 requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}>
                 <EmailVerificationAuth

@@ -37,7 +37,10 @@ class ThirdPartyEmailPasswordAuth extends PureComponent<FeatureBaseProps & { req
         return (
             <SessionAuth
                 redirectToLogin={() => {
-                    ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuth(undefined, this.props.history);
+                    ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(
+                        undefined,
+                        this.props.history
+                    );
                 }}
                 requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}>
                 <EmailVerificationAuth

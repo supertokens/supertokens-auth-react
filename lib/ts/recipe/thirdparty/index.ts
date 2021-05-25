@@ -51,7 +51,7 @@ export default class ThirdPartyAPIWrapper {
     }
 
     static redirectToAuth(show?: "signin" | "signup"): void {
-        return ThirdParty.getInstanceOrThrow().redirectToAuth(show);
+        return ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(show);
     }
 
     /*

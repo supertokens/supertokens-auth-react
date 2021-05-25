@@ -80,14 +80,14 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
             getWindowOrThrow().location.pathname.split("/")[getWindowOrThrow().location.pathname.split("/").length - 1];
         const oauthCallbackError = this.getOAuthCallbackError(providerId);
         if (oauthCallbackError !== undefined) {
-            return this.getRecipeInstanceOrThrow().redirectToAuth(undefined, this.props.history, {
+            return this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                 error: oauthCallbackError,
             });
         }
         // If no code params, redirect with error.
         const code = getQueryParams("code");
         if (code === null) {
-            return this.getRecipeInstanceOrThrow().redirectToAuth(undefined, this.props.history, {
+            return this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                 error: "no_code",
             });
         }
@@ -105,15 +105,23 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
             });
             const response = await signInAndUpAPI(providerId, code, this.getRecipeInstanceOrThrow(), redirectUrl);
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
-                return this.getRecipeInstanceOrThrow().redirectToAuth(undefined, this.props.history, {
-                    error: "no_email_present",
-                });
+                return this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath(
+                    undefined,
+                    this.props.history,
+                    {
+                        error: "no_email_present",
+                    }
+                );
             }
             if (response.status === "FIELD_ERROR") {
-                return this.getRecipeInstanceOrThrow().redirectToAuth(undefined, this.props.history, {
-                    error: "custom",
-                    message: response.error,
-                });
+                return this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath(
+                    undefined,
+                    this.props.history,
+                    {
+                        error: "custom",
+                        message: response.error,
+                    }
+                );
             }
             if (response.status === "OK") {
                 this.getRecipeInstanceOrThrow().config.onHandleEvent({
@@ -130,7 +138,7 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
                 );
             }
         } catch (e) {
-            return this.getRecipeInstanceOrThrow().redirectToAuth(undefined, this.props.history, {
+            return this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                 error: "signin",
             });
         }

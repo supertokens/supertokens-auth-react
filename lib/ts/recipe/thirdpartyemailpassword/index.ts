@@ -45,7 +45,7 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
     }
 
     static redirectToAuth(show?: "signin" | "signup"): void {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuth(show);
+        return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(show);
     }
 
     /*

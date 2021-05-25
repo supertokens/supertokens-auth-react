@@ -157,7 +157,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
                 });
             },
             onSignInClicked: () => {
-                this.getRecipeInstanceOrThrow().redirectToAuth(this.props.history);
+                this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath("signin", this.props.history);
             },
         };
 

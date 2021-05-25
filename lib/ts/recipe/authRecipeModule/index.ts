@@ -49,7 +49,7 @@ export default abstract class AuthRecipeModule<
                 );
             },
             redirectToSignIn: async (history: any) => {
-                this.redirectToAuth(undefined, history);
+                this.redirectToAuthWithoutRedirectToPath(undefined, history);
             },
             getRedirectionURL: config.getRedirectionURL,
             onHandleEvent: config.onHandleEvent,
@@ -82,7 +82,7 @@ export default abstract class AuthRecipeModule<
         return Session.getInstanceOrThrow().doesSessionExist();
     };
 
-    redirectToAuth = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
+    redirectToAuthWithRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
         const redirectToPath = getWindowOrThrow().location.pathname;
         if (queryParams === undefined) {
             queryParams = {};
@@ -91,6 +91,13 @@ export default abstract class AuthRecipeModule<
             ...queryParams,
             redirectToPath,
         };
+        this.redirectToAuthWithoutRedirectToPath(show, history, queryParams);
+    };
+
+    redirectToAuthWithoutRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
+        if (queryParams === undefined) {
+            queryParams = {};
+        }
         if (show !== undefined) {
             queryParams = {
                 ...queryParams,

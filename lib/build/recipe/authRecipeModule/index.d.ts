@@ -14,5 +14,14 @@ export default abstract class AuthRecipeModule<
     getAuthRecipeModuleFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     signOut: () => Promise<SuccessAPIResponse>;
     doesSessionExist: () => Promise<boolean>;
-    redirectToAuth: (show?: "signin" | "signup" | undefined, history?: any, queryParams?: any) => void;
+    redirectToAuthWithRedirectToPath: (
+        show?: "signin" | "signup" | undefined,
+        history?: any,
+        queryParams?: any
+    ) => void;
+    redirectToAuthWithoutRedirectToPath: (
+        show?: "signin" | "signup" | undefined,
+        history?: any,
+        queryParams?: any
+    ) => void;
 }

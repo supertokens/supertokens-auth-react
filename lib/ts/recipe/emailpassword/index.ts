@@ -63,7 +63,7 @@ export default class EmailPasswordAPIWrapper {
     }
 
     static redirectToAuth(show?: "signin" | "signup"): void {
-        return EmailPassword.getInstanceOrThrow().redirectToAuth(show);
+        return EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(show);
     }
 }
 
