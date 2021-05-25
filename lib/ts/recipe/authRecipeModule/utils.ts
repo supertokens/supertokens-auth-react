@@ -14,7 +14,6 @@
  */
 
 import AuthRecipeModule from ".";
-import { normaliseEmailVerificationFeature } from "../emailverification/utils";
 import { Config, NormalisedConfig } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
@@ -24,11 +23,9 @@ export function isAuthRecipeModule<T, S, R, N extends NormalisedConfig<T, S, R>>
 
 
 export function normaliseAuthRecipeModuleConfig<T, S, R>(
-    config: Config<T, S, R>
+    config: Config<T, S, R>,
 ): NormalisedConfig<T, S, R> {
-    const emailVerificationFeature = normaliseEmailVerificationFeature(config.emailVerificationFeature);
     return {
         ...normaliseRecipeModuleConfig(config),
-        emailVerificationFeature,
     };
 }

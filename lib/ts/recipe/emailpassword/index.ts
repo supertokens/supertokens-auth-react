@@ -19,7 +19,7 @@
 import { SuccessAPIResponse } from "../../types";
 import { Config } from "./types";
 
-import EmailPassword from "./emailPassword";
+import EmailPassword from "./recipe";
 import EmailPasswordAuth from "./components/emailPasswordAuth";
 import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";

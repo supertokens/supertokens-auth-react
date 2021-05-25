@@ -44,22 +44,12 @@ export default class EmailPassword extends AuthRecipeModule<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    /*
-     * Static Attributes.
-     */
     static instance?: EmailPassword;
     static RECIPE_ID = "emailpassword";
 
-    /*
-     * Constructor.
-     */
     constructor(config: Config) {
         super(normaliseEmailPasswordConfig(config));
     }
-
-    /*
-     * Instance methods.
-     */
 
     getFeatures = (): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
@@ -144,10 +134,6 @@ export default class EmailPassword extends AuthRecipeModule<
 
     static signOut(): Promise<SuccessAPIResponse> {
         return EmailPassword.getInstanceOrThrow().signOut();
-    }
-
-    static async isEmailVerified(): Promise<boolean> {
-        return await EmailPassword.getInstanceOrThrow().isEmailVerified();
     }
 
     static getInstanceOrThrow(): EmailPassword {

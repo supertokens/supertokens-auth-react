@@ -14,69 +14,44 @@
  */
 import { FeatureBaseConfig, SuccessAPIResponse, ThemeBaseProps } from "../../types";
 import { ThemeResponseGeneralError } from "../emailpassword/types";
-import { RecipeModuleConfig } from "../recipeModule/types";
+import {
+    Config as RecipeModuleConfig,
+    NormalisedConfig as NormalisedRecipeModuleConfig
+} from "../recipeModule/types";
 
-export type EmailVerificationUserInput = {
-    /*
-     * Email Verification Mode
-     */
+export type Config = {
+    signOut(): Promise<SuccessAPIResponse>;
     mode?: "OFF" | "REQUIRED";
-
-    /*
-     * Disable default implementation with default routes.
-     */
     disableDefaultImplementation?: boolean;
-
-    /*
-     * sendVerifyEmailScreen config.
-     */
     sendVerifyEmailScreen?: FeatureBaseConfig;
-
-    /*
-     * verifyEmailLinkClickedScreen config.
-     */
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
-};
+} & RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
-export type NormalisedEmailVerificationConfig = {
-    /*
-     * Email Verification Mode
-     */
+
+export type NormalisedConfig = {
     mode: "OFF" | "REQUIRED";
-
-    /*
-     * Disable default implementation with default routes.
-     */
     disableDefaultImplementation: boolean;
-
-    /*
-     * Normalised sendVerifyEmailScreen config.
-     */
     sendVerifyEmailScreen: FeatureBaseConfig;
-
-    /*
-     * Normalised verifyEmailLinkClickedScreen config.
-     */
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
+    signOut(): Promise<SuccessAPIResponse>;
+} & NormalisedRecipeModuleConfig<
+    GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+
+export type GetRedirectionURLContext =
+    {
+        action: "VERIFY_EMAIL";
+    };
+
+export type PreAPIHookContext = {
+    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED";
+    requestInit: RequestInit;
+    url: string;
 };
 
-export type EmailVerificationConfig<T, S, R> = RecipeModuleConfig<T, S, R> &
-    NormalisedEmailVerificationConfig & {
-        /*
-         * SignOut
-         */
-        signOut(): Promise<SuccessAPIResponse>;
-
-        /*
-         * Use shadow Dom root.
-         */
-        useShadowDom: boolean;
-
-        /*
-         * Styling palette.
-         */
-        palette: Record<string, string>;
-    };
+export type OnHandleEventContext =
+    | {
+        action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
+    }
 
 export type IsEmailVerifiedAPIResponse = {
     /*

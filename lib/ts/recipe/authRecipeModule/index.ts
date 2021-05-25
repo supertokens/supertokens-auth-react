@@ -19,102 +19,46 @@
 
 import Session from "../session/session";
 import RecipeModule from "../recipeModule";
-import { NormalisedConfig, GetRedirectionURLContext } from "./types";
+import {
+    NormalisedConfig, GetRedirectionURLContext
+} from "./types";
 import { RecipeFeatureComponentMap, SuccessAPIResponse } from "../../types";
 import { signOut } from "./api";
-import EmailVerification from "../emailverification";
+import EmailVerification from "../emailverification/recipe";
 
-/*
- * Class.
- */
-export default abstract class AuthRecipeModule<T, S, R, N extends NormalisedConfig<T, S, R>> extends RecipeModule<T, S, R, N> {
-    /*
-     * Instance attributes.
-     */
+export default abstract class AuthRecipeModule<
+    T, S, R, N extends NormalisedConfig<T, S, R>> extends RecipeModule<T, S, R, N> {
 
-    emailVerification?: EmailVerification<T, S, R>;
+    emailVerification: EmailVerification;
 
-    /*
-     * Constructor.
-     */
     constructor(config: N) {
         super(config);
-
-        if (this.config.emailVerificationFeature.mode === "REQUIRED") {
-            this.emailVerification = new EmailVerification({
-                ...this.config,
-                ...this.config.emailVerificationFeature,
-                palette: this.config.palette,
-                useShadowDom: this.config.useShadowDom,
-                ...this.hooks,
-                appInfo: this.appInfo,
-                recipeId: this.recipeId,
-                signOut: this.signOut,
-            });
-        }
+        this.emailVerification = new EmailVerification(config.emailVerificationFeature || {
+            appInfo: config.appInfo,
+            recipeId: config.recipeId,
+            signOut: this.signOut
+        });
     }
 
     getAuthRecipeModuleDefaultRedirectionURL = async (
         context: GetRedirectionURLContext
     ): Promise<string> => {
-        switch (context.action) {
-            case "SIGN_IN_AND_UP":
-                return `${this.config.appInfo.websiteBasePath.getAsStringDangerous()}?rid=${this.config.recipeId}`;
-
-            case "SUCCESS":
-                return context.redirectToPath === undefined ? "/" : context.redirectToPath;
-
-            case "VERIFY_EMAIL": {
-                if (this.emailVerification === undefined) {
-                    return "/";
-                }
-                return this.emailVerification.getEmailVerificationDefaultURL(context);
-            }
+        if (context.action === "SIGN_IN_AND_UP") {
+            return `${this.config.appInfo.websiteBasePath.getAsStringDangerous()}?rid=${this.config.recipeId}`;
+        } else if (context.action === "SUCCESS") {
+            return context.redirectToPath === undefined ? "/" : context.redirectToPath;
+        } else {
+            throw new Error("Should never come here");
         }
     };
 
     getAuthRecipeModuleFeatures = (): RecipeFeatureComponentMap => {
-        let features: RecipeFeatureComponentMap = {};
-        if (this.emailVerification !== undefined) {
-            features = this.emailVerification.getFeatures();
-        }
-
-        return features;
+        return this.emailVerification.getFeatures();
     };
 
-    /*
-     * getConfig
-     */
-    getConfig = <T>(): T => {
-        return (this.config as unknown) as T;
-    };
-
-    /*
-     * SignOut.
-     */
     signOut = async (): Promise<SuccessAPIResponse> => {
         return await signOut(this);
     };
-
-    /*
-     * Email Verification
-     */
-
-    async isEmailVerified(): Promise<boolean> {
-        if (this.emailVerification === undefined) {
-            throw new Error("You need to set emailVerificationFeature mode to required to use this method.");
-            return false;
-        }
-        return await this.emailVerification.isEmailVerified();
-    }
-
-    isEmailVerificationRequired(): boolean {
-        return this.emailVerification !== undefined && this.emailVerification.config.mode === "REQUIRED";
-    }
-
-    /*
-     * Session
-     */
 
     doesSessionExist = (): Promise<boolean> => {
         return Session.getInstanceOrThrow().doesSessionExist();

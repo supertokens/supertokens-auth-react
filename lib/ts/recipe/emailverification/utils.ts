@@ -14,14 +14,12 @@
  */
 
 import { NormalisedBaseConfig } from "../../types";
-import { EmailVerificationUserInput, NormalisedEmailVerificationConfig } from "./types";
+import { Config, NormalisedConfig } from "./types";
+import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
 export function normaliseEmailVerificationFeature(
-    config?: EmailVerificationUserInput
-): NormalisedEmailVerificationConfig {
-    if (config === undefined) {
-        config = {};
-    }
+    config: Config
+): NormalisedConfig {
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
     const mode = config.mode === undefined ? "OFF" : config.mode;
 
@@ -44,9 +42,11 @@ export function normaliseEmailVerificationFeature(
     };
 
     return {
+        ...normaliseRecipeModuleConfig(config),
         disableDefaultImplementation,
         mode,
         sendVerifyEmailScreen,
         verifyEmailLinkClickedScreen,
+        signOut: config.signOut
     };
 }

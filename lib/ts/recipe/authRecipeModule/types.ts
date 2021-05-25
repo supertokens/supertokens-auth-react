@@ -13,7 +13,9 @@
  * under the License.
  */
 
-import { EmailVerificationUserInput, NormalisedEmailVerificationConfig } from "../emailverification/types";
+import {
+    Config as EmailVerificationConfig
+} from "../emailverification/types";
 import {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig
@@ -25,11 +27,11 @@ export type User = {
 };
 
 export type Config<T, S, R> = {
-    emailVerificationFeature?: EmailVerificationUserInput;
+    emailVerificationFeature?: EmailVerificationConfig;
 } & RecipeModuleConfig<T, S, R>;
 
 export type NormalisedConfig<T, S, R> = {
-    emailVerificationFeature: NormalisedEmailVerificationConfig;
+    emailVerificationFeature?: EmailVerificationConfig;
 } & NormalisedRecipeModuleConfig<T, S, R>;
 
 export type GetRedirectionURLContext =
@@ -39,18 +41,18 @@ export type GetRedirectionURLContext =
         redirectToPath?: string;
     }
     | {
-        action: "SIGN_IN_AND_UP" | "VERIFY_EMAIL";
+        action: "SIGN_IN_AND_UP";
     };
 
 export type PreAPIHookContext = {
-    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_OUT" | "SIGN_IN";
+    action: "SIGN_OUT" | "SIGN_IN";
     requestInit: RequestInit;
     url: string;
 };
 
 export type OnHandleEventContext =
     | {
-        action: "SESSION_ALREADY_EXISTS" | "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
+        action: "SESSION_ALREADY_EXISTS";
     }
     | {
         action: "SUCCESS";
