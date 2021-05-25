@@ -19,5 +19,6 @@ import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 export function normaliseAuthRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): NormalisedConfig<T, S, R> {
     return {
         ...normaliseRecipeModuleConfig(config),
+        emailVerificationFeature: config.emailVerificationFeature,
     };
 }

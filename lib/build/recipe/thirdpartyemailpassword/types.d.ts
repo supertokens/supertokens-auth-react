@@ -22,12 +22,15 @@ import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+    UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipeModule/types";
-export declare type Config = {
+export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     disableEmailPassword?: boolean;
-} & AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput;
+export declare type Config = UserInput &
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;

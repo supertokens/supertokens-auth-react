@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { Config as EmailVerificationConfig } from "../emailverification/types";
+import { UserInputForAuthRecipeModule as EmailVerificationUserInput } from "../emailverification/types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 
 export type User = {
@@ -21,12 +21,14 @@ export type User = {
     email: string;
 };
 
-export type Config<T, S, R> = {
-    emailVerificationFeature?: EmailVerificationConfig;
-} & RecipeModuleConfig<T, S, R>;
+export type UserInput = {
+    emailVerificationFeature?: EmailVerificationUserInput;
+};
+
+export type Config<T, S, R> = UserInput & RecipeModuleConfig<T, S, R>;
 
 export type NormalisedConfig<T, S, R> = {
-    emailVerificationFeature?: EmailVerificationConfig;
+    emailVerificationFeature?: EmailVerificationUserInput;
 } & NormalisedRecipeModuleConfig<T, S, R>;
 
 export type GetRedirectionURLContext =

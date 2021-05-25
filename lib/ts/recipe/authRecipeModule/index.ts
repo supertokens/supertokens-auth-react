@@ -35,25 +35,24 @@ export default abstract class AuthRecipeModule<
 
     constructor(config: N) {
         super(config);
-        this.emailVerification = new EmailVerification(
-            config.emailVerificationFeature || {
-                appInfo: config.appInfo,
-                recipeId: config.recipeId,
-                signOut: this.signOut,
-                postVerificationRedirect: async (history: any) => {
-                    this.redirect(
-                        {
-                            action: "SUCCESS",
-                            isNewUser: false,
-                        },
-                        history
-                    );
-                },
-                redirectToSignIn: async (history: any) => {
-                    this.redirectToAuth(undefined, history);
-                },
-            }
-        );
+        this.emailVerification = new EmailVerification({
+            ...config.emailVerificationFeature,
+            appInfo: config.appInfo,
+            recipeId: config.recipeId,
+            signOut: this.signOut,
+            postVerificationRedirect: async (history: any) => {
+                this.redirect(
+                    {
+                        action: "SUCCESS",
+                        isNewUser: false,
+                    },
+                    history
+                );
+            },
+            redirectToSignIn: async (history: any) => {
+                this.redirectToAuth(undefined, history);
+            },
+        });
     }
 
     getAuthRecipeModuleDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {

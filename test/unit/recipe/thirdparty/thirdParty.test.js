@@ -19,7 +19,7 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import ThirdParty from "../../../../lib/build/recipe/thirdparty/thirdparty";
+import ThirdParty from "../../../../lib/build/recipe/thirdparty/recipe";
 import { Google, Github, Facebook } from "../../../../lib/build/recipe/thirdparty";
 import assert from "assert";
 import SuperTokens from "../../../../lib/build/superTokens";

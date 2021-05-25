@@ -19,7 +19,14 @@
 
 import AuthRecipeModule from "../authRecipeModule";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
-import { Config, GetRedirectionURLContext, NormalisedConfig, PreAPIHookContext, OnHandleEventContext } from "./types";
+import {
+    Config,
+    GetRedirectionURLContext,
+    NormalisedConfig,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    UserInput,
+} from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
 import NormalisedURLPath from "../../normalisedURLPath";
@@ -114,7 +121,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
      */
 
     static init(
-        config: Config
+        config: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo

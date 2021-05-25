@@ -19,7 +19,7 @@ import EmailVerification from "./components/features/emailVerification/wrapper";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 
-import { Config, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
@@ -32,7 +32,7 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
      * Static attributes.
      */
 
-    static init(config: Config) {
+    static init(config: UserInput) {
         return ThirdPartyEmailPassword.init(config);
     }
 
@@ -89,4 +89,5 @@ export {
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
+    UserInput,
 };

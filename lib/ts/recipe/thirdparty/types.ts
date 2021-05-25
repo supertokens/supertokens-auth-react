@@ -21,13 +21,14 @@ import {
     User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+    UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipeModule/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 
 export type UserInput = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;
-};
+} & AuthRecipeModuleUserInput;
 
 export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;

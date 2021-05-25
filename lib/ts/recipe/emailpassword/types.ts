@@ -30,12 +30,13 @@ import {
     User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+    UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipeModule/types";
 
 export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
-};
+} & AuthRecipeModuleUserInput;
 
 export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;

@@ -10,6 +10,12 @@ export declare type UserInput = {
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
 };
+export declare type UserInputForAuthRecipeModule = {
+    mode?: "OFF" | "REQUIRED";
+    disableDefaultImplementation?: boolean;
+    sendVerifyEmailScreen?: FeatureBaseConfig;
+    verifyEmailLinkClickedScreen?: FeatureBaseConfig;
+};
 export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type NormalisedConfig = {

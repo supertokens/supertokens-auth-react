@@ -26,6 +26,13 @@ export type UserInput = {
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
 };
 
+export type UserInputForAuthRecipeModule = {
+    mode?: "OFF" | "REQUIRED";
+    disableDefaultImplementation?: boolean;
+    sendVerifyEmailScreen?: FeatureBaseConfig;
+    verifyEmailLinkClickedScreen?: FeatureBaseConfig;
+};
+
 export type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type NormalisedConfig = {
