@@ -18,14 +18,14 @@
  */
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
-import { SessionUserInput, SessionConfig } from "./types";
+import { Config, UserInput } from "./types";
 import { isTest } from "../../utils";
 import sessionSdk from "supertokens-website";
 
 /*
  * Class.
  */
-export default class Session extends RecipeModule<unknown, unknown, unknown> {
+export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
     /*
      * Static Attributes.
      */
@@ -35,7 +35,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
     /*
      * Constructor.
      */
-    constructor(config: SessionConfig) {
+    constructor(config: Config) {
         super(config);
         let usersHeadersForRefreshAPI = {};
         if (config.refreshAPICustomHeaders !== undefined) {
@@ -50,15 +50,15 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
                 config.sessionScope === undefined
                     ? undefined
                     : {
-                          scope: config.sessionScope,
-                          authDomain: config.appInfo.websiteDomain.getAsStringDangerous(),
-                      },
+                        scope: config.sessionScope,
+                        authDomain: config.appInfo.websiteDomain.getAsStringDangerous(),
+                    },
             refreshAPICustomHeaders: {
-                rid: this.recipeId,
+                rid: this.config.recipeId,
                 ...usersHeadersForRefreshAPI,
             },
             signoutAPICustomHeaders: {
-                rid: this.recipeId,
+                rid: this.config.recipeId,
                 ...usersHeadersForSignoutAPI,
             },
             autoAddCredentials: config.autoAddCredentials,
@@ -97,14 +97,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
         return sessionSdk.doesSessionExist();
     };
 
-    setAuth0API = (apiPath: string): void => {
-        return sessionSdk.setAuth0API(apiPath);
-    };
-
-    getAuth0API = (): { apiPath: string | undefined } => {
-        return sessionSdk.getAuth0API();
-    };
-
     signOut = (): Promise<void> => {
         return sessionSdk.signOut();
     };
@@ -113,8 +105,8 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
      * Static methods.
      */
 
-    static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown> {
-        return (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown> => {
+    static init(config?: UserInput): CreateRecipeFunction<unknown, unknown, unknown, any> {
+        return (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown, any> => {
             Session.instance = new Session({
                 ...config,
                 appInfo,
@@ -134,41 +126,9 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
         return Session.instance;
     }
 
-    static getRefreshURLDomain(): string | undefined {
-        return Session.getInstanceOrThrow().getRefreshURLDomain();
-    }
-
-    static getUserId(): Promise<string> {
-        return Session.getInstanceOrThrow().getUserId();
-    }
-
-    static async getJWTPayloadSecurely(): Promise<any> {
-        return Session.getInstanceOrThrow().getJWTPayloadSecurely();
-    }
-
-    static async attemptRefreshingSession(): Promise<boolean> {
-        return Session.getInstanceOrThrow().attemptRefreshingSession();
-    }
-
-    static doesSessionExist(): Promise<boolean> {
-        return Session.getInstanceOrThrow().doesSessionExist();
-    }
-
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     static addAxiosInterceptors(axiosInstance: any): void {
         return sessionSdk.addAxiosInterceptors(axiosInstance);
-    }
-
-    static setAuth0API(apiPath: string): void {
-        return Session.getInstanceOrThrow().setAuth0API(apiPath);
-    }
-
-    static getAuth0API(): { apiPath: string | undefined } {
-        return Session.getInstanceOrThrow().getAuth0API();
-    }
-
-    static signOut(): Promise<void> {
-        return Session.getInstanceOrThrow().signOut();
     }
 
     /*

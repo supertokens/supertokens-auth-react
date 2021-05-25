@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { Config } from "./types";
+import { UserInput } from "./types";
 import EmailVerificationRecipe from "./recipe";
 import EmailVerificationTheme from "./components/themes/emailVerification";
 import EmailVerification from "./components/features/emailVerification";
@@ -33,7 +33,7 @@ export default class Wrapper {
     static EmailVerificationTheme = EmailVerificationTheme;
 
     static init(
-        config: Config
+        config: UserInput
     ) {
         return EmailVerificationRecipe.init(config);
     }
@@ -54,5 +54,5 @@ export {
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
-    Config
+    UserInput
 };

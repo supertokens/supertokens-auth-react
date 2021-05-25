@@ -13,13 +13,8 @@
  * under the License.
  */
 
-/*
- * Imports.
- */
-import { CreateRecipeFunction } from "../../types";
-
-import Session from "./session";
-import { SessionUserInput } from "./types";
+import Session from "./recipe";
+import { UserInput } from "./types";
 import SessionAuthComponent from "./sessionAuth";
 import useSessionContextFunc from "./useSessionContext";
 
@@ -31,28 +26,28 @@ export default class SessionAPIWrapper {
 
     static SessionAuth = SessionAuthComponent;
 
-    static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown> {
+    static init(config?: UserInput) {
         return Session.init(config);
     }
 
     static getRefreshURLDomain(): string | undefined {
-        return Session.getRefreshURLDomain();
+        return Session.getInstanceOrThrow().getRefreshURLDomain();
     }
 
     static getUserId(): Promise<string> {
-        return Session.getUserId();
+        return Session.getInstanceOrThrow().getUserId();
     }
 
     static async getJWTPayloadSecurely(): Promise<any> {
-        return Session.getJWTPayloadSecurely();
+        return Session.getInstanceOrThrow().getJWTPayloadSecurely();
     }
 
     static async attemptRefreshingSession(): Promise<boolean> {
-        return Session.attemptRefreshingSession();
+        return Session.getInstanceOrThrow().attemptRefreshingSession();
     }
 
     static doesSessionExist(): Promise<boolean> {
-        return Session.doesSessionExist();
+        return Session.getInstanceOrThrow().doesSessionExist();
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -60,28 +55,24 @@ export default class SessionAPIWrapper {
         return Session.addAxiosInterceptors(axiosInstance);
     };
 
-    static setAuth0API = (apiPath: string): void => {
-        return Session.setAuth0API(apiPath);
-    };
-
-    static getAuth0API = (): { apiPath: string | undefined } => {
-        return Session.getAuth0API();
-    };
-
     static signOut = (): Promise<void> => {
-        return Session.signOut();
+        return Session.getInstanceOrThrow().signOut();
     };
 }
 
-export const useSessionContext = SessionAPIWrapper.useSessionContext;
-export const SessionAuth = SessionAPIWrapper.SessionAuth;
-export const init = SessionAPIWrapper.init;
-export const getRefreshURLDomain = SessionAPIWrapper.getRefreshURLDomain;
-export const getUserId = SessionAPIWrapper.getUserId;
-export const getJWTPayloadSecurely = SessionAPIWrapper.getJWTPayloadSecurely;
-export const attemptRefreshingSession = SessionAPIWrapper.attemptRefreshingSession;
-export const doesSessionExist = SessionAPIWrapper.doesSessionExist;
-export const addAxiosInterceptors = SessionAPIWrapper.addAxiosInterceptors;
-export const setAuth0API = SessionAPIWrapper.setAuth0API;
-export const getAuth0API = SessionAPIWrapper.getAuth0API;
-export const signOut = SessionAPIWrapper.signOut;
+const useSessionContext = SessionAPIWrapper.useSessionContext;
+const SessionAuth = SessionAPIWrapper.SessionAuth;
+const init = SessionAPIWrapper.init;
+const getRefreshURLDomain = SessionAPIWrapper.getRefreshURLDomain;
+const getUserId = SessionAPIWrapper.getUserId;
+const getJWTPayloadSecurely = SessionAPIWrapper.getJWTPayloadSecurely;
+const attemptRefreshingSession = SessionAPIWrapper.attemptRefreshingSession;
+const doesSessionExist = SessionAPIWrapper.doesSessionExist;
+const addAxiosInterceptors = SessionAPIWrapper.addAxiosInterceptors;
+const signOut = SessionAPIWrapper.signOut;
+
+export {
+    useSessionContext, SessionAuth, init, getRefreshURLDomain,
+    getUserId, UserInput, getJWTPayloadSecurely, attemptRefreshingSession,
+    doesSessionExist, addAxiosInterceptors, signOut
+}

@@ -22,5 +22,5 @@ import ThirdParty from "../../../recipe";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function EmailVerification(props: any): JSX.Element {
-    return <EmailVerificationBase recipeId={ThirdParty.getInstanceOrThrow().recipeId} {...props} />;
+    return <EmailVerificationBase recipeId={ThirdParty.getInstanceOrThrow().config.recipeId} {...props} />;
 }

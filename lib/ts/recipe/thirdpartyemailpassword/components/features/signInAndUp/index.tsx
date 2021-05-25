@@ -20,16 +20,15 @@ import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import { FeatureBaseProps } from "../../../../../types";
-import { NormalisedThirdPartyEmailPasswordConfig } from "../../../types";
+import { NormalisedConfig } from "../../../types";
 import SuperTokens from "../../../../../superTokens";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import {
     SignInAndUpTheme,
-    ThirdPartyEmailPasswordGetRedirectionURLContext,
-    ThirdPartyEmailPasswordOnHandleEventContext,
-    ThirdPartyEmailPasswordPreAPIHookContext,
+    GetRedirectionURLContext,
+    OnHandleEventContext,
+    PreAPIHookContext,
 } from "../../..";
-import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 
 /*
@@ -38,32 +37,21 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 
 class SignInAndUp extends PureComponent<FeatureBaseProps> {
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        ThirdPartyEmailPasswordGetRedirectionURLContext,
-        ThirdPartyEmailPasswordPreAPIHookContext,
-        ThirdPartyEmailPasswordOnHandleEventContext,
-        NormalisedThirdPartyEmailPasswordConfig
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        OnHandleEventContext,
+        NormalisedConfig
     > => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SignInAndUp component");
         }
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (recipe instanceof AuthRecipeModule === false) {
-            throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
+        if (!(recipe instanceof AuthRecipeModule)) {
+            throw new Error(`${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
         }
 
-        return recipe as AuthRecipeModule<
-            ThirdPartyEmailPasswordGetRedirectionURLContext,
-            ThirdPartyEmailPasswordPreAPIHookContext,
-            ThirdPartyEmailPasswordOnHandleEventContext,
-            NormalisedThirdPartyEmailPasswordConfig
-        >;
-    };
-
-    getRecipeConfigOrThrow = (): NormalisedThirdPartyEmailPasswordConfig & NormalisedAuthRecipeConfig => {
-        return this.getRecipeInstanceOrThrow().getConfig<
-            NormalisedThirdPartyEmailPasswordConfig & NormalisedAuthRecipeConfig
-        >();
+        return recipe;
     };
 
     getIsEmbedded = (): boolean => {
@@ -78,21 +66,21 @@ class SignInAndUp extends PureComponent<FeatureBaseProps> {
          * Render.
          */
 
-        const hideEmailPassword = this.getRecipeConfigOrThrow().disableEmailPassword;
-        const hideThirdParty = this.getRecipeConfigOrThrow().signInAndUpFeature.providers.length === 0;
+        const hideEmailPassword = this.getRecipeInstanceOrThrow().config.disableEmailPassword;
+        const hideThirdParty = this.getRecipeInstanceOrThrow().config.signInAndUpFeature.providers.length === 0;
         return (
-            <FeatureWrapper useShadowDom={this.getRecipeConfigOrThrow().useShadowDom}>
+            <FeatureWrapper useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <SignInAndUpTheme
-                            rawPalette={this.getRecipeConfigOrThrow().palette}
-                            styleFromInit={this.getRecipeConfigOrThrow().signInAndUpFeature.style}
+                            rawPalette={this.getRecipeInstanceOrThrow().config.palette}
+                            styleFromInit={this.getRecipeInstanceOrThrow().config.signInAndUpFeature.style}
                             hideThirdParty={hideThirdParty}
                             hideEmailPassword={hideEmailPassword}
-                            defaultToSignUp={this.getRecipeConfigOrThrow().signInAndUpFeature.defaultToSignUp}
+                            defaultToSignUp={this.getRecipeInstanceOrThrow().config.signInAndUpFeature.defaultToSignUp}
                             history={this.props.history}
-                            recipeId={this.getRecipeInstanceOrThrow().recipeId}
+                            recipeId={this.getRecipeInstanceOrThrow().config.recipeId}
                         />
                     )}
                     {/* Otherwise, custom theme is provided, propagate props. */}
@@ -100,11 +88,11 @@ class SignInAndUp extends PureComponent<FeatureBaseProps> {
                         React.cloneElement(this.props.children, {
                             hideThirdParty,
                             hideEmailPassword,
-                            rawPalette: this.getRecipeConfigOrThrow().palette,
-                            styleFromInit: this.getRecipeConfigOrThrow().signInAndUpFeature.style,
-                            defaultToSignUp: this.getRecipeConfigOrThrow().signInAndUpFeature.defaultToSignUp,
+                            rawPalette: this.getRecipeInstanceOrThrow().config.palette,
+                            styleFromInit: this.getRecipeInstanceOrThrow().config.signInAndUpFeature.style,
+                            defaultToSignUp: this.getRecipeInstanceOrThrow().config.signInAndUpFeature.defaultToSignUp,
                             history: this.props.history,
-                            recipeId: this.getRecipeInstanceOrThrow().recipeId,
+                            recipeId: this.getRecipeInstanceOrThrow().config.recipeId,
                         })}
                 </Fragment>
             </FeatureWrapper>

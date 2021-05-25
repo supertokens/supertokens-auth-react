@@ -17,7 +17,7 @@
  * Imports.
  */
 import { SuccessAPIResponse } from "../../types";
-import { Config } from "./types";
+import { UserInput } from "./types";
 
 import EmailPassword from "./recipe";
 import EmailPasswordAuth from "./emailPasswordAuth";
@@ -55,7 +55,7 @@ export default class EmailPasswordAPIWrapper {
      */
 
     static init(
-        config?: Config
+        config?: UserInput
     ) {
         return EmailPassword.init(config);
     }
@@ -94,5 +94,5 @@ export {
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
-    Config
+    UserInput
 };

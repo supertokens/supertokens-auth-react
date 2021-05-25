@@ -1,11 +1,11 @@
 import RecipeModule from "./recipe/recipeModule";
-export default class HttpRequest<T, S, R> {
+export default class HttpRequest {
     private recipe;
-    constructor(recipe: RecipeModule<T, S, R>);
-    get: <T_1>(path: string, config: RequestInit, action: string, queryParams?: Record<string, string> | undefined) => Promise<T_1>;
-    post: <T_1>(path: string, config: RequestInit, action: string) => Promise<T_1>;
-    delete: <T_1>(path: string, action: string, config: RequestInit) => Promise<T_1>;
-    put: <T_1>(path: string, action: string, config: RequestInit) => Promise<T_1>;
+    constructor(recipe: RecipeModule<any, any, any, any>);
+    get: <T>(path: string, config: RequestInit, action: string, queryParams?: Record<string, string> | undefined) => Promise<T>;
+    post: <T>(path: string, config: RequestInit, action: string) => Promise<T>;
+    delete: <T>(path: string, action: string, config: RequestInit) => Promise<T>;
+    put: <T>(path: string, action: string, config: RequestInit) => Promise<T>;
     fetch: (baseUrl: string, config: RequestInit, action: string) => Promise<Response>;
     preAPIHook: ({ action, url, requestInit, }: {
         action: string;
@@ -15,6 +15,6 @@ export default class HttpRequest<T, S, R> {
         url: string;
         requestInit: RequestInit;
     }>;
-    fetchResponseJsonOrThrowAbove300: <T_1>(url: string, config: RequestInit, action: string) => Promise<T_1>;
+    fetchResponseJsonOrThrowAbove300: <T>(url: string, config: RequestInit, action: string) => Promise<T>;
     getFullUrl: (pathStr: string, queryParams?: Record<string, string> | undefined) => string;
 }

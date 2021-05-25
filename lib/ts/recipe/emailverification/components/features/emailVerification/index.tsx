@@ -63,34 +63,31 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
         }
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (recipe instanceof AuthRecipeModule === false) {
+        if (!(recipe instanceof AuthRecipeModule)) {
             throw new Error(
-                `${recipe.recipeId} must be an instance of AuthRecipeModule to use EmailVerification component.`
+                `${recipe.config.recipeId} must be an instance of AuthRecipeModule to use EmailVerification component.`
             );
         }
 
-        return (recipe as AuthRecipeModule<any, any, any, any>).emailVerification;
+        return recipe.emailVerification;
     };
 
     signOut = async (): Promise<void> => {
         try {
             await this.getRecipeInstanceOrThrow().config.signOut();
-            return await this.getRecipeInstanceOrThrow().config.redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
+            return await this.getRecipeInstanceOrThrow().config.redirectToSignIn(this.props.history);
         } catch (e) { }
     };
 
     onTokenInvalidRedirect = async (): Promise<void> => {
         if ((await Session.doesSessionExist()) !== true) {
-            return await this.getRecipeInstanceOrThrow().config.redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
+            return await this.getRecipeInstanceOrThrow().config.redirectToSignIn(this.props.history);
         }
 
         try {
             const response = await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow());
             if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                return await this.getRecipeInstanceOrThrow().config.redirect(
-                    { action: "SUCCESS", isNewUser: false },
-                    this.props.history
-                );
+                return await this.getRecipeInstanceOrThrow().config.postVerificationRedirect(this.props.history);
             }
         } catch (e) { }
 
@@ -105,17 +102,14 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
         // Redirect to login if no existing session and no token in URL.
         const sessionExists = await Session.doesSessionExist();
         if (sessionExists === false && hasToken === false) {
-            return await this.getRecipeInstanceOrThrow().config.redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
+            return await this.getRecipeInstanceOrThrow().config.redirectToSignIn(this.props.history);
         }
 
         try {
             if (hasToken === false) {
                 const response = await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow());
                 if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                    return await this.getRecipeInstanceOrThrow().config.redirect(
-                        { action: "SUCCESS", isNewUser: false },
-                        this.props.history
-                    );
+                    return await this.getRecipeInstanceOrThrow().config.postVerificationRedirect(this.props.history)
                 }
             }
         } catch (e) { }
@@ -133,7 +127,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
                     action: "VERIFY_EMAIL_SENT",
                 }),
             onEmailAlreadyVerified: () =>
-                this.getRecipeInstanceOrThrow().config.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history),
+                this.getRecipeInstanceOrThrow().config.postVerificationRedirect(this.props.history)
         };
 
         const verifyEmailLinkClickedScreenFeature = this.getRecipeInstanceOrThrow().config.verifyEmailLinkClickedScreen;
@@ -146,7 +140,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
                     action: "EMAIL_VERIFIED_SUCCESSFUL",
                 }),
             onContinueClicked: () =>
-                this.getRecipeInstanceOrThrow().config.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history),
+                this.getRecipeInstanceOrThrow().config.postVerificationRedirect(this.props.history),
             verifyEmailAPI: async () => await verifyEmailAPI(this.getRecipeInstanceOrThrow(), this.state.token),
         };
 

@@ -13,13 +13,13 @@
  * under the License.
  */
 
-import { RecipeModuleConfig } from "../recipeModule/types";
+import { Config as RecipeModuleConfig } from "../recipeModule/types";
 
 /*
  * Session User InputsConfig Types.
  */
 
-export type SessionUserInput = {
+export type UserInput = {
     /*
      * Session scope defines the domain's range of the session.
      * Example: example.com, .example.com, api.example.com etc...
@@ -47,9 +47,9 @@ export type SessionUserInput = {
     autoAddCredentials?: boolean;
 
     isInIframe?: boolean;
-};
+}
 
-export type SessionConfig = RecipeModuleConfig<unknown, unknown, unknown> & SessionUserInput;
+export type Config = UserInput & RecipeModuleConfig<unknown, unknown, unknown>;
 
 export type SessionContextType = {
     doesSessionExist: boolean;

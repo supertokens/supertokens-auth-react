@@ -18,16 +18,18 @@ import {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig
 } from "../recipeModule/types";
-import { GetRedirectionURLContext as AuthModuleGetRedirectionURLContext } from "../authRecipeModule/types";
 
-export type Config = {
+export type UserInput = {
     signOut(): Promise<SuccessAPIResponse>;
-    redirect(context: AuthModuleGetRedirectionURLContext, history?: any, queryParams?: Record<string, string>): Promise<void>;
+    redirectToSignIn(history?: any): Promise<void>;
+    postVerificationRedirect(history?: any): Promise<void>;
     mode?: "OFF" | "REQUIRED";
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
-} & RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+}
+
+export type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 
 export type NormalisedConfig = {
@@ -36,7 +38,8 @@ export type NormalisedConfig = {
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
     signOut(): Promise<SuccessAPIResponse>;
-    redirect(context: AuthModuleGetRedirectionURLContext, history?: any, queryParams?: Record<string, string>): Promise<void>;
+    redirectToSignIn(history?: any): Promise<void>;
+    postVerificationRedirect(history?: any): Promise<void>;
 } & NormalisedRecipeModuleConfig<
     GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 

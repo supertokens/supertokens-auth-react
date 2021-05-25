@@ -18,13 +18,14 @@
  */
 
 import AuthRecipeModule from "../authRecipeModule";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, SuccessAPIResponse } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAPIHookContext,
     Config,
     NormalisedConfig,
+    UserInput
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
@@ -94,7 +95,7 @@ export default class EmailPassword extends AuthRecipeModule<
      */
 
     static init(
-        config?: Config
+        config?: UserInput
     ): CreateRecipeFunction<
         GetRedirectionURLContext,
         PreAPIHookContext,

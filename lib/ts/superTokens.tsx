@@ -24,6 +24,7 @@ import NormalisedURLPath from "./normalisedURLPath";
 import { getSuperTokensRoutesForReactRouterDom } from "./components/superTokensRoute";
 import { BaseFeatureComponentMap } from "./types";
 import { SSR_ERROR } from "./constants";
+import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types"
 
 /*
  * Class.
@@ -41,7 +42,7 @@ export default class SuperTokens {
      * Instance Attributes.
      */
     appInfo: NormalisedAppInfo;
-    recipeList: RecipeModule<unknown, unknown, unknown>[] = [];
+    recipeList: RecipeModule<any, any, any, any>[] = [];
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
 
     /*
@@ -165,16 +166,16 @@ export default class SuperTokens {
         return routeComponents[0];
     };
 
-    getRecipeOrThrow<T, S, R>(recipeId: string): RecipeModule<T, S, R> {
+    getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(recipeId: string): RecipeModule<T, S, R, N> {
         const recipe = this.recipeList.find((recipe) => {
-            return recipe.recipeId === recipeId;
+            return recipe.config.recipeId === recipeId;
         });
 
         if (recipe === undefined) {
             throw new Error(`Missing recipe: ${recipeId}`);
         }
 
-        return recipe as RecipeModule<T, S, R>;
+        return recipe as RecipeModule<T, S, R, N>;
     }
 
     getReactRouterDom = (): { Route: any; withRouter: any } | undefined => {

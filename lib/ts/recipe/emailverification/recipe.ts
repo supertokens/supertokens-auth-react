@@ -19,7 +19,7 @@
 
 import RecipeModule from "../recipeModule";
 import { RecipeFeatureComponentMap } from "../../types";
-import { Config, NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { Config, NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, UserInput } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
@@ -41,7 +41,7 @@ export default class EmailVerification extends RecipeModule<
     }
 
     static init(
-        config: Config
+        config: UserInput
     ): CreateRecipeFunction<
         GetRedirectionURLContext,
         PreAPIHookContext,

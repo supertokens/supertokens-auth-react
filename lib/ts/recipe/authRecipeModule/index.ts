@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import Session from "../session/session";
+import Session from "../session/recipe";
 import RecipeModule from "../recipeModule";
 import {
     NormalisedConfig, GetRedirectionURLContext
@@ -25,6 +25,7 @@ import {
 import { RecipeFeatureComponentMap, SuccessAPIResponse } from "../../types";
 import { signOut } from "./api";
 import EmailVerification from "../emailverification/recipe";
+import { getWindowOrThrow } from '../../utils';
 
 export default abstract class AuthRecipeModule<
     T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R>> extends RecipeModule<
@@ -37,7 +38,16 @@ export default abstract class AuthRecipeModule<
         this.emailVerification = new EmailVerification(config.emailVerificationFeature || {
             appInfo: config.appInfo,
             recipeId: config.recipeId,
-            signOut: this.signOut
+            signOut: this.signOut,
+            postVerificationRedirect: async (history: any) => {
+                this.redirect({
+                    action: "SUCCESS",
+                    isNewUser: false
+                }, history);
+            },
+            redirectToSignIn: async (history: any) => {
+                this.redirectToAuth(undefined, history);
+            },
         });
     }
 
@@ -65,17 +75,27 @@ export default abstract class AuthRecipeModule<
         return Session.getInstanceOrThrow().doesSessionExist();
     };
 
-    redirectToAuth = (show?: "signin" | "signup") => {
+    redirectToAuth = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
+        let redirectToPath = getWindowOrThrow().location.pathname;
+        if (queryParams === undefined) {
+            queryParams = {};
+        }
+        queryParams = {
+            ...queryParams,
+            redirectToPath
+        };
+        if (show !== undefined) {
+            queryParams = {
+                ...queryParams,
+                show
+            }
+        }
         this.redirect(
             {
                 action: "SIGN_IN_AND_UP",
             },
-            undefined,
-            show === undefined
-                ? undefined
-                : {
-                    show,
-                }
+            history,
+            queryParams
         );
     }
 }

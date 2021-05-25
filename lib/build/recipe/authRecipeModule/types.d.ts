@@ -1,34 +1,29 @@
-import { EmailVerificationUserInput, NormalisedEmailVerificationConfig } from "../emailverification/types";
-import { RecipeModuleConfig, RecipeModuleHooks } from "../recipeModule/types";
+import { Config as EmailVerificationConfig } from "../emailverification/types";
+import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 export declare type User = {
     id: string;
     email: string;
 };
-export declare type AuthRecipeModuleConfig<T, S, R> = AuthRecipeModuleUserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
-export declare type AuthRecipeModuleUserInput<T, S, R> = RecipeModuleHooks<T, S, R> & {
-    useShadowDom?: boolean;
-    palette?: Record<string, string>;
-    emailVerificationFeature?: EmailVerificationUserInput;
-};
-export declare type NormalisedAuthRecipeConfig = {
-    useShadowDom: boolean;
-    palette: Record<string, string>;
-    emailVerificationFeature: NormalisedEmailVerificationConfig;
-};
-export declare type AuthRecipeModuleGetRedirectionURLContext = {
+export declare type Config<T, S, R> = {
+    emailVerificationFeature?: EmailVerificationConfig;
+} & RecipeModuleConfig<T, S, R>;
+export declare type NormalisedConfig<T, S, R> = {
+    emailVerificationFeature?: EmailVerificationConfig;
+} & NormalisedRecipeModuleConfig<T, S, R>;
+export declare type GetRedirectionURLContext = {
     action: "SUCCESS";
     isNewUser: boolean;
     redirectToPath?: string;
 } | {
-    action: "SIGN_IN_AND_UP" | "VERIFY_EMAIL";
+    action: "SIGN_IN_AND_UP";
 };
-export declare type AuthRecipeModulePreAPIHookContext = {
-    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_OUT" | "SIGN_IN";
+export declare type PreAPIHookContext = {
+    action: "SIGN_OUT" | "SIGN_IN";
     requestInit: RequestInit;
     url: string;
 };
-export declare type AuthRecipeModuleOnHandleEventContext = {
-    action: "SESSION_ALREADY_EXISTS" | "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
+export declare type OnHandleEventContext = {
+    action: "SESSION_ALREADY_EXISTS";
 } | {
     action: "SUCCESS";
     isNewUser: boolean;
@@ -36,10 +31,4 @@ export declare type AuthRecipeModuleOnHandleEventContext = {
         id: string;
         email: string;
     };
-};
-export declare type SignInAndUpState = {
-    status: "LOADING" | "READY";
-} | {
-    status: "SUCCESSFUL";
-    user: User;
 };

@@ -21,7 +21,7 @@ import { PureComponent, ReactElement } from "react";
 import { FeatureBaseProps } from "../../types";
 import Recipe from "./recipe";
 import SuperTokens from "../../superTokens";
-import { isAuthRecipeModule } from "../authRecipeModule/utils";
+import AuthRecipeModule from '../authRecipeModule';
 
 export default class EmailVerificationAuth extends PureComponent<FeatureBaseProps> {
 
@@ -31,7 +31,7 @@ export default class EmailVerificationAuth extends PureComponent<FeatureBaseProp
         }
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (!isAuthRecipeModule(recipe)) {
+        if (!(recipe instanceof AuthRecipeModule)) {
             throw new Error(
                 `${recipe.config.recipeId} must be an instance of AuthRecipeModule to use EmailVerificationAuth component.`
             );

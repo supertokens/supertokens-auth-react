@@ -1,18 +1,15 @@
 import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, ThemeBaseProps } from "../../types";
 import { RefObject } from "react";
-import { RecipeModuleConfig } from "../recipeModule/types";
-import { AuthRecipeModuleGetRedirectionURLContext, AuthRecipeModuleOnHandleEventContext, AuthRecipeModulePreAPIHookContext, AuthRecipeModuleUserInput, User } from "../authRecipeModule/types";
-export declare type EmailPasswordUserInput = AuthRecipeModuleUserInput<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext> & {
-    palette?: Record<string, string>;
-    useShadowDom?: boolean;
+import { GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext, OnHandleEventContext as AuthRecipeModuleOnHandleEventContext, PreAPIHookContext as AuthRecipeModulePreAPIHookContext, User, Config as AuthRecipeModuleConfig, NormalisedConfig as NormalisedAuthRecipeModuleConfig } from "../authRecipeModule/types";
+export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
 };
-export declare type EmailPasswordConfig = EmailPasswordUserInput & RecipeModuleConfig<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext>;
-export declare type NormalisedEmailPasswordConfig = {
+export declare type Config = UserInput & AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
-};
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = {
     disableDefaultImplementation?: boolean;
     defaultToSignUp?: boolean;
@@ -125,15 +122,15 @@ export declare type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
 export declare type SubmitNewPasswordAPIResponse = BaseResetPasswordAPIResponse | {
     status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
 };
-export declare type EmailPasswordPreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
+export declare type PreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
     action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
     requestInit: RequestInit;
     url: string;
 };
-export declare type EmailPasswordGetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext | {
+export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext | {
     action: "RESET_PASSWORD";
 };
-export declare type EmailPasswordOnHandleEventContext = AuthRecipeModuleOnHandleEventContext | {
+export declare type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext | {
     action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
 };
 export declare type ResetPasswordUsingTokenThemeProps = {
@@ -191,4 +188,10 @@ declare global {
         documentMode?: any;
     }
 }
+export declare type SignInAndUpState = {
+    status: "LOADING" | "READY";
+} | {
+    status: "SUCCESSFUL";
+    user: User;
+};
 export {};

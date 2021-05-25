@@ -32,15 +32,14 @@ import {
     getWindowOrThrow,
 } from "../../../../../utils";
 import AuthRecipeModule from "../../../../authRecipeModule";
-import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 import { getStyles } from "../../../components/themes/styles";
 import { SESSION_STORAGE_STATE_KEY } from "../../../constants";
 import Provider from "../../../providers";
 import {
-    NormalisedThirdPartyConfig,
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyOnHandleEventContext,
-    ThirdPartyPreAPIHookContext,
+    NormalisedConfig,
+    GetRedirectionURLContext,
+    OnHandleEventContext,
+    PreAPIHookContext,
     ThirdPartySignInAndUpState,
 } from "../../../types";
 import { getOAuthAuthorisationURLAPI } from "./api";
@@ -88,30 +87,21 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
     }
 
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        ThirdPartyGetRedirectionURLContext,
-        ThirdPartyPreAPIHookContext,
-        ThirdPartyOnHandleEventContext,
-        NormalisedThirdPartyConfig
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        OnHandleEventContext,
+        NormalisedConfig
     > => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SignInAndUp component");
         }
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (recipe instanceof AuthRecipeModule === false) {
-            throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
+        if (!(recipe instanceof AuthRecipeModule)) {
+            throw new Error(`${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
         }
 
-        return recipe as AuthRecipeModule<
-            ThirdPartyGetRedirectionURLContext,
-            ThirdPartyPreAPIHookContext,
-            ThirdPartyOnHandleEventContext,
-            NormalisedThirdPartyConfig
-        >;
-    };
-
-    getRecipeConfigOrThrow = (): NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig => {
-        return this.getRecipeInstanceOrThrow().getConfig<NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig>();
+        return recipe;
     };
 
     getIsEmbedded = (): boolean => {
@@ -128,7 +118,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
     componentDidMount = async (): Promise<void> => {
         const sessionExists = await this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists) {
-            this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
+            this.getRecipeInstanceOrThrow().config.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS",
             });
             await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
@@ -148,7 +138,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
     };
 
     signInAndUpClick = async (providerId: string): Promise<string | void> => {
-        const provider = this.getRecipeConfigOrThrow().signInAndUpFeature.providers.find(
+        const provider = this.getRecipeInstanceOrThrow().config.signInAndUpFeature.providers.find(
             (p) => p.id === providerId
         ) as Provider;
         if (provider === undefined) {
@@ -176,7 +166,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
             redirectToPath,
             state,
             thirdPartyId: provider.id,
-            rid: this.getRecipeInstanceOrThrow().recipeId,
+            rid: this.getRecipeInstanceOrThrow().config.recipeId,
             expiresAt,
         });
         getWindowOrThrow().sessionStorage.setItem(SESSION_STORAGE_STATE_KEY, value);
@@ -191,7 +181,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
             return <Fragment />;
         }
 
-        const signInAndUpFeature = this.getRecipeConfigOrThrow().signInAndUpFeature;
+        const signInAndUpFeature = this.getRecipeInstanceOrThrow().config.signInAndUpFeature;
 
         const providers = signInAndUpFeature.providers.map((provider) => ({
             id: provider.id,
@@ -202,9 +192,9 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={this.getRecipeConfigOrThrow().useShadowDom} isEmbedded={this.getIsEmbedded()}>
+            <FeatureWrapper useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
                 <StyleProvider
-                    rawPalette={this.getRecipeConfigOrThrow().palette}
+                    rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                     defaultPalette={defaultPalette}
                     styleFromInit={signInAndUpFeature.style}
                     getDefaultStyles={getStyles}>
@@ -235,7 +225,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
                             React.cloneElement(this.props.children, {
                                 status: this.state.status,
                                 error: this.state.status === "CUSTOM_ERROR" ? this.state.error : undefined,
-                                rawPalette: this.getRecipeConfigOrThrow().palette,
+                                rawPalette: this.getRecipeInstanceOrThrow().config.palette,
                                 termsOfServiceLink: signInAndUpFeature.termsOfServiceLink,
                                 privacyPolicyLink: signInAndUpFeature.privacyPolicyLink,
                                 signInAndUpClick: this.signInAndUpClick,

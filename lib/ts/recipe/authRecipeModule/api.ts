@@ -17,15 +17,15 @@
  * Imports.
  */
 import sessionSdk from "supertokens-website/lib/build/fetch";
-import AuthRecipeModule from ".";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../constants";
 import { SuccessAPIResponse } from "../../types";
+import RecipeModule from "../recipeModule"
 
 /*
  * Methods.
  */
 
-export async function signOut<T, S, R, N>(recipe: AuthRecipeModule<T, S, R, N>): Promise<SuccessAPIResponse> {
+export async function signOut(recipe: RecipeModule<any, any, any, any>): Promise<SuccessAPIResponse> {
     const sessionExpiredStatusCode = sessionSdk.sessionExpiredStatusCode;
 
     const result = await recipe.httpRequest.fetch(

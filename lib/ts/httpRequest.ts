@@ -18,16 +18,16 @@ import RecipeModule from "./recipe/recipeModule";
 import { isRequestInit } from "./utils";
 import { supported_fdi } from "./version";
 
-export default class HttpRequest<T, S, R> {
+export default class HttpRequest {
     /*
      * Instance Attributes.
      */
-    private recipe: RecipeModule<T, S, R>;
+    private recipe: RecipeModule<any, any, any, any>;
 
     /*
      * Constructor.
      */
-    constructor(recipe: RecipeModule<T, S, R>) {
+    constructor(recipe: RecipeModule<any, any, any, any>) {
         this.recipe = recipe;
     }
 
@@ -99,7 +99,7 @@ export default class HttpRequest<T, S, R> {
                     ...headers,
                     "fdi-version": supported_fdi.join(","),
                     "Content-Type": "application/json",
-                    rid: this.recipe.recipeId,
+                    rid: this.recipe.config.recipeId,
                 },
             },
             url: baseUrl,
@@ -120,7 +120,7 @@ export default class HttpRequest<T, S, R> {
         url: string;
         requestInit: RequestInit;
     }): Promise<{ url: string; requestInit: RequestInit }> => {
-        const result = await this.recipe.hooks.preAPIHook(({ action, url, requestInit } as unknown) as S);
+        const result = await this.recipe.config.preAPIHook({ action, url, requestInit });
         if (isRequestInit(result)) {
             return {
                 url,
@@ -145,7 +145,7 @@ export default class HttpRequest<T, S, R> {
 
     getFullUrl = (pathStr: string, queryParams?: Record<string, string>): string => {
         const path = new NormalisedURLPath(pathStr);
-        const fullUrl = `${this.recipe.appInfo.apiDomain.getAsStringDangerous()}${this.recipe.appInfo.apiBasePath.getAsStringDangerous()}${path.getAsStringDangerous()}`;
+        const fullUrl = `${this.recipe.config.appInfo.apiDomain.getAsStringDangerous()}${this.recipe.config.appInfo.apiBasePath.getAsStringDangerous()}${path.getAsStringDangerous()}`;
 
         if (queryParams === undefined) {
             return fullUrl;

@@ -47,6 +47,8 @@ export function normaliseEmailVerificationFeature(
         mode,
         sendVerifyEmailScreen,
         verifyEmailLinkClickedScreen,
-        signOut: config.signOut
+        signOut: config.signOut,
+        postVerificationRedirect: config.postVerificationRedirect,
+        redirectToSignIn: config.redirectToSignIn
     };
 }

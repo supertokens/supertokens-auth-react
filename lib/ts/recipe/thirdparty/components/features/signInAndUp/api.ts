@@ -25,9 +25,9 @@ import { AuthorisationURLAPIResponse } from "../../../types";
  * Methods.
  */
 
-export async function getOAuthAuthorisationURLAPI<T, S, R>(
+export async function getOAuthAuthorisationURLAPI(
     thirdPartyId: string,
-    recipe: RecipeModule<T, S, R>
+    recipe: RecipeModule<any, any, any, any>
 ): Promise<AuthorisationURLAPIResponse> {
     const response: AuthorisationURLAPIResponse = await recipe.httpRequest.get(
         "/authorisationurl",

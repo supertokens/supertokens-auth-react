@@ -32,10 +32,12 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig
 } from "../authRecipeModule/types";
 
-export type Config = {
+export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
-} & AuthRecipeModuleConfig<
+}
+
+export type Config = UserInput & AuthRecipeModuleConfig<
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext>

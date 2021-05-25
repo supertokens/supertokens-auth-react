@@ -23,7 +23,7 @@ import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import EmailVerification from "./components/features/emailVerification/wrapper";
 import {
-    Config,
+    UserInput,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
@@ -44,7 +44,7 @@ export default class ThirdPartyAPIWrapper {
      */
 
     static init(
-        config: Config
+        config: UserInput
     ) {
         return ThirdParty.init(config);
     }
@@ -98,4 +98,5 @@ export {
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
+    UserInput
 };

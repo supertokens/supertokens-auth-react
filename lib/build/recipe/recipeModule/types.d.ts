@@ -1,25 +1,25 @@
 import { NormalisedAppInfo } from "../../types";
-export declare type RecipeModuleConfig<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext> = RecipeModuleHooks<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext> & {
+export declare type Config<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
     recipeId: string;
-    /**
-     *
-     * AppInfo as present in the recipe module manager
-     */
     appInfo: NormalisedAppInfo;
-};
-export declare type RecipeModuleHooks<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext> = {
-    getRedirectionURL?: (context: RecipeModuleGetRedirectionURLContext) => Promise<string | undefined>;
-    preAPIHook?: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit | {
+    getRedirectionURL?: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
+    preAPIHook?: (context: PreAPIHookContextType) => Promise<RequestInit | {
         url?: string;
         requestInit: RequestInit;
     }>;
-    onHandleEvent?: (context: RecipeModuleOnHandleEventContext) => void;
+    onHandleEvent?: (context: OnHandleEventContextType) => void;
+    useShadowDom?: boolean;
+    palette?: Record<string, string>;
 };
-export declare type NormalisedRecipeModuleHooks<RecipeModuleGetRedirectionURLContext, RecipeModulePreAPIHookContext, RecipeModuleOnHandleEventContext> = {
-    getRedirectionURL: (context: RecipeModuleGetRedirectionURLContext) => Promise<string | undefined>;
-    preAPIHook: (context: RecipeModulePreAPIHookContext) => Promise<RequestInit | {
+export declare type NormalisedConfig<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
+    recipeId: string;
+    appInfo: NormalisedAppInfo;
+    getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
+    preAPIHook: (context: PreAPIHookContextType) => Promise<RequestInit | {
         url?: string;
         requestInit: RequestInit;
     }>;
-    onHandleEvent: (context: RecipeModuleOnHandleEventContext) => void;
+    onHandleEvent: (context: OnHandleEventContextType) => void;
+    useShadowDom: boolean;
+    palette: Record<string, string>;
 };

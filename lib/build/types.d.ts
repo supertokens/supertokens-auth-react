@@ -3,11 +3,12 @@ import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
+import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
-    recipeList: CreateRecipeFunction<any, any, any>[];
+    recipeList: CreateRecipeFunction<any, any, any, any>[];
 };
-export declare type CreateRecipeFunction<T, S, R> = (appInfo: NormalisedAppInfo) => RecipeModule<T, S, R>;
+export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (appInfo: NormalisedAppInfo) => RecipeModule<T, S, R, N>;
 export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;

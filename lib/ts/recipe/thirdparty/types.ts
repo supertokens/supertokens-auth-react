@@ -25,9 +25,11 @@ import {
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 
-export type Config = {
+export type UserInput = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;
-} & AuthRecipeModuleConfig<
+}
+
+export type Config = UserInput & AuthRecipeModuleConfig<
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext
@@ -216,14 +218,12 @@ export type AuthorisationURLAPIResponse = {
 };
 
 export type ThirdPartySignInAndUpState =
-    | SignInAndUpState
     | {
-        /*
-         * Status.
-         */
-        status: "GENERAL_ERROR";
-    }
-    | {
+        status: "LOADING" | "READY" | "GENERAL_ERROR";
+    } | {
+        status: "SUCCESSFUL";
+        user: User;
+    } | {
         status: "CUSTOM_ERROR";
         error: string;
     };
@@ -251,12 +251,3 @@ export type StateObject = {
 
     redirectToPath: string | undefined;
 };
-
-export type SignInAndUpState =
-    | {
-        status: "LOADING" | "READY";
-    }
-    | {
-        status: "SUCCESSFUL";
-        user: User;
-    };

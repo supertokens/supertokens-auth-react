@@ -26,7 +26,7 @@ import ThirdParty from "../../../recipe";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function SignInAndUp(props: any): JSX.Element {
-    return <SignInAndUpBase recipeId={ThirdParty.getInstanceOrThrow().recipeId} {...props} />;
+    return <SignInAndUpBase recipeId={ThirdParty.getInstanceOrThrow().config.recipeId} {...props} />;
 }
 
 export default SignInAndUp;

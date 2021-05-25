@@ -64,16 +64,11 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         }
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (recipe instanceof AuthRecipeModule === false) {
-            throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
+        if (!(recipe instanceof AuthRecipeModule)) {
+            throw new Error(`${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
         }
 
-        return recipe as AuthRecipeModule<
-            GetRedirectionURLContext,
-            PreAPIHookContext,
-            OnHandleEventContext,
-            NormalisedConfig
-        >;
+        return recipe;
     };
 
     getIsEmbedded = (): boolean => {

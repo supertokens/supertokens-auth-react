@@ -1,22 +1,35 @@
 import { FeatureBaseConfig, SuccessAPIResponse, ThemeBaseProps } from "../../types";
 import { ThemeResponseGeneralError } from "../emailpassword/types";
-import { RecipeModuleConfig } from "../recipeModule/types";
-export declare type EmailVerificationUserInput = {
+import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
+export declare type UserInput = {
+    signOut(): Promise<SuccessAPIResponse>;
+    redirectToSignIn(history?: any): Promise<void>;
+    postVerificationRedirect(history?: any): Promise<void>;
     mode?: "OFF" | "REQUIRED";
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
 };
-export declare type NormalisedEmailVerificationConfig = {
+export declare type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+export declare type NormalisedConfig = {
     mode: "OFF" | "REQUIRED";
     disableDefaultImplementation: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
-};
-export declare type EmailVerificationConfig<T, S, R> = RecipeModuleConfig<T, S, R> & NormalisedEmailVerificationConfig & {
     signOut(): Promise<SuccessAPIResponse>;
-    useShadowDom: boolean;
-    palette: Record<string, string>;
+    redirectToSignIn(history?: any): Promise<void>;
+    postVerificationRedirect(history?: any): Promise<void>;
+} & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+export declare type GetRedirectionURLContext = {
+    action: "VERIFY_EMAIL";
+};
+export declare type PreAPIHookContext = {
+    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED";
+    requestInit: RequestInit;
+    url: string;
+};
+export declare type OnHandleEventContext = {
+    action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
 };
 export declare type IsEmailVerifiedAPIResponse = {
     status: "OK";

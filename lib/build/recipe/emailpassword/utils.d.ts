@@ -1,6 +1,6 @@
 import { FormField, NormalisedFormField } from "../../types";
-import { EmailPasswordConfig, NormalisedEmailPasswordConfig, NormalisedResetPasswordUsingTokenFeatureConfig, NormalisedSignInAndUpFeatureConfig, NormalisedSignInFormFeatureConfig, NormalisedSignUpFormFeatureConfig, ResetPasswordUsingTokenUserInput, SignInAndUpFeatureUserInput, SignInFormFeatureUserInput, SignUpFormFeatureUserInput } from "./types";
-export declare function normaliseEmailPasswordConfig(config: EmailPasswordConfig): NormalisedEmailPasswordConfig;
+import { Config, NormalisedConfig, NormalisedResetPasswordUsingTokenFeatureConfig, NormalisedSignInAndUpFeatureConfig, NormalisedSignInFormFeatureConfig, NormalisedSignUpFormFeatureConfig, ResetPasswordUsingTokenUserInput, SignInAndUpFeatureUserInput, SignInFormFeatureUserInput, SignUpFormFeatureUserInput } from "./types";
+export declare function normaliseEmailPasswordConfig(config: Config): NormalisedConfig;
 export declare function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput): NormalisedSignInAndUpFeatureConfig;
 export declare function normaliseSignUpFormFeatureConfig(config?: SignUpFormFeatureUserInput): NormalisedSignUpFormFeatureConfig;
 export declare function normaliseSignInFormFeatureConfig(defaultFormFields: NormalisedFormField[], config?: SignInFormFeatureUserInput): NormalisedSignInFormFeatureConfig;

@@ -1,18 +1,15 @@
 /// <reference types="react" />
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
-import { AuthRecipeModuleGetRedirectionURLContext, AuthRecipeModuleOnHandleEventContext, AuthRecipeModulePreAPIHookContext, AuthRecipeModuleUserInput, SignInAndUpState, User } from "../authRecipeModule/types";
-import { RecipeModuleConfig } from "../recipeModule/types";
+import { GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext, OnHandleEventContext as AuthRecipeModuleOnHandleEventContext, PreAPIHookContext as AuthRecipeModulePreAPIHookContext, User, Config as AuthRecipeModuleConfig, NormalisedConfig as NormalisedAuthRecipeModuleConfig } from "../authRecipeModule/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
-export declare type ThirdPartyUserInput = AuthRecipeModuleUserInput<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext> & {
-    palette?: Record<string, string>;
-    useShadowDom?: boolean;
+export declare type UserInput = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;
 };
-export declare type ThirdPartyConfig = ThirdPartyUserInput & RecipeModuleConfig<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext>;
-export declare type NormalisedThirdPartyConfig = {
+export declare type Config = UserInput & AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
-};
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     disableDefaultImplementation?: boolean;
     privacyPolicyLink?: string;
@@ -25,16 +22,16 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
     termsOfServiceLink?: string;
     providers: Provider[];
 };
-export declare type ThirdPartyGetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext | {
+export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext | {
     action: "GET_REDIRECT_URL";
     provider: Provider;
 };
-export declare type ThirdPartyPreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
+export declare type PreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
     action: "GET_AUTHORISATION_URL";
     requestInit: RequestInit;
     url: string;
 };
-export declare type ThirdPartyOnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
+export declare type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
 export declare type SignInAndUpThemeProps = {
     providers: {
         id: string;
@@ -69,8 +66,11 @@ export declare type AuthorisationURLAPIResponse = {
     status: "OK";
     url: string;
 };
-export declare type ThirdPartySignInAndUpState = SignInAndUpState | {
-    status: "GENERAL_ERROR";
+export declare type ThirdPartySignInAndUpState = {
+    status: "LOADING" | "READY" | "GENERAL_ERROR";
+} | {
+    status: "SUCCESSFUL";
+    user: User;
 } | {
     status: "CUSTOM_ERROR";
     error: string;

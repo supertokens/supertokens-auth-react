@@ -22,5 +22,5 @@ import ThirdPartyEmailPassword from "../../../recipe";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function ResetPasswordUsingToken(props: any): JSX.Element {
-    return <ResetPasswordUsingTokenBase recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId} {...props} />;
+    return <ResetPasswordUsingTokenBase recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().config.recipeId} {...props} />;
 }

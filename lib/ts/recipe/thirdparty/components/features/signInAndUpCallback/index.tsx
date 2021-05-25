@@ -27,17 +27,16 @@ import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
 import { signInAndUpAPI } from "./api";
 import {
-    NormalisedThirdPartyConfig,
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyOnHandleEventContext,
-    ThirdPartyPreAPIHookContext,
+    NormalisedConfig,
+    GetRedirectionURLContext,
+    OnHandleEventContext,
+    PreAPIHookContext,
     ThirdPartySignInAndUpState,
 } from "../../../types";
 import SignInAndUpCallbackTheme from "../../themes/signInAndUpCallback";
 import { getOAuthState } from "../../../utils";
 import Provider from "../../../providers";
 import AuthRecipeModule from "../../../../authRecipeModule";
-import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 import SuperTokens from "../../../../../superTokens";
 
 /*
@@ -50,30 +49,21 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
      */
 
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        ThirdPartyGetRedirectionURLContext,
-        ThirdPartyPreAPIHookContext,
-        ThirdPartyOnHandleEventContext,
-        NormalisedThirdPartyConfig
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        OnHandleEventContext,
+        NormalisedConfig
     > => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SignInAndUp component");
         }
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (recipe instanceof AuthRecipeModule === false) {
-            throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
+        if (!(recipe instanceof AuthRecipeModule)) {
+            throw new Error(`${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
         }
 
-        return recipe as AuthRecipeModule<
-            ThirdPartyGetRedirectionURLContext,
-            ThirdPartyPreAPIHookContext,
-            ThirdPartyOnHandleEventContext,
-            NormalisedThirdPartyConfig
-        >;
-    };
-
-    getRecipeConfigOrThrow = (): NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig => {
-        return this.getRecipeInstanceOrThrow().getConfig<NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig>();
+        return recipe;
     };
 
     getIsEmbedded = (): boolean => {
@@ -89,20 +79,20 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
         ];
         const oauthCallbackError = this.getOAuthCallbackError(providerId);
         if (oauthCallbackError !== undefined) {
-            return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
+            return this.getRecipeInstanceOrThrow().redirectToAuth(undefined, this.props.history, {
                 error: oauthCallbackError,
             });
         }
         // If no code params, redirect with error.
         const code = getQueryParams("code");
         if (code === null) {
-            return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
+            return this.getRecipeInstanceOrThrow().redirectToAuth(undefined, this.props.history, {
                 error: "no_code",
             });
         }
 
         try {
-            const provider = this.getRecipeConfigOrThrow().signInAndUpFeature.providers.find(
+            const provider = this.getRecipeInstanceOrThrow().config.signInAndUpFeature.providers.find(
                 (p) => p.id === providerId
             ) as Provider;
             if (provider === undefined) {
@@ -114,18 +104,18 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
             });
             const response = await signInAndUpAPI(providerId, code, this.getRecipeInstanceOrThrow(), redirectUrl);
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
-                return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
+                return this.getRecipeInstanceOrThrow().redirectToAuth(undefined, this.props.history, {
                     error: "no_email_present",
                 });
             }
             if (response.status === "FIELD_ERROR") {
-                return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
+                return this.getRecipeInstanceOrThrow().redirectToAuth(undefined, this.props.history, {
                     error: "custom",
                     message: response.error,
                 });
             }
             if (response.status === "OK") {
-                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
+                this.getRecipeInstanceOrThrow().config.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: response.createdNewUser,
                     user: response.user,
@@ -139,7 +129,7 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
                 );
             }
         } catch (e) {
-            return this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history, {
+            return this.getRecipeInstanceOrThrow().redirectToAuth(undefined, this.props.history, {
                 error: "signin",
             });
         }
@@ -186,9 +176,9 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={this.getRecipeConfigOrThrow().useShadowDom} isEmbedded={this.getIsEmbedded()}>
+            <FeatureWrapper useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
                 <StyleProvider
-                    rawPalette={this.getRecipeConfigOrThrow().palette}
+                    rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                     defaultPalette={defaultPalette}
                     getDefaultStyles={getStyles}>
                     <Fragment>
