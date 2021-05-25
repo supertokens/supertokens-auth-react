@@ -37,10 +37,10 @@ class ThirdPartyEmailPasswordAuth extends PureComponent<FeatureBaseProps & { req
         return (
             <SessionAuth
                 requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}
-                recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId}
+                recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().config.recipeId}
                 history={this.props.history}>
                 <EmailVerificationAuth
-                    recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId}
+                    recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().config.recipeId}
                     history={this.props.history}>
                     {this.props.children}
                 </EmailVerificationAuth>
@@ -61,7 +61,7 @@ export default function ThirdPartyAuthWrapper({
         return (
             <ThirdPartyEmailPasswordAuth
                 requireAuth={requireAuth}
-                recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId}>
+                recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().config.recipeId}>
                 {children}
             </ThirdPartyEmailPasswordAuth>
         );
@@ -69,7 +69,7 @@ export default function ThirdPartyAuthWrapper({
 
     const Component = reactRouterDom.withRouter(ThirdPartyEmailPasswordAuth);
     return (
-        <Component requireAuth={requireAuth} recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().recipeId}>
+        <Component requireAuth={requireAuth} recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().config.recipeId}>
             {children}
         </Component>
     );

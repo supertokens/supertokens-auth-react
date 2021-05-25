@@ -17,11 +17,10 @@
  * Imports.
  */
 import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
-import { AuthRecipeModuleUserInput } from "../authRecipeModule/types";
 import {
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordOnHandleEventContext,
-    EmailPasswordPreAPIHookContext,
+    GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
+    OnHandleEventContext as EmailPasswordOnHandleEventContext,
+    PreAPIHookContext as EmailPasswordPreAPIHookContext,
 } from "../emailpassword";
 import {
     NormalisedResetPasswordUsingTokenFeatureConfig,
@@ -31,72 +30,41 @@ import {
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
 } from "../emailpassword/types";
-import { RecipeModuleConfig } from "../recipeModule/types";
 import {
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyOnHandleEventContext,
-    ThirdPartyPreAPIHookContext,
+    GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
+    OnHandleEventContext as ThirdPartyOnHandleEventContext,
+    PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
+import {
+    Config as AuthRecipeModuleConfig,
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig
+} from "../authRecipeModule/types";
 
 /*
  * Types.
  */
-export type ThirdPartyEmailPasswordUserInput = AuthRecipeModuleUserInput<
-    ThirdPartyEmailPasswordGetRedirectionURLContext,
-    ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdPartyEmailPasswordOnHandleEventContext
-> & {
-    /*
-     * Styling palette.
-     */
-    palette?: Record<string, string>;
-
-    /*
-     * Use shadow Dom root.
-     */
-    useShadowDom?: boolean;
-
-    /*
-     * Sign In and Sign Up feature.
-     */
+export type Config = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
-
-    /*
-     * Reset password Using Token feature.
-     */
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
-
-    /*
-     * Disable Email Password.
-     */
     disableEmailPassword?: boolean;
-};
+} & AuthRecipeModuleConfig<
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext
+>;
 
-export type ThirdPartyEmailPasswordConfig = ThirdPartyEmailPasswordUserInput &
-    RecipeModuleConfig<
-        ThirdPartyEmailPasswordGetRedirectionURLContext,
-        ThirdPartyEmailPasswordPreAPIHookContext,
-        ThirdPartyEmailPasswordOnHandleEventContext
-    >;
 
-export type NormalisedThirdPartyEmailPasswordConfig = {
-    /*
-     * Sign In and Sign Up feature.
-     */
+export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
-
-    /*
-     * Reset password Using Token feature.
-     */
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
-
-    /*
-     * Disable Email Password.
-     */
     disableEmailPassword: boolean;
-};
+} & NormalisedAuthRecipeModuleConfig<
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext
+>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
@@ -154,13 +122,13 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     signInForm: NormalisedSignInFormFeatureConfig;
 };
 
-export type ThirdPartyEmailPasswordGetRedirectionURLContext =
+export type GetRedirectionURLContext =
     | EmailPasswordGetRedirectionURLContext
     | ThirdPartyGetRedirectionURLContext;
 
-export type ThirdPartyEmailPasswordPreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
+export type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
 
-export type ThirdPartyEmailPasswordOnHandleEventContext =
+export type OnHandleEventContext =
     | ThirdPartyOnHandleEventContext
     | EmailPasswordOnHandleEventContext;
 

@@ -13,17 +13,17 @@
  * under the License.
  */
 import ThirdPartyEmailPassword from "./thirdpartyEmailpassword";
-import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
+import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import EmailVerification from "./components/features/emailVerification/wrapper";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 
 import {
-    ThirdPartyEmailPasswordUserInput,
-    ThirdPartyEmailPasswordGetRedirectionURLContext,
-    ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdPartyEmailPasswordOnHandleEventContext,
+    Config,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
 } from "./types";
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUp from "./components/features/signInAndUp/wrapper";
@@ -38,25 +38,21 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
      */
 
     static init(
-        config: ThirdPartyEmailPasswordUserInput
-    ): CreateRecipeFunction<
-        ThirdPartyEmailPasswordGetRedirectionURLContext,
-        ThirdPartyEmailPasswordPreAPIHookContext,
-        ThirdPartyEmailPasswordOnHandleEventContext
-    > {
+        config: Config
+    ) {
         return ThirdPartyEmailPassword.init(config);
     }
 
     static async signOut(): Promise<SuccessAPIResponse> {
-        return ThirdPartyEmailPassword.signOut();
+        return ThirdPartyEmailPassword.getInstanceOrThrow().signOut();
     }
 
     static async isEmailVerified(): Promise<boolean> {
-        return ThirdPartyEmailPassword.isEmailVerified();
+        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified();
     }
 
     static redirectToAuth(show?: "signin" | "signup"): void {
-        return ThirdPartyEmailPassword.redirectToAuth(show);
+        return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuth(show);
     }
 
     /*
@@ -97,7 +93,7 @@ export {
     EmailVerificationTheme,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
-    ThirdPartyEmailPasswordGetRedirectionURLContext,
-    ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdPartyEmailPasswordOnHandleEventContext,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
 };

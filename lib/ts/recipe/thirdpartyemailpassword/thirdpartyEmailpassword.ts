@@ -18,14 +18,13 @@
  */
 
 import AuthRecipeModule from "../authRecipeModule";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, SuccessAPIResponse } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
-    ThirdPartyEmailPasswordConfig,
-    ThirdPartyEmailPasswordGetRedirectionURLContext,
-    ThirdPartyEmailPasswordUserInput,
-    NormalisedThirdPartyEmailPasswordConfig,
-    ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdPartyEmailPasswordOnHandleEventContext,
+    Config,
+    GetRedirectionURLContext,
+    NormalisedConfig,
+    PreAPIHookContext,
+    OnHandleEventContext,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
@@ -42,10 +41,10 @@ import ResetPasswordUsingToken from "../emailpassword/components/features/resetP
  * Class.
  */
 export default class ThirdPartyEmailPassword extends AuthRecipeModule<
-    ThirdPartyEmailPasswordGetRedirectionURLContext,
-    ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdPartyEmailPasswordOnHandleEventContext,
-    NormalisedThirdPartyEmailPasswordConfig
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    NormalisedConfig
 > {
     /*
      * Static Attributes.
@@ -55,8 +54,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     /*
      * Constructor.
      */
-    constructor(config: ThirdPartyEmailPasswordConfig) {
-        super(config, normaliseThirdPartyEmailPasswordConfig(config));
+    constructor(config: Config) {
+        super(normaliseThirdPartyEmailPasswordConfig(config));
     }
 
     /*
@@ -66,34 +65,34 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     getFeatures = (): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
-            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
+            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.recipeId),
-                rid: this.recipeId,
+                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
+                rid: this.config.recipeId,
                 component: SignInAndUp,
             };
         }
 
         if (this.config.resetPasswordUsingTokenFeature.disableDefaultImplementation !== true) {
-            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
+            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.recipeId),
-                rid: this.recipeId,
+                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
+                rid: this.config.recipeId,
                 component: ResetPasswordUsingToken,
             };
         }
 
         // Add callback route for each provider.
         this.config.signInAndUpFeature.providers.forEach((provider) => {
-            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
+            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 component: SignInAndUpCallback,
-                rid: this.recipeId,
-                matches: matchRecipeIdUsingState(this.recipeId),
+                rid: this.config.recipeId,
+                matches: matchRecipeIdUsingState(this.config.recipeId),
             };
         });
 
@@ -103,33 +102,16 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         };
     };
 
-    getDefaultRedirectionURL = async (context: ThirdPartyEmailPasswordGetRedirectionURLContext): Promise<string> => {
-        switch (context.action) {
-            case "GET_REDIRECT_URL":
-                return context.provider.getRedirectURL();
-            case "RESET_PASSWORD": {
-                const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
-                return `${this.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
-                    this.recipeId
+    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
+        if (context.action === "GET_REDIRECT_URL") {
+            return context.provider.getRedirectURL();
+        } else if (context.action === "RESET_PASSWORD") {
+            const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
+            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${this.config.recipeId
                 }`;
-            }
-            default:
-                return this.getAuthRecipeModuleDefaultRedirectionURL(context);
+        } else {
+            return this.getAuthRecipeModuleDefaultRedirectionURL(context);
         }
-    };
-
-    redirectToAuth = (show?: "signin" | "signup"): void => {
-        this.redirect(
-            {
-                action: "SIGN_IN_AND_UP",
-            },
-            undefined,
-            show === undefined
-                ? undefined
-                : {
-                      show,
-                  }
-        );
     };
 
     /*
@@ -137,18 +119,20 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
      */
 
     static init(
-        config: ThirdPartyEmailPasswordUserInput
+        config: Config
     ): CreateRecipeFunction<
-        ThirdPartyEmailPasswordGetRedirectionURLContext,
-        ThirdPartyEmailPasswordPreAPIHookContext,
-        ThirdPartyEmailPasswordOnHandleEventContext
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        OnHandleEventContext,
+        NormalisedConfig
     > {
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<
-            ThirdPartyEmailPasswordGetRedirectionURLContext,
-            ThirdPartyEmailPasswordPreAPIHookContext,
-            ThirdPartyEmailPasswordOnHandleEventContext
+            GetRedirectionURLContext,
+            PreAPIHookContext,
+            OnHandleEventContext,
+            NormalisedConfig
         > => {
             ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword({
                 ...config,
@@ -157,14 +141,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             });
             return ThirdPartyEmailPassword.instance;
         };
-    }
-
-    static signOut(): Promise<SuccessAPIResponse> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().signOut();
-    }
-
-    static async isEmailVerified(): Promise<boolean> {
-        return await ThirdPartyEmailPassword.getInstanceOrThrow().isEmailVerified();
     }
 
     static getInstanceOrThrow(): ThirdPartyEmailPassword {
@@ -181,10 +157,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         }
 
         return ThirdPartyEmailPassword.instance;
-    }
-
-    static redirectToAuth(show?: "signin" | "signup"): void {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuth(show);
     }
 
     /*

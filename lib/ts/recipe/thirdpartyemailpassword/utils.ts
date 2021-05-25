@@ -16,21 +16,24 @@
 /*
  * Imports.
  */
-import { NormalisedThirdPartyEmailPasswordConfig, ThirdPartyEmailPasswordConfig } from "./types";
+import { Config, NormalisedConfig } from "./types";
 
 import { normaliseEmailPasswordConfig } from "../emailpassword/utils";
 import { normaliseThirdPartyConfig } from "../thirdparty/utils";
-import { ThirdPartyConfig } from "../thirdparty/types";
-import { EmailPasswordConfig } from "../emailpassword/types";
+import { Config as ThirdPartyConfig } from "../thirdparty/types";
+import { Config as EmailPasswordConfig } from "../emailpassword/types";
+import { normaliseAuthRecipeModuleConfig } from "../authRecipeModule/utils";
+
+
 
 /*
  * Methods.
  */
 export function normaliseThirdPartyEmailPasswordConfig(
-    config: ThirdPartyEmailPasswordConfig
-): NormalisedThirdPartyEmailPasswordConfig {
-    const thirdPartyUserInput = isThirdPartyConfig(config);
-    const emailPasswordUserInput = isEmailPasswordConfig(config);
+    config: Config
+): NormalisedConfig {
+    const thirdPartyUserInput = castToThirdPartyConfig(config);
+    const emailPasswordUserInput = castToEmailPasswordConfig(config);
 
     const emailPasswordConfig = normaliseEmailPasswordConfig(emailPasswordUserInput);
     const thirdPartyConfig = normaliseThirdPartyConfig(thirdPartyUserInput, true);
@@ -40,6 +43,7 @@ export function normaliseThirdPartyEmailPasswordConfig(
         throw new Error("You need to enable either email password or third party providers login.");
     }
     return {
+        ...normaliseAuthRecipeModuleConfig(config),
         signInAndUpFeature: {
             ...thirdPartyConfig.signInAndUpFeature,
             ...emailPasswordConfig.signInAndUpFeature,
@@ -49,11 +53,11 @@ export function normaliseThirdPartyEmailPasswordConfig(
     };
 }
 
-export function isEmailPasswordConfig(config: ThirdPartyEmailPasswordConfig): EmailPasswordConfig {
+function castToEmailPasswordConfig(config: Config): EmailPasswordConfig {
     return config as EmailPasswordConfig;
 }
 
-export function isThirdPartyConfig(config: ThirdPartyEmailPasswordConfig): ThirdPartyConfig {
+function castToThirdPartyConfig(config: Config): ThirdPartyConfig {
     if (config.signInAndUpFeature === undefined) {
         config.signInAndUpFeature = {
             providers: [],
@@ -62,5 +66,5 @@ export function isThirdPartyConfig(config: ThirdPartyEmailPasswordConfig): Third
     if (config.signInAndUpFeature.providers === undefined) {
         config.signInAndUpFeature.providers = [];
     }
-    return (config as unknown) as ThirdPartyConfig;
+    return config as ThirdPartyConfig;
 }
