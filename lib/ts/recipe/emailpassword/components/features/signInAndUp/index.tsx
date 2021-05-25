@@ -184,7 +184,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
 
         this.getRecipeInstanceOrThrow().config.onHandleEvent({
             action: "SUCCESS",
-            isNewUser: false,
+            isNewUser: true,
             user: this.state.user,
         });
 

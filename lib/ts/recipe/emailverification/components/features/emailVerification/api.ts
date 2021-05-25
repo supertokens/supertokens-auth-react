@@ -28,7 +28,7 @@ import {
  */
 
 export async function verifyEmailAPI(
-    recipe: RecipeModule<unknown, unknown, unknown>,
+    recipe: RecipeModule<any, any, any, any>,
     token: string
 ): Promise<VerifyEmailThemeResponse> {
     const response: VerifyEmailAPIResponse = await recipe.httpRequest.post(
@@ -60,7 +60,7 @@ export async function verifyEmailAPI(
 }
 
 export async function sendVerifyEmailAPI(
-    recipe: RecipeModule<unknown, unknown, unknown>
+    recipe: RecipeModule<any, any, any, any>
 ): Promise<SendVerifyEmailThemeResponse> {
     const response: SendVerifyEmailAPIResponse = await recipe.httpRequest.post(
         "/user/email/verify/token",
@@ -85,7 +85,7 @@ export async function sendVerifyEmailAPI(
     throw Error(SOMETHING_WENT_WRONG_ERROR);
 }
 
-export async function isEmailVerifiedAPI<T, S, R>(recipe: RecipeModule<T, S, R>): Promise<boolean> {
+export async function isEmailVerifiedAPI(recipe: RecipeModule<any, any, any, any>): Promise<boolean> {
     const response: IsEmailVerifiedAPIResponse = await recipe.httpRequest.get(
         "/user/email/verify",
         {},

@@ -18,9 +18,11 @@ import {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig
 } from "../recipeModule/types";
+import { GetRedirectionURLContext as AuthModuleGetRedirectionURLContext } from "../authRecipeModule/types";
 
 export type Config = {
     signOut(): Promise<SuccessAPIResponse>;
+    redirect(context: AuthModuleGetRedirectionURLContext, history?: any, queryParams?: Record<string, string>): Promise<void>;
     mode?: "OFF" | "REQUIRED";
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
@@ -34,6 +36,7 @@ export type NormalisedConfig = {
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
     signOut(): Promise<SuccessAPIResponse>;
+    redirect(context: AuthModuleGetRedirectionURLContext, history?: any, queryParams?: Record<string, string>): Promise<void>;
 } & NormalisedRecipeModuleConfig<
     GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 

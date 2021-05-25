@@ -25,18 +25,17 @@ import { getWindowOrThrow } from "../../../../../utils";
 import { verifyEmailAPI, sendVerifyEmailAPI } from "./api";
 import Session from "../../../../session";
 import SuperTokens from "../../../../../superTokens";
-import EmailVerificationRecipe from "../../../";
 import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
-import { isAuthRecipeModule } from "../../../../authRecipeModule/utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import AuthRecipeModule from "../../../../authRecipeModule";
+import Recipe from "../../../recipe";
 
 /*
  * Component.
  */
 
-class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { token: string }> {
+class EmailVerification extends PureComponent<FeatureBaseProps, { token: string }> {
     /*
      * Constructor.
      */
@@ -58,7 +57,7 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
      * Methods.
      */
 
-    getAuthRecipeOrThrow = (): AuthRecipeModule<T, S, R, N> => {
+    getRecipeInstanceOrThrow = (): Recipe => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to EmailVerification component");
         }
@@ -70,46 +69,30 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
             );
         }
 
-        return recipe as AuthRecipeModule<T, S, R, N>;
-    };
-
-    getRecipeInstanceOrThrow = (): EmailVerificationRecipe<unknown, unknown, unknown> => {
-        const recipe = this.getAuthRecipeOrThrow();
-        if (isAuthRecipeModule(recipe)) {
-            if (recipe.emailVerification === undefined) {
-                throw new Error(
-                    `${recipe.recipeId} must have EmailVerification enabled to use the EmailVerification component.`
-                );
-            }
-            return recipe.emailVerification;
-        }
-
-        throw new Error(
-            `${this.props.recipeId} must be an instance of AuthRecipeModule to use EmailVerification component.`
-        );
+        return (recipe as AuthRecipeModule<any, any, any, any>).emailVerification;
     };
 
     signOut = async (): Promise<void> => {
         try {
-            await this.getRecipeInstanceOrThrow().signOut();
-            return await this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
-        } catch (e) {}
+            await this.getRecipeInstanceOrThrow().config.signOut();
+            return await this.getRecipeInstanceOrThrow().config.redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
+        } catch (e) { }
     };
 
     onTokenInvalidRedirect = async (): Promise<void> => {
         if ((await Session.doesSessionExist()) !== true) {
-            return await this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
+            return await this.getRecipeInstanceOrThrow().config.redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
         }
 
         try {
             const response = await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow());
             if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                return await this.getRecipeInstanceOrThrow().redirect(
+                return await this.getRecipeInstanceOrThrow().config.redirect(
                     { action: "SUCCESS", isNewUser: false },
                     this.props.history
                 );
             }
-        } catch (e) {}
+        } catch (e) { }
 
         this.setState(() => ({
             token: "",
@@ -122,20 +105,20 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
         // Redirect to login if no existing session and no token in URL.
         const sessionExists = await Session.doesSessionExist();
         if (sessionExists === false && hasToken === false) {
-            return await this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
+            return await this.getRecipeInstanceOrThrow().config.redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
         }
 
         try {
             if (hasToken === false) {
                 const response = await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow());
                 if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                    return await this.getRecipeInstanceOrThrow().redirect(
+                    return await this.getRecipeInstanceOrThrow().config.redirect(
                         { action: "SUCCESS", isNewUser: false },
                         this.props.history
                     );
                 }
             }
-        } catch (e) {}
+        } catch (e) { }
     }
 
     render = (): JSX.Element => {
@@ -146,11 +129,11 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
             sendVerifyEmailAPI: async () => await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow()),
             signOut: this.signOut,
             onSuccess: () =>
-                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
+                this.getRecipeInstanceOrThrow().config.onHandleEvent({
                     action: "VERIFY_EMAIL_SENT",
                 }),
             onEmailAlreadyVerified: () =>
-                this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS", isNewUser: false }, this.props.history),
+                this.getRecipeInstanceOrThrow().config.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history),
         };
 
         const verifyEmailLinkClickedScreenFeature = this.getRecipeInstanceOrThrow().config.verifyEmailLinkClickedScreen;
@@ -159,11 +142,11 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
             styleFromInit: verifyEmailLinkClickedScreenFeature.style,
             onTokenInvalidRedirect: this.onTokenInvalidRedirect,
             onSuccess: () =>
-                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
+                this.getRecipeInstanceOrThrow().config.onHandleEvent({
                     action: "EMAIL_VERIFIED_SUCCESSFUL",
                 }),
             onContinueClicked: () =>
-                this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS" }, this.props.history),
+                this.getRecipeInstanceOrThrow().config.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history),
             verifyEmailAPI: async () => await verifyEmailAPI(this.getRecipeInstanceOrThrow(), this.state.token),
         };
 
@@ -173,7 +156,7 @@ class EmailVerification<T, S, R, N> extends PureComponent<FeatureBaseProps, { to
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={this.getAuthRecipeOrThrow().config.useShadowDom}>
+            <FeatureWrapper useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
