@@ -72,7 +72,15 @@ const addAxiosInterceptors = SessionAPIWrapper.addAxiosInterceptors;
 const signOut = SessionAPIWrapper.signOut;
 
 export {
-    useSessionContext, SessionAuth, init, getRefreshURLDomain,
-    getUserId, UserInput, getJWTPayloadSecurely, attemptRefreshingSession,
-    doesSessionExist, addAxiosInterceptors, signOut
-}
+    useSessionContext,
+    SessionAuth,
+    init,
+    getRefreshURLDomain,
+    getUserId,
+    UserInput,
+    getJWTPayloadSecurely,
+    attemptRefreshingSession,
+    doesSessionExist,
+    addAxiosInterceptors,
+    signOut,
+};

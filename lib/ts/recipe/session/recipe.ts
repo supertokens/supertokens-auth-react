@@ -50,9 +50,9 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 config.sessionScope === undefined
                     ? undefined
                     : {
-                        scope: config.sessionScope,
-                        authDomain: config.appInfo.websiteDomain.getAsStringDangerous(),
-                    },
+                          scope: config.sessionScope,
+                          authDomain: config.appInfo.websiteDomain.getAsStringDangerous(),
+                      },
             refreshAPICustomHeaders: {
                 rid: this.config.recipeId,
                 ...usersHeadersForRefreshAPI,

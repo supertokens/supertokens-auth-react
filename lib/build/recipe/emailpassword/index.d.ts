@@ -16,7 +16,14 @@ export default class EmailPasswordAPIWrapper {
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static EmailVerification: typeof EmailVerification;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
-    static init(config?: UserInput): import("../../types").CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, import("./types").NormalisedConfig>;
+    static init(
+        config?: UserInput
+    ): import("../../types").CreateRecipeFunction<
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        OnHandleEventContext,
+        import("./types").NormalisedConfig
+    >;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
     static redirectToAuth(show?: "signin" | "signup"): void;
@@ -25,4 +32,21 @@ declare const init: typeof EmailPasswordAPIWrapper.init;
 declare const signOut: typeof EmailPasswordAPIWrapper.signOut;
 declare const isEmailVerified: typeof EmailPasswordAPIWrapper.isEmailVerified;
 declare const redirectToAuth: typeof EmailPasswordAPIWrapper.redirectToAuth;
-export { EmailPasswordAuth, EmailPasswordAPIWrapper, init, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, redirectToAuth, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, EmailVerification, EmailVerificationTheme, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, UserInput };
+export {
+    EmailPasswordAuth,
+    EmailPasswordAPIWrapper,
+    init,
+    isEmailVerified,
+    SignInAndUp,
+    SignInAndUpTheme,
+    signOut,
+    redirectToAuth,
+    ResetPasswordUsingToken,
+    ResetPasswordUsingTokenTheme,
+    EmailVerification,
+    EmailVerificationTheme,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    UserInput,
+};

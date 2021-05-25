@@ -14,10 +14,7 @@
  */
 import { FeatureBaseConfig, SuccessAPIResponse, ThemeBaseProps } from "../../types";
 import { ThemeResponseGeneralError } from "../emailpassword/types";
-import {
-    Config as RecipeModuleConfig,
-    NormalisedConfig as NormalisedRecipeModuleConfig
-} from "../recipeModule/types";
+import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 
 export type UserInput = {
     signOut(): Promise<SuccessAPIResponse>;
@@ -27,10 +24,9 @@ export type UserInput = {
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
-}
+};
 
 export type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
-
 
 export type NormalisedConfig = {
     mode: "OFF" | "REQUIRED";
@@ -40,13 +36,11 @@ export type NormalisedConfig = {
     signOut(): Promise<SuccessAPIResponse>;
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
-} & NormalisedRecipeModuleConfig<
-    GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
-export type GetRedirectionURLContext =
-    {
-        action: "VERIFY_EMAIL";
-    };
+export type GetRedirectionURLContext = {
+    action: "VERIFY_EMAIL";
+};
 
 export type PreAPIHookContext = {
     action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED";
@@ -54,10 +48,9 @@ export type PreAPIHookContext = {
     url: string;
 };
 
-export type OnHandleEventContext =
-    | {
-        action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
-    }
+export type OnHandleEventContext = {
+    action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
+};
 
 export type IsEmailVerifiedAPIResponse = {
     /*

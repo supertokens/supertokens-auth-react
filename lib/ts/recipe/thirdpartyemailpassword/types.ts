@@ -39,7 +39,7 @@ import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
     Config as AuthRecipeModuleConfig,
-    NormalisedConfig as NormalisedAuthRecipeModuleConfig
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
 } from "../authRecipeModule/types";
 
 /*
@@ -49,22 +49,13 @@ export type Config = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     disableEmailPassword?: boolean;
-} & AuthRecipeModuleConfig<
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext
->;
-
+} & AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     disableEmailPassword: boolean;
-} & NormalisedAuthRecipeModuleConfig<
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext
->;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
@@ -122,15 +113,11 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     signInForm: NormalisedSignInFormFeatureConfig;
 };
 
-export type GetRedirectionURLContext =
-    | EmailPasswordGetRedirectionURLContext
-    | ThirdPartyGetRedirectionURLContext;
+export type GetRedirectionURLContext = EmailPasswordGetRedirectionURLContext | ThirdPartyGetRedirectionURLContext;
 
 export type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
 
-export type OnHandleEventContext =
-    | ThirdPartyOnHandleEventContext
-    | EmailPasswordOnHandleEventContext;
+export type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 
 export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     /*

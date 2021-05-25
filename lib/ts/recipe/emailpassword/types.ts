@@ -29,26 +29,21 @@ import {
     PreAPIHookContext as AuthRecipeModulePreAPIHookContext,
     User,
     Config as AuthRecipeModuleConfig,
-    NormalisedConfig as NormalisedAuthRecipeModuleConfig
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
 } from "../authRecipeModule/types";
 
 export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
-}
+};
 
-export type Config = UserInput & AuthRecipeModuleConfig<
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext>
+export type Config = UserInput &
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
-} & NormalisedAuthRecipeModuleConfig<
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext>
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = {
     /*
@@ -338,25 +333,25 @@ export type FormFieldAPIResponse = {
 
 export type BaseSignInUpAPIResponse =
     | {
-        /*
-         * Success.
-         */
-        status: "OK";
+          /*
+           * Success.
+           */
+          status: "OK";
 
-        /*
-         * User object.
-         */
-        user: User;
-    }
+          /*
+           * User object.
+           */
+          user: User;
+      }
     | FormFieldAPIResponse;
 
 export type BaseResetPasswordAPIResponse =
     | {
-        /*
-         * Success.
-         */
-        status: "OK";
-    }
+          /*
+           * Success.
+           */
+          status: "OK";
+      }
     | FormFieldAPIResponse;
 
 export type ThemeResponseGeneralError = {
@@ -376,64 +371,64 @@ export type SignUpAPIResponse = BaseSignInUpAPIResponse;
 export type SignInAPIResponse =
     | BaseSignInUpAPIResponse
     | {
-        /*
-         * Wrong credentials error.
-         */
-        status: "WRONG_CREDENTIALS_ERROR";
+          /*
+           * Wrong credentials error.
+           */
+          status: "WRONG_CREDENTIALS_ERROR";
 
-        /*
-         * Wrong credentials error message.
-         */
-        message: string;
-    };
+          /*
+           * Wrong credentials error message.
+           */
+          message: string;
+      };
 
 export type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
 
 export type SubmitNewPasswordAPIResponse =
     | BaseResetPasswordAPIResponse
     | {
-        /*
-         * Wrong credentials error.
-         */
-        status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
-    };
+          /*
+           * Wrong credentials error.
+           */
+          status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+      };
 
 export type PreAPIHookContext =
     | AuthRecipeModulePreAPIHookContext
     | {
-        /*
-         * Pre API Hook action.
-         */
-        action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
+          /*
+           * Pre API Hook action.
+           */
+          action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
 
-        /*
-         * Request object containing query params, body, headers.
-         */
-        requestInit: RequestInit;
+          /*
+           * Request object containing query params, body, headers.
+           */
+          requestInit: RequestInit;
 
-        /*
-         * URL
-         */
-        url: string;
-    };
+          /*
+           * URL
+           */
+          url: string;
+      };
 
 export type GetRedirectionURLContext =
     | AuthRecipeModuleGetRedirectionURLContext
     | {
-        /*
-         * Get Redirection URL Context
-         */
-        action: "RESET_PASSWORD";
-    };
+          /*
+           * Get Redirection URL Context
+           */
+          action: "RESET_PASSWORD";
+      };
 
 export type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
-        /*
-         * On Handle Event actions
-         */
-        action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
-    };
+          /*
+           * On Handle Event actions
+           */
+          action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+      };
 
 export type ResetPasswordUsingTokenThemeProps = {
     /*
@@ -499,14 +494,14 @@ export type SendVerifyEmailThemeState = {
 
 export type FormBaseState =
     | {
-        formFields: FormFieldState[];
-        status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
-    }
+          formFields: FormFieldState[];
+          status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
+      }
     | {
-        formFields: FormFieldState[];
-        status: "GENERAL_ERROR";
-        generalError: string;
-    };
+          formFields: FormFieldState[];
+          status: "GENERAL_ERROR";
+          generalError: string;
+      };
 
 export type FormBaseProps = {
     header?: JSX.Element;
@@ -528,38 +523,38 @@ export type FormBaseProps = {
 
 export type FormBaseAPIResponse =
     | {
-        /*
-         * Success.
-         */
-        status: "OK";
+          /*
+           * Success.
+           */
+          status: "OK";
 
-        /*
-         * User object.
-         */
-        user?: User;
-    }
+          /*
+           * User object.
+           */
+          user?: User;
+      }
     | {
-        /*
-         * General Errors.
-         */
-        status: "GENERAL_ERROR";
+          /*
+           * General Errors.
+           */
+          status: "GENERAL_ERROR";
 
-        /*
-         * Error message.
-         */
-        message: string;
-    }
+          /*
+           * Error message.
+           */
+          message: string;
+      }
     | {
-        /*
-         * Field validation errors.
-         */
-        status: "FIELD_ERROR";
+          /*
+           * Field validation errors.
+           */
+          status: "FIELD_ERROR";
 
-        /*
-         * Array of Field Id and their corresponding error.
-         */
-        formFields: FormFieldError[];
-    };
+          /*
+           * Array of Field Id and their corresponding error.
+           */
+          formFields: FormFieldError[];
+      };
 
 /*
  *  Add documentMode to document object in order to use to detect if browser is IE.
@@ -570,12 +565,11 @@ declare global {
     }
 }
 
-
 export type SignInAndUpState =
     | {
-        status: "LOADING" | "READY";
-    }
+          status: "LOADING" | "READY";
+      }
     | {
-        status: "SUCCESSFUL";
-        user: User;
-    };
+          status: "SUCCESSFUL";
+          user: User;
+      };

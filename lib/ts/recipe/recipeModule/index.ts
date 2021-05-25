@@ -31,7 +31,7 @@ export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T
      * Instance attributes.
      */
     httpRequest: HttpRequest;
-    config: N
+    config: N;
 
     /*
      * Constructor.

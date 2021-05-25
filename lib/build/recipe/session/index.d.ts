@@ -22,4 +22,16 @@ declare const attemptRefreshingSession: typeof SessionAPIWrapper.attemptRefreshi
 declare const doesSessionExist: typeof SessionAPIWrapper.doesSessionExist;
 declare const addAxiosInterceptors: (axiosInstance: any) => void;
 declare const signOut: () => Promise<void>;
-export { useSessionContext, SessionAuth, init, getRefreshURLDomain, getUserId, UserInput, getJWTPayloadSecurely, attemptRefreshingSession, doesSessionExist, addAxiosInterceptors, signOut };
+export {
+    useSessionContext,
+    SessionAuth,
+    init,
+    getRefreshURLDomain,
+    getUserId,
+    UserInput,
+    getJWTPayloadSecurely,
+    attemptRefreshingSession,
+    doesSessionExist,
+    addAxiosInterceptors,
+    signOut,
+};

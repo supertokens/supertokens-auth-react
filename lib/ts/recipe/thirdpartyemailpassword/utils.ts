@@ -24,14 +24,10 @@ import { Config as ThirdPartyConfig } from "../thirdparty/types";
 import { Config as EmailPasswordConfig } from "../emailpassword/types";
 import { normaliseAuthRecipeModuleConfig } from "../authRecipeModule/utils";
 
-
-
 /*
  * Methods.
  */
-export function normaliseThirdPartyEmailPasswordConfig(
-    config: Config
-): NormalisedConfig {
+export function normaliseThirdPartyEmailPasswordConfig(config: Config): NormalisedConfig {
     const thirdPartyUserInput = castToThirdPartyConfig(config);
     const emailPasswordUserInput = castToEmailPasswordConfig(config);
 

@@ -65,7 +65,9 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
         if (!(recipe instanceof AuthRecipeModule)) {
-            throw new Error(`${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
+            throw new Error(
+                `${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`
+            );
         }
 
         return recipe;
@@ -96,10 +98,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             };
         }
 
-        const normalisedAPIResponse = await signInAPI(
-            formFields,
-            this.getRecipeInstanceOrThrow()
-        );
+        const normalisedAPIResponse = await signInAPI(formFields, this.getRecipeInstanceOrThrow());
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
 
@@ -142,10 +141,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             };
         }
 
-        const normalisedAPIResponse = await signUpAPI(
-            formFields,
-            this.getRecipeInstanceOrThrow()
-        );
+        const normalisedAPIResponse = await signUpAPI(formFields, this.getRecipeInstanceOrThrow());
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
 
@@ -184,19 +180,22 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         });
 
         if (this.getRecipeInstanceOrThrow().emailVerification.config.mode === "REQUIRED") {
-            return await this.getRecipeInstanceOrThrow().emailVerification.redirect({
-                action: "VERIFY_EMAIL",
-            }, this.props.history);
-
+            return await this.getRecipeInstanceOrThrow().emailVerification.redirect(
+                {
+                    action: "VERIFY_EMAIL",
+                },
+                this.props.history
+            );
         } else {
-            return await this.getRecipeInstanceOrThrow().redirect({
-                redirectToPath: getRedirectToPathFromURL(),
-                isNewUser: true,
-                action: "SUCCESS",
-            }, this.props.history);
-
+            return await this.getRecipeInstanceOrThrow().redirect(
+                {
+                    redirectToPath: getRedirectToPathFromURL(),
+                    isNewUser: true,
+                    action: "SUCCESS",
+                },
+                this.props.history
+            );
         }
-
     };
 
     getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {
@@ -229,10 +228,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
                         return "Email must be of type string";
                     }
                     try {
-                        return await emailExistsAPI(
-                            value,
-                            this.getRecipeInstanceOrThrow()
-                        );
+                        return await emailExistsAPI(value, this.getRecipeInstanceOrThrow());
                     } catch (e) {
                         // Fail silently.
                         return undefined;
@@ -301,7 +297,9 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+            <FeatureWrapper
+                useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}
+                isEmbedded={this.getIsEmbedded()}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (

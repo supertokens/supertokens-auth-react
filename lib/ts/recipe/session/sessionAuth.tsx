@@ -22,16 +22,17 @@ import { getUserId, getJWTPayloadSecurely, doesSessionExist } from "./";
 
 type PropType = {
     requireAuth?: boolean; // false by default
-    redirectToLogin: () => void
-}
+    redirectToLogin: () => void;
+};
 
-type StateType = { status: "LOADING" }
+type StateType =
+    | { status: "LOADING" }
     | {
-        status: "READY";
-        userId: string;
-        doesSessionExist: boolean;
-        jwtPayload: any;
-    }
+          status: "READY";
+          userId: string;
+          doesSessionExist: boolean;
+          jwtPayload: any;
+      };
 
 export default class SessionAuth extends React.PureComponent<PropType, StateType> {
     /*
@@ -46,7 +47,9 @@ export default class SessionAuth extends React.PureComponent<PropType, StateType
 
     redirectToLogin = async (): Promise<void> => {
         if (this.props.redirectToLogin === undefined) {
-            throw new Error("Please provide the redirectToLogin prop when using SessionAuth, or use requireAuth={false}")
+            throw new Error(
+                "Please provide the redirectToLogin prop when using SessionAuth, or use requireAuth={false}"
+            );
         }
         this.props.redirectToLogin();
     };

@@ -17,9 +17,7 @@ import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
-import {
-    NormalisedConfig as NormalisedRecipeModuleConfig
-} from "./recipe/recipeModule/types"
+import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 
 /*
  * Recipe Module Manager Config Types.
@@ -37,7 +35,9 @@ export type SuperTokensConfig = {
     recipeList: CreateRecipeFunction<any, any, any, any>[];
 };
 
-export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (appInfo: NormalisedAppInfo) => RecipeModule<T, S, R, N>;
+export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
+    appInfo: NormalisedAppInfo
+) => RecipeModule<T, S, R, N>;
 
 export type AppInfoUserInput = {
     /*
@@ -256,29 +256,6 @@ export type FeatureBaseProps = {
      * recipeId.
      */
     recipeId: string;
-
-    /*
-     * Children element
-     */
-    children?: JSX.Element;
-
-    /*
-     * History provided by react-router
-     */
-    history?: any;
-
-    /*
-     * Nested Features
-     * This is used to avoid reinitialising feature wrapper for nested features.
-     */
-    isEmbedded?: boolean;
-};
-
-export type FeatureBaseOptionalRidProps = {
-    /*
-     * recipeId.
-     */
-    recipeId?: string;
 
     /*
      * Children element

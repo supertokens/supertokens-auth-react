@@ -21,10 +21,9 @@ import { PureComponent, ReactElement } from "react";
 import { FeatureBaseProps } from "../../types";
 import Recipe from "./recipe";
 import SuperTokens from "../../superTokens";
-import AuthRecipeModule from '../authRecipeModule';
+import AuthRecipeModule from "../authRecipeModule";
 
 export default class EmailVerificationAuth extends PureComponent<FeatureBaseProps> {
-
     getRecipeInstanceOrThrow = (): Recipe => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to EmailVerificationAuth component");
@@ -48,10 +47,7 @@ export default class EmailVerificationAuth extends PureComponent<FeatureBaseProp
         // Otherwise, make sure that the email is valid, otherwise, redirect to email validation screen.
         const isEmailVerified = await this.getRecipeInstanceOrThrow().isEmailVerified();
         if (isEmailVerified === false) {
-            return await this.getRecipeInstanceOrThrow().redirect(
-                { action: "VERIFY_EMAIL" },
-                this.props.history
-            );
+            return await this.getRecipeInstanceOrThrow().redirect({ action: "VERIFY_EMAIL" }, this.props.history);
         }
     }
 

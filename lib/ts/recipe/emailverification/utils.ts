@@ -17,9 +17,7 @@ import { NormalisedBaseConfig } from "../../types";
 import { Config, NormalisedConfig } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
-export function normaliseEmailVerificationFeature(
-    config: Config
-): NormalisedConfig {
+export function normaliseEmailVerificationFeature(config: Config): NormalisedConfig {
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
     const mode = config.mode === undefined ? "OFF" : config.mode;
 
@@ -49,6 +47,6 @@ export function normaliseEmailVerificationFeature(
         verifyEmailLinkClickedScreen,
         signOut: config.signOut,
         postVerificationRedirect: config.postVerificationRedirect,
-        redirectToSignIn: config.redirectToSignIn
+        redirectToSignIn: config.redirectToSignIn,
     };
 }

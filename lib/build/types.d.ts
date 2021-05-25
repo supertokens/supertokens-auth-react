@@ -8,7 +8,9 @@ export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction<any, any, any, any>[];
 };
-export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (appInfo: NormalisedAppInfo) => RecipeModule<T, S, R, N>;
+export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
+    appInfo: NormalisedAppInfo
+) => RecipeModule<T, S, R, N>;
 export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;
@@ -81,12 +83,6 @@ export declare type ThemeBaseProps = {
 };
 export declare type FeatureBaseProps = {
     recipeId: string;
-    children?: JSX.Element;
-    history?: any;
-    isEmbedded?: boolean;
-};
-export declare type FeatureBaseOptionalRidProps = {
-    recipeId?: string;
     children?: JSX.Element;
     history?: any;
     isEmbedded?: boolean;

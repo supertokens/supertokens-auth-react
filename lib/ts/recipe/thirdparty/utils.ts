@@ -32,10 +32,7 @@ import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 /*
  * Methods.
  */
-export function normaliseThirdPartyConfig(
-    config: Config,
-    allowEmptyProviders = false
-): NormalisedConfig {
+export function normaliseThirdPartyConfig(config: Config, allowEmptyProviders = false): NormalisedConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
         config.signInAndUpFeature,
         allowEmptyProviders

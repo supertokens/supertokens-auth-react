@@ -11,10 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Ability to override recipe functions to customize the behavior of feature components.
 -   Refactors code to:
-    - Make types simpler.
-    - Remove components folder from AuthRecipeModule, and puts them in the themes of the respective recipes.
-    - Uses redirectToAuth everywhere instead of calling redirect manually.
-    - Adds additional props / config to Session and EmailVerification recipe to make them more isolated
+    -   Make types simpler.
+    -   Remove components folder from AuthRecipeModule, and puts them in the themes of the respective recipes.
+    -   Uses redirectToAuth everywhere instead of calling redirect manually.
+    -   Adds additional props / config to Session and EmailVerification recipe to make them more isolated
 -   In session recipe, we remove `setAuth0API` and `getAuth0API`
 
 ## [0.13.0] - 2021-05-11

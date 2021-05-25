@@ -60,7 +60,9 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
         if (!(recipe instanceof AuthRecipeModule)) {
-            throw new Error(`${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
+            throw new Error(
+                `${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`
+            );
         }
 
         return recipe;
@@ -74,9 +76,8 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
     };
 
     componentDidMount = async (): Promise<void> => {
-        const providerId = getWindowOrThrow().location.pathname.split("/")[
-            getWindowOrThrow().location.pathname.split("/").length - 1
-        ];
+        const providerId =
+            getWindowOrThrow().location.pathname.split("/")[getWindowOrThrow().location.pathname.split("/").length - 1];
         const oauthCallbackError = this.getOAuthCallbackError(providerId);
         if (oauthCallbackError !== undefined) {
             return this.getRecipeInstanceOrThrow().redirectToAuth(undefined, this.props.history, {
@@ -176,7 +177,9 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+            <FeatureWrapper
+                useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}
+                isEmbedded={this.getIsEmbedded()}>
                 <StyleProvider
                     rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                     defaultPalette={defaultPalette}

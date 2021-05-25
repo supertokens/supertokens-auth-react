@@ -19,41 +19,44 @@
 
 import Session from "../session/recipe";
 import RecipeModule from "../recipeModule";
-import {
-    NormalisedConfig, GetRedirectionURLContext
-} from "./types";
+import { NormalisedConfig, GetRedirectionURLContext } from "./types";
 import { RecipeFeatureComponentMap, SuccessAPIResponse } from "../../types";
 import { signOut } from "./api";
 import EmailVerification from "../emailverification/recipe";
-import { getWindowOrThrow } from '../../utils';
+import { getWindowOrThrow } from "../../utils";
 
 export default abstract class AuthRecipeModule<
-    T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R>> extends RecipeModule<
-    T | GetRedirectionURLContext, S, R, N> {
-
+    T,
+    S,
+    R,
+    N extends NormalisedConfig<T | GetRedirectionURLContext, S, R>
+> extends RecipeModule<T | GetRedirectionURLContext, S, R, N> {
     emailVerification: EmailVerification;
 
     constructor(config: N) {
         super(config);
-        this.emailVerification = new EmailVerification(config.emailVerificationFeature || {
-            appInfo: config.appInfo,
-            recipeId: config.recipeId,
-            signOut: this.signOut,
-            postVerificationRedirect: async (history: any) => {
-                this.redirect({
-                    action: "SUCCESS",
-                    isNewUser: false
-                }, history);
-            },
-            redirectToSignIn: async (history: any) => {
-                this.redirectToAuth(undefined, history);
-            },
-        });
+        this.emailVerification = new EmailVerification(
+            config.emailVerificationFeature || {
+                appInfo: config.appInfo,
+                recipeId: config.recipeId,
+                signOut: this.signOut,
+                postVerificationRedirect: async (history: any) => {
+                    this.redirect(
+                        {
+                            action: "SUCCESS",
+                            isNewUser: false,
+                        },
+                        history
+                    );
+                },
+                redirectToSignIn: async (history: any) => {
+                    this.redirectToAuth(undefined, history);
+                },
+            }
+        );
     }
 
-    getAuthRecipeModuleDefaultRedirectionURL = async (
-        context: GetRedirectionURLContext
-    ): Promise<string> => {
+    getAuthRecipeModuleDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "SIGN_IN_AND_UP") {
             return `${this.config.appInfo.websiteBasePath.getAsStringDangerous()}?rid=${this.config.recipeId}`;
         } else if (context.action === "SUCCESS") {
@@ -76,19 +79,19 @@ export default abstract class AuthRecipeModule<
     };
 
     redirectToAuth = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
-        let redirectToPath = getWindowOrThrow().location.pathname;
+        const redirectToPath = getWindowOrThrow().location.pathname;
         if (queryParams === undefined) {
             queryParams = {};
         }
         queryParams = {
             ...queryParams,
-            redirectToPath
+            redirectToPath,
         };
         if (show !== undefined) {
             queryParams = {
                 ...queryParams,
-                show
-            }
+                show,
+            };
         }
         this.redirect(
             {
@@ -97,5 +100,5 @@ export default abstract class AuthRecipeModule<
             history,
             queryParams
         );
-    }
+    };
 }

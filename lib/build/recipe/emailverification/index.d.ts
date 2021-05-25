@@ -5,11 +5,25 @@ import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } fro
 export default class Wrapper {
     static EmailVerification: typeof EmailVerification;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
-    static init(config: UserInput): import("../../types").CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, {
-        action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
-    }, import("./types").NormalisedConfig>;
+    static init(
+        config: UserInput
+    ): import("../../types").CreateRecipeFunction<
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        OnHandleEventContext,
+        import("./types").NormalisedConfig
+    >;
     static isEmailVerified(): Promise<boolean>;
 }
 declare const init: typeof Wrapper.init;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
-export { init, isEmailVerified, EmailVerification, EmailVerificationTheme, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, UserInput };
+export {
+    init,
+    isEmailVerified,
+    EmailVerification,
+    EmailVerificationTheme,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    UserInput,
+};

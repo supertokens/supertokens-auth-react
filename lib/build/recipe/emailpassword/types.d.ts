@@ -1,11 +1,27 @@
-import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, ThemeBaseProps } from "../../types";
+import {
+    APIFormField,
+    FeatureBaseConfig,
+    FormField,
+    FormFieldBaseConfig,
+    NormalisedBaseConfig,
+    NormalisedFormField,
+    ThemeBaseProps,
+} from "../../types";
 import { RefObject } from "react";
-import { GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext, OnHandleEventContext as AuthRecipeModuleOnHandleEventContext, PreAPIHookContext as AuthRecipeModulePreAPIHookContext, User, Config as AuthRecipeModuleConfig, NormalisedConfig as NormalisedAuthRecipeModuleConfig } from "../authRecipeModule/types";
+import {
+    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
+    OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
+    PreAPIHookContext as AuthRecipeModulePreAPIHookContext,
+    User,
+    Config as AuthRecipeModuleConfig,
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+} from "../authRecipeModule/types";
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
 };
-export declare type Config = UserInput & AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+export declare type Config = UserInput &
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
@@ -102,37 +118,51 @@ export declare type FormFieldAPIResponse = {
     status: "FIELD_ERROR";
     formFields: FormFieldError[];
 };
-export declare type BaseSignInUpAPIResponse = {
-    status: "OK";
-    user: User;
-} | FormFieldAPIResponse;
-export declare type BaseResetPasswordAPIResponse = {
-    status: "OK";
-} | FormFieldAPIResponse;
+export declare type BaseSignInUpAPIResponse =
+    | {
+          status: "OK";
+          user: User;
+      }
+    | FormFieldAPIResponse;
+export declare type BaseResetPasswordAPIResponse =
+    | {
+          status: "OK";
+      }
+    | FormFieldAPIResponse;
 export declare type ThemeResponseGeneralError = {
     status: "GENERAL_ERROR";
     message: string;
 };
 export declare type SignUpAPIResponse = BaseSignInUpAPIResponse;
-export declare type SignInAPIResponse = BaseSignInUpAPIResponse | {
-    status: "WRONG_CREDENTIALS_ERROR";
-    message: string;
-};
+export declare type SignInAPIResponse =
+    | BaseSignInUpAPIResponse
+    | {
+          status: "WRONG_CREDENTIALS_ERROR";
+          message: string;
+      };
 export declare type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
-export declare type SubmitNewPasswordAPIResponse = BaseResetPasswordAPIResponse | {
-    status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
-};
-export declare type PreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
-    action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
-    requestInit: RequestInit;
-    url: string;
-};
-export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext | {
-    action: "RESET_PASSWORD";
-};
-export declare type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext | {
-    action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
-};
+export declare type SubmitNewPasswordAPIResponse =
+    | BaseResetPasswordAPIResponse
+    | {
+          status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+      };
+export declare type PreAPIHookContext =
+    | AuthRecipeModulePreAPIHookContext
+    | {
+          action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
+          requestInit: RequestInit;
+          url: string;
+      };
+export declare type GetRedirectionURLContext =
+    | AuthRecipeModuleGetRedirectionURLContext
+    | {
+          action: "RESET_PASSWORD";
+      };
+export declare type OnHandleEventContext =
+    | AuthRecipeModuleOnHandleEventContext
+    | {
+          action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+      };
 export declare type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailThemeProps;
     submitNewPasswordForm: SubmitNewPasswordThemeProps;
@@ -155,14 +185,16 @@ export declare type SubmitNewPasswordThemeState = {
 export declare type SendVerifyEmailThemeState = {
     status: "READY" | "SUCCESS" | "ERROR";
 };
-export declare type FormBaseState = {
-    formFields: FormFieldState[];
-    status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
-} | {
-    formFields: FormFieldState[];
-    status: "GENERAL_ERROR";
-    generalError: string;
-};
+export declare type FormBaseState =
+    | {
+          formFields: FormFieldState[];
+          status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
+      }
+    | {
+          formFields: FormFieldState[];
+          status: "GENERAL_ERROR";
+          generalError: string;
+      };
 export declare type FormBaseProps = {
     header?: JSX.Element;
     footer?: JSX.Element;
@@ -173,25 +205,30 @@ export declare type FormBaseProps = {
     onSuccess?: () => void;
     callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
 };
-export declare type FormBaseAPIResponse = {
-    status: "OK";
-    user?: User;
-} | {
-    status: "GENERAL_ERROR";
-    message: string;
-} | {
-    status: "FIELD_ERROR";
-    formFields: FormFieldError[];
-};
+export declare type FormBaseAPIResponse =
+    | {
+          status: "OK";
+          user?: User;
+      }
+    | {
+          status: "GENERAL_ERROR";
+          message: string;
+      }
+    | {
+          status: "FIELD_ERROR";
+          formFields: FormFieldError[];
+      };
 declare global {
     interface Document {
         documentMode?: any;
     }
 }
-export declare type SignInAndUpState = {
-    status: "LOADING" | "READY";
-} | {
-    status: "SUCCESSFUL";
-    user: User;
-};
+export declare type SignInAndUpState =
+    | {
+          status: "LOADING" | "READY";
+      }
+    | {
+          status: "SUCCESSFUL";
+          user: User;
+      };
 export {};

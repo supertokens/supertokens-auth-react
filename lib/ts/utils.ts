@@ -24,7 +24,6 @@ import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 
-
 /*
  * getRecipeIdFromPath
  * Input:
@@ -181,23 +180,6 @@ export function getWindowOrThrow(): any {
     // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
     return window;
 }
-
-export function getShouldUseShadowDom(useShadowDom?: boolean): boolean {
-    /*
-     * Detect if browser is IE
-     * In order to disable unsupported shadowDom
-     * https://github.com/supertokens/supertokens-auth-react/issues/99
-     */
-    const isIE = getWindowOrThrow().document.documentMode !== undefined;
-    // If browser is Internet Explorer, always disable shadow dom.
-    if (isIE === true) {
-        return false;
-    }
-
-    // Otherwise, use provided config or default to true.
-    return useShadowDom !== undefined ? useShadowDom : true;
-}
-
 /*
  * Default method for matching recipe route based on query params.
  */

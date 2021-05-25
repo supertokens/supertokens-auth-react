@@ -4,7 +4,12 @@ import { NormalisedConfig } from "../../../types";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import { GetRedirectionURLContext, PreAPIHookContext } from "../../..";
 declare class SignInAndUp extends PureComponent<FeatureBaseProps> {
-    getRecipeInstanceOrThrow: () => AuthRecipeModule<GetRedirectionURLContext, PreAPIHookContext, import("../../../../emailpassword").OnHandleEventContext, NormalisedConfig>;
+    getRecipeInstanceOrThrow: () => AuthRecipeModule<
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        import("../../../../emailpassword").OnHandleEventContext,
+        NormalisedConfig
+    >;
     getIsEmbedded: () => boolean;
     render: () => JSX.Element;
 }

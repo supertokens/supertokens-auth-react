@@ -25,7 +25,7 @@ import {
     PreAPIHookContext,
     Config,
     NormalisedConfig,
-    UserInput
+    UserInput,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
@@ -83,8 +83,9 @@ export default class EmailPassword extends AuthRecipeModule<
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "RESET_PASSWORD") {
             const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${this.config.recipeId
-                }`;
+            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
+                this.config.recipeId
+            }`;
         }
 
         return this.getAuthRecipeModuleDefaultRedirectionURL(context);
@@ -96,20 +97,10 @@ export default class EmailPassword extends AuthRecipeModule<
 
     static init(
         config?: UserInput
-    ): CreateRecipeFunction<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    > {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<
-            GetRedirectionURLContext,
-            PreAPIHookContext,
-            OnHandleEventContext,
-            NormalisedConfig
-        > => {
+        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
             EmailPassword.instance = new EmailPassword({
                 ...config,
                 appInfo,

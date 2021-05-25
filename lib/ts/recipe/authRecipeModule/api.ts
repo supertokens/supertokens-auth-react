@@ -19,7 +19,7 @@
 import sessionSdk from "supertokens-website/lib/build/fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../constants";
 import { SuccessAPIResponse } from "../../types";
-import RecipeModule from "../recipeModule"
+import RecipeModule from "../recipeModule";
 
 /*
  * Methods.

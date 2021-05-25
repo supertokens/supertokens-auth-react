@@ -25,7 +25,7 @@ import {
     NormalisedConfig,
     PreAPIHookContext,
     OnHandleEventContext,
-    UserInput
+    UserInput,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { matchRecipeIdUsingState, normaliseThirdPartyConfig } from "./utils";
@@ -104,20 +104,10 @@ export default class ThirdParty extends AuthRecipeModule<
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    > {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<
-            GetRedirectionURLContext,
-            PreAPIHookContext,
-            OnHandleEventContext,
-            NormalisedConfig
-        > => {
+        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
             ThirdParty.instance = new ThirdParty({
                 ...config,
                 appInfo,

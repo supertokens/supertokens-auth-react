@@ -23,12 +23,7 @@ import { FeatureBaseProps } from "../../../../../types";
 import { NormalisedConfig } from "../../../types";
 import SuperTokens from "../../../../../superTokens";
 import AuthRecipeModule from "../../../../authRecipeModule";
-import {
-    SignInAndUpTheme,
-    GetRedirectionURLContext,
-    OnHandleEventContext,
-    PreAPIHookContext,
-} from "../../..";
+import { SignInAndUpTheme, GetRedirectionURLContext, OnHandleEventContext, PreAPIHookContext } from "../../..";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 
 /*
@@ -48,7 +43,9 @@ class SignInAndUp extends PureComponent<FeatureBaseProps> {
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
         if (!(recipe instanceof AuthRecipeModule)) {
-            throw new Error(`${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
+            throw new Error(
+                `${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`
+            );
         }
 
         return recipe;

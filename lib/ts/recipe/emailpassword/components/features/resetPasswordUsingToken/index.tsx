@@ -71,7 +71,9 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
 
         const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
         if (!(recipe instanceof AuthRecipeModule)) {
-            throw new Error(`${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
+            throw new Error(
+                `${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`
+            );
         }
 
         return recipe;
@@ -117,11 +119,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         }
 
         // Call API, only send first password.
-        return await handleSubmitNewPasswordAPI(
-            [formFields[0]],
-            this.getRecipeInstanceOrThrow(),
-            this.state.token
-        );
+        return await handleSubmitNewPasswordAPI([formFields[0]], this.getRecipeInstanceOrThrow(), this.state.token);
     };
 
     enterEmail = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
@@ -139,17 +137,15 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             };
         }
 
-        return await enterEmailAPI(
-            formFields,
-            this.getRecipeInstanceOrThrow()
-        );
+        return await enterEmailAPI(formFields, this.getRecipeInstanceOrThrow());
     };
 
     render = (): JSX.Element => {
-        const enterEmailFormFeature = this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm;
+        const enterEmailFormFeature =
+            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm;
 
-        const submitNewPasswordFormFeature = this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature
-            .submitNewPasswordForm;
+        const submitNewPasswordFormFeature =
+            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.submitNewPasswordForm;
 
         const submitNewPasswordForm: SubmitNewPasswordThemeProps = {
             styleFromInit: submitNewPasswordFormFeature.style,
@@ -182,7 +178,9 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
          * Render.
          */
         return (
-            <FeatureWrapper isEmbedded={this.getIsEmbedded()} useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}>
+            <FeatureWrapper
+                isEmbedded={this.getIsEmbedded()}
+                useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (

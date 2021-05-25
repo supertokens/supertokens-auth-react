@@ -22,12 +22,7 @@ import ThirdParty from "./recipe";
 import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import EmailVerification from "./components/features/emailVerification/wrapper";
-import {
-    UserInput,
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext,
-} from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
@@ -43,9 +38,7 @@ export default class ThirdPartyAPIWrapper {
      * Static attributes.
      */
 
-    static init(
-        config: UserInput
-    ) {
+    static init(config: UserInput) {
         return ThirdParty.init(config);
     }
 
@@ -98,5 +91,5 @@ export {
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
-    UserInput
+    UserInput,
 };

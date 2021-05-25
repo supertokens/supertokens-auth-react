@@ -1,10 +1,28 @@
 import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
-import { GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext, OnHandleEventContext as EmailPasswordOnHandleEventContext, PreAPIHookContext as EmailPasswordPreAPIHookContext } from "../emailpassword";
-import { NormalisedResetPasswordUsingTokenFeatureConfig, NormalisedSignInFormFeatureConfig, NormalisedSignUpFormFeatureConfig, ResetPasswordUsingTokenUserInput, SignInFormFeatureUserInput, SignUpFormFeatureUserInput } from "../emailpassword/types";
-import { GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext, OnHandleEventContext as ThirdPartyOnHandleEventContext, PreAPIHookContext as ThirdPartyPreAPIHookContext } from "../thirdparty";
+import {
+    GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
+    OnHandleEventContext as EmailPasswordOnHandleEventContext,
+    PreAPIHookContext as EmailPasswordPreAPIHookContext,
+} from "../emailpassword";
+import {
+    NormalisedResetPasswordUsingTokenFeatureConfig,
+    NormalisedSignInFormFeatureConfig,
+    NormalisedSignUpFormFeatureConfig,
+    ResetPasswordUsingTokenUserInput,
+    SignInFormFeatureUserInput,
+    SignUpFormFeatureUserInput,
+} from "../emailpassword/types";
+import {
+    GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
+    OnHandleEventContext as ThirdPartyOnHandleEventContext,
+    PreAPIHookContext as ThirdPartyPreAPIHookContext,
+} from "../thirdparty";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
-import { Config as AuthRecipeModuleConfig, NormalisedConfig as NormalisedAuthRecipeModuleConfig } from "../authRecipeModule/types";
+import {
+    Config as AuthRecipeModuleConfig,
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+} from "../authRecipeModule/types";
 export declare type Config = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
@@ -29,7 +47,9 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
     signUpForm: NormalisedSignUpFormFeatureConfig;
     signInForm: NormalisedSignInFormFeatureConfig;
 };
-export declare type GetRedirectionURLContext = EmailPasswordGetRedirectionURLContext | ThirdPartyGetRedirectionURLContext;
+export declare type GetRedirectionURLContext =
+    | EmailPasswordGetRedirectionURLContext
+    | ThirdPartyGetRedirectionURLContext;
 export declare type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
 export declare type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {

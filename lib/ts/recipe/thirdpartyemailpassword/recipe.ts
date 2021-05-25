@@ -19,13 +19,7 @@
 
 import AuthRecipeModule from "../authRecipeModule";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
-import {
-    Config,
-    GetRedirectionURLContext,
-    NormalisedConfig,
-    PreAPIHookContext,
-    OnHandleEventContext,
-} from "./types";
+import { Config, GetRedirectionURLContext, NormalisedConfig, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
 import NormalisedURLPath from "../../normalisedURLPath";
@@ -107,8 +101,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             return context.provider.getRedirectURL();
         } else if (context.action === "RESET_PASSWORD") {
             const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${this.config.recipeId
-                }`;
+            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
+                this.config.recipeId
+            }`;
         } else {
             return this.getAuthRecipeModuleDefaultRedirectionURL(context);
         }
@@ -120,20 +115,10 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
 
     static init(
         config: Config
-    ): CreateRecipeFunction<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    > {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<
-            GetRedirectionURLContext,
-            PreAPIHookContext,
-            OnHandleEventContext,
-            NormalisedConfig
-        > => {
+        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
             ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword({
                 ...config,
                 appInfo,

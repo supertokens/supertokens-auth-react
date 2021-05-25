@@ -18,11 +18,17 @@ export default class SuperTokens {
     canHandleRoute: () => boolean;
     getRoutingComponent: () => JSX.Element | undefined;
     getPathsToFeatureComponentWithRecipeIdMap: () => Record<string, ComponentWithRecipeAndMatchingMethod[]>;
-    getMatchingComponentForRouteAndRecipeId: (normalisedUrl: NormalisedURLPath) => ComponentWithRecipeAndMatchingMethod | undefined;
-    getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(recipeId: string): RecipeModule<T, S, R, N>;
-    getReactRouterDom: () => {
-        Route: any;
-        withRouter: any;
-    } | undefined;
+    getMatchingComponentForRouteAndRecipeId: (
+        normalisedUrl: NormalisedURLPath
+    ) => ComponentWithRecipeAndMatchingMethod | undefined;
+    getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(
+        recipeId: string
+    ): RecipeModule<T, S, R, N>;
+    getReactRouterDom: () =>
+        | {
+              Route: any;
+              withRouter: any;
+          }
+        | undefined;
     static reset(): void;
 }

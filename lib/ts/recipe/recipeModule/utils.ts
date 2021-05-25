@@ -1,8 +1,7 @@
 import { Config, NormalisedConfig } from "./types";
+import { getWindowOrThrow } from "../../utils";
 
-export function normaliseRecipeModuleConfig<T, S, R>(
-    config: Config<T, S, R>
-): NormalisedConfig<T, S, R> {
+export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): NormalisedConfig<T, S, R> {
     let { preAPIHook, onHandleEvent, getRedirectionURL } = config;
     if (preAPIHook === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -11,7 +10,7 @@ export function normaliseRecipeModuleConfig<T, S, R>(
 
     if (onHandleEvent === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-        onHandleEvent = (_: unknown): void => { };
+        onHandleEvent = (_: unknown): void => {};
     }
 
     if (getRedirectionURL === undefined) {
@@ -19,7 +18,8 @@ export function normaliseRecipeModuleConfig<T, S, R>(
         getRedirectionURL = async (_: unknown): Promise<string | undefined> => undefined;
     }
 
-    const useShadowDom = config.useShadowDom === undefined ? true : config.useShadowDom;
+    let useShadowDom = config.useShadowDom === undefined ? true : config.useShadowDom;
+    useShadowDom = getShouldUseShadowDomBasedOnBrowser(useShadowDom);
     const palette = config.palette === undefined ? {} : config.palette;
 
     return {
@@ -29,6 +29,22 @@ export function normaliseRecipeModuleConfig<T, S, R>(
         useShadowDom,
         palette,
         recipeId: config.recipeId,
-        appInfo: config.appInfo
+        appInfo: config.appInfo,
     };
+}
+
+function getShouldUseShadowDomBasedOnBrowser(useShadowDom?: boolean): boolean {
+    /*
+     * Detect if browser is IE
+     * In order to disable unsupported shadowDom
+     * https://github.com/supertokens/supertokens-auth-react/issues/99
+     */
+    const isIE = getWindowOrThrow().document.documentMode !== undefined;
+    // If browser is Internet Explorer, always disable shadow dom.
+    if (isIE === true) {
+        return false;
+    }
+
+    // Otherwise, use provided config or default to true.
+    return useShadowDom !== undefined ? useShadowDom : true;
 }

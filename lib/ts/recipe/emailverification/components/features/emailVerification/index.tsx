@@ -76,7 +76,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
         try {
             await this.getRecipeInstanceOrThrow().config.signOut();
             return await this.getRecipeInstanceOrThrow().config.redirectToSignIn(this.props.history);
-        } catch (e) { }
+        } catch (e) {}
     };
 
     onTokenInvalidRedirect = async (): Promise<void> => {
@@ -89,7 +89,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
                 return await this.getRecipeInstanceOrThrow().config.postVerificationRedirect(this.props.history);
             }
-        } catch (e) { }
+        } catch (e) {}
 
         this.setState(() => ({
             token: "",
@@ -109,10 +109,10 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
             if (hasToken === false) {
                 const response = await sendVerifyEmailAPI(this.getRecipeInstanceOrThrow());
                 if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                    return await this.getRecipeInstanceOrThrow().config.postVerificationRedirect(this.props.history)
+                    return await this.getRecipeInstanceOrThrow().config.postVerificationRedirect(this.props.history);
                 }
             }
-        } catch (e) { }
+        } catch (e) {}
     }
 
     render = (): JSX.Element => {
@@ -127,7 +127,7 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
                     action: "VERIFY_EMAIL_SENT",
                 }),
             onEmailAlreadyVerified: () =>
-                this.getRecipeInstanceOrThrow().config.postVerificationRedirect(this.props.history)
+                this.getRecipeInstanceOrThrow().config.postVerificationRedirect(this.props.history),
         };
 
         const verifyEmailLinkClickedScreenFeature = this.getRecipeInstanceOrThrow().config.verifyEmailLinkClickedScreen;

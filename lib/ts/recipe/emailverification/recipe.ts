@@ -19,7 +19,14 @@
 
 import RecipeModule from "../recipeModule";
 import { RecipeFeatureComponentMap } from "../../types";
-import { Config, NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, UserInput } from "./types";
+import {
+    Config,
+    NormalisedConfig,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    UserInput,
+} from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
@@ -30,10 +37,12 @@ import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 
 export default class EmailVerification extends RecipeModule<
-    GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    NormalisedConfig
 > {
-
-    static instance?: EmailVerification
+    static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
 
     constructor(config: Config) {
@@ -42,20 +51,10 @@ export default class EmailVerification extends RecipeModule<
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    > {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<
-            GetRedirectionURLContext,
-            PreAPIHookContext,
-            OnHandleEventContext,
-            NormalisedConfig
-        > => {
+        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
             EmailVerification.instance = new EmailVerification({
                 ...config,
                 appInfo,
@@ -67,8 +66,7 @@ export default class EmailVerification extends RecipeModule<
 
     static getInstanceOrThrow(): EmailVerification {
         if (EmailVerification.instance === undefined) {
-            let error =
-                "No instance of EmailVerification found. Make sure to call the EmailVerification.init method.";
+            let error = "No instance of EmailVerification found. Make sure to call the EmailVerification.init method.";
 
             // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
             if (typeof window === "undefined") {
@@ -99,13 +97,12 @@ export default class EmailVerification extends RecipeModule<
         return await isEmailVerifiedAPI(this);
     }
 
-    getDefaultRedirectionURL = async (
-        context: GetRedirectionURLContext
-    ): Promise<string> => {
+    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "VERIFY_EMAIL") {
             const verifyEmailPath = new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(verifyEmailPath).getAsStringDangerous()}?rid=${this.config.recipeId
-                }`;
+            return `${this.config.appInfo.websiteBasePath.appendPath(verifyEmailPath).getAsStringDangerous()}?rid=${
+                this.config.recipeId
+            }`;
         } else {
             return "/";
         }

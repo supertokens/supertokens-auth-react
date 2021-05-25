@@ -40,7 +40,9 @@ class ThirdPartyAuth extends PureComponent<FeatureBaseProps & { requireAuth?: bo
                     ThirdParty.getInstanceOrThrow().redirectToAuth(undefined, this.props.history);
                 }}
                 requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}>
-                <EmailVerificationAuth recipeId={ThirdParty.getInstanceOrThrow().config.recipeId} history={this.props.history}>
+                <EmailVerificationAuth
+                    recipeId={ThirdParty.getInstanceOrThrow().config.recipeId}
+                    history={this.props.history}>
                     {this.props.children}
                 </EmailVerificationAuth>
             </SessionAuth>

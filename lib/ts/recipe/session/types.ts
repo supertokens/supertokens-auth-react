@@ -47,7 +47,7 @@ export type UserInput = {
     autoAddCredentials?: boolean;
 
     isInIframe?: boolean;
-}
+};
 
 export type Config = UserInput & RecipeModuleConfig<unknown, unknown, unknown>;
 

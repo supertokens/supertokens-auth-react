@@ -16,7 +16,8 @@
 import { FormField, FormFieldBaseConfig, NormalisedFormField } from "../../types";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
 import {
-    Config, NormalisedConfig,
+    Config,
+    NormalisedConfig,
     NormalisedEnterEmailForm,
     NormalisedResetPasswordUsingTokenFeatureConfig,
     NormalisedSignInAndUpFeatureConfig,
@@ -53,11 +54,12 @@ export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
         }
     );
 
-    const resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig = normaliseResetPasswordUsingTokenFeature(
-        signUpPasswordField.validate,
-        signUpEmailField,
-        config.resetPasswordUsingTokenFeature
-    );
+    const resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig =
+        normaliseResetPasswordUsingTokenFeature(
+            signUpPasswordField.validate,
+            signUpEmailField,
+            config.resetPasswordUsingTokenFeature
+        );
 
     return {
         ...normaliseAuthRecipeModuleConfig(config),

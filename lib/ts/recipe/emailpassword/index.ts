@@ -27,11 +27,7 @@ import ResetPasswordUsingToken from "./components/features/resetPasswordUsingTok
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import EmailVerification from "./components/features/emailVerification/wrapper";
-import {
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext,
-} from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 /*
  * Class.
  */
@@ -54,9 +50,7 @@ export default class EmailPasswordAPIWrapper {
      * Methods.
      */
 
-    static init(
-        config?: UserInput
-    ) {
+    static init(config?: UserInput) {
         return EmailPassword.init(config);
     }
 
@@ -94,5 +88,5 @@ export {
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
-    UserInput
+    UserInput,
 };

@@ -24,7 +24,7 @@ import NormalisedURLPath from "./normalisedURLPath";
 import { getSuperTokensRoutesForReactRouterDom } from "./components/superTokensRoute";
 import { BaseFeatureComponentMap } from "./types";
 import { SSR_ERROR } from "./constants";
-import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types"
+import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 
 /*
  * Class.
@@ -166,7 +166,9 @@ export default class SuperTokens {
         return routeComponents[0];
     };
 
-    getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(recipeId: string): RecipeModule<T, S, R, N> {
+    getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(
+        recipeId: string
+    ): RecipeModule<T, S, R, N> {
         const recipe = this.recipeList.find((recipe) => {
             return recipe.config.recipeId === recipeId;
         });
