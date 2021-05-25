@@ -21,7 +21,6 @@ import {
     User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
-    SignInAndUpState
 } from "../authRecipeModule/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
@@ -252,3 +251,12 @@ export type StateObject = {
 
     redirectToPath: string | undefined;
 };
+
+export type SignInAndUpState =
+    | {
+        status: "LOADING" | "READY";
+    }
+    | {
+        status: "SUCCESSFUL";
+        user: User;
+    };

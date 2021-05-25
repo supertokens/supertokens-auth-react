@@ -25,19 +25,18 @@ import { signInAPI, signUpAPI, emailExistsAPI } from "./api";
 import {
     FormFieldThemeProps,
     FormBaseAPIResponse,
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordPreAPIHookContext,
-    EmailPasswordOnHandleEventContext,
-    NormalisedEmailPasswordConfig,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    NormalisedConfig,
 } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { APIFormField, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import { getRedirectToPathFromURL, validateForm } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { NormalisedAuthRecipeConfig, SignInAndUpState } from "../../../../authRecipeModule/types";
+import { SignInAndUpState } from "../../../types";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import SuperTokens from "../../../../../superTokens";
-import RecipeModule from "../../../../recipeModule";
 /*
  * Component.
  */
@@ -55,10 +54,10 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     }
 
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        EmailPasswordGetRedirectionURLContext,
-        EmailPasswordPreAPIHookContext,
-        EmailPasswordOnHandleEventContext,
-        NormalisedEmailPasswordConfig
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        OnHandleEventContext,
+        NormalisedConfig
     > => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SignInAndUp component");
@@ -70,15 +69,11 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         }
 
         return recipe as AuthRecipeModule<
-            EmailPasswordGetRedirectionURLContext,
-            EmailPasswordPreAPIHookContext,
-            EmailPasswordOnHandleEventContext,
-            NormalisedEmailPasswordConfig
+            GetRedirectionURLContext,
+            PreAPIHookContext,
+            OnHandleEventContext,
+            NormalisedConfig
         >;
-    };
-
-    getRecipeConfigOrThrow = (): NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig => {
-        return this.getRecipeInstanceOrThrow().getConfig<NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig>();
     };
 
     getIsEmbedded = (): boolean => {
@@ -96,7 +91,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            this.getRecipeConfigOrThrow().signInAndUpFeature.signInForm.formFields
+            this.getRecipeInstanceOrThrow().config.signInAndUpFeature.signInForm.formFields
         );
         // If errors, return.
         if (validationErrors.length > 0) {
@@ -108,7 +103,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
 
         const normalisedAPIResponse = await signInAPI(
             formFields,
-            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
+            this.getRecipeInstanceOrThrow()
         );
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
@@ -121,7 +116,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             return;
         }
 
-        this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
+        this.getRecipeInstanceOrThrow().config.onHandleEvent({
             action: "SUCCESS",
             isNewUser: false,
             user: this.state.user,
@@ -141,7 +136,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            this.getRecipeConfigOrThrow().signInAndUpFeature.signUpForm.formFields
+            this.getRecipeInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields
         );
 
         // If errors, return.
@@ -154,7 +149,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
 
         const normalisedAPIResponse = await signUpAPI(
             formFields,
-            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
+            this.getRecipeInstanceOrThrow()
         );
 
         this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
@@ -187,27 +182,26 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             return;
         }
 
-        this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
+        this.getRecipeInstanceOrThrow().config.onHandleEvent({
             action: "SUCCESS",
             isNewUser: false,
             user: this.state.user,
         });
 
-        // Redirect to email verification screen if sign up and email verification mode is required.
-        let context: EmailPasswordGetRedirectionURLContext = {
-            redirectToPath: getRedirectToPathFromURL(),
-            isNewUser: true,
-            action: "SUCCESS",
-        };
-
-        if (this.getRecipeInstanceOrThrow().isEmailVerificationRequired() === true) {
-            // Or if sign up and email verification mode is not required, redirect to success screen.
-            context = {
+        if (this.getRecipeInstanceOrThrow().emailVerification.config.mode === "REQUIRED") {
+            return await this.getRecipeInstanceOrThrow().emailVerification.redirect({
                 action: "VERIFY_EMAIL",
-            };
+            }, this.props.history);
+
+        } else {
+            return await this.getRecipeInstanceOrThrow().redirect({
+                redirectToPath: getRedirectToPathFromURL(),
+                isNewUser: true,
+                action: "SUCCESS",
+            }, this.props.history);
+
         }
 
-        return await this.getRecipeInstanceOrThrow().redirect(context, this.props.history);
     };
 
     getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {
@@ -242,7 +236,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
                     try {
                         return await emailExistsAPI(
                             value,
-                            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
+                            this.getRecipeInstanceOrThrow()
                         );
                     } catch (e) {
                         // Fail silently.
@@ -259,7 +253,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     componentDidMount = async (): Promise<void> => {
         const sessionExists = await this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists) {
-            this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
+            this.getRecipeInstanceOrThrow().config.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS",
             });
             return await this.getRecipeInstanceOrThrow().redirect(
@@ -281,7 +275,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
     };
 
     render = (): JSX.Element => {
-        const signInAndUpFeature = this.getRecipeConfigOrThrow().signInAndUpFeature;
+        const signInAndUpFeature = this.getRecipeInstanceOrThrow().config.signInAndUpFeature;
         const signUpFeature = signInAndUpFeature.signUpForm;
         const signInFeature = signInAndUpFeature.signInForm;
 
@@ -312,7 +306,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
          * Render.
          */
         return (
-            <FeatureWrapper useShadowDom={this.getRecipeConfigOrThrow().useShadowDom} isEmbedded={this.getIsEmbedded()}>
+            <FeatureWrapper useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (

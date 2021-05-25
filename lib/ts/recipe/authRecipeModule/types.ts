@@ -59,12 +59,3 @@ export type OnHandleEventContext =
         isNewUser: boolean;
         user: { id: string; email: string };
     };
-
-export type SignInAndUpState =
-    | {
-        status: "LOADING" | "READY";
-    }
-    | {
-        status: "SUCCESSFUL";
-        user: User;
-    };

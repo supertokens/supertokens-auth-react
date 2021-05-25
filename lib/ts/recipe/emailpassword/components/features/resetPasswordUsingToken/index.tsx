@@ -21,11 +21,11 @@ import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import {
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordOnHandleEventContext,
-    EmailPasswordPreAPIHookContext,
+    GetRedirectionURLContext,
+    OnHandleEventContext,
+    PreAPIHookContext,
     FormBaseAPIResponse,
-    NormalisedEmailPasswordConfig,
+    NormalisedConfig,
     SubmitNewPasswordThemeProps,
 } from "../../../types";
 import { ResetPasswordUsingTokenTheme } from "../../..";
@@ -35,9 +35,7 @@ import { getWindowOrThrow, validateForm } from "../../../../../utils";
 import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import AuthRecipeModule from "../../../../authRecipeModule";
-import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
 import SuperTokens from "../../../../../superTokens";
-import RecipeModule from "../../../../recipeModule";
 
 /*
  * Component.
@@ -62,10 +60,10 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
     }
 
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        EmailPasswordGetRedirectionURLContext,
-        EmailPasswordPreAPIHookContext,
-        EmailPasswordOnHandleEventContext,
-        NormalisedEmailPasswordConfig
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        OnHandleEventContext,
+        NormalisedConfig
     > => {
         if (this.props.recipeId === undefined) {
             throw new Error("No recipeId props given to SignInAndUp component");
@@ -77,15 +75,11 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         }
 
         return recipe as AuthRecipeModule<
-            EmailPasswordGetRedirectionURLContext,
-            EmailPasswordPreAPIHookContext,
-            EmailPasswordOnHandleEventContext,
-            NormalisedEmailPasswordConfig
+            GetRedirectionURLContext,
+            PreAPIHookContext,
+            OnHandleEventContext,
+            NormalisedConfig
         >;
-    };
-
-    getRecipeConfigOrThrow = (): NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig => {
-        return this.getRecipeInstanceOrThrow().getConfig<NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig>();
     };
 
     getIsEmbedded = (): boolean => {
@@ -103,7 +97,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
         );
 
         // If errors, return.
@@ -130,7 +124,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // Call API, only send first password.
         return await handleSubmitNewPasswordAPI(
             [formFields[0]],
-            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>,
+            this.getRecipeInstanceOrThrow(),
             this.state.token
         );
     };
@@ -139,7 +133,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         // Front end validation.
         const validationErrors = await validateForm(
             formFields,
-            this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature.enterEmailForm.formFields
+            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
         );
 
         // If errors, return.
@@ -152,14 +146,14 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
 
         return await enterEmailAPI(
             formFields,
-            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
+            this.getRecipeInstanceOrThrow()
         );
     };
 
     render = (): JSX.Element => {
-        const enterEmailFormFeature = this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature.enterEmailForm;
+        const enterEmailFormFeature = this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm;
 
-        const submitNewPasswordFormFeature = this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature
+        const submitNewPasswordFormFeature = this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature
             .submitNewPasswordForm;
 
         const submitNewPasswordForm: SubmitNewPasswordThemeProps = {
@@ -167,7 +161,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             formFields: submitNewPasswordFormFeature.formFields,
             submitNewPasswordAPI: this.submitNewPassword,
             onSuccess: () => {
-                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
+                this.getRecipeInstanceOrThrow().config.onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL",
                 });
             },
@@ -180,7 +174,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             styleFromInit: enterEmailFormFeature.style,
             formFields: enterEmailFormFeature.formFields,
             onSuccess: () => {
-                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
+                this.getRecipeInstanceOrThrow().config.onHandleEvent({
                     action: "RESET_PASSWORD_EMAIL_SENT",
                 });
             },
@@ -193,12 +187,12 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
          * Render.
          */
         return (
-            <FeatureWrapper isEmbedded={this.getIsEmbedded()} useShadowDom={this.getRecipeConfigOrThrow().useShadowDom}>
+            <FeatureWrapper isEmbedded={this.getIsEmbedded()} useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <ResetPasswordUsingTokenTheme
-                            rawPalette={this.getRecipeConfigOrThrow().palette}
+                            rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                             submitNewPasswordForm={submitNewPasswordForm}
                             enterEmailForm={enterEmailForm}
                             hasToken={hasToken}
@@ -207,7 +201,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
                     {/* Otherwise, custom theme is provided, propagate props. */}
                     {this.props.children &&
                         React.cloneElement(this.props.children, {
-                            rawPalette: this.getRecipeConfigOrThrow().palette,
+                            rawPalette: this.getRecipeInstanceOrThrow().config.palette,
                             submitNewPasswordForm,
                             enterEmailForm,
                             hasToken,

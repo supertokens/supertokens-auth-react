@@ -18,12 +18,12 @@
  */
 import React from "react";
 import { default as SignInAndUpBase } from ".";
-import EmailPassword from "../../../emailPassword";
+import EmailPassword from "../../../recipe";
 
 /*
  * Used for embedding in page.
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function SignInAndUp(props: any): JSX.Element {
-    return <SignInAndUpBase recipeId={EmailPassword.getInstanceOrThrow().recipeId} {...props} />;
+    return <SignInAndUpBase recipeId={EmailPassword.getInstanceOrThrow().config.recipeId} {...props} />;
 }

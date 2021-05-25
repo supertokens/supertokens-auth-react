@@ -24,7 +24,7 @@ import { EnterEmailAPIResponse, FormBaseAPIResponse, SubmitNewPasswordAPIRespons
 
 export async function handleSubmitNewPasswordAPI(
     formFields: APIFormField[],
-    recipe: RecipeModule<unknown, unknown, unknown>,
+    recipe: RecipeModule<any, any, any, any>,
     token: string
 ): Promise<FormBaseAPIResponse> {
     const response: SubmitNewPasswordAPIResponse = await recipe.httpRequest.post(
@@ -63,7 +63,7 @@ export async function handleSubmitNewPasswordAPI(
 
 export async function enterEmailAPI(
     formFields: APIFormField[],
-    recipe: RecipeModule<unknown, unknown, unknown>
+    recipe: RecipeModule<any, any, any, any>
 ): Promise<FormBaseAPIResponse> {
     const response: EnterEmailAPIResponse = await recipe.httpRequest.post(
         "/user/password/reset/token",

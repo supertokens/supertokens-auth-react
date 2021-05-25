@@ -567,3 +567,13 @@ declare global {
         documentMode?: any;
     }
 }
+
+
+export type SignInAndUpState =
+    | {
+        status: "LOADING" | "READY";
+    }
+    | {
+        status: "SUCCESSFUL";
+        user: User;
+    };

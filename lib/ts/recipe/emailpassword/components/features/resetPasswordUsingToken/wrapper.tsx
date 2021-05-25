@@ -18,12 +18,12 @@
  */
 import React from "react";
 import { default as ResetPasswordUsingTokenBase } from ".";
-import EmailPassword from "../../../emailPassword";
+import EmailPassword from "../../../recipe";
 
 /*
  * Used for embedding in page.
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function ResetPasswordUsingToken(props: any): JSX.Element {
-    return <ResetPasswordUsingTokenBase recipeId={EmailPassword.getInstanceOrThrow().recipeId} {...props} />;
+    return <ResetPasswordUsingTokenBase recipeId={EmailPassword.getInstanceOrThrow().config.recipeId} {...props} />;
 }

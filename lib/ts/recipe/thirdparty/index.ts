@@ -18,7 +18,7 @@
  */
 
 // /!\ ThirdParty must be imported before any of the providers to prevent circular dependencies.
-import ThirdParty from "./thirdparty";
+import ThirdParty from "./recipe";
 import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import EmailVerification from "./components/features/emailVerification/wrapper";

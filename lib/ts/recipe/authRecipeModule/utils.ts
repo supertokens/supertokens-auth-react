@@ -13,13 +13,8 @@
  * under the License.
  */
 
-import AuthRecipeModule from ".";
 import { Config, NormalisedConfig } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
-
-export function isAuthRecipeModule<T, S, R, N extends NormalisedConfig<T, S, R>>(x: unknown): x is AuthRecipeModule<T, S, R, N> {
-    return x instanceof AuthRecipeModule;
-}
 
 
 export function normaliseAuthRecipeModuleConfig<T, S, R>(

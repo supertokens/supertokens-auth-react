@@ -18,7 +18,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import SignInAndUpBase from ".";
-import ThirdPartyEmailPassword from "../../../thirdpartyEmailpassword";
+import ThirdPartyEmailPassword from "../../../recipe";
 
 /*
  * Component.

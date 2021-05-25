@@ -18,7 +18,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import SignInAndUpBase from ".";
-import ThirdParty from "../../../thirdparty";
+import ThirdParty from "../../../recipe";
 
 /*
  * Component.

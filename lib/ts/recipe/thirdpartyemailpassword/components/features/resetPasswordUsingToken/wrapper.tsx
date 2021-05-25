@@ -18,7 +18,7 @@
  */
 import React from "react";
 import ResetPasswordUsingTokenBase from "../../../../emailpassword/components/features/resetPasswordUsingToken";
-import ThirdPartyEmailPassword from "../../../thirdpartyEmailpassword";
+import ThirdPartyEmailPassword from "../../../recipe";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function ResetPasswordUsingToken(props: any): JSX.Element {

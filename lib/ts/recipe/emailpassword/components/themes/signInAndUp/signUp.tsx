@@ -20,7 +20,7 @@ import { jsx } from "@emotion/react";
 import { PureComponent } from "react";
 import { SignUpThemeProps } from "../../../types";
 
-import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";
+import SignUpFooter from "./signUpFooter";
 import SignUpHeader from "./signUpHeader";
 import StyleContext from "../../../../../styles/styleContext";
 import SignUpForm from "./signUpForm";

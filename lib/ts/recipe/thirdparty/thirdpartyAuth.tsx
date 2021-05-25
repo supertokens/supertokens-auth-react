@@ -19,7 +19,7 @@
 import * as React from "react";
 import { PureComponent } from "react";
 
-import ThirdParty from "./thirdparty";
+import ThirdParty from "./recipe";
 import { FeatureBaseProps } from "../../types";
 import SessionAuth from "../session/sessionAuth";
 import EmailVerificationAuth from "../emailverification/emailVerificationAuth";

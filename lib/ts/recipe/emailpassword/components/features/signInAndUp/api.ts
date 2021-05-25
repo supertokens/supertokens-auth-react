@@ -27,7 +27,7 @@ import { EmailExistsAPIResponse, FormBaseAPIResponse, SignInAPIResponse, SignUpA
 
 export async function signUpAPI(
     formFields: APIFormField[],
-    recipe: RecipeModule<unknown, unknown, unknown>
+    recipe: RecipeModule<any, any, any, any>
 ): Promise<FormBaseAPIResponse> {
     const response: SignUpAPIResponse = await recipe.httpRequest.post(
         "/signup",
@@ -58,7 +58,7 @@ export async function signUpAPI(
 
 export async function signInAPI(
     formFields: APIFormField[],
-    recipe: RecipeModule<unknown, unknown, unknown>
+    recipe: RecipeModule<any, any, any, any>
 ): Promise<FormBaseAPIResponse> {
     const response: SignInAPIResponse = await recipe.httpRequest.post(
         "/signin",
@@ -97,7 +97,7 @@ export async function signInAPI(
 
 export async function emailExistsAPI(
     email: string,
-    recipe: RecipeModule<unknown, unknown, unknown>
+    recipe: RecipeModule<any, any, any, any>
 ): Promise<string | undefined> {
     const response: EmailExistsAPIResponse = await recipe.httpRequest.get("/signup/email/exists", {}, "EMAIL_EXISTS", {
         email,

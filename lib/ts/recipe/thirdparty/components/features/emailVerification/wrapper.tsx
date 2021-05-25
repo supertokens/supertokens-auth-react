@@ -18,7 +18,7 @@
  */
 import React from "react";
 import { default as EmailVerificationBase } from "../../../../emailverification/components/features/emailVerification";
-import ThirdParty from "../../../thirdparty";
+import ThirdParty from "../../../recipe";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function EmailVerification(props: any): JSX.Element {
