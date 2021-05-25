@@ -13,7 +13,12 @@
  * under the License.
  */
 
-import { UserInputForAuthRecipeModule as EmailVerificationUserInput } from "../emailverification/types";
+import {
+    UserInputForAuthRecipeModule as EmailVerificationUserInput,
+    GetRedirectionURLContext as EmailVerificationGetRedirectionURLContext,
+    OnHandleEventContext as EmailVerificationOnHandleEventContext,
+    PreAPIHookContext as EmailVerificationPreAPIHookContext,
+} from "../emailverification/types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 
 export type User = {
@@ -39,13 +44,16 @@ export type GetRedirectionURLContext =
       }
     | {
           action: "SIGN_IN_AND_UP";
-      };
+      }
+    | EmailVerificationGetRedirectionURLContext;
 
-export type PreAPIHookContext = {
-    action: "SIGN_OUT" | "SIGN_IN";
-    requestInit: RequestInit;
-    url: string;
-};
+export type PreAPIHookContext =
+    | {
+          action: "SIGN_OUT" | "SIGN_IN";
+          requestInit: RequestInit;
+          url: string;
+      }
+    | EmailVerificationPreAPIHookContext;
 
 export type OnHandleEventContext =
     | {
@@ -55,4 +63,5 @@ export type OnHandleEventContext =
           action: "SUCCESS";
           isNewUser: boolean;
           user: { id: string; email: string };
-      };
+      }
+    | EmailVerificationOnHandleEventContext;

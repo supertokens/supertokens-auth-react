@@ -19,7 +19,7 @@
 
 import Session from "../session/recipe";
 import RecipeModule from "../recipeModule";
-import { NormalisedConfig, GetRedirectionURLContext } from "./types";
+import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { RecipeFeatureComponentMap, SuccessAPIResponse } from "../../types";
 import { signOut } from "./api";
 import EmailVerification from "../emailverification/recipe";
@@ -29,14 +29,13 @@ export default abstract class AuthRecipeModule<
     T,
     S,
     R,
-    N extends NormalisedConfig<T | GetRedirectionURLContext, S, R>
-> extends RecipeModule<T | GetRedirectionURLContext, S, R, N> {
+    N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
+> extends RecipeModule<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext, N> {
     emailVerification: EmailVerification;
 
     constructor(config: N) {
         super(config);
         this.emailVerification = new EmailVerification({
-            ...config.emailVerificationFeature,
             appInfo: config.appInfo,
             recipeId: config.recipeId,
             signOut: this.signOut,
@@ -52,6 +51,12 @@ export default abstract class AuthRecipeModule<
             redirectToSignIn: async (history: any) => {
                 this.redirectToAuth(undefined, history);
             },
+            getRedirectionURL: config.getRedirectionURL,
+            onHandleEvent: config.onHandleEvent,
+            palette: config.palette,
+            preAPIHook: config.preAPIHook,
+            useShadowDom: config.useShadowDom,
+            ...config.emailVerificationFeature,
         });
     }
 

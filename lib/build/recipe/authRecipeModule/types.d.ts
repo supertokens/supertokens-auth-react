@@ -1,4 +1,9 @@
-import { UserInputForAuthRecipeModule as EmailVerificationUserInput } from "../emailverification/types";
+import {
+    UserInputForAuthRecipeModule as EmailVerificationUserInput,
+    GetRedirectionURLContext as EmailVerificationGetRedirectionURLContext,
+    OnHandleEventContext as EmailVerificationOnHandleEventContext,
+    PreAPIHookContext as EmailVerificationPreAPIHookContext,
+} from "../emailverification/types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 export declare type User = {
     id: string;
@@ -19,12 +24,15 @@ export declare type GetRedirectionURLContext =
       }
     | {
           action: "SIGN_IN_AND_UP";
-      };
-export declare type PreAPIHookContext = {
-    action: "SIGN_OUT" | "SIGN_IN";
-    requestInit: RequestInit;
-    url: string;
-};
+      }
+    | EmailVerificationGetRedirectionURLContext;
+export declare type PreAPIHookContext =
+    | {
+          action: "SIGN_OUT" | "SIGN_IN";
+          requestInit: RequestInit;
+          url: string;
+      }
+    | EmailVerificationPreAPIHookContext;
 export declare type OnHandleEventContext =
     | {
           action: "SESSION_ALREADY_EXISTS";
@@ -36,4 +44,5 @@ export declare type OnHandleEventContext =
               id: string;
               email: string;
           };
-      };
+      }
+    | EmailVerificationOnHandleEventContext;
