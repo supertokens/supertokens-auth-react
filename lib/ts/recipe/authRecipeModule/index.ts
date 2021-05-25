@@ -19,35 +19,30 @@
 
 import Session from "../session/session";
 import RecipeModule from "../recipeModule";
-import { NormalisedAuthRecipeConfig, AuthRecipeModuleConfig, AuthRecipeModuleGetRedirectionURLContext } from "./types";
+import { NormalisedConfig, GetRedirectionURLContext } from "./types";
 import { RecipeFeatureComponentMap, SuccessAPIResponse } from "../../types";
 import { signOut } from "./api";
-import { normaliseAuthRecipeModuleConfig } from "./utils";
 import EmailVerification from "../emailverification";
 
 /*
  * Class.
  */
-export default abstract class AuthRecipeModule<T, S, R, N> extends RecipeModule<T, S, R> {
+export default abstract class AuthRecipeModule<T, S, R, N extends NormalisedConfig<T, S, R>> extends RecipeModule<T, S, R, N> {
     /*
      * Instance attributes.
      */
 
-    config: NormalisedAuthRecipeConfig & N;
     emailVerification?: EmailVerification<T, S, R>;
 
     /*
      * Constructor.
      */
-    constructor(config: AuthRecipeModuleConfig<T, S, R>, normalisedChildClassConfig: N) {
+    constructor(config: N) {
         super(config);
-        this.config = {
-            ...normaliseAuthRecipeModuleConfig(config),
-            ...normalisedChildClassConfig,
-        };
 
         if (this.config.emailVerificationFeature.mode === "REQUIRED") {
             this.emailVerification = new EmailVerification({
+                ...this.config,
                 ...this.config.emailVerificationFeature,
                 palette: this.config.palette,
                 useShadowDom: this.config.useShadowDom,
@@ -60,11 +55,11 @@ export default abstract class AuthRecipeModule<T, S, R, N> extends RecipeModule<
     }
 
     getAuthRecipeModuleDefaultRedirectionURL = async (
-        context: AuthRecipeModuleGetRedirectionURLContext
+        context: GetRedirectionURLContext
     ): Promise<string> => {
         switch (context.action) {
             case "SIGN_IN_AND_UP":
-                return `${this.appInfo.websiteBasePath.getAsStringDangerous()}?rid=${this.recipeId}`;
+                return `${this.config.appInfo.websiteBasePath.getAsStringDangerous()}?rid=${this.config.recipeId}`;
 
             case "SUCCESS":
                 return context.redirectToPath === undefined ? "/" : context.redirectToPath;

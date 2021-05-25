@@ -16,8 +16,8 @@
 /*
  * Imports.
  */
-import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
-import { EmailPasswordUserInput } from "./types";
+import { SuccessAPIResponse } from "../../types";
+import { Config } from "./types";
 
 import EmailPassword from "./emailPassword";
 import EmailPasswordAuth from "./components/emailPasswordAuth";
@@ -28,9 +28,9 @@ import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsing
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import EmailVerification from "./components/features/emailVerification/wrapper";
 import {
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordPreAPIHookContext,
-    EmailPasswordOnHandleEventContext,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
 } from "./types";
 /*
  * Class.
@@ -55,12 +55,8 @@ export default class EmailPasswordAPIWrapper {
      */
 
     static init(
-        config?: EmailPasswordUserInput
-    ): CreateRecipeFunction<
-        EmailPasswordGetRedirectionURLContext,
-        EmailPasswordPreAPIHookContext,
-        EmailPasswordOnHandleEventContext
-    > {
+        config?: Config
+    ) {
         return EmailPassword.init(config);
     }
 
@@ -95,7 +91,8 @@ export {
     ResetPasswordUsingTokenTheme,
     EmailVerification,
     EmailVerificationTheme,
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordPreAPIHookContext,
-    EmailPasswordOnHandleEventContext,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    Config
 };

@@ -17,33 +17,28 @@
  * Imports.
  */
 import HttpRequest from "../../httpRequest";
-import { NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
+import { RecipeFeatureComponentMap } from "../../types";
 
-import { appendQueryParamsToURL, getWindowOrThrow, normalisedRecipeModuleHooks } from "../../utils";
-import { NormalisedRecipeModuleHooks, RecipeModuleConfig } from "./types";
+import { appendQueryParamsToURL, getWindowOrThrow } from "../../utils";
+import { NormalisedConfig } from "./types";
 import NormalisedURLDomain from "../../normalisedURLDomain";
 
 /*
  * Class.
  */
-export default abstract class RecipeModule<T, S, R> {
+export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T, S, R>> {
     /*
      * Instance attributes.
      */
-
-    recipeId: string;
-    appInfo: NormalisedAppInfo;
     httpRequest: HttpRequest<T, S, R>;
-    hooks: NormalisedRecipeModuleHooks<T, S, R>;
+    config: N
 
     /*
      * Constructor.
      */
-    constructor(config: RecipeModuleConfig<T, S, R>) {
-        this.recipeId = config.recipeId;
-        this.appInfo = config.appInfo;
+    constructor(config: N) {
         this.httpRequest = new HttpRequest(this);
-        this.hooks = normalisedRecipeModuleHooks(config);
+        this.config = config;
     }
 
     redirect = async (context: T, history?: any, queryParams?: Record<string, string>): Promise<void> => {
@@ -55,8 +50,8 @@ export default abstract class RecipeModule<T, S, R> {
         } catch (e) {
             // For multi tenancy, If mismatch between websiteDomain and current location, prepand URL relative path with websiteDomain.
             const origin = new NormalisedURLDomain(getWindowOrThrow().location.origin).getAsStringDangerous();
-            if (origin !== this.appInfo.websiteDomain.getAsStringDangerous()) {
-                redirectUrl = `${this.appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
+            if (origin !== this.config.appInfo.websiteDomain.getAsStringDangerous()) {
+                redirectUrl = `${this.config.appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
                 getWindowOrThrow().location.href = redirectUrl;
                 return;
             }
@@ -74,7 +69,7 @@ export default abstract class RecipeModule<T, S, R> {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     getRedirectUrl = async (context: T): Promise<string> => {
         // If getRedirectionURL provided by user.
-        const redirectUrl = await this.hooks.getRedirectionURL(context);
+        const redirectUrl = await this.config.getRedirectionURL(context);
         if (redirectUrl !== undefined) {
             return redirectUrl;
         }

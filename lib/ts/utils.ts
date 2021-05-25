@@ -23,36 +23,7 @@ import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
-import { RecipeModuleHooks, NormalisedRecipeModuleHooks } from "./recipe/recipeModule/types";
 
-/*
- * NormalisedRecipeModuleHooks
- */
-export function normalisedRecipeModuleHooks<T, S, R>(
-    config: RecipeModuleHooks<T, S, R>
-): NormalisedRecipeModuleHooks<T, S, R> {
-    let { preAPIHook, onHandleEvent, getRedirectionURL } = config;
-    if (preAPIHook === undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        preAPIHook = async (context: any): Promise<RequestInit> => context.requestInit;
-    }
-
-    if (onHandleEvent === undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-        onHandleEvent = (_: unknown): void => {};
-    }
-
-    if (getRedirectionURL === undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        getRedirectionURL = async (_: unknown): Promise<string | undefined> => undefined;
-    }
-
-    return {
-        preAPIHook,
-        getRedirectionURL,
-        onHandleEvent,
-    };
-}
 
 /*
  * getRecipeIdFromPath

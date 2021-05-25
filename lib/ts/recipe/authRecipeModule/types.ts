@@ -13,133 +13,56 @@
  * under the License.
  */
 
-/*
- * Imports.
- */
 import { EmailVerificationUserInput, NormalisedEmailVerificationConfig } from "../emailverification/types";
-import { RecipeModuleConfig, RecipeModuleHooks } from "../recipeModule/types";
+import {
+    Config as RecipeModuleConfig,
+    NormalisedConfig as NormalisedRecipeModuleConfig
+} from "../recipeModule/types"
 
-/*
- * Types.
- */
 export type User = {
-    /*
-     * User id.
-     */
     id: string;
-
-    /*
-     * User email.
-     */
     email: string;
 };
 
-export type AuthRecipeModuleConfig<T, S, R> = AuthRecipeModuleUserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
-
-export type AuthRecipeModuleUserInput<T, S, R> = RecipeModuleHooks<T, S, R> & {
-    /*
-     * Use shadow Dom root.
-     */
-    useShadowDom?: boolean;
-
-    /*
-     * Styling palette.
-     */
-    palette?: Record<string, string>;
-
-    /*
-     * Email Verification configs.
-     */
+export type Config<T, S, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
-};
+} & RecipeModuleConfig<T, S, R>;
 
-export type NormalisedAuthRecipeConfig = {
-    /*
-     * Use shadow Dom root.
-     */
-    useShadowDom: boolean;
-
-    /*
-     * Styling palette.
-     */
-    palette: Record<string, string>;
-
-    /*
-     * Normalised Email Verification configs.
-     */
+export type NormalisedConfig<T, S, R> = {
     emailVerificationFeature: NormalisedEmailVerificationConfig;
-};
+} & NormalisedRecipeModuleConfig<T, S, R>;
 
-export type AuthRecipeModuleGetRedirectionURLContext =
+export type GetRedirectionURLContext =
     | {
-          /*
-           * Get Redirection URL Context
-           */
-          action: "SUCCESS";
-
-          /*
-           * isNewUser
-           */
-          isNewUser: boolean;
-
-          /*
-           * Redirect To Path represents the intended path the user wanted to access.
-           */
-          redirectToPath?: string;
-      }
+        action: "SUCCESS";
+        isNewUser: boolean;
+        redirectToPath?: string;
+    }
     | {
-          /*
-           * Get Redirection URL Context
-           */
-          action: "SIGN_IN_AND_UP" | "VERIFY_EMAIL";
-      };
+        action: "SIGN_IN_AND_UP" | "VERIFY_EMAIL";
+    };
 
-export type AuthRecipeModulePreAPIHookContext = {
-    /*
-     * Pre API Hook action.
-     */
+export type PreAPIHookContext = {
     action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_OUT" | "SIGN_IN";
-
-    /*
-     * Request object containing query params, body, headers.
-     */
     requestInit: RequestInit;
-
-    /*
-     * URL
-     */
     url: string;
 };
 
-export type AuthRecipeModuleOnHandleEventContext =
+export type OnHandleEventContext =
     | {
-          /*
-           * On Handle Event actions
-           */
-          action: "SESSION_ALREADY_EXISTS" | "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
-      }
+        action: "SESSION_ALREADY_EXISTS" | "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
+    }
     | {
-          /*
-           * Sign In success.
-           */
-          action: "SUCCESS";
-
-          /*
-           * isNewUser
-           */
-          isNewUser: boolean;
-
-          /*
-           * User returned from API.
-           */
-          user: { id: string; email: string };
-      };
+        action: "SUCCESS";
+        isNewUser: boolean;
+        user: { id: string; email: string };
+    };
 
 export type SignInAndUpState =
     | {
-          status: "LOADING" | "READY";
-      }
+        status: "LOADING" | "READY";
+    }
     | {
-          status: "SUCCESSFUL";
-          user: User;
-      };
+        status: "SUCCESSFUL";
+        user: User;
+    };

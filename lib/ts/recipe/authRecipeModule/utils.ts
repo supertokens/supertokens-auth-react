@@ -13,30 +13,22 @@
  * under the License.
  */
 
-/*
- * Imports.
- */
 import AuthRecipeModule from ".";
-import { getShouldUseShadowDom } from "../../utils";
 import { normaliseEmailVerificationFeature } from "../emailverification/utils";
-import { AuthRecipeModuleConfig, NormalisedAuthRecipeConfig } from "./types";
+import { Config, NormalisedConfig } from "./types";
+import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
-export function isAuthRecipeModule<T, S, R, N>(x: unknown): x is AuthRecipeModule<T, S, R, N> {
+export function isAuthRecipeModule<T, S, R, N extends NormalisedConfig<T, S, R>>(x: unknown): x is AuthRecipeModule<T, S, R, N> {
     return x instanceof AuthRecipeModule;
 }
 
-/*
- * normaliseAuthRecipeModuleConfig
- */
+
 export function normaliseAuthRecipeModuleConfig<T, S, R>(
-    config: AuthRecipeModuleConfig<T, S, R>
-): NormalisedAuthRecipeConfig {
-    const useShadowDom = config.useShadowDom === undefined ? true : config.useShadowDom;
-    const palette = config.palette === undefined ? {} : config.palette;
+    config: Config<T, S, R>
+): NormalisedConfig<T, S, R> {
     const emailVerificationFeature = normaliseEmailVerificationFeature(config.emailVerificationFeature);
     return {
-        useShadowDom: getShouldUseShadowDom(useShadowDom),
-        palette,
+        ...normaliseRecipeModuleConfig(config),
         emailVerificationFeature,
     };
 }

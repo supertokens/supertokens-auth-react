@@ -20,12 +20,11 @@
 import AuthRecipeModule from "../authRecipeModule";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, SuccessAPIResponse } from "../../types";
 import {
-    EmailPasswordConfig,
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordOnHandleEventContext,
-    EmailPasswordPreAPIHookContext,
-    EmailPasswordUserInput,
-    NormalisedEmailPasswordConfig,
+    GetRedirectionURLContext,
+    OnHandleEventContext,
+    PreAPIHookContext,
+    Config,
+    NormalisedConfig,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
@@ -40,10 +39,10 @@ import ResetPasswordUsingToken from "./components/features/resetPasswordUsingTok
  * Class.
  */
 export default class EmailPassword extends AuthRecipeModule<
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordPreAPIHookContext,
-    EmailPasswordOnHandleEventContext,
-    NormalisedEmailPasswordConfig
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    NormalisedConfig
 > {
     /*
      * Static Attributes.
@@ -54,8 +53,8 @@ export default class EmailPassword extends AuthRecipeModule<
     /*
      * Constructor.
      */
-    constructor(config: EmailPasswordConfig) {
-        super(config, normaliseEmailPasswordConfig(config));
+    constructor(config: Config) {
+        super(normaliseEmailPasswordConfig(config));
     }
 
     /*
@@ -65,21 +64,21 @@ export default class EmailPassword extends AuthRecipeModule<
     getFeatures = (): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
-            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
+            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.recipeId),
-                rid: this.recipeId,
+                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
+                rid: this.config.recipeId,
                 component: SignInAndUp,
             };
         }
 
         if (this.config.resetPasswordUsingTokenFeature.disableDefaultImplementation !== true) {
-            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
+            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.recipeId),
-                rid: this.recipeId,
+                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
+                rid: this.config.recipeId,
                 component: ResetPasswordUsingToken,
             };
         }
@@ -90,12 +89,11 @@ export default class EmailPassword extends AuthRecipeModule<
         };
     };
 
-    getDefaultRedirectionURL = async (context: EmailPasswordGetRedirectionURLContext): Promise<string> => {
+    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "RESET_PASSWORD") {
             const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
-            return `${this.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
-                this.recipeId
-            }`;
+            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${this.config.recipeId
+                }`;
         }
 
         return this.getAuthRecipeModuleDefaultRedirectionURL(context);
@@ -110,8 +108,8 @@ export default class EmailPassword extends AuthRecipeModule<
             show === undefined
                 ? undefined
                 : {
-                      show,
-                  }
+                    show,
+                }
         );
     };
 
@@ -120,18 +118,20 @@ export default class EmailPassword extends AuthRecipeModule<
      */
 
     static init(
-        config?: EmailPasswordUserInput
+        config?: Config
     ): CreateRecipeFunction<
-        EmailPasswordGetRedirectionURLContext,
-        EmailPasswordPreAPIHookContext,
-        EmailPasswordOnHandleEventContext
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        OnHandleEventContext,
+        NormalisedConfig
     > {
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<
-            EmailPasswordGetRedirectionURLContext,
-            EmailPasswordPreAPIHookContext,
-            EmailPasswordOnHandleEventContext
+            GetRedirectionURLContext,
+            PreAPIHookContext,
+            OnHandleEventContext,
+            NormalisedConfig
         > => {
             EmailPassword.instance = new EmailPassword({
                 ...config,
