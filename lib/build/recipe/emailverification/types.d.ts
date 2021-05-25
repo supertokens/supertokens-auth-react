@@ -1,20 +1,16 @@
 import { FeatureBaseConfig, SuccessAPIResponse, ThemeBaseProps } from "../../types";
 import { ThemeResponseGeneralError } from "../emailpassword/types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
-export declare type UserInput = {
-    signOut(): Promise<SuccessAPIResponse>;
-    redirectToSignIn(history?: any): Promise<void>;
-    postVerificationRedirect(history?: any): Promise<void>;
-    mode?: "OFF" | "REQUIRED";
-    disableDefaultImplementation?: boolean;
-    sendVerifyEmailScreen?: FeatureBaseConfig;
-    verifyEmailLinkClickedScreen?: FeatureBaseConfig;
-};
 export declare type UserInputForAuthRecipeModule = {
     mode?: "OFF" | "REQUIRED";
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
+};
+export declare type UserInput = UserInputForAuthRecipeModule & {
+    signOut(): Promise<SuccessAPIResponse>;
+    redirectToSignIn(history?: any): Promise<void>;
+    postVerificationRedirect(history?: any): Promise<void>;
 };
 export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;

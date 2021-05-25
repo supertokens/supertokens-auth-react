@@ -16,23 +16,23 @@ import { FeatureBaseConfig, SuccessAPIResponse, ThemeBaseProps } from "../../typ
 import { ThemeResponseGeneralError } from "../emailpassword/types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 
-export type UserInput = {
-    signOut(): Promise<SuccessAPIResponse>;
-    redirectToSignIn(history?: any): Promise<void>;
-    postVerificationRedirect(history?: any): Promise<void>;
-    mode?: "OFF" | "REQUIRED";
-    disableDefaultImplementation?: boolean;
-    sendVerifyEmailScreen?: FeatureBaseConfig;
-    verifyEmailLinkClickedScreen?: FeatureBaseConfig;
-};
-
+// For AuthRecipeModule, we don't need to take signOut,
+// redirectToSignIn and postVerificationRedirect as inputs from the user.
+// So we have UserInputForAuthRecipeModule for AuthRecipeModule, and UserInput
+// for anyone who wants to use this recipe directly.
 export type UserInputForAuthRecipeModule = {
     mode?: "OFF" | "REQUIRED";
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
 };
+export type UserInput = UserInputForAuthRecipeModule & {
+    signOut(): Promise<SuccessAPIResponse>;
+    redirectToSignIn(history?: any): Promise<void>;
+    postVerificationRedirect(history?: any): Promise<void>;
+};
 
+// Config is what does in the constructor of the recipe.
 export type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type NormalisedConfig = {
