@@ -19,14 +19,14 @@
 
 // /!\ ThirdParty must be imported before any of the providers to prevent circular dependencies.
 import ThirdParty from "./thirdparty";
-import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
+import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import EmailVerification from "./components/features/emailVerification/wrapper";
 import {
-    ThirdPartyUserInput,
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext,
+    Config,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
 } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUp from "./components/features/signInAndUp/wrapper";
@@ -44,25 +44,21 @@ export default class ThirdPartyAPIWrapper {
      */
 
     static init(
-        config: ThirdPartyUserInput
-    ): CreateRecipeFunction<
-        ThirdPartyGetRedirectionURLContext,
-        ThirdPartyPreAPIHookContext,
-        ThirdPartyOnHandleEventContext
-    > {
+        config: Config
+    ) {
         return ThirdParty.init(config);
     }
 
     static async signOut(): Promise<SuccessAPIResponse> {
-        return ThirdParty.signOut();
+        return ThirdParty.getInstanceOrThrow().signOut();
     }
 
     static async isEmailVerified(): Promise<boolean> {
-        return ThirdParty.isEmailVerified();
+        return ThirdParty.getInstanceOrThrow().emailVerification.isEmailVerified();
     }
 
     static redirectToAuth(show?: "signin" | "signup"): void {
-        return ThirdParty.redirectToAuth(show);
+        return ThirdParty.getInstanceOrThrow().redirectToAuth(show);
     }
 
     /*
@@ -99,7 +95,7 @@ export {
     redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
 };

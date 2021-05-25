@@ -27,7 +27,8 @@ import { signOut } from "./api";
 import EmailVerification from "../emailverification/recipe";
 
 export default abstract class AuthRecipeModule<
-    T, S, R, N extends NormalisedConfig<T, S, R>> extends RecipeModule<T, S, R, N> {
+    T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R>> extends RecipeModule<
+    T | GetRedirectionURLContext, S, R, N> {
 
     emailVerification: EmailVerification;
 
@@ -64,5 +65,17 @@ export default abstract class AuthRecipeModule<
         return Session.getInstanceOrThrow().doesSessionExist();
     };
 
-    abstract redirectToAuth(show?: "signin" | "signup"): void;
+    redirectToAuth = (show?: "signin" | "signup") => {
+        this.redirect(
+            {
+                action: "SIGN_IN_AND_UP",
+            },
+            undefined,
+            show === undefined
+                ? undefined
+                : {
+                    show,
+                }
+        );
+    }
 }

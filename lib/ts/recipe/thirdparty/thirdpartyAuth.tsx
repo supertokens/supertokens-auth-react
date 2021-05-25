@@ -37,9 +37,9 @@ class ThirdPartyAuth extends PureComponent<FeatureBaseProps & { requireAuth?: bo
         return (
             <SessionAuth
                 requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}
-                recipeId={ThirdParty.getInstanceOrThrow().recipeId}
+                recipeId={ThirdParty.getInstanceOrThrow().config.recipeId}
                 history={this.props.history}>
-                <EmailVerificationAuth recipeId={ThirdParty.getInstanceOrThrow().recipeId} history={this.props.history}>
+                <EmailVerificationAuth recipeId={ThirdParty.getInstanceOrThrow().config.recipeId} history={this.props.history}>
                     {this.props.children}
                 </EmailVerificationAuth>
             </SessionAuth>
@@ -57,7 +57,7 @@ export default function ThirdPartyAuthWrapper({
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
     if (reactRouterDom === undefined) {
         return (
-            <ThirdPartyAuth requireAuth={requireAuth} recipeId={ThirdParty.getInstanceOrThrow().recipeId}>
+            <ThirdPartyAuth requireAuth={requireAuth} recipeId={ThirdParty.getInstanceOrThrow().config.recipeId}>
                 {children}
             </ThirdPartyAuth>
         );
@@ -65,7 +65,7 @@ export default function ThirdPartyAuthWrapper({
 
     const Component = reactRouterDom.withRouter(ThirdPartyAuth);
     return (
-        <Component requireAuth={requireAuth} recipeId={ThirdParty.getInstanceOrThrow().recipeId}>
+        <Component requireAuth={requireAuth} recipeId={ThirdParty.getInstanceOrThrow().config.recipeId}>
             {children}
         </Component>
     );

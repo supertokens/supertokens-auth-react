@@ -18,14 +18,13 @@
  */
 
 import AuthRecipeModule from "../authRecipeModule";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, SuccessAPIResponse } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
-    ThirdPartyConfig,
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyUserInput,
-    NormalisedThirdPartyConfig,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext,
+    GetRedirectionURLContext,
+    Config,
+    NormalisedConfig,
+    PreAPIHookContext,
+    OnHandleEventContext,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { matchRecipeIdUsingState, normaliseThirdPartyConfig } from "./utils";
@@ -39,10 +38,10 @@ import SignInAndUpCallback from "./components/features/signInAndUpCallback";
  * Class.
  */
 export default class ThirdParty extends AuthRecipeModule<
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext,
-    NormalisedThirdPartyConfig
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    NormalisedConfig
 > {
     /*
      * Static Attributes.
@@ -53,8 +52,8 @@ export default class ThirdParty extends AuthRecipeModule<
     /*
      * Constructor.
      */
-    constructor(config: ThirdPartyConfig) {
-        super(config, normaliseThirdPartyConfig(config));
+    constructor(config: Config) {
+        super(normaliseThirdPartyConfig(config));
     }
 
     /*
@@ -64,23 +63,23 @@ export default class ThirdParty extends AuthRecipeModule<
     getFeatures = (): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
-            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
+            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.recipeId),
-                rid: this.recipeId,
+                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
+                rid: this.config.recipeId,
                 component: SignInAndUp,
             };
         }
 
         // Add callback route for each provider.
         this.config.signInAndUpFeature.providers.forEach((provider) => {
-            const normalisedFullPath = this.appInfo.websiteBasePath.appendPath(
+            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 component: SignInAndUpCallback,
-                rid: this.recipeId,
-                matches: matchRecipeIdUsingState(this.recipeId),
+                rid: this.config.recipeId,
+                matches: matchRecipeIdUsingState(this.config.recipeId),
             };
         });
 
@@ -90,27 +89,12 @@ export default class ThirdParty extends AuthRecipeModule<
         };
     };
 
-    getDefaultRedirectionURL = async (context: ThirdPartyGetRedirectionURLContext): Promise<string> => {
-        switch (context.action) {
-            case "GET_REDIRECT_URL":
-                return context.provider.getRedirectURL();
-            default:
-                return this.getAuthRecipeModuleDefaultRedirectionURL(context);
+    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
+        if (context.action === "GET_REDIRECT_URL") {
+            return context.provider.getRedirectURL();
+        } else {
+            return this.getAuthRecipeModuleDefaultRedirectionURL(context);
         }
-    };
-
-    redirectToAuth = (show?: "signin" | "signup"): void => {
-        this.redirect(
-            {
-                action: "SIGN_IN_AND_UP",
-            },
-            undefined,
-            show === undefined
-                ? undefined
-                : {
-                      show,
-                  }
-        );
     };
 
     /*
@@ -118,18 +102,20 @@ export default class ThirdParty extends AuthRecipeModule<
      */
 
     static init(
-        config: ThirdPartyUserInput
+        config: Config
     ): CreateRecipeFunction<
-        ThirdPartyGetRedirectionURLContext,
-        ThirdPartyPreAPIHookContext,
-        ThirdPartyOnHandleEventContext
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        OnHandleEventContext,
+        NormalisedConfig
     > {
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<
-            ThirdPartyGetRedirectionURLContext,
-            ThirdPartyPreAPIHookContext,
-            ThirdPartyOnHandleEventContext
+            GetRedirectionURLContext,
+            PreAPIHookContext,
+            OnHandleEventContext,
+            NormalisedConfig
         > => {
             ThirdParty.instance = new ThirdParty({
                 ...config,
@@ -138,14 +124,6 @@ export default class ThirdParty extends AuthRecipeModule<
             });
             return ThirdParty.instance;
         };
-    }
-
-    static signOut(): Promise<SuccessAPIResponse> {
-        return ThirdParty.getInstanceOrThrow().signOut();
-    }
-
-    static async isEmailVerified(): Promise<boolean> {
-        return await ThirdParty.getInstanceOrThrow().isEmailVerified();
     }
 
     static getInstanceOrThrow(): ThirdParty {
@@ -163,10 +141,6 @@ export default class ThirdParty extends AuthRecipeModule<
         }
 
         return ThirdParty.instance;
-    }
-
-    static redirectToAuth(show?: "signin" | "signup"): void {
-        return ThirdParty.getInstanceOrThrow().redirectToAuth(show);
     }
 
     /*

@@ -22,24 +22,26 @@ import Provider from "./providers";
 import Custom from "./providers/custom";
 import {
     NormalisedSignInAndUpFeatureConfig,
-    NormalisedThirdPartyConfig,
+    NormalisedConfig,
     SignInAndUpFeatureUserInput,
     StateObject,
-    ThirdPartyConfig,
+    Config,
 } from "./types";
+import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
 /*
  * Methods.
  */
 export function normaliseThirdPartyConfig(
-    config: ThirdPartyConfig,
+    config: Config,
     allowEmptyProviders = false
-): NormalisedThirdPartyConfig {
+): NormalisedConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
         config.signInAndUpFeature,
         allowEmptyProviders
     );
     return {
+        ...normaliseRecipeModuleConfig(config),
         signInAndUpFeature,
     };
 }

@@ -15,47 +15,31 @@
 
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
-    AuthRecipeModuleGetRedirectionURLContext,
-    AuthRecipeModuleOnHandleEventContext,
-    AuthRecipeModulePreAPIHookContext,
-    AuthRecipeModuleUserInput,
-    SignInAndUpState,
+    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
+    OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
+    PreAPIHookContext as AuthRecipeModulePreAPIHookContext,
     User,
+    Config as AuthRecipeModuleConfig,
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+    SignInAndUpState
 } from "../authRecipeModule/types";
-import { RecipeModuleConfig } from "../recipeModule/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 
-export type ThirdPartyUserInput = AuthRecipeModuleUserInput<
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext
-> & {
-    /*
-     * Styling palette.
-     */
-    palette?: Record<string, string>;
-
-    /*
-     * Use shadow Dom root.
-     */
-    useShadowDom?: boolean;
-
-    /*
-     * Sign In and Sign Up feature.
-     */
+export type Config = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;
-};
+} & AuthRecipeModuleConfig<
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext
+>;
 
-export type ThirdPartyConfig = ThirdPartyUserInput &
-    RecipeModuleConfig<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext>;
-
-export type NormalisedThirdPartyConfig = {
-    /*
-     * Sign In and Sign Up feature.
-     */
+export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
-};
+} & NormalisedAuthRecipeModuleConfig<
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
@@ -101,40 +85,40 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     providers: Provider[];
 };
 
-export type ThirdPartyGetRedirectionURLContext =
+export type GetRedirectionURLContext =
     | AuthRecipeModuleGetRedirectionURLContext
     | {
-          /*
-           * action
-           */
-          action: "GET_REDIRECT_URL";
+        /*
+         * action
+         */
+        action: "GET_REDIRECT_URL";
 
-          /*
-           * Provider Id
-           */
-          provider: Provider;
-      };
+        /*
+         * Provider Id
+         */
+        provider: Provider;
+    };
 
-export type ThirdPartyPreAPIHookContext =
+export type PreAPIHookContext =
     | AuthRecipeModulePreAPIHookContext
     | {
-          /*
-           * action
-           */
-          action: "GET_AUTHORISATION_URL";
+        /*
+         * action
+         */
+        action: "GET_AUTHORISATION_URL";
 
-          /*
-           * Request object containing query params, body, headers.
-           */
-          requestInit: RequestInit;
+        /*
+         * Request object containing query params, body, headers.
+         */
+        requestInit: RequestInit;
 
-          /*
-           * URL
-           */
-          url: string;
-      };
+        /*
+         * URL
+         */
+        url: string;
+    };
 
-export type ThirdPartyOnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
+export type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
 
 export type SignInAndUpThemeProps = {
     /*
@@ -167,58 +151,58 @@ export type SignInAndUpThemeProps = {
      */
     termsOfServiceLink?: string;
 } & (
-    | {
-          status: "READY" | "LOADING" | "SUCCESSFUL" | "GENERAL_ERROR";
-      }
-    | {
-          status: "CUSTOM_ERROR";
-          error: string;
-      }
-);
+        | {
+            status: "READY" | "LOADING" | "SUCCESSFUL" | "GENERAL_ERROR";
+        }
+        | {
+            status: "CUSTOM_ERROR";
+            error: string;
+        }
+    );
 
 export type ThirdPartySignInAndUpThemeState =
     | {
-          /*
-           * Status
-           */
-          status: "READY" | "LOADING" | "SUCCESSFUL";
-      }
+        /*
+         * Status
+         */
+        status: "READY" | "LOADING" | "SUCCESSFUL";
+    }
     | {
-          /*
-           * Status
-           */
-          status: "ERROR";
+        /*
+         * Status
+         */
+        status: "ERROR";
 
-          /*
-           * Error Message
-           */
-          message: string;
-      };
+        /*
+         * Error Message
+         */
+        message: string;
+    };
 
 export type SignInAndUpAPIResponse =
     | {
-          /*
-           * Status.
-           */
-          status: "OK";
+        /*
+         * Status.
+         */
+        status: "OK";
 
-          /*
-           * URL.
-           */
-          createdNewUser: boolean;
+        /*
+         * URL.
+         */
+        createdNewUser: boolean;
 
-          /*
-           * User
-           */
-          user: User;
-      }
+        /*
+         * User
+         */
+        user: User;
+    }
     | {
-          status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-      }
+        status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+    }
     | {
-          status: "FIELD_ERROR";
-          error: string;
-      };
+        status: "FIELD_ERROR";
+        error: string;
+    };
 
 export type AuthorisationURLAPIResponse = {
     /*
@@ -235,15 +219,15 @@ export type AuthorisationURLAPIResponse = {
 export type ThirdPartySignInAndUpState =
     | SignInAndUpState
     | {
-          /*
-           * Status.
-           */
-          status: "GENERAL_ERROR";
-      }
+        /*
+         * Status.
+         */
+        status: "GENERAL_ERROR";
+    }
     | {
-          status: "CUSTOM_ERROR";
-          error: string;
-      };
+        status: "CUSTOM_ERROR";
+        error: string;
+    };
 
 export type StateObject = {
     /*

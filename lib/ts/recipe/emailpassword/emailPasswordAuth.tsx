@@ -19,11 +19,11 @@
 import * as React from "react";
 import { PureComponent } from "react";
 
-import EmailPassword from "../emailPassword";
-import { FeatureBaseProps } from "../../../types";
-import SessionAuth from "../../session/sessionAuth";
-import EmailVerificationAuth from "../../emailverification/emailVerificationAuth";
-import SuperTokens from "../../../superTokens";
+import EmailPassword from "./recipe";
+import { FeatureBaseProps } from "../../types";
+import SessionAuth from "../session/sessionAuth";
+import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
+import SuperTokens from "../../superTokens";
 
 /*
  * Component.
@@ -37,10 +37,10 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?:
         return (
             <SessionAuth
                 requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}
-                recipeId={EmailPassword.getInstanceOrThrow().recipeId}
+                recipeId={EmailPassword.getInstanceOrThrow().config.recipeId}
                 history={this.props.history}>
                 <EmailVerificationAuth
-                    recipeId={EmailPassword.getInstanceOrThrow().recipeId}
+                    recipeId={EmailPassword.getInstanceOrThrow().config.recipeId}
                     history={this.props.history}>
                     {this.props.children}
                 </EmailVerificationAuth>
@@ -59,7 +59,7 @@ export default function EmailPasswordAuthWrapper({
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
     if (reactRouterDom === undefined) {
         return (
-            <EmailPasswordAuth requireAuth={requireAuth} recipeId={EmailPassword.getInstanceOrThrow().recipeId}>
+            <EmailPasswordAuth requireAuth={requireAuth} recipeId={EmailPassword.getInstanceOrThrow().config.recipeId}>
                 {children}
             </EmailPasswordAuth>
         );
@@ -67,7 +67,7 @@ export default function EmailPasswordAuthWrapper({
 
     const Component = reactRouterDom.withRouter(EmailPasswordAuth);
     return (
-        <Component requireAuth={requireAuth} recipeId={EmailPassword.getInstanceOrThrow().recipeId}>
+        <Component requireAuth={requireAuth} recipeId={EmailPassword.getInstanceOrThrow().config.recipeId}>
             {children}
         </Component>
     );

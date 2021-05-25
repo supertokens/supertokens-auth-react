@@ -20,7 +20,7 @@ import { SuccessAPIResponse } from "../../types";
 import { Config } from "./types";
 
 import EmailPassword from "./recipe";
-import EmailPasswordAuth from "./components/emailPasswordAuth";
+import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
@@ -61,15 +61,15 @@ export default class EmailPasswordAPIWrapper {
     }
 
     static async signOut(): Promise<SuccessAPIResponse> {
-        return EmailPassword.signOut();
+        return EmailPassword.getInstanceOrThrow().signOut();
     }
 
     static async isEmailVerified(): Promise<boolean> {
-        return EmailPassword.isEmailVerified();
+        return EmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified();
     }
 
     static redirectToAuth(show?: "signin" | "signup"): void {
-        return EmailPassword.redirectToAuth(show);
+        return EmailPassword.getInstanceOrThrow().redirectToAuth(show);
     }
 }
 
