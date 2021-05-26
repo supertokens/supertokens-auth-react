@@ -101,6 +101,7 @@ class SignInAndUpTheme extends React.PureComponent<
                     )}
                     {this.props.hideEmailPassword !== true && (
                         <EmailPasswordSignInAndUp
+                            recipeImplemetation={this.props.emailPasswordRecipeImplementation}
                             history={this.props.history}
                             recipeId={this.props.recipeId}
                             isEmbedded={true}>

@@ -15,23 +15,16 @@
 import ThirdPartyEmailPassword from "./recipe";
 import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import EmailVerification from "./components/features/emailVerification/wrapper";
-import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
-import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 /*
  * Class.
  */
-export default class ThirdPartyEmailPasswordAPIWrapper {
-    /*
-     * Static attributes.
-     */
-
+export default class Wrapper {
     static init(config: UserInput) {
         return ThirdPartyEmailPassword.init(config);
     }
@@ -48,30 +41,29 @@ export default class ThirdPartyEmailPasswordAPIWrapper {
         return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(show);
     }
 
-    /*
-     * Providers
-     */
     static Google = Google;
     static Apple = Apple;
     static Facebook = Facebook;
     static Github = Github;
     static ThirdPartyEmailPasswordAuth = ThirdPartyEmailPasswordAuth;
-    static SignInAndUp = SignInAndUp;
+    static SignInAndUp = ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinup");
     static SignInAndUpTheme = SignInAndUpTheme;
-    static ResetPasswordUsingToken = ResetPasswordUsingToken;
+    static ResetPasswordUsingToken = ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword");
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
-    static EmailVerification = EmailVerification;
+    static EmailVerification = ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification");
     static EmailVerificationTheme = EmailVerificationTheme;
 }
 
-const init = ThirdPartyEmailPasswordAPIWrapper.init;
-const signOut = ThirdPartyEmailPasswordAPIWrapper.signOut;
-const isEmailVerified = ThirdPartyEmailPasswordAPIWrapper.isEmailVerified;
-const redirectToAuth = ThirdPartyEmailPasswordAPIWrapper.redirectToAuth;
+const init = Wrapper.init;
+const signOut = Wrapper.signOut;
+const isEmailVerified = Wrapper.isEmailVerified;
+const redirectToAuth = Wrapper.redirectToAuth;
+const SignInAndUp = Wrapper.SignInAndUp;
+const EmailVerification = Wrapper.EmailVerification;
+const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 
 export {
     ThirdPartyEmailPasswordAuth,
-    ThirdPartyEmailPasswordAPIWrapper,
     init,
     Apple,
     Google,

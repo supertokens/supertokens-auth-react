@@ -43,7 +43,7 @@ export default function SignInForm(
                 if (response.status === "WRONG_CREDENTIALS_ERROR") {
                     return {
                         status: "GENERAL_ERROR",
-                        message: "Incorrect email and password combination"
+                        message: "Incorrect email and password combination",
                     };
                 } else {
                     return response;

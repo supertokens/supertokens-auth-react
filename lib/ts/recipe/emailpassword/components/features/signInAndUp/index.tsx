@@ -36,8 +36,7 @@ import { SignInAndUpState, RecipeInterface } from "../../../types";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import SuperTokens from "../../../../../superTokens";
 
-
-type PropType = FeatureBaseProps & { recipeImplemetation: RecipeInterface }
+type PropType = FeatureBaseProps & { recipeImplemetation: RecipeInterface };
 
 class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     /*
@@ -162,7 +161,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                         if (emailExists) {
                             return "This email already exists. Please sign in instead";
                         }
-                    } catch (_) { }
+                    } catch (_) {}
                     return undefined;
                 };
             })(),
@@ -200,10 +199,12 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                 const response = await this.props.recipeImplemetation.signIn(formFields, preApiHook);
 
                 this.setState((oldState) => {
-                    return (oldState.status !== "READY" || response.status !== "OK") ? oldState : {
-                        status: "SUCCESSFUL",
-                        user: response.user
-                    };
+                    return oldState.status !== "READY" || response.status !== "OK"
+                        ? oldState
+                        : {
+                              status: "SUCCESSFUL",
+                              user: response.user,
+                          };
                 });
 
                 return response;
@@ -212,16 +213,18 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                 const response = await this.props.recipeImplemetation.signUp(formFields, preAPIHook);
 
                 this.setState((oldState) => {
-                    return (oldState.status !== "READY" || response.status !== "OK") ? oldState : {
-                        status: "SUCCESSFUL",
-                        user: response.user
-                    };
+                    return oldState.status !== "READY" || response.status !== "OK"
+                        ? oldState
+                        : {
+                              status: "SUCCESSFUL",
+                              user: response.user,
+                          };
                 });
 
                 return response;
-            }
-        }
-    }
+            },
+        };
+    };
 
     render = (): JSX.Element => {
         const signInAndUpFeature = this.getRecipeInstanceOrThrow().config.signInAndUpFeature;

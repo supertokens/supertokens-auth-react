@@ -21,10 +21,8 @@
 import ThirdParty from "./recipe";
 import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import EmailVerification from "./components/features/emailVerification/wrapper";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
-import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import Apple from "./providers/apple";
 import Google from "./providers/google";
@@ -33,7 +31,7 @@ import Github from "./providers/github";
 /*
  * Class.
  */
-export default class ThirdPartyAPIWrapper {
+export default class Wrapper {
     /*
      * Static attributes.
      */
@@ -62,20 +60,21 @@ export default class ThirdPartyAPIWrapper {
     static Facebook = Facebook;
     static Github = Github;
     static ThirdPartyAuth = ThirdPartyAuth;
-    static SignInAndUp = SignInAndUp;
+    static SignInAndUp = ThirdParty.getInstanceOrThrow().getFeatureComponent("signinup");
     static SignInAndUpTheme = SignInAndUpTheme;
-    static EmailVerification = EmailVerification;
+    static EmailVerification = ThirdParty.getInstanceOrThrow().getFeatureComponent("emailverification");
     static EmailVerificationTheme = EmailVerificationTheme;
 }
 
-const init = ThirdPartyAPIWrapper.init;
-const signOut = ThirdPartyAPIWrapper.signOut;
-const isEmailVerified = ThirdPartyAPIWrapper.isEmailVerified;
-const redirectToAuth = ThirdPartyAPIWrapper.redirectToAuth;
+const init = Wrapper.init;
+const signOut = Wrapper.signOut;
+const isEmailVerified = Wrapper.isEmailVerified;
+const redirectToAuth = Wrapper.redirectToAuth;
+const SignInAndUp = Wrapper.SignInAndUp;
+const EmailVerification = Wrapper.EmailVerification;
 
 export {
     ThirdPartyAuth,
-    ThirdPartyAPIWrapper,
     init,
     Apple,
     Google,

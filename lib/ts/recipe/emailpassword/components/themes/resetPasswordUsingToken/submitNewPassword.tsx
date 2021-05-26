@@ -21,10 +21,9 @@ import { jsx } from "@emotion/react";
 import { PureComponent, Fragment } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
-import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from '../../../types';
+import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../types";
 import { FormRow, Button } from "../../library";
 import FormBase from "../../library/formBase";
-
 
 export default class SubmitNewPasswordTheme extends PureComponent<
     SubmitNewPasswordThemeProps,
@@ -95,16 +94,21 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                         onSuccess={this.onSuccess}
                         validateOnBlur={true}
                         callAPI={async (fields) => {
-                            let response = await this.props.recipeImplementation.submitNewPassword(fields, this.props.token);
+                            let response = await this.props.recipeImplementation.submitNewPassword(
+                                fields,
+                                this.props.token
+                            );
                             if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
                                 return {
                                     status: "GENERAL_ERROR",
-                                    message: "Invalid password reset token"
+                                    message: "Invalid password reset token",
                                 };
                             }
-                            return response.status === "FIELD_ERROR" ? response : {
-                                status: "OK"
-                            };
+                            return response.status === "FIELD_ERROR"
+                                ? response
+                                : {
+                                      status: "OK",
+                                  };
                         }}
                         showLabels={true}
                         header={

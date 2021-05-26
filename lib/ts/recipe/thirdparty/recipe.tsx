@@ -17,6 +17,7 @@
  * Imports.
  */
 
+import React from "react";
 import AuthRecipeModule from "../authRecipeModule";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
@@ -67,8 +68,7 @@ export default class ThirdParty extends AuthRecipeModule<
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                rid: this.config.recipeId,
-                component: SignInAndUp,
+                component: () => this.getFeatureComponent("signinup"),
             };
         }
 
@@ -78,9 +78,8 @@ export default class ThirdParty extends AuthRecipeModule<
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
-                component: SignInAndUpCallback,
-                rid: this.config.recipeId,
                 matches: matchRecipeIdUsingState(this.config.recipeId),
+                component: () => this.getFeatureComponent("signinupcallback"),
             };
         });
 
@@ -88,6 +87,16 @@ export default class ThirdParty extends AuthRecipeModule<
             ...features,
             ...this.getAuthRecipeModuleFeatures(),
         };
+    };
+
+    getFeatureComponent = (componentName: "signinup" | "signinupcallback" | "emailverification"): JSX.Element => {
+        if (componentName === "signinup") {
+            return <SignInAndUp recipeId={this.config.recipeId} />;
+        } else if (componentName === "signinupcallback") {
+            return <SignInAndUpCallback recipeId={this.config.recipeId} />;
+        } else {
+            return this.getAuthRecipeModuleFeatureComponent(componentName);
+        }
     };
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {

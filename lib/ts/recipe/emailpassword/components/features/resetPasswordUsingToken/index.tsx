@@ -25,7 +25,7 @@ import {
     OnHandleEventContext,
     PreAPIHookContext,
     NormalisedConfig,
-    RecipeInterface
+    RecipeInterface,
 } from "../../../types";
 import { ResetPasswordUsingTokenTheme } from "../../..";
 import { FeatureBaseProps } from "../../../../../types";
@@ -35,8 +35,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import SuperTokens from "../../../../../superTokens";
 
-
-type PropType = FeatureBaseProps & { recipeImplemetation: RecipeInterface }
+type PropType = FeatureBaseProps & { recipeImplemetation: RecipeInterface };
 
 class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | undefined }> {
     /*
@@ -83,7 +82,6 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
         return false;
     };
 
-
     render = (): JSX.Element => {
         const enterEmailFormFeature =
             this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm;
@@ -103,7 +101,7 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
             onSignInClicked: () => {
                 this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath("signin", this.props.history);
             },
-            token: this.state.token || ""
+            token: this.state.token || "",
         };
 
         const enterEmailForm = {

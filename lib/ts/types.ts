@@ -108,11 +108,6 @@ export type NormalisedAppInfo = {
  */
 export type ComponentWithRecipeAndMatchingMethod = {
     /*
-     * recipeId of the component.
-     */
-    rid: string;
-
-    /*
      * Component.
      */
     component: ReactComponentClass;
@@ -275,6 +270,6 @@ export type FeatureBaseProps = {
 };
 
 export type PreAPIHookFunction = (context: {
-    requestInit: RequestInit,
-    url: string
-}) => Promise<RequestInit | { url?: string; requestInit: RequestInit }>
+    requestInit: RequestInit;
+    url: string;
+}) => Promise<RequestInit | { url?: string; requestInit: RequestInit }>;

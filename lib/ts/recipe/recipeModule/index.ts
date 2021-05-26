@@ -84,4 +84,6 @@ export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T
     }
 
     abstract getFeatures(): RecipeFeatureComponentMap;
+
+    abstract getFeatureComponent(componentName: string): JSX.Element;
 }

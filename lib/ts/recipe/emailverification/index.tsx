@@ -19,13 +19,12 @@
 import { UserInput } from "./types";
 import EmailVerificationRecipe from "./recipe";
 import EmailVerificationTheme from "./components/themes/emailVerification";
-import EmailVerification from "./components/features/emailVerification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 /*
  * Class.
  */
 export default class Wrapper {
-    static EmailVerification = EmailVerification;
+    static EmailVerification = EmailVerificationRecipe.getInstanceOrThrow().getFeatureComponent("emailverification");
     static EmailVerificationTheme = EmailVerificationTheme;
 
     static init(config: UserInput) {
@@ -39,6 +38,7 @@ export default class Wrapper {
 
 const init = Wrapper.init;
 const isEmailVerified = Wrapper.isEmailVerified;
+const EmailVerification = Wrapper.EmailVerification;
 
 export {
     init,

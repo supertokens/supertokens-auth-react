@@ -119,7 +119,7 @@ export default class SuperTokens {
         if (FeatureComponentWithRecipeId === undefined) {
             return undefined;
         }
-        return <FeatureComponentWithRecipeId.component recipeId={FeatureComponentWithRecipeId.rid} />;
+        return <FeatureComponentWithRecipeId.component />;
     };
 
     getPathsToFeatureComponentWithRecipeIdMap = (): BaseFeatureComponentMap => {

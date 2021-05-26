@@ -26,6 +26,7 @@ import {
     NormalisedResetPasswordUsingTokenFeatureConfig,
     NormalisedSignInFormFeatureConfig,
     NormalisedSignUpFormFeatureConfig,
+    RecipeInterface,
     ResetPasswordUsingTokenUserInput,
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
@@ -121,38 +122,12 @@ export type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAP
 export type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 
 export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
-    /*
-     * RecipeId
-     */
     recipeId: string;
-
-    /*
-     * History provided by react-router
-     */
     history?: any;
-
-    /*
-     * Default To Sign Up
-     */
     defaultToSignUp: boolean;
-
-    /*
-     * hideThirdParty
-     */
     hideThirdParty?: boolean;
-
-    /*
-     * hideEmailPassword
-     */
     hideEmailPassword?: boolean;
-
-    /*
-     * Raw Palette
-     */
     rawPalette: Record<string, string>;
-
-    /*
-     * StyleFromInit
-     */
     styleFromInit: Styles;
+    emailPasswordRecipeImplementation: RecipeInterface;
 };

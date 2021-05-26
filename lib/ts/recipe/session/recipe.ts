@@ -69,9 +69,9 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         });
     }
 
-    /*
-     * Instance methods.
-     */
+    getFeatureComponent = (_: string): JSX.Element => {
+        throw new Error("should never come here");
+    };
 
     getFeatures = (): RecipeFeatureComponentMap => {
         return {};

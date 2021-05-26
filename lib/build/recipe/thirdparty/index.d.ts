@@ -1,16 +1,22 @@
+/// <reference types="react" />
 import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import EmailVerification from "./components/features/emailVerification/wrapper";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
-import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-export default class ThirdPartyAPIWrapper {
-    static init(config: UserInput): import("../../types").CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, import("../authRecipeModule/types").OnHandleEventContext, import("./types").NormalisedConfig>;
+export default class Wrapper {
+    static init(
+        config: UserInput
+    ): import("../../types").CreateRecipeFunction<
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        import("../authRecipeModule/types").OnHandleEventContext,
+        import("./types").NormalisedConfig
+    >;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
     static redirectToAuth(show?: "signin" | "signup"): void;
@@ -19,13 +25,33 @@ export default class ThirdPartyAPIWrapper {
     static Facebook: typeof Facebook;
     static Github: typeof Github;
     static ThirdPartyAuth: typeof ThirdPartyAuth;
-    static SignInAndUp: typeof SignInAndUp;
+    static SignInAndUp: JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
-    static EmailVerification: typeof EmailVerification;
+    static EmailVerification: JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
-declare const init: typeof ThirdPartyAPIWrapper.init;
-declare const signOut: typeof ThirdPartyAPIWrapper.signOut;
-declare const isEmailVerified: typeof ThirdPartyAPIWrapper.isEmailVerified;
-declare const redirectToAuth: typeof ThirdPartyAPIWrapper.redirectToAuth;
-export { ThirdPartyAuth, ThirdPartyAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, redirectToAuth, EmailVerification, EmailVerificationTheme, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, UserInput, };
+declare const init: typeof Wrapper.init;
+declare const signOut: typeof Wrapper.signOut;
+declare const isEmailVerified: typeof Wrapper.isEmailVerified;
+declare const redirectToAuth: typeof Wrapper.redirectToAuth;
+declare const SignInAndUp: JSX.Element;
+declare const EmailVerification: JSX.Element;
+export {
+    ThirdPartyAuth,
+    init,
+    Apple,
+    Google,
+    Facebook,
+    Github,
+    isEmailVerified,
+    SignInAndUp,
+    SignInAndUpTheme,
+    signOut,
+    redirectToAuth,
+    EmailVerification,
+    EmailVerificationTheme,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    UserInput,
+};

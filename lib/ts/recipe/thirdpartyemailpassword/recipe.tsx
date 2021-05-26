@@ -17,6 +17,7 @@
  * Imports.
  */
 
+import React from "react";
 import AuthRecipeModule from "../authRecipeModule";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
@@ -33,10 +34,8 @@ import NormalisedURLPath from "../../normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
-import SignInAndUpCallback from "../thirdparty/components/features/signInAndUpCallback";
-import { DEFAULT_RESET_PASSWORD_PATH } from "../emailpassword/constants";
-import { matchRecipeIdUsingState } from "../thirdparty/utils";
-import ResetPasswordUsingToken from "../emailpassword/components/features/resetPasswordUsingToken";
+import EmailPassword from "../emailpassword/recipe";
+import ThirdParty from "../thirdparty/recipe";
 
 /*
  * Class.
@@ -47,55 +46,58 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    /*
-     * Static Attributes.
-     */
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID = "thirdpartyemailpassword";
-    /*
-     * Constructor.
-     */
+
+    emailPasswordRecipe: EmailPassword;
+
+    thirdPartyRecipe: ThirdParty;
+
     constructor(config: Config) {
         super(normaliseThirdPartyEmailPasswordConfig(config));
+        this.emailPasswordRecipe = new EmailPassword({
+            appInfo: this.config.appInfo,
+            recipeId: this.config.recipeId,
+            emailVerificationFeature: {
+                disableDefaultImplementation: true,
+            },
+            getRedirectionURL: this.config.getRedirectionURL,
+            onHandleEvent: this.config.onHandleEvent,
+            palette: this.config.palette,
+            preAPIHook: this.config.preAPIHook,
+            resetPasswordUsingTokenFeature: this.config.resetPasswordUsingTokenFeature,
+            signInAndUpFeature: this.config.signInAndUpFeature,
+            useShadowDom: this.config.useShadowDom,
+        });
+
+        this.thirdPartyRecipe = new ThirdParty({
+            appInfo: this.config.appInfo,
+            recipeId: this.config.recipeId,
+            emailVerificationFeature: {
+                disableDefaultImplementation: true,
+            },
+            getRedirectionURL: this.config.getRedirectionURL,
+            onHandleEvent: this.config.onHandleEvent,
+            palette: this.config.palette,
+            preAPIHook: this.config.preAPIHook,
+            signInAndUpFeature: this.config.signInAndUpFeature,
+            useShadowDom: this.config.useShadowDom,
+        });
     }
 
-    /*
-     * Instance methods.
-     */
-
     getFeatures = (): RecipeFeatureComponentMap => {
-        const features: RecipeFeatureComponentMap = {};
+        const features: RecipeFeatureComponentMap = {
+            ...this.emailPasswordRecipe.getFeatures(),
+            ...this.thirdPartyRecipe.getFeatures(),
+        };
+
         if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                rid: this.config.recipeId,
-                component: SignInAndUp,
+                component: () => this.getFeatureComponent("signinup"),
             };
         }
-
-        if (this.config.resetPasswordUsingTokenFeature.disableDefaultImplementation !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH)
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                rid: this.config.recipeId,
-                component: ResetPasswordUsingToken,
-            };
-        }
-
-        // Add callback route for each provider.
-        this.config.signInAndUpFeature.providers.forEach((provider) => {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath(`/callback/${provider.id}`)
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                component: SignInAndUpCallback,
-                rid: this.config.recipeId,
-                matches: matchRecipeIdUsingState(this.config.recipeId),
-            };
-        });
 
         return {
             ...features,
@@ -105,14 +107,26 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "GET_REDIRECT_URL") {
-            return context.provider.getRedirectURL();
+            return this.thirdPartyRecipe.getDefaultRedirectionURL(context);
         } else if (context.action === "RESET_PASSWORD") {
-            const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
-                this.config.recipeId
-            }`;
+            return this.emailPasswordRecipe.getDefaultRedirectionURL(context);
         } else {
             return this.getAuthRecipeModuleDefaultRedirectionURL(context);
+        }
+    };
+
+    getFeatureComponent = (componentName: "signinup" | "resetpassword" | "emailverification"): JSX.Element => {
+        if (componentName === "signinup") {
+            return (
+                <SignInAndUp
+                    recipeId={this.config.recipeId}
+                    emailPasswordRecipeImplementation={this.emailPasswordRecipe.recipeImpl}
+                />
+            );
+        } else if (componentName === "resetpassword") {
+            return this.emailPasswordRecipe.getFeatureComponent(componentName);
+        } else {
+            return this.getAuthRecipeModuleFeatureComponent(componentName);
         }
     };
 

@@ -15,13 +15,12 @@
 import NormalisedURLPath from "./normalisedURLPath";
 import { isRequestInit } from "./utils";
 import { supported_fdi } from "./version";
-import { PreAPIHookFunction, NormalisedAppInfo } from './types';
+import { PreAPIHookFunction, NormalisedAppInfo } from "./types";
 
 export default class Querier {
+    recipeId: string;
 
-    recipeId: string
-
-    appInfo: NormalisedAppInfo
+    appInfo: NormalisedAppInfo;
 
     constructor(recipeId: string, appInfo: NormalisedAppInfo) {
         this.recipeId = recipeId;
@@ -111,8 +110,8 @@ export default class Querier {
                     "fdi-version": supported_fdi.join(","),
                     "Content-Type": "application/json",
                     rid: this.recipeId,
-                }
-            }
+                },
+            },
         });
 
         return await fetch(modifiedUrl, requestInit);
@@ -122,13 +121,15 @@ export default class Querier {
      * For backward compatibility
      */
     callPreAPIHook = async (context: {
-        preAPIHook?: PreAPIHookFunction, requestInit: RequestInit, url: string
+        preAPIHook?: PreAPIHookFunction;
+        requestInit: RequestInit;
+        url: string;
     }): Promise<{ url: string; requestInit: RequestInit }> => {
         if (context.preAPIHook === undefined) {
             return {
                 url: context.url,
-                requestInit: context.requestInit
-            }
+                requestInit: context.requestInit,
+            };
         }
         const result = await context.preAPIHook({ url: context.url, requestInit: context.requestInit });
         if (isRequestInit(result)) {

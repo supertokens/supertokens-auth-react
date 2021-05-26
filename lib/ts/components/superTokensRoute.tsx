@@ -34,7 +34,8 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
 
     const Route = reactRouterDom.Route;
     const withRouter: WithRouterType = reactRouterDom.withRouter;
-    const pathsToFeatureComponentWithRecipeIdMap = SuperTokens.getInstanceOrThrow().getPathsToFeatureComponentWithRecipeIdMap();
+    const pathsToFeatureComponentWithRecipeIdMap =
+        SuperTokens.getInstanceOrThrow().getPathsToFeatureComponentWithRecipeIdMap();
     return Object.keys(pathsToFeatureComponentWithRecipeIdMap).map((path) => {
         return (
             <Route exact key={`st-${path}`} path={path}>
@@ -52,14 +53,13 @@ function SuperTokensRouteWithRecipeId({
     withRouter: WithRouterType;
 }): JSX.Element | null {
     const normalisedPath = new NormalisedURLPath(path);
-    const featureComponentWithRecipeId = SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(
-        normalisedPath
-    );
+    const featureComponentWithRecipeId =
+        SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(normalisedPath);
 
     if (featureComponentWithRecipeId === undefined) {
         return null;
     }
 
     const WithRouterComponent = withRouter(featureComponentWithRecipeId.component);
-    return <WithRouterComponent recipeId={featureComponentWithRecipeId.rid} />;
+    return <WithRouterComponent />;
 }

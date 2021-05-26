@@ -17,6 +17,7 @@
  * Imports.
  */
 
+import React from "react";
 import AuthRecipeModule from "../authRecipeModule";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
@@ -26,7 +27,7 @@ import {
     Config,
     NormalisedConfig,
     UserInput,
-    RecipeInterface
+    RecipeInterface,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
@@ -34,9 +35,9 @@ import NormalisedURLPath from "../../normalisedURLPath";
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
-import SignInAndUp from "./components/features/signInAndUp/wrapper";
-import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
-import RecipeImplementation from './recipeImplementation';
+import SignInAndUp from "./components/features/signInAndUp";
+import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
+import RecipeImplementation from "./recipeImplementation";
 
 /*
  * Class.
@@ -50,11 +51,11 @@ export default class EmailPassword extends AuthRecipeModule<
     static instance?: EmailPassword;
     static RECIPE_ID = "emailpassword";
 
-    recipeImpl: RecipeInterface
+    recipeImpl: RecipeInterface;
 
     constructor(config: Config) {
         super(normaliseEmailPasswordConfig(config));
-        this.recipeImpl = new RecipeImplementation(this.config)
+        this.recipeImpl = new RecipeImplementation(this.config);
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -63,8 +64,7 @@ export default class EmailPassword extends AuthRecipeModule<
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                rid: this.config.recipeId,
-                component: SignInAndUp,
+                component: () => this.getFeatureComponent("signinup"),
             };
         }
 
@@ -74,8 +74,7 @@ export default class EmailPassword extends AuthRecipeModule<
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                rid: this.config.recipeId,
-                component: ResetPasswordUsingToken,
+                component: () => this.getFeatureComponent("resetpassword"),
             };
         }
 
@@ -88,16 +87,23 @@ export default class EmailPassword extends AuthRecipeModule<
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "RESET_PASSWORD") {
             const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${this.config.recipeId
-                }`;
+            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
+                this.config.recipeId
+            }`;
         }
 
         return this.getAuthRecipeModuleDefaultRedirectionURL(context);
     };
 
-    /*
-     * Static methods.
-     */
+    getFeatureComponent = (componentName: "signinup" | "resetpassword" | "emailverification"): JSX.Element => {
+        if (componentName === "signinup") {
+            return <SignInAndUp recipeId={this.config.recipeId} recipeImplemetation={this.recipeImpl} />;
+        } else if (componentName === "resetpassword") {
+            return <ResetPasswordUsingToken recipeId={this.config.recipeId} recipeImplemetation={this.recipeImpl} />;
+        } else {
+            return this.getAuthRecipeModuleFeatureComponent(componentName);
+        }
+    };
 
     static init(
         config?: UserInput

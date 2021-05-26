@@ -17,6 +17,7 @@
  * Imports.
  */
 
+import React from "react";
 import RecipeModule from "../recipeModule";
 import { RecipeFeatureComponentMap } from "../../types";
 import {
@@ -86,11 +87,14 @@ export default class EmailVerification extends RecipeModule<
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                rid: this.config.recipeId,
-                component: EmailVerificationFeature,
+                component: () => this.getFeatureComponent("emailverification"),
             };
         }
         return features;
+    };
+
+    getFeatureComponent = (_: "emailverification"): JSX.Element => {
+        return <EmailVerificationFeature recipeId={this.config.recipeId} />;
     };
 
     async isEmailVerified(): Promise<boolean> {

@@ -25,12 +25,13 @@ import SuperTokens from "../../../../../superTokens";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import { SignInAndUpTheme, GetRedirectionURLContext, OnHandleEventContext, PreAPIHookContext } from "../../..";
 import FeatureWrapper from "../../../../../components/featureWrapper";
+import { RecipeInterface } from "../../../../emailpassword/types";
 
 /*
  * Component.
  */
 
-class SignInAndUp extends PureComponent<FeatureBaseProps> {
+class SignInAndUp extends PureComponent<FeatureBaseProps & { emailPasswordRecipeImplementation: RecipeInterface }> {
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
         GetRedirectionURLContext,
         PreAPIHookContext,
@@ -71,6 +72,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps> {
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <SignInAndUpTheme
+                            emailPasswordRecipeImplementation={this.props.emailPasswordRecipeImplementation}
                             rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                             styleFromInit={this.getRecipeInstanceOrThrow().config.signInAndUpFeature.style}
                             hideThirdParty={hideThirdParty}

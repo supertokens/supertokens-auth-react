@@ -21,35 +21,12 @@ import { UserInput } from "./types";
 
 import EmailPassword from "./recipe";
 import EmailPasswordAuth from "./emailPasswordAuth";
-import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
-import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import EmailVerification from "./components/features/emailVerification/wrapper";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-/*
- * Class.
- */
-export default class EmailPasswordAPIWrapper {
-    /*
-     * Static attributes.
-     */
 
-    static EmailPasswordAuth = EmailPasswordAuth;
-    static SignInAndUp = SignInAndUp;
-    static SignInAndUpTheme = SignInAndUpTheme;
-
-    static ResetPasswordUsingToken = ResetPasswordUsingToken;
-    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
-
-    static EmailVerification = EmailVerification;
-    static EmailVerificationTheme = EmailVerificationTheme;
-
-    /*
-     * Methods.
-     */
-
+export default class Wrapper {
     static init(config?: UserInput) {
         return EmailPassword.init(config);
     }
@@ -65,16 +42,26 @@ export default class EmailPasswordAPIWrapper {
     static redirectToAuth(show?: "signin" | "signup"): void {
         return EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(show);
     }
+
+    static EmailPasswordAuth = EmailPasswordAuth;
+    static SignInAndUp = EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup");
+    static SignInAndUpTheme = SignInAndUpTheme;
+    static ResetPasswordUsingToken = EmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword");
+    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
+    static EmailVerification = EmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification");
+    static EmailVerificationTheme = EmailVerificationTheme;
 }
 
-const init = EmailPasswordAPIWrapper.init;
-const signOut = EmailPasswordAPIWrapper.signOut;
-const isEmailVerified = EmailPasswordAPIWrapper.isEmailVerified;
-const redirectToAuth = EmailPasswordAPIWrapper.redirectToAuth;
+const init = Wrapper.init;
+const signOut = Wrapper.signOut;
+const isEmailVerified = Wrapper.isEmailVerified;
+const redirectToAuth = Wrapper.redirectToAuth;
+const SignInAndUp = Wrapper.SignInAndUp;
+const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
+const EmailVerification = Wrapper.EmailVerification;
 
 export {
     EmailPasswordAuth,
-    EmailPasswordAPIWrapper,
     init,
     isEmailVerified,
     SignInAndUp,
