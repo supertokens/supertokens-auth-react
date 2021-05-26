@@ -38,7 +38,17 @@ export default function SignInForm(
             formFields={props.formFields}
             buttonLabel={"SIGN IN"}
             onSuccess={props.onSuccess}
-            callAPI={props.signInAPI}
+            callAPI={async (fields) => {
+                let response = await props.recipeImplementation.signIn(fields);
+                if (response.status === "WRONG_CREDENTIALS_ERROR") {
+                    return {
+                        status: "GENERAL_ERROR",
+                        message: "Incorrect email and password combination"
+                    };
+                } else {
+                    return response;
+                }
+            }}
             validateOnBlur={false}
             showLabels={true}
             header={props.header}

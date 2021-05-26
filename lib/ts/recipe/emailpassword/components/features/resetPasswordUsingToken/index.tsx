@@ -24,39 +24,36 @@ import {
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAPIHookContext,
-    FormBaseAPIResponse,
     NormalisedConfig,
-    SubmitNewPasswordThemeProps,
+    RecipeInterface
 } from "../../../types";
 import { ResetPasswordUsingTokenTheme } from "../../..";
-import { APIFormField, FeatureBaseProps } from "../../../../../types";
+import { FeatureBaseProps } from "../../../../../types";
 
-import { getWindowOrThrow, validateForm } from "../../../../../utils";
-import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
+import { getWindowOrThrow } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import SuperTokens from "../../../../../superTokens";
 
-/*
- * Component.
- */
 
-class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: string }> {
+type PropType = FeatureBaseProps & { recipeImplemetation: RecipeInterface }
+
+class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | undefined }> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: PropType) {
         super(props);
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
         let token = urlParams.get("token");
         if (token === null) {
-            token = "";
+            this.state = { token: undefined };
+        } else {
+            this.state = {
+                token,
+            };
         }
-
-        this.state = {
-            token,
-        };
     }
 
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
@@ -86,59 +83,6 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         return false;
     };
 
-    /*
-     * Methods.
-     */
-
-    submitNewPassword = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
-        // Front end validation.
-        const validationErrors = await validateForm(
-            formFields,
-            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
-        );
-
-        // If errors, return.
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
-
-        // Verify that both passwords match.
-        if (formFields[0].value !== formFields[1].value) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: [
-                    {
-                        id: "confirm-password",
-                        error: "Confirmation password doesn't match",
-                    },
-                ],
-            };
-        }
-
-        // Call API, only send first password.
-        return await handleSubmitNewPasswordAPI([formFields[0]], this.getRecipeInstanceOrThrow(), this.state.token);
-    };
-
-    enterEmail = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
-        // Front end validation.
-        const validationErrors = await validateForm(
-            formFields,
-            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
-        );
-
-        // If errors, return.
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
-
-        return await enterEmailAPI(formFields, this.getRecipeInstanceOrThrow());
-    };
 
     render = (): JSX.Element => {
         const enterEmailFormFeature =
@@ -147,10 +91,10 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         const submitNewPasswordFormFeature =
             this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.submitNewPasswordForm;
 
-        const submitNewPasswordForm: SubmitNewPasswordThemeProps = {
+        const submitNewPasswordForm = {
             styleFromInit: submitNewPasswordFormFeature.style,
             formFields: submitNewPasswordFormFeature.formFields,
-            submitNewPasswordAPI: this.submitNewPassword,
+            recipeImplementation: this.props.recipeImplemetation,
             onSuccess: () => {
                 this.getRecipeInstanceOrThrow().config.onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL",
@@ -159,6 +103,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
             onSignInClicked: () => {
                 this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath("signin", this.props.history);
             },
+            token: this.state.token || ""
         };
 
         const enterEmailForm = {
@@ -169,14 +114,9 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
                     action: "RESET_PASSWORD_EMAIL_SENT",
                 });
             },
-            enterEmailAPI: this.enterEmail,
+            recipeImplementation: this.props.recipeImplemetation,
         };
 
-        const hasToken = this.state.token.length !== 0;
-
-        /*
-         * Render.
-         */
         return (
             <FeatureWrapper
                 isEmbedded={this.getIsEmbedded()}
@@ -188,7 +128,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
                             rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                             submitNewPasswordForm={submitNewPasswordForm}
                             enterEmailForm={enterEmailForm}
-                            hasToken={hasToken}
+                            token={this.state.token}
                         />
                     )}
                     {/* Otherwise, custom theme is provided, propagate props. */}
@@ -197,7 +137,7 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
                             rawPalette: this.getRecipeInstanceOrThrow().config.palette,
                             submitNewPasswordForm,
                             enterEmailForm,
-                            hasToken,
+                            token: this.state.token,
                         })}
                 </Fragment>
             </FeatureWrapper>

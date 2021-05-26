@@ -36,7 +36,7 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
      */
 
     // If no token, return SubmitNewPassword.
-    if (props.hasToken === true) {
+    if (props.token !== undefined) {
         return (
             <StyleProvider
                 rawPalette={props.rawPalette}

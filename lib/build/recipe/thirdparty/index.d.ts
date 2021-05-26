@@ -10,14 +10,7 @@ import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 export default class ThirdPartyAPIWrapper {
-    static init(
-        config: UserInput
-    ): import("../../types").CreateRecipeFunction<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        import("../authRecipeModule/types").OnHandleEventContext,
-        import("./types").NormalisedConfig
-    >;
+    static init(config: UserInput): import("../../types").CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, import("../authRecipeModule/types").OnHandleEventContext, import("./types").NormalisedConfig>;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
     static redirectToAuth(show?: "signin" | "signup"): void;
@@ -35,23 +28,4 @@ declare const init: typeof ThirdPartyAPIWrapper.init;
 declare const signOut: typeof ThirdPartyAPIWrapper.signOut;
 declare const isEmailVerified: typeof ThirdPartyAPIWrapper.isEmailVerified;
 declare const redirectToAuth: typeof ThirdPartyAPIWrapper.redirectToAuth;
-export {
-    ThirdPartyAuth,
-    ThirdPartyAPIWrapper,
-    init,
-    Apple,
-    Google,
-    Facebook,
-    Github,
-    isEmailVerified,
-    SignInAndUp,
-    SignInAndUpTheme,
-    signOut,
-    redirectToAuth,
-    EmailVerification,
-    EmailVerificationTheme,
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext,
-    UserInput,
-};
+export { ThirdPartyAuth, ThirdPartyAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, redirectToAuth, EmailVerification, EmailVerificationTheme, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, UserInput, };

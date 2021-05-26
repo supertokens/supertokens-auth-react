@@ -24,10 +24,6 @@ import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../types";
 
 import FormBase from "../../library/formBase";
 
-/*
- * Component.
- */
-
 export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps, EnterEmailThemeState> {
     static contextType = StyleContext;
     /*
@@ -62,7 +58,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
      */
     render(): JSX.Element {
         const styles = this.context;
-        const { formFields, enterEmailAPI } = this.props;
+        const { formFields } = this.props;
         const { status } = this.state;
 
         if (status === "SENT") {
@@ -90,7 +86,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
                         formFields={formFields}
                         buttonLabel={"Email me"}
                         onSuccess={this.onSuccess}
-                        callAPI={enterEmailAPI}
+                        callAPI={this.props.recipeImplementation.sendPasswordResetEmail}
                         showLabels={false}
                         validateOnBlur={true}
                         header={

@@ -1,2 +1,2 @@
 /// <reference types="react" />
-export default function SignInAndUp(props: any): JSX.Element;
+export default function SignInAndUp(): JSX.Element;

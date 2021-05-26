@@ -1,2 +1,2 @@
 /// <reference types="react" />
-export default function ResetPasswordUsingToken(props: any): JSX.Element;
+export default function ResetPasswordUsingToken(): JSX.Element;

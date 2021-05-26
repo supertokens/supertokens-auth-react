@@ -21,13 +21,10 @@ import { jsx } from "@emotion/react";
 import { PureComponent, Fragment } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
-import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../types";
+import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from '../../../types';
 import { FormRow, Button } from "../../library";
 import FormBase from "../../library/formBase";
 
-/*
- * Component.
- */
 
 export default class SubmitNewPasswordTheme extends PureComponent<
     SubmitNewPasswordThemeProps,
@@ -58,7 +55,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
 
     render(): JSX.Element {
         const styles = this.context;
-        const { submitNewPasswordAPI, formFields, onSignInClicked } = this.props;
+        const { formFields, onSignInClicked } = this.props;
         const { status } = this.state;
 
         if (status === "SUCCESS") {
@@ -97,7 +94,18 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                         buttonLabel={"Change password"}
                         onSuccess={this.onSuccess}
                         validateOnBlur={true}
-                        callAPI={submitNewPasswordAPI}
+                        callAPI={async (fields) => {
+                            let response = await this.props.recipeImplementation.submitNewPassword(fields, this.props.token);
+                            if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "Invalid password reset token"
+                                };
+                            }
+                            return response.status === "FIELD_ERROR" ? response : {
+                                status: "OK"
+                            };
+                        }}
                         showLabels={true}
                         header={
                             <Fragment>

@@ -26,6 +26,7 @@ import {
     Config,
     NormalisedConfig,
     UserInput,
+    RecipeInterface
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
@@ -35,6 +36,7 @@ import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
+import RecipeImplementation from './recipeImplementation';
 
 /*
  * Class.
@@ -48,8 +50,11 @@ export default class EmailPassword extends AuthRecipeModule<
     static instance?: EmailPassword;
     static RECIPE_ID = "emailpassword";
 
+    recipeImpl: RecipeInterface
+
     constructor(config: Config) {
         super(normaliseEmailPasswordConfig(config));
+        this.recipeImpl = new RecipeImplementation(this.config)
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -83,9 +88,8 @@ export default class EmailPassword extends AuthRecipeModule<
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "RESET_PASSWORD") {
             const resetPasswordPath = new NormalisedURLPath(DEFAULT_RESET_PASSWORD_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
-                this.config.recipeId
-            }`;
+            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${this.config.recipeId
+                }`;
         }
 
         return this.getAuthRecipeModuleDefaultRedirectionURL(context);

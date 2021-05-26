@@ -21,31 +21,29 @@ import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 
-import { signInAPI, signUpAPI, emailExistsAPI } from "./api";
 import {
     FormFieldThemeProps,
-    FormBaseAPIResponse,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
     NormalisedConfig,
 } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
-import { APIFormField, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
-import { getRedirectToPathFromURL, validateForm } from "../../../../../utils";
+import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
+import { getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { SignInAndUpState } from "../../../types";
+import { SignInAndUpState, RecipeInterface } from "../../../types";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import SuperTokens from "../../../../../superTokens";
-/*
- * Component.
- */
 
-class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
+
+type PropType = FeatureBaseProps & { recipeImplemetation: RecipeInterface }
+
+class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: PropType) {
         super(props);
 
         this.state = {
@@ -80,31 +78,6 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         return false;
     };
 
-    /*
-     * Methods.
-     */
-
-    signIn = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
-        // Front end validation.
-        const validationErrors = await validateForm(
-            formFields,
-            this.getRecipeInstanceOrThrow().config.signInAndUpFeature.signInForm.formFields
-        );
-        // If errors, return.
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
-
-        const normalisedAPIResponse = await signInAPI(formFields, this.getRecipeInstanceOrThrow());
-
-        this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
-
-        return normalisedAPIResponse;
-    };
-
     onSignInSuccess = async (): Promise<void> => {
         if (this.state.status !== "SUCCESSFUL") {
             return;
@@ -125,48 +98,6 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
             this.props.history
         );
     };
-
-    signUp = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
-        // Front end validation.
-        const validationErrors = await validateForm(
-            formFields,
-            this.getRecipeInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields
-        );
-
-        // If errors, return.
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
-
-        const normalisedAPIResponse = await signUpAPI(formFields, this.getRecipeInstanceOrThrow());
-
-        this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
-
-        return normalisedAPIResponse;
-    };
-
-    setStateOnSuccessfulAPICall(normalisedAPIResponse: FormBaseAPIResponse): void {
-        this.setState((oldState) => {
-            if (
-                oldState.status !== "READY" ||
-                normalisedAPIResponse.status !== "OK" ||
-                normalisedAPIResponse.user === undefined
-            ) {
-                return oldState;
-            }
-
-            return {
-                status: "SUCCESSFUL",
-                user: {
-                    id: normalisedAPIResponse.user.id,
-                    email: normalisedAPIResponse.user.email,
-                },
-            };
-        });
-    }
 
     onSignUpSuccess = async (): Promise<void> => {
         if (this.state.status !== "SUCCESSFUL") {
@@ -218,29 +149,26 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
 
                 // Otherwise, if email, use syntax validate method and check if email exists.
                 return async (value: any): Promise<string | undefined> => {
-                    const syntaxError = await field.validate(value);
-
-                    if (syntaxError !== undefined) {
-                        return syntaxError;
+                    const error = await field.validate(value);
+                    if (error !== undefined) {
+                        return error;
                     }
 
                     if (typeof value !== "string") {
                         return "Email must be of type string";
                     }
                     try {
-                        return await emailExistsAPI(value, this.getRecipeInstanceOrThrow());
-                    } catch (e) {
-                        // Fail silently.
-                        return undefined;
-                    }
+                        let emailExists = await this.props.recipeImplemetation.doesEmailExist(value);
+                        if (emailExists) {
+                            return "This email already exists. Please sign in instead";
+                        }
+                    } catch (_) { }
+                    return undefined;
                 };
             })(),
         }));
     }
 
-    /*
-     * Init.
-     */
     componentDidMount = async (): Promise<void> => {
         const sessionExists = await this.getRecipeInstanceOrThrow().doesSessionExist();
         if (sessionExists) {
@@ -265,27 +193,57 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         });
     };
 
+    getModifiedRecipeImplementation = (): RecipeInterface => {
+        return {
+            ...this.props.recipeImplemetation,
+            signIn: async (formFields, preApiHook) => {
+                const response = await this.props.recipeImplemetation.signIn(formFields, preApiHook);
+
+                this.setState((oldState) => {
+                    return (oldState.status !== "READY" || response.status !== "OK") ? oldState : {
+                        status: "SUCCESSFUL",
+                        user: response.user
+                    };
+                });
+
+                return response;
+            },
+            signUp: async (formFields, preAPIHook) => {
+                const response = await this.props.recipeImplemetation.signUp(formFields, preAPIHook);
+
+                this.setState((oldState) => {
+                    return (oldState.status !== "READY" || response.status !== "OK") ? oldState : {
+                        status: "SUCCESSFUL",
+                        user: response.user
+                    };
+                });
+
+                return response;
+            }
+        }
+    }
+
     render = (): JSX.Element => {
         const signInAndUpFeature = this.getRecipeInstanceOrThrow().config.signInAndUpFeature;
         const signUpFeature = signInAndUpFeature.signUpForm;
         const signInFeature = signInAndUpFeature.signInForm;
 
         const signInForm = {
+            recipeImplementation: this.getModifiedRecipeImplementation(),
             styleFromInit: signInFeature.style,
             formFields: signInFeature.formFields,
-            signInAPI: this.signIn,
             onSuccess: this.onSignInSuccess,
             forgotPasswordClick: () =>
                 this.getRecipeInstanceOrThrow().redirect({ action: "RESET_PASSWORD" }, this.props.history),
         };
 
         const signUpForm = {
+            recipeImplementation: this.getModifiedRecipeImplementation(),
             styleFromInit: signUpFeature.style,
             formFields: this.getThemeSignUpFeatureFormFields(signUpFeature.formFields),
             privacyPolicyLink: signUpFeature.privacyPolicyLink,
             termsOfServiceLink: signUpFeature.termsOfServiceLink,
             onSuccess: this.onSignUpSuccess,
-            signUpAPI: this.signUp,
         };
 
         // Before session is verified, return empty fragment, prevent UI glitch.

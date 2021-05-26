@@ -24,6 +24,8 @@ import EmailPassword from "../../../recipe";
  * Used for embedding in page.
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function ResetPasswordUsingToken(props: any): JSX.Element {
-    return <ResetPasswordUsingTokenBase recipeId={EmailPassword.getInstanceOrThrow().config.recipeId} {...props} />;
+export default function ResetPasswordUsingToken(): JSX.Element {
+    return <ResetPasswordUsingTokenBase
+        recipeId={EmailPassword.getInstanceOrThrow().config.recipeId}
+        recipeImplemetation={EmailPassword.getInstanceOrThrow().recipeImpl} />;
 }

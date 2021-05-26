@@ -8,9 +8,7 @@ export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction<any, any, any, any>[];
 };
-export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
-    appInfo: NormalisedAppInfo
-) => RecipeModule<T, S, R, N>;
+export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (appInfo: NormalisedAppInfo) => RecipeModule<T, S, R, N>;
 export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;
@@ -87,3 +85,10 @@ export declare type FeatureBaseProps = {
     history?: any;
     isEmbedded?: boolean;
 };
+export declare type PreAPIHookFunction = (context: {
+    requestInit: RequestInit;
+    url: string;
+}) => Promise<RequestInit | {
+    url?: string;
+    requestInit: RequestInit;
+}>;
