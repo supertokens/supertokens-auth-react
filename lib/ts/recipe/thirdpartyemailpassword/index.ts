@@ -46,11 +46,14 @@ export default class Wrapper {
     static Facebook = Facebook;
     static Github = Github;
     static ThirdPartyEmailPasswordAuth = ThirdPartyEmailPasswordAuth;
-    static SignInAndUp = ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinup");
+    static SignInAndUp = (prop?: any) =>
+        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
-    static ResetPasswordUsingToken = ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword");
+    static ResetPasswordUsingToken = (prop?: any) =>
+        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
-    static EmailVerification = ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification");
+    static EmailVerification = (prop?: any) =>
+        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
 }
 

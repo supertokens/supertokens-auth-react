@@ -45,7 +45,7 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
         super(props);
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
-        let token = urlParams.get("token");
+        const token = urlParams.get("token");
         if (token === null) {
             this.state = { token: undefined };
         } else {

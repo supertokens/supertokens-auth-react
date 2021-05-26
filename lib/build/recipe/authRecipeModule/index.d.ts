@@ -12,7 +12,7 @@ export default abstract class AuthRecipeModule<
     emailVerification: EmailVerification;
     constructor(config: N);
     getAuthRecipeModuleDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    getAuthRecipeModuleFeatureComponent: (componentName: "emailverification") => JSX.Element;
+    getAuthRecipeModuleFeatureComponent: (componentName: "emailverification", props: any) => JSX.Element;
     getAuthRecipeModuleFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     signOut: () => Promise<SuccessAPIResponse>;
     doesSessionExist: () => Promise<boolean>;

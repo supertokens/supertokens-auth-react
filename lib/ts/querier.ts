@@ -33,7 +33,7 @@ export default class Querier {
         queryParams?: Record<string, string>,
         preAPIHook?: PreAPIHookFunction
     ): Promise<T> => {
-        let result = await this.fetch(
+        const result = await this.fetch(
             this.getFullUrl(path, queryParams),
             {
                 method: "GET",
@@ -48,7 +48,7 @@ export default class Querier {
     };
 
     post = async <T>(path: string, config: RequestInit, preAPIHook?: PreAPIHookFunction): Promise<T> => {
-        let result = await this.fetch(
+        const result = await this.fetch(
             this.getFullUrl(path),
             {
                 method: "POST",
@@ -63,7 +63,7 @@ export default class Querier {
     };
 
     delete = async <T>(path: string, config: RequestInit, preAPIHook?: PreAPIHookFunction): Promise<T> => {
-        let result = await this.fetch(
+        const result = await this.fetch(
             this.getFullUrl(path),
             {
                 method: "DELETE",
@@ -78,7 +78,7 @@ export default class Querier {
     };
 
     put = async <T>(path: string, config: RequestInit, preAPIHook?: PreAPIHookFunction): Promise<T> => {
-        let result = await this.fetch(
+        const result = await this.fetch(
             this.getFullUrl(path),
             {
                 method: "PUT",

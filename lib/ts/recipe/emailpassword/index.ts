@@ -24,7 +24,8 @@ import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import RecipeImplementation from "./recipeImplementation";
 
 export default class Wrapper {
     static init(config?: UserInput) {
@@ -44,11 +45,13 @@ export default class Wrapper {
     }
 
     static EmailPasswordAuth = EmailPasswordAuth;
-    static SignInAndUp = EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup");
+    static SignInAndUp = (prop?: any) => EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
-    static ResetPasswordUsingToken = EmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword");
+    static ResetPasswordUsingToken = (prop?: any) =>
+        EmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
-    static EmailVerification = EmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification");
+    static EmailVerification = (prop?: any) =>
+        EmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
 }
 
@@ -76,4 +79,6 @@ export {
     PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
+    RecipeImplementation,
+    RecipeInterface,
 };

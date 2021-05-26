@@ -68,7 +68,7 @@ export default class ThirdParty extends AuthRecipeModule<
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: () => this.getFeatureComponent("signinup"),
+                component: (prop: any) => this.getFeatureComponent("signinup", prop),
             };
         }
 
@@ -79,7 +79,7 @@ export default class ThirdParty extends AuthRecipeModule<
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingState(this.config.recipeId),
-                component: () => this.getFeatureComponent("signinupcallback"),
+                component: (prop: any) => this.getFeatureComponent("signinupcallback", prop),
             };
         });
 
@@ -89,13 +89,16 @@ export default class ThirdParty extends AuthRecipeModule<
         };
     };
 
-    getFeatureComponent = (componentName: "signinup" | "signinupcallback" | "emailverification"): JSX.Element => {
+    getFeatureComponent = (
+        componentName: "signinup" | "signinupcallback" | "emailverification",
+        prop: any
+    ): JSX.Element => {
         if (componentName === "signinup") {
-            return <SignInAndUp recipeId={this.config.recipeId} />;
+            return <SignInAndUp recipeId={this.config.recipeId} {...prop} />;
         } else if (componentName === "signinupcallback") {
-            return <SignInAndUpCallback recipeId={this.config.recipeId} />;
+            return <SignInAndUpCallback recipeId={this.config.recipeId} {...prop} />;
         } else {
-            return this.getAuthRecipeModuleFeatureComponent(componentName);
+            return this.getAuthRecipeModuleFeatureComponent(componentName, prop);
         }
     };
 

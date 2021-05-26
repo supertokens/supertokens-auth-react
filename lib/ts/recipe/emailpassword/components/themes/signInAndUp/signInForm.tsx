@@ -39,7 +39,7 @@ export default function SignInForm(
             buttonLabel={"SIGN IN"}
             onSuccess={props.onSuccess}
             callAPI={async (fields) => {
-                let response = await props.recipeImplementation.signIn(fields);
+                const response = await props.recipeImplementation.signIn(fields);
                 if (response.status === "WRONG_CREDENTIALS_ERROR") {
                     return {
                         status: "GENERAL_ERROR",

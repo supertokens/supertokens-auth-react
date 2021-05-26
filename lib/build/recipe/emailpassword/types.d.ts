@@ -18,15 +18,22 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipeModule/types";
+import RecipeImplementation from "./recipeImplementation";
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
+    override?: {
+        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
 } & AuthRecipeModuleUserInput;
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
+    override: {
+        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = {
     disableDefaultImplementation?: boolean;
@@ -112,42 +119,10 @@ export declare type FormFieldError = {
     id: string;
     error: string;
 };
-export declare type EmailExistsAPIResponse = {
-    status: "OK";
-    exists: boolean;
-};
-export declare type FormFieldAPIResponse = {
-    status: "FIELD_ERROR";
-    formFields: FormFieldError[];
-};
-export declare type BaseSignInUpAPIResponse =
-    | {
-          status: "OK";
-          user: User;
-      }
-    | FormFieldAPIResponse;
-export declare type BaseResetPasswordAPIResponse =
-    | {
-          status: "OK";
-      }
-    | FormFieldAPIResponse;
 export declare type ThemeResponseGeneralError = {
     status: "GENERAL_ERROR";
     message: string;
 };
-export declare type SignUpAPIResponse = BaseSignInUpAPIResponse;
-export declare type SignInAPIResponse =
-    | BaseSignInUpAPIResponse
-    | {
-          status: "WRONG_CREDENTIALS_ERROR";
-          message: string;
-      };
-export declare type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
-export declare type SubmitNewPasswordAPIResponse =
-    | BaseResetPasswordAPIResponse
-    | {
-          status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
-      };
 export declare type PreAPIHookContext =
     | AuthRecipeModulePreAPIHookContext
     | {

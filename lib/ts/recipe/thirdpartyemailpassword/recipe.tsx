@@ -95,7 +95,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: () => this.getFeatureComponent("signinup"),
+                component: (prop: any) => this.getFeatureComponent("signinup", prop),
             };
         }
 
@@ -115,18 +115,22 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         }
     };
 
-    getFeatureComponent = (componentName: "signinup" | "resetpassword" | "emailverification"): JSX.Element => {
+    getFeatureComponent = (
+        componentName: "signinup" | "resetpassword" | "emailverification",
+        prop: any
+    ): JSX.Element => {
         if (componentName === "signinup") {
             return (
                 <SignInAndUp
                     recipeId={this.config.recipeId}
                     emailPasswordRecipeImplementation={this.emailPasswordRecipe.recipeImpl}
+                    {...prop}
                 />
             );
         } else if (componentName === "resetpassword") {
-            return this.emailPasswordRecipe.getFeatureComponent(componentName);
+            return this.emailPasswordRecipe.getFeatureComponent(componentName, prop);
         } else {
-            return this.getAuthRecipeModuleFeatureComponent(componentName);
+            return this.getAuthRecipeModuleFeatureComponent(componentName, prop);
         }
     };
 

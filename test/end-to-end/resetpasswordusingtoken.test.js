@@ -28,7 +28,6 @@ import {
     TEST_CLIENT_BASE_URL,
     TEST_SERVER_BASE_URL,
 } from "../constants";
-import { RESET_PASSWORD_INVALID_TOKEN_ERROR } from "../../lib/build/constants";
 import {
     clearBrowserCookies,
     getInputAdornmentsError,
@@ -258,13 +257,14 @@ describe("SuperTokens Reset password", function () {
             assert.strictEqual(request.headers().rid, "emailpassword");
             assert.deepStrictEqual(
                 request.postData(),
-                '{"formFields":[{"id":"password","value":"Str0ngP@ssw0rd"}],"token":"TOKEN"}'
+                '{"formFields":[{"id":"password","value":"Str0ngP@ssw0rd"}],"token":"TOKEN","method":"token"}'
             );
 
             // Assert Invalid token response.
             assert.strictEqual(response.status, "RESET_PASSWORD_INVALID_TOKEN_ERROR");
             const generalError = await getGeneralError(page);
-            assert.deepStrictEqual(generalError, RESET_PASSWORD_INVALID_TOKEN_ERROR);
+
+            assert.deepStrictEqual(generalError, "Invalid password reset token");
             assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SUBMIT_NEW_PASSWORD"]);
         });
 

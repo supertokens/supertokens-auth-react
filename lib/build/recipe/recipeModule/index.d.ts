@@ -10,5 +10,5 @@ export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T
     getRedirectUrl: (context: T) => Promise<string>;
     getDefaultRedirectionURL(_: T): Promise<string>;
     abstract getFeatures(): RecipeFeatureComponentMap;
-    abstract getFeatureComponent(componentName: string): JSX.Element;
+    abstract getFeatureComponent(componentName: string, props: any): JSX.Element;
 }

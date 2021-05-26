@@ -25,17 +25,17 @@ export default class Wrapper {
     static Facebook: typeof Facebook;
     static Github: typeof Github;
     static ThirdPartyAuth: typeof ThirdPartyAuth;
-    static SignInAndUp: JSX.Element;
+    static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
-    static EmailVerification: JSX.Element;
+    static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
-declare const SignInAndUp: JSX.Element;
-declare const EmailVerification: JSX.Element;
+declare const SignInAndUp: (prop?: any) => JSX.Element;
+declare const EmailVerification: (prop?: any) => JSX.Element;
 export {
     ThirdPartyAuth,
     init,

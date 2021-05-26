@@ -70,8 +70,8 @@ export default abstract class AuthRecipeModule<
         }
     };
 
-    getAuthRecipeModuleFeatureComponent = (componentName: "emailverification"): JSX.Element => {
-        return this.emailVerification.getFeatureComponent(componentName);
+    getAuthRecipeModuleFeatureComponent = (componentName: "emailverification", props: any): JSX.Element => {
+        return this.emailVerification.getFeatureComponent(componentName, props);
     };
 
     getAuthRecipeModuleFeatures = (): RecipeFeatureComponentMap => {

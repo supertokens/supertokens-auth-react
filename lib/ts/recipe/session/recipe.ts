@@ -69,6 +69,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getFeatureComponent = (_: string): JSX.Element => {
         throw new Error("should never come here");
     };

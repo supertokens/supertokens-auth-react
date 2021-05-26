@@ -157,7 +157,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                         return "Email must be of type string";
                     }
                     try {
-                        let emailExists = await this.props.recipeImplemetation.doesEmailExist(value);
+                        const emailExists = await this.props.recipeImplemetation.doesEmailExist(value);
                         if (emailExists) {
                             return "This email already exists. Please sign in instead";
                         }

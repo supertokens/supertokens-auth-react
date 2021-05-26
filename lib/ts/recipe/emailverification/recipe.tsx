@@ -87,14 +87,15 @@ export default class EmailVerification extends RecipeModule<
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: () => this.getFeatureComponent("emailverification"),
+                component: (props: any) => this.getFeatureComponent("emailverification", props),
             };
         }
         return features;
     };
 
-    getFeatureComponent = (_: "emailverification"): JSX.Element => {
-        return <EmailVerificationFeature recipeId={this.config.recipeId} />;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
+        return <EmailVerificationFeature recipeId={this.config.recipeId} {...props} />;
     };
 
     async isEmailVerified(): Promise<boolean> {

@@ -301,6 +301,43 @@ function SessionInfoTable({ sessionInfo }) {
 function getEmailPasswordConfigs() {
     return EmailPassword.init({
         palette: theme.colors,
+        override: {
+            functions: (oI) => {
+                return {
+                    ...oI,
+                    doesEmailExist: (email) => {
+                        return oI.doesEmailExist(email, (context) => {
+                            console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS`);
+                            return context;
+                        });
+                    },
+                    sendPasswordResetEmail: (formFields) => {
+                        return oI.sendPasswordResetEmail(formFields, (context) => {
+                            console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL`);
+                            return context;
+                        });
+                    },
+                    submitNewPassword: (formFields, token) => {
+                        return oI.submitNewPassword(formFields, token, (context) => {
+                            console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SUBMIT_NEW_PASSWORD`);
+                            return context;
+                        });
+                    },
+                    signIn: (formFields) => {
+                        return oI.signIn(formFields, (context) => {
+                            console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN`);
+                            return context;
+                        });
+                    },
+                    signUp: (formFields) => {
+                        return oI.signUp(formFields, (context) => {
+                            console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP`);
+                            return context;
+                        });
+                    },
+                };
+            },
+        },
         preAPIHook: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
             return context.requestInit;

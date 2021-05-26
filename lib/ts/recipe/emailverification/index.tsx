@@ -24,7 +24,8 @@ import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } fro
  * Class.
  */
 export default class Wrapper {
-    static EmailVerification = EmailVerificationRecipe.getInstanceOrThrow().getFeatureComponent("emailverification");
+    static EmailVerification = (prop?: any) =>
+        EmailVerificationRecipe.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
 
     static init(config: UserInput) {

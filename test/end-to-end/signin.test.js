@@ -50,7 +50,7 @@ import {
     getTextInDashboardNoAuth,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
-import { SOMETHING_WENT_WRONG_ERROR, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR } from "../../lib/build/constants";
+import { SOMETHING_WENT_WRONG_ERROR } from "../../lib/build/constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -186,7 +186,7 @@ describe("SuperTokens SignIn", function () {
             formFieldsErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldsErrors, []);
             const generalError = await getGeneralError(page);
-            assert.strictEqual(generalError, INCORRECT_EMAIL_PASSWORD_COMBINATION_ERROR);
+            assert.strictEqual(generalError, "Incorrect email and password combination");
             assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN"]);
         });
 

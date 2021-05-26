@@ -50,7 +50,7 @@ export default class RecipeImplementation implements RecipeInterface {
         // then we call API
         const response: SubmitNewPasswordAPIResponse = await this.querier.post(
             "/user/password/reset",
-            { body: JSON.stringify({ formFields, token }) },
+            { body: JSON.stringify({ formFields: [formFields[0]], token, method: "token" }) },
             preAPIHook
         );
 

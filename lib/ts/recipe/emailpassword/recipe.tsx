@@ -55,7 +55,7 @@ export default class EmailPassword extends AuthRecipeModule<
 
     constructor(config: Config) {
         super(normaliseEmailPasswordConfig(config));
-        this.recipeImpl = new RecipeImplementation(this.config);
+        this.recipeImpl = this.config.override.functions(new RecipeImplementation(this.config));
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -64,7 +64,7 @@ export default class EmailPassword extends AuthRecipeModule<
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: () => this.getFeatureComponent("signinup"),
+                component: (props) => this.getFeatureComponent("signinup", props),
             };
         }
 
@@ -74,7 +74,7 @@ export default class EmailPassword extends AuthRecipeModule<
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: () => this.getFeatureComponent("resetpassword"),
+                component: (props) => this.getFeatureComponent("resetpassword", props),
             };
         }
 
@@ -95,13 +95,22 @@ export default class EmailPassword extends AuthRecipeModule<
         return this.getAuthRecipeModuleDefaultRedirectionURL(context);
     };
 
-    getFeatureComponent = (componentName: "signinup" | "resetpassword" | "emailverification"): JSX.Element => {
+    getFeatureComponent = (
+        componentName: "signinup" | "resetpassword" | "emailverification",
+        props: any | undefined
+    ): JSX.Element => {
         if (componentName === "signinup") {
-            return <SignInAndUp recipeId={this.config.recipeId} recipeImplemetation={this.recipeImpl} />;
+            return <SignInAndUp recipeId={this.config.recipeId} recipeImplemetation={this.recipeImpl} {...props} />;
         } else if (componentName === "resetpassword") {
-            return <ResetPasswordUsingToken recipeId={this.config.recipeId} recipeImplemetation={this.recipeImpl} />;
+            return (
+                <ResetPasswordUsingToken
+                    recipeId={this.config.recipeId}
+                    recipeImplemetation={this.recipeImpl}
+                    {...props}
+                />
+            );
         } else {
-            return this.getAuthRecipeModuleFeatureComponent(componentName);
+            return this.getAuthRecipeModuleFeatureComponent(componentName, props);
         }
     };
 

@@ -94,7 +94,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                         onSuccess={this.onSuccess}
                         validateOnBlur={true}
                         callAPI={async (fields) => {
-                            let response = await this.props.recipeImplementation.submitNewPassword(
+                            const response = await this.props.recipeImplementation.submitNewPassword(
                                 fields,
                                 this.props.token
                             );

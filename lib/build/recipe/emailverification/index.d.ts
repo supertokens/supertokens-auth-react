@@ -3,7 +3,7 @@ import { UserInput } from "./types";
 import EmailVerificationTheme from "./components/themes/emailVerification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 export default class Wrapper {
-    static EmailVerification: JSX.Element;
+    static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
     static init(
         config: UserInput
@@ -17,7 +17,7 @@ export default class Wrapper {
 }
 declare const init: typeof Wrapper.init;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
-declare const EmailVerification: JSX.Element;
+declare const EmailVerification: (prop?: any) => JSX.Element;
 export {
     init,
     isEmailVerified,

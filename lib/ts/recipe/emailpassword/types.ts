@@ -33,10 +33,14 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipeModule/types";
+import RecipeImplementation from "./recipeImplementation";
 
 export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
+    override?: {
+        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
 } & AuthRecipeModuleUserInput;
 
 export type Config = UserInput &
@@ -45,6 +49,9 @@ export type Config = UserInput &
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
+    override: {
+        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = {
@@ -271,53 +278,6 @@ export type FormFieldError = {
     error: string;
 };
 
-export type EmailExistsAPIResponse = {
-    /*
-     * Success.
-     */
-    status: "OK";
-
-    /*
-     * Is email already registered
-     */
-    exists: boolean;
-};
-
-export type FormFieldAPIResponse = {
-    /*
-     * Field validation errors.
-     */
-    status: "FIELD_ERROR";
-
-    /*
-     * Array of Field Id and their corresponding error.
-     */
-    formFields: FormFieldError[];
-};
-
-export type BaseSignInUpAPIResponse =
-    | {
-          /*
-           * Success.
-           */
-          status: "OK";
-
-          /*
-           * User object.
-           */
-          user: User;
-      }
-    | FormFieldAPIResponse;
-
-export type BaseResetPasswordAPIResponse =
-    | {
-          /*
-           * Success.
-           */
-          status: "OK";
-      }
-    | FormFieldAPIResponse;
-
 export type ThemeResponseGeneralError = {
     /*
      * General error.
@@ -329,33 +289,6 @@ export type ThemeResponseGeneralError = {
      */
     message: string;
 };
-
-export type SignUpAPIResponse = BaseSignInUpAPIResponse;
-
-export type SignInAPIResponse =
-    | BaseSignInUpAPIResponse
-    | {
-          /*
-           * Wrong credentials error.
-           */
-          status: "WRONG_CREDENTIALS_ERROR";
-
-          /*
-           * Wrong credentials error message.
-           */
-          message: string;
-      };
-
-export type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
-
-export type SubmitNewPasswordAPIResponse =
-    | BaseResetPasswordAPIResponse
-    | {
-          /*
-           * Wrong credentials error.
-           */
-          status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
-      };
 
 export type PreAPIHookContext =
     | AuthRecipeModulePreAPIHookContext
