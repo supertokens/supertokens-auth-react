@@ -71,23 +71,6 @@ export declare type ThirdPartySignInAndUpThemeState =
           status: "ERROR";
           message: string;
       };
-export declare type SignInAndUpAPIResponse =
-    | {
-          status: "OK";
-          createdNewUser: boolean;
-          user: User;
-      }
-    | {
-          status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-      }
-    | {
-          status: "FIELD_ERROR";
-          error: string;
-      };
-export declare type AuthorisationURLAPIResponse = {
-    status: "OK";
-    url: string;
-};
 export declare type ThirdPartySignInAndUpState =
     | {
           status: "LOADING" | "READY" | "GENERAL_ERROR";
@@ -112,7 +95,8 @@ export interface RecipeInterface {
     signInAndUp: (
         thirdPartyId: string,
         code: string,
-        redirectURI: string
+        redirectURI: string,
+        preAPIHook?: PreAPIHookFunction
     ) => Promise<
         | {
               status: "OK";

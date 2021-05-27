@@ -26,7 +26,7 @@ import {
     NormalisedResetPasswordUsingTokenFeatureConfig,
     NormalisedSignInFormFeatureConfig,
     NormalisedSignUpFormFeatureConfig,
-    RecipeInterface,
+    RecipeInterface as EmailPasswordRecipeInterface,
     ResetPasswordUsingTokenUserInput,
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
@@ -36,6 +36,7 @@ import {
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
+import { RecipeInterface as ThirdPartyRecipeInterface } from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
@@ -129,5 +130,6 @@ export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     hideEmailPassword?: boolean;
     rawPalette: Record<string, string>;
     styleFromInit: Styles;
-    emailPasswordRecipeImplementation: RecipeInterface;
+    emailPasswordRecipeImplementation: EmailPasswordRecipeInterface;
+    thirdPartyRecipeImplementation: ThirdPartyRecipeInterface;
 };

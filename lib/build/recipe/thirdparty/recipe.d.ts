@@ -8,6 +8,7 @@ import {
     PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
+    RecipeInterface,
 } from "./types";
 export default class ThirdParty extends AuthRecipeModule<
     GetRedirectionURLContext,
@@ -17,6 +18,7 @@ export default class ThirdParty extends AuthRecipeModule<
 > {
     static instance?: ThirdParty;
     static RECIPE_ID: string;
+    recipeImpl: RecipeInterface;
     constructor(config: Config);
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getFeatureComponent: (

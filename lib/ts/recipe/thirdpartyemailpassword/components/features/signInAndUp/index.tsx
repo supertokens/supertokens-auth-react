@@ -25,13 +25,19 @@ import SuperTokens from "../../../../../superTokens";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import { SignInAndUpTheme, GetRedirectionURLContext, OnHandleEventContext, PreAPIHookContext } from "../../..";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { RecipeInterface } from "../../../../emailpassword/types";
+import { RecipeInterface as EmailPasswordRecipeInterface } from "../../../../emailpassword/types";
+import { RecipeInterface as ThirdPartyRecipeInterface } from "../../../../thirdparty/types";
 
 /*
  * Component.
  */
 
-class SignInAndUp extends PureComponent<FeatureBaseProps & { emailPasswordRecipeImplementation: RecipeInterface }> {
+class SignInAndUp extends PureComponent<
+    FeatureBaseProps & {
+        emailPasswordRecipeImplementation: EmailPasswordRecipeInterface;
+        thirdPartyRecipeImplementation: ThirdPartyRecipeInterface;
+    }
+> {
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
         GetRedirectionURLContext,
         PreAPIHookContext,
@@ -72,6 +78,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps & { emailPasswordRecipe
                     {/* No custom theme, use default. */}
                     {this.props.children === undefined && (
                         <SignInAndUpTheme
+                            thirdPartyRecipeImplementation={this.props.thirdPartyRecipeImplementation}
                             emailPasswordRecipeImplementation={this.props.emailPasswordRecipeImplementation}
                             rawPalette={this.getRecipeInstanceOrThrow().config.palette}
                             styleFromInit={this.getRecipeInstanceOrThrow().config.signInAndUpFeature.style}

@@ -21,16 +21,15 @@
 import ThirdParty from "./recipe";
 import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-/*
- * Class.
- */
+import RecipeImplementation from "./recipeImplementation";
+
 export default class Wrapper {
     /*
      * Static attributes.
@@ -92,4 +91,6 @@ export {
     PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
+    RecipeImplementation,
+    RecipeInterface,
 };

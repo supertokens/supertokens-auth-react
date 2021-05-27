@@ -3,10 +3,12 @@ import { FeatureBaseProps } from "../../../../../types";
 import { NormalisedConfig } from "../../../types";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import { GetRedirectionURLContext, PreAPIHookContext } from "../../..";
-import { RecipeInterface } from "../../../../emailpassword/types";
+import { RecipeInterface as EmailPasswordRecipeInterface } from "../../../../emailpassword/types";
+import { RecipeInterface as ThirdPartyRecipeInterface } from "../../../../thirdparty/types";
 declare class SignInAndUp extends PureComponent<
     FeatureBaseProps & {
-        emailPasswordRecipeImplementation: RecipeInterface;
+        emailPasswordRecipeImplementation: EmailPasswordRecipeInterface;
+        thirdPartyRecipeImplementation: ThirdPartyRecipeInterface;
     }
 > {
     getRecipeInstanceOrThrow: () => AuthRecipeModule<

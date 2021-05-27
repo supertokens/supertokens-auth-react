@@ -6,9 +6,13 @@ import {
     GetRedirectionURLContext,
     PreAPIHookContext,
     ThirdPartySignInAndUpState,
+    RecipeInterface,
 } from "../../../types";
-declare class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpState> {
-    constructor(props: FeatureBaseProps);
+declare type PropType = FeatureBaseProps & {
+    recipeImplementation: RecipeInterface;
+};
+declare class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
+    constructor(props: PropType);
     getRecipeInstanceOrThrow: () => AuthRecipeModule<
         GetRedirectionURLContext,
         PreAPIHookContext,

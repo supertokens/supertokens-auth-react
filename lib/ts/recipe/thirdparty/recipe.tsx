@@ -27,6 +27,7 @@ import {
     PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
+    RecipeInterface,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { matchRecipeIdUsingState, normaliseThirdPartyConfig } from "./utils";
@@ -35,6 +36,7 @@ import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
+import RecipeImplementation from "./recipeImplementation";
 
 /*
  * Class.
@@ -45,17 +47,14 @@ export default class ThirdParty extends AuthRecipeModule<
     OnHandleEventContext,
     NormalisedConfig
 > {
-    /*
-     * Static Attributes.
-     */
     static instance?: ThirdParty;
     static RECIPE_ID = "thirdparty";
 
-    /*
-     * Constructor.
-     */
+    recipeImpl: RecipeInterface;
+
     constructor(config: Config) {
         super(normaliseThirdPartyConfig(config));
+        this.recipeImpl = new RecipeImplementation(this.config);
     }
 
     /*
@@ -94,9 +93,11 @@ export default class ThirdParty extends AuthRecipeModule<
         prop: any
     ): JSX.Element => {
         if (componentName === "signinup") {
-            return <SignInAndUp recipeId={this.config.recipeId} {...prop} />;
+            return <SignInAndUp recipeId={this.config.recipeId} recipeImplementation={this.recipeImpl} {...prop} />;
         } else if (componentName === "signinupcallback") {
-            return <SignInAndUpCallback recipeId={this.config.recipeId} {...prop} />;
+            return (
+                <SignInAndUpCallback recipeId={this.config.recipeId} recipeImplementation={this.recipeImpl} {...prop} />
+            );
         } else {
             return this.getAuthRecipeModuleFeatureComponent(componentName, prop);
         }

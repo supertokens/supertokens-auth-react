@@ -76,6 +76,7 @@ class SignInAndUpTheme extends React.PureComponent<
                     {this.props.hideThirdParty !== true && (
                         <Fragment>
                             <ThirdPartySignInAndUp
+                                recipeImplementation={this.props.thirdPartyRecipeImplementation}
                                 history={this.props.history}
                                 recipeId={this.props.recipeId}
                                 isEmbedded={true}>

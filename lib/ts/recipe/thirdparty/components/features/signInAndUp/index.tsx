@@ -41,18 +41,12 @@ import {
     OnHandleEventContext,
     PreAPIHookContext,
     ThirdPartySignInAndUpState,
+    RecipeInterface,
 } from "../../../types";
-import { getOAuthAuthorisationURLAPI } from "./api";
 
-/*
- * Component.
- */
-
-class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpState> {
-    /*
-     * Constructor.
-     */
-    constructor(props: FeatureBaseProps) {
+type PropType = FeatureBaseProps & { recipeImplementation: RecipeInterface };
+class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
+    constructor(props: PropType) {
         super(props);
 
         const error = getQueryParams("error");
@@ -151,7 +145,7 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
         const state = provider.generateState();
 
         // 2. Get Authorisation URL.
-        const { url } = await getOAuthAuthorisationURLAPI(provider.id, this.getRecipeInstanceOrThrow());
+        const url = await this.props.recipeImplementation.getOAuthAuthorisationURL(provider.id);
 
         // 3. Store state in Session Storage.
         const redirectToPath = getRedirectToPathFromURL();

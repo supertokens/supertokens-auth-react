@@ -124,6 +124,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
                 <SignInAndUp
                     recipeId={this.config.recipeId}
                     emailPasswordRecipeImplementation={this.emailPasswordRecipe.recipeImpl}
+                    thirdPartyRecipeImplementation={this.thirdPartyRecipe.recipeImpl}
                     {...prop}
                 />
             );

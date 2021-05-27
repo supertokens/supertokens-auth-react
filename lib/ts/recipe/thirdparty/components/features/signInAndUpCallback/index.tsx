@@ -25,13 +25,12 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
-import { signInAndUpAPI } from "./api";
 import {
     NormalisedConfig,
     GetRedirectionURLContext,
     OnHandleEventContext,
     PreAPIHookContext,
-    ThirdPartySignInAndUpState,
+    RecipeInterface,
 } from "../../../types";
 import SignInAndUpCallbackTheme from "../../themes/signInAndUpCallback";
 import { getOAuthState } from "../../../utils";
@@ -39,15 +38,9 @@ import Provider from "../../../providers";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import SuperTokens from "../../../../../superTokens";
 
-/*
- * Component.
- */
+type PropType = FeatureBaseProps & { recipeImplementation: RecipeInterface };
 
-class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpState> {
-    /*
-     * Methods.
-     */
-
+class SignInAndUpCallback extends PureComponent<PropType, unknown> {
     getRecipeInstanceOrThrow = (): AuthRecipeModule<
         GetRedirectionURLContext,
         PreAPIHookContext,
@@ -103,7 +96,7 @@ class SignInAndUpCallback extends PureComponent<FeatureBaseProps, ThirdPartySign
                 action: "GET_REDIRECT_URL",
                 provider,
             });
-            const response = await signInAndUpAPI(providerId, code, this.getRecipeInstanceOrThrow(), redirectUrl);
+            const response = await this.props.recipeImplementation.signInAndUp(providerId, code, redirectUrl);
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
                 return this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath(
                     undefined,

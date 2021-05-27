@@ -176,43 +176,6 @@ export type ThirdPartySignInAndUpThemeState =
           message: string;
       };
 
-export type SignInAndUpAPIResponse =
-    | {
-          /*
-           * Status.
-           */
-          status: "OK";
-
-          /*
-           * URL.
-           */
-          createdNewUser: boolean;
-
-          /*
-           * User
-           */
-          user: User;
-      }
-    | {
-          status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-      }
-    | {
-          status: "FIELD_ERROR";
-          error: string;
-      };
-
-export type AuthorisationURLAPIResponse = {
-    /*
-     * Status.
-     */
-    status: "OK";
-
-    /*
-     * URL.
-     */
-    url: string;
-};
-
 export type ThirdPartySignInAndUpState =
     | {
           status: "LOADING" | "READY" | "GENERAL_ERROR";
@@ -256,7 +219,8 @@ export interface RecipeInterface {
     signInAndUp: (
         thirdPartyId: string,
         code: string,
-        redirectURI: string
+        redirectURI: string,
+        preAPIHook?: PreAPIHookFunction
     ) => Promise<
         | {
               status: "OK";
