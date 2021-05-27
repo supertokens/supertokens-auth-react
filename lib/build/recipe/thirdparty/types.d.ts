@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig, PreAPIHookFunction } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -11,14 +11,20 @@ import {
 } from "../authRecipeModule/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
-import { PreAPIHookFunction } from "../../types";
+import RecipeImplementation from "./recipeImplementation";
 export declare type UserInput = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;
+    override?: {
+        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
 } & AuthRecipeModuleUserInput;
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
+    override: {
+        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     disableDefaultImplementation?: boolean;

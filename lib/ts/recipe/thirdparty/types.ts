@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig, PreAPIHookFunction } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -25,10 +25,13 @@ import {
 } from "../authRecipeModule/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
-import { PreAPIHookFunction } from "../../types";
+import RecipeImplementation from "./recipeImplementation";
 
 export type UserInput = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;
+    override?: {
+        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
 } & AuthRecipeModuleUserInput;
 
 export type Config = UserInput &
@@ -36,6 +39,9 @@ export type Config = UserInput &
 
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
+    override: {
+        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {

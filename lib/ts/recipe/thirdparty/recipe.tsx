@@ -54,7 +54,7 @@ export default class ThirdParty extends AuthRecipeModule<
 
     constructor(config: Config) {
         super(normaliseThirdPartyConfig(config));
-        this.recipeImpl = new RecipeImplementation(this.config);
+        this.recipeImpl = this.config.override.functions(new RecipeImplementation(this.config));
     }
 
     /*

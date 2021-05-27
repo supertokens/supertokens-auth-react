@@ -338,10 +338,6 @@ function getEmailPasswordConfigs() {
                 };
             },
         },
-        preAPIHook: async (context) => {
-            console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
-            return context.requestInit;
-        },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
@@ -386,9 +382,24 @@ function getEmailPasswordConfigs() {
 
 function getThirdPartyConfigs() {
     return ThirdParty.init({
-        preAPIHook: async (context) => {
-            console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
-            return context.requestInit;
+        override: {
+            functions: (oI) => {
+                return {
+                    ...oI,
+                    getOAuthAuthorisationURL: (id) => {
+                        return oI.getOAuthAuthorisationURL(id, (context) => {
+                            console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL`);
+                            return context;
+                        });
+                    },
+                    signInAndUp: (id, code, url) => {
+                        return oI.signInAndUp(id, code, url, (context) => {
+                            console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN`);
+                            return context;
+                        });
+                    },
+                };
+            },
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY GET_REDIRECTION_URL ${context.action}`);

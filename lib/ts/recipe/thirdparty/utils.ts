@@ -26,8 +26,10 @@ import {
     SignInAndUpFeatureUserInput,
     StateObject,
     Config,
+    RecipeInterface,
 } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
+import RecipeImplementation from "./recipeImplementation";
 
 /*
  * Methods.
@@ -37,9 +39,26 @@ export function normaliseThirdPartyConfig(config: Config, allowEmptyProviders = 
         config.signInAndUpFeature,
         allowEmptyProviders
     );
+
+    let override: {
+        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    } = {
+        functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+    };
+
+    if (config !== undefined && config.override !== undefined) {
+        if (config.override.functions !== undefined) {
+            override = {
+                ...override,
+                functions: config.override.functions,
+            };
+        }
+    }
+
     return {
         ...normaliseRecipeModuleConfig(config),
         signInAndUpFeature,
+        override,
     };
 }
 
