@@ -25,6 +25,7 @@ import {
 } from "../authRecipeModule/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
+import { PreAPIHookFunction } from "../../types";
 
 export type UserInput = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;
@@ -248,3 +249,26 @@ export type StateObject = {
 
     redirectToPath: string | undefined;
 };
+
+export interface RecipeInterface {
+    getOAuthAuthorisationURL: (thirdPartyId: string, preAPIHook?: PreAPIHookFunction) => Promise<string>;
+
+    signInAndUp: (
+        thirdPartyId: string,
+        code: string,
+        redirectURI: string
+    ) => Promise<
+        | {
+              status: "OK";
+              user: User;
+              createdNewUser: boolean;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+          }
+        | {
+              status: "FIELD_ERROR";
+              error: string;
+          }
+    >;
+}

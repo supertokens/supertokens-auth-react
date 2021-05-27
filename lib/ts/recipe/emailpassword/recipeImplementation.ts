@@ -40,7 +40,7 @@ export default class RecipeImplementation implements RecipeInterface {
                 status: "FIELD_ERROR",
                 formFields: [
                     {
-                        id: "confirm-password",
+                        id: formFields[1].id,
                         error: "Confirmation password doesn't match",
                     },
                 ],
