@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { FeatureBaseConfig, NormalisedBaseConfig, PreAPIHookFunction } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -17,7 +17,7 @@ export declare type UserInput = {
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
     };
-} & AuthRecipeModuleUserInput;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type NormalisedConfig = {
@@ -81,18 +81,14 @@ export declare type StateObject = {
     thirdPartyId: string;
     redirectToPath: string | undefined;
 };
-export declare type FunctionOptions = {
-    preAPIHook?: PreAPIHookFunction;
-    config: NormalisedConfig;
-};
 export interface RecipeInterface {
-    getOAuthAuthorisationURL: (thirdPartyId: string, options: FunctionOptions) => Promise<string>;
-    signInAndUp: (
-        thirdPartyId: string,
-        code: string,
-        redirectURI: string,
-        options: FunctionOptions
-    ) => Promise<
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<string>;
+    signInAndUp: (input: {
+        thirdPartyId: string;
+        code: string;
+        redirectURI: string;
+        config: NormalisedConfig;
+    }) => Promise<
         | {
               status: "OK";
               user: User;

@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { FeatureBaseConfig, NormalisedBaseConfig, PreAPIHookFunction } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -32,7 +32,7 @@ export type UserInput = {
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
     };
-} & AuthRecipeModuleUserInput;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -194,20 +194,15 @@ export type StateObject = {
     redirectToPath: string | undefined;
 };
 
-export type FunctionOptions = {
-    preAPIHook?: PreAPIHookFunction;
-    config: NormalisedConfig;
-};
-
 export interface RecipeInterface {
-    getOAuthAuthorisationURL: (thirdPartyId: string, options: FunctionOptions) => Promise<string>;
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<string>;
 
-    signInAndUp: (
-        thirdPartyId: string,
-        code: string,
-        redirectURI: string,
-        options: FunctionOptions
-    ) => Promise<
+    signInAndUp: (input: {
+        thirdPartyId: string;
+        code: string;
+        redirectURI: string;
+        config: NormalisedConfig;
+    }) => Promise<
         | {
               status: "OK";
               user: User;

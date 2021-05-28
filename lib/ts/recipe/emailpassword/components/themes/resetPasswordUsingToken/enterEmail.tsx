@@ -86,8 +86,9 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
                         formFields={formFields}
                         buttonLabel={"Email me"}
                         onSuccess={this.onSuccess}
-                        callAPI={async (f) =>
-                            await this.props.recipeImplementation.sendPasswordResetEmail(f, {
+                        callAPI={async (formFields) =>
+                            await this.props.recipeImplementation.sendPasswordResetEmail({
+                                formFields,
                                 config: this.props.config,
                             })
                         }

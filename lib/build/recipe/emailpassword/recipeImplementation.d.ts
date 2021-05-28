@@ -1,40 +1,40 @@
-import { RecipeInterface, FunctionOptions } from "./types";
+import { RecipeInterface, NormalisedConfig } from "./types";
 import { User } from "../authRecipeModule/types";
 import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
 export default class RecipeImplementation implements RecipeInterface {
     querier: Querier;
     constructor(recipeId: string, appInfo: NormalisedAppInfo);
-    submitNewPassword: (
+    submitNewPassword: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        token: string,
-        options: FunctionOptions
-    ) => Promise<SubmitNewPasswordAPIResponse>;
-    sendPasswordResetEmail: (
+        }[];
+        token: string;
+        config: NormalisedConfig;
+    }) => Promise<SubmitNewPasswordAPIResponse>;
+    sendPasswordResetEmail: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: FunctionOptions
-    ) => Promise<SendPasswordResetEmailAPIResponse>;
-    signUp: (
+        }[];
+        config: NormalisedConfig;
+    }) => Promise<SendPasswordResetEmailAPIResponse>;
+    signUp: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: FunctionOptions
-    ) => Promise<SignUpAPIResponse>;
-    signIn: (
+        }[];
+        config: NormalisedConfig;
+    }) => Promise<SignUpAPIResponse>;
+    signIn: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: FunctionOptions
-    ) => Promise<SignInAPIResponse>;
-    doesEmailExist: (email: string, options: FunctionOptions) => Promise<boolean>;
+        }[];
+        config: NormalisedConfig;
+    }) => Promise<SignInAPIResponse>;
+    doesEmailExist: (input: { email: string; config: NormalisedConfig }) => Promise<boolean>;
 }
 declare type SubmitNewPasswordAPIResponse =
     | {

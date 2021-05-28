@@ -132,7 +132,8 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                         return "Email must be of type string";
                     }
                     try {
-                        const emailExists = await this.props.recipe.recipeImpl.doesEmailExist(value, {
+                        const emailExists = await this.props.recipe.recipeImpl.doesEmailExist({
+                            email: value,
                             config: this.props.recipe.config,
                         });
                         if (emailExists) {
@@ -169,8 +170,8 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     getModifiedRecipeImplementation = (): RecipeInterface => {
         return {
             ...this.props.recipe.recipeImpl,
-            signIn: async (formFields, preApiHook) => {
-                const response = await this.props.recipe.recipeImpl.signIn(formFields, preApiHook);
+            signIn: async (input) => {
+                const response = await this.props.recipe.recipeImpl.signIn(input);
 
                 this.setState((oldState) => {
                     return oldState.status !== "READY" || response.status !== "OK"
@@ -183,8 +184,8 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
 
                 return response;
             },
-            signUp: async (formFields, preAPIHook) => {
-                const response = await this.props.recipe.recipeImpl.signUp(formFields, preAPIHook);
+            signUp: async (input) => {
+                const response = await this.props.recipe.recipeImpl.signUp(input);
 
                 this.setState((oldState) => {
                     return oldState.status !== "READY" || response.status !== "OK"

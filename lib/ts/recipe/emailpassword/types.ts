@@ -21,7 +21,6 @@ import {
     NormalisedBaseConfig,
     NormalisedFormField,
     ThemeBaseProps,
-    PreAPIHookFunction,
 } from "../../types";
 import { RefObject } from "react";
 import {
@@ -41,7 +40,7 @@ export type UserInput = {
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
     };
-} & AuthRecipeModuleUserInput;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -298,7 +297,7 @@ export type PreAPIHookContext =
           /*
            * Pre API Hook action.
            */
-          action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
+          action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD" | "EMAIL_EXISTS";
 
           /*
            * Request object containing query params, body, headers.
@@ -451,20 +450,15 @@ export type SignInAndUpState =
           user: User;
       };
 
-export type FunctionOptions = {
-    preAPIHook?: PreAPIHookFunction;
-    config: NormalisedConfig;
-};
-
 export interface RecipeInterface {
-    submitNewPassword: (
+    submitNewPassword: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        token: string,
-        options: FunctionOptions
-    ) => Promise<
+        }[];
+        token: string;
+        config: NormalisedConfig;
+    }) => Promise<
         | {
               status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
           }
@@ -477,13 +471,13 @@ export interface RecipeInterface {
           }
     >;
 
-    sendPasswordResetEmail: (
+    sendPasswordResetEmail: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: FunctionOptions
-    ) => Promise<
+        }[];
+        config: NormalisedConfig;
+    }) => Promise<
         | {
               status: "OK";
           }
@@ -496,13 +490,13 @@ export interface RecipeInterface {
           }
     >;
 
-    signUp: (
+    signUp: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: FunctionOptions
-    ) => Promise<
+        }[];
+        config: NormalisedConfig;
+    }) => Promise<
         | {
               status: "OK";
               user: User;
@@ -516,13 +510,13 @@ export interface RecipeInterface {
           }
     >;
 
-    signIn: (
+    signIn: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: FunctionOptions
-    ) => Promise<
+        }[];
+        config: NormalisedConfig;
+    }) => Promise<
         | {
               status: "OK";
               user: User;
@@ -539,5 +533,5 @@ export interface RecipeInterface {
           }
     >;
 
-    doesEmailExist: (email: string, options: FunctionOptions) => Promise<boolean>;
+    doesEmailExist: (input: { email: string; config: NormalisedConfig }) => Promise<boolean>;
 }

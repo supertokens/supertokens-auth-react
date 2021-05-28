@@ -36,8 +36,9 @@ export default function SignUpForm(
             formFields={props.formFields}
             buttonLabel={"SIGN UP"}
             onSuccess={props.onSuccess}
-            callAPI={(f) =>
-                props.recipeImplementation.signUp(f, {
+            callAPI={(formFields) =>
+                props.recipeImplementation.signUp({
+                    formFields,
                     config: props.config,
                 })
             }

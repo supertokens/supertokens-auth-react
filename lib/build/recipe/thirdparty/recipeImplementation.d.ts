@@ -1,17 +1,17 @@
-import { RecipeInterface, FunctionOptions } from "./types";
+import { RecipeInterface, NormalisedConfig } from "./types";
 import { User } from "../authRecipeModule/types";
 import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
 export default class RecipeImplementation implements RecipeInterface {
     querier: Querier;
     constructor(recipeId: string, appInfo: NormalisedAppInfo);
-    getOAuthAuthorisationURL: (thirdPartyId: string, options: FunctionOptions) => Promise<string>;
-    signInAndUp: (
-        thirdPartyId: string,
-        code: string,
-        redirectURI: string,
-        options: FunctionOptions
-    ) => Promise<SignInAndUpAPIResponse>;
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<string>;
+    signInAndUp: (input: {
+        thirdPartyId: string;
+        code: string;
+        redirectURI: string;
+        config: NormalisedConfig;
+    }) => Promise<SignInAndUpAPIResponse>;
 }
 declare type SignInAndUpAPIResponse =
     | {

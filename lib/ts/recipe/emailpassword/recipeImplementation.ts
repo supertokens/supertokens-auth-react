@@ -1,4 +1,4 @@
-import { RecipeInterface, FunctionOptions } from "./types";
+import { RecipeInterface, NormalisedConfig } from "./types";
 import { User } from "../authRecipeModule/types";
 import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
@@ -11,18 +11,18 @@ export default class RecipeImplementation implements RecipeInterface {
         this.querier = new Querier(recipeId, appInfo);
     }
 
-    submitNewPassword = async (
+    submitNewPassword = async (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        token: string,
-        options: FunctionOptions
-    ): Promise<SubmitNewPasswordAPIResponse> => {
+        }[];
+        token: string;
+        config: NormalisedConfig;
+    }): Promise<SubmitNewPasswordAPIResponse> => {
         // first we validate on the frontend
         const validationErrors = await validateForm(
-            formFields,
-            options.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+            input.formFields,
+            input.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
         );
 
         if (validationErrors.length > 0) {
@@ -33,12 +33,12 @@ export default class RecipeImplementation implements RecipeInterface {
         }
 
         // Verify that both passwords match.
-        if (formFields[0].value !== formFields[1].value) {
+        if (input.formFields[0].value !== input.formFields[1].value) {
             return {
                 status: "FIELD_ERROR",
                 formFields: [
                     {
-                        id: formFields[1].id,
+                        id: input.formFields[1].id,
                         error: "Confirmation password doesn't match",
                     },
                 ],
@@ -48,24 +48,29 @@ export default class RecipeImplementation implements RecipeInterface {
         // then we call API
         const response: SubmitNewPasswordAPIResponse = await this.querier.post(
             "/user/password/reset",
-            { body: JSON.stringify({ formFields: [formFields[0]], token, method: "token" }) },
-            options.preAPIHook
+            { body: JSON.stringify({ formFields: [input.formFields[0]], token: input.token, method: "token" }) },
+            (context) => {
+                return input.config.preAPIHook({
+                    ...context,
+                    action: "SUBMIT_NEW_PASSWORD",
+                });
+            }
         );
 
         return response;
     };
 
-    sendPasswordResetEmail = async (
+    sendPasswordResetEmail = async (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: FunctionOptions
-    ): Promise<SendPasswordResetEmailAPIResponse> => {
+        }[];
+        config: NormalisedConfig;
+    }): Promise<SendPasswordResetEmailAPIResponse> => {
         // first we validate on the frontend
         const validationErrors = await validateForm(
-            formFields,
-            options.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
+            input.formFields,
+            input.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
         );
 
         if (validationErrors.length > 0) {
@@ -78,23 +83,28 @@ export default class RecipeImplementation implements RecipeInterface {
         // then we call API
         const response: SendPasswordResetEmailAPIResponse = await this.querier.post(
             "/user/password/reset/token",
-            { body: JSON.stringify({ formFields }) },
-            options.preAPIHook
+            { body: JSON.stringify({ formFields: input.formFields }) },
+            (context) => {
+                return input.config.preAPIHook({
+                    ...context,
+                    action: "SEND_RESET_PASSWORD_EMAIL",
+                });
+            }
         );
         return response;
     };
 
-    signUp = async (
+    signUp = async (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: FunctionOptions
-    ): Promise<SignUpAPIResponse> => {
+        }[];
+        config: NormalisedConfig;
+    }): Promise<SignUpAPIResponse> => {
         // first we validate on the frontend
         const validationErrors = await validateForm(
-            formFields,
-            options.config.signInAndUpFeature.signUpForm.formFields
+            input.formFields,
+            input.config.signInAndUpFeature.signUpForm.formFields
         );
 
         if (validationErrors.length > 0) {
@@ -107,24 +117,29 @@ export default class RecipeImplementation implements RecipeInterface {
         // then we call API
         const response: SignUpAPIResponse = await this.querier.post(
             "/signup",
-            { body: JSON.stringify({ formFields }) },
-            options.preAPIHook
+            { body: JSON.stringify({ formFields: input.formFields }) },
+            (context) => {
+                return input.config.preAPIHook({
+                    ...context,
+                    action: "SIGN_UP",
+                });
+            }
         );
 
         return response;
     };
 
-    signIn = async (
+    signIn = async (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: FunctionOptions
-    ): Promise<SignInAPIResponse> => {
+        }[];
+        config: NormalisedConfig;
+    }): Promise<SignInAPIResponse> => {
         // first we validate on the frontend
         const validationErrors = await validateForm(
-            formFields,
-            options.config.signInAndUpFeature.signInForm.formFields
+            input.formFields,
+            input.config.signInAndUpFeature.signInForm.formFields
         );
 
         if (validationErrors.length > 0) {
@@ -137,18 +152,28 @@ export default class RecipeImplementation implements RecipeInterface {
         // then we call API
         const response: SignInAPIResponse = await this.querier.post(
             "/signin",
-            { body: JSON.stringify({ formFields }) },
-            options.preAPIHook
+            { body: JSON.stringify({ formFields: input.formFields }) },
+            (context) => {
+                return input.config.preAPIHook({
+                    ...context,
+                    action: "SIGN_IN",
+                });
+            }
         );
         return response;
     };
 
-    doesEmailExist = async (email: string, options: FunctionOptions): Promise<boolean> => {
+    doesEmailExist = async (input: { email: string; config: NormalisedConfig }): Promise<boolean> => {
         const response: EmailExistsAPIResponse = await this.querier.get(
             "/signup/email/exists",
             {},
-            { email },
-            options.preAPIHook
+            { email: input.email },
+            (context) => {
+                return input.config.preAPIHook({
+                    ...context,
+                    action: "EMAIL_EXISTS",
+                });
+            }
         );
 
         return response.exists;

@@ -1,7 +1,9 @@
-import { RecipeInterface, SignInAndUpInput, SignInAndUpOutput, EPFunctionOptions, TPFunctionOptions } from "../types";
+import { RecipeInterface, SignInAndUpInput, SignInAndUpOutput } from "../types";
 import { NormalisedAppInfo } from "../../../types";
 import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImplementation";
 import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
+import { NormalisedConfig as EPConfig } from "../../emailpassword/types";
+import { NormalisedConfig as TPConfig } from "../../thirdparty/types";
 
 export default class RecipeImplementation implements RecipeInterface {
     emailpasswordImpl: EmailPasswordRecipeImplementation;
@@ -12,39 +14,39 @@ export default class RecipeImplementation implements RecipeInterface {
         this.thirdPartyImpl = new ThirdPartyRecipeImplementation(recipeId, appInfo);
     }
 
-    submitNewPassword = async (
+    submitNewPassword = async (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        token: string,
-        options: EPFunctionOptions
-    ) => {
-        return this.emailpasswordImpl.submitNewPassword(formFields, token, options);
+        }[];
+        token: string;
+        config: EPConfig;
+    }) => {
+        return this.emailpasswordImpl.submitNewPassword(input);
     };
 
-    sendPasswordResetEmail = async (
+    sendPasswordResetEmail = async (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: EPFunctionOptions
-    ) => {
-        return this.emailpasswordImpl.sendPasswordResetEmail(formFields, options);
+        }[];
+        config: EPConfig;
+    }) => {
+        return this.emailpasswordImpl.sendPasswordResetEmail(input);
     };
 
-    doesEmailExist = async (email: string, options: EPFunctionOptions) => {
-        return this.emailpasswordImpl.doesEmailExist(email, options);
+    doesEmailExist = async (input: { email: string; config: EPConfig }) => {
+        return this.emailpasswordImpl.doesEmailExist(input);
     };
 
-    getOAuthAuthorisationURL = async (thirdPartyId: string, options: TPFunctionOptions) => {
-        return this.thirdPartyImpl.getOAuthAuthorisationURL(thirdPartyId, options);
+    getOAuthAuthorisationURL = async (input: { thirdPartyId: string; config: TPConfig }) => {
+        return this.thirdPartyImpl.getOAuthAuthorisationURL(input);
     };
 
     signInAndUp = async (input: SignInAndUpInput): Promise<SignInAndUpOutput> => {
         if (input.type === "emailpassword") {
             if (input.isSignIn) {
-                const response = await this.emailpasswordImpl.signIn(input.formFields, input.options);
+                const response = await this.emailpasswordImpl.signIn(input);
                 if (response.status === "OK") {
                     return {
                         ...response,
@@ -58,7 +60,7 @@ export default class RecipeImplementation implements RecipeInterface {
                     };
                 }
             } else {
-                const response = await this.emailpasswordImpl.signUp(input.formFields, input.options);
+                const response = await this.emailpasswordImpl.signUp(input);
                 if (response.status === "OK") {
                     return {
                         ...response,
@@ -73,12 +75,7 @@ export default class RecipeImplementation implements RecipeInterface {
                 }
             }
         } else {
-            const response = await this.thirdPartyImpl.signInAndUp(
-                input.thirdPartyId,
-                input.code,
-                input.redirectURI,
-                input.options
-            );
+            const response = await this.thirdPartyImpl.signInAndUp(input);
             return {
                 ...response,
                 type: "thirdparty",

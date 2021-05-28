@@ -113,7 +113,8 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         const state = provider.generateState();
 
         // 2. Get Authorisation URL.
-        const url = await this.props.recipe.recipeImpl.getOAuthAuthorisationURL(provider.id, {
+        const url = await this.props.recipe.recipeImpl.getOAuthAuthorisationURL({
+            thirdPartyId: provider.id,
             config: this.props.recipe.config,
         });
 

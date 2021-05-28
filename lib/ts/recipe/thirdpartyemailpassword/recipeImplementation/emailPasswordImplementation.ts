@@ -5,12 +5,11 @@ export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
     return {
         doesEmailExist: oI.doesEmailExist,
         sendPasswordResetEmail: oI.sendPasswordResetEmail,
-        signIn: async (formFields, options) => {
+        signIn: async (input) => {
             const response = await oI.signInAndUp({
                 type: "emailpassword",
-                formFields,
                 isSignIn: true,
-                options,
+                ...input,
             });
             if (response.type === "emailpassword") {
                 if (response.status === "OK") {
@@ -32,12 +31,11 @@ export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
                 throw Error("Should never come here");
             }
         },
-        signUp: async (formFields, options) => {
+        signUp: async (input) => {
             const response = await oI.signInAndUp({
                 type: "emailpassword",
-                formFields,
                 isSignIn: false,
-                options,
+                ...input,
             });
             if (response.type === "emailpassword") {
                 if (response.status === "OK") {

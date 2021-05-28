@@ -15,7 +15,12 @@
 import NormalisedURLPath from "./normalisedURLPath";
 import { isRequestInit } from "./utils";
 import { supported_fdi } from "./version";
-import { PreAPIHookFunction, NormalisedAppInfo } from "./types";
+import { NormalisedAppInfo } from "./types";
+
+type PreAPIHookFunction = (context: {
+    requestInit: RequestInit;
+    url: string;
+}) => Promise<RequestInit | { url?: string; requestInit: RequestInit }>;
 
 export default class Querier {
     recipeId: string;

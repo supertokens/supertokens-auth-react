@@ -301,58 +301,6 @@ function SessionInfoTable({ sessionInfo }) {
 function getEmailPasswordConfigs() {
     return EmailPassword.init({
         palette: theme.colors,
-        override: {
-            functions: (oI) => {
-                return {
-                    ...oI,
-                    doesEmailExist: (email, options) => {
-                        return oI.doesEmailExist(email, {
-                            ...options,
-                            preAPIHook: (context) => {
-                                console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS`);
-                                return context;
-                            },
-                        });
-                    },
-                    sendPasswordResetEmail: (formFields, options) => {
-                        return oI.sendPasswordResetEmail(formFields, {
-                            ...options,
-                            preAPIHook: (context) => {
-                                console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL`);
-                                return context;
-                            },
-                        });
-                    },
-                    submitNewPassword: (formFields, token, options) => {
-                        return oI.submitNewPassword(formFields, token, {
-                            ...options,
-                            preAPIHook: (context) => {
-                                console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SUBMIT_NEW_PASSWORD`);
-                                return context;
-                            },
-                        });
-                    },
-                    signIn: (formFields, options) => {
-                        return oI.signIn(formFields, {
-                            ...options,
-                            preAPIHook: (context) => {
-                                console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN`);
-                                return context;
-                            },
-                        });
-                    },
-                    signUp: (formFields, options) => {
-                        return oI.signUp(formFields, {
-                            ...options,
-                            preAPIHook: (context) => {
-                                console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP`);
-                                return context;
-                            },
-                        });
-                    },
-                };
-            },
-        },
         preAPIHook: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
             return context.requestInit;
@@ -401,31 +349,6 @@ function getEmailPasswordConfigs() {
 
 function getThirdPartyConfigs() {
     return ThirdParty.init({
-        override: {
-            functions: (oI) => {
-                return {
-                    ...oI,
-                    getOAuthAuthorisationURL: (id, options) => {
-                        return oI.getOAuthAuthorisationURL(id, {
-                            ...options,
-                            preAPIHook: (context) => {
-                                console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL`);
-                                return context;
-                            },
-                        });
-                    },
-                    signInAndUp: (id, code, url, options) => {
-                        return oI.signInAndUp(id, code, url, {
-                            ...options,
-                            preAPIHook: (context) => {
-                                console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN`);
-                                return context;
-                            },
-                        });
-                    },
-                };
-            },
-        },
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
             return context.requestInit;
@@ -465,63 +388,6 @@ function getThirdPartyConfigs() {
 
 function getThirdPartyEmailPasswordConfigs() {
     return ThirdPartyEmailPassword.init({
-        override: {
-            functions: (oI) => {
-                return {
-                    ...oI,
-                    doesEmailExist: (email, options) => {
-                        return oI.doesEmailExist(email, {
-                            ...options,
-                            preAPIHook: (context) => {
-                                console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS`);
-                                return context;
-                            },
-                        });
-                    },
-                    sendPasswordResetEmail: (formFields, options) => {
-                        return oI.sendPasswordResetEmail(formFields, {
-                            ...options,
-                            preAPIHook: (context) => {
-                                console.log(
-                                    `ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL`
-                                );
-                                return context;
-                            },
-                        });
-                    },
-                    submitNewPassword: (formFields, token, options) => {
-                        return oI.submitNewPassword(formFields, token, {
-                            ...options,
-                            preAPIHook: (context) => {
-                                console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS SUBMIT_NEW_PASSWORD`);
-                                return context;
-                            },
-                        });
-                    },
-                    getOAuthAuthorisationURL: (id, options) => {
-                        return oI.getOAuthAuthorisationURL(id, {
-                            ...options,
-                            preAPIHook: (context) => {
-                                console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS GET_AUTHORISATION_URL`);
-                                return context;
-                            },
-                        });
-                    },
-                    signInAndUp: (input) => {
-                        return oI.signInAndUp({
-                            ...input,
-                            options: {
-                                ...input.options,
-                                preAPIHook: (context) => {
-                                    console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN`);
-                                    return context;
-                                },
-                            },
-                        });
-                    },
-                };
-            },
-        },
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
             return context.requestInit;

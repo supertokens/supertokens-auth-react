@@ -85,10 +85,3 @@ export declare type FeatureBaseProps = {
     history?: any;
     isEmbedded?: boolean;
 };
-export declare type PreAPIHookFunction = (context: { requestInit: RequestInit; url: string }) => Promise<
-    | RequestInit
-    | {
-          url?: string;
-          requestInit: RequestInit;
-      }
->;

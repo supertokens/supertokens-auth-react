@@ -3,7 +3,6 @@ import {
     GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
     PreAPIHookContext as EmailPasswordPreAPIHookContext,
-    FunctionOptions as EPFunctionOptions,
 } from "../emailpassword";
 import {
     NormalisedResetPasswordUsingTokenFeatureConfig,
@@ -12,13 +11,14 @@ import {
     ResetPasswordUsingTokenUserInput,
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
+    NormalisedConfig as EPConfig,
 } from "../emailpassword/types";
 import {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
-    FunctionOptions as TPFunctionOptions,
 } from "../thirdparty";
+import { NormalisedConfig as TPConfig } from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
@@ -29,7 +29,6 @@ import {
 } from "../authRecipeModule/types";
 import EPRecipe from "../emailpassword/recipe";
 import TPRecipe from "../thirdparty/recipe";
-export { EPFunctionOptions, TPFunctionOptions };
 import RecipeImplementation from "./recipeImplementation";
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
@@ -38,7 +37,7 @@ export declare type UserInput = {
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
     };
-} & AuthRecipeModuleUserInput;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type NormalisedConfig = {
@@ -86,14 +85,14 @@ export declare type SignInAndUpInput =
               id: string;
               value: string;
           }[];
-          options: EPFunctionOptions;
+          config: EPConfig;
       }
     | {
           type: "thirdparty";
           thirdPartyId: string;
           code: string;
           redirectURI: string;
-          options: TPFunctionOptions;
+          config: TPConfig;
       };
 export declare type SignInAndUpOutput =
     | {
@@ -124,14 +123,14 @@ export declare type SignInAndUpOutput =
           error: string;
       };
 export interface RecipeInterface {
-    submitNewPassword: (
+    submitNewPassword: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        token: string,
-        options: EPFunctionOptions
-    ) => Promise<
+        }[];
+        token: string;
+        config: EPConfig;
+    }) => Promise<
         | {
               status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
           }
@@ -143,13 +142,13 @@ export interface RecipeInterface {
               }[];
           }
     >;
-    sendPasswordResetEmail: (
+    sendPasswordResetEmail: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: EPFunctionOptions
-    ) => Promise<
+        }[];
+        config: EPConfig;
+    }) => Promise<
         | {
               status: "OK";
           }
@@ -161,7 +160,7 @@ export interface RecipeInterface {
               }[];
           }
     >;
-    doesEmailExist: (email: string, options: EPFunctionOptions) => Promise<boolean>;
-    getOAuthAuthorisationURL: (thirdPartyId: string, options: TPFunctionOptions) => Promise<string>;
+    doesEmailExist: (input: { email: string; config: EPConfig }) => Promise<boolean>;
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig }) => Promise<string>;
     signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
 }

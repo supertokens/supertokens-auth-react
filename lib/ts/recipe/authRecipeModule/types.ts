@@ -19,18 +19,22 @@ import {
     OnHandleEventContext as EmailVerificationOnHandleEventContext,
     PreAPIHookContext as EmailVerificationPreAPIHookContext,
 } from "../emailverification/types";
-import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
+import {
+    Config as RecipeModuleConfig,
+    NormalisedConfig as NormalisedRecipeModuleConfig,
+    UserInput as UserInputRecipeModule,
+} from "../recipeModule/types";
 
 export type User = {
     id: string;
     email: string;
 };
 
-export type UserInput = {
+export type UserInput<T, S, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
-};
+} & UserInputRecipeModule<T, S, R>;
 
-export type Config<T, S, R> = UserInput & RecipeModuleConfig<T, S, R>;
+export type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
 
 export type NormalisedConfig<T, S, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;

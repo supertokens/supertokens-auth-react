@@ -1,4 +1,4 @@
-import { RecipeInterface, FunctionOptions } from "./types";
+import { RecipeInterface, NormalisedConfig } from "./types";
 import { User } from "../authRecipeModule/types";
 import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
@@ -10,29 +10,43 @@ export default class RecipeImplementation implements RecipeInterface {
         this.querier = new Querier(recipeId, appInfo);
     }
 
-    getOAuthAuthorisationURL = async (thirdPartyId: string, options: FunctionOptions): Promise<string> => {
+    getOAuthAuthorisationURL = async (input: { thirdPartyId: string; config: NormalisedConfig }): Promise<string> => {
         const response: AuthorisationURLAPIResponse = await this.querier.get(
             "/authorisationurl",
             {},
-            { thirdPartyId },
-            options.preAPIHook
+            { thirdPartyId: input.thirdPartyId },
+            (context) => {
+                return input.config.preAPIHook({
+                    ...context,
+                    action: "GET_AUTHORISATION_URL",
+                });
+            }
         );
 
         return response.url;
     };
 
-    signInAndUp = async (
-        thirdPartyId: string,
-        code: string,
-        redirectURI: string,
-        options: FunctionOptions
-    ): Promise<SignInAndUpAPIResponse> => {
+    signInAndUp = async (input: {
+        thirdPartyId: string;
+        code: string;
+        redirectURI: string;
+        config: NormalisedConfig;
+    }): Promise<SignInAndUpAPIResponse> => {
         const response: SignInAndUpAPIResponse = await this.querier.post(
             "/signinup",
             {
-                body: JSON.stringify({ code, thirdPartyId, redirectURI }),
+                body: JSON.stringify({
+                    code: input.code,
+                    thirdPartyId: input.thirdPartyId,
+                    redirectURI: input.redirectURI,
+                }),
             },
-            options.preAPIHook
+            (context) => {
+                return input.config.preAPIHook({
+                    ...context,
+                    action: "SIGN_IN",
+                });
+            }
         );
 
         return response;

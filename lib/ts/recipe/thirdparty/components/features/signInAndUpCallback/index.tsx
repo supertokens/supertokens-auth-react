@@ -69,7 +69,10 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 action: "GET_REDIRECT_URL",
                 provider,
             });
-            const response = await this.props.recipe.recipeImpl.signInAndUp(providerId, code, redirectUrl, {
+            const response = await this.props.recipe.recipeImpl.signInAndUp({
+                thirdPartyId: providerId,
+                code,
+                redirectURI: redirectUrl,
                 config: this.props.recipe.config,
             });
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {

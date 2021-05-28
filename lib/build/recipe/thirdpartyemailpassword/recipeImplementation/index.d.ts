@@ -1,19 +1,21 @@
-import { RecipeInterface, SignInAndUpInput, SignInAndUpOutput, EPFunctionOptions, TPFunctionOptions } from "../types";
+import { RecipeInterface, SignInAndUpInput, SignInAndUpOutput } from "../types";
 import { NormalisedAppInfo } from "../../../types";
 import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImplementation";
 import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
+import { NormalisedConfig as EPConfig } from "../../emailpassword/types";
+import { NormalisedConfig as TPConfig } from "../../thirdparty/types";
 export default class RecipeImplementation implements RecipeInterface {
     emailpasswordImpl: EmailPasswordRecipeImplementation;
     thirdPartyImpl: ThirdPartyRecipeImplementation;
     constructor(recipeId: string, appInfo: NormalisedAppInfo);
-    submitNewPassword: (
+    submitNewPassword: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        token: string,
-        options: EPFunctionOptions
-    ) => Promise<
+        }[];
+        token: string;
+        config: EPConfig;
+    }) => Promise<
         | {
               status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
           }
@@ -25,13 +27,13 @@ export default class RecipeImplementation implements RecipeInterface {
               }[];
           }
     >;
-    sendPasswordResetEmail: (
+    sendPasswordResetEmail: (input: {
         formFields: {
             id: string;
             value: string;
-        }[],
-        options: EPFunctionOptions
-    ) => Promise<
+        }[];
+        config: EPConfig;
+    }) => Promise<
         | {
               status: "OK";
           }
@@ -43,7 +45,7 @@ export default class RecipeImplementation implements RecipeInterface {
               }[];
           }
     >;
-    doesEmailExist: (email: string, options: EPFunctionOptions) => Promise<boolean>;
-    getOAuthAuthorisationURL: (thirdPartyId: string, options: TPFunctionOptions) => Promise<string>;
+    doesEmailExist: (input: { email: string; config: EPConfig }) => Promise<boolean>;
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig }) => Promise<string>;
     signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
 }

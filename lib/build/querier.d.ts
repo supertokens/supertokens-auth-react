@@ -1,4 +1,11 @@
-import { PreAPIHookFunction, NormalisedAppInfo } from "./types";
+import { NormalisedAppInfo } from "./types";
+declare type PreAPIHookFunction = (context: { requestInit: RequestInit; url: string }) => Promise<
+    | RequestInit
+    | {
+          url?: string;
+          requestInit: RequestInit;
+      }
+>;
 export default class Querier {
     recipeId: string;
     appInfo: NormalisedAppInfo;
@@ -23,3 +30,4 @@ export default class Querier {
     }>;
     getFullUrl: (pathStr: string, queryParams?: Record<string, string> | undefined) => string;
 }
+export {};

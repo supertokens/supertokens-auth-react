@@ -1,14 +1,7 @@
 /// <reference types="react" />
 import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import {
-    UserInput,
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext,
-    RecipeInterface,
-    FunctionOptions,
-} from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import Apple from "./providers/apple";
@@ -64,5 +57,4 @@ export {
     UserInput,
     RecipeImplementation,
     RecipeInterface,
-    FunctionOptions,
 };
