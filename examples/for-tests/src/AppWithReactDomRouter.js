@@ -16,6 +16,12 @@ function AppWithReactDomRouter(props) {
                             <Home />
                         </Route>
 
+                        <Route exact path="/CasE/Case-SensItive1-PAth" sensitive>
+                            <Auth {...props}>
+                                <Dashboard />
+                            </Auth>
+                        </Route>
+
                         <Route path="/dashboard-no-auth">
                             <Auth requireAuth={false}>
                                 <DashboardNoAuthRequired />
