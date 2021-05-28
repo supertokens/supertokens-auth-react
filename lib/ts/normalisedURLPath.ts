@@ -40,7 +40,7 @@ export default class NormalisedURLPath {
 }
 
 export function normaliseURLPathOrThrowError(input: string): string {
-    input = input.trim().toLowerCase();
+    input = input.trim();
     try {
         if (!input.startsWith("http://") && !input.startsWith("https://")) {
             throw new Error("converting to proper URL");

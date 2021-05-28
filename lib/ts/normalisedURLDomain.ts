@@ -31,7 +31,7 @@ export function normaliseURLDomainOrThrowError(input: string, ignoreProtocol = f
             ipaddress
         );
     }
-    input = input.trim().toLowerCase();
+    input = input.trim();
     try {
         if (!input.startsWith("http://") && !input.startsWith("https://")) {
             throw new Error("converting to proper URL");

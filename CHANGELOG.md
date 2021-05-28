@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   In session recipe, we remove `setAuth0API` and `getAuth0API`
 -   Removes a global pre API hook per recipe. Pre API hooks now need to be added per function in the recipe interface.
 
+## [0.13.1] - 2021-05-28
+
+### Fixed:
+
+-   Respects case sensitive when redirecting post login: https://github.com/supertokens/supertokens-auth-react/issues/252
+
 ## [0.13.0] - 2021-05-11
 
 ### Added:
