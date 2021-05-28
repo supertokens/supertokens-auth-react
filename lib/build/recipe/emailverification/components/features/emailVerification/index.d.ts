@@ -11,7 +11,6 @@ declare class EmailVerification extends PureComponent<
     }
 > {
     constructor(props: Prop);
-    getRecipeInstanceOrThrow: () => Recipe;
     signOut: () => Promise<void>;
     onTokenInvalidRedirect: () => Promise<void>;
     componentDidMount(): Promise<void>;

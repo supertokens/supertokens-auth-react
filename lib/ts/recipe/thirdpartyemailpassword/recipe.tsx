@@ -59,7 +59,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     constructor(config: Config) {
         super(normaliseThirdPartyEmailPasswordConfig(config));
 
-        this.recipeImpl = new RecipeImplementation(this.config.recipeId, this.config.appInfo);
+        this.recipeImpl = this.config.override.functions(
+            new RecipeImplementation(this.config.recipeId, this.config.appInfo)
+        );
 
         this.emailPasswordRecipe = new EmailPassword({
             appInfo: this.config.appInfo,

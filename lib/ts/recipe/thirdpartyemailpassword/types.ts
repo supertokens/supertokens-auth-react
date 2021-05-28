@@ -48,11 +48,15 @@ import {
 import EPRecipe from "../emailpassword/recipe";
 import TPRecipe from "../thirdparty/recipe";
 export { EPFunctionOptions, TPFunctionOptions };
+import RecipeImplementation from "./recipeImplementation";
 
 export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     disableEmailPassword?: boolean;
+    override?: {
+        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
 } & AuthRecipeModuleUserInput;
 
 export type Config = UserInput &
@@ -62,6 +66,9 @@ export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     disableEmailPassword: boolean;
+    override: {
+        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {

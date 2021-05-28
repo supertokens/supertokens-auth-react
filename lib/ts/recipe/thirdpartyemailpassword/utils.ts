@@ -16,13 +16,14 @@
 /*
  * Imports.
  */
-import { Config, NormalisedConfig } from "./types";
+import { Config, NormalisedConfig, RecipeInterface } from "./types";
 
 import { normaliseEmailPasswordConfig } from "../emailpassword/utils";
 import { normaliseThirdPartyConfig } from "../thirdparty/utils";
 import { Config as ThirdPartyConfig } from "../thirdparty/types";
 import { Config as EmailPasswordConfig } from "../emailpassword/types";
 import { normaliseAuthRecipeModuleConfig } from "../authRecipeModule/utils";
+import RecipeImplementation from "./recipeImplementation";
 
 /*
  * Methods.
@@ -38,6 +39,22 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
     if (disableEmailPassword && thirdPartyConfig.signInAndUpFeature.providers.length === 0) {
         throw new Error("You need to enable either email password or third party providers login.");
     }
+
+    let override: {
+        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    } = {
+        functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+    };
+
+    if (config !== undefined && config.override !== undefined) {
+        if (config.override.functions !== undefined) {
+            override = {
+                ...override,
+                functions: config.override.functions,
+            };
+        }
+    }
+
     return {
         ...normaliseAuthRecipeModuleConfig(config),
         signInAndUpFeature: {
@@ -46,6 +63,7 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
         },
         resetPasswordUsingTokenFeature: emailPasswordConfig.resetPasswordUsingTokenFeature,
         disableEmailPassword,
+        override,
     };
 }
 

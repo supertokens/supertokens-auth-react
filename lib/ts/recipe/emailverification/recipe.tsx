@@ -95,7 +95,7 @@ export default class EmailVerification extends RecipeModule<
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
-        return <EmailVerificationFeature recipeId={this.config.recipeId} {...props} />;
+        return <EmailVerificationFeature recipe={this} {...props} />;
     };
 
     async isEmailVerified(): Promise<boolean> {
