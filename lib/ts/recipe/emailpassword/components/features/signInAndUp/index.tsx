@@ -21,22 +21,17 @@ import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 
-import {
-    FormFieldThemeProps,
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext,
-    NormalisedConfig,
-} from "../../../types";
+import { FormFieldThemeProps } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
 import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import { getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { SignInAndUpState, RecipeInterface } from "../../../types";
-import AuthRecipeModule from "../../../../authRecipeModule";
-import SuperTokens from "../../../../../superTokens";
+import Recipe from "../../../recipe";
 
-type PropType = FeatureBaseProps & { recipeImplemetation: RecipeInterface };
+type PropType = FeatureBaseProps & {
+    recipe: Recipe;
+};
 
 class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     /*
@@ -50,26 +45,6 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         };
     }
 
-    getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    > => {
-        if (this.props.recipeId === undefined) {
-            throw new Error("No recipeId props given to SignInAndUp component");
-        }
-
-        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (!(recipe instanceof AuthRecipeModule)) {
-            throw new Error(
-                `${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`
-            );
-        }
-
-        return recipe;
-    };
-
     getIsEmbedded = (): boolean => {
         if (this.props.isEmbedded !== undefined) {
             return this.props.isEmbedded;
@@ -82,13 +57,13 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
             return;
         }
 
-        this.getRecipeInstanceOrThrow().config.onHandleEvent({
+        this.props.recipe.config.onHandleEvent({
             action: "SUCCESS",
             isNewUser: false,
             user: this.state.user,
         });
 
-        return await this.getRecipeInstanceOrThrow().redirect(
+        return await this.props.recipe.redirect(
             {
                 action: "SUCCESS",
                 isNewUser: false,
@@ -103,21 +78,21 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
             return;
         }
 
-        this.getRecipeInstanceOrThrow().config.onHandleEvent({
+        this.props.recipe.config.onHandleEvent({
             action: "SUCCESS",
             isNewUser: true,
             user: this.state.user,
         });
 
-        if (this.getRecipeInstanceOrThrow().emailVerification.config.mode === "REQUIRED") {
-            return await this.getRecipeInstanceOrThrow().emailVerification.redirect(
+        if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
+            return await this.props.recipe.emailVerification.redirect(
                 {
                     action: "VERIFY_EMAIL",
                 },
                 this.props.history
             );
         } else {
-            return await this.getRecipeInstanceOrThrow().redirect(
+            return await this.props.recipe.redirect(
                 {
                     redirectToPath: getRedirectToPathFromURL(),
                     isNewUser: true,
@@ -157,7 +132,9 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                         return "Email must be of type string";
                     }
                     try {
-                        const emailExists = await this.props.recipeImplemetation.doesEmailExist(value);
+                        const emailExists = await this.props.recipe.recipeImpl.doesEmailExist(value, {
+                            config: this.props.recipe.config,
+                        });
                         if (emailExists) {
                             return "This email already exists. Please sign in instead";
                         }
@@ -169,15 +146,12 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     }
 
     componentDidMount = async (): Promise<void> => {
-        const sessionExists = await this.getRecipeInstanceOrThrow().doesSessionExist();
+        const sessionExists = await this.props.recipe.doesSessionExist();
         if (sessionExists) {
-            this.getRecipeInstanceOrThrow().config.onHandleEvent({
+            this.props.recipe.config.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS",
             });
-            return await this.getRecipeInstanceOrThrow().redirect(
-                { action: "SUCCESS", isNewUser: false },
-                this.props.history
-            );
+            return await this.props.recipe.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
         }
 
         this.setState((oldState) => {
@@ -194,9 +168,9 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
 
     getModifiedRecipeImplementation = (): RecipeInterface => {
         return {
-            ...this.props.recipeImplemetation,
+            ...this.props.recipe.recipeImpl,
             signIn: async (formFields, preApiHook) => {
-                const response = await this.props.recipeImplemetation.signIn(formFields, preApiHook);
+                const response = await this.props.recipe.recipeImpl.signIn(formFields, preApiHook);
 
                 this.setState((oldState) => {
                     return oldState.status !== "READY" || response.status !== "OK"
@@ -210,7 +184,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                 return response;
             },
             signUp: async (formFields, preAPIHook) => {
-                const response = await this.props.recipeImplemetation.signUp(formFields, preAPIHook);
+                const response = await this.props.recipe.recipeImpl.signUp(formFields, preAPIHook);
 
                 this.setState((oldState) => {
                     return oldState.status !== "READY" || response.status !== "OK"
@@ -227,21 +201,27 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     };
 
     render = (): JSX.Element => {
-        const signInAndUpFeature = this.getRecipeInstanceOrThrow().config.signInAndUpFeature;
+        // Before session is verified, return empty fragment, prevent UI glitch.
+        if (this.state.status === "LOADING") {
+            return <Fragment />;
+        }
+
+        const signInAndUpFeature = this.props.recipe.config.signInAndUpFeature;
         const signUpFeature = signInAndUpFeature.signUpForm;
         const signInFeature = signInAndUpFeature.signInForm;
 
         const signInForm = {
             recipeImplementation: this.getModifiedRecipeImplementation(),
+            config: this.props.recipe.config,
             styleFromInit: signInFeature.style,
             formFields: signInFeature.formFields,
             onSuccess: this.onSignInSuccess,
-            forgotPasswordClick: () =>
-                this.getRecipeInstanceOrThrow().redirect({ action: "RESET_PASSWORD" }, this.props.history),
+            forgotPasswordClick: () => this.props.recipe.redirect({ action: "RESET_PASSWORD" }, this.props.history),
         };
 
         const signUpForm = {
             recipeImplementation: this.getModifiedRecipeImplementation(),
+            config: this.props.recipe.config,
             styleFromInit: signUpFeature.style,
             formFields: this.getThemeSignUpFeatureFormFields(signUpFeature.formFields),
             privacyPolicyLink: signUpFeature.privacyPolicyLink,
@@ -249,36 +229,20 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
             onSuccess: this.onSignUpSuccess,
         };
 
-        // Before session is verified, return empty fragment, prevent UI glitch.
-        if (this.state.status === "LOADING") {
-            return <Fragment />;
-        }
+        const props = {
+            rawPalette: this.props.recipe.config.palette,
+            defaultToSignUp: signInAndUpFeature.defaultToSignUp,
+            signInForm: signInForm,
+            signUpForm: signUpForm,
+        };
 
-        /*
-         * Render.
-         */
         return (
-            <FeatureWrapper
-                useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}
-                isEmbedded={this.getIsEmbedded()}>
+            <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
                 <Fragment>
                     {/* No custom theme, use default. */}
-                    {this.props.children === undefined && (
-                        <SignInAndUpTheme
-                            rawPalette={this.getRecipeInstanceOrThrow().config.palette}
-                            defaultToSignUp={signInAndUpFeature.defaultToSignUp}
-                            signInForm={signInForm}
-                            signUpForm={signUpForm}
-                        />
-                    )}
+                    {this.props.children === undefined && <SignInAndUpTheme {...props} />}
                     {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children &&
-                        React.cloneElement(this.props.children, {
-                            rawPalette: this.getRecipeInstanceOrThrow().config.palette,
-                            defaultToSignUp: signInAndUpFeature.defaultToSignUp,
-                            signInForm,
-                            signUpForm,
-                        })}
+                    {this.props.children && React.cloneElement(this.props.children, props)}
                 </Fragment>
             </FeatureWrapper>
         );

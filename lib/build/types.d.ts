@@ -81,7 +81,6 @@ export declare type ThemeBaseProps = {
     onSuccess: () => void;
 };
 export declare type FeatureBaseProps = {
-    recipeId: string;
     children?: JSX.Element;
     history?: any;
     isEmbedded?: boolean;

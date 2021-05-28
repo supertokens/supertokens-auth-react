@@ -27,6 +27,7 @@ import {
     PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
+    RecipeInterface,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
@@ -36,10 +37,10 @@ import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
+import RecipeImplementation from "./recipeImplementation";
+import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
+import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 
-/*
- * Class.
- */
 export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     GetRedirectionURLContext,
     PreAPIHookContext,
@@ -53,8 +54,13 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
 
     thirdPartyRecipe: ThirdParty;
 
+    recipeImpl: RecipeInterface;
+
     constructor(config: Config) {
         super(normaliseThirdPartyEmailPasswordConfig(config));
+
+        this.recipeImpl = new RecipeImplementation(this.config.recipeId, this.config.appInfo);
+
         this.emailPasswordRecipe = new EmailPassword({
             appInfo: this.config.appInfo,
             recipeId: this.config.recipeId,
@@ -68,6 +74,12 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             resetPasswordUsingTokenFeature: this.config.resetPasswordUsingTokenFeature,
             signInAndUpFeature: this.config.signInAndUpFeature,
             useShadowDom: this.config.useShadowDom,
+            override: {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                functions: (_) => {
+                    return getEmailPasswordImpl(this.recipeImpl);
+                },
+            },
         });
 
         this.thirdPartyRecipe = new ThirdParty({
@@ -82,6 +94,12 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             preAPIHook: this.config.preAPIHook,
             signInAndUpFeature: this.config.signInAndUpFeature,
             useShadowDom: this.config.useShadowDom,
+            override: {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                functions: (_) => {
+                    return getThirdPartyImpl(this.recipeImpl);
+                },
+            },
         });
     }
 
@@ -120,14 +138,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         prop: any
     ): JSX.Element => {
         if (componentName === "signinup") {
-            return (
-                <SignInAndUp
-                    recipeId={this.config.recipeId}
-                    emailPasswordRecipeImplementation={this.emailPasswordRecipe.recipeImpl}
-                    thirdPartyRecipeImplementation={this.thirdPartyRecipe.recipeImpl}
-                    {...prop}
-                />
-            );
+            return <SignInAndUp recipe={this} {...prop} />;
         } else if (componentName === "resetpassword") {
             return this.emailPasswordRecipe.getFeatureComponent(componentName, prop);
         } else {

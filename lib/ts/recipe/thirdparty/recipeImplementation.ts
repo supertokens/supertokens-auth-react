@@ -1,23 +1,21 @@
-import { RecipeInterface, NormalisedConfig } from "./types";
+import { RecipeInterface, FunctionOptions } from "./types";
 import { User } from "../authRecipeModule/types";
-import { PreAPIHookFunction } from "../../types";
+import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
 
 export default class RecipeImplementation implements RecipeInterface {
     querier: Querier;
-    config: NormalisedConfig;
 
-    constructor(config: NormalisedConfig) {
-        this.querier = new Querier(config.recipeId, config.appInfo);
-        this.config = config;
+    constructor(recipeId: string, appInfo: NormalisedAppInfo) {
+        this.querier = new Querier(recipeId, appInfo);
     }
 
-    getOAuthAuthorisationURL = async (thirdPartyId: string, preAPIHook?: PreAPIHookFunction): Promise<string> => {
+    getOAuthAuthorisationURL = async (thirdPartyId: string, options: FunctionOptions): Promise<string> => {
         const response: AuthorisationURLAPIResponse = await this.querier.get(
             "/authorisationurl",
             {},
             { thirdPartyId },
-            preAPIHook
+            options.preAPIHook
         );
 
         return response.url;
@@ -27,14 +25,14 @@ export default class RecipeImplementation implements RecipeInterface {
         thirdPartyId: string,
         code: string,
         redirectURI: string,
-        preAPIHook?: PreAPIHookFunction
+        options: FunctionOptions
     ): Promise<SignInAndUpAPIResponse> => {
         const response: SignInAndUpAPIResponse = await this.querier.post(
             "/signinup",
             {
                 body: JSON.stringify({ code, thirdPartyId, redirectURI }),
             },
-            preAPIHook
+            options.preAPIHook
         );
 
         return response;

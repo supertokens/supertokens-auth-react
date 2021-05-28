@@ -207,12 +207,14 @@ type FormThemeBaseProps = ThemeBaseProps & {
 
 export type SignInThemeProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
     signUpClicked?: () => void;
     forgotPasswordClick: () => void;
 };
 
 export type SignUpThemeProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
     signInClicked?: () => void;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
@@ -336,10 +338,12 @@ export type ResetPasswordUsingTokenThemeProps = {
 
 export type EnterEmailThemeProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
 };
 
 export type SubmitNewPasswordThemeProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
     onSignInClicked: () => void;
     token: string;
 };
@@ -447,6 +451,11 @@ export type SignInAndUpState =
           user: User;
       };
 
+export type FunctionOptions = {
+    preAPIHook?: PreAPIHookFunction;
+    config: NormalisedConfig;
+};
+
 export interface RecipeInterface {
     submitNewPassword: (
         formFields: {
@@ -454,7 +463,7 @@ export interface RecipeInterface {
             value: string;
         }[],
         token: string,
-        preAPIHook?: PreAPIHookFunction
+        options: FunctionOptions
     ) => Promise<
         | {
               status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
@@ -473,7 +482,7 @@ export interface RecipeInterface {
             id: string;
             value: string;
         }[],
-        preAPIHook?: PreAPIHookFunction
+        options: FunctionOptions
     ) => Promise<
         | {
               status: "OK";
@@ -492,7 +501,7 @@ export interface RecipeInterface {
             id: string;
             value: string;
         }[],
-        preAPIHook?: PreAPIHookFunction
+        options: FunctionOptions
     ) => Promise<
         | {
               status: "OK";
@@ -512,7 +521,7 @@ export interface RecipeInterface {
             id: string;
             value: string;
         }[],
-        preAPIHook?: PreAPIHookFunction
+        options: FunctionOptions
     ) => Promise<
         | {
               status: "OK";
@@ -530,5 +539,5 @@ export interface RecipeInterface {
           }
     >;
 
-    doesEmailExist: (email: string, preAPIHook?: PreAPIHookFunction) => Promise<boolean>;
+    doesEmailExist: (email: string, options: FunctionOptions) => Promise<boolean>;
 }

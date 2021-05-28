@@ -21,12 +21,12 @@ import {
     GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
     PreAPIHookContext as EmailPasswordPreAPIHookContext,
+    FunctionOptions as EPFunctionOptions,
 } from "../emailpassword";
 import {
     NormalisedResetPasswordUsingTokenFeatureConfig,
     NormalisedSignInFormFeatureConfig,
     NormalisedSignUpFormFeatureConfig,
-    RecipeInterface as EmailPasswordRecipeInterface,
     ResetPasswordUsingTokenUserInput,
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
@@ -35,15 +35,19 @@ import {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
+    FunctionOptions as TPFunctionOptions,
 } from "../thirdparty";
-import { RecipeInterface as ThirdPartyRecipeInterface } from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
+    User,
 } from "../authRecipeModule/types";
+import EPRecipe from "../emailpassword/recipe";
+import TPRecipe from "../thirdparty/recipe";
+export { EPFunctionOptions, TPFunctionOptions };
 
 export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
@@ -123,13 +127,106 @@ export type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAP
 export type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 
 export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
-    recipeId: string;
     history?: any;
     defaultToSignUp: boolean;
     hideThirdParty?: boolean;
     hideEmailPassword?: boolean;
     rawPalette: Record<string, string>;
     styleFromInit: Styles;
-    emailPasswordRecipeImplementation: EmailPasswordRecipeInterface;
-    thirdPartyRecipeImplementation: ThirdPartyRecipeInterface;
+    emailPasswordRecipe: EPRecipe;
+    thirdPartyRecipe: TPRecipe;
 };
+
+export type SignInAndUpInput =
+    | {
+          type: "emailpassword";
+          isSignIn: boolean;
+          formFields: {
+              id: string;
+              value: string;
+          }[];
+          options: EPFunctionOptions;
+      }
+    | {
+          type: "thirdparty";
+          thirdPartyId: string;
+          code: string;
+          redirectURI: string;
+          options: TPFunctionOptions;
+      };
+
+export type SignInAndUpOutput =
+    | {
+          type: "emailpassword" | "thirdparty";
+          status: "OK";
+          user: User;
+          createdNewUser: boolean;
+      }
+    | {
+          type: "emailpassword";
+          status: "FIELD_ERROR";
+          formFields: {
+              id: string;
+              error: string;
+          }[];
+      }
+    | {
+          type: "emailpassword";
+          status: "WRONG_CREDENTIALS_ERROR";
+      }
+    | {
+          type: "thirdparty";
+          status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+      }
+    | {
+          type: "thirdparty";
+          status: "FIELD_ERROR";
+          error: string;
+      };
+
+export interface RecipeInterface {
+    submitNewPassword: (
+        formFields: {
+            id: string;
+            value: string;
+        }[],
+        token: string,
+        options: EPFunctionOptions
+    ) => Promise<
+        | {
+              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+          }
+    >;
+
+    sendPasswordResetEmail: (
+        formFields: {
+            id: string;
+            value: string;
+        }[],
+        options: EPFunctionOptions
+    ) => Promise<
+        | {
+              status: "OK";
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+          }
+    >;
+
+    doesEmailExist: (email: string, options: EPFunctionOptions) => Promise<boolean>;
+
+    getOAuthAuthorisationURL: (thirdPartyId: string, options: TPFunctionOptions) => Promise<string>;
+
+    signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
+}

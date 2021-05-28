@@ -248,11 +248,6 @@ export type ThemeBaseProps = {
 
 export type FeatureBaseProps = {
     /*
-     * recipeId.
-     */
-    recipeId: string;
-
-    /*
      * Children element
      */
     children?: JSX.Element;

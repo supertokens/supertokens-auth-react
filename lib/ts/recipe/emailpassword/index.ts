@@ -24,7 +24,13 @@ import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import {
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    RecipeInterface,
+    FunctionOptions,
+} from "./types";
 import RecipeImplementation from "./recipeImplementation";
 
 export default class Wrapper {
@@ -81,4 +87,5 @@ export {
     UserInput,
     RecipeImplementation,
     RecipeInterface,
+    FunctionOptions,
 };

@@ -1,15 +1,8 @@
 import { PureComponent } from "react";
-import {
-    GetRedirectionURLContext,
-    OnHandleEventContext,
-    PreAPIHookContext,
-    NormalisedConfig,
-    RecipeInterface,
-} from "../../../types";
 import { FeatureBaseProps } from "../../../../../types";
-import AuthRecipeModule from "../../../../authRecipeModule";
+import Recipe from "../../../recipe";
 declare type PropType = FeatureBaseProps & {
-    recipeImplemetation: RecipeInterface;
+    recipe: Recipe;
 };
 declare class ResetPasswordUsingToken extends PureComponent<
     PropType,
@@ -18,12 +11,6 @@ declare class ResetPasswordUsingToken extends PureComponent<
     }
 > {
     constructor(props: PropType);
-    getRecipeInstanceOrThrow: () => AuthRecipeModule<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    >;
     getIsEmbedded: () => boolean;
     render: () => JSX.Element;
 }

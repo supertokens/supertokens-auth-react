@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   Remove components folder from AuthRecipeModule, and puts them in the themes of the respective recipes.
     -   Uses redirectToAuth everywhere instead of calling redirect manually.
     -   Adds additional props / config to Session and EmailVerification recipe to make them more isolated
+    -   Passes recipe to feature components directly, as opposed to recipeId
 -   In session recipe, we remove `setAuth0API` and `getAuth0API`
 -   Removes a global pre API hook per recipe. Pre API hooks now need to be added per function in the recipe interface.
 

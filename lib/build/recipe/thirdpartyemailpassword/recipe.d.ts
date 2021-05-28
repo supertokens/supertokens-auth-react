@@ -8,6 +8,7 @@ import {
     PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
+    RecipeInterface,
 } from "./types";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
@@ -21,6 +22,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     static RECIPE_ID: string;
     emailPasswordRecipe: EmailPassword;
     thirdPartyRecipe: ThirdParty;
+    recipeImpl: RecipeInterface;
     constructor(config: Config);
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;

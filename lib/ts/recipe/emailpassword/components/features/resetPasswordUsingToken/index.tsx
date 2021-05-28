@@ -20,22 +20,16 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import {
-    GetRedirectionURLContext,
-    OnHandleEventContext,
-    PreAPIHookContext,
-    NormalisedConfig,
-    RecipeInterface,
-} from "../../../types";
 import { ResetPasswordUsingTokenTheme } from "../../..";
 import { FeatureBaseProps } from "../../../../../types";
 
 import { getWindowOrThrow } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import AuthRecipeModule from "../../../../authRecipeModule";
-import SuperTokens from "../../../../../superTokens";
+import Recipe from "../../../recipe";
 
-type PropType = FeatureBaseProps & { recipeImplemetation: RecipeInterface };
+type PropType = FeatureBaseProps & {
+    recipe: Recipe;
+};
 
 class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | undefined }> {
     /*
@@ -55,26 +49,6 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
         }
     }
 
-    getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    > => {
-        if (this.props.recipeId === undefined) {
-            throw new Error("No recipeId props given to SignInAndUp component");
-        }
-
-        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (!(recipe instanceof AuthRecipeModule)) {
-            throw new Error(
-                `${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`
-            );
-        }
-
-        return recipe;
-    };
-
     getIsEmbedded = (): boolean => {
         if (this.props.isEmbedded !== undefined) {
             return this.props.isEmbedded;
@@ -83,23 +57,23 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
     };
 
     render = (): JSX.Element => {
-        const enterEmailFormFeature =
-            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm;
+        const enterEmailFormFeature = this.props.recipe.config.resetPasswordUsingTokenFeature.enterEmailForm;
 
         const submitNewPasswordFormFeature =
-            this.getRecipeInstanceOrThrow().config.resetPasswordUsingTokenFeature.submitNewPasswordForm;
+            this.props.recipe.config.resetPasswordUsingTokenFeature.submitNewPasswordForm;
 
         const submitNewPasswordForm = {
             styleFromInit: submitNewPasswordFormFeature.style,
             formFields: submitNewPasswordFormFeature.formFields,
-            recipeImplementation: this.props.recipeImplemetation,
+            recipeImplementation: this.props.recipe.recipeImpl,
+            config: this.props.recipe.config,
             onSuccess: () => {
-                this.getRecipeInstanceOrThrow().config.onHandleEvent({
+                this.props.recipe.config.onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL",
                 });
             },
             onSignInClicked: () => {
-                this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath("signin", this.props.history);
+                this.props.recipe.redirectToAuthWithoutRedirectToPath("signin", this.props.history);
             },
             token: this.state.token || "",
         };
@@ -108,35 +82,28 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
             styleFromInit: enterEmailFormFeature.style,
             formFields: enterEmailFormFeature.formFields,
             onSuccess: () => {
-                this.getRecipeInstanceOrThrow().config.onHandleEvent({
+                this.props.recipe.config.onHandleEvent({
                     action: "RESET_PASSWORD_EMAIL_SENT",
                 });
             },
-            recipeImplementation: this.props.recipeImplemetation,
+            recipeImplementation: this.props.recipe.recipeImpl,
+            config: this.props.recipe.config,
+        };
+
+        const props = {
+            rawPalette: this.props.recipe.config.palette,
+            submitNewPasswordForm: submitNewPasswordForm,
+            enterEmailForm: enterEmailForm,
+            token: this.state.token,
         };
 
         return (
-            <FeatureWrapper
-                isEmbedded={this.getIsEmbedded()}
-                useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}>
+            <FeatureWrapper isEmbedded={this.getIsEmbedded()} useShadowDom={this.props.recipe.config.useShadowDom}>
                 <Fragment>
                     {/* No custom theme, use default. */}
-                    {this.props.children === undefined && (
-                        <ResetPasswordUsingTokenTheme
-                            rawPalette={this.getRecipeInstanceOrThrow().config.palette}
-                            submitNewPasswordForm={submitNewPasswordForm}
-                            enterEmailForm={enterEmailForm}
-                            token={this.state.token}
-                        />
-                    )}
+                    {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}
                     {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children &&
-                        React.cloneElement(this.props.children, {
-                            rawPalette: this.getRecipeInstanceOrThrow().config.palette,
-                            submitNewPasswordForm,
-                            enterEmailForm,
-                            token: this.state.token,
-                        })}
+                    {this.props.children && React.cloneElement(this.props.children, props)}
                 </Fragment>
             </FeatureWrapper>
         );

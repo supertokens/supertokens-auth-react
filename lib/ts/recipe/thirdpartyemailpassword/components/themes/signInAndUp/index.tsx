@@ -76,9 +76,8 @@ class SignInAndUpTheme extends React.PureComponent<
                     {this.props.hideThirdParty !== true && (
                         <Fragment>
                             <ThirdPartySignInAndUp
-                                recipeImplementation={this.props.thirdPartyRecipeImplementation}
+                                recipe={this.props.thirdPartyRecipe}
                                 history={this.props.history}
-                                recipeId={this.props.recipeId}
                                 isEmbedded={true}>
                                 <SignInAndUpProvidersForm
                                     // Seed props. Real props will be given by parent feature.
@@ -102,9 +101,8 @@ class SignInAndUpTheme extends React.PureComponent<
                     )}
                     {this.props.hideEmailPassword !== true && (
                         <EmailPasswordSignInAndUp
-                            recipeImplemetation={this.props.emailPasswordRecipeImplementation}
+                            recipe={this.props.emailPasswordRecipe}
                             history={this.props.history}
-                            recipeId={this.props.recipeId}
                             isEmbedded={true}>
                             <EmailPasswordSignInAndUpForm
                                 // Seed props. Real props will be given by parent feature.

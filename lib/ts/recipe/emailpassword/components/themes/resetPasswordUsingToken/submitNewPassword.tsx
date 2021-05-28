@@ -96,7 +96,10 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                         callAPI={async (fields) => {
                             const response = await this.props.recipeImplementation.submitNewPassword(
                                 fields,
-                                this.props.token
+                                this.props.token,
+                                {
+                                    config: this.props.config,
+                                }
                             );
                             if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
                                 return {

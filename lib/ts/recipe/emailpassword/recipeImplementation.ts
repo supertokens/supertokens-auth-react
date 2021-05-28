@@ -1,16 +1,14 @@
-import { RecipeInterface, NormalisedConfig } from "./types";
+import { RecipeInterface, FunctionOptions } from "./types";
 import { User } from "../authRecipeModule/types";
-import { PreAPIHookFunction } from "../../types";
+import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
 import { validateForm } from "../../utils";
 
 export default class RecipeImplementation implements RecipeInterface {
     querier: Querier;
-    config: NormalisedConfig;
 
-    constructor(config: NormalisedConfig) {
-        this.querier = new Querier(config.recipeId, config.appInfo);
-        this.config = config;
+    constructor(recipeId: string, appInfo: NormalisedAppInfo) {
+        this.querier = new Querier(recipeId, appInfo);
     }
 
     submitNewPassword = async (
@@ -19,12 +17,12 @@ export default class RecipeImplementation implements RecipeInterface {
             value: string;
         }[],
         token: string,
-        preAPIHook?: PreAPIHookFunction
+        options: FunctionOptions
     ): Promise<SubmitNewPasswordAPIResponse> => {
         // first we validate on the frontend
         const validationErrors = await validateForm(
             formFields,
-            this.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+            options.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
         );
 
         if (validationErrors.length > 0) {
@@ -51,7 +49,7 @@ export default class RecipeImplementation implements RecipeInterface {
         const response: SubmitNewPasswordAPIResponse = await this.querier.post(
             "/user/password/reset",
             { body: JSON.stringify({ formFields: [formFields[0]], token, method: "token" }) },
-            preAPIHook
+            options.preAPIHook
         );
 
         return response;
@@ -62,12 +60,12 @@ export default class RecipeImplementation implements RecipeInterface {
             id: string;
             value: string;
         }[],
-        preAPIHook?: PreAPIHookFunction
+        options: FunctionOptions
     ): Promise<SendPasswordResetEmailAPIResponse> => {
         // first we validate on the frontend
         const validationErrors = await validateForm(
             formFields,
-            this.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
+            options.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
         );
 
         if (validationErrors.length > 0) {
@@ -81,7 +79,7 @@ export default class RecipeImplementation implements RecipeInterface {
         const response: SendPasswordResetEmailAPIResponse = await this.querier.post(
             "/user/password/reset/token",
             { body: JSON.stringify({ formFields }) },
-            preAPIHook
+            options.preAPIHook
         );
         return response;
     };
@@ -91,10 +89,13 @@ export default class RecipeImplementation implements RecipeInterface {
             id: string;
             value: string;
         }[],
-        preAPIHook?: PreAPIHookFunction
+        options: FunctionOptions
     ): Promise<SignUpAPIResponse> => {
         // first we validate on the frontend
-        const validationErrors = await validateForm(formFields, this.config.signInAndUpFeature.signUpForm.formFields);
+        const validationErrors = await validateForm(
+            formFields,
+            options.config.signInAndUpFeature.signUpForm.formFields
+        );
 
         if (validationErrors.length > 0) {
             return {
@@ -107,7 +108,7 @@ export default class RecipeImplementation implements RecipeInterface {
         const response: SignUpAPIResponse = await this.querier.post(
             "/signup",
             { body: JSON.stringify({ formFields }) },
-            preAPIHook
+            options.preAPIHook
         );
 
         return response;
@@ -118,10 +119,13 @@ export default class RecipeImplementation implements RecipeInterface {
             id: string;
             value: string;
         }[],
-        preAPIHook?: PreAPIHookFunction
+        options: FunctionOptions
     ): Promise<SignInAPIResponse> => {
         // first we validate on the frontend
-        const validationErrors = await validateForm(formFields, this.config.signInAndUpFeature.signInForm.formFields);
+        const validationErrors = await validateForm(
+            formFields,
+            options.config.signInAndUpFeature.signInForm.formFields
+        );
 
         if (validationErrors.length > 0) {
             return {
@@ -134,17 +138,17 @@ export default class RecipeImplementation implements RecipeInterface {
         const response: SignInAPIResponse = await this.querier.post(
             "/signin",
             { body: JSON.stringify({ formFields }) },
-            preAPIHook
+            options.preAPIHook
         );
         return response;
     };
 
-    doesEmailExist = async (email: string, preAPIHook?: PreAPIHookFunction): Promise<boolean> => {
+    doesEmailExist = async (email: string, options: FunctionOptions): Promise<boolean> => {
         const response: EmailExistsAPIResponse = await this.querier.get(
             "/signup/email/exists",
             {},
             { email },
-            preAPIHook
+            options.preAPIHook
         );
 
         return response.exists;

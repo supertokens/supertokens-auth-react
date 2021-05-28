@@ -54,7 +54,9 @@ export default class ThirdParty extends AuthRecipeModule<
 
     constructor(config: Config) {
         super(normaliseThirdPartyConfig(config));
-        this.recipeImpl = this.config.override.functions(new RecipeImplementation(this.config));
+        this.recipeImpl = this.config.override.functions(
+            new RecipeImplementation(this.config.recipeId, this.config.appInfo)
+        );
     }
 
     /*
@@ -93,11 +95,9 @@ export default class ThirdParty extends AuthRecipeModule<
         prop: any
     ): JSX.Element => {
         if (componentName === "signinup") {
-            return <SignInAndUp recipeId={this.config.recipeId} recipeImplementation={this.recipeImpl} {...prop} />;
+            return <SignInAndUp recipe={this} {...prop} />;
         } else if (componentName === "signinupcallback") {
-            return (
-                <SignInAndUpCallback recipeId={this.config.recipeId} recipeImplementation={this.recipeImpl} {...prop} />
-            );
+            return <SignInAndUpCallback recipe={this} {...prop} />;
         } else {
             return this.getAuthRecipeModuleFeatureComponent(componentName, prop);
         }

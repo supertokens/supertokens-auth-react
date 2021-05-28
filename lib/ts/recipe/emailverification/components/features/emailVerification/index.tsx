@@ -31,15 +31,13 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import AuthRecipeModule from "../../../../authRecipeModule";
 import Recipe from "../../../recipe";
 
-/*
- * Component.
- */
+type Prop = FeatureBaseProps & { recipe: Recipe };
 
-class EmailVerification extends PureComponent<FeatureBaseProps, { token: string }> {
+class EmailVerification extends PureComponent<Prop, { token: string }> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: Prop) {
         super(props);
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
@@ -58,11 +56,11 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
      */
 
     getRecipeInstanceOrThrow = (): Recipe => {
-        if (this.props.recipeId === undefined) {
+        if (this.props.recipe.config.recipeId === undefined) {
             throw new Error("No recipeId props given to EmailVerification component");
         }
 
-        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
+        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipe.config.recipeId);
         if (!(recipe instanceof AuthRecipeModule)) {
             throw new Error(
                 `${recipe.config.recipeId} must be an instance of AuthRecipeModule to use EmailVerification component.`
@@ -146,29 +144,20 @@ class EmailVerification extends PureComponent<FeatureBaseProps, { token: string 
 
         const hasToken = this.state.token.length !== 0;
 
-        /*
-         * Render.
-         */
+        const props = {
+            rawPalette: this.getRecipeInstanceOrThrow().config.palette,
+            sendVerifyEmailScreen: sendVerifyEmailScreen,
+            verifyEmailLinkClickedScreen: verifyEmailLinkClickedScreen,
+            hasToken: hasToken,
+        };
+
         return (
             <FeatureWrapper useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}>
                 <Fragment>
                     {/* No custom theme, use default. */}
-                    {this.props.children === undefined && (
-                        <EmailVerificationTheme
-                            rawPalette={this.getRecipeInstanceOrThrow().config.palette}
-                            sendVerifyEmailScreen={sendVerifyEmailScreen}
-                            verifyEmailLinkClickedScreen={verifyEmailLinkClickedScreen}
-                            hasToken={hasToken}
-                        />
-                    )}
+                    {this.props.children === undefined && <EmailVerificationTheme {...props} />}
                     {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children &&
-                        React.cloneElement(this.props.children, {
-                            rawPalette: this.getRecipeInstanceOrThrow().config.palette,
-                            sendVerifyEmailScreen,
-                            verifyEmailLinkClickedScreen,
-                            hasToken,
-                        })}
+                    {this.props.children && React.cloneElement(this.props.children, props)}
                 </Fragment>
             </FeatureWrapper>
         );

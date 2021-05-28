@@ -24,12 +24,9 @@ import { FeatureBaseProps } from "../../types";
 import SessionAuth from "../session/sessionAuth";
 import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
+import Recipe from "./recipe";
 
-/*
- * Component.
- */
-
-class EmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?: boolean }> {
+class EmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?: boolean; recipe: Recipe }> {
     /*
      * Render.
      */
@@ -40,9 +37,7 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?:
                     EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, this.props.history);
                 }}
                 requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}>
-                <EmailVerificationAuth
-                    recipeId={EmailPassword.getInstanceOrThrow().config.recipeId}
-                    history={this.props.history}>
+                <EmailVerificationAuth recipe={this.props.recipe.emailVerification} history={this.props.history}>
                     {this.props.children}
                 </EmailVerificationAuth>
             </SessionAuth>
@@ -60,7 +55,7 @@ export default function EmailPasswordAuthWrapper({
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
     if (reactRouterDom === undefined) {
         return (
-            <EmailPasswordAuth requireAuth={requireAuth} recipeId={EmailPassword.getInstanceOrThrow().config.recipeId}>
+            <EmailPasswordAuth requireAuth={requireAuth} recipe={EmailPassword.getInstanceOrThrow()}>
                 {children}
             </EmailPasswordAuth>
         );
@@ -68,7 +63,7 @@ export default function EmailPasswordAuthWrapper({
 
     const Component = reactRouterDom.withRouter(EmailPasswordAuth);
     return (
-        <Component requireAuth={requireAuth} recipeId={EmailPassword.getInstanceOrThrow().config.recipeId}>
+        <Component requireAuth={requireAuth} recipe={EmailPassword.getInstanceOrThrow()}>
             {children}
         </Component>
     );

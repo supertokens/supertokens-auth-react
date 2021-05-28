@@ -153,34 +153,9 @@ export type SignInAndUpThemeProps = {
      * Terms Of Service Link.
      */
     termsOfServiceLink?: string;
-} & (
-    | {
-          status: "READY" | "LOADING" | "SUCCESSFUL" | "GENERAL_ERROR";
-      }
-    | {
-          status: "CUSTOM_ERROR";
-          error: string;
-      }
-);
 
-export type ThirdPartySignInAndUpThemeState =
-    | {
-          /*
-           * Status
-           */
-          status: "READY" | "LOADING" | "SUCCESSFUL";
-      }
-    | {
-          /*
-           * Status
-           */
-          status: "ERROR";
-
-          /*
-           * Error Message
-           */
-          message: string;
-      };
+    error: string | undefined;
+};
 
 export type ThirdPartySignInAndUpState =
     | {
@@ -219,14 +194,19 @@ export type StateObject = {
     redirectToPath: string | undefined;
 };
 
+export type FunctionOptions = {
+    preAPIHook?: PreAPIHookFunction;
+    config: NormalisedConfig;
+};
+
 export interface RecipeInterface {
-    getOAuthAuthorisationURL: (thirdPartyId: string, preAPIHook?: PreAPIHookFunction) => Promise<string>;
+    getOAuthAuthorisationURL: (thirdPartyId: string, options: FunctionOptions) => Promise<string>;
 
     signInAndUp: (
         thirdPartyId: string,
         code: string,
         redirectURI: string,
-        preAPIHook?: PreAPIHookFunction
+        options: FunctionOptions
     ) => Promise<
         | {
               status: "OK";

@@ -25,42 +25,15 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
-import {
-    NormalisedConfig,
-    GetRedirectionURLContext,
-    OnHandleEventContext,
-    PreAPIHookContext,
-    RecipeInterface,
-} from "../../../types";
+import {} from "../../../types";
 import SignInAndUpCallbackTheme from "../../themes/signInAndUpCallback";
 import { getOAuthState } from "../../../utils";
 import Provider from "../../../providers";
-import AuthRecipeModule from "../../../../authRecipeModule";
-import SuperTokens from "../../../../../superTokens";
+import Recipe from "../../../recipe";
 
-type PropType = FeatureBaseProps & { recipeImplementation: RecipeInterface };
+type PropType = FeatureBaseProps & { recipe: Recipe };
 
 class SignInAndUpCallback extends PureComponent<PropType, unknown> {
-    getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    > => {
-        if (this.props.recipeId === undefined) {
-            throw new Error("No recipeId props given to SignInAndUp component");
-        }
-
-        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (!(recipe instanceof AuthRecipeModule)) {
-            throw new Error(
-                `${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`
-            );
-        }
-
-        return recipe;
-    };
-
     getIsEmbedded = (): boolean => {
         if (this.props.isEmbedded !== undefined) {
             return this.props.isEmbedded;
@@ -73,51 +46,45 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
             getWindowOrThrow().location.pathname.split("/")[getWindowOrThrow().location.pathname.split("/").length - 1];
         const oauthCallbackError = this.getOAuthCallbackError(providerId);
         if (oauthCallbackError !== undefined) {
-            return this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+            return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                 error: oauthCallbackError,
             });
         }
         // If no code params, redirect with error.
         const code = getQueryParams("code");
         if (code === null) {
-            return this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+            return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                 error: "no_code",
             });
         }
 
         try {
-            const provider = this.getRecipeInstanceOrThrow().config.signInAndUpFeature.providers.find(
+            const provider = this.props.recipe.config.signInAndUpFeature.providers.find(
                 (p) => p.id === providerId
             ) as Provider;
             if (provider === undefined) {
                 throw new Error();
             }
-            const redirectUrl = await this.getRecipeInstanceOrThrow().getRedirectUrl({
+            const redirectUrl = await this.props.recipe.getRedirectUrl({
                 action: "GET_REDIRECT_URL",
                 provider,
             });
-            const response = await this.props.recipeImplementation.signInAndUp(providerId, code, redirectUrl);
+            const response = await this.props.recipe.recipeImpl.signInAndUp(providerId, code, redirectUrl, {
+                config: this.props.recipe.config,
+            });
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
-                return this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath(
-                    undefined,
-                    this.props.history,
-                    {
-                        error: "no_email_present",
-                    }
-                );
+                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                    error: "no_email_present",
+                });
             }
             if (response.status === "FIELD_ERROR") {
-                return this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath(
-                    undefined,
-                    this.props.history,
-                    {
-                        error: "custom",
-                        message: response.error,
-                    }
-                );
+                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                    error: "custom",
+                    message: response.error,
+                });
             }
             if (response.status === "OK") {
-                this.getRecipeInstanceOrThrow().config.onHandleEvent({
+                this.props.recipe.config.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: response.createdNewUser,
                     user: response.user,
@@ -125,13 +92,13 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
 
                 const stateObject = getOAuthState();
                 const redirectToPath = stateObject === undefined ? undefined : stateObject.redirectToPath;
-                return this.getRecipeInstanceOrThrow().redirect(
+                return this.props.recipe.redirect(
                     { action: "SUCCESS", isNewUser: response.createdNewUser, redirectToPath },
                     this.props.history
                 );
             }
         } catch (e) {
-            return this.getRecipeInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+            return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                 error: "signin",
             });
         }
@@ -178,11 +145,9 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
          * Render.
          */
         return (
-            <FeatureWrapper
-                useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}
-                isEmbedded={this.getIsEmbedded()}>
+            <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
                 <StyleProvider
-                    rawPalette={this.getRecipeInstanceOrThrow().config.palette}
+                    rawPalette={this.props.recipe.config.palette}
                     defaultPalette={defaultPalette}
                     getDefaultStyles={getStyles}>
                     <Fragment>

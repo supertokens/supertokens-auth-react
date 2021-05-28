@@ -1,17 +1,10 @@
 import { PureComponent } from "react";
 import { FeatureBaseProps } from "../../../../../types";
-import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, RecipeInterface } from "../../../types";
-import AuthRecipeModule from "../../../../authRecipeModule";
+import Recipe from "../../../recipe";
 declare type PropType = FeatureBaseProps & {
-    recipeImplementation: RecipeInterface;
+    recipe: Recipe;
 };
 declare class SignInAndUpCallback extends PureComponent<PropType, unknown> {
-    getRecipeInstanceOrThrow: () => AuthRecipeModule<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        import("../../../../authRecipeModule/types").OnHandleEventContext,
-        NormalisedConfig
-    >;
     getIsEmbedded: () => boolean;
     componentDidMount: () => Promise<void>;
     getOAuthCallbackError: (providerIdFromPath: string) => string | undefined;

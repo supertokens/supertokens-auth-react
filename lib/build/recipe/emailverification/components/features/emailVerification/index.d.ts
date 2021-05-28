@@ -1,13 +1,16 @@
 import { PureComponent } from "react";
 import { FeatureBaseProps } from "../../../../../types";
 import Recipe from "../../../recipe";
+declare type Prop = FeatureBaseProps & {
+    recipe: Recipe;
+};
 declare class EmailVerification extends PureComponent<
-    FeatureBaseProps,
+    Prop,
     {
         token: string;
     }
 > {
-    constructor(props: FeatureBaseProps);
+    constructor(props: Prop);
     getRecipeInstanceOrThrow: () => Recipe;
     signOut: () => Promise<void>;
     onTokenInvalidRedirect: () => Promise<void>;

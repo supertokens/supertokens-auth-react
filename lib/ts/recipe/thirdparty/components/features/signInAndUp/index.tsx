@@ -23,7 +23,6 @@ import { SignInAndUpTheme } from "../../..";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
-import SuperTokens from "../../../../../superTokens";
 import { FeatureBaseProps } from "../../../../../types";
 import {
     getQueryParams,
@@ -31,20 +30,13 @@ import {
     appendQueryParamsToURL,
     getWindowOrThrow,
 } from "../../../../../utils";
-import AuthRecipeModule from "../../../../authRecipeModule";
 import { getStyles } from "../../../components/themes/styles";
 import { SESSION_STORAGE_STATE_KEY } from "../../../constants";
 import Provider from "../../../providers";
-import {
-    NormalisedConfig,
-    GetRedirectionURLContext,
-    OnHandleEventContext,
-    PreAPIHookContext,
-    ThirdPartySignInAndUpState,
-    RecipeInterface,
-} from "../../../types";
+import { ThirdPartySignInAndUpState } from "../../../types";
+import Recipe from "../../../recipe";
 
-type PropType = FeatureBaseProps & { recipeImplementation: RecipeInterface };
+type PropType = FeatureBaseProps & { recipe: Recipe };
 class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
     constructor(props: PropType) {
         super(props);
@@ -80,26 +72,6 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         }
     }
 
-    getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    > => {
-        if (this.props.recipeId === undefined) {
-            throw new Error("No recipeId props given to SignInAndUp component");
-        }
-
-        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (!(recipe instanceof AuthRecipeModule)) {
-            throw new Error(
-                `${recipe.config.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`
-            );
-        }
-
-        return recipe;
-    };
-
     getIsEmbedded = (): boolean => {
         if (this.props.isEmbedded !== undefined) {
             return this.props.isEmbedded;
@@ -107,17 +79,13 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         return false;
     };
 
-    /*
-     * Methods.
-     */
-
     componentDidMount = async (): Promise<void> => {
-        const sessionExists = await this.getRecipeInstanceOrThrow().doesSessionExist();
+        const sessionExists = await this.props.recipe.doesSessionExist();
         if (sessionExists) {
-            this.getRecipeInstanceOrThrow().config.onHandleEvent({
+            this.props.recipe.config.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS",
             });
-            await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
+            await this.props.recipe.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
             return;
         }
 
@@ -134,7 +102,7 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
     };
 
     signInAndUpClick = async (providerId: string): Promise<string | void> => {
-        const provider = this.getRecipeInstanceOrThrow().config.signInAndUpFeature.providers.find(
+        const provider = this.props.recipe.config.signInAndUpFeature.providers.find(
             (p) => p.id === providerId
         ) as Provider;
         if (provider === undefined) {
@@ -145,11 +113,13 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         const state = provider.generateState();
 
         // 2. Get Authorisation URL.
-        const url = await this.props.recipeImplementation.getOAuthAuthorisationURL(provider.id);
+        const url = await this.props.recipe.recipeImpl.getOAuthAuthorisationURL(provider.id, {
+            config: this.props.recipe.config,
+        });
 
         // 3. Store state in Session Storage.
         const redirectToPath = getRedirectToPathFromURL();
-        const redirect_uri = await this.getRecipeInstanceOrThrow().getRedirectUrl({
+        const redirect_uri = await this.props.recipe.getRedirectUrl({
             action: "GET_REDIRECT_URL",
             provider,
         });
@@ -162,7 +132,7 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
             redirectToPath,
             state,
             thirdPartyId: provider.id,
-            rid: this.getRecipeInstanceOrThrow().config.recipeId,
+            rid: this.props.recipe.config.recipeId,
             expiresAt,
         });
         getWindowOrThrow().sessionStorage.setItem(SESSION_STORAGE_STATE_KEY, value);
@@ -177,58 +147,41 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
             return <Fragment />;
         }
 
-        const signInAndUpFeature = this.getRecipeInstanceOrThrow().config.signInAndUpFeature;
+        const signInAndUpFeature = this.props.recipe.config.signInAndUpFeature;
 
         const providers = signInAndUpFeature.providers.map((provider) => ({
             id: provider.id,
             buttonComponent: provider.getButton(),
         }));
 
-        /*
-         * Render.
-         */
+        let error = undefined;
+        if (this.state.status === "CUSTOM_ERROR") {
+            error = this.state.error;
+        } else if (this.state.status === "GENERAL_ERROR") {
+            error = "Something went wrong. Please try again";
+        }
+
+        const props = {
+            error,
+            providers: providers,
+            signInAndUpClick: this.signInAndUpClick,
+            privacyPolicyLink: signInAndUpFeature.privacyPolicyLink,
+            termsOfServiceLink: signInAndUpFeature.termsOfServiceLink,
+        };
+
         return (
-            <FeatureWrapper
-                useShadowDom={this.getRecipeInstanceOrThrow().config.useShadowDom}
-                isEmbedded={this.getIsEmbedded()}>
+            <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
                 <StyleProvider
-                    rawPalette={this.getRecipeInstanceOrThrow().config.palette}
+                    rawPalette={this.props.recipe.config.palette}
                     defaultPalette={defaultPalette}
                     styleFromInit={signInAndUpFeature.style}
                     getDefaultStyles={getStyles}>
                     <Fragment>
                         {/* No custom theme, use default. */}
-                        {this.props.children === undefined &&
-                            (this.state.status === "CUSTOM_ERROR" ? (
-                                <SignInAndUpTheme
-                                    status={this.state.status}
-                                    error={this.state.error}
-                                    providers={providers}
-                                    signInAndUpClick={this.signInAndUpClick}
-                                    privacyPolicyLink={signInAndUpFeature.privacyPolicyLink}
-                                    termsOfServiceLink={signInAndUpFeature.termsOfServiceLink}
-                                />
-                            ) : (
-                                <SignInAndUpTheme
-                                    status={this.state.status}
-                                    providers={providers}
-                                    signInAndUpClick={this.signInAndUpClick}
-                                    privacyPolicyLink={signInAndUpFeature.privacyPolicyLink}
-                                    termsOfServiceLink={signInAndUpFeature.termsOfServiceLink}
-                                />
-                            ))}
+                        {this.props.children === undefined && <SignInAndUpTheme {...props} />}
 
                         {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children &&
-                            React.cloneElement(this.props.children, {
-                                status: this.state.status,
-                                error: this.state.status === "CUSTOM_ERROR" ? this.state.error : undefined,
-                                rawPalette: this.getRecipeInstanceOrThrow().config.palette,
-                                termsOfServiceLink: signInAndUpFeature.termsOfServiceLink,
-                                privacyPolicyLink: signInAndUpFeature.privacyPolicyLink,
-                                signInAndUpClick: this.signInAndUpClick,
-                                providers: providers,
-                            })}
+                        {this.props.children && React.cloneElement(this.props.children, props)}
                     </Fragment>
                 </StyleProvider>
             </FeatureWrapper>

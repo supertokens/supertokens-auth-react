@@ -1,25 +1,13 @@
 import { PureComponent } from "react";
-import {
-    FormFieldThemeProps,
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext,
-    NormalisedConfig,
-} from "../../../types";
+import { FormFieldThemeProps } from "../../../types";
 import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import { SignInAndUpState, RecipeInterface } from "../../../types";
-import AuthRecipeModule from "../../../../authRecipeModule";
+import Recipe from "../../../recipe";
 declare type PropType = FeatureBaseProps & {
-    recipeImplemetation: RecipeInterface;
+    recipe: Recipe;
 };
 declare class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     constructor(props: PropType);
-    getRecipeInstanceOrThrow: () => AuthRecipeModule<
-        GetRedirectionURLContext,
-        PreAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    >;
     getIsEmbedded: () => boolean;
     onSignInSuccess: () => Promise<void>;
     onSignUpSuccess: () => Promise<void>;

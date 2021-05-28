@@ -2,10 +2,21 @@
 import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import {
+    UserInput,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    SignInAndUpInput,
+    SignInAndUpOutput,
+    RecipeInterface,
+    EPFunctionOptions as EmailPasswordFunctionOptions,
+    TPFunctionOptions as ThirdPartyFunctionOptions,
+} from "./types";
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import RecipeImplementation from "./recipeImplementation";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -57,4 +68,10 @@ export {
     PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
+    SignInAndUpInput,
+    SignInAndUpOutput,
+    RecipeInterface,
+    RecipeImplementation,
+    EmailPasswordFunctionOptions,
+    ThirdPartyFunctionOptions,
 };

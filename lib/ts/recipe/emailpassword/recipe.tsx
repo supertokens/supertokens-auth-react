@@ -55,7 +55,9 @@ export default class EmailPassword extends AuthRecipeModule<
 
     constructor(config: Config) {
         super(normaliseEmailPasswordConfig(config));
-        this.recipeImpl = this.config.override.functions(new RecipeImplementation(this.config));
+        this.recipeImpl = this.config.override.functions(
+            new RecipeImplementation(this.config.recipeId, this.config.appInfo)
+        );
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -100,15 +102,9 @@ export default class EmailPassword extends AuthRecipeModule<
         props: any | undefined
     ): JSX.Element => {
         if (componentName === "signinup") {
-            return <SignInAndUp recipeId={this.config.recipeId} recipeImplemetation={this.recipeImpl} {...props} />;
+            return <SignInAndUp recipe={this} {...props} />;
         } else if (componentName === "resetpassword") {
-            return (
-                <ResetPasswordUsingToken
-                    recipeId={this.config.recipeId}
-                    recipeImplemetation={this.recipeImpl}
-                    {...props}
-                />
-            );
+            return <ResetPasswordUsingToken recipe={this} {...props} />;
         } else {
             return this.getAuthRecipeModuleFeatureComponent(componentName, props);
         }

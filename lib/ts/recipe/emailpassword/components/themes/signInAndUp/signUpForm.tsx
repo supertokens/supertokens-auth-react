@@ -36,7 +36,11 @@ export default function SignUpForm(
             formFields={props.formFields}
             buttonLabel={"SIGN UP"}
             onSuccess={props.onSuccess}
-            callAPI={props.recipeImplementation.signUp}
+            callAPI={(f) =>
+                props.recipeImplementation.signUp(f, {
+                    config: props.config,
+                })
+            }
             validateOnBlur={true}
             showLabels={true}
             header={props.header}

@@ -24,12 +24,13 @@ import { FeatureBaseProps } from "../../types";
 import SessionAuth from "../session/sessionAuth";
 import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
+import Recipe from "./recipe";
 
 /*
  * Component.
  */
 
-class ThirdPartyEmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?: boolean }> {
+class ThirdPartyEmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?: boolean; recipe: Recipe }> {
     /*
      * Render.
      */
@@ -43,9 +44,7 @@ class ThirdPartyEmailPasswordAuth extends PureComponent<FeatureBaseProps & { req
                     );
                 }}
                 requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}>
-                <EmailVerificationAuth
-                    recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().config.recipeId}
-                    history={this.props.history}>
+                <EmailVerificationAuth recipe={this.props.recipe.emailVerification} history={this.props.history}>
                     {this.props.children}
                 </EmailVerificationAuth>
             </SessionAuth>
@@ -65,7 +64,7 @@ export default function ThirdPartyAuthWrapper({
         return (
             <ThirdPartyEmailPasswordAuth
                 requireAuth={requireAuth}
-                recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().config.recipeId}>
+                recipe={ThirdPartyEmailPassword.getInstanceOrThrow()}>
                 {children}
             </ThirdPartyEmailPasswordAuth>
         );
@@ -73,7 +72,7 @@ export default function ThirdPartyAuthWrapper({
 
     const Component = reactRouterDom.withRouter(ThirdPartyEmailPasswordAuth);
     return (
-        <Component requireAuth={requireAuth} recipeId={ThirdPartyEmailPassword.getInstanceOrThrow().config.recipeId}>
+        <Component requireAuth={requireAuth} recipe={ThirdPartyEmailPassword.getInstanceOrThrow()}>
             {children}
         </Component>
     );

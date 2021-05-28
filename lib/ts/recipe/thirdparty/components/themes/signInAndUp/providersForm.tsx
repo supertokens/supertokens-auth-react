@@ -20,38 +20,13 @@ import { jsx } from "@emotion/react";
 import { PureComponent, Fragment } from "react";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import StyleContext from "../../../../../styles/styleContext";
-import { SignInAndUpThemeProps, ThirdPartySignInAndUpThemeState } from "../../../types";
+import { SignInAndUpThemeProps } from "../../../types";
 /*
  * Component.
  */
 
-export default class SignInAndUpProvidersForm extends PureComponent<
-    SignInAndUpThemeProps,
-    ThirdPartySignInAndUpThemeState
-> {
+export default class SignInAndUpProvidersForm extends PureComponent<SignInAndUpThemeProps, unknown> {
     static contextType = StyleContext;
-
-    /*
-     * Constructor
-     */
-    constructor(props: SignInAndUpThemeProps) {
-        super(props);
-        if (this.props.status === "GENERAL_ERROR") {
-            this.state = {
-                status: "ERROR",
-                message: SOMETHING_WENT_WRONG_ERROR,
-            };
-        } else if (this.props.status === "CUSTOM_ERROR") {
-            this.state = {
-                status: "ERROR",
-                message: this.props.error,
-            };
-        } else {
-            this.state = {
-                status: this.props.status,
-            };
-        }
-    }
 
     signInClick = async (providerId: string): Promise<void> => {
         try {
@@ -82,11 +57,6 @@ export default class SignInAndUpProvidersForm extends PureComponent<
          */
         return (
             <Fragment>
-                {this.state.status === "ERROR" ? (
-                    <div data-supertokens="generalError" css={styles.generalError}>
-                        {this.state.message}
-                    </div>
-                ) : null}
                 {this.props.providers.map((provider) => {
                     return (
                         <div

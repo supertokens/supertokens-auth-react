@@ -60,23 +60,8 @@ export declare type SignInAndUpThemeProps = {
     signInAndUpClick: (id: string) => Promise<string | void>;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
-} & (
-    | {
-          status: "READY" | "LOADING" | "SUCCESSFUL" | "GENERAL_ERROR";
-      }
-    | {
-          status: "CUSTOM_ERROR";
-          error: string;
-      }
-);
-export declare type ThirdPartySignInAndUpThemeState =
-    | {
-          status: "READY" | "LOADING" | "SUCCESSFUL";
-      }
-    | {
-          status: "ERROR";
-          message: string;
-      };
+    error: string | undefined;
+};
 export declare type ThirdPartySignInAndUpState =
     | {
           status: "LOADING" | "READY" | "GENERAL_ERROR";
@@ -96,13 +81,17 @@ export declare type StateObject = {
     thirdPartyId: string;
     redirectToPath: string | undefined;
 };
+export declare type FunctionOptions = {
+    preAPIHook?: PreAPIHookFunction;
+    config: NormalisedConfig;
+};
 export interface RecipeInterface {
-    getOAuthAuthorisationURL: (thirdPartyId: string, preAPIHook?: PreAPIHookFunction) => Promise<string>;
+    getOAuthAuthorisationURL: (thirdPartyId: string, options: FunctionOptions) => Promise<string>;
     signInAndUp: (
         thirdPartyId: string,
         code: string,
         redirectURI: string,
-        preAPIHook?: PreAPIHookFunction
+        options: FunctionOptions
     ) => Promise<
         | {
               status: "OK";
