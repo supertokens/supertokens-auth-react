@@ -25,7 +25,8 @@ import {
 } from "./constants";
 
 import assert from "assert";
-import { SESSION_STORAGE_STATE_KEY } from "../lib/build/recipe/thirdparty/constants";
+
+const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
 /*
  * General Helpers.

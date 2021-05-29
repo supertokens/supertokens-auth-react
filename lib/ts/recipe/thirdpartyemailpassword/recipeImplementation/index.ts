@@ -3,7 +3,7 @@ import { NormalisedAppInfo } from "../../../types";
 import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImplementation";
 import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
 import { NormalisedConfig as EPConfig } from "../../emailpassword/types";
-import { NormalisedConfig as TPConfig } from "../../thirdparty/types";
+import { NormalisedConfig as TPConfig, StateObject } from "../../thirdparty/types";
 
 export default class RecipeImplementation implements RecipeInterface {
     emailpasswordImpl: EmailPasswordRecipeImplementation;
@@ -81,5 +81,17 @@ export default class RecipeImplementation implements RecipeInterface {
                 type: "thirdparty",
             };
         }
+    };
+
+    getOAuthState = () => {
+        return this.thirdPartyImpl.getOAuthState();
+    };
+
+    setOAuthState = (input: StateObject) => {
+        return this.thirdPartyImpl.setOAuthState(input);
+    };
+
+    redirectToThirdPartyLogin = (input: { thirdPartyId: string; config: TPConfig; state?: StateObject }) => {
+        return this.thirdPartyImpl.redirectToThirdPartyLogin(input);
     };
 }

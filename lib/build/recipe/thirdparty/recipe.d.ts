@@ -25,7 +25,9 @@ export default class ThirdParty extends AuthRecipeModule<
         componentName: "emailverification" | "signinup" | "signinupcallback",
         prop: any
     ) => JSX.Element;
-    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
+    getDefaultRedirectionURL: (
+        context: import("../authRecipeModule/types").GetRedirectionURLContext
+    ) => Promise<string>;
     static init(
         config: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>;

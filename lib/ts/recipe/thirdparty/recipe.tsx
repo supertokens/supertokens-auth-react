@@ -30,7 +30,7 @@ import {
     RecipeInterface,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
-import { matchRecipeIdUsingState, normaliseThirdPartyConfig } from "./utils";
+import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
@@ -79,7 +79,7 @@ export default class ThirdParty extends AuthRecipeModule<
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingState(this.config.recipeId),
+                matches: () => matchRecipeIdUsingState(this),
                 component: (prop: any) => this.getFeatureComponent("signinupcallback", prop),
             };
         });
@@ -104,16 +104,8 @@ export default class ThirdParty extends AuthRecipeModule<
     };
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        if (context.action === "GET_REDIRECT_URL") {
-            return context.provider.getRedirectURL();
-        } else {
-            return this.getAuthRecipeModuleDefaultRedirectionURL(context);
-        }
+        return this.getAuthRecipeModuleDefaultRedirectionURL(context);
     };
-
-    /*
-     * Static methods.
-     */
 
     static init(
         config: UserInput

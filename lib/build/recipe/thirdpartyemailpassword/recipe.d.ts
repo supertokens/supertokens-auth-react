@@ -25,7 +25,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     recipeImpl: RecipeInterface;
     constructor(config: Config);
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
-    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
+    getDefaultRedirectionURL: (context: import("../emailpassword").GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (componentName: "emailverification" | "signinup" | "resetpassword", prop: any) => JSX.Element;
     static init(
         config: UserInput

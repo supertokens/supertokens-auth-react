@@ -126,9 +126,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     };
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        if (context.action === "GET_REDIRECT_URL") {
-            return this.thirdPartyRecipe.getDefaultRedirectionURL(context);
-        } else if (context.action === "RESET_PASSWORD") {
+        if (context.action === "RESET_PASSWORD") {
             return this.emailPasswordRecipe.getDefaultRedirectionURL(context);
         } else {
             return this.getAuthRecipeModuleDefaultRedirectionURL(context);

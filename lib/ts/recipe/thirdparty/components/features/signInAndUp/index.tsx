@@ -24,52 +24,37 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { FeatureBaseProps } from "../../../../../types";
-import {
-    getQueryParams,
-    getRedirectToPathFromURL,
-    appendQueryParamsToURL,
-    getWindowOrThrow,
-} from "../../../../../utils";
+import { getQueryParams } from "../../../../../utils";
 import { getStyles } from "../../../components/themes/styles";
-import { SESSION_STORAGE_STATE_KEY } from "../../../constants";
-import Provider from "../../../providers";
-import { ThirdPartySignInAndUpState } from "../../../types";
+import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
+import { getRedirectToPathFromURL } from "../../../../../utils";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
     constructor(props: PropType) {
         super(props);
 
-        const error = getQueryParams("error");
-        if (error !== null) {
-            if (error === "signin") {
-                this.state = {
-                    status: "GENERAL_ERROR",
-                };
-            } else if (error === "no_email_present") {
-                this.state = {
-                    status: "CUSTOM_ERROR",
-                    error: "Could not retrieve email. Please try a different method.",
-                };
+        let error: string | undefined = undefined;
+        const errorQueryParam = getQueryParams("error");
+        if (errorQueryParam !== null) {
+            if (errorQueryParam === "signin") {
+                error = "Something went wrong. Please try again";
+            } else if (errorQueryParam === "no_email_present") {
+                error = "Could not retrieve email. Please try a different method.";
             } else {
                 const customError = getQueryParams("message");
                 if (customError === null) {
-                    this.state = {
-                        status: "GENERAL_ERROR",
-                    };
+                    error = "Something went wrong. Please try again";
                 } else {
-                    this.state = {
-                        status: "CUSTOM_ERROR",
-                        error: customError,
-                    };
+                    error = customError;
                 }
             }
-        } else {
-            this.state = {
-                status: "LOADING",
-            };
         }
+        this.state = {
+            status: "LOADING",
+            error,
+        };
     }
 
     getIsEmbedded = (): boolean => {
@@ -93,7 +78,6 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
             if (oldState.status !== "LOADING") {
                 return oldState;
             }
-
             return {
                 ...oldState,
                 status: "READY",
@@ -101,49 +85,23 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         });
     };
 
-    signInAndUpClick = async (providerId: string): Promise<string | void> => {
-        const provider = this.props.recipe.config.signInAndUpFeature.providers.find(
-            (p) => p.id === providerId
-        ) as Provider;
-        if (provider === undefined) {
-            return "Unknown Provider";
-        }
-
-        // 1. Generate state.
-        const state = provider.generateState();
-
-        // 2. Get Authorisation URL.
-        const url = await this.props.recipe.recipeImpl.getOAuthAuthorisationURL({
-            thirdPartyId: provider.id,
-            config: this.props.recipe.config,
-        });
-
-        // 3. Store state in Session Storage.
-        const redirectToPath = getRedirectToPathFromURL();
-        const redirect_uri = await this.props.recipe.getRedirectUrl({
-            action: "GET_REDIRECT_URL",
-            provider,
-        });
-        const urlWithState = appendQueryParamsToURL(url, {
-            state,
-            redirect_uri,
-        });
-        const expiresAt = Date.now() + 1000 * 60 * 10; // 10 minutes expiry.
-        const value = JSON.stringify({
-            redirectToPath,
-            state,
-            thirdPartyId: provider.id,
-            rid: this.props.recipe.config.recipeId,
-            expiresAt,
-        });
-        getWindowOrThrow().sessionStorage.setItem(SESSION_STORAGE_STATE_KEY, value);
-
-        // 4. Redirect to provider authorisation URL.
-        getWindowOrThrow().location.href = urlWithState;
+    getModifiedRecipeImplementation = (): RecipeInterface => {
+        return {
+            ...this.props.recipe.recipeImpl,
+            redirectToThirdPartyLogin: (input) => {
+                input = {
+                    ...input,
+                    state: {
+                        ...input.state,
+                        redirectToPath: getRedirectToPathFromURL(),
+                    },
+                };
+                return this.props.recipe.recipeImpl.redirectToThirdPartyLogin(input);
+            },
+        };
     };
 
     render = (): JSX.Element => {
-        // Before session is verified, return empty fragment, prevent UI glitch.
         if (this.state.status === "LOADING") {
             return <Fragment />;
         }
@@ -155,17 +113,11 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
             buttonComponent: provider.getButton(),
         }));
 
-        let error = undefined;
-        if (this.state.status === "CUSTOM_ERROR") {
-            error = this.state.error;
-        } else if (this.state.status === "GENERAL_ERROR") {
-            error = "Something went wrong. Please try again";
-        }
-
         const props = {
-            error,
+            error: this.state.error,
             providers: providers,
-            signInAndUpClick: this.signInAndUpClick,
+            recipeImplementation: this.getModifiedRecipeImplementation(),
+            config: this.props.recipe.config,
             privacyPolicyLink: signInAndUpFeature.privacyPolicyLink,
             termsOfServiceLink: signInAndUpFeature.termsOfServiceLink,
         };

@@ -16,20 +16,18 @@
 /*
  * Imports.
  */
-import { getWindowOrThrow } from "../../utils";
-import { SESSION_STORAGE_STATE_KEY } from "./constants";
 import Provider from "./providers";
 import Custom from "./providers/custom";
 import {
     NormalisedSignInAndUpFeatureConfig,
     NormalisedConfig,
     SignInAndUpFeatureUserInput,
-    StateObject,
     Config,
     RecipeInterface,
 } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import RecipeImplementation from "./recipeImplementation";
+import Recipe from "./recipe";
 
 /*
  * Methods.
@@ -111,34 +109,13 @@ export function normaliseSignInAndUpFeature(
     };
 }
 
-/*
- * getOAuthState
- */
-export function getOAuthState(): StateObject | undefined {
-    try {
-        const state = JSON.parse(getWindowOrThrow().sessionStorage.getItem(SESSION_STORAGE_STATE_KEY));
-        if (state === null) {
-            return undefined;
-        }
-
-        return state;
-    } catch (e) {
-        return undefined;
-    }
-}
-
-/*
- * matchRecipeIdUsingState
- */
-export function matchRecipeIdUsingState(recipeId: string): () => boolean {
-    return () => {
-        const state = getOAuthState();
-        if (state === undefined) {
-            return false;
-        }
-        if (state.rid === recipeId) {
-            return true;
-        }
+export function matchRecipeIdUsingState(recipe: Recipe): boolean {
+    const state = recipe.recipeImpl.getOAuthState();
+    if (state === undefined) {
         return false;
-    };
+    }
+    if (state.rid === recipe.config.recipeId) {
+        return true;
+    }
+    return false;
 }

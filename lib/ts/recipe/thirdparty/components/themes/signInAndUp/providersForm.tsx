@@ -12,51 +12,57 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/*
- * Imports.
- */
+
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import { PureComponent, Fragment } from "react";
-import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import StyleContext from "../../../../../styles/styleContext";
 import { SignInAndUpThemeProps } from "../../../types";
-/*
- * Component.
- */
 
-export default class SignInAndUpProvidersForm extends PureComponent<SignInAndUpThemeProps, unknown> {
+export default class SignInAndUpProvidersForm extends PureComponent<SignInAndUpThemeProps, { error?: string }> {
     static contextType = StyleContext;
 
-    signInClick = async (providerId: string): Promise<void> => {
-        try {
-            const errorMessage = await this.props.signInAndUpClick(providerId);
-            if (errorMessage !== undefined) {
-                this.setState(() => ({
-                    status: "ERROR",
-                    message: errorMessage,
-                }));
-            }
-        } catch (e) {
+    constructor(props: SignInAndUpThemeProps) {
+        super(props);
+        if (this.props.error !== undefined) {
+            this.state = {
+                error: this.props.error,
+            };
+        } else {
+            this.state = {};
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.props.error !== undefined) {
             this.setState(() => ({
-                status: "ERROR",
-                message: SOMETHING_WENT_WRONG_ERROR,
+                error: this.props.error,
+            }));
+        }
+    }
+
+    signInClick = async (providerId: string): Promise<void> => {
+        const response = await this.props.recipeImplementation.redirectToThirdPartyLogin({
+            thirdPartyId: providerId,
+            config: this.props.config,
+        });
+        if (response.status === "ERROR") {
+            this.setState(() => ({
+                error: "Something went wrong. Please try again",
             }));
         }
     };
 
-    /*
-     * Methods.
-     */
-
     render = (): JSX.Element => {
         const styles = this.context;
 
-        /*
-         * Render.
-         */
         return (
             <Fragment>
+                {this.state.error !== undefined ? (
+                    <div data-supertokens="generalError" css={styles.generalError}>
+                        {this.state.error}
+                    </div>
+                ) : null}
                 {this.props.providers.map((provider) => {
                     return (
                         <div

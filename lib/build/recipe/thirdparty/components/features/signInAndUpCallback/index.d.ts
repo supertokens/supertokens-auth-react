@@ -7,7 +7,6 @@ declare type PropType = FeatureBaseProps & {
 declare class SignInAndUpCallback extends PureComponent<PropType, unknown> {
     getIsEmbedded: () => boolean;
     componentDidMount: () => Promise<void>;
-    getOAuthCallbackError: (providerIdFromPath: string) => string | undefined;
     render: () => JSX.Element;
 }
 export default SignInAndUpCallback;

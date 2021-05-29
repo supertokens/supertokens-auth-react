@@ -20,15 +20,13 @@ import { jsx } from "@emotion/react";
 import { Fragment, PureComponent } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
-import { getQueryParams, getWindowOrThrow } from "../../../../../utils";
+import { getWindowOrThrow } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
 import {} from "../../../types";
 import SignInAndUpCallbackTheme from "../../themes/signInAndUpCallback";
-import { getOAuthState } from "../../../utils";
-import Provider from "../../../providers";
 import Recipe from "../../../recipe";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
@@ -44,103 +42,40 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
     componentDidMount = async (): Promise<void> => {
         const providerId =
             getWindowOrThrow().location.pathname.split("/")[getWindowOrThrow().location.pathname.split("/").length - 1];
-        const oauthCallbackError = this.getOAuthCallbackError(providerId);
-        if (oauthCallbackError !== undefined) {
-            return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                error: oauthCallbackError,
-            });
-        }
-        // If no code params, redirect with error.
-        const code = getQueryParams("code");
-        if (code === null) {
-            return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                error: "no_code",
-            });
-        }
-
-        try {
-            const provider = this.props.recipe.config.signInAndUpFeature.providers.find(
-                (p) => p.id === providerId
-            ) as Provider;
-            if (provider === undefined) {
-                throw new Error();
-            }
-            const redirectUrl = await this.props.recipe.getRedirectUrl({
-                action: "GET_REDIRECT_URL",
-                provider,
-            });
-            const response = await this.props.recipe.recipeImpl.signInAndUp({
-                thirdPartyId: providerId,
-                code,
-                redirectURI: redirectUrl,
-                config: this.props.recipe.config,
-            });
-            if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "no_email_present",
-                });
-            }
-            if (response.status === "FIELD_ERROR") {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "custom",
-                    message: response.error,
-                });
-            }
-            if (response.status === "OK") {
-                this.props.recipe.config.onHandleEvent({
-                    action: "SUCCESS",
-                    isNewUser: response.createdNewUser,
-                    user: response.user,
-                });
-
-                const stateObject = getOAuthState();
-                const redirectToPath = stateObject === undefined ? undefined : stateObject.redirectToPath;
-                return this.props.recipe.redirect(
-                    { action: "SUCCESS", isNewUser: response.createdNewUser, redirectToPath },
-                    this.props.history
-                );
-            }
-        } catch (e) {
+        const response = await this.props.recipe.recipeImpl.signInAndUp({
+            thirdPartyId: providerId,
+            config: this.props.recipe.config,
+        });
+        if (response.status === "GENERAL_ERROR") {
             return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                 error: "signin",
             });
         }
-    };
-
-    getOAuthCallbackError = (providerIdFromPath: string): string | undefined => {
-        // 1. error params is present.
-        const error = getQueryParams("error");
-        if (error !== null) {
-            return error;
+        if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
+            return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                error: "no_email_present",
+            });
         }
-
-        // 2. No state params.
-        const state = getQueryParams("state");
-        if (state === null) {
-            return "no_query_state";
+        if (response.status === "FIELD_ERROR") {
+            return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                error: "custom",
+                message: response.error,
+            });
         }
+        if (response.status === "OK") {
+            this.props.recipe.config.onHandleEvent({
+                action: "SUCCESS",
+                isNewUser: response.createdNewUser,
+                user: response.user,
+            });
 
-        const stateObject = getOAuthState();
-        if (stateObject === undefined) {
-            return "error_reading_local_state";
+            const state = this.props.recipe.recipeImpl.getOAuthState();
+            const redirectToPath = state === undefined ? undefined : state.redirectToPath;
+            return this.props.recipe.redirect(
+                { action: "SUCCESS", isNewUser: response.createdNewUser, redirectToPath },
+                this.props.history
+            );
         }
-
-        // 4. State nonce mismatch.
-        if (stateObject.state !== state) {
-            return "state_mismatch";
-        }
-
-        // 5. State expired.
-        if (Date.now() > stateObject.expiresAt) {
-            return "state_expired";
-        }
-
-        // 6. Third party provider mismatch between route and state object.
-        if (stateObject.thirdPartyId !== providerIdFromPath) {
-            return "provider_mismatch";
-        }
-
-        return undefined;
     };
 
     render = (): JSX.Element => {

@@ -18,7 +18,7 @@ import {
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
-import { NormalisedConfig as TPConfig } from "../thirdparty/types";
+import { NormalisedConfig as TPConfig, StateObject } from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
@@ -90,8 +90,6 @@ export declare type SignInAndUpInput =
     | {
           type: "thirdparty";
           thirdPartyId: string;
-          code: string;
-          redirectURI: string;
           config: TPConfig;
       };
 export declare type SignInAndUpOutput =
@@ -115,7 +113,7 @@ export declare type SignInAndUpOutput =
       }
     | {
           type: "thirdparty";
-          status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+          status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
       }
     | {
           type: "thirdparty";
@@ -163,4 +161,9 @@ export interface RecipeInterface {
     doesEmailExist: (input: { email: string; config: EPConfig }) => Promise<boolean>;
     getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig }) => Promise<string>;
     signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
+    getOAuthState(): StateObject | undefined;
+    setOAuthState(state: StateObject): void;
+    redirectToThirdPartyLogin: (input: { thirdPartyId: string; config: TPConfig; state?: StateObject }) => Promise<{
+        status: "OK" | "ERROR";
+    }>;
 }

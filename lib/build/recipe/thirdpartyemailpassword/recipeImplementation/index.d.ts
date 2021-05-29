@@ -3,7 +3,7 @@ import { NormalisedAppInfo } from "../../../types";
 import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImplementation";
 import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
 import { NormalisedConfig as EPConfig } from "../../emailpassword/types";
-import { NormalisedConfig as TPConfig } from "../../thirdparty/types";
+import { NormalisedConfig as TPConfig, StateObject } from "../../thirdparty/types";
 export default class RecipeImplementation implements RecipeInterface {
     emailpasswordImpl: EmailPasswordRecipeImplementation;
     thirdPartyImpl: ThirdPartyRecipeImplementation;
@@ -48,4 +48,13 @@ export default class RecipeImplementation implements RecipeInterface {
     doesEmailExist: (input: { email: string; config: EPConfig }) => Promise<boolean>;
     getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig }) => Promise<string>;
     signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
+    getOAuthState: () => StateObject | undefined;
+    setOAuthState: (input: StateObject) => void;
+    redirectToThirdPartyLogin: (input: {
+        thirdPartyId: string;
+        config: TPConfig;
+        state?: StateObject | undefined;
+    }) => Promise<{
+        status: "OK" | "ERROR";
+    }>;
 }

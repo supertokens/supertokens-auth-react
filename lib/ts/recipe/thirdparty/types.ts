@@ -88,128 +88,63 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     providers: Provider[];
 };
 
-export type GetRedirectionURLContext =
-    | AuthRecipeModuleGetRedirectionURLContext
-    | {
-          /*
-           * action
-           */
-          action: "GET_REDIRECT_URL";
-
-          /*
-           * Provider Id
-           */
-          provider: Provider;
-      };
+export type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 
 export type PreAPIHookContext =
     | AuthRecipeModulePreAPIHookContext
     | {
-          /*
-           * action
-           */
           action: "GET_AUTHORISATION_URL";
-
-          /*
-           * Request object containing query params, body, headers.
-           */
           requestInit: RequestInit;
-
-          /*
-           * URL
-           */
           url: string;
       };
 
 export type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
 
 export type SignInAndUpThemeProps = {
-    /*
-     * Providers
-     */
     providers: {
-        /*
-         * Provider Id
-         */
         id: string;
-
-        /*
-         * Provider Button
-         */
         buttonComponent: JSX.Element;
     }[];
-
-    /*
-     * Click on button.
-     */
-    signInAndUpClick: (id: string) => Promise<string | void>;
-
-    /*
-     * Privacy Policy Link.
-     */
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
     privacyPolicyLink?: string;
-
-    /*
-     * Terms Of Service Link.
-     */
     termsOfServiceLink?: string;
-
     error: string | undefined;
 };
 
-export type ThirdPartySignInAndUpState =
-    | {
-          status: "LOADING" | "READY" | "GENERAL_ERROR";
-      }
-    | {
-          status: "SUCCESSFUL";
-          user: User;
-      }
-    | {
-          status: "CUSTOM_ERROR";
-          error: string;
-      };
+export type ThirdPartySignInAndUpState = {
+    status: "LOADING" | "READY";
+    error?: string;
+};
 
 export type StateObject = {
-    /*
-     * State, generated randomly
-     */
-    state: string;
-
-    /*
-     * ExpiresAt
-     */
-    expiresAt: number;
-
-    /*
-     * rid
-     */
-    rid: string;
-
-    /*
-     * Third Party Id
-     */
-    thirdPartyId: string;
-
-    redirectToPath: string | undefined;
+    state?: string;
+    rid?: string;
+    thirdPartyId?: string;
+    redirectToPath?: string;
 };
 
 export interface RecipeInterface {
+    getOAuthState(): StateObject | undefined;
+
+    setOAuthState(state: StateObject): void;
+
+    redirectToThirdPartyLogin: (input: {
+        thirdPartyId: string;
+        config: NormalisedConfig;
+        state?: StateObject;
+    }) => Promise<{ status: "OK" | "ERROR" }>;
+
     getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<string>;
 
-    signInAndUp: (input: {
-        thirdPartyId: string;
-        code: string;
-        redirectURI: string;
-        config: NormalisedConfig;
-    }) => Promise<
+    signInAndUp: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<
         | {
               status: "OK";
               user: User;
               createdNewUser: boolean;
           }
         | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
           }
         | {
               status: "FIELD_ERROR";

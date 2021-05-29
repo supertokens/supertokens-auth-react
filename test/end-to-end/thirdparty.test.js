@@ -105,8 +105,6 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to append to authorisation url
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
@@ -158,8 +156,6 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to append to authorisation url
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
@@ -181,8 +177,6 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to append to authorisation url
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
@@ -200,7 +194,7 @@ describe("SuperTokens Third Party", function () {
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(search, "?rid=thirdparty&error=no_query_state");
+            assert.deepStrictEqual(search, "?rid=thirdparty&error=signin");
         });
 
         it("Invalid nonce", async function () {
@@ -222,7 +216,7 @@ describe("SuperTokens Third Party", function () {
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(search, "?rid=thirdparty&error=state_mismatch");
+            assert.deepStrictEqual(search, "?rid=thirdparty&error=signin");
         });
 
         it("Wrong provider", async function () {
@@ -244,7 +238,7 @@ describe("SuperTokens Third Party", function () {
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(search, "?rid=thirdparty&error=provider_mismatch");
+            assert.deepStrictEqual(search, "?rid=thirdparty&error=signin");
         });
 
         it("Unknown provider", async function () {
@@ -287,7 +281,7 @@ describe("SuperTokens Third Party", function () {
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(search, "?rid=thirdparty&error=state_expired");
+            assert.deepStrictEqual(search, "?rid=thirdparty&error=signin");
         });
 
         it("No code params", async function () {
@@ -309,7 +303,7 @@ describe("SuperTokens Third Party", function () {
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(search, "?rid=thirdparty&error=no_code");
+            assert.deepStrictEqual(search, "?rid=thirdparty&error=signin");
         });
     });
 });

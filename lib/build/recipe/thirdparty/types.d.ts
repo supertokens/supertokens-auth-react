@@ -38,12 +38,7 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
     termsOfServiceLink?: string;
     providers: Provider[];
 };
-export declare type GetRedirectionURLContext =
-    | AuthRecipeModuleGetRedirectionURLContext
-    | {
-          action: "GET_REDIRECT_URL";
-          provider: Provider;
-      };
+export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 export declare type PreAPIHookContext =
     | AuthRecipeModulePreAPIHookContext
     | {
@@ -57,45 +52,41 @@ export declare type SignInAndUpThemeProps = {
         id: string;
         buttonComponent: JSX.Element;
     }[];
-    signInAndUpClick: (id: string) => Promise<string | void>;
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
     error: string | undefined;
 };
-export declare type ThirdPartySignInAndUpState =
-    | {
-          status: "LOADING" | "READY" | "GENERAL_ERROR";
-      }
-    | {
-          status: "SUCCESSFUL";
-          user: User;
-      }
-    | {
-          status: "CUSTOM_ERROR";
-          error: string;
-      };
+export declare type ThirdPartySignInAndUpState = {
+    status: "LOADING" | "READY";
+    error?: string;
+};
 export declare type StateObject = {
-    state: string;
-    expiresAt: number;
-    rid: string;
-    thirdPartyId: string;
-    redirectToPath: string | undefined;
+    state?: string;
+    rid?: string;
+    thirdPartyId?: string;
+    redirectToPath?: string;
 };
 export interface RecipeInterface {
-    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<string>;
-    signInAndUp: (input: {
+    getOAuthState(): StateObject | undefined;
+    setOAuthState(state: StateObject): void;
+    redirectToThirdPartyLogin: (input: {
         thirdPartyId: string;
-        code: string;
-        redirectURI: string;
         config: NormalisedConfig;
-    }) => Promise<
+        state?: StateObject;
+    }) => Promise<{
+        status: "OK" | "ERROR";
+    }>;
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<string>;
+    signInAndUp: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<
         | {
               status: "OK";
               user: User;
               createdNewUser: boolean;
           }
         | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
           }
         | {
               status: "FIELD_ERROR";
