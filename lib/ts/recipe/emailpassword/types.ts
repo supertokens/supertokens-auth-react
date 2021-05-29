@@ -273,18 +273,6 @@ export type FormFieldError = {
     error: string;
 };
 
-export type ThemeResponseGeneralError = {
-    /*
-     * General error.
-     */
-    status: "GENERAL_ERROR";
-
-    /*
-     * General error message.
-     */
-    message: string;
-};
-
 export type PreAPIHookContext =
     | AuthRecipeModulePreAPIHookContext
     | {
@@ -352,13 +340,6 @@ export type SubmitNewPasswordThemeState = {
      * Submit New Password Theme Status
      */
     status: "READY" | "SUCCESS";
-};
-
-export type SendVerifyEmailThemeState = {
-    /*
-     * Send verify Email Theme Status.
-     */
-    status: "READY" | "SUCCESS" | "ERROR";
 };
 
 export type FormBaseState =

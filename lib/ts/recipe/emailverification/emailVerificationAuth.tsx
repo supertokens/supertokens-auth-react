@@ -21,20 +21,45 @@ import { PureComponent, ReactElement } from "react";
 import { FeatureBaseProps } from "../../types";
 import Recipe from "./recipe";
 
-export default class EmailVerificationAuth extends PureComponent<FeatureBaseProps & { recipe: Recipe }> {
+type Prop = FeatureBaseProps & { recipe: Recipe };
+
+export default class EmailVerificationAuth extends PureComponent<Prop, { status: "LOADING" | "READY" }> {
+    constructor(props: Prop) {
+        super(props);
+        this.state = {
+            status: "LOADING",
+        };
+    }
+
     async componentDidMount(): Promise<void> {
         // If email verification mode is off or optional, return.
         if (this.props.recipe.config.mode !== "REQUIRED") {
+            this.setState((oldState) => {
+                return {
+                    ...oldState,
+                    status: "READY",
+                };
+            });
             return;
         }
         // Otherwise, make sure that the email is valid, otherwise, redirect to email validation screen.
         const isEmailVerified = await this.props.recipe.isEmailVerified();
         if (isEmailVerified === false) {
             return await this.props.recipe.redirect({ action: "VERIFY_EMAIL" }, this.props.history);
+        } else {
+            this.setState((oldState) => {
+                return {
+                    ...oldState,
+                    status: "READY",
+                };
+            });
         }
     }
 
     render = (): JSX.Element | null => {
+        if (this.state.status === "LOADING") {
+            return null;
+        }
         return this.props.children as ReactElement<any>;
     };
 }

@@ -40,6 +40,7 @@ import ThirdParty from "../thirdparty/recipe";
 import RecipeImplementation from "./recipeImplementation";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
+import EmailVerification from "../emailverification/recipe";
 
 export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     GetRedirectionURLContext,
@@ -56,53 +57,74 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
 
     recipeImpl: RecipeInterface;
 
-    constructor(config: Config) {
-        super(normaliseThirdPartyEmailPasswordConfig(config));
+    constructor(
+        config: Config,
+        recipes: {
+            emailVerificationInstance: EmailVerification | undefined;
+            thirdPartyInstance: ThirdParty | undefined;
+            emailPasswordInstance: EmailPassword | undefined;
+        }
+    ) {
+        super(normaliseThirdPartyEmailPasswordConfig(config), {
+            emailVerificationInstance: recipes.emailVerificationInstance,
+        });
 
         this.recipeImpl = this.config.override.functions(
             new RecipeImplementation(this.config.recipeId, this.config.appInfo)
         );
 
-        this.emailPasswordRecipe = new EmailPassword({
-            appInfo: this.config.appInfo,
-            recipeId: this.config.recipeId,
-            emailVerificationFeature: {
-                disableDefaultImplementation: true,
-            },
-            getRedirectionURL: this.config.getRedirectionURL,
-            onHandleEvent: this.config.onHandleEvent,
-            palette: this.config.palette,
-            preAPIHook: this.config.preAPIHook,
-            resetPasswordUsingTokenFeature: this.config.resetPasswordUsingTokenFeature,
-            signInAndUpFeature: this.config.signInAndUpFeature,
-            useShadowDom: this.config.useShadowDom,
-            override: {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                functions: (_) => {
-                    return getEmailPasswordImpl(this.recipeImpl);
-                },
-            },
-        });
+        this.emailPasswordRecipe =
+            recipes.emailPasswordInstance !== undefined
+                ? recipes.emailPasswordInstance
+                : new EmailPassword(
+                      {
+                          appInfo: this.config.appInfo,
+                          recipeId: this.config.recipeId,
+                          emailVerificationFeature: this.config.emailVerificationFeature,
+                          getRedirectionURL: this.config.getRedirectionURL,
+                          onHandleEvent: this.config.onHandleEvent,
+                          palette: this.config.palette,
+                          preAPIHook: this.config.preAPIHook,
+                          resetPasswordUsingTokenFeature: this.config.resetPasswordUsingTokenFeature,
+                          signInAndUpFeature: this.config.signInAndUpFeature,
+                          useShadowDom: this.config.useShadowDom,
+                          override: {
+                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                              functions: (_) => {
+                                  return getEmailPasswordImpl(this.recipeImpl);
+                              },
+                          },
+                      },
+                      {
+                          emailVerificationInstance: this.emailVerification,
+                      }
+                  );
 
-        this.thirdPartyRecipe = new ThirdParty({
-            appInfo: this.config.appInfo,
-            recipeId: this.config.recipeId,
-            emailVerificationFeature: {
-                disableDefaultImplementation: true,
-            },
-            getRedirectionURL: this.config.getRedirectionURL,
-            onHandleEvent: this.config.onHandleEvent,
-            palette: this.config.palette,
-            preAPIHook: this.config.preAPIHook,
-            signInAndUpFeature: this.config.signInAndUpFeature,
-            useShadowDom: this.config.useShadowDom,
-            override: {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                functions: (_) => {
-                    return getThirdPartyImpl(this.recipeImpl);
-                },
-            },
-        });
+        this.thirdPartyRecipe =
+            recipes.thirdPartyInstance !== undefined
+                ? recipes.thirdPartyInstance
+                : new ThirdParty(
+                      {
+                          appInfo: this.config.appInfo,
+                          recipeId: this.config.recipeId,
+                          emailVerificationFeature: this.config.emailVerificationFeature,
+                          getRedirectionURL: this.config.getRedirectionURL,
+                          onHandleEvent: this.config.onHandleEvent,
+                          palette: this.config.palette,
+                          preAPIHook: this.config.preAPIHook,
+                          signInAndUpFeature: this.config.signInAndUpFeature,
+                          useShadowDom: this.config.useShadowDom,
+                          override: {
+                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                              functions: (_) => {
+                                  return getThirdPartyImpl(this.recipeImpl);
+                              },
+                          },
+                      },
+                      {
+                          emailVerificationInstance: this.emailVerification,
+                      }
+                  );
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -156,11 +178,18 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
-            ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword({
-                ...config,
-                appInfo,
-                recipeId: ThirdPartyEmailPassword.RECIPE_ID,
-            });
+            ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword(
+                {
+                    ...config,
+                    appInfo,
+                    recipeId: ThirdPartyEmailPassword.RECIPE_ID,
+                },
+                {
+                    emailPasswordInstance: undefined,
+                    emailVerificationInstance: undefined,
+                    thirdPartyInstance: undefined,
+                }
+            );
             return ThirdPartyEmailPassword.instance;
         };
     }

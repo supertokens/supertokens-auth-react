@@ -1,13 +1,20 @@
 /// <reference types="@emotion/react/types/css-prop" />
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 import { PureComponent } from "react";
-import { VerifyEmailLinkClickedThemeProps, VerifyEmailLinkClickedThemeState } from "../../../types";
-export default class VerifyEmailLinkClicked extends PureComponent<VerifyEmailLinkClickedThemeProps, VerifyEmailLinkClickedThemeState> {
+import { VerifyEmailLinkClickedThemeProps } from "../../../types";
+export default class VerifyEmailLinkClicked extends PureComponent<
+    VerifyEmailLinkClickedThemeProps,
+    {
+        status: "LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL";
+    }
+> {
     static contextType: import("react").Context<{
         [x: string]: import("@emotion/serialize").CSSObject;
         palette: import("../../../../../types").NormalisedPalette;
     }>;
     constructor(props: VerifyEmailLinkClickedThemeProps);
     onSuccess: () => void;
-    componentDidMount: () => Promise<void>;
-    render(): JSX.Element;
+    componentDidMount(): Promise<void>;
+    render(): jsx.JSX.Element;
 }

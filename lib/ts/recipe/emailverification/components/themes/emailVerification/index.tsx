@@ -35,10 +35,10 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
      */
 
     // If no token, return SendVerifyEmail.
-    if (props.hasToken === false) {
+    if (props.verifyEmailLinkClickedScreen === undefined) {
         return (
             <StyleProvider
-                rawPalette={props.rawPalette}
+                rawPalette={props.config.palette}
                 defaultPalette={defaultPalette}
                 styleFromInit={props.sendVerifyEmailScreen.styleFromInit}
                 getDefaultStyles={getStyles}>
@@ -50,7 +50,7 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
     // Otherwise, return VerifyEmailLinkClicked.
     return (
         <StyleProvider
-            rawPalette={props.rawPalette}
+            rawPalette={props.config.palette}
             defaultPalette={defaultPalette}
             styleFromInit={props.verifyEmailLinkClickedScreen.styleFromInit}
             getDefaultStyles={getStyles}>

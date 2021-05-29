@@ -27,7 +27,7 @@ import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import StyleContext from "../../../../../styles/styleContext";
 import { Button } from "../../../../emailpassword/components/library";
 
-import { VerifyEmailLinkClickedThemeProps, VerifyEmailLinkClickedThemeState } from "../../../types";
+import { VerifyEmailLinkClickedThemeProps } from "../../../types";
 
 /*
  * Component.
@@ -35,13 +35,10 @@ import { VerifyEmailLinkClickedThemeProps, VerifyEmailLinkClickedThemeState } fr
 
 export default class VerifyEmailLinkClicked extends PureComponent<
     VerifyEmailLinkClickedThemeProps,
-    VerifyEmailLinkClickedThemeState
+    { status: "LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL" }
 > {
     static contextType = StyleContext;
 
-    /*
-     * Constructor.
-     */
     constructor(props: VerifyEmailLinkClickedThemeProps) {
         super(props);
         this.state = {
@@ -57,24 +54,30 @@ export default class VerifyEmailLinkClicked extends PureComponent<
         this.props.onSuccess();
     };
 
-    componentDidMount = async (): Promise<void> => {
+    async componentDidMount() {
         try {
-            const response = await this.props.verifyEmailAPI();
-            this.setState(() => ({
-                status: response.status,
-            }));
+            const response = await this.props.recipeImplementation.verifyEmail({
+                config: this.props.config,
+                token: this.props.token,
+            });
+
+            if (response.status === "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR") {
+                this.setState(() => ({
+                    status: "INVALID",
+                }));
+            } else {
+                this.setState(() => ({
+                    status: "SUCCESSFUL",
+                }));
+            }
         } catch (e) {
             this.setState(() => ({
                 status: "GENERAL_ERROR",
             }));
         }
-    };
+    }
 
-    /*
-     * Render.
-     */
-
-    render(): JSX.Element {
+    render() {
         const styles = this.context;
         const { status } = this.state;
         const { onTokenInvalidRedirect, onContinueClicked } = this.props;

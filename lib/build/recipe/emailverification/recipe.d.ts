@@ -7,6 +7,7 @@ import {
     PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
+    RecipeInterface,
 } from "./types";
 import { CreateRecipeFunction } from "../../types";
 export default class EmailVerification extends RecipeModule<
@@ -17,6 +18,7 @@ export default class EmailVerification extends RecipeModule<
 > {
     static instance?: EmailVerification;
     static RECIPE_ID: string;
+    recipeImpl: RecipeInterface;
     constructor(config: Config);
     static init(
         config: UserInput

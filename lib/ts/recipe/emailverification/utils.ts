@@ -14,8 +14,9 @@
  */
 
 import { NormalisedBaseConfig } from "../../types";
-import { Config, NormalisedConfig } from "./types";
+import { Config, NormalisedConfig, RecipeInterface } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
+import RecipeImplementation from "./recipeImplementation";
 
 export function normaliseEmailVerificationFeature(config: Config): NormalisedConfig {
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
@@ -39,6 +40,21 @@ export function normaliseEmailVerificationFeature(config: Config): NormalisedCon
         style: verifyEmailLinkClickedScreenStyle,
     };
 
+    let override: {
+        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    } = {
+        functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+    };
+
+    if (config !== undefined && config.override !== undefined) {
+        if (config.override.functions !== undefined) {
+            override = {
+                ...override,
+                functions: config.override.functions,
+            };
+        }
+    }
+
     return {
         ...normaliseRecipeModuleConfig(config),
         disableDefaultImplementation,
@@ -48,5 +64,6 @@ export function normaliseEmailVerificationFeature(config: Config): NormalisedCon
         signOut: config.signOut,
         postVerificationRedirect: config.postVerificationRedirect,
         redirectToSignIn: config.redirectToSignIn,
+        override,
     };
 }

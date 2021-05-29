@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Removes `GET_REDIRECTION_URL` from the possible action types for `getRedirectionURL`.
 -   Changes `redirectToAuth` to take an object and adds `redirectBack` param, which can be used to indicate if the user should be redirected to the current page.
 
+### Fixed:
+
+-   State update post unmounting when using EmailVerification wrapper.
+
 ## [0.13.1] - 2021-05-28
 
 ### Fixed:

@@ -12,6 +12,7 @@ import {
 } from "./types";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
+import EmailVerification from "../emailverification/recipe";
 export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     GetRedirectionURLContext,
     PreAPIHookContext,
@@ -23,7 +24,14 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     emailPasswordRecipe: EmailPassword;
     thirdPartyRecipe: ThirdParty;
     recipeImpl: RecipeInterface;
-    constructor(config: Config);
+    constructor(
+        config: Config,
+        recipes: {
+            emailVerificationInstance: EmailVerification | undefined;
+            thirdPartyInstance: ThirdParty | undefined;
+            emailPasswordInstance: EmailPassword | undefined;
+        }
+    );
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getDefaultRedirectionURL: (context: import("../emailpassword").GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (componentName: "emailverification" | "signinup" | "resetpassword", prop: any) => JSX.Element;

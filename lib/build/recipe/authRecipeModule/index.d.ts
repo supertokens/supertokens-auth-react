@@ -10,7 +10,12 @@ export default abstract class AuthRecipeModule<
     N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
 > extends RecipeModule<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext, N> {
     emailVerification: EmailVerification;
-    constructor(config: N);
+    constructor(
+        config: N,
+        recipes: {
+            emailVerificationInstance: EmailVerification | undefined;
+        }
+    );
     getAuthRecipeModuleDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getAuthRecipeModuleFeatureComponent: (componentName: "emailverification", props: any) => JSX.Element;
     getAuthRecipeModuleFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;

@@ -20,9 +20,8 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import { VerifyEmailLinkClickedThemeProps, SendVerifyEmailThemeProps } from "../../../types";
+import { RecipeInterface } from "../../../types";
 import { getWindowOrThrow } from "../../../../../utils";
-import { verifyEmailAPI, sendVerifyEmailAPI } from "./api";
 import Session from "../../../../session";
 import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
@@ -31,7 +30,7 @@ import Recipe from "../../../recipe";
 
 type Prop = FeatureBaseProps & { recipe: Recipe };
 
-class EmailVerification extends PureComponent<Prop, { token: string }> {
+class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING"; token: string | undefined }> {
     /*
      * Constructor.
      */
@@ -39,14 +38,18 @@ class EmailVerification extends PureComponent<Prop, { token: string }> {
         super(props);
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
-        let token = urlParams.get("token");
+        const token = urlParams.get("token");
         if (token === null) {
-            token = "";
+            this.state = {
+                status: "LOADING",
+                token: undefined,
+            };
+        } else {
+            this.state = {
+                status: "LOADING",
+                token,
+            };
         }
-
-        this.state = {
-            token,
-        };
     }
 
     signOut = async (): Promise<void> => {
@@ -56,76 +59,78 @@ class EmailVerification extends PureComponent<Prop, { token: string }> {
         } catch (e) {}
     };
 
-    onTokenInvalidRedirect = async (): Promise<void> => {
-        if ((await Session.doesSessionExist()) !== true) {
-            return await this.props.recipe.config.redirectToSignIn(this.props.history);
-        }
-
-        try {
-            const response = await sendVerifyEmailAPI(this.props.recipe);
-            if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                return await this.props.recipe.config.postVerificationRedirect(this.props.history);
-            }
-        } catch (e) {}
-
-        this.setState(() => ({
-            token: "",
-        }));
+    getModifiedRecipeInterface = (): RecipeInterface => {
+        return {
+            ...this.props.recipe.recipeImpl,
+            sendVerificationEmail: async (input) => {
+                const response = await this.props.recipe.recipeImpl.sendVerificationEmail(input);
+                this.setState(() => ({
+                    token: undefined,
+                }));
+                return response;
+            },
+        };
     };
 
     async componentDidMount(): Promise<void> {
-        const hasToken = this.state.token.length !== 0;
-
-        // Redirect to login if no existing session and no token in URL.
-        const sessionExists = await Session.doesSessionExist();
-        if (sessionExists === false && hasToken === false) {
-            return await this.props.recipe.config.redirectToSignIn(this.props.history);
+        // Redirect to login if no existing session and no token.
+        // We don't redirect if a token exists because the user might
+        // be verifying their token on another browser
+        if (this.state.token === undefined) {
+            const sessionExists = await Session.doesSessionExist();
+            if (sessionExists === false) {
+                return await this.props.recipe.config.redirectToSignIn(this.props.history);
+            }
         }
 
-        try {
-            if (hasToken === false) {
-                const response = await sendVerifyEmailAPI(this.props.recipe);
-                if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                    return await this.props.recipe.config.postVerificationRedirect(this.props.history);
-                }
-            }
-        } catch (e) {}
+        this.setState((oldState) => {
+            return {
+                ...oldState,
+                status: "READY",
+            };
+        });
     }
 
     render = (): JSX.Element => {
+        if (this.state.status === "LOADING") {
+            return <Fragment />;
+        }
+
         const sendVerifyEmailScreenFeature = this.props.recipe.config.sendVerifyEmailScreen;
 
-        const sendVerifyEmailScreen: SendVerifyEmailThemeProps = {
+        const sendVerifyEmailScreen = {
             styleFromInit: sendVerifyEmailScreenFeature.style,
-            sendVerifyEmailAPI: async () => await sendVerifyEmailAPI(this.props.recipe),
+            recipeImplementation: this.getModifiedRecipeInterface(),
+            config: this.props.recipe.config,
             signOut: this.signOut,
-            onSuccess: () =>
-                this.props.recipe.config.onHandleEvent({
-                    action: "VERIFY_EMAIL_SENT",
-                }),
-            onEmailAlreadyVerified: () => this.props.recipe.config.postVerificationRedirect(this.props.history),
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onSuccess: () => {},
+            onEmailAlreadyVerified: async () => this.props.recipe.config.postVerificationRedirect(this.props.history),
         };
 
         const verifyEmailLinkClickedScreenFeature = this.props.recipe.config.verifyEmailLinkClickedScreen;
 
-        const verifyEmailLinkClickedScreen: VerifyEmailLinkClickedThemeProps = {
-            styleFromInit: verifyEmailLinkClickedScreenFeature.style,
-            onTokenInvalidRedirect: this.onTokenInvalidRedirect,
-            onSuccess: () =>
-                this.props.recipe.config.onHandleEvent({
-                    action: "EMAIL_VERIFIED_SUCCESSFUL",
-                }),
-            onContinueClicked: () => this.props.recipe.config.postVerificationRedirect(this.props.history),
-            verifyEmailAPI: async () => await verifyEmailAPI(this.props.recipe, this.state.token),
-        };
-
-        const hasToken = this.state.token.length !== 0;
+        const verifyEmailLinkClickedScreen =
+            this.state.token === undefined
+                ? undefined
+                : {
+                      styleFromInit: verifyEmailLinkClickedScreenFeature.style,
+                      onTokenInvalidRedirect: async () => {
+                          this.props.recipe.config.redirectToSignIn(this.props.history);
+                      },
+                      // eslint-disable-next-line @typescript-eslint/no-empty-function
+                      onSuccess: () => {},
+                      onContinueClicked: () => this.props.recipe.config.postVerificationRedirect(this.props.history),
+                      recipeImplementation: this.getModifiedRecipeInterface(),
+                      config: this.props.recipe.config,
+                      token: this.state.token,
+                  };
 
         const props = {
-            rawPalette: this.props.recipe.config.palette,
+            config: this.props.recipe.config,
             sendVerifyEmailScreen: sendVerifyEmailScreen,
-            verifyEmailLinkClickedScreen: verifyEmailLinkClickedScreen,
-            hasToken: hasToken,
+            verifyEmailLinkClickedScreen,
+            hasToken: this.state.token !== undefined,
         };
 
         return (

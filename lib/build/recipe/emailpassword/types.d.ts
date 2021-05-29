@@ -117,10 +117,6 @@ export declare type FormFieldError = {
     id: string;
     error: string;
 };
-export declare type ThemeResponseGeneralError = {
-    status: "GENERAL_ERROR";
-    message: string;
-};
 export declare type PreAPIHookContext =
     | AuthRecipeModulePreAPIHookContext
     | {
@@ -158,9 +154,6 @@ export declare type EnterEmailThemeState = {
 };
 export declare type SubmitNewPasswordThemeState = {
     status: "READY" | "SUCCESS";
-};
-export declare type SendVerifyEmailThemeState = {
-    status: "READY" | "SUCCESS" | "ERROR";
 };
 export declare type FormBaseState =
     | {

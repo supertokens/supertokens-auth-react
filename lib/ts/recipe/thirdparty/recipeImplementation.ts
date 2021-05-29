@@ -44,49 +44,45 @@ export default class RecipeImplementation implements RecipeInterface {
               error: string;
           }
     > => {
-        try {
-            const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
+        const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
 
-            const stateFromStorage = this.getOAuthState();
+        const stateFromStorage = this.getOAuthState();
 
-            const code = getQueryParams("code");
+        const code = getQueryParams("code");
 
-            const stateFromQueryParams = getQueryParams("state");
+        const stateFromQueryParams = getQueryParams("state");
 
-            if (
-                getQueryParams("error") !== null ||
-                stateFromStorage === undefined ||
-                stateFromStorage.thirdPartyId !== input.thirdPartyId ||
-                stateFromStorage.state !== stateFromQueryParams ||
-                code === null ||
-                provider === undefined
-            ) {
-                return { status: "GENERAL_ERROR" };
-            }
-
-            const redirectURI = await provider.getRedirectURL();
-
-            const response: SignInAndUpAPIResponse = await this.querier.post(
-                "/signinup",
-                {
-                    body: JSON.stringify({
-                        code,
-                        thirdPartyId: input.thirdPartyId,
-                        redirectURI,
-                    }),
-                },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "SIGN_IN",
-                    });
-                }
-            );
-
-            return response;
-        } catch (err) {
+        if (
+            getQueryParams("error") !== null ||
+            stateFromStorage === undefined ||
+            stateFromStorage.thirdPartyId !== input.thirdPartyId ||
+            stateFromStorage.state !== stateFromQueryParams ||
+            code === null ||
+            provider === undefined
+        ) {
             return { status: "GENERAL_ERROR" };
         }
+
+        const redirectURI = await provider.getRedirectURL();
+
+        const response: SignInAndUpAPIResponse = await this.querier.post(
+            "/signinup",
+            {
+                body: JSON.stringify({
+                    code,
+                    thirdPartyId: input.thirdPartyId,
+                    redirectURI,
+                }),
+            },
+            (context) => {
+                return input.config.preAPIHook({
+                    ...context,
+                    action: "SIGN_IN",
+                });
+            }
+        );
+
+        return response;
     };
 
     getOAuthState = (): StateObject | undefined => {
@@ -123,50 +119,41 @@ export default class RecipeImplementation implements RecipeInterface {
         config: NormalisedConfig;
         state?: StateObject;
     }): Promise<{ status: "OK" | "ERROR" }> => {
-        try {
-            const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
-            if (provider === undefined) {
-                return { status: "ERROR" };
-            }
-
-            // 1. Generate state.
-            const state =
-                input.state === undefined || input.state.state === undefined
-                    ? provider.generateState()
-                    : input.state.state;
-
-            // 2. Store state in Session Storage.
-            this.setOAuthState({
-                ...input.state,
-                rid:
-                    input.state === undefined || input.state.rid === undefined
-                        ? input.config.recipeId
-                        : input.state.rid,
-                thirdPartyId:
-                    input.state === undefined || input.state.thirdPartyId === undefined
-                        ? input.thirdPartyId
-                        : input.state.thirdPartyId,
-                state,
-            });
-
-            // 3. Get Authorisation URL.
-            const url = await this.getOAuthAuthorisationURL({
-                thirdPartyId: provider.id,
-                config: input.config,
-            });
-
-            const urlWithState = appendQueryParamsToURL(url, {
-                state,
-                redirect_uri: provider.getRedirectURL(),
-            });
-
-            // 4. Redirect to provider authorisation URL.
-            getWindowOrThrow().location.href = urlWithState;
-
-            return { status: "OK" };
-        } catch (err) {
+        const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
+        if (provider === undefined) {
             return { status: "ERROR" };
         }
+
+        // 1. Generate state.
+        const state =
+            input.state === undefined || input.state.state === undefined ? provider.generateState() : input.state.state;
+
+        // 2. Store state in Session Storage.
+        this.setOAuthState({
+            ...input.state,
+            rid: input.state === undefined || input.state.rid === undefined ? input.config.recipeId : input.state.rid,
+            thirdPartyId:
+                input.state === undefined || input.state.thirdPartyId === undefined
+                    ? input.thirdPartyId
+                    : input.state.thirdPartyId,
+            state,
+        });
+
+        // 3. Get Authorisation URL.
+        const url = await this.getOAuthAuthorisationURL({
+            thirdPartyId: provider.id,
+            config: input.config,
+        });
+
+        const urlWithState = appendQueryParamsToURL(url, {
+            state,
+            redirect_uri: provider.getRedirectURL(),
+        });
+
+        // 4. Redirect to provider authorisation URL.
+        getWindowOrThrow().location.href = urlWithState;
+
+        return { status: "OK" };
     };
 }
 

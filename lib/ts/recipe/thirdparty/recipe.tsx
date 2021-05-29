@@ -37,6 +37,7 @@ import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import RecipeImplementation from "./recipeImplementation";
+import EmailVerification from "../emailverification/recipe";
 
 /*
  * Class.
@@ -52,8 +53,15 @@ export default class ThirdParty extends AuthRecipeModule<
 
     recipeImpl: RecipeInterface;
 
-    constructor(config: Config) {
-        super(normaliseThirdPartyConfig(config));
+    constructor(
+        config: Config,
+        recipes: {
+            emailVerificationInstance: EmailVerification | undefined;
+        }
+    ) {
+        super(normaliseThirdPartyConfig(config), {
+            emailVerificationInstance: recipes.emailVerificationInstance,
+        });
         this.recipeImpl = this.config.override.functions(
             new RecipeImplementation(this.config.recipeId, this.config.appInfo)
         );
@@ -113,11 +121,16 @@ export default class ThirdParty extends AuthRecipeModule<
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
-            ThirdParty.instance = new ThirdParty({
-                ...config,
-                appInfo,
-                recipeId: ThirdParty.RECIPE_ID,
-            });
+            ThirdParty.instance = new ThirdParty(
+                {
+                    ...config,
+                    appInfo,
+                    recipeId: ThirdParty.RECIPE_ID,
+                },
+                {
+                    emailVerificationInstance: undefined,
+                }
+            );
             return ThirdParty.instance;
         };
     }

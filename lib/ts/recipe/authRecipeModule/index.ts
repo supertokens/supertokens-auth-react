@@ -33,31 +33,39 @@ export default abstract class AuthRecipeModule<
 > extends RecipeModule<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext, N> {
     emailVerification: EmailVerification;
 
-    constructor(config: N) {
+    constructor(
+        config: N,
+        recipes: {
+            emailVerificationInstance: EmailVerification | undefined;
+        }
+    ) {
         super(config);
-        this.emailVerification = new EmailVerification({
-            appInfo: config.appInfo,
-            recipeId: config.recipeId,
-            signOut: this.signOut,
-            postVerificationRedirect: async (history: any) => {
-                this.redirect(
-                    {
-                        action: "SUCCESS",
-                        isNewUser: false,
-                    },
-                    history
-                );
-            },
-            redirectToSignIn: async (history: any) => {
-                this.redirectToAuthWithoutRedirectToPath(undefined, history);
-            },
-            getRedirectionURL: config.getRedirectionURL,
-            onHandleEvent: config.onHandleEvent,
-            palette: config.palette,
-            preAPIHook: config.preAPIHook,
-            useShadowDom: config.useShadowDom,
-            ...config.emailVerificationFeature,
-        });
+        this.emailVerification =
+            recipes.emailVerificationInstance === undefined
+                ? new EmailVerification({
+                      appInfo: config.appInfo,
+                      recipeId: config.recipeId,
+                      signOut: this.signOut,
+                      postVerificationRedirect: async (history: any) => {
+                          this.redirect(
+                              {
+                                  action: "SUCCESS",
+                                  isNewUser: false,
+                              },
+                              history
+                          );
+                      },
+                      redirectToSignIn: async (history: any) => {
+                          this.redirectToAuthWithoutRedirectToPath(undefined, history);
+                      },
+                      getRedirectionURL: config.getRedirectionURL,
+                      onHandleEvent: config.onHandleEvent,
+                      palette: config.palette,
+                      preAPIHook: config.preAPIHook,
+                      useShadowDom: config.useShadowDom,
+                      ...config.emailVerificationFeature,
+                  })
+                : recipes.emailVerificationInstance;
     }
 
     getAuthRecipeModuleDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {

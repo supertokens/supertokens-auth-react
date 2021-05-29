@@ -27,15 +27,16 @@ import {
     PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
+    RecipeInterface,
 } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "../../normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import { isEmailVerifiedAPI } from "./components/features/emailVerification/api";
 import { matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailVerificationFeature } from "./utils";
 import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
+import RecipeImplementation from "./recipeImplementation";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -46,8 +47,13 @@ export default class EmailVerification extends RecipeModule<
     static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
 
+    recipeImpl: RecipeInterface;
+
     constructor(config: Config) {
         super(normaliseEmailVerificationFeature(config));
+        this.recipeImpl = this.config.override.functions(
+            new RecipeImplementation(this.config.recipeId, this.config.appInfo)
+        );
     }
 
     static init(
@@ -99,7 +105,9 @@ export default class EmailVerification extends RecipeModule<
     };
 
     async isEmailVerified(): Promise<boolean> {
-        return await isEmailVerifiedAPI(this);
+        return await this.recipeImpl.isEmailVerified({
+            config: this.config,
+        });
     }
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {

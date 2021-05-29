@@ -24,18 +24,18 @@ import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import StyleContext from "../../../../../styles/styleContext";
 import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
 import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
-import { SendVerifyEmailThemeState } from "../../../../emailpassword/types";
 import { SendVerifyEmailThemeProps } from "../../../types";
 
 /*
  * Component.
  */
 
-export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeProps, SendVerifyEmailThemeState> {
+export default class SendVerifyEmail extends PureComponent<
+    SendVerifyEmailThemeProps,
+    { status: "READY" | "EMAIL_RESENT" | "ERROR" }
+> {
     static contextType = StyleContext;
-    /*
-     * Constructor.
-     */
+
     constructor(props: SendVerifyEmailThemeProps) {
         super(props);
         this.state = {
@@ -43,31 +43,18 @@ export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeP
         };
     }
 
-    /*
-     * Methods.
-     */
-
-    onSuccess = (): void => {
-        this.setState(() => ({
-            status: "SUCCESS",
-        }));
-        this.props.onSuccess();
-    };
-
-    sendEmail = async (): Promise<void> => {
-        const { sendVerifyEmailAPI, onEmailAlreadyVerified } = this.props;
+    resendEmail = async (): Promise<void> => {
         try {
-            const response = await sendVerifyEmailAPI();
+            const response = await this.props.recipeImplementation.sendVerificationEmail({
+                config: this.props.config,
+            });
 
             if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                return onEmailAlreadyVerified();
-            }
-
-            if (response.status === "OK") {
-                this.setState({
-                    status: "SUCCESS",
-                });
-                return;
+                this.props.onEmailAlreadyVerified();
+            } else if (response.status === "OK") {
+                this.setState(() => ({
+                    status: "EMAIL_RESENT",
+                }));
             }
         } catch (e) {
             this.setState({
@@ -76,9 +63,17 @@ export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeP
         }
     };
 
-    /*
-     * Render.
-     */
+    async componentDidMount() {
+        // we send an email on load...
+        const response = await this.props.recipeImplementation.sendVerificationEmail({
+            config: this.props.config,
+        });
+
+        if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
+            this.props.onEmailAlreadyVerified();
+        }
+    }
+
     render(): JSX.Element {
         const styles = this.context;
         const { signOut } = this.props;
@@ -92,7 +87,7 @@ export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeP
                             {SOMETHING_WENT_WRONG_ERROR}
                         </div>
                     )}
-                    {status === "SUCCESS" && (
+                    {status === "EMAIL_RESENT" && (
                         <div data-supertokens="generalSuccess" css={styles.generalSuccess}>
                             Email resent
                         </div>
@@ -111,11 +106,11 @@ export default class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeP
                         <strong>Please click on the link</strong> in the email we just sent you to confirm your email
                         address.
                     </div>
-                    {status !== "SUCCESS" && (
+                    {status !== "EMAIL_RESENT" && (
                         <div
                             data-supertokens="link sendVerifyEmailResend"
                             css={[styles.link, styles.sendVerifyEmailResend]}
-                            onClick={this.sendEmail}>
+                            onClick={this.resendEmail}>
                             Resend Email
                         </div>
                     )}

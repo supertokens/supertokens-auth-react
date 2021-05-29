@@ -38,6 +38,7 @@ import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
 import RecipeImplementation from "./recipeImplementation";
+import EmailVerification from "../emailverification/recipe";
 
 /*
  * Class.
@@ -53,8 +54,15 @@ export default class EmailPassword extends AuthRecipeModule<
 
     recipeImpl: RecipeInterface;
 
-    constructor(config: Config) {
-        super(normaliseEmailPasswordConfig(config));
+    constructor(
+        config: Config,
+        recipes: {
+            emailVerificationInstance: EmailVerification | undefined;
+        }
+    ) {
+        super(normaliseEmailPasswordConfig(config), {
+            emailVerificationInstance: recipes.emailVerificationInstance,
+        });
         this.recipeImpl = this.config.override.functions(
             new RecipeImplementation(this.config.recipeId, this.config.appInfo)
         );
@@ -116,11 +124,16 @@ export default class EmailPassword extends AuthRecipeModule<
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
-            EmailPassword.instance = new EmailPassword({
-                ...config,
-                appInfo,
-                recipeId: EmailPassword.RECIPE_ID,
-            });
+            EmailPassword.instance = new EmailPassword(
+                {
+                    ...config,
+                    appInfo,
+                    recipeId: EmailPassword.RECIPE_ID,
+                },
+                {
+                    emailVerificationInstance: undefined,
+                }
+            );
             return EmailPassword.instance;
         };
     }

@@ -40,41 +40,49 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
     };
 
     componentDidMount = async (): Promise<void> => {
-        const providerId =
-            getWindowOrThrow().location.pathname.split("/")[getWindowOrThrow().location.pathname.split("/").length - 1];
-        const response = await this.props.recipe.recipeImpl.signInAndUp({
-            thirdPartyId: providerId,
-            config: this.props.recipe.config,
-        });
-        if (response.status === "GENERAL_ERROR") {
+        try {
+            const providerId =
+                getWindowOrThrow().location.pathname.split("/")[
+                    getWindowOrThrow().location.pathname.split("/").length - 1
+                ];
+            const response = await this.props.recipe.recipeImpl.signInAndUp({
+                thirdPartyId: providerId,
+                config: this.props.recipe.config,
+            });
+            if (response.status === "GENERAL_ERROR") {
+                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                    error: "signin",
+                });
+            }
+            if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
+                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                    error: "no_email_present",
+                });
+            }
+            if (response.status === "FIELD_ERROR") {
+                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                    error: "custom",
+                    message: response.error,
+                });
+            }
+            if (response.status === "OK") {
+                this.props.recipe.config.onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: response.createdNewUser,
+                    user: response.user,
+                });
+
+                const state = this.props.recipe.recipeImpl.getOAuthState();
+                const redirectToPath = state === undefined ? undefined : state.redirectToPath;
+                return this.props.recipe.redirect(
+                    { action: "SUCCESS", isNewUser: response.createdNewUser, redirectToPath },
+                    this.props.history
+                );
+            }
+        } catch (err) {
             return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                 error: "signin",
             });
-        }
-        if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
-            return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                error: "no_email_present",
-            });
-        }
-        if (response.status === "FIELD_ERROR") {
-            return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                error: "custom",
-                message: response.error,
-            });
-        }
-        if (response.status === "OK") {
-            this.props.recipe.config.onHandleEvent({
-                action: "SUCCESS",
-                isNewUser: response.createdNewUser,
-                user: response.user,
-            });
-
-            const state = this.props.recipe.recipeImpl.getOAuthState();
-            const redirectToPath = state === undefined ? undefined : state.redirectToPath;
-            return this.props.recipe.redirect(
-                { action: "SUCCESS", isNewUser: response.createdNewUser, redirectToPath },
-                this.props.history
-            );
         }
     };
 

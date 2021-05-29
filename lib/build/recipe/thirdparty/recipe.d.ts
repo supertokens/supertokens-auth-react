@@ -10,6 +10,7 @@ import {
     UserInput,
     RecipeInterface,
 } from "./types";
+import EmailVerification from "../emailverification/recipe";
 export default class ThirdParty extends AuthRecipeModule<
     GetRedirectionURLContext,
     PreAPIHookContext,
@@ -19,7 +20,12 @@ export default class ThirdParty extends AuthRecipeModule<
     static instance?: ThirdParty;
     static RECIPE_ID: string;
     recipeImpl: RecipeInterface;
-    constructor(config: Config);
+    constructor(
+        config: Config,
+        recipes: {
+            emailVerificationInstance: EmailVerification | undefined;
+        }
+    );
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getFeatureComponent: (
         componentName: "emailverification" | "signinup" | "signinupcallback",

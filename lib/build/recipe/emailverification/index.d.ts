@@ -1,7 +1,8 @@
 /// <reference types="react" />
 import { UserInput } from "./types";
 import EmailVerificationTheme from "./components/themes/emailVerification";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import RecipeImplementation from "./recipeImplementation";
 export default class Wrapper {
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
@@ -27,4 +28,6 @@ export {
     PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
+    RecipeInterface,
+    RecipeImplementation,
 };

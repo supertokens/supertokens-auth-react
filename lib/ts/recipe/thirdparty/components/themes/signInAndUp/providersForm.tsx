@@ -42,11 +42,17 @@ export default class SignInAndUpProvidersForm extends PureComponent<SignInAndUpT
     }
 
     signInClick = async (providerId: string): Promise<void> => {
-        const response = await this.props.recipeImplementation.redirectToThirdPartyLogin({
-            thirdPartyId: providerId,
-            config: this.props.config,
-        });
-        if (response.status === "ERROR") {
+        try {
+            const response = await this.props.recipeImplementation.redirectToThirdPartyLogin({
+                thirdPartyId: providerId,
+                config: this.props.config,
+            });
+            if (response.status === "ERROR") {
+                this.setState(() => ({
+                    error: "Something went wrong. Please try again",
+                }));
+            }
+        } catch (err) {
             this.setState(() => ({
                 error: "Something went wrong. Please try again",
             }));
