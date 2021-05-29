@@ -323,6 +323,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED",
             ]);
         });
