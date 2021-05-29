@@ -22,6 +22,7 @@ import {
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
+    UserInputOverride as AuthRecipeUserInputOverride,
 } from "../authRecipeModule/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
@@ -31,7 +32,7 @@ export type UserInput = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
-    };
+    } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type Config = UserInput &

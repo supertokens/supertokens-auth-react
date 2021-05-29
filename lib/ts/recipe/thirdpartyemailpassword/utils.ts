@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { Config, NormalisedConfig, RecipeInterface } from "./types";
+import { Config, NormalisedConfig } from "./types";
 
 import { normaliseEmailPasswordConfig } from "../emailpassword/utils";
 import { normaliseThirdPartyConfig } from "../thirdparty/utils";
@@ -40,20 +40,10 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
         throw new Error("You need to enable either email password or third party providers login.");
     }
 
-    let override: {
-        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
-    } = {
+    const override: any = {
         functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+        ...config.override,
     };
-
-    if (config !== undefined && config.override !== undefined) {
-        if (config.override.functions !== undefined) {
-            override = {
-                ...override,
-                functions: config.override.functions,
-            };
-        }
-    }
 
     return {
         ...normaliseAuthRecipeModuleConfig(config),

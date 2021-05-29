@@ -31,6 +31,7 @@ import {
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
+    UserInputOverride as AuthRecipeUserInputOverride,
 } from "../authRecipeModule/types";
 import RecipeImplementation from "./recipeImplementation";
 
@@ -39,7 +40,7 @@ export type UserInput = {
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
-    };
+    } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type Config = UserInput &

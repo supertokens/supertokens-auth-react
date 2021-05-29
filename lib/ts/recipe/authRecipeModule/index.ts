@@ -64,6 +64,7 @@ export default abstract class AuthRecipeModule<
                       preAPIHook: config.preAPIHook,
                       useShadowDom: config.useShadowDom,
                       ...config.emailVerificationFeature,
+                      override: config.override === undefined ? undefined : config.override.emailVerification,
                   })
                 : recipes.emailVerificationInstance;
     }

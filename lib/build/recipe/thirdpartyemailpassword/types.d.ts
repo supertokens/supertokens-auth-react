@@ -26,6 +26,7 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
     User,
+    UserInputOverride as AuthRecipeUserInputOverride,
 } from "../authRecipeModule/types";
 import EPRecipe from "../emailpassword/recipe";
 import TPRecipe from "../thirdparty/recipe";
@@ -36,7 +37,7 @@ export declare type UserInput = {
     disableEmailPassword?: boolean;
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
-    };
+    } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;

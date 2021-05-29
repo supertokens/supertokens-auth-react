@@ -3,7 +3,9 @@ import {
     GetRedirectionURLContext as EmailVerificationGetRedirectionURLContext,
     OnHandleEventContext as EmailVerificationOnHandleEventContext,
     PreAPIHookContext as EmailVerificationPreAPIHookContext,
+    RecipeInterface,
 } from "../emailverification/types";
+import RecipeImplementation from "../emailverification/recipeImplementation";
 import {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -13,12 +15,22 @@ export declare type User = {
     id: string;
     email: string;
 };
+export declare type UserInputOverride = {
+    emailVerification?: {
+        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
+};
 export declare type UserInput<T, S, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
 } & UserInputRecipeModule<T, S, R>;
 export declare type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
 export declare type NormalisedConfig<T, S, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
+    override?: {
+        emailVerification?: {
+            functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        };
+    };
 } & NormalisedRecipeModuleConfig<T, S, R>;
 export declare type GetRedirectionURLContext =
     | {
