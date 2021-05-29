@@ -47,8 +47,24 @@ export default class Wrapper {
         return ThirdParty.getInstanceOrThrow().emailVerification.isEmailVerified();
     }
 
-    static redirectToAuth(show?: "signin" | "signup"): void {
-        return ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(show);
+    // have backwards compatibility to allow input as "signin" | "signup"
+    static redirectToAuth(
+        input?:
+            | ("signin" | "signup")
+            | {
+                  show?: "signin" | "signup";
+                  redirectBack?: boolean;
+              }
+    ): void {
+        if (input === undefined || typeof input === "string") {
+            return ThirdParty.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
+        } else {
+            if (input.redirectBack === false || input.redirectBack === undefined) {
+                return ThirdParty.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
+            } else {
+                return ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
+            }
+        }
     }
 
     /*

@@ -36,8 +36,24 @@ export default class Wrapper {
         return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified();
     }
 
-    static redirectToAuth(show?: "signin" | "signup"): void {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(show);
+    // have backwards compatibility to allow input as "signin" | "signup"
+    static redirectToAuth(
+        input?:
+            | ("signin" | "signup")
+            | {
+                  show?: "signin" | "signup";
+                  redirectBack?: boolean;
+              }
+    ): void {
+        if (input === undefined || typeof input === "string") {
+            return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
+        } else {
+            if (input.redirectBack === false || input.redirectBack === undefined) {
+                return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
+            } else {
+                return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
+            }
+        }
     }
 
     static Google = Google;

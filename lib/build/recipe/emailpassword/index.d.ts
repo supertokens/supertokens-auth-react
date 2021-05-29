@@ -18,7 +18,14 @@ export default class Wrapper {
     >;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
-    static redirectToAuth(show?: "signin" | "signup"): void;
+    static redirectToAuth(
+        input?:
+            | ("signin" | "signup")
+            | {
+                  show?: "signin" | "signup";
+                  redirectBack?: boolean;
+              }
+    ): void;
     static EmailPasswordAuth: typeof EmailPasswordAuth;
     static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;

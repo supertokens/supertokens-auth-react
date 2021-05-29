@@ -20,7 +20,14 @@ export default class Wrapper {
     >;
     static signOut(): Promise<SuccessAPIResponse>;
     static isEmailVerified(): Promise<boolean>;
-    static redirectToAuth(show?: "signin" | "signup"): void;
+    static redirectToAuth(
+        input?:
+            | ("signin" | "signup")
+            | {
+                  show?: "signin" | "signup";
+                  redirectBack?: boolean;
+              }
+    ): void;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
