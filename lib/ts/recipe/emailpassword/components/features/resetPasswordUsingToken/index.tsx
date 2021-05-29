@@ -62,21 +62,24 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
         const submitNewPasswordFormFeature =
             this.props.recipe.config.resetPasswordUsingTokenFeature.submitNewPasswordForm;
 
-        const submitNewPasswordForm = {
-            styleFromInit: submitNewPasswordFormFeature.style,
-            formFields: submitNewPasswordFormFeature.formFields,
-            recipeImplementation: this.props.recipe.recipeImpl,
-            config: this.props.recipe.config,
-            onSuccess: () => {
-                this.props.recipe.config.onHandleEvent({
-                    action: "PASSWORD_RESET_SUCCESSFUL",
-                });
-            },
-            onSignInClicked: () => {
-                this.props.recipe.redirectToAuthWithoutRedirectToPath("signin", this.props.history);
-            },
-            token: this.state.token || "",
-        };
+        const submitNewPasswordForm =
+            this.state.token === undefined
+                ? undefined
+                : {
+                      styleFromInit: submitNewPasswordFormFeature.style,
+                      formFields: submitNewPasswordFormFeature.formFields,
+                      recipeImplementation: this.props.recipe.recipeImpl,
+                      config: this.props.recipe.config,
+                      onSuccess: () => {
+                          this.props.recipe.config.onHandleEvent({
+                              action: "PASSWORD_RESET_SUCCESSFUL",
+                          });
+                      },
+                      onSignInClicked: () => {
+                          this.props.recipe.redirectToAuthWithoutRedirectToPath("signin", this.props.history);
+                      },
+                      token: this.state.token,
+                  };
 
         const enterEmailForm = {
             styleFromInit: enterEmailFormFeature.style,
@@ -91,10 +94,9 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
         };
 
         const props = {
-            rawPalette: this.props.recipe.config.palette,
+            config: this.props.recipe.config,
             submitNewPasswordForm: submitNewPasswordForm,
             enterEmailForm: enterEmailForm,
-            token: this.state.token,
         };
 
         return (

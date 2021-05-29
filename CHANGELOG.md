@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   Adds additional props / config to Session and EmailVerification recipe to make them more isolated
     -   Passes recipe to feature components directly, as opposed to recipeId
 -   In session recipe, we remove `setAuth0API` and `getAuth0API`
--   Removes `GET_REDIRECT_URL` from the possible action types for `getRedirectionURL`.
+-   Removes `GET_REDIRECTION_URL` from the possible action types for `getRedirectionURL`.
 
 ## [0.13.1] - 2021-05-28
 

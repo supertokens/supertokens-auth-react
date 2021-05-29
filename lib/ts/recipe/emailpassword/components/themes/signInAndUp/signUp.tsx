@@ -45,8 +45,8 @@ export default class SignUp extends PureComponent<SignUpThemeProps> {
                         header={<SignUpHeader onClick={this.props.signInClicked} />}
                         footer={
                             <SignUpFooter
-                                privacyPolicyLink={this.props.privacyPolicyLink}
-                                termsOfServiceLink={this.props.termsOfServiceLink}
+                                privacyPolicyLink={this.props.config.signInAndUpFeature.signUpForm.privacyPolicyLink}
+                                termsOfServiceLink={this.props.config.signInAndUpFeature.signUpForm.termsOfServiceLink}
                             />
                         }
                     />

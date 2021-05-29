@@ -41,7 +41,7 @@ export class SignInAndUpTheme extends React.PureComponent<
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
         const show = urlParams.get("show");
-        let isSignUp = props.defaultToSignUp;
+        let isSignUp = props.config.signInAndUpFeature.defaultToSignUp;
         if (show !== null) {
             isSignUp = show === "signup";
         }
@@ -56,7 +56,7 @@ export class SignInAndUpTheme extends React.PureComponent<
         if (this.state.isSignUp) {
             return (
                 <StyleProvider
-                    rawPalette={this.props.rawPalette}
+                    rawPalette={this.props.config.palette}
                     defaultPalette={defaultPalette}
                     styleFromInit={this.props.signUpForm.styleFromInit}
                     getDefaultStyles={getStyles}>
@@ -78,7 +78,7 @@ export class SignInAndUpTheme extends React.PureComponent<
         // Otherwise, return SignIn.
         return (
             <StyleProvider
-                rawPalette={this.props.rawPalette}
+                rawPalette={this.props.config.palette}
                 defaultPalette={defaultPalette}
                 styleFromInit={this.props.signInForm.styleFromInit}
                 getDefaultStyles={getStyles}>

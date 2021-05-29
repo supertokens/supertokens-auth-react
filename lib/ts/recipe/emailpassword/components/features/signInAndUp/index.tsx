@@ -225,14 +225,11 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
             config: this.props.recipe.config,
             styleFromInit: signUpFeature.style,
             formFields: this.getThemeSignUpFeatureFormFields(signUpFeature.formFields),
-            privacyPolicyLink: signUpFeature.privacyPolicyLink,
-            termsOfServiceLink: signUpFeature.termsOfServiceLink,
             onSuccess: this.onSignUpSuccess,
         };
 
         const props = {
-            rawPalette: this.props.recipe.config.palette,
-            defaultToSignUp: signInAndUpFeature.defaultToSignUp,
+            config: this.props.recipe.config,
             signInForm: signInForm,
             signUpForm: signUpForm,
         };

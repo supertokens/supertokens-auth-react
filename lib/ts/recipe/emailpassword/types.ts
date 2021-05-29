@@ -215,18 +215,12 @@ export type SignUpThemeProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signInClicked?: () => void;
-    privacyPolicyLink?: string;
-    termsOfServiceLink?: string;
 };
 
 export type SignInAndUpThemeProps = {
-    defaultToSignUp: boolean;
-
     signInForm: SignInThemeProps;
-
     signUpForm: SignUpThemeProps;
-
-    rawPalette: Record<string, string>;
+    config: NormalisedConfig;
 };
 
 export type NormalisedFormFieldWithError = NormalisedFormField & {
@@ -330,9 +324,8 @@ export type OnHandleEventContext =
 
 export type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailThemeProps;
-    submitNewPasswordForm: SubmitNewPasswordThemeProps;
-    token: string | undefined;
-    rawPalette: Record<string, string>;
+    submitNewPasswordForm: SubmitNewPasswordThemeProps | undefined;
+    config: NormalisedConfig;
 };
 
 export type EnterEmailThemeProps = FormThemeBaseProps & {

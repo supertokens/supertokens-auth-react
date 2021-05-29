@@ -41,8 +41,8 @@ export default function SignInAndUpForm(
                 {...props.signUpForm}
                 footer={
                     <SignUpFooter
-                        privacyPolicyLink={props.signUpForm.privacyPolicyLink}
-                        termsOfServiceLink={props.signUpForm.termsOfServiceLink}
+                        privacyPolicyLink={props.config.signInAndUpFeature.signUpForm.privacyPolicyLink}
+                        termsOfServiceLink={props.config.signInAndUpFeature.signUpForm.termsOfServiceLink}
                     />
                 }
             />

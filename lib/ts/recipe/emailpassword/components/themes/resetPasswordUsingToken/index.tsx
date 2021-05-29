@@ -36,10 +36,10 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
      */
 
     // If no token, return SubmitNewPassword.
-    if (props.token !== undefined) {
+    if (props.submitNewPasswordForm !== undefined) {
         return (
             <StyleProvider
-                rawPalette={props.rawPalette}
+                rawPalette={props.config.palette}
                 defaultPalette={defaultPalette}
                 styleFromInit={props.submitNewPasswordForm.styleFromInit}
                 getDefaultStyles={getStyles}>
@@ -51,7 +51,7 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
     // Otherwise, return EnterEmail.
     return (
         <StyleProvider
-            rawPalette={props.rawPalette}
+            rawPalette={props.config.palette}
             defaultPalette={defaultPalette}
             styleFromInit={props.enterEmailForm.styleFromInit}
             getDefaultStyles={getStyles}>
