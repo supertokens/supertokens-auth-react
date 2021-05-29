@@ -47,7 +47,7 @@ class SignInAndUpTheme extends React.PureComponent<
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
         const show = urlParams.get("show");
-        let isSignUp = props.defaultToSignUp;
+        let isSignUp = props.config.signInAndUpFeature.defaultToSignUp;
         if (show !== null) {
             isSignUp = show === "signup";
         }
@@ -73,7 +73,7 @@ class SignInAndUpTheme extends React.PureComponent<
                             });
                         }}
                     />
-                    {this.props.hideThirdParty !== true && (
+                    {this.props.config.signInAndUpFeature.providers.length > 0 && (
                         <Fragment>
                             <ThirdPartySignInAndUp
                                 recipe={this.props.thirdPartyRecipe}
@@ -86,20 +86,21 @@ class SignInAndUpTheme extends React.PureComponent<
                             </ThirdPartySignInAndUp>
                         </Fragment>
                     )}
-                    {this.props.hideEmailPassword !== true && this.props.hideThirdParty !== true && (
-                        <div
-                            data-supertokens="thirdPartyEmailPasswordDivider"
-                            css={styles.thirdPartyEmailPasswordDivider}>
-                            <div data-supertokens="divider" css={styles.divider}></div>
+                    {this.props.config.disableEmailPassword !== true &&
+                        this.props.config.signInAndUpFeature.providers.length > 0 && (
                             <div
-                                data-supertokens="thirdPartyEmailPasswordDividerOr"
-                                css={styles.thirdPartyEmailPasswordDividerOr}>
-                                or
+                                data-supertokens="thirdPartyEmailPasswordDivider"
+                                css={styles.thirdPartyEmailPasswordDivider}>
+                                <div data-supertokens="divider" css={styles.divider}></div>
+                                <div
+                                    data-supertokens="thirdPartyEmailPasswordDividerOr"
+                                    css={styles.thirdPartyEmailPasswordDividerOr}>
+                                    or
+                                </div>
+                                <div data-supertokens="divider" css={styles.divider}></div>
                             </div>
-                            <div data-supertokens="divider" css={styles.divider}></div>
-                        </div>
-                    )}
-                    {this.props.hideEmailPassword !== true && (
+                        )}
+                    {this.props.config.disableEmailPassword !== true && (
                         <EmailPasswordSignInAndUp
                             recipe={this.props.emailPasswordRecipe}
                             history={this.props.history}
@@ -121,9 +122,9 @@ export default function SignInAndUpThemeWrapper(props: ThirdPartyEmailPasswordSi
     return (
         <ThemeBase>
             <StyleProvider
-                rawPalette={props.rawPalette}
+                rawPalette={props.config.palette}
                 defaultPalette={defaultPalette}
-                styleFromInit={props.styleFromInit}
+                styleFromInit={props.config.signInAndUpFeature.style}
                 getDefaultStyles={getStyles}>
                 <SignInAndUpTheme {...props} />
             </StyleProvider>

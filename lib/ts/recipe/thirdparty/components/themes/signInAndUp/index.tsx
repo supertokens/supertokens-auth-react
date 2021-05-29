@@ -39,8 +39,8 @@ function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
                     <div data-supertokens="divider" css={styles.divider}></div>
                     <SignInAndUpProvidersForm {...props} />
                     <SignUpFooter
-                        privacyPolicyLink={props.privacyPolicyLink}
-                        termsOfServiceLink={props.termsOfServiceLink}
+                        privacyPolicyLink={props.config.signInAndUpFeature.privacyPolicyLink}
+                        termsOfServiceLink={props.config.signInAndUpFeature.termsOfServiceLink}
                     />
                 </div>
             </div>

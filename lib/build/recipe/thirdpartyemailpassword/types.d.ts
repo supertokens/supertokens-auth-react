@@ -1,4 +1,4 @@
-import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
@@ -69,13 +69,9 @@ export declare type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPa
 export declare type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     history?: any;
-    defaultToSignUp: boolean;
-    hideThirdParty?: boolean;
-    hideEmailPassword?: boolean;
-    rawPalette: Record<string, string>;
-    styleFromInit: Styles;
     emailPasswordRecipe: EPRecipe;
     thirdPartyRecipe: TPRecipe;
+    config: NormalisedConfig;
 };
 export declare type SignInAndUpInput =
     | {

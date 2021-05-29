@@ -44,11 +44,7 @@ class SignInAndUp extends PureComponent<
         const props = {
             emailPasswordRecipe: this.props.recipe.emailPasswordRecipe,
             thirdPartyRecipe: this.props.recipe.thirdPartyRecipe,
-            rawPalette: this.props.recipe.config.palette,
-            styleFromInit: this.props.recipe.config.signInAndUpFeature.style,
-            hideThirdParty: this.props.recipe.config.signInAndUpFeature.providers.length === 0,
-            hideEmailPassword: this.props.recipe.config.disableEmailPassword,
-            defaultToSignUp: this.props.recipe.config.signInAndUpFeature.defaultToSignUp,
+            config: this.props.recipe.config,
             history: this.props.history,
         };
 

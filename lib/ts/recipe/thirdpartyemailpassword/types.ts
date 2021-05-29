@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
@@ -134,13 +134,9 @@ export type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswor
 
 export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     history?: any;
-    defaultToSignUp: boolean;
-    hideThirdParty?: boolean;
-    hideEmailPassword?: boolean;
-    rawPalette: Record<string, string>;
-    styleFromInit: Styles;
     emailPasswordRecipe: EPRecipe;
     thirdPartyRecipe: TPRecipe;
+    config: NormalisedConfig;
 };
 
 export type SignInAndUpInput =

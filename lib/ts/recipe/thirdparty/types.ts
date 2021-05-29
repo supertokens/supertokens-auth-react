@@ -107,8 +107,6 @@ export type SignInAndUpThemeProps = {
     }[];
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    privacyPolicyLink?: string;
-    termsOfServiceLink?: string;
     error: string | undefined;
 };
 

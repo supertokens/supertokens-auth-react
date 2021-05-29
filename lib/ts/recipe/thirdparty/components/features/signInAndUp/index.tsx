@@ -118,8 +118,6 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
             providers: providers,
             recipeImplementation: this.getModifiedRecipeImplementation(),
             config: this.props.recipe.config,
-            privacyPolicyLink: signInAndUpFeature.privacyPolicyLink,
-            termsOfServiceLink: signInAndUpFeature.termsOfServiceLink,
         };
 
         return (
