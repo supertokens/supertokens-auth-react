@@ -14,39 +14,22 @@
  */
 
 import { Config as RecipeModuleConfig } from "../recipeModule/types";
+import RecipeImplementation from "./recipeImplementation";
 
 /*
  * Session User InputsConfig Types.
  */
 
 export type UserInput = {
-    /*
-     * Session scope defines the domain's range of the session.
-     * Example: example.com, .example.com, api.example.com etc...
-     */
     sessionScope?: string;
-
-    /*
-     * refreshAPICustomHeaders
-     */
     refreshAPICustomHeaders?: any;
-
-    /*
-     * signoutAPICustomHeaders
-     */
     signoutAPICustomHeaders?: any;
-
-    /*
-     * sessionExpiredStatusCode
-     */
     sessionExpiredStatusCode?: number;
-
-    /*
-     * autoAddCredentials
-     */
     autoAddCredentials?: boolean;
-
     isInIframe?: boolean;
+    override?: {
+        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+    };
 };
 
 export type Config = UserInput & RecipeModuleConfig<unknown, unknown, unknown>;
@@ -56,3 +39,13 @@ export type SessionContextType = {
     userId: string;
     jwtPayload: any;
 };
+
+export interface RecipeInterface {
+    getUserId(): Promise<string>;
+
+    getJWTPayloadSecurely(): Promise<any>;
+
+    doesSessionExist(): Promise<boolean>;
+
+    signOut(): Promise<void>;
+}

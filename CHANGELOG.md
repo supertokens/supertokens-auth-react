@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   In session recipe, we remove `setAuth0API` and `getAuth0API`
 -   Removes `GET_REDIRECTION_URL` from the possible action types for `getRedirectionURL`.
 -   Changes `redirectToAuth` to take an object and adds `redirectBack` param, which can be used to indicate if the user should be redirected to the current page.
+-   Removes `getRefreshURLDomain` function from session recipe.
 
 ### Fixed:
 

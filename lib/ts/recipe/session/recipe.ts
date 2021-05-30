@@ -18,55 +18,28 @@
  */
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
-import { Config, UserInput } from "./types";
+import { Config, UserInput, RecipeInterface } from "./types";
 import { isTest } from "../../utils";
 import sessionSdk from "supertokens-website";
+import RecipeImplementation from "./recipeImplementation";
 
-/*
- * Class.
- */
 export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
-    /*
-     * Static Attributes.
-     */
     static instance?: Session;
     static RECIPE_ID = "session";
 
-    /*
-     * Constructor.
-     */
+    recipeImpl: RecipeImplementation;
+
     constructor(config: Config) {
         super(config);
-        let usersHeadersForRefreshAPI = {};
-        if (config.refreshAPICustomHeaders !== undefined) {
-            usersHeadersForRefreshAPI = config.refreshAPICustomHeaders;
-        }
-        let usersHeadersForSignoutAPI = {};
-        if (config.signoutAPICustomHeaders !== undefined) {
-            usersHeadersForSignoutAPI = config.signoutAPICustomHeaders;
-        }
-        sessionSdk.init({
-            sessionScope:
-                config.sessionScope === undefined
-                    ? undefined
-                    : {
-                          scope: config.sessionScope,
-                          authDomain: config.appInfo.websiteDomain.getAsStringDangerous(),
-                      },
-            refreshAPICustomHeaders: {
-                rid: this.config.recipeId,
-                ...usersHeadersForRefreshAPI,
-            },
-            signoutAPICustomHeaders: {
-                rid: this.config.recipeId,
-                ...usersHeadersForSignoutAPI,
-            },
-            autoAddCredentials: config.autoAddCredentials,
-            sessionExpiredStatusCode: config.sessionExpiredStatusCode,
-            apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),
-            apiBasePath: config.appInfo.apiBasePath.getAsStringDangerous(),
-            isInIframe: config.isInIframe,
-        });
+
+        const override: {
+            functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        } = {
+            functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+            ...config.override,
+        };
+
+        this.recipeImpl = override.functions(new RecipeImplementation(config));
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -78,33 +51,21 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return {};
     };
 
-    getRefreshURLDomain = (): string | undefined => {
-        return sessionSdk.getRefreshURLDomain();
-    };
-
     getUserId = (): Promise<string> => {
-        return sessionSdk.getUserId();
+        return this.recipeImpl.getUserId();
     };
 
     getJWTPayloadSecurely = async (): Promise<any> => {
-        return sessionSdk.getJWTPayloadSecurely();
-    };
-
-    attemptRefreshingSession = async (): Promise<boolean> => {
-        return sessionSdk.attemptRefreshingSession();
+        return this.recipeImpl.getJWTPayloadSecurely();
     };
 
     doesSessionExist = (): Promise<boolean> => {
-        return sessionSdk.doesSessionExist();
+        return this.recipeImpl.doesSessionExist();
     };
 
     signOut = (): Promise<void> => {
-        return sessionSdk.signOut();
+        return this.recipeImpl.signOut();
     };
-
-    /*
-     * Static methods.
-     */
 
     static init(config?: UserInput): CreateRecipeFunction<unknown, unknown, unknown, any> {
         return (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown, any> => {
@@ -127,14 +88,21 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return Session.instance;
     }
 
+    attemptRefreshingSession = async (): Promise<boolean> => {
+        // we don't use recipeImpl for this one since if a user overrides
+        // this, then refreshing is not gonna call this anyway.
+        // plus it's not a generic session sematic function..
+        // it's specific to our implementation only.
+        return sessionSdk.attemptRefreshingSession();
+    };
+
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     static addAxiosInterceptors(axiosInstance: any): void {
+        // we don't have recipeImpl for this since it's not a generic
+        // session sematic function.. it's specific to our implementation only.
         return sessionSdk.addAxiosInterceptors(axiosInstance);
     }
 
-    /*
-     * Tests methods.
-     */
     static reset(): void {
         if (!isTest()) {
             return;
