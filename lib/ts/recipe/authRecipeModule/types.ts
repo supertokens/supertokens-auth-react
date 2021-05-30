@@ -66,7 +66,7 @@ export type GetRedirectionURLContext =
 
 export type PreAPIHookContext =
     | {
-          action: "SIGN_OUT" | "SIGN_IN";
+          action: "SIGN_IN";
           requestInit: RequestInit;
           url: string;
       }

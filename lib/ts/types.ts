@@ -228,15 +228,7 @@ export type NormalisedPalette = {
 export type NormalisedDefaultStyles = Record<string, CSSObject>;
 
 export type ThemeBaseProps = {
-    /*
-     * Custom styling from user.
-     */
     styleFromInit?: Styles;
-
-    /*
-     * Called on successful state.
-     */
-    onSuccess: () => void;
 };
 
 export type FeatureBaseProps = {

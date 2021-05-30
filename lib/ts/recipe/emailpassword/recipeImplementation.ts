@@ -57,6 +57,12 @@ export default class RecipeImplementation implements RecipeInterface {
             }
         );
 
+        if (response.status === "OK") {
+            input.config.onHandleEvent({
+                action: "PASSWORD_RESET_SUCCESSFUL",
+            });
+        }
+
         return response;
     };
 
@@ -91,6 +97,12 @@ export default class RecipeImplementation implements RecipeInterface {
                 });
             }
         );
+
+        if (response.status === "OK") {
+            input.config.onHandleEvent({
+                action: "RESET_PASSWORD_EMAIL_SENT",
+            });
+        }
         return response;
     };
 

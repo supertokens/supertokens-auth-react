@@ -70,11 +70,6 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
                       formFields: submitNewPasswordFormFeature.formFields,
                       recipeImplementation: this.props.recipe.recipeImpl,
                       config: this.props.recipe.config,
-                      onSuccess: () => {
-                          this.props.recipe.config.onHandleEvent({
-                              action: "PASSWORD_RESET_SUCCESSFUL",
-                          });
-                      },
                       onSignInClicked: () => {
                           this.props.recipe.redirectToAuthWithoutRedirectToPath("signin", this.props.history);
                       },
@@ -84,11 +79,6 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
         const enterEmailForm = {
             styleFromInit: enterEmailFormFeature.style,
             formFields: enterEmailFormFeature.formFields,
-            onSuccess: () => {
-                this.props.recipe.config.onHandleEvent({
-                    action: "RESET_PASSWORD_EMAIL_SENT",
-                });
-            },
             recipeImplementation: this.props.recipe.recipeImpl,
             config: this.props.recipe.config,
         };

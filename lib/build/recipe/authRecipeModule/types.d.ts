@@ -44,7 +44,7 @@ export declare type GetRedirectionURLContext =
     | EmailVerificationGetRedirectionURLContext;
 export declare type PreAPIHookContext =
     | {
-          action: "SIGN_OUT" | "SIGN_IN";
+          action: "SIGN_IN";
           requestInit: RequestInit;
           url: string;
       }

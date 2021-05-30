@@ -46,14 +46,6 @@ export default class VerifyEmailLinkClicked extends PureComponent<
         };
     }
 
-    onSuccess = (): void => {
-        this.setState(() => ({
-            status: "SUCCESSFUL",
-        }));
-
-        this.props.onSuccess();
-    };
-
     async componentDidMount() {
         try {
             const response = await this.props.recipeImplementation.verifyEmail({

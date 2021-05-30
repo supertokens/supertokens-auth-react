@@ -210,12 +210,14 @@ export type SignInThemeProps = FormThemeBaseProps & {
     config: NormalisedConfig;
     signUpClicked?: () => void;
     forgotPasswordClick: () => void;
+    onSuccess: () => void;
 };
 
 export type SignUpThemeProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signInClicked?: () => void;
+    onSuccess: () => void;
 };
 
 export type SignInAndUpThemeProps = {

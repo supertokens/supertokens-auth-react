@@ -75,7 +75,6 @@ export declare type NormalisedPalette = {
 export declare type NormalisedDefaultStyles = Record<string, CSSObject>;
 export declare type ThemeBaseProps = {
     styleFromInit?: Styles;
-    onSuccess: () => void;
 };
 export declare type FeatureBaseProps = {
     children?: JSX.Element;

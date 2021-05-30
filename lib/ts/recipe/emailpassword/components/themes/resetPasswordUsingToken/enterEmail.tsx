@@ -44,7 +44,6 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
         this.setState(() => ({
             status: "SENT",
         }));
-        this.props.onSuccess();
     };
 
     resend = (): void => {

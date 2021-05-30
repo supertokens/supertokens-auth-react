@@ -14,7 +14,6 @@ export default class VerifyEmailLinkClicked extends PureComponent<
         palette: import("../../../../../types").NormalisedPalette;
     }>;
     constructor(props: VerifyEmailLinkClickedThemeProps);
-    onSuccess: () => void;
     componentDidMount(): Promise<void>;
     render(): jsx.JSX.Element;
 }

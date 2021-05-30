@@ -103,8 +103,6 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
             recipeImplementation: this.getModifiedRecipeInterface(),
             config: this.props.recipe.config,
             signOut: this.signOut,
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onSuccess: () => {},
             onEmailAlreadyVerified: async () => this.props.recipe.config.postVerificationRedirect(this.props.history),
         };
 
@@ -118,8 +116,6 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
                       onTokenInvalidRedirect: async () => {
                           this.props.recipe.config.redirectToSignIn(this.props.history);
                       },
-                      // eslint-disable-next-line @typescript-eslint/no-empty-function
-                      onSuccess: () => {},
                       onContinueClicked: () => this.props.recipe.config.postVerificationRedirect(this.props.history),
                       recipeImplementation: this.getModifiedRecipeInterface(),
                       config: this.props.recipe.config,

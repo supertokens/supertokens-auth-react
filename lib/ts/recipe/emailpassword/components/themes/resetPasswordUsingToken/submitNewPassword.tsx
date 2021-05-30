@@ -45,7 +45,6 @@ export default class SubmitNewPasswordTheme extends PureComponent<
         this.setState(() => ({
             status: "SUCCESS",
         }));
-        this.props.onSuccess();
     };
 
     /*
