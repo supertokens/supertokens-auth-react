@@ -13,10 +13,6 @@
  * under the License.
  */
 
-/*
- * Imports.
- */
-import HttpRequest from "../../httpRequest";
 import { RecipeFeatureComponentMap } from "../../types";
 
 import { appendQueryParamsToURL, getWindowOrThrow } from "../../utils";
@@ -27,17 +23,12 @@ import NormalisedURLDomain from "../../normalisedURLDomain";
  * Class.
  */
 export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T, S, R>> {
-    /*
-     * Instance attributes.
-     */
-    httpRequest: HttpRequest;
     config: N;
 
     /*
      * Constructor.
      */
     constructor(config: N) {
-        this.httpRequest = new HttpRequest(this);
         this.config = config;
     }
 
