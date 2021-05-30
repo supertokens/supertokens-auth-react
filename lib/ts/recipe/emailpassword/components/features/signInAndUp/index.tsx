@@ -57,12 +57,6 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
             return;
         }
 
-        this.props.recipe.config.onHandleEvent({
-            action: "SUCCESS",
-            isNewUser: false,
-            user: this.state.user,
-        });
-
         return await this.props.recipe.redirect(
             {
                 action: "SUCCESS",
@@ -77,12 +71,6 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         if (this.state.status !== "SUCCESSFUL") {
             return;
         }
-
-        this.props.recipe.config.onHandleEvent({
-            action: "SUCCESS",
-            isNewUser: true,
-            user: this.state.user,
-        });
 
         if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
             return await this.props.recipe.emailVerification.redirect(

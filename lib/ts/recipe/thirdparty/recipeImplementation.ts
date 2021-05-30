@@ -82,6 +82,14 @@ export default class RecipeImplementation implements RecipeInterface {
             }
         );
 
+        if (response.status === "OK") {
+            input.config.onHandleEvent({
+                action: "SUCCESS",
+                isNewUser: response.createdNewUser,
+                user: response.user,
+            });
+        }
+
         return response;
     };
 

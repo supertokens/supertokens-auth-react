@@ -66,12 +66,6 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 });
             }
             if (response.status === "OK") {
-                this.props.recipe.config.onHandleEvent({
-                    action: "SUCCESS",
-                    isNewUser: response.createdNewUser,
-                    user: response.user,
-                });
-
                 const state = this.props.recipe.recipeImpl.getOAuthState();
                 const redirectToPath = state === undefined ? undefined : state.redirectToPath;
                 return this.props.recipe.redirect(

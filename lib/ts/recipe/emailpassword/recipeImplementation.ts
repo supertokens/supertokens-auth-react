@@ -138,6 +138,14 @@ export default class RecipeImplementation implements RecipeInterface {
             }
         );
 
+        if (response.status === "OK") {
+            input.config.onHandleEvent({
+                action: "SUCCESS",
+                isNewUser: true,
+                user: response.user,
+            });
+        }
+
         return response;
     };
 
@@ -172,6 +180,14 @@ export default class RecipeImplementation implements RecipeInterface {
                 });
             }
         );
+
+        if (response.status === "OK") {
+            input.config.onHandleEvent({
+                action: "SUCCESS",
+                isNewUser: false,
+                user: response.user,
+            });
+        }
         return response;
     };
 
