@@ -1,4 +1,4 @@
-import { FeatureBaseConfig, SuccessAPIResponse, ThemeBaseProps } from "../../types";
+import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 import RecipeImplementation from "./recipeImplementation";
 export declare type UserInputForAuthRecipeModule = {
@@ -8,7 +8,7 @@ export declare type UserInputForAuthRecipeModule = {
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
 };
 export declare type UserInput = UserInputForAuthRecipeModule & {
-    signOut(): Promise<SuccessAPIResponse>;
+    signOut(): Promise<void>;
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override?: {
@@ -22,7 +22,7 @@ export declare type NormalisedConfig = {
     disableDefaultImplementation: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
-    signOut(): Promise<SuccessAPIResponse>;
+    signOut(): Promise<void>;
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override: {

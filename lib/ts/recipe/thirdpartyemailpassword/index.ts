@@ -13,7 +13,6 @@
  * under the License.
  */
 import ThirdPartyEmailPassword from "./recipe";
-import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 
@@ -28,7 +27,7 @@ export default class Wrapper {
         return ThirdPartyEmailPassword.init(config);
     }
 
-    static async signOut(): Promise<SuccessAPIResponse> {
+    static async signOut(): Promise<void> {
         return ThirdPartyEmailPassword.getInstanceOrThrow().signOut();
     }
 

@@ -66,9 +66,6 @@ export declare type FeatureBaseConfig = {
 export declare type NormalisedBaseConfig = {
     style: Styles;
 };
-export declare type SuccessAPIResponse = {
-    status: "OK";
-};
 export declare type NormalisedPalette = {
     colors: Record<string, string>;
     fonts: {

@@ -218,13 +218,6 @@ export type NormalisedBaseConfig = {
     style: Styles;
 };
 
-export type SuccessAPIResponse = {
-    /*
-     * Success.
-     */
-    status: "OK";
-};
-
 export type NormalisedPalette = {
     colors: Record<string, string>;
     fonts: {

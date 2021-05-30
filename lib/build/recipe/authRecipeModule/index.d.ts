@@ -1,7 +1,6 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
 import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import { SuccessAPIResponse } from "../../types";
 import EmailVerification from "../emailverification/recipe";
 export default abstract class AuthRecipeModule<
     T,
@@ -19,7 +18,7 @@ export default abstract class AuthRecipeModule<
     getAuthRecipeModuleDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getAuthRecipeModuleFeatureComponent: (componentName: "emailverification", props: any) => JSX.Element;
     getAuthRecipeModuleFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
-    signOut: () => Promise<SuccessAPIResponse>;
+    signOut: () => Promise<void>;
     doesSessionExist: () => Promise<boolean>;
     redirectToAuthWithRedirectToPath: (
         show?: "signin" | "signup" | undefined,

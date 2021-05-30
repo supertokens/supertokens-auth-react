@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { FeatureBaseConfig, SuccessAPIResponse, ThemeBaseProps } from "../../types";
+import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 import RecipeImplementation from "./recipeImplementation";
 
@@ -27,7 +27,7 @@ export type UserInputForAuthRecipeModule = {
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
 };
 export type UserInput = UserInputForAuthRecipeModule & {
-    signOut(): Promise<SuccessAPIResponse>;
+    signOut(): Promise<void>;
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override?: {
@@ -43,7 +43,7 @@ export type NormalisedConfig = {
     disableDefaultImplementation: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
-    signOut(): Promise<SuccessAPIResponse>;
+    signOut(): Promise<void>;
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override: {

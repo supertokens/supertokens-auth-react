@@ -1,5 +1,4 @@
 /// <reference types="react" />
-import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
@@ -16,7 +15,7 @@ export default class Wrapper {
         import("../emailpassword").OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static signOut(): Promise<SuccessAPIResponse>;
+    static signOut(): Promise<void>;
     static isEmailVerified(): Promise<boolean>;
     static redirectToAuth(
         input?:

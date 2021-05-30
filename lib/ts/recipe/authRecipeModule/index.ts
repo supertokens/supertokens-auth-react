@@ -20,8 +20,7 @@
 import Session from "../session/recipe";
 import RecipeModule from "../recipeModule";
 import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import { RecipeFeatureComponentMap, SuccessAPIResponse } from "../../types";
-import { signOut } from "./api";
+import { RecipeFeatureComponentMap } from "../../types";
 import EmailVerification from "../emailverification/recipe";
 import { getWindowOrThrow } from "../../utils";
 
@@ -87,12 +86,12 @@ export default abstract class AuthRecipeModule<
         return this.emailVerification.getFeatures();
     };
 
-    signOut = async (): Promise<SuccessAPIResponse> => {
-        return await signOut(this);
+    signOut = async (): Promise<void> => {
+        return await Session.getInstanceOrThrow().signOut();
     };
 
-    doesSessionExist = (): Promise<boolean> => {
-        return Session.getInstanceOrThrow().doesSessionExist();
+    doesSessionExist = async (): Promise<boolean> => {
+        return await Session.getInstanceOrThrow().doesSessionExist();
     };
 
     redirectToAuthWithRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {

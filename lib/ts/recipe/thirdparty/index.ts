@@ -19,7 +19,6 @@
 
 // /!\ ThirdParty must be imported before any of the providers to prevent circular dependencies.
 import ThirdParty from "./recipe";
-import { SuccessAPIResponse } from "../../types";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
@@ -39,7 +38,7 @@ export default class Wrapper {
         return ThirdParty.init(config);
     }
 
-    static async signOut(): Promise<SuccessAPIResponse> {
+    static async signOut(): Promise<void> {
         return ThirdParty.getInstanceOrThrow().signOut();
     }
 

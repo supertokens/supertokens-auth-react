@@ -13,10 +13,6 @@
  * under the License.
  */
 
-/*
- * Imports.
- */
-import { SuccessAPIResponse } from "../../types";
 import { UserInput } from "./types";
 
 import EmailPassword from "./recipe";
@@ -32,7 +28,7 @@ export default class Wrapper {
         return EmailPassword.init(config);
     }
 
-    static async signOut(): Promise<SuccessAPIResponse> {
+    static async signOut(): Promise<void> {
         return EmailPassword.getInstanceOrThrow().signOut();
     }
 
