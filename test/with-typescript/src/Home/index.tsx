@@ -1,9 +1,8 @@
-import React from "react";
 import Logout from "./Logout";
 import SuccessView from "./SuccessView";
-import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { useSessionContext } from "../../../../recipe/session";
 import { useHistory } from "react-router-dom";
-import { signOut } from "supertokens-auth-react/recipe/emailpassword";
+import { signOut } from "../../../../recipe/emailpassword";
 
 export default function Home() {
     const userId = useSessionContext().userId;

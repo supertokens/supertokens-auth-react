@@ -1,5 +1,5 @@
 import axios from "axios";
-import Session from "supertokens-auth-react/recipe/session";
+import Session from "../../../../recipe/session";
 import { useHistory } from "react-router-dom";
 import { getApiDomain } from "../App";
 Session.addAxiosInterceptors(axios);

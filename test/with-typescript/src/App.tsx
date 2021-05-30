@@ -1,21 +1,21 @@
 import "./App.css";
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "../../../";
 import EmailPassword, {
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordOnHandleEventContext,
-    EmailPasswordPreAPIHookContext,
-} from "supertokens-auth-react/recipe/emailpassword";
-import Session from "supertokens-auth-react/recipe/session";
+    GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
+    OnHandleEventContext as EmailPasswordOnHandleEventContext,
+    PreAPIHookContext as EmailPasswordPreAPIHookContext,
+} from "../../../recipe/emailpassword";
+import Session from "../../../recipe/session";
 import ThirdParty, {
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyOnHandleEventContext,
-    ThirdPartyPreAPIHookContext,
-} from "supertokens-auth-react/recipe/thirdparty";
+    GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
+    OnHandleEventContext as ThirdPartyOnHandleEventContext,
+    PreAPIHookContext as ThirdPartyPreAPIHookContext,
+} from "../../../recipe/thirdparty";
 import ThirdPartyEmailPassword, {
-    ThirdPartyEmailPasswordGetRedirectionURLContext,
-    ThirdPartyEmailPasswordOnHandleEventContext,
-    ThirdPartyEmailPasswordPreAPIHookContext,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+    GetRedirectionURLContext as ThirdPartyEmailPasswordGetRedirectionURLContext,
+    OnHandleEventContext as ThirdPartyEmailPasswordOnHandleEventContext,
+    PreAPIHookContext as ThirdPartyEmailPasswordPreAPIHookContext,
+} from "../../../recipe/thirdpartyemailpassword";
 import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -23,7 +23,6 @@ import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import DarkTheme from "./Themes/Dark";
 import { CSSObject } from "@emotion/react";
-import { appendQueryParamsToURL } from "supertokens-auth-react/lib/build/utils";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -210,14 +209,6 @@ function getThirdPartyConfigs() {
         onHandleEvent(context: ThirdPartyOnHandleEventContext) {},
 
         async preAPIHook(context: ThirdPartyPreAPIHookContext) {
-            // You need to authorize `x-app` in node for the following to work
-            // context.requestInit.headers = {
-            //   ...context.requestInit.headers,
-            //   "x-app": "with-typescript"
-            // }
-            context.url = appendQueryParamsToURL(context.url, {
-                app: "with-typescript",
-            });
             return context;
         },
 
