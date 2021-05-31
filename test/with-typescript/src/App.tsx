@@ -134,7 +134,37 @@ function getTheme(): {
 }
 
 function getRecipeList() {
-    return [getEmailPasswordConfigs(), getThirdPartyConfigs(), getThirdPartyEmailPasswordConfigs(), Session.init()];
+    return [
+        getEmailPasswordConfigs(),
+        getThirdPartyConfigs(),
+        getThirdPartyEmailPasswordConfigs(),
+        Session.init({
+            autoAddCredentials: true,
+            isInIframe: true,
+            refreshAPICustomHeaders: {},
+            sessionExpiredStatusCode: 401,
+            sessionScope: "",
+            signoutAPICustomHeaders: {},
+            override: {
+                functions: (oI) => {
+                    return {
+                        doesSessionExist: () => {
+                            return oI.doesSessionExist();
+                        },
+                        getJWTPayloadSecurely: () => {
+                            return oI.getJWTPayloadSecurely();
+                        },
+                        getUserId: () => {
+                            return oI.getUserId();
+                        },
+                        signOut: () => {
+                            return oI.signOut();
+                        },
+                    };
+                },
+            },
+        }),
+    ];
 }
 
 function getEmailPasswordConfigs() {
@@ -165,31 +195,36 @@ function getEmailPasswordConfigs() {
                 style: theme.style,
                 privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
                 termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-                // formFields: [{
-                //   id: "email",
-                //   label: "Your Email",
-                //   placeholder: "Your work email"
-                // },{
-                //     id: "name",
-                //     label: "Full name",
-                //     placeholder: "First name and last name",
-                // },{
-                //     id: "age",
-                //     label: "Your age",
-                //     placeholder: "How old are you?",
-                //     validate: async (value) => {
-                //       if (parseInt(value) > 18) {
-                //           return undefined;
-                //       }
+                formFields: [
+                    {
+                        id: "email",
+                        label: "Your Email",
+                        placeholder: "Your work email",
+                    },
+                    {
+                        id: "name",
+                        label: "Full name",
+                        placeholder: "First name and last name",
+                    },
+                    {
+                        id: "age",
+                        label: "Your age",
+                        placeholder: "How old are you?",
+                        validate: async (value) => {
+                            if (parseInt(value) > 18) {
+                                return undefined;
+                            }
 
-                //       return "You must be over 18 to register";;
-                //     }
-                //   }, {
-                //     id: "country",
-                //     label: "Your Country",
-                //     placeholder: "Where do you live?",
-                //     optional: true
-                // }]
+                            return "You must be over 18 to register";
+                        },
+                    },
+                    {
+                        id: "country",
+                        label: "Your Country",
+                        placeholder: "Where do you live?",
+                        optional: true,
+                    },
+                ],
             },
         },
 
@@ -201,6 +236,43 @@ function getEmailPasswordConfigs() {
 
         async getRedirectionURL(context: EmailPasswordGetRedirectionURLContext) {
             return undefined;
+        },
+        override: {
+            functions: (oI) => {
+                return {
+                    ...oI,
+                    doesEmailExist: (input) => {
+                        return oI.doesEmailExist(input);
+                    },
+                    sendPasswordResetEmail: (input) => {
+                        return oI.sendPasswordResetEmail(input);
+                    },
+                    signIn: (input) => {
+                        return oI.signIn(input);
+                    },
+                    signUp: (input) => {
+                        return oI.signUp(input);
+                    },
+                    submitNewPassword: (input) => {
+                        return oI.submitNewPassword(input);
+                    },
+                };
+            },
+            emailVerification: {
+                functions: (oI) => {
+                    return {
+                        isEmailVerified: (input) => {
+                            return oI.isEmailVerified(input);
+                        },
+                        sendVerificationEmail: (input) => {
+                            return oI.sendVerificationEmail(input);
+                        },
+                        verifyEmail: (input) => {
+                            return oI.verifyEmail(input);
+                        },
+                    };
+                },
+            },
         },
     });
 }
@@ -230,6 +302,20 @@ function getThirdPartyConfigs() {
                     name: "Custom",
                 },
             ],
+        },
+        override: {
+            functions: (oI) => {
+                return {
+                    ...oI,
+                };
+            },
+            emailVerification: {
+                functions: (oI) => {
+                    return {
+                        ...oI,
+                    };
+                },
+            },
         },
     });
 }
