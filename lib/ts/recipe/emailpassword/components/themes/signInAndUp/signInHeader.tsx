@@ -12,38 +12,32 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
-/*
- * Imports
- */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
+import { withOverride } from "../../../../withOverride";
 
-/*
- * Component
- */
-export default function SignInHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
-    /*
-     * Render.
-     */
+export default withOverride(
+    "SignInHeader",
+    function SignInHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
+        const styles = useContext(StyleContext);
 
-    const styles = useContext(StyleContext);
-    return (
-        <Fragment>
-            <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                Sign In
-            </div>
-            <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                    Not registered yet?
-                    <span data-supertokens="link" onClick={onClick} css={styles.link}>
-                        Sign Up
-                    </span>
+        return (
+            <Fragment>
+                <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                    Sign In
                 </div>
-            </div>
-            <div data-supertokens="divider" css={styles.divider}></div>
-        </Fragment>
-    );
-}
+                <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                    <div data-supertokens="secondaryText" css={styles.secondaryText}>
+                        Not registered yet?
+                        <span data-supertokens="link" onClick={onClick} css={styles.link}>
+                            Sign Up
+                        </span>
+                    </div>
+                </div>
+                <div data-supertokens="divider" css={styles.divider}></div>
+            </Fragment>
+        );
+    }
+);

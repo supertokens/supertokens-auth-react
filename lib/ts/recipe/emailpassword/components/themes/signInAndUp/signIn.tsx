@@ -18,7 +18,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { PureComponent } from "react";
+import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
 import { SignInThemeProps } from "../../../types";
@@ -26,31 +26,20 @@ import { SignInThemeProps } from "../../../types";
 import SignInFooter from "./signInFooter";
 import SignInForm from "./signInForm";
 import SignInHeader from "./signInHeader";
+import { withOverride } from "../../../../withOverride";
 
-/*
- * Component.
- */
+export default withOverride("SignIn", function DefaultSignIn(props: SignInThemeProps) {
+    const styles = useContext(StyleContext);
 
-export default class SignIn extends PureComponent<SignInThemeProps> {
-    static contextType = StyleContext;
-
-    /*
-     * Render.
-     */
-
-    render(): JSX.Element {
-        const styles = this.context;
-
-        return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row" css={styles.row}>
-                    <SignInForm
-                        {...this.props}
-                        header={<SignInHeader onClick={this.props.signUpClicked} />}
-                        footer={<SignInFooter onClick={this.props.forgotPasswordClick} />}
-                    />
-                </div>
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                <SignInForm
+                    {...props}
+                    header={<SignInHeader onClick={props.signUpClicked} />}
+                    footer={<SignInFooter onClick={props.forgotPasswordClick} />}
+                />
             </div>
-        );
-    }
-}
+        </div>
+    );
+});

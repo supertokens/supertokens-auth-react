@@ -19,11 +19,31 @@ import {
     UserInputOverride as AuthRecipeUserInputOverride,
 } from "../authRecipeModule/types";
 import RecipeImplementation from "./recipeImplementation";
+import { ComponentOverride } from "../componentOverride";
+import SignInHeader from "./components/themes/signInAndUp/signInHeader";
+import SignIn from "./components/themes/signInAndUp/signIn";
+import SignInFooter from "./components/themes/signInAndUp/signInFooter";
+import SignInForm from "./components/themes/signInAndUp/signInForm";
+import SignUp from "./components/themes/signInAndUp/signUp";
+import SignUpFooter from "./components/themes/signInAndUp/signUpFooter";
+import SignUpForm from "./components/themes/signInAndUp/signUpForm";
+import SignUpHeader from "./components/themes/signInAndUp/signUpHeader";
+declare type ComponentOverrideMap = Partial<{
+    SignIn: ComponentOverride<typeof SignIn>;
+    SignInFooter: ComponentOverride<typeof SignInFooter>;
+    SignInForm: ComponentOverride<typeof SignInForm>;
+    SignInHeader: ComponentOverride<typeof SignInHeader>;
+    SignUp: ComponentOverride<typeof SignUp>;
+    SignUpFooter: ComponentOverride<typeof SignUpFooter>;
+    SignUpForm: ComponentOverride<typeof SignUpForm>;
+    SignUpHeader: ComponentOverride<typeof SignUpHeader>;
+}>;
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type Config = UserInput &

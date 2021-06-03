@@ -21,46 +21,50 @@ import { jsx } from "@emotion/react";
 
 import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
+import { withOverride } from "../../../../withOverride";
 
-export default function SignUpFooter({
-    termsOfServiceLink,
-    privacyPolicyLink,
-}: {
-    privacyPolicyLink?: string;
-    termsOfServiceLink?: string;
-}): JSX.Element | null {
-    const styles = useContext(StyleContext);
+export default withOverride(
+    "SignUpFooter",
+    function SignUpFooter({
+        termsOfServiceLink,
+        privacyPolicyLink,
+    }: {
+        privacyPolicyLink?: string;
+        termsOfServiceLink?: string;
+    }): JSX.Element | null {
+        const styles = useContext(StyleContext);
 
-    if (termsOfServiceLink === undefined && privacyPolicyLink === undefined) {
-        return null;
+        if (termsOfServiceLink === undefined && privacyPolicyLink === undefined) {
+            return null;
+        }
+
+        return (
+            <div
+                data-supertokens="secondaryText privacyPolicyAndTermsAndConditions"
+                css={[styles.secondaryText, styles.privacyPolicyAndTermsAndConditions]}>
+                By continuing, you agree to our
+                {termsOfServiceLink !== undefined && (
+                    <a
+                        data-supertokens="link"
+                        css={styles.link}
+                        href={termsOfServiceLink}
+                        target="_blank"
+                        rel="noopener noreferer">
+                        Terms of Service
+                    </a>
+                )}
+                {termsOfServiceLink !== undefined && privacyPolicyLink !== undefined && "and"}
+                {privacyPolicyLink !== undefined && (
+                    <a
+                        data-supertokens="link"
+                        css={styles.link}
+                        href={privacyPolicyLink}
+                        target="_blank"
+                        rel="noopener noreferer">
+                        Privacy Policy
+                    </a>
+                )}
+            </div>
+        );
     }
-
-    return (
-        <div
-            data-supertokens="secondaryText privacyPolicyAndTermsAndConditions"
-            css={[styles.secondaryText, styles.privacyPolicyAndTermsAndConditions]}>
-            By continuing, you agree to our
-            {termsOfServiceLink !== undefined && (
-                <a
-                    data-supertokens="link"
-                    css={styles.link}
-                    href={termsOfServiceLink}
-                    target="_blank"
-                    rel="noopener noreferer">
-                    Terms of Service
-                </a>
-            )}
-            {termsOfServiceLink !== undefined && privacyPolicyLink !== undefined && "and"}
-            {privacyPolicyLink !== undefined && (
-                <a
-                    data-supertokens="link"
-                    css={styles.link}
-                    href={privacyPolicyLink}
-                    target="_blank"
-                    rel="noopener noreferer">
-                    Privacy Policy
-                </a>
-            )}
-        </div>
-    );
-}
+);
