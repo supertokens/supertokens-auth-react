@@ -27,8 +27,8 @@ import { withOverride } from "../../../../withOverride";
  */
 
 export default withOverride(
-    "SignUpForm",
-    function SignUpForm(
+    "EmailPasswordSignUpForm",
+    function EmailPasswordSignUpForm(
         props: SignUpThemeProps & {
             header?: JSX.Element;
             footer?: JSX.Element;

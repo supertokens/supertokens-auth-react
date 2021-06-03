@@ -19,8 +19,8 @@ import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../withOverride";
 
 export default withOverride(
-    "SignInHeader",
-    function SignInHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
+    "EmailPasswordSignInHeader",
+    function EmailPasswordSignInHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
         const styles = useContext(StyleContext);
 
         return (

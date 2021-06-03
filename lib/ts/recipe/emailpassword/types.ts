@@ -36,24 +36,24 @@ import {
 import RecipeImplementation from "./recipeImplementation";
 
 import { ComponentOverride } from "../componentOverride";
-import SignInHeader from "./components/themes/signInAndUp/signInHeader";
-import SignIn from "./components/themes/signInAndUp/signIn";
-import SignInFooter from "./components/themes/signInAndUp/signInFooter";
-import SignInForm from "./components/themes/signInAndUp/signInForm";
-import SignUp from "./components/themes/signInAndUp/signUp";
-import SignUpFooter from "./components/themes/signInAndUp/signUpFooter";
-import SignUpForm from "./components/themes/signInAndUp/signUpForm";
-import SignUpHeader from "./components/themes/signInAndUp/signUpHeader";
+import EmailPasswordSignInHeader from "./components/themes/signInAndUp/signInHeader";
+import EmailPasswordSignIn from "./components/themes/signInAndUp/signIn";
+import EmailPasswordSignInFooter from "./components/themes/signInAndUp/signInFooter";
+import EmailPasswordSignInForm from "./components/themes/signInAndUp/signInForm";
+import EmailPasswordSignUp from "./components/themes/signInAndUp/signUp";
+import EmailPasswordSignUpFooter from "./components/themes/signInAndUp/signUpFooter";
+import EmailPasswordSignUpForm from "./components/themes/signInAndUp/signUpForm";
+import EmailPasswordSignUpHeader from "./components/themes/signInAndUp/signUpHeader";
 
-type ComponentOverrideMap = Partial<{
-    SignIn: ComponentOverride<typeof SignIn>;
-    SignInFooter: ComponentOverride<typeof SignInFooter>;
-    SignInForm: ComponentOverride<typeof SignInForm>;
-    SignInHeader: ComponentOverride<typeof SignInHeader>;
-    SignUp: ComponentOverride<typeof SignUp>;
-    SignUpFooter: ComponentOverride<typeof SignUpFooter>;
-    SignUpForm: ComponentOverride<typeof SignUpForm>;
-    SignUpHeader: ComponentOverride<typeof SignUpHeader>;
+export type ComponentOverrideMap = Partial<{
+    EmailPasswordSignIn: ComponentOverride<typeof EmailPasswordSignIn>;
+    EmailPasswordSignInFooter: ComponentOverride<typeof EmailPasswordSignInFooter>;
+    EmailPasswordSignInForm: ComponentOverride<typeof EmailPasswordSignInForm>;
+    EmailPasswordSignInHeader: ComponentOverride<typeof EmailPasswordSignInHeader>;
+    EmailPasswordSignUp: ComponentOverride<typeof EmailPasswordSignUp>;
+    EmailPasswordSignUpFooter: ComponentOverride<typeof EmailPasswordSignUpFooter>;
+    EmailPasswordSignUpForm: ComponentOverride<typeof EmailPasswordSignUpForm>;
+    EmailPasswordSignUpHeader: ComponentOverride<typeof EmailPasswordSignUpHeader>;
 }>;
 
 export type UserInput = {

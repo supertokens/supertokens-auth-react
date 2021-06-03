@@ -26,8 +26,8 @@ import { withOverride } from "../../../../withOverride";
  * Component
  */
 export default withOverride(
-    "SignUpHeader",
-    function SignUpHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
+    "EmailPasswordSignUpHeader",
+    function EmailPasswordSignUpHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
         /*
          * Render.
          */

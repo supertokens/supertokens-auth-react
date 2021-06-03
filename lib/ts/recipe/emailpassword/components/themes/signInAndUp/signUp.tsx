@@ -23,7 +23,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import SignUpForm from "./signUpForm";
 import { withOverride } from "../../../../withOverride";
 
-export default withOverride("SignUp", function SignUp(props: SignUpThemeProps) {
+export default withOverride("EmailPasswordSignUp", function EmailPasswordSignUp(props: SignUpThemeProps) {
     const styles = useContext(StyleContext);
 
     return (

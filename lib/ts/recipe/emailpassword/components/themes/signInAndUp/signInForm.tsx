@@ -29,8 +29,8 @@ import { withOverride } from "../../../../withOverride";
  */
 
 export default withOverride(
-    "SignInForm",
-    function SignInForm(
+    "EmailPasswordSignInForm",
+    function EmailPasswordSignInForm(
         props: SignInThemeProps & {
             header?: JSX.Element;
             footer?: JSX.Element;

@@ -24,8 +24,8 @@ import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../withOverride";
 
 export default withOverride(
-    "SignUpFooter",
-    function SignUpFooter({
+    "EmailPasswordSignUpFooter",
+    function EmailPasswordSignUpFooter({
         termsOfServiceLink,
         privacyPolicyLink,
     }: {
