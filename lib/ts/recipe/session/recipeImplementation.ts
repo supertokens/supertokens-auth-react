@@ -53,4 +53,24 @@ export default class RecipeImplementation implements RecipeInterface {
     signOut = (): Promise<void> => {
         return sessionSdk.signOut();
     };
+
+    attachSessionToRequest = async (context: {
+        requestInit: RequestInit;
+        url: string;
+    }): Promise<{ url: string; requestInit: RequestInit }> => {
+        return context;
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    saveSessionFromResponse = async (_: {
+        requestInit: RequestInit;
+        url: string;
+        response: Response;
+    }): Promise<void> => {
+        return;
+    };
+
+    handleSessionExpiry = async (): Promise<void> => {
+        return;
+    };
 }

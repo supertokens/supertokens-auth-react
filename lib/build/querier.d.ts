@@ -1,11 +1,4 @@
-import { NormalisedAppInfo } from "./types";
-declare type PreAPIHookFunction = (context: { requestInit: RequestInit; url: string }) => Promise<
-    | RequestInit
-    | {
-          url?: string;
-          requestInit: RequestInit;
-      }
->;
+import { NormalisedAppInfo, PostAPIHookFunction, PreAPIHookFunction } from "./types";
 export default class Querier {
     recipeId: string;
     appInfo: NormalisedAppInfo;
@@ -14,12 +7,33 @@ export default class Querier {
         path: string,
         config: RequestInit,
         queryParams?: Record<string, string> | undefined,
-        preAPIHook?: PreAPIHookFunction | undefined
+        preAPIHook?: PreAPIHookFunction | undefined,
+        postAPIHook?: PostAPIHookFunction | undefined
     ) => Promise<T>;
-    post: <T>(path: string, config: RequestInit, preAPIHook?: PreAPIHookFunction | undefined) => Promise<T>;
-    delete: <T>(path: string, config: RequestInit, preAPIHook?: PreAPIHookFunction | undefined) => Promise<T>;
-    put: <T>(path: string, config: RequestInit, preAPIHook?: PreAPIHookFunction | undefined) => Promise<T>;
-    fetch: (url: string, config: RequestInit, preAPIHook?: PreAPIHookFunction | undefined) => Promise<Response>;
+    post: <T>(
+        path: string,
+        config: RequestInit,
+        preAPIHook?: PreAPIHookFunction | undefined,
+        postAPIHook?: PostAPIHookFunction | undefined
+    ) => Promise<T>;
+    delete: <T>(
+        path: string,
+        config: RequestInit,
+        preAPIHook?: PreAPIHookFunction | undefined,
+        postAPIHook?: PostAPIHookFunction | undefined
+    ) => Promise<T>;
+    put: <T>(
+        path: string,
+        config: RequestInit,
+        preAPIHook?: PreAPIHookFunction | undefined,
+        postAPIHook?: PostAPIHookFunction | undefined
+    ) => Promise<T>;
+    fetch: (
+        url: string,
+        config: RequestInit,
+        preAPIHook?: PreAPIHookFunction | undefined,
+        postAPIHook?: PostAPIHookFunction | undefined
+    ) => Promise<Response>;
     callPreAPIHook: (context: {
         preAPIHook?: PreAPIHookFunction | undefined;
         requestInit: RequestInit;
@@ -30,4 +44,3 @@ export default class Querier {
     }>;
     getFullUrl: (pathStr: string, queryParams?: Record<string, string> | undefined) => string;
 }
-export {};

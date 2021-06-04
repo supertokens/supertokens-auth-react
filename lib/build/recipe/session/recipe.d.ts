@@ -7,6 +7,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static instance?: Session;
     static RECIPE_ID: string;
     recipeImpl: RecipeImplementation;
+    sessionExpiredStatusCode: number;
     constructor(config: Config);
     getFeatureComponent: (_: string) => JSX.Element;
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;

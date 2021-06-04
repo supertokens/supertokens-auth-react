@@ -189,7 +189,3 @@ export function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean {
         return recipeIdFromSearch === recipeId;
     };
 }
-
-export function isRequestInit(x: RequestInit | { url?: string; requestInit: RequestInit }): x is RequestInit {
-    return (x as any).requestInit === undefined;
-}

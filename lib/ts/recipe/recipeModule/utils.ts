@@ -5,7 +5,7 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
     let { preAPIHook, onHandleEvent, getRedirectionURL } = config;
     if (preAPIHook === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        preAPIHook = async (context: any): Promise<RequestInit> => context.requestInit;
+        preAPIHook = async (context: any) => context;
     }
 
     if (onHandleEvent === undefined) {

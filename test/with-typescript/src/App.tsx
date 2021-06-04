@@ -148,6 +148,7 @@ function getRecipeList() {
             override: {
                 functions: (oI) => {
                     return {
+                        ...oI,
                         doesSessionExist: () => {
                             return oI.doesSessionExist();
                         },
@@ -231,7 +232,7 @@ function getEmailPasswordConfigs() {
         onHandleEvent(context: EmailPasswordOnHandleEventContext) {},
 
         async preAPIHook(context: EmailPasswordPreAPIHookContext) {
-            return context.requestInit;
+            return context;
         },
 
         async getRedirectionURL(context: EmailPasswordGetRedirectionURLContext) {

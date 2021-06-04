@@ -29,8 +29,13 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
 
     recipeImpl: RecipeImplementation;
 
+    sessionExpiredStatusCode: number;
+
     constructor(config: Config) {
         super(config);
+
+        this.sessionExpiredStatusCode =
+            config.sessionExpiredStatusCode === undefined ? 401 : config.sessionExpiredStatusCode;
 
         const override: {
             functions: (originalImplementation: RecipeImplementation) => RecipeInterface;

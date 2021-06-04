@@ -1,5 +1,6 @@
 import { Config as RecipeModuleConfig } from "../recipeModule/types";
 import RecipeImplementation from "./recipeImplementation";
+import { PreAPIHookFunction } from "../../types";
 export declare type UserInput = {
     sessionScope?: string;
     refreshAPICustomHeaders?: any;
@@ -22,4 +23,7 @@ export interface RecipeInterface {
     getJWTPayloadSecurely(): Promise<any>;
     doesSessionExist(): Promise<boolean>;
     signOut(): Promise<void>;
+    saveSessionFromResponse: (context: { requestInit: RequestInit; url: string; response: Response }) => Promise<void>;
+    attachSessionToRequest: PreAPIHookFunction;
+    handleSessionExpiry: () => Promise<void>;
 }

@@ -5,4 +5,10 @@ export default class RecipeImplementation implements RecipeInterface {
     getJWTPayloadSecurely: () => Promise<any>;
     doesSessionExist: () => Promise<boolean>;
     signOut: () => Promise<void>;
+    attachSessionToRequest: (context: { requestInit: RequestInit; url: string }) => Promise<{
+        url: string;
+        requestInit: RequestInit;
+    }>;
+    saveSessionFromResponse: (_: { requestInit: RequestInit; url: string; response: Response }) => Promise<void>;
+    handleSessionExpiry: () => Promise<void>;
 }

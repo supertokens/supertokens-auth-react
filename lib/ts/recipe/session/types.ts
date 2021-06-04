@@ -15,6 +15,7 @@
 
 import { Config as RecipeModuleConfig } from "../recipeModule/types";
 import RecipeImplementation from "./recipeImplementation";
+import { PreAPIHookFunction } from "../../types";
 
 /*
  * Session User InputsConfig Types.
@@ -48,4 +49,10 @@ export interface RecipeInterface {
     doesSessionExist(): Promise<boolean>;
 
     signOut(): Promise<void>;
+
+    saveSessionFromResponse: (context: { requestInit: RequestInit; url: string; response: Response }) => Promise<void>;
+
+    attachSessionToRequest: PreAPIHookFunction;
+
+    handleSessionExpiry: () => Promise<void>;
 }

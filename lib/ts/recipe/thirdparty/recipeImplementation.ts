@@ -3,6 +3,7 @@ import { User } from "../authRecipeModule/types";
 import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
 import { appendQueryParamsToURL, getWindowOrThrow, getQueryParams } from "../../utils";
+import Session from "../session/recipe";
 
 export default class RecipeImplementation implements RecipeInterface {
     querier: Querier;
@@ -79,6 +80,10 @@ export default class RecipeImplementation implements RecipeInterface {
                     ...context,
                     action: "SIGN_IN",
                 });
+            },
+            async (context) => {
+                Session.getInstanceOrThrow().recipeImpl.saveSessionFromResponse(context);
+                return context.response;
             }
         );
 
