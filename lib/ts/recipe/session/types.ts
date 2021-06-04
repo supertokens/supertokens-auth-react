@@ -53,6 +53,4 @@ export interface RecipeInterface {
     saveSessionFromResponse: (context: { requestInit: RequestInit; url: string; response: Response }) => Promise<void>;
 
     attachSessionToRequest: PreAPIHookFunction;
-
-    handleSessionExpiry: () => Promise<void>;
 }

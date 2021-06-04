@@ -10,5 +10,4 @@ export default class RecipeImplementation implements RecipeInterface {
         requestInit: RequestInit;
     }>;
     saveSessionFromResponse: (_: { requestInit: RequestInit; url: string; response: Response }) => Promise<void>;
-    handleSessionExpiry: () => Promise<void>;
 }

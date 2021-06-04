@@ -15,7 +15,6 @@
 import NormalisedURLPath from "./normalisedURLPath";
 import { supported_fdi } from "./version";
 import { NormalisedAppInfo, PostAPIHookFunction, PreAPIHookFunction } from "./types";
-import Session from "./recipe/session/recipe";
 
 export default class Querier {
     recipeId: string;
@@ -129,10 +128,6 @@ export default class Querier {
         });
 
         const result = await fetch(modifiedUrl, requestInit);
-
-        if (result.status === Session.getInstanceOrThrow().sessionExpiredStatusCode) {
-            await Session.getInstanceOrThrow().recipeImpl.handleSessionExpiry();
-        }
 
         if (result.status >= 300) {
             throw result;

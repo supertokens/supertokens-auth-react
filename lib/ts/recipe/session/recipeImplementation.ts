@@ -69,8 +69,4 @@ export default class RecipeImplementation implements RecipeInterface {
     }): Promise<void> => {
         return;
     };
-
-    handleSessionExpiry = async (): Promise<void> => {
-        return;
-    };
 }
