@@ -66,6 +66,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown> {
             apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),
             apiBasePath: config.appInfo.apiBasePath.getAsStringDangerous(),
             isInIframe: config.isInIframe,
+            cookieDomain: config.cookieDomain,
         });
     }
 

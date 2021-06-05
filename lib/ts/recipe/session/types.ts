@@ -47,6 +47,8 @@ export type SessionUserInput = {
     autoAddCredentials?: boolean;
 
     isInIframe?: boolean;
+
+    cookieDomain?: string;
 };
 
 export type SessionConfig = RecipeModuleConfig<unknown, unknown, unknown> & SessionUserInput;

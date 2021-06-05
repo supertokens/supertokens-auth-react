@@ -6,6 +6,7 @@ export declare type SessionUserInput = {
     sessionExpiredStatusCode?: number;
     autoAddCredentials?: boolean;
     isInIframe?: boolean;
+    cookieDomain?: string;
 };
 export declare type SessionConfig = RecipeModuleConfig<unknown, unknown, unknown> & SessionUserInput;
 export declare type SessionContextType = {
