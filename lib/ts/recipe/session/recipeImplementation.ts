@@ -35,6 +35,7 @@ export default class RecipeImplementation implements RecipeInterface {
             apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),
             apiBasePath: config.appInfo.apiBasePath.getAsStringDangerous(),
             isInIframe: config.isInIframe,
+            cookieDomain: config.cookieDomain,
         });
     }
 

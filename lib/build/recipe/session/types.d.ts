@@ -11,6 +11,7 @@ export declare type UserInput = {
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
     };
+    cookieDomain?: string;
 };
 export declare type Config = UserInput & RecipeModuleConfig<unknown, unknown, unknown>;
 export declare type SessionContextType = {

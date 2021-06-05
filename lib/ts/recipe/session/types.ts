@@ -31,6 +31,7 @@ export type UserInput = {
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
     };
+    cookieDomain?: string;
 };
 
 export type Config = UserInput & RecipeModuleConfig<unknown, unknown, unknown>;

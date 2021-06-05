@@ -12,7 +12,7 @@
         "@emotion/eslint-plugin": "^11.1.0",
         "@types/chroma-js": "2.1.3",
         "@types/node": "14.11.10",
-        "@types/react": "^17.0.5",
+        "@types/react": "^17.0.9",
         "@types/react-router-dom": "5.1.6",
         "@typescript-eslint/eslint-plugin": "4.6.0",
         "@typescript-eslint/eslint-plugin-tslint": "4.6.0",
@@ -42,9 +42,9 @@
         "@emotion/cache": "^11.1.0",
         "@emotion/react": "^11.1.0",
         "@emotion/server": "^11.1.0",
-        "chroma-js": "^2.1.1",
+        "chroma-js": "^2.1.2",
         "react-shadow": "^19.0.2",
-        "supertokens-website": "^7.1.0"
+        "supertokens-website": "^7.2.0"
     },
     "peerDependencies": {
         "react": ">=16.8.0"

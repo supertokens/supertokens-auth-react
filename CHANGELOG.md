@@ -27,6 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   State update post unmounting when using EmailVerification wrapper.
 
+## [0.13.2] - 2021-06-05
+
+### Added:
+
+-   Allow specifying of `cookieDomain` in config to add interceptors to multiple API subdomain: https://github.com/supertokens/supertokens-website/issues/58
+
 ## [0.13.1] - 2021-05-28
 
 ### Fixed:
