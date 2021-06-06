@@ -39,7 +39,7 @@ export default class NormalisedURLPath {
     };
 }
 
-export function normaliseURLPathOrThrowError(input: string): string {
+function normaliseURLPathOrThrowError(input: string): string {
     input = input.trim();
     try {
         if (!input.startsWith("http://") && !input.startsWith("https://")) {
