@@ -39,18 +39,18 @@ describe("Config tests", function () {
         assert.strictEqual(normaliseURLPathOrThrowError("exists"), "/exists");
         assert.strictEqual(normaliseURLPathOrThrowError("/exists"), "/exists");
         assert.strictEqual(normaliseURLPathOrThrowError("/exists?email=john.doe%40gmail.com"), "/exists");
-        assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com"), "/");
-        assert.strictEqual(normaliseURLPathOrThrowError("https://api.example.com"), "/");
-        assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com?hello=1"), "/");
+        assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com"), "");
+        assert.strictEqual(normaliseURLPathOrThrowError("https://api.example.com"), "");
+        assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com?hello=1"), "");
         assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com/hello"), "/hello");
-        assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com/"), "/");
-        assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com:8080"), "/");
-        assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com#random2"), "/");
-        assert.strictEqual(normaliseURLPathOrThrowError("api.example.com/"), "/");
-        assert.strictEqual(normaliseURLPathOrThrowError("api.example.com#random"), "/");
-        assert.strictEqual(normaliseURLPathOrThrowError(".example.com"), "/");
-        assert.strictEqual(normaliseURLPathOrThrowError("api.example.com/?hello=1&bye=2"), "/");
-        assert.strictEqual(normaliseURLPathOrThrowError(window.location.hostname), "/");
+        assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com/"), "");
+        assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com:8080"), "");
+        assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com#random2"), "");
+        assert.strictEqual(normaliseURLPathOrThrowError("api.example.com/"), "");
+        assert.strictEqual(normaliseURLPathOrThrowError("api.example.com#random"), "");
+        assert.strictEqual(normaliseURLPathOrThrowError(".example.com"), "");
+        assert.strictEqual(normaliseURLPathOrThrowError("api.example.com/?hello=1&bye=2"), "");
+        assert.strictEqual(normaliseURLPathOrThrowError(window.location.hostname), "");
 
         assert.strictEqual(normaliseURLPathOrThrowError("http://api.example.com/one/two"), "/one/two");
         assert.strictEqual(normaliseURLPathOrThrowError("http://1.2.3.4/one/two"), "/one/two");
@@ -83,7 +83,7 @@ describe("Config tests", function () {
         assert.strictEqual(normaliseURLPathOrThrowError("127.0.0.1:4000/one/two"), "/one/two");
         assert.strictEqual(normaliseURLPathOrThrowError("127.0.0.1/one/two"), "/one/two");
         assert.strictEqual(normaliseURLPathOrThrowError("https://127.0.0.1:80/one/two"), "/one/two");
-        assert.strictEqual(normaliseURLPathOrThrowError("/"), "/");
+        assert.strictEqual(normaliseURLPathOrThrowError("/"), "");
 
         assert.strictEqual(normaliseURLPathOrThrowError("/.netlify/functions/api"), "/.netlify/functions/api");
         assert.strictEqual(normaliseURLPathOrThrowError("/netlify/.functions/api"), "/netlify/.functions/api");
