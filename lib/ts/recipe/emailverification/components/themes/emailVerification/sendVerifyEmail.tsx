@@ -25,15 +25,13 @@ import StyleContext from "../../../../../styles/styleContext";
 import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
 import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
 import { SendVerifyEmailThemeProps } from "../../../types";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component.
  */
 
-export default class SendVerifyEmail extends PureComponent<
-    SendVerifyEmailThemeProps,
-    { status: "READY" | "EMAIL_RESENT" | "ERROR" }
-> {
+class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeProps, { status: "READY" | "EMAIL_RESENT" | "ERROR" }> {
     static contextType = StyleContext;
 
     constructor(props: SendVerifyEmailThemeProps) {
@@ -127,3 +125,5 @@ export default class SendVerifyEmail extends PureComponent<
         );
     }
 }
+
+export default withOverride("EmailVerificationSendVerifyEmail", SendVerifyEmail);

@@ -27,6 +27,7 @@ import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
 type Prop = FeatureBaseProps & { recipe: Recipe };
 
@@ -96,6 +97,8 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
             return <Fragment />;
         }
 
+        const componentOverrides = this.props.recipe.config.override.components;
+
         const sendVerifyEmailScreenFeature = this.props.recipe.config.sendVerifyEmailScreen;
 
         const sendVerifyEmailScreen = {
@@ -130,14 +133,16 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
         };
 
         return (
-            <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {this.props.children === undefined && <EmailVerificationTheme {...props} />}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children && React.cloneElement(this.props.children, props)}
-                </Fragment>
-            </FeatureWrapper>
+            <ComponentOverrideContext.Provider value={componentOverrides}>
+                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom}>
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {this.props.children === undefined && <EmailVerificationTheme {...props} />}
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {this.props.children && React.cloneElement(this.props.children, props)}
+                    </Fragment>
+                </FeatureWrapper>
+            </ComponentOverrideContext.Provider>
         );
     };
 }
