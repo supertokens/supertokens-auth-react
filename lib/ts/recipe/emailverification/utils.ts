@@ -42,6 +42,7 @@ export function normaliseEmailVerificationFeature(config: Config): NormalisedCon
 
     const override: any = {
         functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+        components: {},
         ...config.override,
     };
 
