@@ -154,6 +154,9 @@ function getRecipeList() {
                 }
             },
             preAPIHook: async (context) => {
+                if (context.action === "REFRESH_SESSION") {
+                } else if (context.action === "SIGN_OUT") {
+                }
                 return context;
             },
             override: {
