@@ -45,16 +45,16 @@ import EmailPasswordSignUpFooter from "./components/themes/signInAndUp/signUpFoo
 import EmailPasswordSignUpForm from "./components/themes/signInAndUp/signUpForm";
 import EmailPasswordSignUpHeader from "./components/themes/signInAndUp/signUpHeader";
 
-export type ComponentOverrideMap = Partial<{
-    EmailPasswordSignIn: ComponentOverride<typeof EmailPasswordSignIn>;
-    EmailPasswordSignInFooter: ComponentOverride<typeof EmailPasswordSignInFooter>;
-    EmailPasswordSignInForm: ComponentOverride<typeof EmailPasswordSignInForm>;
-    EmailPasswordSignInHeader: ComponentOverride<typeof EmailPasswordSignInHeader>;
-    EmailPasswordSignUp: ComponentOverride<typeof EmailPasswordSignUp>;
-    EmailPasswordSignUpFooter: ComponentOverride<typeof EmailPasswordSignUpFooter>;
-    EmailPasswordSignUpForm: ComponentOverride<typeof EmailPasswordSignUpForm>;
-    EmailPasswordSignUpHeader: ComponentOverride<typeof EmailPasswordSignUpHeader>;
-}>;
+export type ComponentOverrideMap = {
+    EmailPasswordSignIn?: ComponentOverride<typeof EmailPasswordSignIn>;
+    EmailPasswordSignInFooter?: ComponentOverride<typeof EmailPasswordSignInFooter>;
+    EmailPasswordSignInForm?: ComponentOverride<typeof EmailPasswordSignInForm>;
+    EmailPasswordSignInHeader?: ComponentOverride<typeof EmailPasswordSignInHeader>;
+    EmailPasswordSignUp?: ComponentOverride<typeof EmailPasswordSignUp>;
+    EmailPasswordSignUpFooter?: ComponentOverride<typeof EmailPasswordSignUpFooter>;
+    EmailPasswordSignUpForm?: ComponentOverride<typeof EmailPasswordSignUpForm>;
+    EmailPasswordSignUpHeader?: ComponentOverride<typeof EmailPasswordSignUpHeader>;
+};
 
 export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
@@ -73,6 +73,7 @@ export type NormalisedConfig = {
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     override: {
         functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 

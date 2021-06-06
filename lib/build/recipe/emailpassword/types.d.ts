@@ -28,16 +28,16 @@ import EmailPasswordSignUp from "./components/themes/signInAndUp/signUp";
 import EmailPasswordSignUpFooter from "./components/themes/signInAndUp/signUpFooter";
 import EmailPasswordSignUpForm from "./components/themes/signInAndUp/signUpForm";
 import EmailPasswordSignUpHeader from "./components/themes/signInAndUp/signUpHeader";
-export declare type ComponentOverrideMap = Partial<{
-    EmailPasswordSignIn: ComponentOverride<typeof EmailPasswordSignIn>;
-    EmailPasswordSignInFooter: ComponentOverride<typeof EmailPasswordSignInFooter>;
-    EmailPasswordSignInForm: ComponentOverride<typeof EmailPasswordSignInForm>;
-    EmailPasswordSignInHeader: ComponentOverride<typeof EmailPasswordSignInHeader>;
-    EmailPasswordSignUp: ComponentOverride<typeof EmailPasswordSignUp>;
-    EmailPasswordSignUpFooter: ComponentOverride<typeof EmailPasswordSignUpFooter>;
-    EmailPasswordSignUpForm: ComponentOverride<typeof EmailPasswordSignUpForm>;
-    EmailPasswordSignUpHeader: ComponentOverride<typeof EmailPasswordSignUpHeader>;
-}>;
+export declare type ComponentOverrideMap = {
+    EmailPasswordSignIn?: ComponentOverride<typeof EmailPasswordSignIn>;
+    EmailPasswordSignInFooter?: ComponentOverride<typeof EmailPasswordSignInFooter>;
+    EmailPasswordSignInForm?: ComponentOverride<typeof EmailPasswordSignInForm>;
+    EmailPasswordSignInHeader?: ComponentOverride<typeof EmailPasswordSignInHeader>;
+    EmailPasswordSignUp?: ComponentOverride<typeof EmailPasswordSignUp>;
+    EmailPasswordSignUpFooter?: ComponentOverride<typeof EmailPasswordSignUpFooter>;
+    EmailPasswordSignUpForm?: ComponentOverride<typeof EmailPasswordSignUpForm>;
+    EmailPasswordSignUpHeader?: ComponentOverride<typeof EmailPasswordSignUpHeader>;
+};
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
@@ -53,6 +53,7 @@ export declare type NormalisedConfig = {
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     override: {
         functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = {
