@@ -1,2 +1,7 @@
 import React from "react";
-export declare const ComponentOverrideContext: React.Context<Map<string, React.FunctionComponent<any>>>;
+import { ComponentOverride } from "./componentOverride";
+declare type ContextType<T> = {
+    [K in keyof T]?: ComponentOverride<any>;
+};
+export declare const ComponentOverrideContext: React.Context<ContextType<any>>;
+export {};

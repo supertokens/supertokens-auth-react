@@ -8,9 +8,18 @@ export const withOverride = <TComponent extends React.FunctionComponent<any>>(
     DefaultComponent: TComponent
 ) => {
     return (props: React.ComponentProps<TComponent>) => {
-        const OverrideComponent: TComponent = useContext(ComponentOverrideContext).get(overrideKey) as TComponent;
+        const ctx = useContext(ComponentOverrideContext);
 
-        const EffectiveComponent = OverrideComponent || DefaultComponent;
+        if (!ctx) {
+            throw new Error(
+                "Missing ComponentOverrideContext! Be sure to use the overridable component inside a feature."
+            );
+        }
+
+        const OverrideComponent = ctx[overrideKey];
+
+        const EffectiveComponent =
+            OverrideComponent === undefined ? DefaultComponent : OverrideComponent(DefaultComponent);
 
         return <EffectiveComponent {...props} />;
     };

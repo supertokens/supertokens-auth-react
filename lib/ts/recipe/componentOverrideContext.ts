@@ -1,3 +1,8 @@
 import React from "react";
+import { ComponentOverride } from "./componentOverride";
 
-export const ComponentOverrideContext = React.createContext(new Map<string, React.FunctionComponent<any>>());
+type ContextType<T> = {
+    [K in keyof T]?: ComponentOverride<any>;
+};
+
+export const ComponentOverrideContext = React.createContext<ContextType<any>>({});
