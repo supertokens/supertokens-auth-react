@@ -27,13 +27,16 @@ import {
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 import RecipeImplementation from "./recipeImplementation";
+
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import ThirdPartySignInAndUpProvidersForm from "./components/themes/signInAndUp/providersForm";
 import ThirdPartySignUpFooter from "./components/themes/signInAndUp/signUpFooter";
+import ThirdPartySignInAndUpCallbackTheme from "./components/themes/signInAndUpCallback";
 
 export type ComponentOverrideMap = {
     ThirdPartySignUpFooter?: ComponentOverride<typeof ThirdPartySignUpFooter>;
     ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ThirdPartySignInAndUpProvidersForm>;
+    ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof ThirdPartySignInAndUpCallbackTheme>;
 };
 
 export type UserInput = {

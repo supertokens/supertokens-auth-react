@@ -28,6 +28,7 @@ import { getStyles } from "../../themes/styles";
 import {} from "../../../types";
 import SignInAndUpCallbackTheme from "../../themes/signInAndUpCallback";
 import Recipe from "../../../recipe";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -81,24 +82,25 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
     };
 
     render = (): JSX.Element => {
-        /*
-         * Render.
-         */
-        return (
-            <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
-                <StyleProvider
-                    rawPalette={this.props.recipe.config.palette}
-                    defaultPalette={defaultPalette}
-                    getDefaultStyles={getStyles}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {this.props.children === undefined && <SignInAndUpCallbackTheme />}
+        const componentOverrides = this.props.recipe.config.override.components;
 
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children}
-                    </Fragment>
-                </StyleProvider>
-            </FeatureWrapper>
+        return (
+            <ComponentOverrideContext.Provider value={componentOverrides}>
+                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                    <StyleProvider
+                        rawPalette={this.props.recipe.config.palette}
+                        defaultPalette={defaultPalette}
+                        getDefaultStyles={getStyles}>
+                        <Fragment>
+                            {/* No custom theme, use default. */}
+                            {this.props.children === undefined && <SignInAndUpCallbackTheme />}
+
+                            {/* Otherwise, custom theme is provided, propagate props. */}
+                            {this.props.children}
+                        </Fragment>
+                    </StyleProvider>
+                </FeatureWrapper>
+            </ComponentOverrideContext.Provider>
         );
     };
 }
