@@ -16,7 +16,7 @@
 import { jsx } from "@emotion/react";
 import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
-import { withOverride } from "../../../../withOverride";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 export default withOverride(
     "EmailPasswordSignInFooter",

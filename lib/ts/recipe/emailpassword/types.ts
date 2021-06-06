@@ -35,7 +35,7 @@ import {
 } from "../authRecipeModule/types";
 import RecipeImplementation from "./recipeImplementation";
 
-import { ComponentOverride } from "../componentOverride";
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import EmailPasswordSignInHeader from "./components/themes/signInAndUp/signInHeader";
 import EmailPasswordSignIn from "./components/themes/signInAndUp/signIn";
 import EmailPasswordSignInFooter from "./components/themes/signInAndUp/signInFooter";

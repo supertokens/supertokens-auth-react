@@ -21,7 +21,7 @@ import SignUpFooter from "./signUpFooter";
 import SignUpHeader from "./signUpHeader";
 import StyleContext from "../../../../../styles/styleContext";
 import SignUpForm from "./signUpForm";
-import { withOverride } from "../../../../withOverride";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 export default withOverride("EmailPasswordSignUp", function EmailPasswordSignUp(props: SignUpThemeProps) {
     const styles = useContext(StyleContext);

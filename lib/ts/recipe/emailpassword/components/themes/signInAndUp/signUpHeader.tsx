@@ -20,7 +20,7 @@
 import { jsx } from "@emotion/react";
 import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
-import { withOverride } from "../../../../withOverride";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component

@@ -22,7 +22,7 @@ import { jsx } from "@emotion/react";
 import { SignInThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
-import { withOverride } from "../../../../withOverride";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component.

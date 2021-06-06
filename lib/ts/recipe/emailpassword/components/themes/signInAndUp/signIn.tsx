@@ -26,7 +26,7 @@ import { SignInThemeProps } from "../../../types";
 import SignInFooter from "./signInFooter";
 import SignInForm from "./signInForm";
 import SignInHeader from "./signInHeader";
-import { withOverride } from "../../../../withOverride";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 export default withOverride("EmailPasswordSignIn", function EmailPasswordSignIn(props: SignInThemeProps) {
     const styles = useContext(StyleContext);
