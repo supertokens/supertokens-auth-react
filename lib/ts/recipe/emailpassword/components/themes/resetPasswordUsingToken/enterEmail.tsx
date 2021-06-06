@@ -23,8 +23,9 @@ import StyleContext from "../../../../../styles/styleContext";
 import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../types";
 
 import FormBase from "../../library/formBase";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps, EnterEmailThemeState> {
+class EnterEmailTheme extends PureComponent<EnterEmailThemeProps, EnterEmailThemeState> {
     static contextType = StyleContext;
     /*
      * Constructor.
@@ -111,3 +112,5 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
         );
     }
 }
+
+export default withOverride("EmailPasswordEnterEmailTheme", EnterEmailTheme);

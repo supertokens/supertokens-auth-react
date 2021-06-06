@@ -28,6 +28,8 @@ import EmailPasswordSignUp from "./components/themes/signInAndUp/signUp";
 import EmailPasswordSignUpFooter from "./components/themes/signInAndUp/signUpFooter";
 import EmailPasswordSignUpForm from "./components/themes/signInAndUp/signUpForm";
 import EmailPasswordSignUpHeader from "./components/themes/signInAndUp/signUpHeader";
+import EmailPasswordEnterEmailTheme from "./components/themes/resetPasswordUsingToken/enterEmail";
+import EmailPasswordSubmitNewPasswordTheme from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 export declare type ComponentOverrideMap = {
     EmailPasswordSignIn?: ComponentOverride<typeof EmailPasswordSignIn>;
     EmailPasswordSignInFooter?: ComponentOverride<typeof EmailPasswordSignInFooter>;
@@ -37,6 +39,8 @@ export declare type ComponentOverrideMap = {
     EmailPasswordSignUpFooter?: ComponentOverride<typeof EmailPasswordSignUpFooter>;
     EmailPasswordSignUpForm?: ComponentOverride<typeof EmailPasswordSignUpForm>;
     EmailPasswordSignUpHeader?: ComponentOverride<typeof EmailPasswordSignUpHeader>;
+    EmailPasswordEnterEmailTheme?: ComponentOverride<typeof EmailPasswordEnterEmailTheme>;
+    EmailPasswordSubmitNewPasswordTheme?: ComponentOverride<typeof EmailPasswordSubmitNewPasswordTheme>;
 };
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;

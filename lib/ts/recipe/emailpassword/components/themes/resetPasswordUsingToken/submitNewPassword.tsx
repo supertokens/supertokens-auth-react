@@ -24,11 +24,9 @@ import StyleContext from "../../../../../styles/styleContext";
 import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../types";
 import { FormRow, Button } from "../../library";
 import FormBase from "../../library/formBase";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-export default class SubmitNewPasswordTheme extends PureComponent<
-    SubmitNewPasswordThemeProps,
-    SubmitNewPasswordThemeState
-> {
+class SubmitNewPasswordTheme extends PureComponent<SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState> {
     static contextType = StyleContext;
 
     /*
@@ -129,3 +127,5 @@ export default class SubmitNewPasswordTheme extends PureComponent<
         );
     }
 }
+
+export default withOverride("EmailPasswordSubmitNewPasswordTheme", SubmitNewPasswordTheme);
