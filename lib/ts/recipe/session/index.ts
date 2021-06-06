@@ -14,20 +14,17 @@
  */
 
 import Session from "./recipe";
-import { UserInput, RecipeInterface } from "./types";
+import { RecipeInterface, RecipeImplementation } from "supertokens-website";
 import SessionAuthComponent from "./sessionAuth";
 import useSessionContextFunc from "./useSessionContext";
-import RecipeImplementation from "./recipeImplementation";
+import { InputType } from "./types";
 
-/*
- * Class.
- */
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
 
     static SessionAuth = SessionAuthComponent;
 
-    static init(config?: UserInput) {
+    static init(config?: InputType) {
         return Session.init(config);
     }
 
@@ -72,7 +69,6 @@ export {
     SessionAuth,
     init,
     getUserId,
-    UserInput,
     getJWTPayloadSecurely,
     attemptRefreshingSession,
     doesSessionExist,
@@ -80,4 +76,5 @@ export {
     signOut,
     RecipeInterface,
     RecipeImplementation,
+    InputType,
 };

@@ -18,28 +18,39 @@
  */
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
-import { Config, UserInput, RecipeInterface } from "./types";
 import { isTest } from "../../utils";
+import { InputType } from "./types";
 import sessionSdk from "supertokens-website";
-import RecipeImplementation from "./recipeImplementation";
 
 export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
     static instance?: Session;
     static RECIPE_ID = "session";
 
-    recipeImpl: RecipeImplementation;
-
-    constructor(config: Config) {
+    constructor(config: InputType & { recipeId: string; appInfo: NormalisedAppInfo }) {
         super(config);
 
-        const override: {
-            functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
-        } = {
-            functions: (originalImplementation: RecipeImplementation) => originalImplementation,
-            ...config.override,
-        };
-
-        this.recipeImpl = override.functions(new RecipeImplementation(config));
+        sessionSdk.init({
+            ...config,
+            preAPIHook: async (context) => {
+                const response = {
+                    ...context,
+                    requestInit: {
+                        ...context.requestInit,
+                        headers: {
+                            ...context.requestInit.headers,
+                            rid: config.recipeId,
+                        },
+                    },
+                };
+                if (config.preAPIHook === undefined) {
+                    return response;
+                } else {
+                    return config.preAPIHook(context);
+                }
+            },
+            apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),
+            apiBasePath: config.appInfo.apiBasePath.getAsStringDangerous(),
+        });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,22 +63,31 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     };
 
     getUserId = (): Promise<string> => {
-        return this.recipeImpl.getUserId();
+        return sessionSdk.getUserId();
     };
 
     getJWTPayloadSecurely = async (): Promise<any> => {
-        return this.recipeImpl.getJWTPayloadSecurely();
+        return sessionSdk.getJWTPayloadSecurely();
     };
 
     doesSessionExist = (): Promise<boolean> => {
-        return this.recipeImpl.doesSessionExist();
+        return sessionSdk.doesSessionExist();
     };
 
     signOut = (): Promise<void> => {
-        return this.recipeImpl.signOut();
+        return sessionSdk.signOut();
     };
 
-    static init(config?: UserInput): CreateRecipeFunction<unknown, unknown, unknown, any> {
+    attemptRefreshingSession = async (): Promise<boolean> => {
+        return sessionSdk.attemptRefreshingSession();
+    };
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    static addAxiosInterceptors(axiosInstance: any): void {
+        return sessionSdk.addAxiosInterceptors(axiosInstance);
+    }
+
+    static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any> {
         return (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown, any> => {
             Session.instance = new Session({
                 ...config,
@@ -86,21 +106,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         }
 
         return Session.instance;
-    }
-
-    attemptRefreshingSession = async (): Promise<boolean> => {
-        // we don't use recipeImpl for this one since if a user overrides
-        // this, then refreshing is not gonna call this anyway.
-        // plus it's not a generic session sematic function..
-        // it's specific to our implementation only.
-        return sessionSdk.attemptRefreshingSession();
-    };
-
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    static addAxiosInterceptors(axiosInstance: any): void {
-        // we don't have recipeImpl for this since it's not a generic
-        // session sematic function.. it's specific to our implementation only.
-        return sessionSdk.addAxiosInterceptors(axiosInstance);
     }
 
     static reset(): void {

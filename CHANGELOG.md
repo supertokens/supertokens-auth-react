@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Removes `getRefreshURLDomain` function from session recipe.
 -   Removes `SIGN_OUT` pre API hook as it's used within the supertokens-website SDK.
 -   Change to type of `preAPIHook` function
+-   Uses supertokens-website version >= 8.0
 
 ### Fixed:
 

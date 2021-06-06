@@ -1,7 +1,6 @@
 import { RecipeInterface, NormalisedConfig } from "./types";
 import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
-import Session from "../session/recipe";
 
 export default class RecipeImplementation implements RecipeInterface {
     querier: Querier;
@@ -46,7 +45,6 @@ export default class RecipeImplementation implements RecipeInterface {
             "/user/email/verify/token",
             {},
             async (context) => {
-                context = await Session.getInstanceOrThrow().recipeImpl.attachSessionToRequest(context);
                 return input.config.preAPIHook({
                     ...context,
                     action: "SEND_VERIFY_EMAIL",
@@ -69,7 +67,6 @@ export default class RecipeImplementation implements RecipeInterface {
             {},
             undefined,
             async (context) => {
-                context = await Session.getInstanceOrThrow().recipeImpl.attachSessionToRequest(context);
                 return input.config.preAPIHook({
                     ...context,
                     action: "IS_EMAIL_VERIFIED",

@@ -138,28 +138,44 @@ function getRecipeList() {
         getEmailPasswordConfigs(),
         getThirdPartyConfigs(),
         getThirdPartyEmailPasswordConfigs(),
+        Session.init(),
         Session.init({
             autoAddCredentials: true,
             isInIframe: true,
-            refreshAPICustomHeaders: {},
             sessionExpiredStatusCode: 401,
             sessionScope: "",
-            signoutAPICustomHeaders: {},
+            apiBasePath: "",
+            apiDomain: "",
+            cookieDomain: "",
+            onHandleEvent: (context) => {
+                if (context.action === "REFRESH_SESSION") {
+                } else if (context.action === "SIGN_OUT") {
+                } else if (context.action === "UNAUTHORISED") {
+                }
+            },
+            preAPIHook: async (context) => {
+                return context;
+            },
             override: {
                 functions: (oI) => {
                     return {
-                        ...oI,
-                        doesSessionExist: () => {
-                            return oI.doesSessionExist();
+                        addAxiosInterceptors: (instance, config) => {
+                            return oI.addAxiosInterceptors(instance, config);
                         },
-                        getJWTPayloadSecurely: () => {
-                            return oI.getJWTPayloadSecurely();
+                        addFetchInterceptorsAndReturnModifiedFetch: (f, c) => {
+                            return oI.addFetchInterceptorsAndReturnModifiedFetch(f, c);
                         },
-                        getUserId: () => {
-                            return oI.getUserId();
+                        doesSessionExist: (input) => {
+                            return oI.doesSessionExist(input);
                         },
-                        signOut: () => {
-                            return oI.signOut();
+                        getJWTPayloadSecurely: (input) => {
+                            return oI.getJWTPayloadSecurely(input);
+                        },
+                        getUserId: (config) => {
+                            return oI.getUserId(config);
+                        },
+                        signOut: (config) => {
+                            return oI.signOut(config);
                         },
                     };
                 },
