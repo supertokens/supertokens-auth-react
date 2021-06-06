@@ -27,11 +27,20 @@ import {
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 import RecipeImplementation from "./recipeImplementation";
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import ThirdPartySignInAndUpProvidersForm from "./components/themes/signInAndUp/providersForm";
+import ThirdPartySignUpFooter from "./components/themes/signInAndUp/signUpFooter";
+
+export type ComponentOverrideMap = {
+    ThirdPartySignUpFooter?: ComponentOverride<typeof ThirdPartySignUpFooter>;
+    ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ThirdPartySignInAndUpProvidersForm>;
+};
 
 export type UserInput = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
@@ -42,6 +51,7 @@ export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     override: {
         functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 

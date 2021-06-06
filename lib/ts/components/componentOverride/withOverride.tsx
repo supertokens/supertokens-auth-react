@@ -3,7 +3,7 @@ import { jsx } from "@emotion/react";
 import React, { useContext } from "react";
 import { ComponentOverrideContext } from "./componentOverrideContext";
 
-export const withOverride = <TComponent extends React.FunctionComponent<any>>(
+export const withOverride = <TComponent extends React.FunctionComponent<any> | React.ComponentClass<any>>(
     overrideKey: string,
     DefaultComponent: TComponent
 ) => {

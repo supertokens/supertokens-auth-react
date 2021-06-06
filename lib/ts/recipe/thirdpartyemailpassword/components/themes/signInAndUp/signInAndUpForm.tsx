@@ -22,37 +22,41 @@ import SignInFooter from "../../../../emailpassword/components/themes/signInAndU
 import SignInForm from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
 import SignUpForm from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
 import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component.
  */
-export default function SignInAndUpForm(
-    props: EmailPasswordSignInAndUpThemeProps & {
-        isSignUp: boolean;
-    }
-): JSX.Element {
-    /*
-     * Render.
-     */
+export default withOverride(
+    "ThirdPartyEmailPasswordSignInAndUpForm",
+    function SignInAndUpForm(
+        props: EmailPasswordSignInAndUpThemeProps & {
+            isSignUp: boolean;
+        }
+    ): JSX.Element {
+        /*
+         * Render.
+         */
 
-    if (props.isSignUp === true) {
-        return (
-            <SignUpForm
-                {...props.signUpForm}
-                footer={
-                    <SignUpFooter
-                        privacyPolicyLink={props.config.signInAndUpFeature.signUpForm.privacyPolicyLink}
-                        termsOfServiceLink={props.config.signInAndUpFeature.signUpForm.termsOfServiceLink}
-                    />
-                }
-            />
-        );
-    } else {
-        return (
-            <SignInForm
-                {...props.signInForm}
-                footer={<SignInFooter onClick={props.signInForm.forgotPasswordClick} />}
-            />
-        );
+        if (props.isSignUp === true) {
+            return (
+                <SignUpForm
+                    {...props.signUpForm}
+                    footer={
+                        <SignUpFooter
+                            privacyPolicyLink={props.config.signInAndUpFeature.signUpForm.privacyPolicyLink}
+                            termsOfServiceLink={props.config.signInAndUpFeature.signUpForm.termsOfServiceLink}
+                        />
+                    }
+                />
+            );
+        } else {
+            return (
+                <SignInForm
+                    {...props.signInForm}
+                    footer={<SignInFooter onClick={props.signInForm.forgotPasswordClick} />}
+                />
+            );
+        }
     }
-}
+);

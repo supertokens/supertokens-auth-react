@@ -1,5 +1,9 @@
-/// <reference types="react" />
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
-export default function SignInAndUpForm(props: EmailPasswordSignInAndUpThemeProps & {
-    isSignUp: boolean;
-}): JSX.Element;
+declare const _default: (
+    props: EmailPasswordSignInAndUpThemeProps & {
+        isSignUp: boolean;
+    }
+) => jsx.JSX.Element;
+export default _default;

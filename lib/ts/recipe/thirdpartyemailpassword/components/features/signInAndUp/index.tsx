@@ -23,6 +23,7 @@ import { FeatureBaseProps } from "../../../../../types";
 import { SignInAndUpTheme } from "../../..";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
 /*
  * Component.
@@ -41,6 +42,8 @@ class SignInAndUp extends PureComponent<
     };
 
     render = (): JSX.Element => {
+        const componentOverrides = this.props.recipe.config.override.components;
+
         const props = {
             emailPasswordRecipe: this.props.recipe.emailPasswordRecipe,
             thirdPartyRecipe: this.props.recipe.thirdPartyRecipe,
@@ -49,14 +52,16 @@ class SignInAndUp extends PureComponent<
         };
 
         return (
-            <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {this.props.children === undefined && <SignInAndUpTheme {...props} />}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children && React.cloneElement(this.props.children, props)}
-                </Fragment>
-            </FeatureWrapper>
+            <ComponentOverrideContext.Provider value={componentOverrides}>
+                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom}>
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {this.props.children === undefined && <SignInAndUpTheme {...props} />}
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {this.props.children && React.cloneElement(this.props.children, props)}
+                    </Fragment>
+                </FeatureWrapper>
+            </ComponentOverrideContext.Provider>
         );
     };
 }

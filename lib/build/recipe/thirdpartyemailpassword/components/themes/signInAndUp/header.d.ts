@@ -1,5 +1,4 @@
-/// <reference types="react" />
-export default function Header({ isSignUp, setIsSignUp, }: {
-    isSignUp: boolean;
-    setIsSignUp: (isSignUp: boolean) => void;
-}): JSX.Element;
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
+declare const _default: (props: { isSignUp: boolean; setIsSignUp: (isSignUp: boolean) => void }) => jsx.JSX.Element;
+export default _default;
