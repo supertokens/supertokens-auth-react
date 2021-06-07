@@ -17,16 +17,16 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import SignInHeader from "../../../../emailpassword/components/themes/signInAndUp/signInHeader";
-import SignUpHeader from "../../../../emailpassword/components/themes/signInAndUp/signUpHeader";
+import { SignInHeader } from "../../../../emailpassword/components/themes/signInAndUp/signInHeader";
+import { SignUpHeader } from "../../../../emailpassword/components/themes/signInAndUp/signUpHeader";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component.
  */
-export default withOverride(
+export const Header = withOverride(
     "ThirdPartyEmailPasswordHeader",
-    function Header({
+    function ThirdPartyEmailPasswordHeader({
         isSignUp,
         setIsSignUp,
     }: {

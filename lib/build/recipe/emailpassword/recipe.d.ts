@@ -28,7 +28,7 @@ export default class EmailPassword extends AuthRecipeModule<
     );
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    getFeatureComponent: (componentName: "emailverification" | "signinup" | "resetpassword", props: any) => JSX.Element;
+    getFeatureComponent: (componentName: "signinup" | "resetpassword" | "emailverification", props: any) => JSX.Element;
     static init(
         config?: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>;

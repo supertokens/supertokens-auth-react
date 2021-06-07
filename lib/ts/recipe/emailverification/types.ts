@@ -17,8 +17,8 @@ import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModul
 import RecipeImplementation from "./recipeImplementation";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import EmailVerificationSendVerifyEmail from "./components/themes/emailVerification/sendVerifyEmail";
-import EmailVerificationVerifyEmailLinkClicked from "./components/themes/emailVerification/verifyEmailLinkClicked";
+import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
+import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 
 // For AuthRecipeModule, we don't need to take signOut,
 // redirectToSignIn and postVerificationRedirect as inputs from the user.
@@ -32,8 +32,8 @@ export type UserInputForAuthRecipeModule = {
 };
 
 export type ComponentOverrideMap = {
-    EmailVerificationSendVerifyEmail?: ComponentOverride<typeof EmailVerificationSendVerifyEmail>;
-    EmailVerificationVerifyEmailLinkClicked?: ComponentOverride<typeof EmailVerificationVerifyEmailLinkClicked>;
+    EmailVerificationSendVerifyEmail?: ComponentOverride<typeof SendVerifyEmail>;
+    EmailVerificationVerifyEmailLinkClicked?: ComponentOverride<typeof VerifyEmailLinkClicked>;
 };
 
 export type UserInput = UserInputForAuthRecipeModule & {

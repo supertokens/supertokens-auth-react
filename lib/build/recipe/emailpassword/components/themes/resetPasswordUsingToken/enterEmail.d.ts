@@ -1,5 +1,4 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { EnterEmailThemeProps } from "../../../types";
-declare const _default: (props: EnterEmailThemeProps) => jsx.JSX.Element;
-export default _default;
+import { EnterEmailProps } from "../../../types";
+export declare const EnterEmail: (props: EnterEmailProps) => jsx.JSX.Element;

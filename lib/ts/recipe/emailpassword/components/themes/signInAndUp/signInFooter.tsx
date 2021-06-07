@@ -18,7 +18,7 @@ import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-export default withOverride(
+export const SignInFooter = withOverride(
     "EmailPasswordSignInFooter",
     function EmailPasswordSignInFooter({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
         const styles = useContext(StyleContext);

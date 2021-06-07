@@ -34,7 +34,7 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
  * Component.
  */
 
-class VerifyEmailLinkClicked extends PureComponent<
+class EmailVerificationVerifyEmailLinkClicked extends PureComponent<
     VerifyEmailLinkClickedThemeProps,
     { status: "LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL" }
 > {
@@ -142,4 +142,7 @@ class VerifyEmailLinkClicked extends PureComponent<
     }
 }
 
-export default withOverride("EmailVerificationVerifyEmailLinkClicked", VerifyEmailLinkClicked);
+export const VerifyEmailLinkClicked = withOverride(
+    "EmailVerificationVerifyEmailLinkClicked",
+    EmailVerificationVerifyEmailLinkClicked
+);

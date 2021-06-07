@@ -1,5 +1,4 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { SubmitNewPasswordThemeProps } from "../../../types";
-declare const _default: (props: SubmitNewPasswordThemeProps) => jsx.JSX.Element;
-export default _default;
+import { SubmitNewPasswordProps } from "../../../types";
+export declare const SubmitNewPassword: (props: SubmitNewPasswordProps) => jsx.JSX.Element;

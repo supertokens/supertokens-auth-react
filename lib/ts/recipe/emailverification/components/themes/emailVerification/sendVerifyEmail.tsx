@@ -31,7 +31,10 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
  * Component.
  */
 
-class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeProps, { status: "READY" | "EMAIL_RESENT" | "ERROR" }> {
+class EmailVerificationSendVerifyEmail extends PureComponent<
+    SendVerifyEmailThemeProps,
+    { status: "READY" | "EMAIL_RESENT" | "ERROR" }
+> {
     static contextType = StyleContext;
 
     constructor(props: SendVerifyEmailThemeProps) {
@@ -126,4 +129,4 @@ class SendVerifyEmail extends PureComponent<SendVerifyEmailThemeProps, { status:
     }
 }
 
-export default withOverride("EmailVerificationSendVerifyEmail", SendVerifyEmail);
+export const SendVerifyEmail = withOverride("EmailVerificationSendVerifyEmail", EmailVerificationSendVerifyEmail);

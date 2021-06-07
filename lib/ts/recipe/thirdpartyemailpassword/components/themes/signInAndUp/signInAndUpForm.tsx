@@ -17,19 +17,19 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import SignUpFooter from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
-import SignInFooter from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
-import SignInForm from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
-import SignUpForm from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
+import { SignUpFooter } from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
+import { SignInFooter } from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
+import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
+import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
 import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component.
  */
-export default withOverride(
+export const SignInAndUpForm = withOverride(
     "ThirdPartyEmailPasswordSignInAndUpForm",
-    function SignInAndUpForm(
+    function ThirdPartyEmailPasswordSignInAndUpForm(
         props: EmailPasswordSignInAndUpThemeProps & {
             isSignUp: boolean;
         }

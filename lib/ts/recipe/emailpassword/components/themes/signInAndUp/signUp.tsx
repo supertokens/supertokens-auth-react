@@ -17,13 +17,13 @@ import { jsx } from "@emotion/react";
 import { useContext } from "react";
 import { SignUpThemeProps } from "../../../types";
 
-import SignUpFooter from "./signUpFooter";
-import SignUpHeader from "./signUpHeader";
+import { SignUpFooter } from "./signUpFooter";
+import { SignUpHeader } from "./signUpHeader";
 import StyleContext from "../../../../../styles/styleContext";
-import SignUpForm from "./signUpForm";
+import { SignUpForm } from "./signUpForm";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-export default withOverride("EmailPasswordSignUp", function EmailPasswordSignUp(props: SignUpThemeProps) {
+export const SignUp = withOverride("EmailPasswordSignUp", function EmailPasswordSignUp(props: SignUpThemeProps) {
     const styles = useContext(StyleContext);
 
     return (

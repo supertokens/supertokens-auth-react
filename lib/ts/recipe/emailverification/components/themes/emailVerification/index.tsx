@@ -22,8 +22,8 @@ import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../../../emailpassword/components/themes/styles/styles";
 import { ThemeBase } from "../../../../emailpassword/components/themes/themeBase";
 import { EmailVerificationThemeProps } from "../../../types";
-import SendVerifyEmail from "./sendVerifyEmail";
-import VerifyEmailLinkClicked from "./verifyEmailLinkClicked";
+import { SendVerifyEmail } from "./sendVerifyEmail";
+import { VerifyEmailLinkClicked } from "./verifyEmailLinkClicked";
 
 /*
  * Component.

@@ -18,7 +18,7 @@ import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-export default withOverride(
+export const SignInHeader = withOverride(
     "EmailPasswordSignInHeader",
     function EmailPasswordSignInHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
         const styles = useContext(StyleContext);

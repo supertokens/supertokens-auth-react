@@ -21,18 +21,18 @@ import { jsx } from "@emotion/react";
 import { PureComponent, Fragment } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
-import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../types";
+import { SubmitNewPasswordProps, SubmitNewPasswordState } from "../../../types";
 import { FormRow, Button } from "../../library";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-class SubmitNewPasswordTheme extends PureComponent<SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState> {
+class EmailPasswordSubmitNewPassword extends PureComponent<SubmitNewPasswordProps, SubmitNewPasswordState> {
     static contextType = StyleContext;
 
     /*
      * Constructor.
      */
-    constructor(props: SubmitNewPasswordThemeProps) {
+    constructor(props: SubmitNewPasswordProps) {
         super(props);
         this.state = {
             status: "READY",
@@ -128,4 +128,4 @@ class SubmitNewPasswordTheme extends PureComponent<SubmitNewPasswordThemeProps, 
     }
 }
 
-export default withOverride("EmailPasswordSubmitNewPasswordTheme", SubmitNewPasswordTheme);
+export const SubmitNewPassword = withOverride("EmailPasswordSubmitNewPassword", EmailPasswordSubmitNewPassword);

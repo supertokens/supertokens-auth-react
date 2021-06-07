@@ -23,7 +23,7 @@ import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-export default withOverride(
+export const SignUpFooter = withOverride(
     "EmailPasswordSignUpFooter",
     function EmailPasswordSignUpFooter({
         termsOfServiceLink,

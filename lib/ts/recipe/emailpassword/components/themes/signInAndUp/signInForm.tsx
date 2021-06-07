@@ -28,7 +28,7 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
  * Component.
  */
 
-export default withOverride(
+export const SignInForm = withOverride(
     "EmailPasswordSignInForm",
     function EmailPasswordSignInForm(
         props: SignInThemeProps & {

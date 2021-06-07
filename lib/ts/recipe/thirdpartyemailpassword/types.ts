@@ -53,13 +53,13 @@ import RecipeImplementation from "./recipeImplementation";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpassword/types";
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
-import ThirdPartyEmailPasswordHeader from "./components/themes/signInAndUp/header";
-import ThirdPartyEmailPasswordSignInAndUpForm from "./components/themes/signInAndUp/signInAndUpForm";
+import { Header } from "./components/themes/signInAndUp/header";
+import { SignInAndUpForm } from "./components/themes/signInAndUp/signInAndUpForm";
 
 export type ComponentOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap & {
-        ThirdPartyEmailPasswordHeader?: ComponentOverride<typeof ThirdPartyEmailPasswordHeader>;
-        ThirdPartyEmailPasswordSignInAndUpForm?: ComponentOverride<typeof ThirdPartyEmailPasswordSignInAndUpForm>;
+        ThirdPartyEmailPasswordHeader?: ComponentOverride<typeof Header>;
+        ThirdPartyEmailPasswordSignInAndUpForm?: ComponentOverride<typeof SignInAndUpForm>;
     };
 
 export type UserInput = {

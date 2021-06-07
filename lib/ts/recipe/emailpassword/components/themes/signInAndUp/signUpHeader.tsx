@@ -25,7 +25,7 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 /*
  * Component
  */
-export default withOverride(
+export const SignUpHeader = withOverride(
     "EmailPasswordSignUpHeader",
     function EmailPasswordSignUpHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
         /*

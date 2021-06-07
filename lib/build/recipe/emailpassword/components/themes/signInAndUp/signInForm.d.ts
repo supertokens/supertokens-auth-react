@@ -1,7 +1,7 @@
 /// <reference types="react" />
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-declare const _default: (
+export declare const SignInForm: (
     props: import("../../../../../types").ThemeBaseProps & {
         formFields: import("../../../types").FormFieldThemeProps[];
     } & {
@@ -15,4 +15,3 @@ declare const _default: (
         footer?: JSX.Element | undefined;
     }
 ) => jsx.JSX.Element;
-export default _default;

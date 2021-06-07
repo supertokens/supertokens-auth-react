@@ -20,17 +20,17 @@ import { jsx } from "@emotion/react";
 import { PureComponent, Fragment } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
-import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../types";
+import { EnterEmailProps, EnterEmailState } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-class EnterEmailTheme extends PureComponent<EnterEmailThemeProps, EnterEmailThemeState> {
+class EmailPasswordEnterEmail extends PureComponent<EnterEmailProps, EnterEmailState> {
     static contextType = StyleContext;
     /*
      * Constructor.
      */
-    constructor(props: EnterEmailThemeProps) {
+    constructor(props: EnterEmailProps) {
         super(props);
         this.state = {
             status: "READY",
@@ -113,4 +113,4 @@ class EnterEmailTheme extends PureComponent<EnterEmailThemeProps, EnterEmailThem
     }
 }
 
-export default withOverride("EmailPasswordEnterEmailTheme", EnterEmailTheme);
+export const EnterEmail = withOverride("EmailPasswordEnterEmail", EmailPasswordEnterEmail);

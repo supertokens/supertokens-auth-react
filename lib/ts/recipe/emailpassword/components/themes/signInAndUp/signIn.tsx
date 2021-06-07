@@ -23,12 +23,12 @@ import StyleContext from "../../../../../styles/styleContext";
 
 import { SignInThemeProps } from "../../../types";
 
-import SignInFooter from "./signInFooter";
-import SignInForm from "./signInForm";
-import SignInHeader from "./signInHeader";
+import { SignInFooter } from "./signInFooter";
+import { SignInForm } from "./signInForm";
+import { SignInHeader } from "./signInHeader";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-export default withOverride("EmailPasswordSignIn", function EmailPasswordSignIn(props: SignInThemeProps) {
+export const SignIn = withOverride("EmailPasswordSignIn", function EmailPasswordSignIn(props: SignInThemeProps) {
     const styles = useContext(StyleContext);
 
     return (
