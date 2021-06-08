@@ -1,10 +1,10 @@
 module.exports = {
     preset: "ts-jest",
     testEnvironment: "jsdom",
-    testRegex: ["test/unit/.*ts"],
+    testRegex: ["(/test/unit/.*|(\\.|/)(test|spec))\\.tsx?$"],
     globals: {
         "ts-jest": {
-            tsconfig: "./tsconfig.test.json",
+            tsconfig: "test/unit/tsconfig.test.json",
         },
     },
 };
