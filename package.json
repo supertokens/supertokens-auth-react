@@ -59,7 +59,7 @@
         "front": "(cd ./examples/for-tests/ && BROWSER=none PORT=3031 npm run start)",
         "server": "cd test/server/ && START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
         "test": "./test/startTestApp.sh",
-        "test-unit": "jest",
+        "test-unit": "jest -c test/unit/jest.config.js",
         "link-dependencies": "./test/linkDependencies.sh $SRC",
         "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit",
         "tsc": "cd lib && npx tsc -p tsconfig.json",
