@@ -14,6 +14,10 @@ export const withOverride = <TComponent extends React.FunctionComponent<any> | R
             throw new Error("Missing ComponentOverrideContext!");
         }
 
+        if (ctx === "IS_DEFAULT") {
+            throw new Error("Using withOverride HOC without a parent Provider");
+        }
+
         const OverrideComponent = ctx[overrideKey];
 
         const EffectiveComponent =
