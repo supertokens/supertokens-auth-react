@@ -10,10 +10,8 @@ export const withOverride = <TComponent extends React.FunctionComponent<any> | R
     return (props: React.ComponentProps<TComponent>) => {
         const ctx = useContext(ComponentOverrideContext);
 
-        if (!ctx) {
-            throw new Error(
-                "Missing ComponentOverrideContext! Be sure to use the overridable component inside a feature."
-            );
+        if (ctx === undefined || ctx === null) {
+            throw new Error("Missing ComponentOverrideContext!");
         }
 
         const OverrideComponent = ctx[overrideKey];

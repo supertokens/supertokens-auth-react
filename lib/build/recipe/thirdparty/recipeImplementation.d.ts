@@ -13,7 +13,7 @@ export default class RecipeImplementation implements RecipeInterface {
               createdNewUser: boolean;
           }
         | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
+              status: "GENERAL_ERROR" | "NO_EMAIL_GIVEN_BY_PROVIDER";
           }
         | {
               status: "FIELD_ERROR";
