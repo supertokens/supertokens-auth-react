@@ -10,10 +10,6 @@ export const withOverride = <TComponent extends React.FunctionComponent<any> | R
     return (props: React.ComponentProps<TComponent>) => {
         const ctx = useContext(ComponentOverrideContext);
 
-        if (ctx === undefined || ctx === null) {
-            throw new Error("Missing ComponentOverrideContext!");
-        }
-
         if (ctx === "IS_DEFAULT") {
             throw new Error("Using withOverride HOC without a parent Provider");
         }
