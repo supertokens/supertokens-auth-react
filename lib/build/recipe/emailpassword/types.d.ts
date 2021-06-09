@@ -39,8 +39,8 @@ export declare type ComponentOverrideMap = {
     EmailPasswordSignUpFooter?: ComponentOverride<typeof SignUpFooter>;
     EmailPasswordSignUpForm?: ComponentOverride<typeof SignUpForm>;
     EmailPasswordSignUpHeader?: ComponentOverride<typeof SignUpHeader>;
-    EmailPasswordEnterEmailTheme?: ComponentOverride<typeof EnterEmail>;
-    EmailPasswordSubmitNewPasswordTheme?: ComponentOverride<typeof SubmitNewPassword>;
+    EmailPasswordEnterEmail?: ComponentOverride<typeof EnterEmail>;
+    EmailPasswordSubmitNewPassword?: ComponentOverride<typeof SubmitNewPassword>;
 };
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
