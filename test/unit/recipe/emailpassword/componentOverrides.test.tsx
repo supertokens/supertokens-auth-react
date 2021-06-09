@@ -21,7 +21,8 @@ const WithProvider: React.FC<any> = ({ overrideMap, children }) => {
 
 describe("EmailPassword overrides", () => {
     const overrides: {
-        [K in keyof ComponentOverrideMap]: any;
+        // Required<T> ensures that we cover all available overrides in tests
+        [K in keyof Required<ComponentOverrideMap>]: any;
     } = {
         EmailPasswordSignUpHeader: SignUpHeader,
         EmailPasswordSignInHeader: SignInHeader,
@@ -35,10 +36,6 @@ describe("EmailPassword overrides", () => {
         EmailPasswordSubmitNewPassword: SubmitNewPassword,
     };
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
     Object.entries(overrides).forEach(([key, Component]) => {
         test(`${key} can be overrode`, async () => {
             // given
@@ -46,6 +43,9 @@ describe("EmailPassword overrides", () => {
                 [key]: makeOverride,
             };
 
+            // Since we do not pass props to component, if the override is not applied
+            // we will additionally get errors related to undefined props
+            //
             // when
             const result = await render(
                 <WithProvider overrideMap={overrideMap}>
