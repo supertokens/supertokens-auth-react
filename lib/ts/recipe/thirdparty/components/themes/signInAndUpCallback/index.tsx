@@ -25,7 +25,7 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
  * Component.
  */
 
-class SignInAndUpCallbackTheme extends PureComponent {
+class ThirdPartySignInAndUpCallbackTheme extends PureComponent {
     static contextType = StyleContext;
 
     /*
@@ -47,4 +47,7 @@ class SignInAndUpCallbackTheme extends PureComponent {
     };
 }
 
-export default withOverride("ThirdPartySignInAndUpCallbackTheme", SignInAndUpCallbackTheme);
+export const SignInAndUpCallbackTheme = withOverride(
+    "ThirdPartySignInAndUpCallbackTheme",
+    ThirdPartySignInAndUpCallbackTheme
+);

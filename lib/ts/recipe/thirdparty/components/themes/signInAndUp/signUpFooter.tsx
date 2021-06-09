@@ -23,9 +23,9 @@ import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-export default withOverride(
+export const SignUpFooter = withOverride(
     "ThirdPartySignUpFooter",
-    function SignUpFooter({
+    function ThirdPartySignUpFooter({
         termsOfServiceLink,
         privacyPolicyLink,
     }: {

@@ -20,7 +20,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import { SignInAndUpThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-class SignInAndUpProvidersForm extends PureComponent<SignInAndUpThemeProps, { error?: string }> {
+class ThirdPartySignInAndUpProvidersForm extends PureComponent<SignInAndUpThemeProps, { error?: string }> {
     static contextType = StyleContext;
 
     constructor(props: SignInAndUpThemeProps) {
@@ -85,4 +85,4 @@ class SignInAndUpProvidersForm extends PureComponent<SignInAndUpThemeProps, { er
     };
 }
 
-export default withOverride("ThirdPartySignInAndUpProvidersForm", SignInAndUpProvidersForm);
+export const ProvidersForm = withOverride("ThirdPartySignInAndUpProvidersForm", ThirdPartySignInAndUpProvidersForm);

@@ -14,13 +14,13 @@ import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 import RecipeImplementation from "./recipeImplementation";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
-import ThirdPartySignInAndUpProvidersForm from "./components/themes/signInAndUp/providersForm";
-import ThirdPartySignUpFooter from "./components/themes/signInAndUp/signUpFooter";
-import ThirdPartySignInAndUpCallbackTheme from "./components/themes/signInAndUpCallback";
+import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
+import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
+import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 export declare type ComponentOverrideMap = {
-    ThirdPartySignUpFooter?: ComponentOverride<typeof ThirdPartySignUpFooter>;
-    ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ThirdPartySignInAndUpProvidersForm>;
-    ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof ThirdPartySignInAndUpCallbackTheme>;
+    ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
+    ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
+    ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
 };
 export declare type UserInput = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;

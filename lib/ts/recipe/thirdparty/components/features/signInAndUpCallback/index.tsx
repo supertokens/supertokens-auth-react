@@ -26,7 +26,7 @@ import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
 import {} from "../../../types";
-import SignInAndUpCallbackTheme from "../../themes/signInAndUpCallback";
+import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
