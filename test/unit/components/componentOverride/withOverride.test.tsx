@@ -7,14 +7,12 @@ describe("withOverride", () => {
     const DefaultComponent = () => <h1 data-testid="heading">Default</h1>;
     const DefaultComponentOverride = withOverride("DefaultComponent", DefaultComponent);
 
-    test("display default component if no context provider", async () => {
+    test("throw an error if no parent provider is set", async () => {
         // when
-        const result = render(<DefaultComponentOverride />);
-
-        const heading = await result.findByTestId("heading");
+        const doRender = () => render(<DefaultComponentOverride />);
 
         // then
-        expect(heading.textContent).toEqual("Default");
+        expect(doRender).toThrowError();
     });
 
     test("display overriden component if context key matches override key", async () => {
