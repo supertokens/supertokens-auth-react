@@ -37,6 +37,7 @@ export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
     const pathsToFeatureComponentWithRecipeIdMap =
         SuperTokens.getInstanceOrThrow().getPathsToFeatureComponentWithRecipeIdMap();
     return Object.keys(pathsToFeatureComponentWithRecipeIdMap).map((path) => {
+        path = path === "" ? "/" : path;
         return (
             <Route exact key={`st-${path}`} path={path}>
                 <SuperTokensRouteWithRecipeId withRouter={withRouter} path={path} />

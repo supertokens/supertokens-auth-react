@@ -3,6 +3,7 @@ import {
     GetRedirectionURLContext as EmailVerificationGetRedirectionURLContext,
     OnHandleEventContext as EmailVerificationOnHandleEventContext,
     PreAPIHookContext as EmailVerificationPreAPIHookContext,
+    ComponentOverrideMap as EmailVerificationComponentOverrideMap,
     RecipeInterface,
 } from "../emailverification/types";
 import RecipeImplementation from "../emailverification/recipeImplementation";
@@ -18,6 +19,7 @@ export declare type User = {
 export declare type UserInputOverride = {
     emailVerification?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components?: EmailVerificationComponentOverrideMap;
     };
 };
 export declare type UserInput<T, S, R> = {
@@ -29,6 +31,7 @@ export declare type NormalisedConfig<T, S, R> = {
     override?: {
         emailVerification?: {
             functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+            components?: EmailVerificationComponentOverrideMap;
         };
     };
 } & NormalisedRecipeModuleConfig<T, S, R>;

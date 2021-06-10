@@ -20,32 +20,36 @@ import { jsx } from "@emotion/react";
 import { SignUpThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component.
  */
 
-export default function SignUpForm(
-    props: SignUpThemeProps & {
-        header?: JSX.Element;
-        footer?: JSX.Element;
+export const SignUpForm = withOverride(
+    "EmailPasswordSignUpForm",
+    function EmailPasswordSignUpForm(
+        props: SignUpThemeProps & {
+            header?: JSX.Element;
+            footer?: JSX.Element;
+        }
+    ): JSX.Element {
+        return (
+            <FormBase
+                formFields={props.formFields}
+                buttonLabel={"SIGN UP"}
+                onSuccess={props.onSuccess}
+                callAPI={(formFields) =>
+                    props.recipeImplementation.signUp({
+                        formFields,
+                        config: props.config,
+                    })
+                }
+                validateOnBlur={true}
+                showLabels={true}
+                header={props.header}
+                footer={props.footer}
+            />
+        );
     }
-): JSX.Element {
-    return (
-        <FormBase
-            formFields={props.formFields}
-            buttonLabel={"SIGN UP"}
-            onSuccess={props.onSuccess}
-            callAPI={(formFields) =>
-                props.recipeImplementation.signUp({
-                    formFields,
-                    config: props.config,
-                })
-            }
-            validateOnBlur={true}
-            showLabels={true}
-            header={props.header}
-            footer={props.footer}
-        />
-    );
-}
+);

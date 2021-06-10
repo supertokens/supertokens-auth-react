@@ -1,8 +1,6 @@
-/// <reference types="react" />
-export default function SignUpFooter({
-    termsOfServiceLink,
-    privacyPolicyLink,
-}: {
-    privacyPolicyLink?: string;
-    termsOfServiceLink?: string;
-}): JSX.Element | null;
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
+export declare const SignUpFooter: (props: {
+    privacyPolicyLink?: string | undefined;
+    termsOfServiceLink?: string | undefined;
+}) => jsx.JSX.Element;

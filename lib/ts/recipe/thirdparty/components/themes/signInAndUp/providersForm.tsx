@@ -18,8 +18,9 @@ import { jsx } from "@emotion/react";
 import { PureComponent, Fragment } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { SignInAndUpThemeProps } from "../../../types";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-export default class SignInAndUpProvidersForm extends PureComponent<SignInAndUpThemeProps, { error?: string }> {
+class ThirdPartySignInAndUpProvidersForm extends PureComponent<SignInAndUpThemeProps, { error?: string }> {
     static contextType = StyleContext;
 
     constructor(props: SignInAndUpThemeProps) {
@@ -83,3 +84,5 @@ export default class SignInAndUpProvidersForm extends PureComponent<SignInAndUpT
         );
     };
 }
+
+export const ProvidersForm = withOverride("ThirdPartySignInAndUpProvidersForm", ThirdPartySignInAndUpProvidersForm);

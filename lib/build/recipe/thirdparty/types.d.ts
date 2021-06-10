@@ -13,10 +13,20 @@ import {
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 import RecipeImplementation from "./recipeImplementation";
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
+import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
+import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
+export declare type ComponentOverrideMap = {
+    ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
+    ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
+    ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
+};
 export declare type UserInput = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type Config = UserInput &
@@ -25,6 +35,7 @@ export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     override: {
         functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {

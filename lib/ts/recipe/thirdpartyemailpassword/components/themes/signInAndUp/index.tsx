@@ -23,13 +23,13 @@ import { Fragment } from "react";
 import StyleContext, { StyleProvider } from "../../../../../styles/styleContext";
 import { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
-import Header from "./header";
+import { Header } from "./header";
 import { default as ThirdPartySignInAndUp } from "../../../../thirdparty/components/features/signInAndUp";
 import { default as EmailPasswordSignInAndUp } from "../../../../emailpassword/components/features/signInAndUp";
-import EmailPasswordSignInAndUpForm from "../../themes/signInAndUp/signInAndUpForm";
+import { SignInAndUpForm as EmailPasswordSignInAndUpForm } from "../../themes/signInAndUp/signInAndUpForm";
 import { SignInAndUpThemeProps as ThirdPartySignInAndUpThemeProps } from "../../../../thirdparty/types";
 import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
-import SignInAndUpProvidersForm from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
+import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../styles";
 import { getWindowOrThrow } from "../../../../../utils";
@@ -79,7 +79,7 @@ class SignInAndUpTheme extends React.PureComponent<
                                 recipe={this.props.thirdPartyRecipe}
                                 history={this.props.history}
                                 isEmbedded={true}>
-                                <SignInAndUpProvidersForm
+                                <ProvidersForm
                                     // Seed props. Real props will be given by parent feature.
                                     {...({} as ThirdPartySignInAndUpThemeProps)}
                                 />

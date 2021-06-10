@@ -1,11 +1,18 @@
 import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 import RecipeImplementation from "./recipeImplementation";
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
+import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 export declare type UserInputForAuthRecipeModule = {
     mode?: "OFF" | "REQUIRED";
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
+};
+export declare type ComponentOverrideMap = {
+    EmailVerificationSendVerifyEmail?: ComponentOverride<typeof SendVerifyEmail>;
+    EmailVerificationVerifyEmailLinkClicked?: ComponentOverride<typeof VerifyEmailLinkClicked>;
 };
 export declare type UserInput = UserInputForAuthRecipeModule & {
     signOut(): Promise<void>;
@@ -13,6 +20,7 @@ export declare type UserInput = UserInputForAuthRecipeModule & {
     postVerificationRedirect(history?: any): Promise<void>;
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components?: ComponentOverrideMap;
     };
 };
 export declare type Config = UserInput &
@@ -27,6 +35,7 @@ export declare type NormalisedConfig = {
     postVerificationRedirect(history?: any): Promise<void>;
     override: {
         functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components: ComponentOverrideMap;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type GetRedirectionURLContext = {

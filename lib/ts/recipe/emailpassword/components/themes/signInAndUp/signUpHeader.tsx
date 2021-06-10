@@ -20,30 +20,34 @@
 import { jsx } from "@emotion/react";
 import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component
  */
-export default function SignUpHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
-    /*
-     * Render.
-     */
+export const SignUpHeader = withOverride(
+    "EmailPasswordSignUpHeader",
+    function EmailPasswordSignUpHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
+        /*
+         * Render.
+         */
 
-    const styles = useContext(StyleContext);
-    return (
-        <Fragment>
-            <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                Sign Up
-            </div>
-            <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                    Already have an account?
-                    <span data-supertokens="link" onClick={onClick} css={styles.link}>
-                        Sign In
-                    </span>
+        const styles = useContext(StyleContext);
+        return (
+            <Fragment>
+                <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                    Sign Up
                 </div>
-            </div>
-            <div data-supertokens="divider" css={styles.divider}></div>
-        </Fragment>
-    );
-}
+                <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                    <div data-supertokens="secondaryText" css={styles.secondaryText}>
+                        Already have an account?
+                        <span data-supertokens="link" onClick={onClick} css={styles.link}>
+                            Sign In
+                        </span>
+                    </div>
+                </div>
+                <div data-supertokens="divider" css={styles.divider}></div>
+            </Fragment>
+        );
+    }
+);

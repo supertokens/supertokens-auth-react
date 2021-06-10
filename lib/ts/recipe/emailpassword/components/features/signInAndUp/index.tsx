@@ -28,6 +28,7 @@ import { getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { SignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -195,6 +196,8 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
             return <Fragment />;
         }
 
+        const componentOverrides = this.props.recipe.config.override.components;
+
         const signInAndUpFeature = this.props.recipe.config.signInAndUpFeature;
         const signUpFeature = signInAndUpFeature.signUpForm;
         const signInFeature = signInAndUpFeature.signInForm;
@@ -223,14 +226,16 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         };
 
         return (
-            <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {this.props.children === undefined && <SignInAndUpTheme {...props} />}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children && React.cloneElement(this.props.children, props)}
-                </Fragment>
-            </FeatureWrapper>
+            <ComponentOverrideContext.Provider value={componentOverrides}>
+                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {this.props.children === undefined && <SignInAndUpTheme {...props} />}
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {this.props.children && React.cloneElement(this.props.children, props)}
+                    </Fragment>
+                </FeatureWrapper>
+            </ComponentOverrideContext.Provider>
         );
     };
 }

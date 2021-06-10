@@ -19,10 +19,10 @@
 import { jsx } from "@emotion/react";
 import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
-import SignUpFooter from "./signUpFooter";
+import { SignUpFooter } from "./signUpFooter";
 import { SignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
-import SignInAndUpProvidersForm from "./providersForm";
+import { ProvidersForm } from "./providersForm";
 /*
  * Component.
  */
@@ -37,7 +37,7 @@ function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
                         Sign Up / Sign In
                     </div>
                     <div data-supertokens="divider" css={styles.divider}></div>
-                    <SignInAndUpProvidersForm {...props} />
+                    <ProvidersForm {...props} />
                     <SignUpFooter
                         privacyPolicyLink={props.config.signInAndUpFeature.privacyPolicyLink}
                         termsOfServiceLink={props.config.signInAndUpFeature.termsOfServiceLink}

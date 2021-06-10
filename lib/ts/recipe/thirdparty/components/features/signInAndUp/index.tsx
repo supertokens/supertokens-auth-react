@@ -29,6 +29,7 @@ import { getStyles } from "../../../components/themes/styles";
 import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
 import { getRedirectToPathFromURL } from "../../../../../utils";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
@@ -106,6 +107,8 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
             return <Fragment />;
         }
 
+        const componentOverrides = this.props.recipe.config.override.components;
+
         const signInAndUpFeature = this.props.recipe.config.signInAndUpFeature;
 
         const providers = signInAndUpFeature.providers.map((provider) => ({
@@ -121,21 +124,23 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         };
 
         return (
-            <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
-                <StyleProvider
-                    rawPalette={this.props.recipe.config.palette}
-                    defaultPalette={defaultPalette}
-                    styleFromInit={signInAndUpFeature.style}
-                    getDefaultStyles={getStyles}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {this.props.children === undefined && <SignInAndUpTheme {...props} />}
+            <ComponentOverrideContext.Provider value={componentOverrides}>
+                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                    <StyleProvider
+                        rawPalette={this.props.recipe.config.palette}
+                        defaultPalette={defaultPalette}
+                        styleFromInit={signInAndUpFeature.style}
+                        getDefaultStyles={getStyles}>
+                        <Fragment>
+                            {/* No custom theme, use default. */}
+                            {this.props.children === undefined && <SignInAndUpTheme {...props} />}
 
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children && React.cloneElement(this.props.children, props)}
-                    </Fragment>
-                </StyleProvider>
-            </FeatureWrapper>
+                            {/* Otherwise, custom theme is provided, propagate props. */}
+                            {this.props.children && React.cloneElement(this.props.children, props)}
+                        </Fragment>
+                    </StyleProvider>
+                </FeatureWrapper>
+            </ComponentOverrideContext.Provider>
         );
     };
 }

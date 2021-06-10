@@ -34,6 +34,7 @@ export function normaliseThirdPartyConfig(config: Config, allowEmptyProviders = 
 
     const override: any = {
         functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+        components: {},
         ...config.override,
     };
 

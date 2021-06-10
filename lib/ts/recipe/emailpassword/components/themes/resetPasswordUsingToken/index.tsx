@@ -20,8 +20,8 @@ import * as React from "react";
 import { ResetPasswordUsingTokenThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 
-import EnterEmail from "./enterEmail";
-import SubmitNewPassword from "./submitNewPassword";
+import { EnterEmail } from "./enterEmail";
+import { SubmitNewPassword } from "./submitNewPassword";
 import { getStyles } from "../styles/styles";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";

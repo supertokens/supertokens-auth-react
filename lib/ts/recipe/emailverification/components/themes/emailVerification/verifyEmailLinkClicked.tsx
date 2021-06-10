@@ -28,12 +28,13 @@ import StyleContext from "../../../../../styles/styleContext";
 import { Button } from "../../../../emailpassword/components/library";
 
 import { VerifyEmailLinkClickedThemeProps } from "../../../types";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component.
  */
 
-export default class VerifyEmailLinkClicked extends PureComponent<
+class EmailVerificationVerifyEmailLinkClicked extends PureComponent<
     VerifyEmailLinkClickedThemeProps,
     { status: "LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL" }
 > {
@@ -140,3 +141,8 @@ export default class VerifyEmailLinkClicked extends PureComponent<
         );
     }
 }
+
+export const VerifyEmailLinkClicked = withOverride(
+    "EmailVerificationVerifyEmailLinkClicked",
+    EmailVerificationVerifyEmailLinkClicked
+);

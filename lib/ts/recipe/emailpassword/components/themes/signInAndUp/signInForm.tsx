@@ -22,40 +22,44 @@ import { jsx } from "@emotion/react";
 import { SignInThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component.
  */
 
-export default function SignInForm(
-    props: SignInThemeProps & {
-        header?: JSX.Element;
-        footer?: JSX.Element;
+export const SignInForm = withOverride(
+    "EmailPasswordSignInForm",
+    function EmailPasswordSignInForm(
+        props: SignInThemeProps & {
+            header?: JSX.Element;
+            footer?: JSX.Element;
+        }
+    ): JSX.Element {
+        return (
+            <FormBase
+                formFields={props.formFields}
+                buttonLabel={"SIGN IN"}
+                onSuccess={props.onSuccess}
+                callAPI={async (formFields) => {
+                    const response = await props.recipeImplementation.signIn({
+                        formFields,
+                        config: props.config,
+                    });
+                    if (response.status === "WRONG_CREDENTIALS_ERROR") {
+                        return {
+                            status: "GENERAL_ERROR",
+                            message: "Incorrect email and password combination",
+                        };
+                    } else {
+                        return response;
+                    }
+                }}
+                validateOnBlur={false}
+                showLabels={true}
+                header={props.header}
+                footer={props.footer}
+            />
+        );
     }
-): JSX.Element {
-    return (
-        <FormBase
-            formFields={props.formFields}
-            buttonLabel={"SIGN IN"}
-            onSuccess={props.onSuccess}
-            callAPI={async (formFields) => {
-                const response = await props.recipeImplementation.signIn({
-                    formFields,
-                    config: props.config,
-                });
-                if (response.status === "WRONG_CREDENTIALS_ERROR") {
-                    return {
-                        status: "GENERAL_ERROR",
-                        message: "Incorrect email and password combination",
-                    };
-                } else {
-                    return response;
-                }
-            }}
-            validateOnBlur={false}
-            showLabels={true}
-            header={props.header}
-            footer={props.footer}
-        />
-    );
-}
+);

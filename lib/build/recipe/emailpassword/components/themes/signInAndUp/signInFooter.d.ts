@@ -1,4 +1,3 @@
-/// <reference types="react" />
-export default function SignInFooter({ onClick }: {
-    onClick: (() => void) | undefined;
-}): JSX.Element;
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
+export declare const SignInFooter: (props: { onClick: (() => void) | undefined }) => jsx.JSX.Element;

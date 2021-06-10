@@ -35,11 +35,37 @@ import {
 } from "../authRecipeModule/types";
 import RecipeImplementation from "./recipeImplementation";
 
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import { SignInHeader } from "./components/themes/signInAndUp/signInHeader";
+import { SignIn } from "./components/themes/signInAndUp/signIn";
+import { SignInFooter } from "./components/themes/signInAndUp/signInFooter";
+import { SignInForm } from "./components/themes/signInAndUp/signInForm";
+import { SignUp } from "./components/themes/signInAndUp/signUp";
+import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
+import { SignUpForm } from "./components/themes/signInAndUp/signUpForm";
+import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
+import { EnterEmail } from "./components/themes/resetPasswordUsingToken/enterEmail";
+import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
+
+export type ComponentOverrideMap = {
+    EmailPasswordSignIn?: ComponentOverride<typeof SignIn>;
+    EmailPasswordSignInFooter?: ComponentOverride<typeof SignInFooter>;
+    EmailPasswordSignInForm?: ComponentOverride<typeof SignInForm>;
+    EmailPasswordSignInHeader?: ComponentOverride<typeof SignInHeader>;
+    EmailPasswordSignUp?: ComponentOverride<typeof SignUp>;
+    EmailPasswordSignUpFooter?: ComponentOverride<typeof SignUpFooter>;
+    EmailPasswordSignUpForm?: ComponentOverride<typeof SignUpForm>;
+    EmailPasswordSignUpHeader?: ComponentOverride<typeof SignUpHeader>;
+    EmailPasswordEnterEmail?: ComponentOverride<typeof EnterEmail>;
+    EmailPasswordSubmitNewPassword?: ComponentOverride<typeof SubmitNewPassword>;
+};
+
 export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
@@ -51,6 +77,7 @@ export type NormalisedConfig = {
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     override: {
         functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
@@ -314,31 +341,31 @@ export type OnHandleEventContext =
       };
 
 export type ResetPasswordUsingTokenThemeProps = {
-    enterEmailForm: EnterEmailThemeProps;
-    submitNewPasswordForm: SubmitNewPasswordThemeProps | undefined;
+    enterEmailForm: EnterEmailProps;
+    submitNewPasswordForm: SubmitNewPasswordProps | undefined;
     config: NormalisedConfig;
 };
 
-export type EnterEmailThemeProps = FormThemeBaseProps & {
+export type EnterEmailProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
 };
 
-export type SubmitNewPasswordThemeProps = FormThemeBaseProps & {
+export type SubmitNewPasswordProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSignInClicked: () => void;
     token: string;
 };
 
-export type EnterEmailThemeState = {
+export type EnterEmailState = {
     /*
      * Enter Email Status
      */
     status: "READY" | "SENT";
 };
 
-export type SubmitNewPasswordThemeState = {
+export type SubmitNewPasswordState = {
     /*
      * Submit New Password Theme Status
      */

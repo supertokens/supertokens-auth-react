@@ -26,6 +26,7 @@ import { FeatureBaseProps } from "../../../../../types";
 import { getWindowOrThrow } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -59,6 +60,8 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
     render = (): JSX.Element => {
         const enterEmailFormFeature = this.props.recipe.config.resetPasswordUsingTokenFeature.enterEmailForm;
 
+        const componentOverrides = this.props.recipe.config.override.components;
+
         const submitNewPasswordFormFeature =
             this.props.recipe.config.resetPasswordUsingTokenFeature.submitNewPasswordForm;
 
@@ -90,14 +93,16 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
         };
 
         return (
-            <FeatureWrapper isEmbedded={this.getIsEmbedded()} useShadowDom={this.props.recipe.config.useShadowDom}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children && React.cloneElement(this.props.children, props)}
-                </Fragment>
-            </FeatureWrapper>
+            <ComponentOverrideContext.Provider value={componentOverrides}>
+                <FeatureWrapper isEmbedded={this.getIsEmbedded()} useShadowDom={this.props.recipe.config.useShadowDom}>
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {this.props.children && React.cloneElement(this.props.children, props)}
+                    </Fragment>
+                </FeatureWrapper>
+            </ComponentOverrideContext.Provider>
         );
     };
 }

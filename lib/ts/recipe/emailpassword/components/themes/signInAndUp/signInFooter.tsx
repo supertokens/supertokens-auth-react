@@ -12,30 +12,24 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
-/*
- * Imports
- */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-/*
- * Component
- */
-export default function SignInFooter({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
-    /*
-     * Render.
-     */
+export const SignInFooter = withOverride(
+    "EmailPasswordSignInFooter",
+    function EmailPasswordSignInFooter({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
+        const styles = useContext(StyleContext);
 
-    const styles = useContext(StyleContext);
-    return (
-        <div
-            data-supertokens="link secondaryText forgotPasswordLink"
-            css={[styles.link, styles.secondaryText, styles.forgotPasswordLink]}
-            onClick={onClick}>
-            Forgot password?
-        </div>
-    );
-}
+        return (
+            <div
+                data-supertokens="link secondaryText forgotPasswordLink"
+                css={[styles.link, styles.secondaryText, styles.forgotPasswordLink]}
+                onClick={onClick}>
+                Forgot password?
+            </div>
+        );
+    }
+);

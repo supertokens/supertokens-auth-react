@@ -31,12 +31,23 @@ import {
 import EPRecipe from "../emailpassword/recipe";
 import TPRecipe from "../thirdparty/recipe";
 import RecipeImplementation from "./recipeImplementation";
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpassword/types";
+import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
+import { Header } from "./components/themes/signInAndUp/header";
+import { SignInAndUpForm } from "./components/themes/signInAndUp/signInAndUpForm";
+export declare type ComponentOverrideMap = EmailPasswordOverrideMap &
+    ThirdPartyOverrideMap & {
+        ThirdPartyEmailPasswordHeader?: ComponentOverride<typeof Header>;
+        ThirdPartyEmailPasswordSignInAndUpForm?: ComponentOverride<typeof SignInAndUpForm>;
+    };
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     disableEmailPassword?: boolean;
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type Config = UserInput &
@@ -47,6 +58,7 @@ export declare type NormalisedConfig = {
     disableEmailPassword: boolean;
     override: {
         functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {

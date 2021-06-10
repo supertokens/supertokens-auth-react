@@ -146,10 +146,12 @@ SuperTokens.init({
     recipeList,
 });
 
+let doNotUseReactRouterDom = localStorage.getItem("useReactRouterDom") === "false";
+
 /* App */
 function App() {
     const router = getQueryParams("router");
-    if (router === "no-router") {
+    if (router === "no-router" || doNotUseReactRouterDom) {
         return <AppWithoutRouter />;
     }
 

@@ -16,6 +16,10 @@ import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 import RecipeImplementation from "./recipeImplementation";
 
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
+import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
+
 // For AuthRecipeModule, we don't need to take signOut,
 // redirectToSignIn and postVerificationRedirect as inputs from the user.
 // So we have UserInputForAuthRecipeModule for AuthRecipeModule, and UserInput
@@ -26,12 +30,19 @@ export type UserInputForAuthRecipeModule = {
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
 };
+
+export type ComponentOverrideMap = {
+    EmailVerificationSendVerifyEmail?: ComponentOverride<typeof SendVerifyEmail>;
+    EmailVerificationVerifyEmailLinkClicked?: ComponentOverride<typeof VerifyEmailLinkClicked>;
+};
+
 export type UserInput = UserInputForAuthRecipeModule & {
     signOut(): Promise<void>;
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components?: ComponentOverrideMap;
     };
 };
 
@@ -48,6 +59,7 @@ export type NormalisedConfig = {
     postVerificationRedirect(history?: any): Promise<void>;
     override: {
         functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        components: ComponentOverrideMap;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 

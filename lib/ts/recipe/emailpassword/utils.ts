@@ -64,6 +64,7 @@ export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
 
     const override: any = {
         functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+        components: {},
         ...config.override,
     };
 
