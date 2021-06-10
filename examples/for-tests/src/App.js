@@ -303,7 +303,7 @@ function getEmailPasswordConfigs() {
         palette: theme.colors,
         preAPIHook: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
-            return context.requestInit;
+            return context;
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
@@ -351,7 +351,7 @@ function getThirdPartyConfigs() {
     return ThirdParty.init({
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
-            return context.requestInit;
+            return context;
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY GET_REDIRECTION_URL ${context.action}`);
@@ -390,7 +390,7 @@ function getThirdPartyEmailPasswordConfigs() {
     return ThirdPartyEmailPassword.init({
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
-            return context.requestInit;
+            return context;
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);

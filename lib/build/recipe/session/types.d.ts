@@ -1,25 +1,27 @@
-import { Config as RecipeModuleConfig } from "../recipeModule/types";
-import RecipeImplementation from "./recipeImplementation";
-export declare type UserInput = {
+import { RecipeImplementation, RecipeInterface } from "supertokens-website";
+export declare type InputType = {
+    apiDomain?: string;
+    apiBasePath?: string;
     sessionScope?: string;
-    refreshAPICustomHeaders?: any;
-    signoutAPICustomHeaders?: any;
     sessionExpiredStatusCode?: number;
     autoAddCredentials?: boolean;
     isInIframe?: boolean;
+    cookieDomain?: string;
+    preAPIHook?: (context: {
+        action: "SIGN_OUT" | "REFRESH_SESSION";
+        requestInit: RequestInit;
+        url: string;
+    }) => Promise<{
+        url: string;
+        requestInit: RequestInit;
+    }>;
+    onHandleEvent?: (context: { action: "SIGN_OUT" | "REFRESH_SESSION" | "UNAUTHORISED" }) => void;
     override?: {
         functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
     };
 };
-export declare type Config = UserInput & RecipeModuleConfig<unknown, unknown, unknown>;
 export declare type SessionContextType = {
     doesSessionExist: boolean;
     userId: string;
     jwtPayload: any;
 };
-export interface RecipeInterface {
-    getUserId(): Promise<string>;
-    getJWTPayloadSecurely(): Promise<any>;
-    doesSessionExist(): Promise<boolean>;
-    signOut(): Promise<void>;
-}

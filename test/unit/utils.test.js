@@ -14,8 +14,8 @@
  */
 import { getRecipeIdFromSearch, validateForm, appendQueryParamsToURL } from "../../lib/build/utils";
 
-import { normaliseURLPathOrThrowError } from "../../lib/build/normalisedURLPath";
-import { normaliseURLDomainOrThrowError } from "../../lib/build/normalisedURLDomain";
+import NormalisedURLPath from "../../lib/build/normalisedURLPath";
+import NormalisedURLDomain from "../../lib/build/normalisedURLDomain";
 
 const assert = require("assert");
 import { mockWindowLocation } from "../helpers";
@@ -27,6 +27,10 @@ describe("Config tests", function () {
     });
 
     it("testing URL path normalisation", async function () {
+        function normaliseURLPathOrThrowError(input) {
+            return new NormalisedURLPath(input).getAsStringDangerous();
+        }
+
         assert.strictEqual(normaliseURLPathOrThrowError("exists?email=john.doe%40gmail.com"), "/exists");
         assert.strictEqual(
             normaliseURLPathOrThrowError("/auth/email/exists?email=john.doe%40gmail.com"),
@@ -95,6 +99,9 @@ describe("Config tests", function () {
     });
 
     it("testing URL domain normalisation", async function () {
+        function normaliseURLDomainOrThrowError(input) {
+            return new NormalisedURLDomain(input).getAsStringDangerous();
+        }
         assert(normaliseURLDomainOrThrowError("http://api.example.com") === "http://api.example.com");
         assert(normaliseURLDomainOrThrowError("https://api.example.com") === "https://api.example.com");
         assert(normaliseURLDomainOrThrowError("http://api.example.com?hello=1") === "http://api.example.com");

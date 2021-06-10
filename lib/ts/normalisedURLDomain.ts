@@ -25,7 +25,7 @@ export default class NormalisedURLDomain {
     };
 }
 
-export function normaliseURLDomainOrThrowError(input: string, ignoreProtocol = false): string {
+function normaliseURLDomainOrThrowError(input: string, ignoreProtocol = false): string {
     function isAnIpAddress(ipaddress: string) {
         return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
             ipaddress

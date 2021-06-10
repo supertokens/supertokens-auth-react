@@ -14,11 +14,3 @@ export declare function getCurrentNormalisedUrlPath(): NormalisedURLPath;
 export declare function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string;
 export declare function getWindowOrThrow(): any;
 export declare function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean;
-export declare function isRequestInit(
-    x:
-        | RequestInit
-        | {
-              url?: string;
-              requestInit: RequestInit;
-          }
-): x is RequestInit;

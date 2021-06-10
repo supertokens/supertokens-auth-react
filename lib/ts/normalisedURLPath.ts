@@ -29,17 +29,12 @@ export default class NormalisedURLPath {
     };
 
     getAsStringDangerous = (): string => {
-        // In case path is empty, add slash.
-        if (this.value.length === 0) {
-            return "/";
-        }
-
         // Otherwise, return value.
         return this.value;
     };
 }
 
-export function normaliseURLPathOrThrowError(input: string): string {
+function normaliseURLPathOrThrowError(input: string): string {
     input = input.trim();
     try {
         if (!input.startsWith("http://") && !input.startsWith("https://")) {

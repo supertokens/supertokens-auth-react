@@ -13,14 +13,8 @@
  * under the License.
  */
 import NormalisedURLPath from "./normalisedURLPath";
-import { isRequestInit } from "./utils";
 import { supported_fdi } from "./version";
-import { NormalisedAppInfo } from "./types";
-
-type PreAPIHookFunction = (context: {
-    requestInit: RequestInit;
-    url: string;
-}) => Promise<RequestInit | { url?: string; requestInit: RequestInit }>;
+import { NormalisedAppInfo, PostAPIHookFunction, PreAPIHookFunction } from "./types";
 
 export default class Querier {
     recipeId: string;
@@ -36,7 +30,8 @@ export default class Querier {
         path: string,
         config: RequestInit,
         queryParams?: Record<string, string>,
-        preAPIHook?: PreAPIHookFunction
+        preAPIHook?: PreAPIHookFunction,
+        postAPIHook?: PostAPIHookFunction
     ): Promise<T> => {
         const result = await this.fetch(
             this.getFullUrl(path, queryParams),
@@ -44,60 +39,73 @@ export default class Querier {
                 method: "GET",
                 ...config,
             },
-            preAPIHook
+            preAPIHook,
+            postAPIHook
         );
-        if (result.status >= 300) {
-            throw result;
-        }
         return await result.json();
     };
 
-    post = async <T>(path: string, config: RequestInit, preAPIHook?: PreAPIHookFunction): Promise<T> => {
+    post = async <T>(
+        path: string,
+        config: RequestInit,
+        preAPIHook?: PreAPIHookFunction,
+        postAPIHook?: PostAPIHookFunction
+    ): Promise<T> => {
         const result = await this.fetch(
             this.getFullUrl(path),
             {
                 method: "POST",
                 ...config,
             },
-            preAPIHook
+            preAPIHook,
+            postAPIHook
         );
-        if (result.status >= 300) {
-            throw result;
-        }
         return await result.json();
     };
 
-    delete = async <T>(path: string, config: RequestInit, preAPIHook?: PreAPIHookFunction): Promise<T> => {
+    delete = async <T>(
+        path: string,
+        config: RequestInit,
+        preAPIHook?: PreAPIHookFunction,
+        postAPIHook?: PostAPIHookFunction
+    ): Promise<T> => {
         const result = await this.fetch(
             this.getFullUrl(path),
             {
                 method: "DELETE",
                 ...config,
             },
-            preAPIHook
+            preAPIHook,
+            postAPIHook
         );
-        if (result.status >= 300) {
-            throw result;
-        }
         return await result.json();
     };
 
-    put = async <T>(path: string, config: RequestInit, preAPIHook?: PreAPIHookFunction): Promise<T> => {
+    put = async <T>(
+        path: string,
+        config: RequestInit,
+        preAPIHook?: PreAPIHookFunction,
+        postAPIHook?: PostAPIHookFunction
+    ): Promise<T> => {
         const result = await this.fetch(
             this.getFullUrl(path),
             {
                 method: "PUT",
                 ...config,
             },
-            preAPIHook
+            preAPIHook,
+            postAPIHook
         );
-        if (result.status >= 300) {
-            throw result;
-        }
+
         return await result.json();
     };
 
-    fetch = async (url: string, config: RequestInit, preAPIHook?: PreAPIHookFunction): Promise<Response> => {
+    fetch = async (
+        url: string,
+        config: RequestInit,
+        preAPIHook?: PreAPIHookFunction,
+        postAPIHook?: PostAPIHookFunction
+    ): Promise<Response> => {
         let headers;
         if (config === undefined) {
             headers = {};
@@ -119,7 +127,19 @@ export default class Querier {
             },
         });
 
-        return await fetch(modifiedUrl, requestInit);
+        const result = await fetch(modifiedUrl, requestInit);
+
+        if (result.status >= 300) {
+            throw result;
+        }
+
+        return postAPIHook === undefined
+            ? result
+            : await postAPIHook({
+                  requestInit,
+                  url: modifiedUrl,
+                  response: result,
+              });
     };
 
     /*
@@ -137,17 +157,7 @@ export default class Querier {
             };
         }
         const result = await context.preAPIHook({ url: context.url, requestInit: context.requestInit });
-        if (isRequestInit(result)) {
-            return {
-                url: context.url,
-                requestInit: result as RequestInit,
-            };
-        } else {
-            return {
-                url: context.url,
-                ...result,
-            };
-        }
+        return result;
     };
 
     getFullUrl = (pathStr: string, queryParams?: Record<string, string>): string => {

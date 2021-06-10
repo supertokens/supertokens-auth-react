@@ -20,11 +20,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Removes `GET_REDIRECTION_URL` from the possible action types for `getRedirectionURL`.
 -   Changes `redirectToAuth` to take an object and adds `redirectBack` param, which can be used to indicate if the user should be redirected to the current page.
 -   Removes `getRefreshURLDomain` function from session recipe.
--   Removes `SIGN_OUT` pre API hook as it's used within the supertokens-website SDK.
+-   Moves `SIGN_OUT` even and pre API hook into the Session recipe.
+-   Change to type of `preAPIHook` function
+-   Uses supertokens-website version >= 8.0
 
 ### Fixed:
 
 -   State update post unmounting when using EmailVerification wrapper.
+
+## [0.13.2] - 2021-06-05
+
+### Added:
+
+-   Allow specifying of `cookieDomain` in config to add interceptors to multiple API subdomain: https://github.com/supertokens/supertokens-website/issues/58
 
 ## [0.13.1] - 2021-05-28
 

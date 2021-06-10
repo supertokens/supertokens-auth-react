@@ -248,3 +248,14 @@ export type FeatureBaseProps = {
      */
     isEmbedded?: boolean;
 };
+
+export type PreAPIHookFunction = (context: {
+    requestInit: RequestInit;
+    url: string;
+}) => Promise<{ url: string; requestInit: RequestInit }>;
+
+export type PostAPIHookFunction = (context: {
+    requestInit: RequestInit;
+    url: string;
+    response: Response;
+}) => Promise<Response>;
