@@ -4,7 +4,7 @@ import { ComponentOverride } from "../../components/componentOverride/componentO
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 export declare type UserInputForAuthRecipeModule = {
-    mode?: "OFF" | "REQUIRED";
+    mode?: "OFF" | "REQUIRED" | "OPTIONAL";
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
@@ -25,7 +25,7 @@ export declare type UserInput = UserInputForAuthRecipeModule & {
 export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type NormalisedConfig = {
-    mode: "OFF" | "REQUIRED";
+    mode: "OFF" | "REQUIRED" | "OPTIONAL";
     disableDefaultImplementation: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
