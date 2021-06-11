@@ -14,9 +14,8 @@
  */
 
 import { NormalisedBaseConfig } from "../../types";
-import { Config, NormalisedConfig } from "./types";
+import { Config, NormalisedConfig, RecipeInterface } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
-import RecipeImplementation from "./recipeImplementation";
 
 export function normaliseEmailVerificationFeature(config: Config): NormalisedConfig {
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
@@ -41,7 +40,7 @@ export function normaliseEmailVerificationFeature(config: Config): NormalisedCon
     };
 
     const override: any = {
-        functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+        functions: (originalImplementation: RecipeInterface) => originalImplementation,
         components: {},
         ...config.override,
     };

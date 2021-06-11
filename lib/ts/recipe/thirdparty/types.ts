@@ -26,7 +26,6 @@ import {
 } from "../authRecipeModule/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
-import RecipeImplementation from "./recipeImplementation";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
@@ -42,7 +41,7 @@ export type ComponentOverrideMap = {
 export type UserInput = {
     signInAndUpFeature: SignInAndUpFeatureUserInput;
     override?: {
-        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -53,7 +52,7 @@ export type Config = UserInput &
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     override: {
-        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
         components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;

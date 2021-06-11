@@ -1,4 +1,4 @@
-import { RecipeImplementation, RecipeInterface } from "supertokens-website";
+import { RecipeInterface } from "supertokens-website";
 export declare type InputType = {
     apiDomain?: string;
     apiBasePath?: string;
@@ -17,7 +17,7 @@ export declare type InputType = {
     }>;
     onHandleEvent?: (context: { action: "SIGN_OUT" | "REFRESH_SESSION" | "UNAUTHORISED" }) => void;
     override?: {
-        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
 };
 export declare type SessionContextType = {

@@ -20,7 +20,6 @@ import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventCo
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
-import RecipeImplementation from "./recipeImplementation";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -100,5 +99,4 @@ export {
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
-    RecipeImplementation,
 };

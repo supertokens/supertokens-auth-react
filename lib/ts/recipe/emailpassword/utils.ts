@@ -36,7 +36,7 @@ import {
     defaultValidate,
 } from "./validators";
 import { normaliseAuthRecipeModuleConfig } from "../authRecipeModule/utils";
-import { RecipeImplementation } from "./";
+import { RecipeInterface } from "./types";
 
 export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
@@ -63,7 +63,7 @@ export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
         );
 
     const override: any = {
-        functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+        functions: (originalImplementation: RecipeInterface) => originalImplementation,
         components: {},
         ...config.override,
     };

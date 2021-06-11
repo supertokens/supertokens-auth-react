@@ -14,7 +14,6 @@
  */
 import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
-import RecipeImplementation from "./recipeImplementation";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
@@ -41,7 +40,7 @@ export type UserInput = UserInputForAuthRecipeModule & {
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override?: {
-        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;
     };
 };
@@ -58,7 +57,7 @@ export type NormalisedConfig = {
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override: {
-        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
         components: ComponentOverrideMap;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;

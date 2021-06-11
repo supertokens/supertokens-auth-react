@@ -1,4 +1,4 @@
-import { RecipeInterface, RecipeImplementation } from "supertokens-website";
+import { RecipeInterface } from "supertokens-website";
 import SessionAuthComponent from "./sessionAuth";
 import { InputType } from "./types";
 export default class SessionAPIWrapper {
@@ -32,6 +32,5 @@ export {
     addAxiosInterceptors,
     signOut,
     RecipeInterface,
-    RecipeImplementation,
     InputType,
 };

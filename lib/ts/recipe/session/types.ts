@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { RecipeImplementation, RecipeInterface } from "supertokens-website";
+import { RecipeInterface } from "supertokens-website";
 
 export type InputType = {
     apiDomain?: string;
@@ -30,7 +30,7 @@ export type InputType = {
     }) => Promise<{ url: string; requestInit: RequestInit }>;
     onHandleEvent?: (context: { action: "SIGN_OUT" | "REFRESH_SESSION" | "UNAUTHORISED" }) => void;
     override?: {
-        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };
 };
 

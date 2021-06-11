@@ -30,7 +30,6 @@ import {
 } from "../authRecipeModule/types";
 import EPRecipe from "../emailpassword/recipe";
 import TPRecipe from "../thirdparty/recipe";
-import RecipeImplementation from "./recipeImplementation";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpassword/types";
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
@@ -46,7 +45,7 @@ export declare type UserInput = {
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     disableEmailPassword?: boolean;
     override?: {
-        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -57,7 +56,7 @@ export declare type NormalisedConfig = {
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     disableEmailPassword: boolean;
     override: {
-        functions: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
         components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;

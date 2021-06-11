@@ -14,7 +14,7 @@
  */
 
 import Session from "./recipe";
-import { RecipeInterface, RecipeImplementation } from "supertokens-website";
+import { RecipeInterface } from "supertokens-website";
 import SessionAuthComponent from "./sessionAuth";
 import useSessionContextFunc from "./useSessionContext";
 import { InputType } from "./types";
@@ -75,6 +75,5 @@ export {
     addAxiosInterceptors,
     signOut,
     RecipeInterface,
-    RecipeImplementation,
     InputType,
 };

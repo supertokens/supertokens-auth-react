@@ -16,14 +16,13 @@
 /*
  * Imports.
  */
-import { Config, NormalisedConfig } from "./types";
+import { Config, NormalisedConfig, RecipeInterface } from "./types";
 
 import { normaliseEmailPasswordConfig } from "../emailpassword/utils";
 import { normaliseThirdPartyConfig } from "../thirdparty/utils";
 import { Config as ThirdPartyConfig } from "../thirdparty/types";
 import { Config as EmailPasswordConfig } from "../emailpassword/types";
 import { normaliseAuthRecipeModuleConfig } from "../authRecipeModule/utils";
-import RecipeImplementation from "./recipeImplementation";
 
 /*
  * Methods.
@@ -41,7 +40,7 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
     }
 
     const override: any = {
-        functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+        functions: (originalImplementation: RecipeInterface) => originalImplementation,
         components: {},
         ...config.override,
     };

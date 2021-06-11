@@ -18,9 +18,14 @@
  */
 import Provider from "./providers";
 import Custom from "./providers/custom";
-import { NormalisedSignInAndUpFeatureConfig, NormalisedConfig, SignInAndUpFeatureUserInput, Config } from "./types";
+import {
+    NormalisedSignInAndUpFeatureConfig,
+    NormalisedConfig,
+    SignInAndUpFeatureUserInput,
+    Config,
+    RecipeInterface,
+} from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
-import RecipeImplementation from "./recipeImplementation";
 import Recipe from "./recipe";
 
 /*
@@ -33,7 +38,7 @@ export function normaliseThirdPartyConfig(config: Config, allowEmptyProviders = 
     );
 
     const override: any = {
-        functions: (originalImplementation: RecipeImplementation) => originalImplementation,
+        functions: (originalImplementation: RecipeInterface) => originalImplementation,
         components: {},
         ...config.override,
     };

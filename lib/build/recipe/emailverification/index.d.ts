@@ -2,7 +2,6 @@
 import { UserInput } from "./types";
 import EmailVerificationTheme from "./components/themes/emailVerification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
-import RecipeImplementation from "./recipeImplementation";
 export default class Wrapper {
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
@@ -29,5 +28,4 @@ export {
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
-    RecipeImplementation,
 };

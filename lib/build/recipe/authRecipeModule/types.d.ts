@@ -6,7 +6,6 @@ import {
     ComponentOverrideMap as EmailVerificationComponentOverrideMap,
     RecipeInterface,
 } from "../emailverification/types";
-import RecipeImplementation from "../emailverification/recipeImplementation";
 import {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
@@ -18,7 +17,7 @@ export declare type User = {
 };
 export declare type UserInputOverride = {
     emailVerification?: {
-        functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: EmailVerificationComponentOverrideMap;
     };
 };
@@ -30,7 +29,7 @@ export declare type NormalisedConfig<T, S, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
     override?: {
         emailVerification?: {
-            functions?: (originalImplementation: RecipeImplementation) => RecipeInterface;
+            functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
             components?: EmailVerificationComponentOverrideMap;
         };
     };

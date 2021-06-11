@@ -27,7 +27,6 @@ import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-import RecipeImplementation from "./recipeImplementation";
 
 export default class Wrapper {
     /*
@@ -106,6 +105,5 @@ export {
     PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
-    RecipeImplementation,
     RecipeInterface,
 };
