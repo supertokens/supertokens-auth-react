@@ -126,14 +126,18 @@ const formFields = [
 
 let recipeList = [Session.init()];
 
+const testContext = {
+    disableDefaultImplementation: getQueryParams("disableDefaultImplementation") === "true",
+};
+
 if (authRecipe === "thirdparty") {
-    recipeList = [getThirdPartyConfigs(), ...recipeList];
+    recipeList = [getThirdPartyConfigs(testContext), ...recipeList];
 } else if (authRecipe === "emailpassword") {
-    recipeList = [getEmailPasswordConfigs(), ...recipeList];
+    recipeList = [getEmailPasswordConfigs(testContext), ...recipeList];
 } else if (authRecipe === "both") {
-    recipeList = [getEmailPasswordConfigs(), getThirdPartyConfigs(), ...recipeList];
+    recipeList = [getEmailPasswordConfigs(testContext), getThirdPartyConfigs(testContext), ...recipeList];
 } else if (authRecipe === "thirdpartyemailpassword") {
-    recipeList = [getThirdPartyEmailPasswordConfigs(), ...recipeList];
+    recipeList = [getThirdPartyEmailPasswordConfigs(testContext), ...recipeList];
 }
 
 SuperTokens.init({
@@ -300,7 +304,7 @@ function SessionInfoTable({ sessionInfo }) {
     );
 }
 
-function getEmailPasswordConfigs() {
+function getEmailPasswordConfigs({ disableDefaultImplementation }) {
     return EmailPassword.init({
         palette: theme.colors,
         preAPIHook: async (context) => {
@@ -335,6 +339,7 @@ function getEmailPasswordConfigs() {
             },
         },
         signInAndUpFeature: {
+            disableDefaultImplementation,
             defaultToSignUp,
             signInForm: {
                 style: theme.style,
@@ -349,7 +354,7 @@ function getEmailPasswordConfigs() {
     });
 }
 
-function getThirdPartyConfigs() {
+function getThirdPartyConfigs({ disableDefaultImplementation }) {
     return ThirdParty.init({
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
@@ -371,6 +376,7 @@ function getThirdPartyConfigs() {
             mode: emailVerificationMode,
         },
         signInAndUpFeature: {
+            disableDefaultImplementation,
             style: theme.style,
             privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
@@ -388,7 +394,7 @@ function getThirdPartyConfigs() {
     });
 }
 
-function getThirdPartyEmailPasswordConfigs() {
+function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
     return ThirdPartyEmailPassword.init({
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
@@ -403,7 +409,6 @@ function getThirdPartyEmailPasswordConfigs() {
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
         },
-
         useShadowDom,
         palette: theme.colors,
         emailVerificationFeature: {
@@ -411,6 +416,7 @@ function getThirdPartyEmailPasswordConfigs() {
         },
         resetPasswordUsingTokenFeature: {},
         signInAndUpFeature: {
+            disableDefaultImplementation,
             signInForm: {},
             signUpForm: {
                 formFields,
