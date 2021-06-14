@@ -2,6 +2,8 @@ import assert from "assert";
 import puppeteer from "puppeteer";
 import { TEST_SERVER_BASE_URL } from "../constants";
 import { AuthPage } from "./pages/AuthPage";
+import { EmailVerificationPage } from "./pages/EmailVerificationPage";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 
 describe("Embed components", async () => {
     let browser;
@@ -35,12 +37,12 @@ describe("Embed components", async () => {
         await browser.close();
     });
 
-    describe("EmailPassword recipe", () => {
+    describe("EmailPassword SignInAndUp feature", () => {
         const testContext = {
             authRecipe: "emailpassword",
         };
 
-        it("mount supertokens on /auth route", async () => {
+        it("mount SignInAndUp on /auth route", async () => {
             const authPage = await AuthPage.navigate(page, testContext);
 
             const isFeatureMounted = await authPage.isFeatureMounted();
@@ -48,7 +50,7 @@ describe("Embed components", async () => {
             assert.strictEqual(isFeatureMounted, true);
         });
 
-        it("don't mount supertokens on /auth route if disableDefaultImplementation = true", async () => {
+        it("don't mount SignInAndUp on /auth route if disableDefaultImplementation = true", async () => {
             const authPage = await AuthPage.navigate(page, {
                 ...testContext,
                 disableDefaultImplementation: true,
@@ -60,7 +62,67 @@ describe("Embed components", async () => {
         });
     });
 
-    describe("ThirdParty recipe", () => {
+    describe("ResetPassword feature", () => {
+        const testContext = {};
+
+        it("mount ResetPassword on /auth/reset-password route", async () => {
+            const resetPasswordPage = await ResetPasswordPage.navigate(page, testContext);
+
+            const isFeatureMounted = await resetPasswordPage.isFeatureMounted();
+
+            assert.strictEqual(isFeatureMounted, true);
+        });
+
+        it("don't mount ResetPassword on /auth/reset-password if disableDefaultImplementation = true", async () => {
+            const resetPasswordPage = await ResetPasswordPage.navigate(page, {
+                ...testContext,
+                disableDefaultImplementation: true,
+            });
+
+            const isFeatureMounted = await resetPasswordPage.isFeatureMounted();
+
+            assert.strictEqual(isFeatureMounted, false);
+        });
+    });
+
+    describe("EmailVerification feature", () => {
+        const testContext = {
+            mode: "REQUIRED",
+        };
+
+        it("mount EmailVerification on /auth/verify-email route", async () => {
+            // First, sign in
+            const authPage = await AuthPage.navigate(page, testContext);
+            await authPage.signIn("john.doe@supertokens.io", "Str0ngP@ssw0rd");
+
+            const emailVerificationPage = await EmailVerificationPage.navigate(page, testContext);
+
+            const isFeatureMounted = await emailVerificationPage.isFeatureMounted();
+
+            assert.strictEqual(isFeatureMounted, true);
+        });
+
+        it("don't mount EmailVerification on /auth/verify-email if disableDefaultImplementation = true", async () => {
+            // First, sign in
+            const authPage = await AuthPage.navigate(page, {
+                ...testContext,
+                disableDefaultImplementation: true,
+            });
+
+            await authPage.signIn("john.doe@supertokens.io", "Str0ngP@ssw0rd");
+
+            const emailVerificationPage = await EmailVerificationPage.navigate(page, {
+                ...testContext,
+                disableDefaultImplementation: true,
+            });
+
+            const isFeatureMounted = await emailVerificationPage.isFeatureMounted();
+
+            assert.strictEqual(isFeatureMounted, false);
+        });
+    });
+
+    describe("ThirdParty SignInAndUp feature", () => {
         const testContext = {
             authRecipe: "thirdparty",
         };
@@ -85,7 +147,7 @@ describe("Embed components", async () => {
         });
     });
 
-    describe("ThirdPartyEmailPassword recipe", () => {
+    describe("ThirdPartyEmailPassword SignInAndUp feature", () => {
         const testContext = {
             authRecipe: "thirdpartyemailpassword",
         };

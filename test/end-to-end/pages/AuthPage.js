@@ -1,30 +1,45 @@
+import { Page } from "./Page";
+import { getSubmitFormButton, setInputValues } from "../../helpers";
 import { ST_ROOT_SELECTOR, TEST_CLIENT_BASE_URL } from "../../constants";
 
-export class AuthPage {
+export class AuthPage extends Page {
     static async navigate(page, testContext = {}) {
         const testParams = new URLSearchParams(testContext);
 
         const url = `${TEST_CLIENT_BASE_URL}/auth?${testParams}`;
-        console.log(url);
 
-        await Promise.all([page.goto(url), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+        const authPage = new AuthPage(page);
 
-        return new AuthPage(page);
+        await authPage.doNavigation(() => page.goto(url));
+
+        return authPage;
     }
 
-    constructor(page) {
-        this.page = page;
+    getSubmitFormButton() {
+        return getSubmitFormButton(this.page);
     }
 
-    async isFeatureMounted() {
-        /**
-         * @type {Element}
-         */
-        const root = await this.page.evaluate(
-            (ST_ROOT_SELECTOR) => document.querySelector(ST_ROOT_SELECTOR),
-            ST_ROOT_SELECTOR
-        );
+    async signIn(email, password) {
+        await this.setInputForm(email, password);
+        await this.page.screenshot({
+            path: "signin.jpg",
+        });
 
-        return root !== null;
+        await this.submitForm();
+        await this.page.screenshot({
+            path: "signin.jpg",
+        });
+    }
+
+    async setInputForm(email, password) {
+        await setInputValues(this.page, [
+            { name: "email", value: email },
+            { name: "password", value: password },
+        ]);
+    }
+
+    async submitForm() {
+        const submitButton = await this.getSubmitFormButton(this.page);
+        await this.doNavigation(() => submitButton.click());
     }
 }

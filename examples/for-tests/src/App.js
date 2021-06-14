@@ -322,6 +322,7 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
         },
         useShadowDom,
         emailVerificationFeature: {
+            disableDefaultImplementation,
             sendVerifyEmailScreen: {
                 style: theme.style,
             },
@@ -331,6 +332,7 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
             mode: emailVerificationMode,
         },
         resetPasswordUsingTokenFeature: {
+            disableDefaultImplementation,
             enterEmailForm: {
                 style: theme.style,
             },
@@ -373,6 +375,7 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
         useShadowDom,
         palette: theme.colors,
         emailVerificationFeature: {
+            disableDefaultImplementation,
             mode: emailVerificationMode,
         },
         signInAndUpFeature: {
@@ -412,9 +415,12 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
         useShadowDom,
         palette: theme.colors,
         emailVerificationFeature: {
+            disableDefaultImplementation,
             mode: emailVerificationMode,
         },
-        resetPasswordUsingTokenFeature: {},
+        resetPasswordUsingTokenFeature: {
+            disableDefaultImplementation,
+        },
         signInAndUpFeature: {
             disableDefaultImplementation,
             signInForm: {},
