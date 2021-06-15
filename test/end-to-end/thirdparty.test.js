@@ -190,7 +190,11 @@ describe("SuperTokens Third Party", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
@@ -212,7 +216,11 @@ describe("SuperTokens Third Party", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NOT_NONCE`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
@@ -234,7 +242,11 @@ describe("SuperTokens Third Party", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NONCE`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
@@ -277,7 +289,11 @@ describe("SuperTokens Third Party", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NONCE`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
@@ -299,7 +315,11 @@ describe("SuperTokens Third Party", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NONCE`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");

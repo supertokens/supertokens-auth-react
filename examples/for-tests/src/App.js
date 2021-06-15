@@ -411,7 +411,30 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY ON_HANDLE_EVENT ${context.action}`);
         },
-
+        override: {
+            functions: (implementation) => ({
+                getOAuthAuthorisationURL(...args) {
+                    console.log(`ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_AUTHORISATION_URL`);
+                    return implementation.getOAuthAuthorisationURL(...args);
+                },
+                getOAuthState(...args) {
+                    console.log(`ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE`);
+                    return implementation.getOAuthState(...args);
+                },
+                redirectToThirdPartyLogin(...args) {
+                    console.log(`ST_LOGS THIRD_PARTY OVERRIDE REDIRECT_TO_THIRD_PARTY_LOGIN`);
+                    return implementation.redirectToThirdPartyLogin(...args);
+                },
+                setOAuthState(...args) {
+                    console.log(`ST_LOGS THIRD_PARTY OVERRIDE SET_OAUTH_STATE`);
+                    return implementation.setOAuthState(...args);
+                },
+                signInAndUp(...args) {
+                    console.log(`ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP`);
+                    return implementation.signInAndUp(...args);
+                },
+            }),
+        },
         useShadowDom,
         palette: theme.colors,
         emailVerificationFeature: {
