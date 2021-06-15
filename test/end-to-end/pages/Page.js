@@ -1,15 +1,9 @@
-import { ST_ROOT_SELECTOR, TEST_CLIENT_BASE_URL } from "../../constants";
+import { ST_ROOT_SELECTOR } from "../../constants";
 
 export class Page {
-    static async gotoAndWait(page, path) {
-        return Promise.all([
-            page.goto(`${TEST_CLIENT_BASE_URL}${path}`),
-            page.waitForNavigation({ waitUntil: "networkidle0" }),
-        ]);
-    }
-
-    constructor(page) {
+    constructor(page, testContext) {
         this.page = page;
+        this.testContext = testContext;
     }
 
     doNavigation(fn) {

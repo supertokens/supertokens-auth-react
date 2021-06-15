@@ -7,7 +7,7 @@ export class ResetPasswordPage extends Page {
 
         const url = `${TEST_CLIENT_BASE_URL}/auth/reset-password?${testParams}`;
 
-        const resetPasswordPage = new ResetPasswordPage(page);
+        const resetPasswordPage = new ResetPasswordPage(page, testContext);
         await resetPasswordPage.doNavigation(() => page.goto(url));
 
         return resetPasswordPage;

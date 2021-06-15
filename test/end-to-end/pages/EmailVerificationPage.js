@@ -7,7 +7,7 @@ export class EmailVerificationPage extends Page {
 
         const url = `${TEST_CLIENT_BASE_URL}/auth/verify-email?${testParams}`;
 
-        const emailVerificationPage = new EmailVerificationPage(page);
+        const emailVerificationPage = new EmailVerificationPage(page, testContext);
 
         await emailVerificationPage.doNavigation(() => page.goto(url));
 

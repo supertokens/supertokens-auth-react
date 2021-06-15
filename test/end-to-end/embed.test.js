@@ -4,6 +4,7 @@ import { TEST_SERVER_BASE_URL } from "../constants";
 import { AuthPage } from "./pages/AuthPage";
 import { EmailVerificationPage } from "./pages/EmailVerificationPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
+import { clearBrowserCookies } from "../helpers";
 
 describe("Embed components", async () => {
     let browser;
@@ -21,8 +22,11 @@ describe("Embed components", async () => {
         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
             method: "POST",
         }).catch(console.error);
+    });
 
+    beforeEach(async () => {
         page = await browser.newPage();
+        await clearBrowserCookies(page);
     });
 
     after(async function () {
@@ -91,9 +95,9 @@ describe("Embed components", async () => {
         };
 
         it("mount EmailVerification on /auth/verify-email route", async () => {
-            // First, sign in
+            // First, sign up
             const authPage = await AuthPage.navigate(page, testContext);
-            await authPage.signIn("john.doe@supertokens.io", "Str0ngP@ssw0rd");
+            await authPage.signUp();
 
             const emailVerificationPage = await EmailVerificationPage.navigate(page, testContext);
 
@@ -103,10 +107,9 @@ describe("Embed components", async () => {
         });
 
         it("don't mount EmailVerification on /auth/verify-email if disableDefaultImplementation = true", async () => {
-            // First, sign in
+            // First, sign in, as we signed up previously
             const authPage = await AuthPage.navigate(page, {
                 ...testContext,
-                disableDefaultImplementation: true,
             });
 
             await authPage.signIn("john.doe@supertokens.io", "Str0ngP@ssw0rd");
@@ -129,6 +132,9 @@ describe("Embed components", async () => {
 
         it("mount supertokens on /auth route", async () => {
             const authPage = await AuthPage.navigate(page, testContext);
+            await page.screenshot({
+                path: "page.jpg",
+            });
 
             const isFeatureMounted = await authPage.isFeatureMounted();
 

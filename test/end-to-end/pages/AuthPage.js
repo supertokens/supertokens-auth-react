@@ -1,6 +1,6 @@
 import { Page } from "./Page";
-import { getSubmitFormButton, setInputValues } from "../../helpers";
-import { ST_ROOT_SELECTOR, TEST_CLIENT_BASE_URL } from "../../constants";
+import { defaultSignUp, getSubmitFormButton, setInputValues, toggleSignInSignUp } from "../../helpers";
+import { TEST_CLIENT_BASE_URL } from "../../constants";
 
 export class AuthPage extends Page {
     static async navigate(page, testContext = {}) {
@@ -8,7 +8,7 @@ export class AuthPage extends Page {
 
         const url = `${TEST_CLIENT_BASE_URL}/auth?${testParams}`;
 
-        const authPage = new AuthPage(page);
+        const authPage = new AuthPage(page, testContext);
 
         await authPage.doNavigation(() => page.goto(url));
 
@@ -21,14 +21,13 @@ export class AuthPage extends Page {
 
     async signIn(email, password) {
         await this.setInputForm(email, password);
-        await this.page.screenshot({
-            path: "signin.jpg",
-        });
 
         await this.submitForm();
-        await this.page.screenshot({
-            path: "signin.jpg",
-        });
+    }
+
+    async signUp() {
+        await toggleSignInSignUp(this.page);
+        await defaultSignUp(this.page);
     }
 
     async setInputForm(email, password) {
