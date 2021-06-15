@@ -51,7 +51,7 @@ export function normaliseThirdPartyConfig(config: Config, allowEmptyProviders = 
 }
 
 export function normaliseSignInAndUpFeature(
-    config: SignInAndUpFeatureUserInput,
+    config: SignInAndUpFeatureUserInput | undefined,
     allowEmptyProviders: boolean
 ): NormalisedSignInAndUpFeatureConfig {
     if (config === undefined) {

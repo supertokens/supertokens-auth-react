@@ -39,7 +39,7 @@ export type ComponentOverrideMap = {
 };
 
 export type UserInput = {
-    signInAndUpFeature: SignInAndUpFeatureUserInput;
+    signInAndUpFeature?: SignInAndUpFeatureUserInput;
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;

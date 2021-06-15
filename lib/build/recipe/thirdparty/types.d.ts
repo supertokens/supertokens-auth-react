@@ -22,7 +22,7 @@ export declare type ComponentOverrideMap = {
     ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
 };
 export declare type UserInput = {
-    signInAndUpFeature: SignInAndUpFeatureUserInput;
+    signInAndUpFeature?: SignInAndUpFeatureUserInput;
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;
