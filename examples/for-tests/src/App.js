@@ -127,7 +127,7 @@ const formFields = [
 let recipeList = [
     Session.init({
         preAPIHook: (ctx) => {
-            // FIXME: Workaround the issue events firing differently on test runs
+            // See https://github.com/supertokens/supertokens-auth-react/issues/267
             if (ctx.action !== "REFRESH_SESSION") {
                 console.log(`ST_LOGS SESSION PRE_API_HOOKS ${ctx.action}`);
             }
