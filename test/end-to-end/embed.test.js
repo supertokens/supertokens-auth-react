@@ -132,9 +132,6 @@ describe("Embed components", async () => {
 
         it("mount supertokens on /auth route", async () => {
             const authPage = await AuthPage.navigate(page, testContext);
-            await page.screenshot({
-                path: "page.jpg",
-            });
 
             const isFeatureMounted = await authPage.isFeatureMounted();
 
