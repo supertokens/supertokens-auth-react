@@ -140,6 +140,8 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
+                "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
             ]);
         });

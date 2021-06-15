@@ -124,7 +124,21 @@ const formFields = [
     },
 ];
 
-let recipeList = [Session.init()];
+let recipeList = [
+    Session.init({
+        preAPIHook: (ctx) => {
+            // See https://github.com/supertokens/supertokens-auth-react/issues/267
+            if (ctx.action !== "REFRESH_SESSION") {
+                console.log(`ST_LOGS SESSION PRE_API_HOOKS ${ctx.action}`);
+            }
+
+            return ctx;
+        },
+        onHandleEvent: (ctx) => {
+            console.log(`ST_LOGS SESSION ON_HANDLE_EVENT ${ctx.action}`);
+        },
+    }),
+];
 
 if (authRecipe === "thirdparty") {
     recipeList = [getThirdPartyConfigs(), ...recipeList];

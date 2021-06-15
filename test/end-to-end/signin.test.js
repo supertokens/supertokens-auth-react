@@ -300,6 +300,8 @@ describe("SuperTokens SignIn", function () {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
             ]);
         });
 
@@ -395,6 +397,8 @@ describe("SuperTokens SignIn", function () {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
             ]);
         });
 
