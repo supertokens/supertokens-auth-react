@@ -100,7 +100,9 @@ describe("SuperTokens Email Verification", function () {
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
             assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",
@@ -131,6 +133,7 @@ describe("SuperTokens Email Verification", function () {
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
@@ -319,7 +322,9 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
             assert.deepStrictEqual(pathname, "/dashboard");
 
             assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SIGN_UP",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",

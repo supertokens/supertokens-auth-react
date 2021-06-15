@@ -320,6 +320,32 @@ function SessionInfoTable({ sessionInfo }) {
 
 function getEmailPasswordConfigs({ disableDefaultImplementation }) {
     return EmailPassword.init({
+        override: {
+            functions: (implementation) => {
+                return {
+                    doesEmailExist(...args) {
+                        console.log(`ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST`);
+                        return implementation.doesEmailExist(...args);
+                    },
+                    sendPasswordResetEmail(...args) {
+                        console.log(`ST_LOGS EMAIL_PASSWORD OVERRIDE SEND_PASSWORD_RESET_EMAIL`);
+                        return implementation.sendPasswordResetEmail(...args);
+                    },
+                    signIn(...args) {
+                        console.log(`ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN`);
+                        return implementation.signIn(...args);
+                    },
+                    signUp(...args) {
+                        console.log(`ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP`);
+                        return implementation.signUp(...args);
+                    },
+                    submitNewPassword(...args) {
+                        console.log(`ST_LOGS EMAIL_PASSWORD OVERRIDE SUBMIT_NEW_PASSWORD`);
+                        return implementation.submitNewPassword(...args);
+                    },
+                };
+            },
+        },
         palette: theme.colors,
         preAPIHook: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
