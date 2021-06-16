@@ -17,6 +17,7 @@ import Button from "./Button";
 import DarkTheme from "./Themes/Dark";
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
+import { logWithPrefix } from "./logWithPrefix";
 
 Session.addAxiosInterceptors(axios);
 
@@ -123,8 +124,6 @@ const formFields = [
         optional: true,
     },
 ];
-
-const logWithPrefix = (prefix) => (postfix) => console.log(`${prefix} ${postfix}`);
 
 let recipeList = [
     Session.init({
@@ -508,6 +507,46 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
         },
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
+        },
+        override: {
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE`);
+
+                return {
+                    signInAndUp(...args) {
+                        log(`SIGN_IN_AND_UP`);
+                        return implementation.signInAndUp(...args);
+                    },
+                    setOAuthState(...args) {
+                        log(`SET_OAUTH_STATE`);
+                        return implementation.setOAuthState(...args);
+                    },
+                    redirectToThirdPartyLogin(...args) {
+                        log(`REDIRECT_TO_THIRD_PARTY_LOGIN`);
+                        return implementation.redirectToThirdPartyLogin(...args);
+                    },
+                    getOAuthState(...args) {
+                        log(`GET_OAUTH_STATE`);
+                        return implementation.getOAuthState(...args);
+                    },
+                    getOAuthAuthorisationURL(...args) {
+                        log(`GET_OAUTH_AUTHORISATION_URL`);
+                        return implementation.getOAuthAuthorisationURL(...args);
+                    },
+                    submitNewPassword(...args) {
+                        log(`SUBMIT_NEW_PASSWORD`);
+                        return implementation.submitNewPassword(...args);
+                    },
+                    sendPasswordResetEmail(...args) {
+                        log(`SEND_PASSWORD_RESET_EMAIL`);
+                        return implementation.sendPasswordResetEmail(...args);
+                    },
+                    doesEmailExist(...args) {
+                        log(`DOES_EMAIL_EXIST`);
+                        return implementation.doesEmailExist(...args);
+                    },
+                };
+            },
         },
         useShadowDom,
         palette: theme.colors,
