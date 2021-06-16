@@ -133,7 +133,7 @@ export default class RecipeImplementation implements RecipeInterface {
             (context) => {
                 return input.config.preAPIHook({
                     ...context,
-                    action: "SIGN_UP",
+                    action: "EMAIL_PASSWORD_SIGN_UP",
                 });
             }
         );
@@ -176,7 +176,7 @@ export default class RecipeImplementation implements RecipeInterface {
             (context) => {
                 return input.config.preAPIHook({
                     ...context,
-                    action: "SIGN_IN",
+                    action: "EMAIL_PASSWORD_SIGN_IN",
                 });
             }
         );

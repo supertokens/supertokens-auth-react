@@ -308,7 +308,12 @@ export type PreAPIHookContext =
           /*
            * Pre API Hook action.
            */
-          action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD" | "EMAIL_EXISTS";
+          action:
+              | "EMAIL_PASSWORD_SIGN_UP"
+              | "EMAIL_PASSWORD_SIGN_IN"
+              | "SEND_RESET_PASSWORD_EMAIL"
+              | "SUBMIT_NEW_PASSWORD"
+              | "EMAIL_EXISTS";
 
           /*
            * Request object containing query params, body, headers.

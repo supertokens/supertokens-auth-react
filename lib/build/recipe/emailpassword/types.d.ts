@@ -147,7 +147,12 @@ export declare type FormFieldError = {
 export declare type PreAPIHookContext =
     | AuthRecipeModulePreAPIHookContext
     | {
-          action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD" | "EMAIL_EXISTS";
+          action:
+              | "EMAIL_PASSWORD_SIGN_UP"
+              | "EMAIL_PASSWORD_SIGN_IN"
+              | "SEND_RESET_PASSWORD_EMAIL"
+              | "SUBMIT_NEW_PASSWORD"
+              | "EMAIL_EXISTS";
           requestInit: RequestInit;
           url: string;
       };

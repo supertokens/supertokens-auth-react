@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Moves `SIGN_OUT` even and pre API hook into the Session recipe.
 -   Change to type of `preAPIHook` function
 -   Uses supertokens-website version >= 8.0
+-   Changed `SIGN_IN`, `SIGN_UP` Pre API hook action to `EMAIL_PASSWORD_SIGN_IN`, `EMAIL_PASSWORD_SIGN_UP` or `THIRD_PARTY_SIGN_IN_UP`
 
 ### Fixed:
 

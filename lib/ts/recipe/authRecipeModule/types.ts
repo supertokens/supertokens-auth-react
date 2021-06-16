@@ -66,13 +66,7 @@ export type GetRedirectionURLContext =
       }
     | EmailVerificationGetRedirectionURLContext;
 
-export type PreAPIHookContext =
-    | {
-          action: "SIGN_IN";
-          requestInit: RequestInit;
-          url: string;
-      }
-    | EmailVerificationPreAPIHookContext;
+export type PreAPIHookContext = EmailVerificationPreAPIHookContext;
 
 export type OnHandleEventContext =
     | {

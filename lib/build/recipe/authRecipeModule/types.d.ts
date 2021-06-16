@@ -44,13 +44,7 @@ export declare type GetRedirectionURLContext =
           action: "SIGN_IN_AND_UP";
       }
     | EmailVerificationGetRedirectionURLContext;
-export declare type PreAPIHookContext =
-    | {
-          action: "SIGN_IN";
-          requestInit: RequestInit;
-          url: string;
-      }
-    | EmailVerificationPreAPIHookContext;
+export declare type PreAPIHookContext = EmailVerificationPreAPIHookContext;
 export declare type OnHandleEventContext =
     | {
           action: "SESSION_ALREADY_EXISTS";

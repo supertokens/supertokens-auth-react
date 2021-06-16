@@ -77,7 +77,7 @@ export default class RecipeImplementation implements RecipeInterface {
             (context) => {
                 return input.config.preAPIHook({
                     ...context,
-                    action: "SIGN_IN",
+                    action: "THIRD_PARTY_SIGN_IN_UP",
                 });
             }
         );

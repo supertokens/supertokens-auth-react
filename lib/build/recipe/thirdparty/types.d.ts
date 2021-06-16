@@ -56,6 +56,11 @@ export declare type PreAPIHookContext =
           action: "GET_AUTHORISATION_URL";
           requestInit: RequestInit;
           url: string;
+      }
+    | {
+          action: "THIRD_PARTY_SIGN_IN_UP";
+          requestInit: RequestInit;
+          url: string;
       };
 export declare type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
 export declare type SignInAndUpThemeProps = {
