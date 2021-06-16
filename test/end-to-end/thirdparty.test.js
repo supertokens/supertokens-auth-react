@@ -105,7 +105,7 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN_UP",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
             ]);
@@ -156,7 +156,7 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN_UP",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
             ]);
@@ -177,7 +177,7 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN_UP",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
             ]);
