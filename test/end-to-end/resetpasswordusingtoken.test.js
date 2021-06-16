@@ -169,7 +169,11 @@ describe("SuperTokens Reset password", function () {
             const buttonLabel = await getSubmitFormButtonLabel(page);
             assert.deepStrictEqual(buttonLabel, "Email me");
             assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE SEND_PASSWORD_RESET_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT RESET_PASSWORD_EMAIL_SENT",
             ]);
         });
@@ -265,7 +269,17 @@ describe("SuperTokens Reset password", function () {
             const generalError = await getGeneralError(page);
 
             assert.deepStrictEqual(generalError, "Invalid password reset token");
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SUBMIT_NEW_PASSWORD"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE SUBMIT_NEW_PASSWORD",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE SUBMIT_NEW_PASSWORD",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SUBMIT_NEW_PASSWORD",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+            ]);
         });
 
         it("Should reset password successfully and redirect to success URL if token is defined", async function () {
