@@ -132,7 +132,7 @@ describe("SuperTokens Third Party Email Password", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS SIGN_IN_UP",
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
             ]);
