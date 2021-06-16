@@ -354,6 +354,26 @@ function SessionInfoTable({ sessionInfo }) {
 function getEmailPasswordConfigs({ disableDefaultImplementation }) {
     return EmailPassword.init({
         override: {
+            emailVerification: {
+                functions: (implementation) => {
+                    const log = logWithPrefix(`ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION`);
+
+                    return {
+                        sendVerificationEmail(...args) {
+                            log(`SEND_VERIFICATION_EMAIL`);
+                            return implementation.sendVerificationEmail(...args);
+                        },
+                        isEmailVerified(...args) {
+                            log(`IS_EMAIL_VERIFIED`);
+                            return implementation.isEmailVerified(...args);
+                        },
+                        verifyEmail(...args) {
+                            log(`VERIFY_EMAIL`);
+                            return implementation.verifyEmail(...args);
+                        },
+                    };
+                },
+            },
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS EMAIL_PASSWORD OVERRIDE`);
 
@@ -447,6 +467,26 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
             console.log(`ST_LOGS THIRD_PARTY ON_HANDLE_EVENT ${context.action}`);
         },
         override: {
+            emailVerification: {
+                functions: (implementation) => {
+                    const log = logWithPrefix(`ST_LOGS THIRD_PARTY OVERRIDE EMAIL_VERIFICATION`);
+
+                    return {
+                        sendVerificationEmail(...args) {
+                            log(`SEND_VERIFICATION_EMAIL`);
+                            return implementation.sendVerificationEmail(...args);
+                        },
+                        isEmailVerified(...args) {
+                            log(`IS_EMAIL_VERIFIED`);
+                            return implementation.isEmailVerified(...args);
+                        },
+                        verifyEmail(...args) {
+                            log(`VERIFY_EMAIL`);
+                            return implementation.verifyEmail(...args);
+                        },
+                    };
+                },
+            },
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS THIRD_PARTY OVERRIDE`);
 
@@ -515,6 +555,26 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
         },
         override: {
+            emailVerification: {
+                functions: (implementation) => {
+                    const log = logWithPrefix(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION`);
+
+                    return {
+                        sendVerificationEmail(...args) {
+                            log(`SEND_VERIFICATION_EMAIL`);
+                            return implementation.sendVerificationEmail(...args);
+                        },
+                        isEmailVerified(...args) {
+                            log(`IS_EMAIL_VERIFIED`);
+                            return implementation.isEmailVerified(...args);
+                        },
+                        verifyEmail(...args) {
+                            log(`VERIFY_EMAIL`);
+                            return implementation.verifyEmail(...args);
+                        },
+                    };
+                },
+            },
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE`);
 
