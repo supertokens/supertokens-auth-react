@@ -355,25 +355,27 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
     return EmailPassword.init({
         override: {
             functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS EMAIL_PASSWORD OVERRIDE`);
+
                 return {
                     doesEmailExist(...args) {
-                        console.log(`ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST`);
+                        log(`DOES_EMAIL_EXIST`);
                         return implementation.doesEmailExist(...args);
                     },
                     sendPasswordResetEmail(...args) {
-                        console.log(`ST_LOGS EMAIL_PASSWORD OVERRIDE SEND_PASSWORD_RESET_EMAIL`);
+                        log(`SEND_PASSWORD_RESET_EMAIL`);
                         return implementation.sendPasswordResetEmail(...args);
                     },
                     signIn(...args) {
-                        console.log(`ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN`);
+                        log(`SIGN_IN`);
                         return implementation.signIn(...args);
                     },
                     signUp(...args) {
-                        console.log(`ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP`);
+                        log(`SIGN_UP`);
                         return implementation.signUp(...args);
                     },
                     submitNewPassword(...args) {
-                        console.log(`ST_LOGS EMAIL_PASSWORD OVERRIDE SUBMIT_NEW_PASSWORD`);
+                        log(`SUBMIT_NEW_PASSWORD`);
                         return implementation.submitNewPassword(...args);
                     },
                 };
@@ -445,28 +447,32 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
             console.log(`ST_LOGS THIRD_PARTY ON_HANDLE_EVENT ${context.action}`);
         },
         override: {
-            functions: (implementation) => ({
-                getOAuthAuthorisationURL(...args) {
-                    console.log(`ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_AUTHORISATION_URL`);
-                    return implementation.getOAuthAuthorisationURL(...args);
-                },
-                getOAuthState(...args) {
-                    console.log(`ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE`);
-                    return implementation.getOAuthState(...args);
-                },
-                redirectToThirdPartyLogin(...args) {
-                    console.log(`ST_LOGS THIRD_PARTY OVERRIDE REDIRECT_TO_THIRD_PARTY_LOGIN`);
-                    return implementation.redirectToThirdPartyLogin(...args);
-                },
-                setOAuthState(...args) {
-                    console.log(`ST_LOGS THIRD_PARTY OVERRIDE SET_OAUTH_STATE`);
-                    return implementation.setOAuthState(...args);
-                },
-                signInAndUp(...args) {
-                    console.log(`ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP`);
-                    return implementation.signInAndUp(...args);
-                },
-            }),
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS THIRD_PARTY OVERRIDE`);
+
+                return {
+                    getOAuthAuthorisationURL(...args) {
+                        log(`GET_OAUTH_AUTHORISATION_URL`);
+                        return implementation.getOAuthAuthorisationURL(...args);
+                    },
+                    getOAuthState(...args) {
+                        log(`GET_OAUTH_STATE`);
+                        return implementation.getOAuthState(...args);
+                    },
+                    redirectToThirdPartyLogin(...args) {
+                        log(`REDIRECT_TO_THIRD_PARTY_LOGIN`);
+                        return implementation.redirectToThirdPartyLogin(...args);
+                    },
+                    setOAuthState(...args) {
+                        log(`SET_OAUTH_STATE`);
+                        return implementation.setOAuthState(...args);
+                    },
+                    signInAndUp(...args) {
+                        log(`SIGN_IN_AND_UP`);
+                        return implementation.signInAndUp(...args);
+                    },
+                };
+            },
         },
         useShadowDom,
         palette: theme.colors,
