@@ -182,7 +182,19 @@ describe("SuperTokens Third Party Email Password", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);

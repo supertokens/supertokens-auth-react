@@ -124,8 +124,42 @@ const formFields = [
     },
 ];
 
+const logWithPrefix = (prefix) => (postfix) => console.log(`${prefix} ${postfix}`);
+
 let recipeList = [
     Session.init({
+        override: {
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS SESSION OVERRIDE`);
+
+                return {
+                    addAxiosInterceptors(...args) {
+                        log(`ADD_AXIOS_INTERCEPTORS`);
+                        return implementation.addAxiosInterceptors(...args);
+                    },
+                    addFetchInterceptorsAndReturnModifiedFetch(...args) {
+                        log(`ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH`);
+                        return implementation.addFetchInterceptorsAndReturnModifiedFetch(...args);
+                    },
+                    doesSessionExist(...args) {
+                        log(`DOES_SESSION_EXIST`);
+                        return implementation.doesSessionExist(...args);
+                    },
+                    getJWTPayloadSecurely(...args) {
+                        log(`GET_JWT_PAYLOAD_SECURELY`);
+                        return implementation.getJWTPayloadSecurely(...args);
+                    },
+                    getUserId(...args) {
+                        log(`GET_USER_ID`);
+                        return implementation.getUserId(...args);
+                    },
+                    signOut(...args) {
+                        log(`SIGN_OUT`);
+                        return implementation.signOut(...args);
+                    },
+                };
+            },
+        },
         preAPIHook: (ctx) => {
             // See https://github.com/supertokens/supertokens-auth-react/issues/267
             if (ctx.action !== "REFRESH_SESSION") {
