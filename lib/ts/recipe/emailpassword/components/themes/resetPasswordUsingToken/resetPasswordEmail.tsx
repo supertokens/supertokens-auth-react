@@ -25,7 +25,7 @@ import { EnterEmailProps, EnterEmailState } from "../../../types";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-class EmailPasswordEnterEmail extends PureComponent<EnterEmailProps, EnterEmailState> {
+class EmailPasswordResetPasswordEmail extends PureComponent<EnterEmailProps, EnterEmailState> {
     static contextType = StyleContext;
     /*
      * Constructor.
@@ -113,4 +113,4 @@ class EmailPasswordEnterEmail extends PureComponent<EnterEmailProps, EnterEmailS
     }
 }
 
-export const EnterEmail = withOverride("EmailPasswordEnterEmail", EmailPasswordEnterEmail);
+export const ResetPasswordEmail = withOverride("EmailPasswordResetPasswordEmail", EmailPasswordResetPasswordEmail);

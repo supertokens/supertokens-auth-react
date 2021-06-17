@@ -10,7 +10,7 @@ import { ComponentOverrideMap as ThirdPartyEmailPasswordOverrideMap } from "../.
 import { SignUp } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUp";
 import { SignUpHeader } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUpHeader";
 import { SignInHeader } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signInHeader";
-import { EnterEmail } from "../../lib/ts/recipe/emailpassword/components/themes/resetPasswordUsingToken/enterEmail";
+import { ResetPasswordEmail } from "../../lib/ts/recipe/emailpassword/components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import { SignIn } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signIn";
 import { SignInFooter } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signInFooter";
 import { SignInForm } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signInForm";
@@ -42,7 +42,7 @@ describe("Theme component overrides", () => {
     } = {
         EmailPasswordSignUpHeader: SignUpHeader,
         EmailPasswordSignInHeader: SignInHeader,
-        EmailPasswordEnterEmail: EnterEmail,
+        EmailPasswordResetPasswordEmail: ResetPasswordEmail,
         EmailPasswordSignIn: SignIn,
         EmailPasswordSignInFooter: SignInFooter,
         EmailPasswordSignInForm: SignInForm,
