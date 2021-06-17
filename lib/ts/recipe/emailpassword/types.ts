@@ -43,7 +43,7 @@ import { SignUp } from "./components/themes/signInAndUp/signUp";
 import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import { SignUpForm } from "./components/themes/signInAndUp/signUpForm";
 import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
-import { EnterEmail } from "./components/themes/resetPasswordUsingToken/enterEmail";
+import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 
 export type ComponentOverrideMap = {
@@ -55,7 +55,7 @@ export type ComponentOverrideMap = {
     EmailPasswordSignUpFooter?: ComponentOverride<typeof SignUpFooter>;
     EmailPasswordSignUpForm?: ComponentOverride<typeof SignUpForm>;
     EmailPasswordSignUpHeader?: ComponentOverride<typeof SignUpHeader>;
-    EmailPasswordEnterEmail?: ComponentOverride<typeof EnterEmail>;
+    EmailPasswordResetPasswordEmail?: ComponentOverride<typeof ResetPasswordEmail>;
     EmailPasswordSubmitNewPassword?: ComponentOverride<typeof SubmitNewPassword>;
 };
 

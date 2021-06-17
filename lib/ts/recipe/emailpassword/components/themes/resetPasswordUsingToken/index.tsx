@@ -20,7 +20,7 @@ import * as React from "react";
 import { ResetPasswordUsingTokenThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 
-import { EnterEmail } from "./enterEmail";
+import { ResetPasswordEmail } from "./resetPasswordEmail";
 import { SubmitNewPassword } from "./submitNewPassword";
 import { getStyles } from "../styles/styles";
 import { StyleProvider } from "../../../../../styles/styleContext";
@@ -55,7 +55,7 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
             defaultPalette={defaultPalette}
             styleFromInit={props.enterEmailForm.styleFromInit}
             getDefaultStyles={getStyles}>
-            <EnterEmail {...props.enterEmailForm} />
+            <ResetPasswordEmail {...props.enterEmailForm} />
         </StyleProvider>
     );
 }
