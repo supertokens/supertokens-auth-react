@@ -23,96 +23,40 @@ import { SignInAndUpTheme } from "../../..";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
-import SuperTokens from "../../../../../superTokens";
 import { FeatureBaseProps } from "../../../../../types";
-import {
-    getQueryParams,
-    getRedirectToPathFromURL,
-    appendQueryParamsToURL,
-    getWindowOrThrow,
-} from "../../../../../utils";
-import AuthRecipeModule from "../../../../authRecipeModule";
-import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
+import { getQueryParams } from "../../../../../utils";
 import { getStyles } from "../../../components/themes/styles";
-import { SESSION_STORAGE_STATE_KEY } from "../../../constants";
-import Provider from "../../../providers";
-import {
-    NormalisedThirdPartyConfig,
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyOnHandleEventContext,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartySignInAndUpState,
-} from "../../../types";
-import { getOAuthAuthorisationURLAPI } from "./api";
+import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
+import Recipe from "../../../recipe";
+import { getRedirectToPathFromURL } from "../../../../../utils";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
-/*
- * Component.
- */
-
-class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpState> {
-    /*
-     * Constructor.
-     */
-    constructor(props: FeatureBaseProps) {
+type PropType = FeatureBaseProps & { recipe: Recipe };
+class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
+    constructor(props: PropType) {
         super(props);
 
-        const error = getQueryParams("error");
-        if (error !== null) {
-            if (error === "signin") {
-                this.state = {
-                    status: "GENERAL_ERROR",
-                };
-            } else if (error === "no_email_present") {
-                this.state = {
-                    status: "CUSTOM_ERROR",
-                    error: "Could not retrieve email. Please try a different method.",
-                };
+        let error: string | undefined = undefined;
+        const errorQueryParam = getQueryParams("error");
+        if (errorQueryParam !== null) {
+            if (errorQueryParam === "signin") {
+                error = "Something went wrong. Please try again";
+            } else if (errorQueryParam === "no_email_present") {
+                error = "Could not retrieve email. Please try a different method.";
             } else {
                 const customError = getQueryParams("message");
                 if (customError === null) {
-                    this.state = {
-                        status: "GENERAL_ERROR",
-                    };
+                    error = "Something went wrong. Please try again";
                 } else {
-                    this.state = {
-                        status: "CUSTOM_ERROR",
-                        error: customError,
-                    };
+                    error = customError;
                 }
             }
-        } else {
-            this.state = {
-                status: "LOADING",
-            };
         }
+        this.state = {
+            status: "LOADING",
+            error,
+        };
     }
-
-    getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        ThirdPartyGetRedirectionURLContext,
-        ThirdPartyPreAPIHookContext,
-        ThirdPartyOnHandleEventContext,
-        NormalisedThirdPartyConfig
-    > => {
-        if (this.props.recipeId === undefined) {
-            throw new Error("No recipeId props given to SignInAndUp component");
-        }
-
-        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (recipe instanceof AuthRecipeModule === false) {
-            throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
-        }
-
-        return recipe as AuthRecipeModule<
-            ThirdPartyGetRedirectionURLContext,
-            ThirdPartyPreAPIHookContext,
-            ThirdPartyOnHandleEventContext,
-            NormalisedThirdPartyConfig
-        >;
-    };
-
-    getRecipeConfigOrThrow = (): NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig => {
-        return this.getRecipeInstanceOrThrow().getConfig<NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig>();
-    };
 
     getIsEmbedded = (): boolean => {
         if (this.props.isEmbedded !== undefined) {
@@ -121,17 +65,13 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
         return false;
     };
 
-    /*
-     * Methods.
-     */
-
     componentDidMount = async (): Promise<void> => {
-        const sessionExists = await this.getRecipeInstanceOrThrow().doesSessionExist();
+        const sessionExists = await this.props.recipe.doesSessionExist();
         if (sessionExists) {
-            this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
+            this.props.recipe.config.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS",
             });
-            await this.getRecipeInstanceOrThrow().redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
+            await this.props.recipe.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
             return;
         }
 
@@ -139,7 +79,6 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
             if (oldState.status !== "LOADING") {
                 return oldState;
             }
-
             return {
                 ...oldState,
                 status: "READY",
@@ -147,103 +86,61 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpS
         });
     };
 
-    signInAndUpClick = async (providerId: string): Promise<string | void> => {
-        const provider = this.getRecipeConfigOrThrow().signInAndUpFeature.providers.find(
-            (p) => p.id === providerId
-        ) as Provider;
-        if (provider === undefined) {
-            return "Unknown Provider";
-        }
-
-        // 1. Generate state.
-        const state = provider.generateState();
-
-        // 2. Get Authorisation URL.
-        const { url } = await getOAuthAuthorisationURLAPI(provider.id, this.getRecipeInstanceOrThrow());
-
-        // 3. Store state in Session Storage.
-        const redirectToPath = getRedirectToPathFromURL();
-        const redirect_uri = await this.getRecipeInstanceOrThrow().getRedirectUrl({
-            action: "GET_REDIRECT_URL",
-            provider,
-        });
-        const urlWithState = appendQueryParamsToURL(url, {
-            state,
-            redirect_uri,
-        });
-        const expiresAt = Date.now() + 1000 * 60 * 10; // 10 minutes expiry.
-        const value = JSON.stringify({
-            redirectToPath,
-            state,
-            thirdPartyId: provider.id,
-            rid: this.getRecipeInstanceOrThrow().recipeId,
-            expiresAt,
-        });
-        getWindowOrThrow().sessionStorage.setItem(SESSION_STORAGE_STATE_KEY, value);
-
-        // 4. Redirect to provider authorisation URL.
-        getWindowOrThrow().location.href = urlWithState;
+    getModifiedRecipeImplementation = (): RecipeInterface => {
+        return {
+            ...this.props.recipe.recipeImpl,
+            redirectToThirdPartyLogin: (input) => {
+                input = {
+                    ...input,
+                    state: {
+                        ...input.state,
+                        redirectToPath: getRedirectToPathFromURL(),
+                    },
+                };
+                return this.props.recipe.recipeImpl.redirectToThirdPartyLogin(input);
+            },
+        };
     };
 
     render = (): JSX.Element => {
-        // Before session is verified, return empty fragment, prevent UI glitch.
         if (this.state.status === "LOADING") {
             return <Fragment />;
         }
 
-        const signInAndUpFeature = this.getRecipeConfigOrThrow().signInAndUpFeature;
+        const componentOverrides = this.props.recipe.config.override.components;
+
+        const signInAndUpFeature = this.props.recipe.config.signInAndUpFeature;
 
         const providers = signInAndUpFeature.providers.map((provider) => ({
             id: provider.id,
             buttonComponent: provider.getButton(),
         }));
 
-        /*
-         * Render.
-         */
-        return (
-            <FeatureWrapper useShadowDom={this.getRecipeConfigOrThrow().useShadowDom} isEmbedded={this.getIsEmbedded()}>
-                <StyleProvider
-                    rawPalette={this.getRecipeConfigOrThrow().palette}
-                    defaultPalette={defaultPalette}
-                    styleFromInit={signInAndUpFeature.style}
-                    getDefaultStyles={getStyles}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {this.props.children === undefined &&
-                            (this.state.status === "CUSTOM_ERROR" ? (
-                                <SignInAndUpTheme
-                                    status={this.state.status}
-                                    error={this.state.error}
-                                    providers={providers}
-                                    signInAndUpClick={this.signInAndUpClick}
-                                    privacyPolicyLink={signInAndUpFeature.privacyPolicyLink}
-                                    termsOfServiceLink={signInAndUpFeature.termsOfServiceLink}
-                                />
-                            ) : (
-                                <SignInAndUpTheme
-                                    status={this.state.status}
-                                    providers={providers}
-                                    signInAndUpClick={this.signInAndUpClick}
-                                    privacyPolicyLink={signInAndUpFeature.privacyPolicyLink}
-                                    termsOfServiceLink={signInAndUpFeature.termsOfServiceLink}
-                                />
-                            ))}
+        const props = {
+            error: this.state.error,
+            providers: providers,
+            recipeImplementation: this.getModifiedRecipeImplementation(),
+            config: this.props.recipe.config,
+        };
 
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children &&
-                            React.cloneElement(this.props.children, {
-                                status: this.state.status,
-                                error: this.state.status === "CUSTOM_ERROR" ? this.state.error : undefined,
-                                rawPalette: this.getRecipeConfigOrThrow().palette,
-                                termsOfServiceLink: signInAndUpFeature.termsOfServiceLink,
-                                privacyPolicyLink: signInAndUpFeature.privacyPolicyLink,
-                                signInAndUpClick: this.signInAndUpClick,
-                                providers: providers,
-                            })}
-                    </Fragment>
-                </StyleProvider>
-            </FeatureWrapper>
+        return (
+            <ComponentOverrideContext.Provider value={componentOverrides}>
+                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                    <StyleProvider
+                        rawPalette={this.props.recipe.config.palette}
+                        defaultPalette={defaultPalette}
+                        styleFromInit={signInAndUpFeature.style}
+                        getDefaultStyles={getStyles}>
+                        <Fragment>
+                            {/* No custom theme, use default. */}
+                            {this.props.children === undefined && <SignInAndUpTheme {...props} />}
+
+                            {/* Otherwise, custom theme is provided, propagate props. */}
+                            {this.props.children && React.cloneElement(this.props.children, props)}
+                        </Fragment>
+                    </StyleProvider>
+                </FeatureWrapper>
+            </ComponentOverrideContext.Provider>
         );
     };
 }

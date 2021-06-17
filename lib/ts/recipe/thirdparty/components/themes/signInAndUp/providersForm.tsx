@@ -12,79 +12,62 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/*
- * Imports.
- */
+
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import { PureComponent, Fragment } from "react";
-import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import StyleContext from "../../../../../styles/styleContext";
-import { SignInAndUpThemeProps, ThirdPartySignInAndUpThemeState } from "../../../types";
-/*
- * Component.
- */
+import { SignInAndUpThemeProps } from "../../../types";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-export default class SignInAndUpProvidersForm extends PureComponent<
-    SignInAndUpThemeProps,
-    ThirdPartySignInAndUpThemeState
-> {
+class ThirdPartySignInAndUpProvidersForm extends PureComponent<SignInAndUpThemeProps, { error?: string }> {
     static contextType = StyleContext;
 
-    /*
-     * Constructor
-     */
     constructor(props: SignInAndUpThemeProps) {
         super(props);
-        if (this.props.status === "GENERAL_ERROR") {
+        if (this.props.error !== undefined) {
             this.state = {
-                status: "ERROR",
-                message: SOMETHING_WENT_WRONG_ERROR,
-            };
-        } else if (this.props.status === "CUSTOM_ERROR") {
-            this.state = {
-                status: "ERROR",
-                message: this.props.error,
+                error: this.props.error,
             };
         } else {
-            this.state = {
-                status: this.props.status,
-            };
+            this.state = {};
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.props.error !== undefined) {
+            this.setState(() => ({
+                error: this.props.error,
+            }));
         }
     }
 
     signInClick = async (providerId: string): Promise<void> => {
         try {
-            const errorMessage = await this.props.signInAndUpClick(providerId);
-            if (errorMessage !== undefined) {
+            const response = await this.props.recipeImplementation.redirectToThirdPartyLogin({
+                thirdPartyId: providerId,
+                config: this.props.config,
+            });
+            if (response.status === "ERROR") {
                 this.setState(() => ({
-                    status: "ERROR",
-                    message: errorMessage,
+                    error: "Something went wrong. Please try again",
                 }));
             }
-        } catch (e) {
+        } catch (err) {
             this.setState(() => ({
-                status: "ERROR",
-                message: SOMETHING_WENT_WRONG_ERROR,
+                error: "Something went wrong. Please try again",
             }));
         }
     };
 
-    /*
-     * Methods.
-     */
-
     render = (): JSX.Element => {
         const styles = this.context;
 
-        /*
-         * Render.
-         */
         return (
             <Fragment>
-                {this.state.status === "ERROR" ? (
+                {this.state.error !== undefined ? (
                     <div data-supertokens="generalError" css={styles.generalError}>
-                        {this.state.message}
+                        {this.state.error}
                     </div>
                 ) : null}
                 {this.props.providers.map((provider) => {
@@ -101,3 +84,5 @@ export default class SignInAndUpProvidersForm extends PureComponent<
         );
     };
 }
+
+export const ProvidersForm = withOverride("ThirdPartySignInAndUpProvidersForm", ThirdPartySignInAndUpProvidersForm);

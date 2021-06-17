@@ -17,42 +17,46 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";
-import SignInFooter from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
-import SignInForm from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
-import SignUpForm from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
+import { SignUpFooter } from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
+import { SignInFooter } from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
+import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
+import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
 import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component.
  */
-export default function SignInAndUpForm(
-    props: EmailPasswordSignInAndUpThemeProps & {
-        isSignUp: boolean;
-    }
-): JSX.Element {
-    /*
-     * Render.
-     */
+export const SignInAndUpForm = withOverride(
+    "ThirdPartyEmailPasswordSignInAndUpForm",
+    function ThirdPartyEmailPasswordSignInAndUpForm(
+        props: EmailPasswordSignInAndUpThemeProps & {
+            isSignUp: boolean;
+        }
+    ): JSX.Element {
+        /*
+         * Render.
+         */
 
-    if (props.isSignUp === true) {
-        return (
-            <SignUpForm
-                {...props.signUpForm}
-                footer={
-                    <SignUpFooter
-                        privacyPolicyLink={props.signUpForm.privacyPolicyLink}
-                        termsOfServiceLink={props.signUpForm.termsOfServiceLink}
-                    />
-                }
-            />
-        );
-    } else {
-        return (
-            <SignInForm
-                {...props.signInForm}
-                footer={<SignInFooter onClick={props.signInForm.forgotPasswordClick} />}
-            />
-        );
+        if (props.isSignUp === true) {
+            return (
+                <SignUpForm
+                    {...props.signUpForm}
+                    footer={
+                        <SignUpFooter
+                            privacyPolicyLink={props.config.signInAndUpFeature.signUpForm.privacyPolicyLink}
+                            termsOfServiceLink={props.config.signInAndUpFeature.signUpForm.termsOfServiceLink}
+                        />
+                    }
+                />
+            );
+        } else {
+            return (
+                <SignInForm
+                    {...props.signInForm}
+                    footer={<SignInFooter onClick={props.signInForm.forgotPasswordClick} />}
+                />
+            );
+        }
     }
-}
+);

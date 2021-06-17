@@ -20,73 +20,35 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import {
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordOnHandleEventContext,
-    EmailPasswordPreAPIHookContext,
-    FormBaseAPIResponse,
-    NormalisedEmailPasswordConfig,
-    SubmitNewPasswordThemeProps,
-} from "../../../types";
 import { ResetPasswordUsingTokenTheme } from "../../..";
-import { APIFormField, FeatureBaseProps } from "../../../../../types";
+import { FeatureBaseProps } from "../../../../../types";
 
-import { getWindowOrThrow, validateForm } from "../../../../../utils";
-import { enterEmailAPI, handleSubmitNewPasswordAPI } from "./api";
+import { getWindowOrThrow } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import AuthRecipeModule from "../../../../authRecipeModule";
-import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
-import SuperTokens from "../../../../../superTokens";
-import RecipeModule from "../../../../recipeModule";
+import Recipe from "../../../recipe";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
-/*
- * Component.
- */
+type PropType = FeatureBaseProps & {
+    recipe: Recipe;
+};
 
-class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: string }> {
+class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | undefined }> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: PropType) {
         super(props);
 
         const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
-        let token = urlParams.get("token");
+        const token = urlParams.get("token");
         if (token === null) {
-            token = "";
+            this.state = { token: undefined };
+        } else {
+            this.state = {
+                token,
+            };
         }
-
-        this.state = {
-            token,
-        };
     }
-
-    getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        EmailPasswordGetRedirectionURLContext,
-        EmailPasswordPreAPIHookContext,
-        EmailPasswordOnHandleEventContext,
-        NormalisedEmailPasswordConfig
-    > => {
-        if (this.props.recipeId === undefined) {
-            throw new Error("No recipeId props given to SignInAndUp component");
-        }
-
-        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (recipe instanceof AuthRecipeModule === false) {
-            throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
-        }
-
-        return recipe as AuthRecipeModule<
-            EmailPasswordGetRedirectionURLContext,
-            EmailPasswordPreAPIHookContext,
-            EmailPasswordOnHandleEventContext,
-            NormalisedEmailPasswordConfig
-        >;
-    };
-
-    getRecipeConfigOrThrow = (): NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig => {
-        return this.getRecipeInstanceOrThrow().getConfig<NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig>();
-    };
 
     getIsEmbedded = (): boolean => {
         if (this.props.isEmbedded !== undefined) {
@@ -95,125 +57,52 @@ class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, { token: s
         return false;
     };
 
-    /*
-     * Methods.
-     */
-
-    submitNewPassword = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
-        // Front end validation.
-        const validationErrors = await validateForm(
-            formFields,
-            this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
-        );
-
-        // If errors, return.
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
-
-        // Verify that both passwords match.
-        if (formFields[0].value !== formFields[1].value) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: [
-                    {
-                        id: "confirm-password",
-                        error: "Confirmation password doesn't match",
-                    },
-                ],
-            };
-        }
-
-        // Call API, only send first password.
-        return await handleSubmitNewPasswordAPI(
-            [formFields[0]],
-            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>,
-            this.state.token
-        );
-    };
-
-    enterEmail = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
-        // Front end validation.
-        const validationErrors = await validateForm(
-            formFields,
-            this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature.enterEmailForm.formFields
-        );
-
-        // If errors, return.
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
-
-        return await enterEmailAPI(
-            formFields,
-            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
-        );
-    };
-
     render = (): JSX.Element => {
-        const enterEmailFormFeature = this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature.enterEmailForm;
+        const enterEmailFormFeature = this.props.recipe.config.resetPasswordUsingTokenFeature.enterEmailForm;
 
-        const submitNewPasswordFormFeature = this.getRecipeConfigOrThrow().resetPasswordUsingTokenFeature
-            .submitNewPasswordForm;
+        const componentOverrides = this.props.recipe.config.override.components;
 
-        const submitNewPasswordForm: SubmitNewPasswordThemeProps = {
-            styleFromInit: submitNewPasswordFormFeature.style,
-            formFields: submitNewPasswordFormFeature.formFields,
-            submitNewPasswordAPI: this.submitNewPassword,
-            onSuccess: () => {
-                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-                    action: "PASSWORD_RESET_SUCCESSFUL",
-                });
-            },
-            onSignInClicked: () => {
-                this.getRecipeInstanceOrThrow().redirect({ action: "SIGN_IN_AND_UP" }, this.props.history);
-            },
-        };
+        const submitNewPasswordFormFeature =
+            this.props.recipe.config.resetPasswordUsingTokenFeature.submitNewPasswordForm;
+
+        const submitNewPasswordForm =
+            this.state.token === undefined
+                ? undefined
+                : {
+                      styleFromInit: submitNewPasswordFormFeature.style,
+                      formFields: submitNewPasswordFormFeature.formFields,
+                      recipeImplementation: this.props.recipe.recipeImpl,
+                      config: this.props.recipe.config,
+                      onSignInClicked: () => {
+                          this.props.recipe.redirectToAuthWithoutRedirectToPath("signin", this.props.history);
+                      },
+                      token: this.state.token,
+                  };
 
         const enterEmailForm = {
             styleFromInit: enterEmailFormFeature.style,
             formFields: enterEmailFormFeature.formFields,
-            onSuccess: () => {
-                this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-                    action: "RESET_PASSWORD_EMAIL_SENT",
-                });
-            },
-            enterEmailAPI: this.enterEmail,
+            recipeImplementation: this.props.recipe.recipeImpl,
+            config: this.props.recipe.config,
         };
 
-        const hasToken = this.state.token.length !== 0;
+        const props = {
+            config: this.props.recipe.config,
+            submitNewPasswordForm: submitNewPasswordForm,
+            enterEmailForm: enterEmailForm,
+        };
 
-        /*
-         * Render.
-         */
         return (
-            <FeatureWrapper isEmbedded={this.getIsEmbedded()} useShadowDom={this.getRecipeConfigOrThrow().useShadowDom}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {this.props.children === undefined && (
-                        <ResetPasswordUsingTokenTheme
-                            rawPalette={this.getRecipeConfigOrThrow().palette}
-                            submitNewPasswordForm={submitNewPasswordForm}
-                            enterEmailForm={enterEmailForm}
-                            hasToken={hasToken}
-                        />
-                    )}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children &&
-                        React.cloneElement(this.props.children, {
-                            rawPalette: this.getRecipeConfigOrThrow().palette,
-                            submitNewPasswordForm,
-                            enterEmailForm,
-                            hasToken,
-                        })}
-                </Fragment>
-            </FeatureWrapper>
+            <ComponentOverrideContext.Provider value={componentOverrides}>
+                <FeatureWrapper isEmbedded={this.getIsEmbedded()} useShadowDom={this.props.recipe.config.useShadowDom}>
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {this.props.children && React.cloneElement(this.props.children, props)}
+                    </Fragment>
+                </FeatureWrapper>
+            </ComponentOverrideContext.Provider>
         );
     };
 }

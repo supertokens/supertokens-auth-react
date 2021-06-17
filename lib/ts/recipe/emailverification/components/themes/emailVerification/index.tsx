@@ -22,8 +22,8 @@ import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../../../emailpassword/components/themes/styles/styles";
 import { ThemeBase } from "../../../../emailpassword/components/themes/themeBase";
 import { EmailVerificationThemeProps } from "../../../types";
-import SendVerifyEmail from "./sendVerifyEmail";
-import VerifyEmailLinkClicked from "./verifyEmailLinkClicked";
+import { SendVerifyEmail } from "./sendVerifyEmail";
+import { VerifyEmailLinkClicked } from "./verifyEmailLinkClicked";
 
 /*
  * Component.
@@ -35,10 +35,10 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
      */
 
     // If no token, return SendVerifyEmail.
-    if (props.hasToken === false) {
+    if (props.verifyEmailLinkClickedScreen === undefined) {
         return (
             <StyleProvider
-                rawPalette={props.rawPalette}
+                rawPalette={props.config.palette}
                 defaultPalette={defaultPalette}
                 styleFromInit={props.sendVerifyEmailScreen.styleFromInit}
                 getDefaultStyles={getStyles}>
@@ -50,7 +50,7 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
     // Otherwise, return VerifyEmailLinkClicked.
     return (
         <StyleProvider
-            rawPalette={props.rawPalette}
+            rawPalette={props.config.palette}
             defaultPalette={defaultPalette}
             styleFromInit={props.verifyEmailLinkClickedScreen.styleFromInit}
             getDefaultStyles={getStyles}>

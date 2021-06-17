@@ -17,113 +17,111 @@
  * Imports.
  */
 
-import Session from "../session/session";
+import Session from "../session/recipe";
 import RecipeModule from "../recipeModule";
-import { NormalisedAuthRecipeConfig, AuthRecipeModuleConfig, AuthRecipeModuleGetRedirectionURLContext } from "./types";
-import { RecipeFeatureComponentMap, SuccessAPIResponse } from "../../types";
-import { signOut } from "./api";
-import { normaliseAuthRecipeModuleConfig } from "./utils";
-import EmailVerification from "../emailverification";
+import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { RecipeFeatureComponentMap } from "../../types";
+import EmailVerification from "../emailverification/recipe";
+import { getWindowOrThrow } from "../../utils";
 
-/*
- * Class.
- */
-export default abstract class AuthRecipeModule<T, S, R, N> extends RecipeModule<T, S, R> {
-    /*
-     * Instance attributes.
-     */
+export default abstract class AuthRecipeModule<
+    T,
+    S,
+    R,
+    N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
+> extends RecipeModule<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext, N> {
+    emailVerification: EmailVerification;
 
-    config: NormalisedAuthRecipeConfig & N;
-    emailVerification?: EmailVerification<T, S, R>;
-
-    /*
-     * Constructor.
-     */
-    constructor(config: AuthRecipeModuleConfig<T, S, R>, normalisedChildClassConfig: N) {
-        super(config);
-        this.config = {
-            ...normaliseAuthRecipeModuleConfig(config),
-            ...normalisedChildClassConfig,
-        };
-
-        if (this.config.emailVerificationFeature.mode === "REQUIRED") {
-            this.emailVerification = new EmailVerification({
-                ...this.config.emailVerificationFeature,
-                palette: this.config.palette,
-                useShadowDom: this.config.useShadowDom,
-                ...this.hooks,
-                appInfo: this.appInfo,
-                recipeId: this.recipeId,
-                signOut: this.signOut,
-            });
+    constructor(
+        config: N,
+        recipes: {
+            emailVerificationInstance: EmailVerification | undefined;
         }
+    ) {
+        super(config);
+        this.emailVerification =
+            recipes.emailVerificationInstance === undefined
+                ? new EmailVerification({
+                      appInfo: config.appInfo,
+                      recipeId: config.recipeId,
+                      signOut: this.signOut,
+                      postVerificationRedirect: async (history: any) => {
+                          this.redirect(
+                              {
+                                  action: "SUCCESS",
+                                  isNewUser: false,
+                              },
+                              history
+                          );
+                      },
+                      redirectToSignIn: async (history: any) => {
+                          this.redirectToAuthWithoutRedirectToPath(undefined, history);
+                      },
+                      getRedirectionURL: config.getRedirectionURL,
+                      onHandleEvent: config.onHandleEvent,
+                      palette: config.palette,
+                      preAPIHook: config.preAPIHook,
+                      useShadowDom: config.useShadowDom,
+                      ...config.emailVerificationFeature,
+                      override: config.override === undefined ? undefined : config.override.emailVerification,
+                  })
+                : recipes.emailVerificationInstance;
     }
 
-    getAuthRecipeModuleDefaultRedirectionURL = async (
-        context: AuthRecipeModuleGetRedirectionURLContext
-    ): Promise<string> => {
-        switch (context.action) {
-            case "SIGN_IN_AND_UP":
-                return `${this.appInfo.websiteBasePath.getAsStringDangerous()}?rid=${this.recipeId}`;
-
-            case "SUCCESS":
-                return context.redirectToPath === undefined ? "/" : context.redirectToPath;
-
-            case "VERIFY_EMAIL": {
-                if (this.emailVerification === undefined) {
-                    return "/";
-                }
-                return this.emailVerification.getEmailVerificationDefaultURL(context);
-            }
+    getAuthRecipeModuleDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
+        if (context.action === "SIGN_IN_AND_UP") {
+            return `${this.config.appInfo.websiteBasePath.getAsStringDangerous()}?rid=${this.config.recipeId}`;
+        } else if (context.action === "SUCCESS") {
+            return context.redirectToPath === undefined ? "/" : context.redirectToPath;
+        } else {
+            throw new Error("Should never come here");
         }
+    };
+
+    getAuthRecipeModuleFeatureComponent = (componentName: "emailverification", props: any): JSX.Element => {
+        return this.emailVerification.getFeatureComponent(componentName, props);
     };
 
     getAuthRecipeModuleFeatures = (): RecipeFeatureComponentMap => {
-        let features: RecipeFeatureComponentMap = {};
-        if (this.emailVerification !== undefined) {
-            features = this.emailVerification.getFeatures();
+        return this.emailVerification.getFeatures();
+    };
+
+    signOut = async (): Promise<void> => {
+        return await Session.getInstanceOrThrow().signOut();
+    };
+
+    doesSessionExist = async (): Promise<boolean> => {
+        return await Session.getInstanceOrThrow().doesSessionExist();
+    };
+
+    redirectToAuthWithRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
+        const redirectToPath = getWindowOrThrow().location.pathname;
+        if (queryParams === undefined) {
+            queryParams = {};
         }
-
-        return features;
+        queryParams = {
+            ...queryParams,
+            redirectToPath,
+        };
+        this.redirectToAuthWithoutRedirectToPath(show, history, queryParams);
     };
 
-    /*
-     * getConfig
-     */
-    getConfig = <T>(): T => {
-        return (this.config as unknown) as T;
-    };
-
-    /*
-     * SignOut.
-     */
-    signOut = async (): Promise<SuccessAPIResponse> => {
-        return await signOut(this);
-    };
-
-    /*
-     * Email Verification
-     */
-
-    async isEmailVerified(): Promise<boolean> {
-        if (this.emailVerification === undefined) {
-            throw new Error("You need to set emailVerificationFeature mode to required to use this method.");
-            return false;
+    redirectToAuthWithoutRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
+        if (queryParams === undefined) {
+            queryParams = {};
         }
-        return await this.emailVerification.isEmailVerified();
-    }
-
-    isEmailVerificationRequired(): boolean {
-        return this.emailVerification !== undefined && this.emailVerification.config.mode === "REQUIRED";
-    }
-
-    /*
-     * Session
-     */
-
-    doesSessionExist = (): Promise<boolean> => {
-        return Session.getInstanceOrThrow().doesSessionExist();
+        if (show !== undefined) {
+            queryParams = {
+                ...queryParams,
+                show,
+            };
+        }
+        this.redirect(
+            {
+                action: "SIGN_IN_AND_UP",
+            },
+            history,
+            queryParams
+        );
     };
-
-    abstract redirectToAuth(show?: "signin" | "signup"): void;
 }

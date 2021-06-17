@@ -16,12 +16,11 @@
 /*
  * Imports.
  */
-import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
-import { AuthRecipeModuleUserInput } from "../authRecipeModule/types";
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordOnHandleEventContext,
-    EmailPasswordPreAPIHookContext,
+    GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
+    OnHandleEventContext as EmailPasswordOnHandleEventContext,
+    PreAPIHookContext as EmailPasswordPreAPIHookContext,
 } from "../emailpassword";
 import {
     NormalisedResetPasswordUsingTokenFeatureConfig,
@@ -30,73 +29,60 @@ import {
     ResetPasswordUsingTokenUserInput,
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
+    NormalisedConfig as EPConfig,
 } from "../emailpassword/types";
-import { RecipeModuleConfig } from "../recipeModule/types";
 import {
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyOnHandleEventContext,
-    ThirdPartyPreAPIHookContext,
+    GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
+    OnHandleEventContext as ThirdPartyOnHandleEventContext,
+    PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
+import { NormalisedConfig as TPConfig, StateObject } from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
+import {
+    Config as AuthRecipeModuleConfig,
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+    UserInput as AuthRecipeModuleUserInput,
+    User,
+    UserInputOverride as AuthRecipeUserInputOverride,
+} from "../authRecipeModule/types";
+import EPRecipe from "../emailpassword/recipe";
+import TPRecipe from "../thirdparty/recipe";
 
-/*
- * Types.
- */
-export type ThirdPartyEmailPasswordUserInput = AuthRecipeModuleUserInput<
-    ThirdPartyEmailPasswordGetRedirectionURLContext,
-    ThirdPartyEmailPasswordPreAPIHookContext,
-    ThirdPartyEmailPasswordOnHandleEventContext
-> & {
-    /*
-     * Styling palette.
-     */
-    palette?: Record<string, string>;
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpassword/types";
+import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
+import { Header } from "./components/themes/signInAndUp/header";
+import { SignInAndUpForm } from "./components/themes/signInAndUp/signInAndUpForm";
 
-    /*
-     * Use shadow Dom root.
-     */
-    useShadowDom?: boolean;
+export type ComponentOverrideMap = EmailPasswordOverrideMap &
+    ThirdPartyOverrideMap & {
+        ThirdPartyEmailPasswordHeader?: ComponentOverride<typeof Header>;
+        ThirdPartyEmailPasswordSignInAndUpForm?: ComponentOverride<typeof SignInAndUpForm>;
+    };
 
-    /*
-     * Sign In and Sign Up feature.
-     */
+export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
-
-    /*
-     * Reset password Using Token feature.
-     */
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
-
-    /*
-     * Disable Email Password.
-     */
     disableEmailPassword?: boolean;
-};
+    override?: {
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components?: ComponentOverrideMap;
+    } & AuthRecipeUserInputOverride;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
-export type ThirdPartyEmailPasswordConfig = ThirdPartyEmailPasswordUserInput &
-    RecipeModuleConfig<
-        ThirdPartyEmailPasswordGetRedirectionURLContext,
-        ThirdPartyEmailPasswordPreAPIHookContext,
-        ThirdPartyEmailPasswordOnHandleEventContext
-    >;
+export type Config = UserInput &
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
-export type NormalisedThirdPartyEmailPasswordConfig = {
-    /*
-     * Sign In and Sign Up feature.
-     */
+export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
-
-    /*
-     * Reset password Using Token feature.
-     */
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
-
-    /*
-     * Disable Email Password.
-     */
     disableEmailPassword: boolean;
-};
+    override: {
+        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components: ComponentOverrideMap;
+    };
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
@@ -154,49 +140,117 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     signInForm: NormalisedSignInFormFeatureConfig;
 };
 
-export type ThirdPartyEmailPasswordGetRedirectionURLContext =
-    | EmailPasswordGetRedirectionURLContext
-    | ThirdPartyGetRedirectionURLContext;
+export type GetRedirectionURLContext = EmailPasswordGetRedirectionURLContext | ThirdPartyGetRedirectionURLContext;
 
-export type ThirdPartyEmailPasswordPreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
+export type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
 
-export type ThirdPartyEmailPasswordOnHandleEventContext =
-    | ThirdPartyOnHandleEventContext
-    | EmailPasswordOnHandleEventContext;
+export type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 
 export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
-    /*
-     * RecipeId
-     */
-    recipeId: string;
-
-    /*
-     * History provided by react-router
-     */
     history?: any;
-
-    /*
-     * Default To Sign Up
-     */
-    defaultToSignUp: boolean;
-
-    /*
-     * hideThirdParty
-     */
-    hideThirdParty?: boolean;
-
-    /*
-     * hideEmailPassword
-     */
-    hideEmailPassword?: boolean;
-
-    /*
-     * Raw Palette
-     */
-    rawPalette: Record<string, string>;
-
-    /*
-     * StyleFromInit
-     */
-    styleFromInit: Styles;
+    emailPasswordRecipe: EPRecipe;
+    thirdPartyRecipe: TPRecipe;
+    config: NormalisedConfig;
 };
+
+export type SignInAndUpInput =
+    | {
+          type: "emailpassword";
+          isSignIn: boolean;
+          formFields: {
+              id: string;
+              value: string;
+          }[];
+          config: EPConfig;
+      }
+    | {
+          type: "thirdparty";
+          thirdPartyId: string;
+          config: TPConfig;
+      };
+
+export type SignInAndUpOutput =
+    | {
+          type: "emailpassword" | "thirdparty";
+          status: "OK";
+          user: User;
+          createdNewUser: boolean;
+      }
+    | {
+          type: "emailpassword";
+          status: "FIELD_ERROR";
+          formFields: {
+              id: string;
+              error: string;
+          }[];
+      }
+    | {
+          type: "emailpassword";
+          status: "WRONG_CREDENTIALS_ERROR";
+      }
+    | {
+          type: "thirdparty";
+          status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
+      }
+    | {
+          type: "thirdparty";
+          status: "FIELD_ERROR";
+          error: string;
+      };
+
+export interface RecipeInterface {
+    submitNewPassword: (input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        token: string;
+        config: EPConfig;
+    }) => Promise<
+        | {
+              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+          }
+    >;
+
+    sendPasswordResetEmail: (input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        config: EPConfig;
+    }) => Promise<
+        | {
+              status: "OK";
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+          }
+    >;
+
+    doesEmailExist: (input: { email: string; config: EPConfig }) => Promise<boolean>;
+
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig }) => Promise<string>;
+
+    signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
+
+    getOAuthState(): StateObject | undefined;
+
+    setOAuthState(state: StateObject): void;
+
+    redirectToThirdPartyLogin: (input: {
+        thirdPartyId: string;
+        config: TPConfig;
+        state?: StateObject;
+    }) => Promise<{ status: "OK" | "ERROR" }>;
+}

@@ -5,4 +5,3 @@ export default class NormalisedURLPath {
     appendPath: (other: NormalisedURLPath) => NormalisedURLPath;
     getAsStringDangerous: () => string;
 }
-export declare function normaliseURLPathOrThrowError(input: string): string;

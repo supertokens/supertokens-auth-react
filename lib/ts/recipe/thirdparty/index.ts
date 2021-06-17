@@ -18,51 +18,51 @@
  */
 
 // /!\ ThirdParty must be imported before any of the providers to prevent circular dependencies.
-import ThirdParty from "./thirdparty";
-import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
+import ThirdParty from "./recipe";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import EmailVerification from "./components/features/emailVerification/wrapper";
-import {
-    ThirdPartyUserInput,
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext,
-} from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
-import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-/*
- * Class.
- */
-export default class ThirdPartyAPIWrapper {
+
+export default class Wrapper {
     /*
      * Static attributes.
      */
 
-    static init(
-        config: ThirdPartyUserInput
-    ): CreateRecipeFunction<
-        ThirdPartyGetRedirectionURLContext,
-        ThirdPartyPreAPIHookContext,
-        ThirdPartyOnHandleEventContext
-    > {
+    static init(config: UserInput) {
         return ThirdParty.init(config);
     }
 
-    static async signOut(): Promise<SuccessAPIResponse> {
-        return ThirdParty.signOut();
+    static async signOut(): Promise<void> {
+        return ThirdParty.getInstanceOrThrow().signOut();
     }
 
     static async isEmailVerified(): Promise<boolean> {
-        return ThirdParty.isEmailVerified();
+        return ThirdParty.getInstanceOrThrow().emailVerification.isEmailVerified();
     }
 
-    static redirectToAuth(show?: "signin" | "signup"): void {
-        return ThirdParty.redirectToAuth(show);
+    // have backwards compatibility to allow input as "signin" | "signup"
+    static redirectToAuth(
+        input?:
+            | ("signin" | "signup")
+            | {
+                  show?: "signin" | "signup";
+                  redirectBack?: boolean;
+              }
+    ): void {
+        if (input === undefined || typeof input === "string") {
+            return ThirdParty.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
+        } else {
+            if (input.redirectBack === false || input.redirectBack === undefined) {
+                return ThirdParty.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
+            } else {
+                return ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
+            }
+        }
     }
 
     /*
@@ -73,20 +73,22 @@ export default class ThirdPartyAPIWrapper {
     static Facebook = Facebook;
     static Github = Github;
     static ThirdPartyAuth = ThirdPartyAuth;
-    static SignInAndUp = SignInAndUp;
+    static SignInAndUp = (prop?: any) => ThirdParty.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
-    static EmailVerification = EmailVerification;
+    static EmailVerification = (prop?: any) =>
+        ThirdParty.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
 }
 
-const init = ThirdPartyAPIWrapper.init;
-const signOut = ThirdPartyAPIWrapper.signOut;
-const isEmailVerified = ThirdPartyAPIWrapper.isEmailVerified;
-const redirectToAuth = ThirdPartyAPIWrapper.redirectToAuth;
+const init = Wrapper.init;
+const signOut = Wrapper.signOut;
+const isEmailVerified = Wrapper.isEmailVerified;
+const redirectToAuth = Wrapper.redirectToAuth;
+const SignInAndUp = Wrapper.SignInAndUp;
+const EmailVerification = Wrapper.EmailVerification;
 
 export {
     ThirdPartyAuth,
-    ThirdPartyAPIWrapper,
     init,
     Apple,
     Google,
@@ -99,7 +101,9 @@ export {
     redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    UserInput,
+    RecipeInterface,
 };

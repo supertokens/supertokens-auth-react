@@ -19,27 +19,29 @@
 import * as React from "react";
 import { PureComponent } from "react";
 
-import ThirdParty from "./thirdparty";
+import ThirdParty from "./recipe";
 import { FeatureBaseProps } from "../../types";
 import SessionAuth from "../session/sessionAuth";
 import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
+import Recipe from "./recipe";
 
 /*
  * Component.
  */
 
-class ThirdPartyAuth extends PureComponent<FeatureBaseProps & { requireAuth?: boolean }> {
+class ThirdPartyAuth extends PureComponent<FeatureBaseProps & { requireAuth?: boolean; recipe: Recipe }> {
     /*
      * Render.
      */
     render = (): JSX.Element | null => {
         return (
             <SessionAuth
-                requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}
-                recipeId={ThirdParty.getInstanceOrThrow().recipeId}
-                history={this.props.history}>
-                <EmailVerificationAuth recipeId={ThirdParty.getInstanceOrThrow().recipeId} history={this.props.history}>
+                redirectToLogin={() => {
+                    ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, this.props.history);
+                }}
+                requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}>
+                <EmailVerificationAuth recipe={this.props.recipe.emailVerification} history={this.props.history}>
                     {this.props.children}
                 </EmailVerificationAuth>
             </SessionAuth>
@@ -57,7 +59,7 @@ export default function ThirdPartyAuthWrapper({
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
     if (reactRouterDom === undefined) {
         return (
-            <ThirdPartyAuth requireAuth={requireAuth} recipeId={ThirdParty.getInstanceOrThrow().recipeId}>
+            <ThirdPartyAuth requireAuth={requireAuth} recipe={ThirdParty.getInstanceOrThrow()}>
                 {children}
             </ThirdPartyAuth>
         );
@@ -65,7 +67,7 @@ export default function ThirdPartyAuthWrapper({
 
     const Component = reactRouterDom.withRouter(ThirdPartyAuth);
     return (
-        <Component requireAuth={requireAuth} recipeId={ThirdParty.getInstanceOrThrow().recipeId}>
+        <Component requireAuth={requireAuth} recipe={ThirdParty.getInstanceOrThrow()}>
             {children}
         </Component>
     );

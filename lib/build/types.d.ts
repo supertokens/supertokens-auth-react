@@ -3,11 +3,14 @@ import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
+import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
-    recipeList: CreateRecipeFunction<any, any, any>[];
+    recipeList: CreateRecipeFunction<any, any, any, any>[];
 };
-export declare type CreateRecipeFunction<T, S, R> = (appInfo: NormalisedAppInfo) => RecipeModule<T, S, R>;
+export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
+    appInfo: NormalisedAppInfo
+) => RecipeModule<T, S, R, N>;
 export declare type AppInfoUserInput = {
     appName: string;
     apiDomain: string;
@@ -28,7 +31,6 @@ export declare type NormalisedAppInfo = {
     websiteBasePath: NormalisedURLPath;
 };
 export declare type ComponentWithRecipeAndMatchingMethod = {
-    rid: string;
     component: ReactComponentClass;
     matches: () => boolean;
 };
@@ -64,9 +66,6 @@ export declare type FeatureBaseConfig = {
 export declare type NormalisedBaseConfig = {
     style: Styles;
 };
-export declare type SuccessAPIResponse = {
-    status: "OK";
-};
 export declare type NormalisedPalette = {
     colors: Record<string, string>;
     fonts: {
@@ -76,17 +75,18 @@ export declare type NormalisedPalette = {
 export declare type NormalisedDefaultStyles = Record<string, CSSObject>;
 export declare type ThemeBaseProps = {
     styleFromInit?: Styles;
-    onSuccess: () => void;
 };
 export declare type FeatureBaseProps = {
-    recipeId: string;
     children?: JSX.Element;
     history?: any;
     isEmbedded?: boolean;
 };
-export declare type FeatureBaseOptionalRidProps = {
-    recipeId?: string;
-    children?: JSX.Element;
-    history?: any;
-    isEmbedded?: boolean;
-};
+export declare type PreAPIHookFunction = (context: { requestInit: RequestInit; url: string }) => Promise<{
+    url: string;
+    requestInit: RequestInit;
+}>;
+export declare type PostAPIHookFunction = (context: {
+    requestInit: RequestInit;
+    url: string;
+    response: Response;
+}) => Promise<Response>;

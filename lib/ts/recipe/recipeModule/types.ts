@@ -1,68 +1,24 @@
 import { NormalisedAppInfo } from "../../types";
 
-export type RecipeModuleConfig<
-    RecipeModuleGetRedirectionURLContext,
-    RecipeModulePreAPIHookContext,
-    RecipeModuleOnHandleEventContext
-> = RecipeModuleHooks<
-    RecipeModuleGetRedirectionURLContext,
-    RecipeModulePreAPIHookContext,
-    RecipeModuleOnHandleEventContext
-> & {
-    /*
-     * Unique Identifier of a module.
-     */
+export type UserInput<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
+    getRedirectionURL?: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
+    preAPIHook?: (context: PreAPIHookContextType) => Promise<{ url: string; requestInit: RequestInit }>;
+    onHandleEvent?: (context: OnHandleEventContextType) => void;
+    useShadowDom?: boolean;
+    palette?: Record<string, string>;
+};
+
+export type Config<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
     recipeId: string;
-
-    /**
-     *
-     * AppInfo as present in the recipe module manager
-     */
     appInfo: NormalisedAppInfo;
-};
+} & UserInput<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType>;
 
-export type RecipeModuleHooks<
-    RecipeModuleGetRedirectionURLContext,
-    RecipeModulePreAPIHookContext,
-    RecipeModuleOnHandleEventContext
-> = {
-    /*
-     * Method used for redirections.
-     */
-    getRedirectionURL?: (context: RecipeModuleGetRedirectionURLContext) => Promise<string | undefined>;
-
-    /*
-     * Optional pre API Hook.
-     */
-    preAPIHook?: (
-        context: RecipeModulePreAPIHookContext
-    ) => Promise<RequestInit | { url?: string; requestInit: RequestInit }>;
-
-    /*
-     * Optional method used for handling event success.
-     */
-    onHandleEvent?: (context: RecipeModuleOnHandleEventContext) => void;
-};
-
-export type NormalisedRecipeModuleHooks<
-    RecipeModuleGetRedirectionURLContext,
-    RecipeModulePreAPIHookContext,
-    RecipeModuleOnHandleEventContext
-> = {
-    /*
-     * Optional method used for redirections.
-     */
-    getRedirectionURL: (context: RecipeModuleGetRedirectionURLContext) => Promise<string | undefined>;
-
-    /*
-     * Optional pre API Hook.
-     */
-    preAPIHook: (
-        context: RecipeModulePreAPIHookContext
-    ) => Promise<RequestInit | { url?: string; requestInit: RequestInit }>;
-
-    /*
-     * Method used for handling event success.
-     */
-    onHandleEvent: (context: RecipeModuleOnHandleEventContext) => void;
+export type NormalisedConfig<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
+    recipeId: string;
+    appInfo: NormalisedAppInfo;
+    getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
+    preAPIHook: (context: PreAPIHookContextType) => Promise<{ url: string; requestInit: RequestInit }>;
+    onHandleEvent: (context: OnHandleEventContextType) => void;
+    useShadowDom: boolean;
+    palette: Record<string, string>;
 };

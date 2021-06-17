@@ -1,33 +1,36 @@
-import { CreateRecipeFunction } from "../../types";
-import { SessionUserInput } from "./types";
+import { RecipeInterface } from "supertokens-website";
 import SessionAuthComponent from "./sessionAuth";
+import { InputType } from "./types";
 export default class SessionAPIWrapper {
     static useSessionContext: () => import("./types").SessionContextType;
     static SessionAuth: typeof SessionAuthComponent;
-    static init(config?: SessionUserInput): CreateRecipeFunction<unknown, unknown, unknown>;
-    static getRefreshURLDomain(): string | undefined;
+    static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
     static getUserId(): Promise<string>;
     static getJWTPayloadSecurely(): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
     static doesSessionExist(): Promise<boolean>;
-    static addAxiosInterceptors: (axiosInstance: any) => void;
-    static setAuth0API: (apiPath: string) => void;
-    static getAuth0API: () => {
-        apiPath: string | undefined;
-    };
-    static signOut: () => Promise<void>;
+    static addAxiosInterceptors(axiosInstance: any): void;
+    static signOut(): Promise<void>;
 }
-export declare const useSessionContext: () => import("./types").SessionContextType;
-export declare const SessionAuth: typeof SessionAuthComponent;
-export declare const init: typeof SessionAPIWrapper.init;
-export declare const getRefreshURLDomain: typeof SessionAPIWrapper.getRefreshURLDomain;
-export declare const getUserId: typeof SessionAPIWrapper.getUserId;
-export declare const getJWTPayloadSecurely: typeof SessionAPIWrapper.getJWTPayloadSecurely;
-export declare const attemptRefreshingSession: typeof SessionAPIWrapper.attemptRefreshingSession;
-export declare const doesSessionExist: typeof SessionAPIWrapper.doesSessionExist;
-export declare const addAxiosInterceptors: (axiosInstance: any) => void;
-export declare const setAuth0API: (apiPath: string) => void;
-export declare const getAuth0API: () => {
-    apiPath: string | undefined;
+declare const useSessionContext: () => import("./types").SessionContextType;
+declare const SessionAuth: typeof SessionAuthComponent;
+declare const init: typeof SessionAPIWrapper.init;
+declare const getUserId: typeof SessionAPIWrapper.getUserId;
+declare const getJWTPayloadSecurely: typeof SessionAPIWrapper.getJWTPayloadSecurely;
+declare const attemptRefreshingSession: typeof SessionAPIWrapper.attemptRefreshingSession;
+declare const doesSessionExist: typeof SessionAPIWrapper.doesSessionExist;
+declare const addAxiosInterceptors: typeof SessionAPIWrapper.addAxiosInterceptors;
+declare const signOut: typeof SessionAPIWrapper.signOut;
+export {
+    useSessionContext,
+    SessionAuth,
+    init,
+    getUserId,
+    getJWTPayloadSecurely,
+    attemptRefreshingSession,
+    doesSessionExist,
+    addAxiosInterceptors,
+    signOut,
+    RecipeInterface,
+    InputType,
 };
-export declare const signOut: () => Promise<void>;

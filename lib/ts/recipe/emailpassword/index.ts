@@ -13,78 +13,69 @@
  * under the License.
  */
 
-/*
- * Imports.
- */
-import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
-import { EmailPasswordUserInput } from "./types";
+import { UserInput } from "./types";
 
-import EmailPassword from "./emailPassword";
-import EmailPasswordAuth from "./components/emailPasswordAuth";
-import SignInAndUp from "./components/features/signInAndUp/wrapper";
+import EmailPassword from "./recipe";
+import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
-import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import EmailVerification from "./components/features/emailVerification/wrapper";
-import {
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordPreAPIHookContext,
-    EmailPasswordOnHandleEventContext,
-} from "./types";
-/*
- * Class.
- */
-export default class EmailPasswordAPIWrapper {
-    /*
-     * Static attributes.
-     */
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
 
-    static EmailPasswordAuth = EmailPasswordAuth;
-    static SignInAndUp = SignInAndUp;
-    static SignInAndUpTheme = SignInAndUpTheme;
-
-    static ResetPasswordUsingToken = ResetPasswordUsingToken;
-    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
-
-    static EmailVerification = EmailVerification;
-    static EmailVerificationTheme = EmailVerificationTheme;
-
-    /*
-     * Methods.
-     */
-
-    static init(
-        config?: EmailPasswordUserInput
-    ): CreateRecipeFunction<
-        EmailPasswordGetRedirectionURLContext,
-        EmailPasswordPreAPIHookContext,
-        EmailPasswordOnHandleEventContext
-    > {
+export default class Wrapper {
+    static init(config?: UserInput) {
         return EmailPassword.init(config);
     }
 
-    static async signOut(): Promise<SuccessAPIResponse> {
-        return EmailPassword.signOut();
+    static async signOut(): Promise<void> {
+        return EmailPassword.getInstanceOrThrow().signOut();
     }
 
     static async isEmailVerified(): Promise<boolean> {
-        return EmailPassword.isEmailVerified();
+        return EmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified();
     }
 
-    static redirectToAuth(show?: "signin" | "signup"): void {
-        return EmailPassword.redirectToAuth(show);
+    // have backwards compatibility to allow input as "signin" | "signup"
+    static redirectToAuth(
+        input?:
+            | ("signin" | "signup")
+            | {
+                  show?: "signin" | "signup";
+                  redirectBack?: boolean;
+              }
+    ): void {
+        if (input === undefined || typeof input === "string") {
+            return EmailPassword.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
+        } else {
+            if (input.redirectBack === false || input.redirectBack === undefined) {
+                return EmailPassword.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
+            } else {
+                return EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
+            }
+        }
     }
+
+    static EmailPasswordAuth = EmailPasswordAuth;
+    static SignInAndUp = (prop?: any) => EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
+    static SignInAndUpTheme = SignInAndUpTheme;
+    static ResetPasswordUsingToken = (prop?: any) =>
+        EmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
+    static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
+    static EmailVerification = (prop?: any) =>
+        EmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
+    static EmailVerificationTheme = EmailVerificationTheme;
 }
 
-const init = EmailPasswordAPIWrapper.init;
-const signOut = EmailPasswordAPIWrapper.signOut;
-const isEmailVerified = EmailPasswordAPIWrapper.isEmailVerified;
-const redirectToAuth = EmailPasswordAPIWrapper.redirectToAuth;
+const init = Wrapper.init;
+const signOut = Wrapper.signOut;
+const isEmailVerified = Wrapper.isEmailVerified;
+const redirectToAuth = Wrapper.redirectToAuth;
+const SignInAndUp = Wrapper.SignInAndUp;
+const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
+const EmailVerification = Wrapper.EmailVerification;
 
 export {
     EmailPasswordAuth,
-    EmailPasswordAPIWrapper,
     init,
     isEmailVerified,
     SignInAndUp,
@@ -95,7 +86,9 @@ export {
     ResetPasswordUsingTokenTheme,
     EmailVerification,
     EmailVerificationTheme,
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordPreAPIHookContext,
-    EmailPasswordOnHandleEventContext,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    UserInput,
+    RecipeInterface,
 };

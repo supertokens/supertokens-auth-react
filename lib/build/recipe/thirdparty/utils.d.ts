@@ -1,5 +1,8 @@
-import { NormalisedSignInAndUpFeatureConfig, NormalisedThirdPartyConfig, SignInAndUpFeatureUserInput, StateObject, ThirdPartyConfig } from "./types";
-export declare function normaliseThirdPartyConfig(config: ThirdPartyConfig, allowEmptyProviders?: boolean): NormalisedThirdPartyConfig;
-export declare function normaliseSignInAndUpFeature(config: SignInAndUpFeatureUserInput, allowEmptyProviders: boolean): NormalisedSignInAndUpFeatureConfig;
-export declare function getOAuthState(): StateObject | undefined;
-export declare function matchRecipeIdUsingState(recipeId: string): () => boolean;
+import { NormalisedSignInAndUpFeatureConfig, NormalisedConfig, SignInAndUpFeatureUserInput, Config } from "./types";
+import Recipe from "./recipe";
+export declare function normaliseThirdPartyConfig(config: Config, allowEmptyProviders?: boolean): NormalisedConfig;
+export declare function normaliseSignInAndUpFeature(
+    config: SignInAndUpFeatureUserInput | undefined,
+    allowEmptyProviders: boolean
+): NormalisedSignInAndUpFeatureConfig;
+export declare function matchRecipeIdUsingState(recipe: Recipe): boolean;

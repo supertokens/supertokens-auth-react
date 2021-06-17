@@ -19,7 +19,7 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import ThirdParty from "../../../../lib/build/recipe/thirdparty/thirdparty";
+import ThirdParty from "../../../../lib/build/recipe/thirdparty/recipe";
 import { Google, Github, Facebook } from "../../../../lib/build/recipe/thirdparty";
 import assert from "assert";
 import SuperTokens from "../../../../lib/build/superTokens";
@@ -86,8 +86,11 @@ describe("ThirdParty", function () {
             },
         })(SuperTokens.getInstanceOrThrow().appInfo);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().recipeId, "thirdparty");
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().appInfo, SuperTokens.getInstanceOrThrow().appInfo);
+        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
+        assert.deepStrictEqual(
+            ThirdParty.getInstanceOrThrow().config.appInfo,
+            SuperTokens.getInstanceOrThrow().appInfo
+        );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 1);
     });
 
@@ -100,8 +103,11 @@ describe("ThirdParty", function () {
             },
         })(SuperTokens.getInstanceOrThrow().appInfo);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().recipeId, "thirdparty");
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().appInfo, SuperTokens.getInstanceOrThrow().appInfo);
+        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
+        assert.deepStrictEqual(
+            ThirdParty.getInstanceOrThrow().config.appInfo,
+            SuperTokens.getInstanceOrThrow().appInfo
+        );
         assert.deepStrictEqual(
             ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.termsOfServiceLink,
             termsOfServiceLink
@@ -119,8 +125,11 @@ describe("ThirdParty", function () {
             },
         })(SuperTokens.getInstanceOrThrow().appInfo);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().recipeId, "thirdparty");
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().appInfo, SuperTokens.getInstanceOrThrow().appInfo);
+        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
+        assert.deepStrictEqual(
+            ThirdParty.getInstanceOrThrow().config.appInfo,
+            SuperTokens.getInstanceOrThrow().appInfo
+        );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 2);
     });
 
@@ -180,8 +189,11 @@ describe("ThirdParty", function () {
             },
         })(SuperTokens.getInstanceOrThrow().appInfo);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().recipeId, "thirdparty");
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().appInfo, SuperTokens.getInstanceOrThrow().appInfo);
+        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
+        assert.deepStrictEqual(
+            ThirdParty.getInstanceOrThrow().config.appInfo,
+            SuperTokens.getInstanceOrThrow().appInfo
+        );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 1);
         assert.deepStrictEqual(
             ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].getButton().props.children.props
@@ -206,8 +218,11 @@ describe("ThirdParty", function () {
             },
         })(SuperTokens.getInstanceOrThrow().appInfo);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().recipeId, "thirdparty");
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().appInfo, SuperTokens.getInstanceOrThrow().appInfo);
+        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
+        assert.deepStrictEqual(
+            ThirdParty.getInstanceOrThrow().config.appInfo,
+            SuperTokens.getInstanceOrThrow().appInfo
+        );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 1);
         assert.deepStrictEqual(
             ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].getButton().props.children.props
@@ -229,8 +244,11 @@ describe("ThirdParty", function () {
             },
         })(SuperTokens.getInstanceOrThrow().appInfo);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().recipeId, "thirdparty");
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().appInfo, SuperTokens.getInstanceOrThrow().appInfo);
+        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
+        assert.deepStrictEqual(
+            ThirdParty.getInstanceOrThrow().config.appInfo,
+            SuperTokens.getInstanceOrThrow().appInfo
+        );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 1);
         assert.deepStrictEqual(
             ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].getButton(),
@@ -245,8 +263,11 @@ describe("ThirdParty", function () {
             },
         })(SuperTokens.getInstanceOrThrow().appInfo);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().recipeId, "thirdparty");
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().appInfo, SuperTokens.getInstanceOrThrow().appInfo);
+        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
+        assert.deepStrictEqual(
+            ThirdParty.getInstanceOrThrow().config.appInfo,
+            SuperTokens.getInstanceOrThrow().appInfo
+        );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 2);
         assert.deepStrictEqual(
             ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].getButton().props.children.props
@@ -308,18 +329,21 @@ describe("ThirdParty", function () {
             },
         })(SuperTokens.getInstanceOrThrow().appInfo);
         assert.notDeepStrictEqual(ThirdParty.getInstanceOrThrow(), undefined);
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().recipeId, "thirdparty");
-        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().appInfo, SuperTokens.getInstanceOrThrow().appInfo);
+        assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.recipeId, "thirdparty");
+        assert.deepStrictEqual(
+            ThirdParty.getInstanceOrThrow().config.appInfo,
+            SuperTokens.getInstanceOrThrow().appInfo
+        );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 3);
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.palette.primary, "blue");
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.useShadowDom, false);
-        assert.throws(() => ThirdParty.getInstanceOrThrow().hooks.preAPIHook(), new Error("PRE API HOOK THROWS"));
+        assert.throws(() => ThirdParty.getInstanceOrThrow().config.preAPIHook(), new Error("PRE API HOOK THROWS"));
         assert.throws(
-            () => ThirdParty.getInstanceOrThrow().hooks.onHandleEvent(),
+            () => ThirdParty.getInstanceOrThrow().config.onHandleEvent(),
             new Error("ON HANDLE EVENTS HOOK THROWS")
         );
         assert.throws(
-            () => ThirdParty.getInstanceOrThrow().hooks.getRedirectionURL(),
+            () => ThirdParty.getInstanceOrThrow().config.getRedirectionURL(),
             new Error("GET REDIRECTION HOOK THROWS")
         );
     });

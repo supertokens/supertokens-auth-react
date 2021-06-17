@@ -21,65 +21,30 @@ import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 
-import { signInAPI, signUpAPI, emailExistsAPI } from "./api";
-import {
-    FormFieldThemeProps,
-    FormBaseAPIResponse,
-    EmailPasswordGetRedirectionURLContext,
-    EmailPasswordPreAPIHookContext,
-    EmailPasswordOnHandleEventContext,
-    NormalisedEmailPasswordConfig,
-} from "../../../types";
+import { FormFieldThemeProps } from "../../../types";
 import { SignInAndUpTheme } from "../../..";
-import { APIFormField, FeatureBaseProps, NormalisedFormField } from "../../../../../types";
-import { getRedirectToPathFromURL, validateForm } from "../../../../../utils";
+import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
+import { getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { NormalisedAuthRecipeConfig, SignInAndUpState } from "../../../../authRecipeModule/types";
-import AuthRecipeModule from "../../../../authRecipeModule";
-import SuperTokens from "../../../../../superTokens";
-import RecipeModule from "../../../../recipeModule";
-/*
- * Component.
- */
+import { SignInAndUpState, RecipeInterface } from "../../../types";
+import Recipe from "../../../recipe";
+import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
-class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
+type PropType = FeatureBaseProps & {
+    recipe: Recipe;
+};
+
+class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseProps) {
+    constructor(props: PropType) {
         super(props);
 
         this.state = {
             status: "LOADING",
         };
     }
-
-    getRecipeInstanceOrThrow = (): AuthRecipeModule<
-        EmailPasswordGetRedirectionURLContext,
-        EmailPasswordPreAPIHookContext,
-        EmailPasswordOnHandleEventContext,
-        NormalisedEmailPasswordConfig
-    > => {
-        if (this.props.recipeId === undefined) {
-            throw new Error("No recipeId props given to SignInAndUp component");
-        }
-
-        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (recipe instanceof AuthRecipeModule === false) {
-            throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SignInAndUp component.`);
-        }
-
-        return recipe as AuthRecipeModule<
-            EmailPasswordGetRedirectionURLContext,
-            EmailPasswordPreAPIHookContext,
-            EmailPasswordOnHandleEventContext,
-            NormalisedEmailPasswordConfig
-        >;
-    };
-
-    getRecipeConfigOrThrow = (): NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig => {
-        return this.getRecipeInstanceOrThrow().getConfig<NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig>();
-    };
 
     getIsEmbedded = (): boolean => {
         if (this.props.isEmbedded !== undefined) {
@@ -88,46 +53,12 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         return false;
     };
 
-    /*
-     * Methods.
-     */
-
-    signIn = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
-        // Front end validation.
-        const validationErrors = await validateForm(
-            formFields,
-            this.getRecipeConfigOrThrow().signInAndUpFeature.signInForm.formFields
-        );
-        // If errors, return.
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
-
-        const normalisedAPIResponse = await signInAPI(
-            formFields,
-            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
-        );
-
-        this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
-
-        return normalisedAPIResponse;
-    };
-
     onSignInSuccess = async (): Promise<void> => {
         if (this.state.status !== "SUCCESSFUL") {
             return;
         }
 
-        this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-            action: "SUCCESS",
-            isNewUser: false,
-            user: this.state.user,
-        });
-
-        return await this.getRecipeInstanceOrThrow().redirect(
+        return await this.props.recipe.redirect(
             {
                 action: "SUCCESS",
                 isNewUser: false,
@@ -137,77 +68,28 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         );
     };
 
-    signUp = async (formFields: APIFormField[]): Promise<FormBaseAPIResponse> => {
-        // Front end validation.
-        const validationErrors = await validateForm(
-            formFields,
-            this.getRecipeConfigOrThrow().signInAndUpFeature.signUpForm.formFields
-        );
-
-        // If errors, return.
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
-
-        const normalisedAPIResponse = await signUpAPI(
-            formFields,
-            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
-        );
-
-        this.setStateOnSuccessfulAPICall(normalisedAPIResponse);
-
-        return normalisedAPIResponse;
-    };
-
-    setStateOnSuccessfulAPICall(normalisedAPIResponse: FormBaseAPIResponse): void {
-        this.setState((oldState) => {
-            if (
-                oldState.status !== "READY" ||
-                normalisedAPIResponse.status !== "OK" ||
-                normalisedAPIResponse.user === undefined
-            ) {
-                return oldState;
-            }
-
-            return {
-                status: "SUCCESSFUL",
-                user: {
-                    id: normalisedAPIResponse.user.id,
-                    email: normalisedAPIResponse.user.email,
-                },
-            };
-        });
-    }
-
     onSignUpSuccess = async (): Promise<void> => {
         if (this.state.status !== "SUCCESSFUL") {
             return;
         }
 
-        this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
-            action: "SUCCESS",
-            isNewUser: false,
-            user: this.state.user,
-        });
-
-        // Redirect to email verification screen if sign up and email verification mode is required.
-        let context: EmailPasswordGetRedirectionURLContext = {
-            redirectToPath: getRedirectToPathFromURL(),
-            isNewUser: true,
-            action: "SUCCESS",
-        };
-
-        if (this.getRecipeInstanceOrThrow().isEmailVerificationRequired() === true) {
-            // Or if sign up and email verification mode is not required, redirect to success screen.
-            context = {
-                action: "VERIFY_EMAIL",
-            };
+        if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
+            return await this.props.recipe.emailVerification.redirect(
+                {
+                    action: "VERIFY_EMAIL",
+                },
+                this.props.history
+            );
+        } else {
+            return await this.props.recipe.redirect(
+                {
+                    redirectToPath: getRedirectToPathFromURL(),
+                    isNewUser: true,
+                    action: "SUCCESS",
+                },
+                this.props.history
+            );
         }
-
-        return await this.getRecipeInstanceOrThrow().redirect(context, this.props.history);
     };
 
     getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {
@@ -230,42 +112,36 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
 
                 // Otherwise, if email, use syntax validate method and check if email exists.
                 return async (value: any): Promise<string | undefined> => {
-                    const syntaxError = await field.validate(value);
-
-                    if (syntaxError !== undefined) {
-                        return syntaxError;
+                    const error = await field.validate(value);
+                    if (error !== undefined) {
+                        return error;
                     }
 
                     if (typeof value !== "string") {
                         return "Email must be of type string";
                     }
                     try {
-                        return await emailExistsAPI(
-                            value,
-                            this.getRecipeInstanceOrThrow() as RecipeModule<unknown, unknown, unknown>
-                        );
-                    } catch (e) {
-                        // Fail silently.
-                        return undefined;
-                    }
+                        const emailExists = await this.props.recipe.recipeImpl.doesEmailExist({
+                            email: value,
+                            config: this.props.recipe.config,
+                        });
+                        if (emailExists) {
+                            return "This email already exists. Please sign in instead";
+                        }
+                    } catch (_) {}
+                    return undefined;
                 };
             })(),
         }));
     }
 
-    /*
-     * Init.
-     */
     componentDidMount = async (): Promise<void> => {
-        const sessionExists = await this.getRecipeInstanceOrThrow().doesSessionExist();
+        const sessionExists = await this.props.recipe.doesSessionExist();
         if (sessionExists) {
-            this.getRecipeInstanceOrThrow().hooks.onHandleEvent({
+            this.props.recipe.config.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS",
             });
-            return await this.getRecipeInstanceOrThrow().redirect(
-                { action: "SUCCESS", isNewUser: false },
-                this.props.history
-            );
+            return await this.props.recipe.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
         }
 
         this.setState((oldState) => {
@@ -280,59 +156,86 @@ class SignInAndUp extends PureComponent<FeatureBaseProps, SignInAndUpState> {
         });
     };
 
+    getModifiedRecipeImplementation = (): RecipeInterface => {
+        return {
+            ...this.props.recipe.recipeImpl,
+            signIn: async (input) => {
+                const response = await this.props.recipe.recipeImpl.signIn(input);
+
+                this.setState((oldState) => {
+                    return oldState.status !== "READY" || response.status !== "OK"
+                        ? oldState
+                        : {
+                              status: "SUCCESSFUL",
+                              user: response.user,
+                          };
+                });
+
+                return response;
+            },
+            signUp: async (input) => {
+                const response = await this.props.recipe.recipeImpl.signUp(input);
+
+                this.setState((oldState) => {
+                    return oldState.status !== "READY" || response.status !== "OK"
+                        ? oldState
+                        : {
+                              status: "SUCCESSFUL",
+                              user: response.user,
+                          };
+                });
+
+                return response;
+            },
+        };
+    };
+
     render = (): JSX.Element => {
-        const signInAndUpFeature = this.getRecipeConfigOrThrow().signInAndUpFeature;
-        const signUpFeature = signInAndUpFeature.signUpForm;
-        const signInFeature = signInAndUpFeature.signInForm;
-
-        const signInForm = {
-            styleFromInit: signInFeature.style,
-            formFields: signInFeature.formFields,
-            signInAPI: this.signIn,
-            onSuccess: this.onSignInSuccess,
-            forgotPasswordClick: () =>
-                this.getRecipeInstanceOrThrow().redirect({ action: "RESET_PASSWORD" }, this.props.history),
-        };
-
-        const signUpForm = {
-            styleFromInit: signUpFeature.style,
-            formFields: this.getThemeSignUpFeatureFormFields(signUpFeature.formFields),
-            privacyPolicyLink: signUpFeature.privacyPolicyLink,
-            termsOfServiceLink: signUpFeature.termsOfServiceLink,
-            onSuccess: this.onSignUpSuccess,
-            signUpAPI: this.signUp,
-        };
-
         // Before session is verified, return empty fragment, prevent UI glitch.
         if (this.state.status === "LOADING") {
             return <Fragment />;
         }
 
-        /*
-         * Render.
-         */
+        const componentOverrides = this.props.recipe.config.override.components;
+
+        const signInAndUpFeature = this.props.recipe.config.signInAndUpFeature;
+        const signUpFeature = signInAndUpFeature.signUpForm;
+        const signInFeature = signInAndUpFeature.signInForm;
+
+        const signInForm = {
+            recipeImplementation: this.getModifiedRecipeImplementation(),
+            config: this.props.recipe.config,
+            styleFromInit: signInFeature.style,
+            formFields: signInFeature.formFields,
+            onSuccess: this.onSignInSuccess,
+            forgotPasswordClick: () => this.props.recipe.redirect({ action: "RESET_PASSWORD" }, this.props.history),
+        };
+
+        const signUpForm = {
+            recipeImplementation: this.getModifiedRecipeImplementation(),
+            config: this.props.recipe.config,
+            styleFromInit: signUpFeature.style,
+            formFields: this.getThemeSignUpFeatureFormFields(signUpFeature.formFields),
+            onSuccess: this.onSignUpSuccess,
+        };
+
+        const props = {
+            config: this.props.recipe.config,
+            signInForm: signInForm,
+            signUpForm: signUpForm,
+        };
+
         return (
-            <FeatureWrapper useShadowDom={this.getRecipeConfigOrThrow().useShadowDom} isEmbedded={this.getIsEmbedded()}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {this.props.children === undefined && (
-                        <SignInAndUpTheme
-                            rawPalette={this.getRecipeInstanceOrThrow().config.palette}
-                            defaultToSignUp={signInAndUpFeature.defaultToSignUp}
-                            signInForm={signInForm}
-                            signUpForm={signUpForm}
-                        />
-                    )}
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {this.props.children &&
-                        React.cloneElement(this.props.children, {
-                            rawPalette: this.getRecipeInstanceOrThrow().config.palette,
-                            defaultToSignUp: signInAndUpFeature.defaultToSignUp,
-                            signInForm,
-                            signUpForm,
-                        })}
-                </Fragment>
-            </FeatureWrapper>
+            <ComponentOverrideContext.Provider value={componentOverrides}>
+                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {this.props.children === undefined && <SignInAndUpTheme {...props} />}
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {this.props.children && React.cloneElement(this.props.children, props)}
+                    </Fragment>
+                </FeatureWrapper>
+            </ComponentOverrideContext.Provider>
         );
     };
 }

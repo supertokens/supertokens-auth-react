@@ -13,133 +13,68 @@
  * under the License.
  */
 
-/*
- * Imports.
- */
-import { EmailVerificationUserInput, NormalisedEmailVerificationConfig } from "../emailverification/types";
-import { RecipeModuleConfig, RecipeModuleHooks } from "../recipeModule/types";
+import {
+    UserInputForAuthRecipeModule as EmailVerificationUserInput,
+    GetRedirectionURLContext as EmailVerificationGetRedirectionURLContext,
+    OnHandleEventContext as EmailVerificationOnHandleEventContext,
+    PreAPIHookContext as EmailVerificationPreAPIHookContext,
+    ComponentOverrideMap as EmailVerificationComponentOverrideMap,
+    RecipeInterface,
+} from "../emailverification/types";
+import {
+    Config as RecipeModuleConfig,
+    NormalisedConfig as NormalisedRecipeModuleConfig,
+    UserInput as UserInputRecipeModule,
+} from "../recipeModule/types";
 
-/*
- * Types.
- */
 export type User = {
-    /*
-     * User id.
-     */
     id: string;
-
-    /*
-     * User email.
-     */
     email: string;
 };
 
-export type AuthRecipeModuleConfig<T, S, R> = AuthRecipeModuleUserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
+export type UserInputOverride = {
+    emailVerification?: {
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components?: EmailVerificationComponentOverrideMap;
+    };
+};
 
-export type AuthRecipeModuleUserInput<T, S, R> = RecipeModuleHooks<T, S, R> & {
-    /*
-     * Use shadow Dom root.
-     */
-    useShadowDom?: boolean;
-
-    /*
-     * Styling palette.
-     */
-    palette?: Record<string, string>;
-
-    /*
-     * Email Verification configs.
-     */
+export type UserInput<T, S, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
-};
+} & UserInputRecipeModule<T, S, R>;
 
-export type NormalisedAuthRecipeConfig = {
-    /*
-     * Use shadow Dom root.
-     */
-    useShadowDom: boolean;
+export type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
 
-    /*
-     * Styling palette.
-     */
-    palette: Record<string, string>;
+export type NormalisedConfig<T, S, R> = {
+    emailVerificationFeature?: EmailVerificationUserInput;
+    override?: {
+        emailVerification?: {
+            functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+            components?: EmailVerificationComponentOverrideMap;
+        };
+    };
+} & NormalisedRecipeModuleConfig<T, S, R>;
 
-    /*
-     * Normalised Email Verification configs.
-     */
-    emailVerificationFeature: NormalisedEmailVerificationConfig;
-};
-
-export type AuthRecipeModuleGetRedirectionURLContext =
+export type GetRedirectionURLContext =
     | {
-          /*
-           * Get Redirection URL Context
-           */
           action: "SUCCESS";
-
-          /*
-           * isNewUser
-           */
           isNewUser: boolean;
-
-          /*
-           * Redirect To Path represents the intended path the user wanted to access.
-           */
           redirectToPath?: string;
       }
     | {
-          /*
-           * Get Redirection URL Context
-           */
-          action: "SIGN_IN_AND_UP" | "VERIFY_EMAIL";
-      };
+          action: "SIGN_IN_AND_UP";
+      }
+    | EmailVerificationGetRedirectionURLContext;
 
-export type AuthRecipeModulePreAPIHookContext = {
-    /*
-     * Pre API Hook action.
-     */
-    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_OUT" | "SIGN_IN";
+export type PreAPIHookContext = EmailVerificationPreAPIHookContext;
 
-    /*
-     * Request object containing query params, body, headers.
-     */
-    requestInit: RequestInit;
-
-    /*
-     * URL
-     */
-    url: string;
-};
-
-export type AuthRecipeModuleOnHandleEventContext =
+export type OnHandleEventContext =
     | {
-          /*
-           * On Handle Event actions
-           */
-          action: "SESSION_ALREADY_EXISTS" | "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
+          action: "SESSION_ALREADY_EXISTS";
       }
     | {
-          /*
-           * Sign In success.
-           */
           action: "SUCCESS";
-
-          /*
-           * isNewUser
-           */
           isNewUser: boolean;
-
-          /*
-           * User returned from API.
-           */
           user: { id: string; email: string };
-      };
-
-export type SignInAndUpState =
-    | {
-          status: "LOADING" | "READY";
       }
-    | {
-          status: "SUCCESSFUL";
-          user: User;
-      };
+    | EmailVerificationOnHandleEventContext;

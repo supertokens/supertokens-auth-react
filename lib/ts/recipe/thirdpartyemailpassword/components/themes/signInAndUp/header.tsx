@@ -17,25 +17,29 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import SignInHeader from "../../../../emailpassword/components/themes/signInAndUp/signInHeader";
-import SignUpHeader from "../../../../emailpassword/components/themes/signInAndUp/signUpHeader";
+import { SignInHeader } from "../../../../emailpassword/components/themes/signInAndUp/signInHeader";
+import { SignUpHeader } from "../../../../emailpassword/components/themes/signInAndUp/signUpHeader";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
 /*
  * Component.
  */
-export default function Header({
-    isSignUp,
-    setIsSignUp,
-}: {
-    isSignUp: boolean;
-    setIsSignUp: (isSignUp: boolean) => void;
-}): JSX.Element {
-    /*
-     * Render.
-     */
-    if (isSignUp === true) {
-        return <SignUpHeader onClick={() => setIsSignUp(false)} />;
-    } else {
-        return <SignInHeader onClick={() => setIsSignUp(true)} />;
+export const Header = withOverride(
+    "ThirdPartyEmailPasswordHeader",
+    function ThirdPartyEmailPasswordHeader({
+        isSignUp,
+        setIsSignUp,
+    }: {
+        isSignUp: boolean;
+        setIsSignUp: (isSignUp: boolean) => void;
+    }): JSX.Element {
+        /*
+         * Render.
+         */
+        if (isSignUp === true) {
+            return <SignUpHeader onClick={() => setIsSignUp(false)} />;
+        } else {
+            return <SignInHeader onClick={() => setIsSignUp(true)} />;
+        }
     }
-}
+);

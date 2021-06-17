@@ -19,60 +19,47 @@
 import { PureComponent, ReactElement } from "react";
 
 import { FeatureBaseProps } from "../../types";
-import AuthRecipeModule from "../authRecipeModule";
-import SuperTokens from "../../superTokens";
+import Recipe from "./recipe";
 
-/*
- * Component.
- */
+type Prop = FeatureBaseProps & { recipe: Recipe };
 
-export default class EmailVerificationAuth<T, S, R, N> extends PureComponent<FeatureBaseProps> {
-    /*
-     * Methods.
-     */
-    getRecipeInstanceOrThrow = (): AuthRecipeModule<T, S, R, N> => {
-        if (this.props.recipeId === undefined) {
-            throw new Error("No recipeId props given to EmailVerificationAuth component");
-        }
-
-        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow<T, S, R>(this.props.recipeId);
-        if (recipe instanceof AuthRecipeModule === false) {
-            throw new Error(
-                `${recipe.recipeId} must be an instance of AuthRecipeModule to use EmailVerificationAuth component.`
-            );
-        }
-
-        return recipe as AuthRecipeModule<T, S, R, N>;
-    };
-
-    isEmailVerifiedAPI = async (): Promise<boolean> => {
-        try {
-            return await this.getRecipeInstanceOrThrow().isEmailVerified();
-        } catch (e) {
-            // In case of API failure, continue, do not break the application.
-            return true;
-        }
-    };
+export default class EmailVerificationAuth extends PureComponent<Prop, { status: "LOADING" | "READY" }> {
+    constructor(props: Prop) {
+        super(props);
+        this.state = {
+            status: "LOADING",
+        };
+    }
 
     async componentDidMount(): Promise<void> {
         // If email verification mode is off or optional, return.
-        if (this.getRecipeInstanceOrThrow().isEmailVerificationRequired() === false) {
+        if (this.props.recipe.config.mode !== "REQUIRED") {
+            this.setState((oldState) => {
+                return {
+                    ...oldState,
+                    status: "READY",
+                };
+            });
             return;
         }
         // Otherwise, make sure that the email is valid, otherwise, redirect to email validation screen.
-        const isEmailVerified = await this.isEmailVerifiedAPI();
+        const isEmailVerified = await this.props.recipe.isEmailVerified();
         if (isEmailVerified === false) {
-            return await this.getRecipeInstanceOrThrow().redirect(
-                ({ action: "VERIFY_EMAIL" } as unknown) as T,
-                this.props.history
-            );
+            return await this.props.recipe.redirect({ action: "VERIFY_EMAIL" }, this.props.history);
+        } else {
+            this.setState((oldState) => {
+                return {
+                    ...oldState,
+                    status: "READY",
+                };
+            });
         }
     }
 
-    /*
-     * Render.
-     */
     render = (): JSX.Element | null => {
+        if (this.state.status === "LOADING") {
+            return null;
+        }
         return this.props.children as ReactElement<any>;
     };
 }

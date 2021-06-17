@@ -1,18 +1,42 @@
 /// <reference types="react" />
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
-import { AuthRecipeModuleGetRedirectionURLContext, AuthRecipeModuleOnHandleEventContext, AuthRecipeModulePreAPIHookContext, AuthRecipeModuleUserInput, SignInAndUpState, User } from "../authRecipeModule/types";
-import { RecipeModuleConfig } from "../recipeModule/types";
+import {
+    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
+    OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
+    PreAPIHookContext as AuthRecipeModulePreAPIHookContext,
+    User,
+    Config as AuthRecipeModuleConfig,
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+    UserInput as AuthRecipeModuleUserInput,
+    UserInputOverride as AuthRecipeUserInputOverride,
+} from "../authRecipeModule/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
-export declare type ThirdPartyUserInput = AuthRecipeModuleUserInput<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext> & {
-    palette?: Record<string, string>;
-    useShadowDom?: boolean;
-    signInAndUpFeature: SignInAndUpFeatureUserInput;
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
+import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
+import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
+export declare type ComponentOverrideMap = {
+    ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
+    ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
+    ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
 };
-export declare type ThirdPartyConfig = ThirdPartyUserInput & RecipeModuleConfig<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext>;
-export declare type NormalisedThirdPartyConfig = {
+export declare type UserInput = {
+    signInAndUpFeature?: SignInAndUpFeatureUserInput;
+    override?: {
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components?: ComponentOverrideMap;
+    } & AuthRecipeUserInputOverride;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+export declare type Config = UserInput &
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
-};
+    override: {
+        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components: ComponentOverrideMap;
+    };
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     disableDefaultImplementation?: boolean;
     privacyPolicyLink?: string;
@@ -25,60 +49,62 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
     termsOfServiceLink?: string;
     providers: Provider[];
 };
-export declare type ThirdPartyGetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext | {
-    action: "GET_REDIRECT_URL";
-    provider: Provider;
-};
-export declare type ThirdPartyPreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
-    action: "GET_AUTHORISATION_URL";
-    requestInit: RequestInit;
-    url: string;
-};
-export declare type ThirdPartyOnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
+export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
+export declare type PreAPIHookContext =
+    | AuthRecipeModulePreAPIHookContext
+    | {
+          action: "GET_AUTHORISATION_URL";
+          requestInit: RequestInit;
+          url: string;
+      }
+    | {
+          action: "THIRD_PARTY_SIGN_IN_UP";
+          requestInit: RequestInit;
+          url: string;
+      };
+export declare type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
 export declare type SignInAndUpThemeProps = {
     providers: {
         id: string;
         buttonComponent: JSX.Element;
     }[];
-    signInAndUpClick: (id: string) => Promise<string | void>;
-    privacyPolicyLink?: string;
-    termsOfServiceLink?: string;
-} & ({
-    status: "READY" | "LOADING" | "SUCCESSFUL" | "GENERAL_ERROR";
-} | {
-    status: "CUSTOM_ERROR";
-    error: string;
-});
-export declare type ThirdPartySignInAndUpThemeState = {
-    status: "READY" | "LOADING" | "SUCCESSFUL";
-} | {
-    status: "ERROR";
-    message: string;
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
+    error: string | undefined;
 };
-export declare type SignInAndUpAPIResponse = {
-    status: "OK";
-    createdNewUser: boolean;
-    user: User;
-} | {
-    status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-} | {
-    status: "FIELD_ERROR";
-    error: string;
-};
-export declare type AuthorisationURLAPIResponse = {
-    status: "OK";
-    url: string;
-};
-export declare type ThirdPartySignInAndUpState = SignInAndUpState | {
-    status: "GENERAL_ERROR";
-} | {
-    status: "CUSTOM_ERROR";
-    error: string;
+export declare type ThirdPartySignInAndUpState = {
+    status: "LOADING" | "READY";
+    error?: string;
 };
 export declare type StateObject = {
-    state: string;
-    expiresAt: number;
-    rid: string;
-    thirdPartyId: string;
-    redirectToPath: string | undefined;
+    state?: string;
+    rid?: string;
+    thirdPartyId?: string;
+    redirectToPath?: string;
 };
+export interface RecipeInterface {
+    getOAuthState(): StateObject | undefined;
+    setOAuthState(state: StateObject): void;
+    redirectToThirdPartyLogin: (input: {
+        thirdPartyId: string;
+        config: NormalisedConfig;
+        state?: StateObject;
+    }) => Promise<{
+        status: "OK" | "ERROR";
+    }>;
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<string>;
+    signInAndUp: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<
+        | {
+              status: "OK";
+              user: User;
+              createdNewUser: boolean;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
+          }
+        | {
+              status: "FIELD_ERROR";
+              error: string;
+          }
+    >;
+}

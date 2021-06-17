@@ -1,4 +1,3 @@
-/// <reference types="react" />
-export default function SignInHeader({ onClick }: {
-    onClick: (() => void) | undefined;
-}): JSX.Element;
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
+export declare const SignInHeader: (props: { onClick: (() => void) | undefined }) => jsx.JSX.Element;

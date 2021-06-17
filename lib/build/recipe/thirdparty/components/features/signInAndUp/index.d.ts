@@ -1,15 +1,15 @@
 import { PureComponent } from "react";
 import { FeatureBaseProps } from "../../../../../types";
-import AuthRecipeModule from "../../../../authRecipeModule";
-import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
-import { NormalisedThirdPartyConfig, ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartySignInAndUpState } from "../../../types";
-declare class SignInAndUp extends PureComponent<FeatureBaseProps, ThirdPartySignInAndUpState> {
-    constructor(props: FeatureBaseProps);
-    getRecipeInstanceOrThrow: () => AuthRecipeModule<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, import("../../../../authRecipeModule/types").AuthRecipeModuleOnHandleEventContext, NormalisedThirdPartyConfig>;
-    getRecipeConfigOrThrow: () => NormalisedThirdPartyConfig & NormalisedAuthRecipeConfig;
+import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
+import Recipe from "../../../recipe";
+declare type PropType = FeatureBaseProps & {
+    recipe: Recipe;
+};
+declare class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
+    constructor(props: PropType);
     getIsEmbedded: () => boolean;
     componentDidMount: () => Promise<void>;
-    signInAndUpClick: (providerId: string) => Promise<string | void>;
+    getModifiedRecipeImplementation: () => RecipeInterface;
     render: () => JSX.Element;
 }
 export default SignInAndUp;

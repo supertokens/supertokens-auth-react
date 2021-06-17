@@ -1,12 +1,11 @@
 import { PureComponent } from "react";
 import { FeatureBaseProps } from "../../../../../types";
-import { NormalisedThirdPartyEmailPasswordConfig } from "../../../types";
-import AuthRecipeModule from "../../../../authRecipeModule";
-import { ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext } from "../../..";
-import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
-declare class SignInAndUp extends PureComponent<FeatureBaseProps> {
-    getRecipeInstanceOrThrow: () => AuthRecipeModule<ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, import("../../../../emailpassword").EmailPasswordOnHandleEventContext, NormalisedThirdPartyEmailPasswordConfig>;
-    getRecipeConfigOrThrow: () => NormalisedThirdPartyEmailPasswordConfig & NormalisedAuthRecipeConfig;
+import Recipe from "../../../recipe";
+declare class SignInAndUp extends PureComponent<
+    FeatureBaseProps & {
+        recipe: Recipe;
+    }
+> {
     getIsEmbedded: () => boolean;
     render: () => JSX.Element;
 }

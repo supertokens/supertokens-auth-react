@@ -12,46 +12,34 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/*
- * Imports.
- */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { PureComponent } from "react";
+import { useContext } from "react";
 import { SignUpThemeProps } from "../../../types";
 
-import SignUpFooter from "../../../../authRecipeModule/components/themes/signInAndUp/signUpFooter";
-import SignUpHeader from "./signUpHeader";
+import { SignUpFooter } from "./signUpFooter";
+import { SignUpHeader } from "./signUpHeader";
 import StyleContext from "../../../../../styles/styleContext";
-import SignUpForm from "./signUpForm";
+import { SignUpForm } from "./signUpForm";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-/*
- * Component.
- */
+export const SignUp = withOverride("EmailPasswordSignUp", function EmailPasswordSignUp(props: SignUpThemeProps) {
+    const styles = useContext(StyleContext);
 
-export default class SignUp extends PureComponent<SignUpThemeProps> {
-    static contextType = StyleContext;
-
-    /*
-     * Render.
-     */
-    render(): JSX.Element {
-        const styles = this.context;
-        return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row" css={styles.row}>
-                    <SignUpForm
-                        {...this.props}
-                        header={<SignUpHeader onClick={this.props.signInClicked} />}
-                        footer={
-                            <SignUpFooter
-                                privacyPolicyLink={this.props.privacyPolicyLink}
-                                termsOfServiceLink={this.props.termsOfServiceLink}
-                            />
-                        }
-                    />
-                </div>
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                <SignUpForm
+                    {...props}
+                    header={<SignUpHeader onClick={props.signInClicked} />}
+                    footer={
+                        <SignUpFooter
+                            privacyPolicyLink={props.config.signInAndUpFeature.signUpForm.privacyPolicyLink}
+                            termsOfServiceLink={props.config.signInAndUpFeature.signUpForm.termsOfServiceLink}
+                        />
+                    }
+                />
             </div>
-        );
-    }
-}
+        </div>
+    );
+});

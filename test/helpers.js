@@ -25,7 +25,8 @@ import {
 } from "./constants";
 
 import assert from "assert";
-import { SESSION_STORAGE_STATE_KEY } from "../lib/build/recipe/thirdparty/constants";
+
+const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
 /*
  * General Helpers.
@@ -362,7 +363,7 @@ export async function clearBrowserCookies(page) {
 export async function clickForgotPasswordLink(page) {
     // Click on Forgot Password Link.
     const forgotPasswordLink = await getForgotPasswordLink(page);
-    await Promise.all([page.waitForNavigation(), forgotPasswordLink.click()]);
+    await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), forgotPasswordLink.click()]);
 }
 
 export async function toggleSignInSignUp(page) {

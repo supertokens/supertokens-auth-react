@@ -1,32 +1,67 @@
-import { CreateRecipeFunction, SuccessAPIResponse } from "../../types";
+/// <reference types="react" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import EmailVerification from "./components/features/emailVerification/wrapper";
-import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken/wrapper";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
-import { ThirdPartyEmailPasswordUserInput, ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext } from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
-import SignInAndUp from "./components/features/signInAndUp/wrapper";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
-export default class ThirdPartyEmailPasswordAPIWrapper {
-    static init(config: ThirdPartyEmailPasswordUserInput): CreateRecipeFunction<ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext>;
-    static signOut(): Promise<SuccessAPIResponse>;
+export default class Wrapper {
+    static init(
+        config: UserInput
+    ): import("../../types").CreateRecipeFunction<
+        import("../emailpassword").GetRedirectionURLContext,
+        PreAPIHookContext,
+        import("../emailpassword").OnHandleEventContext,
+        import("./types").NormalisedConfig
+    >;
+    static signOut(): Promise<void>;
     static isEmailVerified(): Promise<boolean>;
-    static redirectToAuth(show?: "signin" | "signup"): void;
+    static redirectToAuth(
+        input?:
+            | ("signin" | "signup")
+            | {
+                  show?: "signin" | "signup";
+                  redirectBack?: boolean;
+              }
+    ): void;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
     static ThirdPartyEmailPasswordAuth: typeof ThirdPartyEmailPasswordAuth;
-    static SignInAndUp: typeof SignInAndUp;
+    static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
-    static ResetPasswordUsingToken: typeof ResetPasswordUsingToken;
+    static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
-    static EmailVerification: typeof EmailVerification;
+    static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
-declare const init: typeof ThirdPartyEmailPasswordAPIWrapper.init;
-declare const signOut: typeof ThirdPartyEmailPasswordAPIWrapper.signOut;
-declare const isEmailVerified: typeof ThirdPartyEmailPasswordAPIWrapper.isEmailVerified;
-declare const redirectToAuth: typeof ThirdPartyEmailPasswordAPIWrapper.redirectToAuth;
-export { ThirdPartyEmailPasswordAuth, ThirdPartyEmailPasswordAPIWrapper, init, Apple, Google, Facebook, Github, isEmailVerified, SignInAndUp, SignInAndUpTheme, signOut, redirectToAuth, EmailVerification, EmailVerificationTheme, ResetPasswordUsingToken, ResetPasswordUsingTokenTheme, ThirdPartyEmailPasswordGetRedirectionURLContext, ThirdPartyEmailPasswordPreAPIHookContext, ThirdPartyEmailPasswordOnHandleEventContext, };
+declare const init: typeof Wrapper.init;
+declare const signOut: typeof Wrapper.signOut;
+declare const isEmailVerified: typeof Wrapper.isEmailVerified;
+declare const redirectToAuth: typeof Wrapper.redirectToAuth;
+declare const SignInAndUp: (prop?: any) => JSX.Element;
+declare const EmailVerification: (prop?: any) => JSX.Element;
+declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
+export {
+    ThirdPartyEmailPasswordAuth,
+    init,
+    Apple,
+    Google,
+    Facebook,
+    Github,
+    isEmailVerified,
+    SignInAndUp,
+    SignInAndUpTheme,
+    signOut,
+    redirectToAuth,
+    EmailVerification,
+    EmailVerificationTheme,
+    ResetPasswordUsingToken,
+    ResetPasswordUsingTokenTheme,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    UserInput,
+    RecipeInterface,
+};

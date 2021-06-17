@@ -1,17 +1,17 @@
 import { PureComponent } from "react";
-import { EmailPasswordGetRedirectionURLContext, EmailPasswordOnHandleEventContext, EmailPasswordPreAPIHookContext, FormBaseAPIResponse, NormalisedEmailPasswordConfig } from "../../../types";
-import { APIFormField, FeatureBaseProps } from "../../../../../types";
-import AuthRecipeModule from "../../../../authRecipeModule";
-import { NormalisedAuthRecipeConfig } from "../../../../authRecipeModule/types";
-declare class ResetPasswordUsingToken extends PureComponent<FeatureBaseProps, {
-    token: string;
-}> {
-    constructor(props: FeatureBaseProps);
-    getRecipeInstanceOrThrow: () => AuthRecipeModule<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext, NormalisedEmailPasswordConfig>;
-    getRecipeConfigOrThrow: () => NormalisedEmailPasswordConfig & NormalisedAuthRecipeConfig;
+import { FeatureBaseProps } from "../../../../../types";
+import Recipe from "../../../recipe";
+declare type PropType = FeatureBaseProps & {
+    recipe: Recipe;
+};
+declare class ResetPasswordUsingToken extends PureComponent<
+    PropType,
+    {
+        token: string | undefined;
+    }
+> {
+    constructor(props: PropType);
     getIsEmbedded: () => boolean;
-    submitNewPassword: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse>;
-    enterEmail: (formFields: APIFormField[]) => Promise<FormBaseAPIResponse>;
     render: () => JSX.Element;
 }
 export default ResetPasswordUsingToken;

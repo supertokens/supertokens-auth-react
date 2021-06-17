@@ -1,18 +1,64 @@
-import { APIFormField, FeatureBaseConfig, FormField, FormFieldBaseConfig, NormalisedBaseConfig, NormalisedFormField, ThemeBaseProps } from "../../types";
+import {
+    APIFormField,
+    FeatureBaseConfig,
+    FormField,
+    FormFieldBaseConfig,
+    NormalisedBaseConfig,
+    NormalisedFormField,
+    ThemeBaseProps,
+} from "../../types";
 import { RefObject } from "react";
-import { RecipeModuleConfig } from "../recipeModule/types";
-import { AuthRecipeModuleGetRedirectionURLContext, AuthRecipeModuleOnHandleEventContext, AuthRecipeModulePreAPIHookContext, AuthRecipeModuleUserInput, User } from "../authRecipeModule/types";
-export declare type EmailPasswordUserInput = AuthRecipeModuleUserInput<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext> & {
-    palette?: Record<string, string>;
-    useShadowDom?: boolean;
+import {
+    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
+    OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
+    PreAPIHookContext as AuthRecipeModulePreAPIHookContext,
+    User,
+    Config as AuthRecipeModuleConfig,
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+    UserInput as AuthRecipeModuleUserInput,
+    UserInputOverride as AuthRecipeUserInputOverride,
+} from "../authRecipeModule/types";
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import { SignInHeader } from "./components/themes/signInAndUp/signInHeader";
+import { SignIn } from "./components/themes/signInAndUp/signIn";
+import { SignInFooter } from "./components/themes/signInAndUp/signInFooter";
+import { SignInForm } from "./components/themes/signInAndUp/signInForm";
+import { SignUp } from "./components/themes/signInAndUp/signUp";
+import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
+import { SignUpForm } from "./components/themes/signInAndUp/signUpForm";
+import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
+import { EnterEmail } from "./components/themes/resetPasswordUsingToken/enterEmail";
+import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
+export declare type ComponentOverrideMap = {
+    EmailPasswordSignIn?: ComponentOverride<typeof SignIn>;
+    EmailPasswordSignInFooter?: ComponentOverride<typeof SignInFooter>;
+    EmailPasswordSignInForm?: ComponentOverride<typeof SignInForm>;
+    EmailPasswordSignInHeader?: ComponentOverride<typeof SignInHeader>;
+    EmailPasswordSignUp?: ComponentOverride<typeof SignUp>;
+    EmailPasswordSignUpFooter?: ComponentOverride<typeof SignUpFooter>;
+    EmailPasswordSignUpForm?: ComponentOverride<typeof SignUpForm>;
+    EmailPasswordSignUpHeader?: ComponentOverride<typeof SignUpHeader>;
+    EmailPasswordEnterEmail?: ComponentOverride<typeof EnterEmail>;
+    EmailPasswordSubmitNewPassword?: ComponentOverride<typeof SubmitNewPassword>;
+};
+export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
-};
-export declare type EmailPasswordConfig = EmailPasswordUserInput & RecipeModuleConfig<EmailPasswordGetRedirectionURLContext, EmailPasswordPreAPIHookContext, EmailPasswordOnHandleEventContext>;
-export declare type NormalisedEmailPasswordConfig = {
+    override?: {
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components?: ComponentOverrideMap;
+    } & AuthRecipeUserInputOverride;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+export declare type Config = UserInput &
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
-};
+    override: {
+        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components: ComponentOverrideMap;
+    };
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = {
     disableDefaultImplementation?: boolean;
     defaultToSignUp?: boolean;
@@ -63,21 +109,22 @@ declare type FormThemeBaseProps = ThemeBaseProps & {
     formFields: FormFieldThemeProps[];
 };
 export declare type SignInThemeProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
     signUpClicked?: () => void;
     forgotPasswordClick: () => void;
-    signInAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
+    onSuccess: () => void;
 };
 export declare type SignUpThemeProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
     signInClicked?: () => void;
-    privacyPolicyLink?: string;
-    termsOfServiceLink?: string;
-    signUpAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
+    onSuccess: () => void;
 };
 export declare type SignInAndUpThemeProps = {
-    defaultToSignUp: boolean;
     signInForm: SignInThemeProps;
     signUpForm: SignUpThemeProps;
-    rawPalette: Record<string, string>;
+    config: NormalisedConfig;
 };
 export declare type NormalisedFormFieldWithError = NormalisedFormField & {
     error?: string;
@@ -97,75 +144,59 @@ export declare type FormFieldError = {
     id: string;
     error: string;
 };
-export declare type EmailExistsAPIResponse = {
-    status: "OK";
-    exists: boolean;
-};
-export declare type FormFieldAPIResponse = {
-    status: "FIELD_ERROR";
-    formFields: FormFieldError[];
-};
-export declare type BaseSignInUpAPIResponse = {
-    status: "OK";
-    user: User;
-} | FormFieldAPIResponse;
-export declare type BaseResetPasswordAPIResponse = {
-    status: "OK";
-} | FormFieldAPIResponse;
-export declare type ThemeResponseGeneralError = {
-    status: "GENERAL_ERROR";
-    message: string;
-};
-export declare type SignUpAPIResponse = BaseSignInUpAPIResponse;
-export declare type SignInAPIResponse = BaseSignInUpAPIResponse | {
-    status: "WRONG_CREDENTIALS_ERROR";
-    message: string;
-};
-export declare type EnterEmailAPIResponse = BaseResetPasswordAPIResponse;
-export declare type SubmitNewPasswordAPIResponse = BaseResetPasswordAPIResponse | {
-    status: "RESET_PASSWORD_INVALID_TOKEN_ERROR";
-};
-export declare type EmailPasswordPreAPIHookContext = AuthRecipeModulePreAPIHookContext | {
-    action: "SIGN_UP" | "SEND_RESET_PASSWORD_EMAIL" | "SUBMIT_NEW_PASSWORD";
-    requestInit: RequestInit;
-    url: string;
-};
-export declare type EmailPasswordGetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext | {
-    action: "RESET_PASSWORD";
-};
-export declare type EmailPasswordOnHandleEventContext = AuthRecipeModuleOnHandleEventContext | {
-    action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
-};
+export declare type PreAPIHookContext =
+    | AuthRecipeModulePreAPIHookContext
+    | {
+          action:
+              | "EMAIL_PASSWORD_SIGN_UP"
+              | "EMAIL_PASSWORD_SIGN_IN"
+              | "SEND_RESET_PASSWORD_EMAIL"
+              | "SUBMIT_NEW_PASSWORD"
+              | "EMAIL_EXISTS";
+          requestInit: RequestInit;
+          url: string;
+      };
+export declare type GetRedirectionURLContext =
+    | AuthRecipeModuleGetRedirectionURLContext
+    | {
+          action: "RESET_PASSWORD";
+      };
+export declare type OnHandleEventContext =
+    | AuthRecipeModuleOnHandleEventContext
+    | {
+          action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+      };
 export declare type ResetPasswordUsingTokenThemeProps = {
-    enterEmailForm: EnterEmailThemeProps;
-    submitNewPasswordForm: SubmitNewPasswordThemeProps;
-    hasToken: boolean;
-    rawPalette: Record<string, string>;
+    enterEmailForm: EnterEmailProps;
+    submitNewPasswordForm: SubmitNewPasswordProps | undefined;
+    config: NormalisedConfig;
 };
-export declare type EnterEmailThemeProps = FormThemeBaseProps & {
-    enterEmailAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
+export declare type EnterEmailProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
 };
-export declare type SubmitNewPasswordThemeProps = FormThemeBaseProps & {
-    submitNewPasswordAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
+export declare type SubmitNewPasswordProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
     onSignInClicked: () => void;
+    token: string;
 };
-export declare type EnterEmailThemeState = {
+export declare type EnterEmailState = {
     status: "READY" | "SENT";
 };
-export declare type SubmitNewPasswordThemeState = {
+export declare type SubmitNewPasswordState = {
     status: "READY" | "SUCCESS";
 };
-export declare type SendVerifyEmailThemeState = {
-    status: "READY" | "SUCCESS" | "ERROR";
-};
-export declare type FormBaseState = {
-    formFields: FormFieldState[];
-    status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
-} | {
-    formFields: FormFieldState[];
-    status: "GENERAL_ERROR";
-    generalError: string;
-};
+export declare type FormBaseState =
+    | {
+          formFields: FormFieldState[];
+          status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
+      }
+    | {
+          formFields: FormFieldState[];
+          status: "GENERAL_ERROR";
+          generalError: string;
+      };
 export declare type FormBaseProps = {
     header?: JSX.Element;
     footer?: JSX.Element;
@@ -176,19 +207,111 @@ export declare type FormBaseProps = {
     onSuccess?: () => void;
     callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
 };
-export declare type FormBaseAPIResponse = {
-    status: "OK";
-    user?: User;
-} | {
-    status: "GENERAL_ERROR";
-    message: string;
-} | {
-    status: "FIELD_ERROR";
-    formFields: FormFieldError[];
-};
+export declare type FormBaseAPIResponse =
+    | {
+          status: "OK";
+          user?: User;
+      }
+    | {
+          status: "GENERAL_ERROR";
+          message: string;
+      }
+    | {
+          status: "FIELD_ERROR";
+          formFields: FormFieldError[];
+      };
 declare global {
     interface Document {
         documentMode?: any;
     }
+}
+export declare type SignInAndUpState =
+    | {
+          status: "LOADING" | "READY";
+      }
+    | {
+          status: "SUCCESSFUL";
+          user: User;
+      };
+export interface RecipeInterface {
+    submitNewPassword: (input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        token: string;
+        config: NormalisedConfig;
+    }) => Promise<
+        | {
+              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+          }
+    >;
+    sendPasswordResetEmail: (input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        config: NormalisedConfig;
+    }) => Promise<
+        | {
+              status: "OK";
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+          }
+    >;
+    signUp: (input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        config: NormalisedConfig;
+    }) => Promise<
+        | {
+              status: "OK";
+              user: User;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+          }
+    >;
+    signIn: (input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        config: NormalisedConfig;
+    }) => Promise<
+        | {
+              status: "OK";
+              user: User;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+          }
+        | {
+              status: "WRONG_CREDENTIALS_ERROR";
+          }
+    >;
+    doesEmailExist: (input: { email: string; config: NormalisedConfig }) => Promise<boolean>;
 }
 export {};

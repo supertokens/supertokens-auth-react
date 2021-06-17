@@ -21,24 +21,18 @@ import { jsx } from "@emotion/react";
 import { PureComponent, Fragment } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
-import { SubmitNewPasswordThemeProps, SubmitNewPasswordThemeState } from "../../../types";
+import { SubmitNewPasswordProps, SubmitNewPasswordState } from "../../../types";
 import { FormRow, Button } from "../../library";
 import FormBase from "../../library/formBase";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-/*
- * Component.
- */
-
-export default class SubmitNewPasswordTheme extends PureComponent<
-    SubmitNewPasswordThemeProps,
-    SubmitNewPasswordThemeState
-> {
+class EmailPasswordSubmitNewPassword extends PureComponent<SubmitNewPasswordProps, SubmitNewPasswordState> {
     static contextType = StyleContext;
 
     /*
      * Constructor.
      */
-    constructor(props: SubmitNewPasswordThemeProps) {
+    constructor(props: SubmitNewPasswordProps) {
         super(props);
         this.state = {
             status: "READY",
@@ -49,7 +43,6 @@ export default class SubmitNewPasswordTheme extends PureComponent<
         this.setState(() => ({
             status: "SUCCESS",
         }));
-        this.props.onSuccess();
     };
 
     /*
@@ -58,7 +51,7 @@ export default class SubmitNewPasswordTheme extends PureComponent<
 
     render(): JSX.Element {
         const styles = this.context;
-        const { submitNewPasswordAPI, formFields, onSignInClicked } = this.props;
+        const { formFields, onSignInClicked } = this.props;
         const { status } = this.state;
 
         if (status === "SUCCESS") {
@@ -97,7 +90,24 @@ export default class SubmitNewPasswordTheme extends PureComponent<
                         buttonLabel={"Change password"}
                         onSuccess={this.onSuccess}
                         validateOnBlur={true}
-                        callAPI={submitNewPasswordAPI}
+                        callAPI={async (fields) => {
+                            const response = await this.props.recipeImplementation.submitNewPassword({
+                                formFields: fields,
+                                token: this.props.token,
+                                config: this.props.config,
+                            });
+                            if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "Invalid password reset token",
+                                };
+                            }
+                            return response.status === "FIELD_ERROR"
+                                ? response
+                                : {
+                                      status: "OK",
+                                  };
+                        }}
                         showLabels={true}
                         header={
                             <Fragment>
@@ -117,3 +127,5 @@ export default class SubmitNewPasswordTheme extends PureComponent<
         );
     }
 }
+
+export const SubmitNewPassword = withOverride("EmailPasswordSubmitNewPassword", EmailPasswordSubmitNewPassword);

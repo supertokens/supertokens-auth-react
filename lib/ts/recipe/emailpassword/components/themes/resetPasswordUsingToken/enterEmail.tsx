@@ -20,20 +20,17 @@ import { jsx } from "@emotion/react";
 import { PureComponent, Fragment } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
-import { EnterEmailThemeProps, EnterEmailThemeState } from "../../../types";
+import { EnterEmailProps, EnterEmailState } from "../../../types";
 
 import FormBase from "../../library/formBase";
+import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-/*
- * Component.
- */
-
-export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps, EnterEmailThemeState> {
+class EmailPasswordEnterEmail extends PureComponent<EnterEmailProps, EnterEmailState> {
     static contextType = StyleContext;
     /*
      * Constructor.
      */
-    constructor(props: EnterEmailThemeProps) {
+    constructor(props: EnterEmailProps) {
         super(props);
         this.state = {
             status: "READY",
@@ -48,7 +45,6 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
         this.setState(() => ({
             status: "SENT",
         }));
-        this.props.onSuccess();
     };
 
     resend = (): void => {
@@ -62,7 +58,7 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
      */
     render(): JSX.Element {
         const styles = this.context;
-        const { formFields, enterEmailAPI } = this.props;
+        const { formFields } = this.props;
         const { status } = this.state;
 
         if (status === "SENT") {
@@ -90,7 +86,12 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
                         formFields={formFields}
                         buttonLabel={"Email me"}
                         onSuccess={this.onSuccess}
-                        callAPI={enterEmailAPI}
+                        callAPI={async (formFields) =>
+                            await this.props.recipeImplementation.sendPasswordResetEmail({
+                                formFields,
+                                config: this.props.config,
+                            })
+                        }
                         showLabels={false}
                         validateOnBlur={true}
                         header={
@@ -111,3 +112,5 @@ export default class EnterEmailTheme extends PureComponent<EnterEmailThemeProps,
         );
     }
 }
+
+export const EnterEmail = withOverride("EmailPasswordEnterEmail", EmailPasswordEnterEmail);

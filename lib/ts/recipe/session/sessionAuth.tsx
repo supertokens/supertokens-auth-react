@@ -17,66 +17,41 @@
  * Imports.
  */
 import React from "react";
-
-import { getWindowOrThrow } from "supertokens-website/lib/build/utils";
-import { FeatureBaseOptionalRidProps } from "../../types";
-import AuthRecipeModule from "../authRecipeModule";
-import SuperTokens from "../../superTokens";
-import { isAuthRecipeModule } from "../authRecipeModule/utils";
 import SessionContext from "./sessionContext";
 import { getUserId, getJWTPayloadSecurely, doesSessionExist } from "./";
 
-/*
- * Component.
- */
+type PropType = {
+    requireAuth?: boolean; // false by default
+    redirectToLogin: () => void;
+};
 
-export default class SessionAuth<T, S, R, N> extends React.PureComponent<
-    FeatureBaseOptionalRidProps & {
-        requireAuth?: boolean; // false by default
-    },
+type StateType =
     | { status: "LOADING" }
     | {
           status: "READY";
           userId: string;
           doesSessionExist: boolean;
           jwtPayload: any;
-      }
-> {
+      };
+
+export default class SessionAuth extends React.PureComponent<PropType, StateType> {
     /*
      * Constructor.
      */
-    constructor(props: FeatureBaseOptionalRidProps & { requireAuth?: boolean }) {
+    constructor(props: PropType) {
         super(props);
         this.state = {
             status: "LOADING",
         };
     }
 
-    /*
-     * Methods.
-     */
-    getRecipeInstanceOrThrow = (): AuthRecipeModule<T, S, R, N> => {
-        if (this.props.recipeId === undefined) {
-            throw new Error("No recipeId props given to SessionAuth component");
-        }
-
-        const recipe = SuperTokens.getInstanceOrThrow().getRecipeOrThrow(this.props.recipeId);
-        if (isAuthRecipeModule<T, S, R, N>(recipe)) {
-            return recipe;
-        }
-
-        throw new Error(`${recipe.recipeId} must be an instance of AuthRecipeModule to use SessionAuth component.`);
-    };
-
     redirectToLogin = async (): Promise<void> => {
-        const redirectToPath = getWindowOrThrow().location.pathname;
-        await this.getRecipeInstanceOrThrow().redirect(
-            { action: "SIGN_IN_AND_UP" } as unknown as T,
-            this.props.history,
-            {
-                redirectToPath,
-            }
-        );
+        if (this.props.redirectToLogin === undefined) {
+            throw new Error(
+                "Please provide the redirectToLogin prop when using SessionAuth, or use requireAuth={false}"
+            );
+        }
+        this.props.redirectToLogin();
     };
 
     async componentDidMount(): Promise<void> {

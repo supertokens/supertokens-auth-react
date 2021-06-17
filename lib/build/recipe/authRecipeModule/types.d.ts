@@ -1,45 +1,60 @@
-import { EmailVerificationUserInput, NormalisedEmailVerificationConfig } from "../emailverification/types";
-import { RecipeModuleConfig, RecipeModuleHooks } from "../recipeModule/types";
+import {
+    UserInputForAuthRecipeModule as EmailVerificationUserInput,
+    GetRedirectionURLContext as EmailVerificationGetRedirectionURLContext,
+    OnHandleEventContext as EmailVerificationOnHandleEventContext,
+    PreAPIHookContext as EmailVerificationPreAPIHookContext,
+    ComponentOverrideMap as EmailVerificationComponentOverrideMap,
+    RecipeInterface,
+} from "../emailverification/types";
+import {
+    Config as RecipeModuleConfig,
+    NormalisedConfig as NormalisedRecipeModuleConfig,
+    UserInput as UserInputRecipeModule,
+} from "../recipeModule/types";
 export declare type User = {
     id: string;
     email: string;
 };
-export declare type AuthRecipeModuleConfig<T, S, R> = AuthRecipeModuleUserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
-export declare type AuthRecipeModuleUserInput<T, S, R> = RecipeModuleHooks<T, S, R> & {
-    useShadowDom?: boolean;
-    palette?: Record<string, string>;
-    emailVerificationFeature?: EmailVerificationUserInput;
-};
-export declare type NormalisedAuthRecipeConfig = {
-    useShadowDom: boolean;
-    palette: Record<string, string>;
-    emailVerificationFeature: NormalisedEmailVerificationConfig;
-};
-export declare type AuthRecipeModuleGetRedirectionURLContext = {
-    action: "SUCCESS";
-    isNewUser: boolean;
-    redirectToPath?: string;
-} | {
-    action: "SIGN_IN_AND_UP" | "VERIFY_EMAIL";
-};
-export declare type AuthRecipeModulePreAPIHookContext = {
-    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED" | "SIGN_OUT" | "SIGN_IN";
-    requestInit: RequestInit;
-    url: string;
-};
-export declare type AuthRecipeModuleOnHandleEventContext = {
-    action: "SESSION_ALREADY_EXISTS" | "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
-} | {
-    action: "SUCCESS";
-    isNewUser: boolean;
-    user: {
-        id: string;
-        email: string;
+export declare type UserInputOverride = {
+    emailVerification?: {
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components?: EmailVerificationComponentOverrideMap;
     };
 };
-export declare type SignInAndUpState = {
-    status: "LOADING" | "READY";
-} | {
-    status: "SUCCESSFUL";
-    user: User;
-};
+export declare type UserInput<T, S, R> = {
+    emailVerificationFeature?: EmailVerificationUserInput;
+} & UserInputRecipeModule<T, S, R>;
+export declare type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
+export declare type NormalisedConfig<T, S, R> = {
+    emailVerificationFeature?: EmailVerificationUserInput;
+    override?: {
+        emailVerification?: {
+            functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+            components?: EmailVerificationComponentOverrideMap;
+        };
+    };
+} & NormalisedRecipeModuleConfig<T, S, R>;
+export declare type GetRedirectionURLContext =
+    | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          redirectToPath?: string;
+      }
+    | {
+          action: "SIGN_IN_AND_UP";
+      }
+    | EmailVerificationGetRedirectionURLContext;
+export declare type PreAPIHookContext = EmailVerificationPreAPIHookContext;
+export declare type OnHandleEventContext =
+    | {
+          action: "SESSION_ALREADY_EXISTS";
+      }
+    | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: {
+              id: string;
+              email: string;
+          };
+      }
+    | EmailVerificationOnHandleEventContext;

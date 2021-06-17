@@ -23,36 +23,6 @@ import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
-import { RecipeModuleHooks, NormalisedRecipeModuleHooks } from "./recipe/recipeModule/types";
-
-/*
- * NormalisedRecipeModuleHooks
- */
-export function normalisedRecipeModuleHooks<T, S, R>(
-    config: RecipeModuleHooks<T, S, R>
-): NormalisedRecipeModuleHooks<T, S, R> {
-    let { preAPIHook, onHandleEvent, getRedirectionURL } = config;
-    if (preAPIHook === undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        preAPIHook = async (context: any): Promise<RequestInit> => context.requestInit;
-    }
-
-    if (onHandleEvent === undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-        onHandleEvent = (_: unknown): void => {};
-    }
-
-    if (getRedirectionURL === undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        getRedirectionURL = async (_: unknown): Promise<string | undefined> => undefined;
-    }
-
-    return {
-        preAPIHook,
-        getRedirectionURL,
-        onHandleEvent,
-    };
-}
 
 /*
  * getRecipeIdFromPath
@@ -210,23 +180,6 @@ export function getWindowOrThrow(): any {
     // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
     return window;
 }
-
-export function getShouldUseShadowDom(useShadowDom?: boolean): boolean {
-    /*
-     * Detect if browser is IE
-     * In order to disable unsupported shadowDom
-     * https://github.com/supertokens/supertokens-auth-react/issues/99
-     */
-    const isIE = getWindowOrThrow().document.documentMode !== undefined;
-    // If browser is Internet Explorer, always disable shadow dom.
-    if (isIE === true) {
-        return false;
-    }
-
-    // Otherwise, use provided config or default to true.
-    return useShadowDom !== undefined ? useShadowDom : true;
-}
-
 /*
  * Default method for matching recipe route based on query params.
  */
@@ -235,8 +188,4 @@ export function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean {
         const recipeIdFromSearch = getRecipeIdFromSearch(getWindowOrThrow().location.search);
         return recipeIdFromSearch === recipeId;
     };
-}
-
-export function isRequestInit(x: RequestInit | { url?: string; requestInit: RequestInit }): x is RequestInit {
-    return (x as any).requestInit === undefined;
 }

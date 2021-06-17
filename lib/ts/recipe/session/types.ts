@@ -13,45 +13,26 @@
  * under the License.
  */
 
-import { RecipeModuleConfig } from "../recipeModule/types";
+import { RecipeInterface } from "supertokens-website";
 
-/*
- * Session User InputsConfig Types.
- */
-
-export type SessionUserInput = {
-    /*
-     * Session scope defines the domain's range of the session.
-     * Example: example.com, .example.com, api.example.com etc...
-     */
+export type InputType = {
+    apiDomain?: string;
+    apiBasePath?: string;
     sessionScope?: string;
-
-    /*
-     * refreshAPICustomHeaders
-     */
-    refreshAPICustomHeaders?: any;
-
-    /*
-     * signoutAPICustomHeaders
-     */
-    signoutAPICustomHeaders?: any;
-
-    /*
-     * sessionExpiredStatusCode
-     */
     sessionExpiredStatusCode?: number;
-
-    /*
-     * autoAddCredentials
-     */
     autoAddCredentials?: boolean;
-
     isInIframe?: boolean;
-
     cookieDomain?: string;
+    preAPIHook?: (context: {
+        action: "SIGN_OUT" | "REFRESH_SESSION";
+        requestInit: RequestInit;
+        url: string;
+    }) => Promise<{ url: string; requestInit: RequestInit }>;
+    onHandleEvent?: (context: { action: "SIGN_OUT" | "REFRESH_SESSION" | "UNAUTHORISED" }) => void;
+    override?: {
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+    };
 };
-
-export type SessionConfig = RecipeModuleConfig<unknown, unknown, unknown> & SessionUserInput;
 
 export type SessionContextType = {
     doesSessionExist: boolean;

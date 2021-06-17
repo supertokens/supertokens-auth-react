@@ -17,6 +17,7 @@ import Button from "./Button";
 import DarkTheme from "./Themes/Dark";
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
+import { logWithPrefix } from "./logWithPrefix";
 
 Session.addAxiosInterceptors(axios);
 
@@ -124,16 +125,66 @@ const formFields = [
     },
 ];
 
-let recipeList = [Session.init()];
+let recipeList = [
+    Session.init({
+        override: {
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS SESSION OVERRIDE`);
+
+                return {
+                    addAxiosInterceptors(...args) {
+                        log(`ADD_AXIOS_INTERCEPTORS`);
+                        return implementation.addAxiosInterceptors(...args);
+                    },
+                    addFetchInterceptorsAndReturnModifiedFetch(...args) {
+                        log(`ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH`);
+                        return implementation.addFetchInterceptorsAndReturnModifiedFetch(...args);
+                    },
+                    doesSessionExist(...args) {
+                        log(`DOES_SESSION_EXIST`);
+                        return implementation.doesSessionExist(...args);
+                    },
+                    getJWTPayloadSecurely(...args) {
+                        log(`GET_JWT_PAYLOAD_SECURELY`);
+                        return implementation.getJWTPayloadSecurely(...args);
+                    },
+                    getUserId(...args) {
+                        log(`GET_USER_ID`);
+                        return implementation.getUserId(...args);
+                    },
+                    signOut(...args) {
+                        log(`SIGN_OUT`);
+                        return implementation.signOut(...args);
+                    },
+                };
+            },
+        },
+        preAPIHook: (ctx) => {
+            // See https://github.com/supertokens/supertokens-auth-react/issues/267
+            if (ctx.action !== "REFRESH_SESSION") {
+                console.log(`ST_LOGS SESSION PRE_API_HOOKS ${ctx.action}`);
+            }
+
+            return ctx;
+        },
+        onHandleEvent: (ctx) => {
+            console.log(`ST_LOGS SESSION ON_HANDLE_EVENT ${ctx.action}`);
+        },
+    }),
+];
+
+const testContext = {
+    disableDefaultImplementation: getQueryParams("disableDefaultImplementation") === "true",
+};
 
 if (authRecipe === "thirdparty") {
-    recipeList = [getThirdPartyConfigs(), ...recipeList];
+    recipeList = [getThirdPartyConfigs(testContext), ...recipeList];
 } else if (authRecipe === "emailpassword") {
-    recipeList = [getEmailPasswordConfigs(), ...recipeList];
+    recipeList = [getEmailPasswordConfigs(testContext), ...recipeList];
 } else if (authRecipe === "both") {
-    recipeList = [getEmailPasswordConfigs(), getThirdPartyConfigs(), ...recipeList];
+    recipeList = [getEmailPasswordConfigs(testContext), getThirdPartyConfigs(testContext), ...recipeList];
 } else if (authRecipe === "thirdpartyemailpassword") {
-    recipeList = [getThirdPartyEmailPasswordConfigs(), ...recipeList];
+    recipeList = [getThirdPartyEmailPasswordConfigs(testContext), ...recipeList];
 }
 
 SuperTokens.init({
@@ -146,10 +197,12 @@ SuperTokens.init({
     recipeList,
 });
 
+let doNotUseReactRouterDom = localStorage.getItem("useReactRouterDom") === "false";
+
 /* App */
 function App() {
     const router = getQueryParams("router");
-    if (router === "no-router") {
+    if (router === "no-router" || doNotUseReactRouterDom) {
         return <AppWithoutRouter />;
     }
 
@@ -298,12 +351,60 @@ function SessionInfoTable({ sessionInfo }) {
     );
 }
 
-function getEmailPasswordConfigs() {
+function getEmailPasswordConfigs({ disableDefaultImplementation }) {
     return EmailPassword.init({
+        override: {
+            emailVerification: {
+                functions: (implementation) => {
+                    const log = logWithPrefix(`ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION`);
+
+                    return {
+                        sendVerificationEmail(...args) {
+                            log(`SEND_VERIFICATION_EMAIL`);
+                            return implementation.sendVerificationEmail(...args);
+                        },
+                        isEmailVerified(...args) {
+                            log(`IS_EMAIL_VERIFIED`);
+                            return implementation.isEmailVerified(...args);
+                        },
+                        verifyEmail(...args) {
+                            log(`VERIFY_EMAIL`);
+                            return implementation.verifyEmail(...args);
+                        },
+                    };
+                },
+            },
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS EMAIL_PASSWORD OVERRIDE`);
+
+                return {
+                    doesEmailExist(...args) {
+                        log(`DOES_EMAIL_EXIST`);
+                        return implementation.doesEmailExist(...args);
+                    },
+                    sendPasswordResetEmail(...args) {
+                        log(`SEND_PASSWORD_RESET_EMAIL`);
+                        return implementation.sendPasswordResetEmail(...args);
+                    },
+                    signIn(...args) {
+                        log(`SIGN_IN`);
+                        return implementation.signIn(...args);
+                    },
+                    signUp(...args) {
+                        log(`SIGN_UP`);
+                        return implementation.signUp(...args);
+                    },
+                    submitNewPassword(...args) {
+                        log(`SUBMIT_NEW_PASSWORD`);
+                        return implementation.submitNewPassword(...args);
+                    },
+                };
+            },
+        },
         palette: theme.colors,
         preAPIHook: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
-            return context.requestInit;
+            return context;
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
@@ -316,6 +417,7 @@ function getEmailPasswordConfigs() {
         },
         useShadowDom,
         emailVerificationFeature: {
+            disableDefaultImplementation,
             sendVerifyEmailScreen: {
                 style: theme.style,
             },
@@ -325,6 +427,7 @@ function getEmailPasswordConfigs() {
             mode: emailVerificationMode,
         },
         resetPasswordUsingTokenFeature: {
+            disableDefaultImplementation,
             enterEmailForm: {
                 style: theme.style,
             },
@@ -333,6 +436,7 @@ function getEmailPasswordConfigs() {
             },
         },
         signInAndUpFeature: {
+            disableDefaultImplementation,
             defaultToSignUp,
             signInForm: {
                 style: theme.style,
@@ -347,11 +451,11 @@ function getEmailPasswordConfigs() {
     });
 }
 
-function getThirdPartyConfigs() {
+function getThirdPartyConfigs({ disableDefaultImplementation }) {
     return ThirdParty.init({
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
-            return context.requestInit;
+            return context;
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY GET_REDIRECTION_URL ${context.action}`);
@@ -362,13 +466,62 @@ function getThirdPartyConfigs() {
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY ON_HANDLE_EVENT ${context.action}`);
         },
+        override: {
+            emailVerification: {
+                functions: (implementation) => {
+                    const log = logWithPrefix(`ST_LOGS THIRD_PARTY OVERRIDE EMAIL_VERIFICATION`);
 
+                    return {
+                        sendVerificationEmail(...args) {
+                            log(`SEND_VERIFICATION_EMAIL`);
+                            return implementation.sendVerificationEmail(...args);
+                        },
+                        isEmailVerified(...args) {
+                            log(`IS_EMAIL_VERIFIED`);
+                            return implementation.isEmailVerified(...args);
+                        },
+                        verifyEmail(...args) {
+                            log(`VERIFY_EMAIL`);
+                            return implementation.verifyEmail(...args);
+                        },
+                    };
+                },
+            },
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS THIRD_PARTY OVERRIDE`);
+
+                return {
+                    getOAuthAuthorisationURL(...args) {
+                        log(`GET_OAUTH_AUTHORISATION_URL`);
+                        return implementation.getOAuthAuthorisationURL(...args);
+                    },
+                    getOAuthState(...args) {
+                        log(`GET_OAUTH_STATE`);
+                        return implementation.getOAuthState(...args);
+                    },
+                    redirectToThirdPartyLogin(...args) {
+                        log(`REDIRECT_TO_THIRD_PARTY_LOGIN`);
+                        return implementation.redirectToThirdPartyLogin(...args);
+                    },
+                    setOAuthState(...args) {
+                        log(`SET_OAUTH_STATE`);
+                        return implementation.setOAuthState(...args);
+                    },
+                    signInAndUp(...args) {
+                        log(`SIGN_IN_AND_UP`);
+                        return implementation.signInAndUp(...args);
+                    },
+                };
+            },
+        },
         useShadowDom,
         palette: theme.colors,
         emailVerificationFeature: {
+            disableDefaultImplementation,
             mode: emailVerificationMode,
         },
         signInAndUpFeature: {
+            disableDefaultImplementation,
             style: theme.style,
             privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
@@ -386,11 +539,11 @@ function getThirdPartyConfigs() {
     });
 }
 
-function getThirdPartyEmailPasswordConfigs() {
+function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
     return ThirdPartyEmailPassword.init({
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
-            return context.requestInit;
+            return context;
         },
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
@@ -401,14 +554,77 @@ function getThirdPartyEmailPasswordConfigs() {
         onHandleEvent: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
         },
+        override: {
+            emailVerification: {
+                functions: (implementation) => {
+                    const log = logWithPrefix(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION`);
 
+                    return {
+                        sendVerificationEmail(...args) {
+                            log(`SEND_VERIFICATION_EMAIL`);
+                            return implementation.sendVerificationEmail(...args);
+                        },
+                        isEmailVerified(...args) {
+                            log(`IS_EMAIL_VERIFIED`);
+                            return implementation.isEmailVerified(...args);
+                        },
+                        verifyEmail(...args) {
+                            log(`VERIFY_EMAIL`);
+                            return implementation.verifyEmail(...args);
+                        },
+                    };
+                },
+            },
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE`);
+
+                return {
+                    signInAndUp(...args) {
+                        log(`SIGN_IN_AND_UP`);
+                        return implementation.signInAndUp(...args);
+                    },
+                    setOAuthState(...args) {
+                        log(`SET_OAUTH_STATE`);
+                        return implementation.setOAuthState(...args);
+                    },
+                    redirectToThirdPartyLogin(...args) {
+                        log(`REDIRECT_TO_THIRD_PARTY_LOGIN`);
+                        return implementation.redirectToThirdPartyLogin(...args);
+                    },
+                    getOAuthState(...args) {
+                        log(`GET_OAUTH_STATE`);
+                        return implementation.getOAuthState(...args);
+                    },
+                    getOAuthAuthorisationURL(...args) {
+                        log(`GET_OAUTH_AUTHORISATION_URL`);
+                        return implementation.getOAuthAuthorisationURL(...args);
+                    },
+                    submitNewPassword(...args) {
+                        log(`SUBMIT_NEW_PASSWORD`);
+                        return implementation.submitNewPassword(...args);
+                    },
+                    sendPasswordResetEmail(...args) {
+                        log(`SEND_PASSWORD_RESET_EMAIL`);
+                        return implementation.sendPasswordResetEmail(...args);
+                    },
+                    doesEmailExist(...args) {
+                        log(`DOES_EMAIL_EXIST`);
+                        return implementation.doesEmailExist(...args);
+                    },
+                };
+            },
+        },
         useShadowDom,
         palette: theme.colors,
         emailVerificationFeature: {
+            disableDefaultImplementation,
             mode: emailVerificationMode,
         },
-        resetPasswordUsingTokenFeature: {},
+        resetPasswordUsingTokenFeature: {
+            disableDefaultImplementation,
+        },
         signInAndUpFeature: {
+            disableDefaultImplementation,
             signInForm: {},
             signUpForm: {
                 formFields,

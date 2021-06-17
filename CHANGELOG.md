@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [0.14.0] - 2021-05-24
+
+### Added:
+
+-   Ability to override recipe functions to customize the behavior of feature components.
+-   Refactors code to:
+    -   Make types simpler.
+    -   Remove components folder from AuthRecipeModule, and puts them in the themes of the respective recipes.
+    -   Uses redirectToAuth everywhere instead of calling redirect manually.
+    -   Adds additional props / config to Session and EmailVerification recipe to make them more isolated
+    -   Passes recipe to feature components directly, as opposed to recipeId
+-   In session recipe, we remove `setAuth0API` and `getAuth0API`
+-   Removes `GET_REDIRECTION_URL` from the possible action types for `getRedirectionURL`.
+-   Changes `redirectToAuth` to take an object and adds `redirectBack` param, which can be used to indicate if the user should be redirected to the current page.
+-   Removes `getRefreshURLDomain` function from session recipe.
+-   Moves `SIGN_OUT` even and pre API hook into the Session recipe.
+-   Change to type of `preAPIHook` function
+-   Uses supertokens-website version >= 8.0
+-   Changed `SIGN_IN`, `SIGN_UP` Pre API hook action to `EMAIL_PASSWORD_SIGN_IN`, `EMAIL_PASSWORD_SIGN_UP` or `THIRD_PARTY_SIGN_IN_UP`
+
+### Fixed:
+
+-   State update post unmounting when using EmailVerification wrapper.
+
 ## [0.13.2] - 2021-06-05
 
 ### Added:

@@ -15,47 +15,47 @@
 
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
-    AuthRecipeModuleGetRedirectionURLContext,
-    AuthRecipeModuleOnHandleEventContext,
-    AuthRecipeModulePreAPIHookContext,
-    AuthRecipeModuleUserInput,
-    SignInAndUpState,
+    GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
+    OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
+    PreAPIHookContext as AuthRecipeModulePreAPIHookContext,
     User,
+    Config as AuthRecipeModuleConfig,
+    NormalisedConfig as NormalisedAuthRecipeModuleConfig,
+    UserInput as AuthRecipeModuleUserInput,
+    UserInputOverride as AuthRecipeUserInputOverride,
 } from "../authRecipeModule/types";
-import { RecipeModuleConfig } from "../recipeModule/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 
-export type ThirdPartyUserInput = AuthRecipeModuleUserInput<
-    ThirdPartyGetRedirectionURLContext,
-    ThirdPartyPreAPIHookContext,
-    ThirdPartyOnHandleEventContext
-> & {
-    /*
-     * Styling palette.
-     */
-    palette?: Record<string, string>;
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
+import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
+import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 
-    /*
-     * Use shadow Dom root.
-     */
-    useShadowDom?: boolean;
-
-    /*
-     * Sign In and Sign Up feature.
-     */
-    signInAndUpFeature: SignInAndUpFeatureUserInput;
+export type ComponentOverrideMap = {
+    ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
+    ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
+    ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
 };
 
-export type ThirdPartyConfig = ThirdPartyUserInput &
-    RecipeModuleConfig<ThirdPartyGetRedirectionURLContext, ThirdPartyPreAPIHookContext, ThirdPartyOnHandleEventContext>;
+export type UserInput = {
+    signInAndUpFeature?: SignInAndUpFeatureUserInput;
+    override?: {
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components?: ComponentOverrideMap;
+    } & AuthRecipeUserInputOverride;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
-export type NormalisedThirdPartyConfig = {
-    /*
-     * Sign In and Sign Up feature.
-     */
+export type Config = UserInput &
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+
+export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
-};
+    override: {
+        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components: ComponentOverrideMap;
+    };
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
@@ -101,170 +101,70 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     providers: Provider[];
 };
 
-export type ThirdPartyGetRedirectionURLContext =
-    | AuthRecipeModuleGetRedirectionURLContext
-    | {
-          /*
-           * action
-           */
-          action: "GET_REDIRECT_URL";
+export type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 
-          /*
-           * Provider Id
-           */
-          provider: Provider;
-      };
-
-export type ThirdPartyPreAPIHookContext =
+export type PreAPIHookContext =
     | AuthRecipeModulePreAPIHookContext
     | {
-          /*
-           * action
-           */
           action: "GET_AUTHORISATION_URL";
-
-          /*
-           * Request object containing query params, body, headers.
-           */
           requestInit: RequestInit;
-
-          /*
-           * URL
-           */
+          url: string;
+      }
+    | {
+          action: "THIRD_PARTY_SIGN_IN_UP";
+          requestInit: RequestInit;
           url: string;
       };
 
-export type ThirdPartyOnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
+export type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
 
 export type SignInAndUpThemeProps = {
-    /*
-     * Providers
-     */
     providers: {
-        /*
-         * Provider Id
-         */
         id: string;
-
-        /*
-         * Provider Button
-         */
         buttonComponent: JSX.Element;
     }[];
-
-    /*
-     * Click on button.
-     */
-    signInAndUpClick: (id: string) => Promise<string | void>;
-
-    /*
-     * Privacy Policy Link.
-     */
-    privacyPolicyLink?: string;
-
-    /*
-     * Terms Of Service Link.
-     */
-    termsOfServiceLink?: string;
-} & (
-    | {
-          status: "READY" | "LOADING" | "SUCCESSFUL" | "GENERAL_ERROR";
-      }
-    | {
-          status: "CUSTOM_ERROR";
-          error: string;
-      }
-);
-
-export type ThirdPartySignInAndUpThemeState =
-    | {
-          /*
-           * Status
-           */
-          status: "READY" | "LOADING" | "SUCCESSFUL";
-      }
-    | {
-          /*
-           * Status
-           */
-          status: "ERROR";
-
-          /*
-           * Error Message
-           */
-          message: string;
-      };
-
-export type SignInAndUpAPIResponse =
-    | {
-          /*
-           * Status.
-           */
-          status: "OK";
-
-          /*
-           * URL.
-           */
-          createdNewUser: boolean;
-
-          /*
-           * User
-           */
-          user: User;
-      }
-    | {
-          status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-      }
-    | {
-          status: "FIELD_ERROR";
-          error: string;
-      };
-
-export type AuthorisationURLAPIResponse = {
-    /*
-     * Status.
-     */
-    status: "OK";
-
-    /*
-     * URL.
-     */
-    url: string;
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
+    error: string | undefined;
 };
 
-export type ThirdPartySignInAndUpState =
-    | SignInAndUpState
-    | {
-          /*
-           * Status.
-           */
-          status: "GENERAL_ERROR";
-      }
-    | {
-          status: "CUSTOM_ERROR";
-          error: string;
-      };
+export type ThirdPartySignInAndUpState = {
+    status: "LOADING" | "READY";
+    error?: string;
+};
 
 export type StateObject = {
-    /*
-     * State, generated randomly
-     */
-    state: string;
-
-    /*
-     * ExpiresAt
-     */
-    expiresAt: number;
-
-    /*
-     * rid
-     */
-    rid: string;
-
-    /*
-     * Third Party Id
-     */
-    thirdPartyId: string;
-
-    redirectToPath: string | undefined;
+    state?: string;
+    rid?: string;
+    thirdPartyId?: string;
+    redirectToPath?: string;
 };
+
+export interface RecipeInterface {
+    getOAuthState(): StateObject | undefined;
+
+    setOAuthState(state: StateObject): void;
+
+    redirectToThirdPartyLogin: (input: {
+        thirdPartyId: string;
+        config: NormalisedConfig;
+        state?: StateObject;
+    }) => Promise<{ status: "OK" | "ERROR" }>;
+
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<string>;
+
+    signInAndUp: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<
+        | {
+              status: "OK";
+              user: User;
+              createdNewUser: boolean;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
+          }
+        | {
+              status: "FIELD_ERROR";
+              error: string;
+          }
+    >;
+}

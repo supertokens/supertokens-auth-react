@@ -1,17 +1,33 @@
+/// <reference types="react" />
 import RecipeModule from "../recipeModule";
-import { NormalisedAuthRecipeConfig, AuthRecipeModuleConfig, AuthRecipeModuleGetRedirectionURLContext } from "./types";
-import { SuccessAPIResponse } from "../../types";
-import EmailVerification from "../emailverification";
-export default abstract class AuthRecipeModule<T, S, R, N> extends RecipeModule<T, S, R> {
-    config: NormalisedAuthRecipeConfig & N;
-    emailVerification?: EmailVerification<T, S, R>;
-    constructor(config: AuthRecipeModuleConfig<T, S, R>, normalisedChildClassConfig: N);
-    getAuthRecipeModuleDefaultRedirectionURL: (context: AuthRecipeModuleGetRedirectionURLContext) => Promise<string>;
+import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import EmailVerification from "../emailverification/recipe";
+export default abstract class AuthRecipeModule<
+    T,
+    S,
+    R,
+    N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
+> extends RecipeModule<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext, N> {
+    emailVerification: EmailVerification;
+    constructor(
+        config: N,
+        recipes: {
+            emailVerificationInstance: EmailVerification | undefined;
+        }
+    );
+    getAuthRecipeModuleDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
+    getAuthRecipeModuleFeatureComponent: (componentName: "emailverification", props: any) => JSX.Element;
     getAuthRecipeModuleFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
-    getConfig: <T_1>() => T_1;
-    signOut: () => Promise<SuccessAPIResponse>;
-    isEmailVerified(): Promise<boolean>;
-    isEmailVerificationRequired(): boolean;
+    signOut: () => Promise<void>;
     doesSessionExist: () => Promise<boolean>;
-    abstract redirectToAuth(show?: "signin" | "signup"): void;
+    redirectToAuthWithRedirectToPath: (
+        show?: "signin" | "signup" | undefined,
+        history?: any,
+        queryParams?: any
+    ) => void;
+    redirectToAuthWithoutRedirectToPath: (
+        show?: "signin" | "signup" | undefined,
+        history?: any,
+        queryParams?: any
+    ) => void;
 }

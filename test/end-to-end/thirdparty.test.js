@@ -43,7 +43,7 @@ import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../c
 describe("SuperTokens Third Party", function () {
     let browser;
     let page;
-    let consoleLogs;
+    let consoleLogs = [];
 
     before(async function () {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
@@ -105,9 +105,7 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to append to authorisation url
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
-                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN_UP",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
             ]);
@@ -158,9 +156,7 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to append to authorisation url
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
-                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN_UP",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
             ]);
@@ -181,9 +177,7 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to append to authorisation url
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL GET_REDIRECT_URL", // to send to /signinup POST api
-                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN_UP",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
             ]);
@@ -196,11 +190,21 @@ describe("SuperTokens Third Party", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(search, "?rid=thirdparty&error=no_query_state");
+            assert.deepStrictEqual(search, "?rid=thirdparty&error=signin");
         });
 
         it("Invalid nonce", async function () {
@@ -218,11 +222,21 @@ describe("SuperTokens Third Party", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NOT_NONCE`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(search, "?rid=thirdparty&error=state_mismatch");
+            assert.deepStrictEqual(search, "?rid=thirdparty&error=signin");
         });
 
         it("Wrong provider", async function () {
@@ -240,11 +254,21 @@ describe("SuperTokens Third Party", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NONCE`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(search, "?rid=thirdparty&error=provider_mismatch");
+            assert.deepStrictEqual(search, "?rid=thirdparty&error=signin");
         });
 
         it("Unknown provider", async function () {
@@ -262,7 +286,13 @@ describe("SuperTokens Third Party", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/unknown?state=NONCE`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            assert.deepStrictEqual(consoleLogs, []);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/callback/unknown");
             await assertNoSTComponents(page);
@@ -283,11 +313,21 @@ describe("SuperTokens Third Party", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NONCE`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(search, "?rid=thirdparty&error=state_expired");
+            assert.deepStrictEqual(search, "?rid=thirdparty&error=signin");
         });
 
         it("No code params", async function () {
@@ -305,11 +345,21 @@ describe("SuperTokens Third Party", function () {
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth/callback/github?state=NONCE`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
-            assert.deepStrictEqual(consoleLogs, ["ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP"]);
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
             assert.deepStrictEqual(pathname, "/auth");
-            assert.deepStrictEqual(search, "?rid=thirdparty&error=no_code");
+            assert.deepStrictEqual(search, "?rid=thirdparty&error=signin");
         });
     });
 });

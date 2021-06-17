@@ -19,7 +19,7 @@
 
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
-import EmailPassword from "../../../../lib/build/recipe/emailpassword/emailPassword";
+import EmailPassword from "../../../../lib/build/recipe/emailpassword/recipe";
 import { getDefaultFormFields, getFormattedFormField } from "../../../../lib/build/recipe/emailpassword/utils";
 import { validateForm } from "../../../../lib/build/utils";
 import { defaultLoginPasswordValidator, defaultValidate } from "../../../../lib/build/recipe/emailpassword/validators";
@@ -82,9 +82,8 @@ describe("EmailPassword", function () {
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] !== undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] !== undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/verify-email"] === undefined);
-        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().recipeId, "emailpassword");
-        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().emailVerification, undefined);
-        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().isEmailVerificationRequired(), false);
+        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().config.recipeId, "emailpassword");
+        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().emailVerification.config.mode, "OFF");
     });
 
     it("Initializing EmailPassword and disable default implementation but Email verification required", async function () {
@@ -193,9 +192,8 @@ describe("EmailPassword", function () {
             ]
         );
 
-        const signUpEmailValidateError = await EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields[0].validate(
-            "foo"
-        );
+        const signUpEmailValidateError =
+            await EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields[0].validate("foo");
         assert.strictEqual(signUpEmailValidateError, "Custom Email Error");
 
         // Sign In fields changed.
@@ -218,9 +216,8 @@ describe("EmailPassword", function () {
             ]
         );
 
-        const signInEmailValidateError = await EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signInForm.formFields[0].validate(
-            "foo"
-        );
+        const signInEmailValidateError =
+            await EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signInForm.formFields[0].validate("foo");
         assert.strictEqual(signInEmailValidateError, "Custom Email Error");
     });
 
@@ -278,9 +275,8 @@ describe("EmailPassword", function () {
             ]
         );
 
-        const signInEmailValidateError = await EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signInForm.formFields[0].validate(
-            "foo"
-        );
+        const signInEmailValidateError =
+            await EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signInForm.formFields[0].validate("foo");
         assert.strictEqual(signInEmailValidateError, "Custom Email Error");
     });
 
@@ -365,9 +361,8 @@ describe("EmailPassword", function () {
             ]
         );
 
-        const signUpEmailValidateError = await EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields[0].validate(
-            "foo"
-        );
+        const signUpEmailValidateError =
+            await EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields[0].validate("foo");
         assert.strictEqual(signUpEmailValidateError, "Custom Email Error");
 
         // Sign In fields changed.
@@ -390,14 +385,14 @@ describe("EmailPassword", function () {
             ]
         );
 
-        const signInEmailValidateError = await EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signInForm.formFields[0].validate(
-            "foo"
-        );
+        const signInEmailValidateError =
+            await EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signInForm.formFields[0].validate("foo");
         assert.strictEqual(signInEmailValidateError, "Custom Email Error");
 
-        const enterEmailPasswordResetEmailValidateError = await EmailPassword.getInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm.formFields[0].validate(
-            "foo"
-        );
+        const enterEmailPasswordResetEmailValidateError =
+            await EmailPassword.getInstanceOrThrow().config.resetPasswordUsingTokenFeature.enterEmailForm.formFields[0].validate(
+                "foo"
+            );
         assert.strictEqual(enterEmailPasswordResetEmailValidateError, "Custom Email Error");
     });
 

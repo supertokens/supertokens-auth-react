@@ -12,165 +12,100 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { FeatureBaseConfig, SuccessAPIResponse, ThemeBaseProps } from "../../types";
-import { ThemeResponseGeneralError } from "../emailpassword/types";
-import { RecipeModuleConfig } from "../recipeModule/types";
+import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
+import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
 
-export type EmailVerificationUserInput = {
-    /*
-     * Email Verification Mode
-     */
+import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
+import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
+
+// For AuthRecipeModule, we don't need to take signOut,
+// redirectToSignIn and postVerificationRedirect as inputs from the user.
+// So we have UserInputForAuthRecipeModule for AuthRecipeModule, and UserInput
+// for anyone who wants to use this recipe directly.
+export type UserInputForAuthRecipeModule = {
     mode?: "OFF" | "REQUIRED";
-
-    /*
-     * Disable default implementation with default routes.
-     */
     disableDefaultImplementation?: boolean;
-
-    /*
-     * sendVerifyEmailScreen config.
-     */
     sendVerifyEmailScreen?: FeatureBaseConfig;
-
-    /*
-     * verifyEmailLinkClickedScreen config.
-     */
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
 };
 
-export type NormalisedEmailVerificationConfig = {
-    /*
-     * Email Verification Mode
-     */
-    mode: "OFF" | "REQUIRED";
-
-    /*
-     * Disable default implementation with default routes.
-     */
-    disableDefaultImplementation: boolean;
-
-    /*
-     * Normalised sendVerifyEmailScreen config.
-     */
-    sendVerifyEmailScreen: FeatureBaseConfig;
-
-    /*
-     * Normalised verifyEmailLinkClickedScreen config.
-     */
-    verifyEmailLinkClickedScreen: FeatureBaseConfig;
+export type ComponentOverrideMap = {
+    EmailVerificationSendVerifyEmail?: ComponentOverride<typeof SendVerifyEmail>;
+    EmailVerificationVerifyEmailLinkClicked?: ComponentOverride<typeof VerifyEmailLinkClicked>;
 };
 
-export type EmailVerificationConfig<T, S, R> = RecipeModuleConfig<T, S, R> &
-    NormalisedEmailVerificationConfig & {
-        /*
-         * SignOut
-         */
-        signOut(): Promise<SuccessAPIResponse>;
-
-        /*
-         * Use shadow Dom root.
-         */
-        useShadowDom: boolean;
-
-        /*
-         * Styling palette.
-         */
-        palette: Record<string, string>;
+export type UserInput = UserInputForAuthRecipeModule & {
+    signOut(): Promise<void>;
+    redirectToSignIn(history?: any): Promise<void>;
+    postVerificationRedirect(history?: any): Promise<void>;
+    override?: {
+        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components?: ComponentOverrideMap;
     };
-
-export type IsEmailVerifiedAPIResponse = {
-    /*
-     * Success.
-     */
-    status: "OK";
-
-    /*
-     * Is email verified
-     */
-    isVerified: boolean;
 };
 
-export type VerifyEmailAPIResponse = {
-    /*
-     * Email verification status.
-     */
-    status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
+// Config is what does in the constructor of the recipe.
+export type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+
+export type NormalisedConfig = {
+    mode: "OFF" | "REQUIRED";
+    disableDefaultImplementation: boolean;
+    sendVerifyEmailScreen: FeatureBaseConfig;
+    verifyEmailLinkClickedScreen: FeatureBaseConfig;
+    signOut(): Promise<void>;
+    redirectToSignIn(history?: any): Promise<void>;
+    postVerificationRedirect(history?: any): Promise<void>;
+    override: {
+        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
+        components: ComponentOverrideMap;
+    };
+} & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+
+export type GetRedirectionURLContext = {
+    action: "VERIFY_EMAIL";
+};
+
+export type PreAPIHookContext = {
+    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED";
+    requestInit: RequestInit;
+    url: string;
+};
+
+export type OnHandleEventContext = {
+    action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
 };
 
 export type EmailVerificationThemeProps = {
-    /*
-     * Send Verification Email Screen Theme Props.
-     */
     sendVerifyEmailScreen: SendVerifyEmailThemeProps;
-
-    /*
-     * Verify Email Link Clicked Screen Theme Props.
-     */
-    verifyEmailLinkClickedScreen: VerifyEmailLinkClickedThemeProps;
-
-    /*
-     * A token is present in the query params or not.
-     */
-    hasToken: boolean;
-
-    /*
-     * Raw Palette provided by user.
-     */
-    rawPalette: Record<string, string>;
+    verifyEmailLinkClickedScreen?: VerifyEmailLinkClickedThemeProps;
+    config: NormalisedConfig;
 };
 
 export type SendVerifyEmailThemeProps = ThemeBaseProps & {
-    /*
-     * Call Send Verify Email API.
-     */
-    sendVerifyEmailAPI: () => Promise<SendVerifyEmailThemeResponse>;
-
-    /*
-     * Method called when Sign Out button is clicked. Default to SuperTokens Session Sign Out.
-     */
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
     signOut: () => Promise<void>;
-
-    /*
-     * Method called when "resend email" clicked results in email already verified response.
-     */
     onEmailAlreadyVerified: () => Promise<void>;
 };
 
 export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
-    /*
-     * Call Verify Email API.
-     */
-    verifyEmailAPI: () => Promise<VerifyEmailThemeResponse>;
-
-    /*
-     * Redirect to verify Email Screen on invalid token.
-     */
-    onTokenInvalidRedirect: () => Promise<void>;
-
-    /*
-     * On email verification success, action when "Continue" button is clicked.
-     */
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
     onContinueClicked: () => Promise<void>;
+    onTokenInvalidRedirect: () => Promise<void>;
+    token: string;
 };
 
-export type SendVerifyEmailAPIResponse = {
-    /*
-     * Success.
-     */
-    status: "OK" | "EMAIL_ALREADY_VERIFIED_ERROR";
-};
-export type SendVerifyEmailThemeResponse = SendVerifyEmailAPIResponse | ThemeResponseGeneralError;
+export interface RecipeInterface {
+    verifyEmail: (input: {
+        token: string;
+        config: NormalisedConfig;
+    }) => Promise<{ status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK" }>;
 
-export type VerifyEmailThemeResponse = {
-    /*
-     * Verify Email Link clicked Theme Status.
-     */
-    status: "LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL";
-};
+    sendVerificationEmail: (input: {
+        config: NormalisedConfig;
+    }) => Promise<{ status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK" }>;
 
-export type VerifyEmailLinkClickedThemeState = {
-    /*
-     * Verify Email Link clicked Status.
-     */
-    status: "LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL";
-};
+    isEmailVerified: (input: { config: NormalisedConfig }) => Promise<boolean>;
+}

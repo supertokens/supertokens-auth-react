@@ -1,14 +1,31 @@
-import RecipeModule from "../recipeModule";
-import { SuccessAPIResponse } from "../../types";
-import { EmailVerificationConfig } from "./types";
-export default class EmailVerification<T, S, R> extends RecipeModule<T, S, R> {
-    config: EmailVerificationConfig<T, S, R>;
-    constructor(config: EmailVerificationConfig<T, S, R>);
-    getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
-    isEmailVerified(): Promise<boolean>;
-    signOut(): Promise<SuccessAPIResponse>;
-    getDefaultRedirectionURL(context: unknown): Promise<string>;
-    getEmailVerificationDefaultURL(context: {
-        action: string;
-    }): Promise<string>;
+/// <reference types="react" />
+import { UserInput } from "./types";
+import EmailVerificationTheme from "./components/themes/emailVerification";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+export default class Wrapper {
+    static EmailVerification: (prop?: any) => JSX.Element;
+    static EmailVerificationTheme: typeof EmailVerificationTheme;
+    static init(
+        config: UserInput
+    ): import("../../types").CreateRecipeFunction<
+        GetRedirectionURLContext,
+        PreAPIHookContext,
+        OnHandleEventContext,
+        import("./types").NormalisedConfig
+    >;
+    static isEmailVerified(): Promise<boolean>;
 }
+declare const init: typeof Wrapper.init;
+declare const isEmailVerified: typeof Wrapper.isEmailVerified;
+declare const EmailVerification: (prop?: any) => JSX.Element;
+export {
+    init,
+    isEmailVerified,
+    EmailVerification,
+    EmailVerificationTheme,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    UserInput,
+    RecipeInterface,
+};
