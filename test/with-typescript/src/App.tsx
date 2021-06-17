@@ -279,6 +279,15 @@ function getEmailPasswordConfigs() {
                     },
                 };
             },
+            components: {
+                EmailPasswordSignIn: (OriginalComponent) => (props) => {
+                    return (
+                        <div>
+                            <OriginalComponent {...props} />
+                        </div>
+                    );
+                },
+            },
             emailVerification: {
                 functions: (oI) => {
                     return {
