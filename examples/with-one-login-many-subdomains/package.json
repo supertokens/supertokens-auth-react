@@ -20,7 +20,7 @@
         "helmet": "^4.6.0",
         "morgan": "^1.10.0",
         "npm-run-all": "^4.1.5",
-        "supertokens-node": "github:supertokens/supertokens-node#5.0"
+        "supertokens-node": "github:supertokens/supertokens-node#6.0"
     },
     "devDependencies": {
         "nodemon": "^2.0.7"

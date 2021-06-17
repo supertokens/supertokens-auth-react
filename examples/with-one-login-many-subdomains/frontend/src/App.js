@@ -7,7 +7,7 @@ import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import axios from "axios";
 import { useEffect } from "react";
-import { getApiDomain, getAuthDomain, getRedirectionUrlForUser, redirectIfOnWrongSubdomain } from "./utils";
+import { getApiDomain, getAuthDomain, getRedirectionUrlForUser } from "./utils";
 
 Session.addAxiosInterceptors(axios);
 
@@ -35,12 +35,6 @@ SuperTokens.init({
 });
 
 function App() {
-    useEffect(() => {
-        // If the user `abc` navigates to `xyz.example.com`, redirect them back to
-        // their correct subdomain i.e `abc.example.com`
-        redirectIfOnWrongSubdomain();
-    }, []);
-
     return (
         <div className="App">
             <Router>

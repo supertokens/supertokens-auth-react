@@ -5,7 +5,7 @@ import Layout from "app/layouts/Layout"
 import SuperTokens from "supertokens-auth-react"
 
 const SuperTokensComponentNoSSR = dynamic(
-  new Promise((res) => res(SuperTokens.getRoutingComponent)),
+  new Promise((res) => res(SuperTokens.getRoutingComponent as any)),
   { ssr: false }
 )
 

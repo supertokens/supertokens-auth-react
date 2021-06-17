@@ -19,8 +19,8 @@
         "react-router-dom": "^5.2.0",
         "react-scripts": "4.0.1",
         "serverless-http": "^2.7.0",
-        "supertokens-auth-react": "supertokens/supertokens-auth-react#0.13",
-        "supertokens-node": "supertokens/supertokens-node#5.0",
+        "supertokens-auth-react": "supertokens/supertokens-auth-react#0.14",
+        "supertokens-node": "supertokens/supertokens-node#6.0",
         "typescript": "^4.0.3",
         "web-vitals": "^0.2.4"
     },

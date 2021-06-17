@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Logout from "./Logout";
 import SuccessView from "./SuccessView";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -7,6 +7,7 @@ import { getRedirectToIfOnWrongSubdomain } from "../utils";
 
 export default function Home() {
     const { userId } = useSessionContext();
+    let [show, setShow] = useState(false);
 
     useEffect(() => {
         async function checkRedirect() {
@@ -15,6 +16,8 @@ export default function Home() {
             let redirectTo = await getRedirectToIfOnWrongSubdomain();
             if (redirectTo !== undefined) {
                 window.location.href = redirectTo;
+            } else {
+                setShow(true);
             }
         }
 
@@ -26,10 +29,14 @@ export default function Home() {
         redirectToAuth();
     }
 
-    return (
-        <div className="fill">
-            <Logout logoutClicked={logoutClicked} />
-            <SuccessView userId={userId} />
-        </div>
-    );
+    if (show) {
+        return (
+            <div className="fill">
+                <Logout logoutClicked={logoutClicked} />
+                <SuccessView userId={userId} />
+            </div>
+        );
+    } else {
+        return null;
+    }
 }

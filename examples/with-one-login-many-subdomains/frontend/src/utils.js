@@ -34,7 +34,10 @@ export async function redirectIfOnWrongSubdomain() {
             // the continue button on verify-email page
             if (window.location.origin !== getAuthDomain() && currentSubdomain !== currentUserSubdomain) {
                 window.location.href = `http://${currentUserSubdomain}.example.com:${websitePort}`;
+                return true;
             }
+            return false;
         }
     } catch (error) {}
+    return false;
 }
