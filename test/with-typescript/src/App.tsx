@@ -287,6 +287,20 @@ function getEmailPasswordConfigs() {
                         </div>
                     );
                 },
+                EmailPasswordSignInHeader: (OriginalComponent) => (props) => {
+                    return (
+                        <div>
+                            <OriginalComponent {...props} />
+                        </div>
+                    );
+                },
+                EmailPasswordSubmitNewPassword: (OriginalComponent) => (props) => {
+                    return (
+                        <div>
+                            <OriginalComponent {...props} />
+                        </div>
+                    );
+                },
             },
             emailVerification: {
                 functions: (oI) => {
@@ -301,6 +315,15 @@ function getEmailPasswordConfigs() {
                             return oI.verifyEmail(input);
                         },
                     };
+                },
+                components: {
+                    EmailVerificationSendVerifyEmail: (OriginalComponent) => (props) => {
+                        return (
+                            <div>
+                                <OriginalComponent {...props} />
+                            </div>
+                        );
+                    },
                 },
             },
         },
@@ -339,11 +362,29 @@ function getThirdPartyConfigs() {
                     ...oI,
                 };
             },
+            components: {
+                ThirdPartySignInAndUpCallbackTheme: (OriginalComponent) => () => {
+                    return (
+                        <div>
+                            <OriginalComponent />
+                        </div>
+                    );
+                },
+            },
             emailVerification: {
                 functions: (oI) => {
                     return {
                         ...oI,
                     };
+                },
+                components: {
+                    EmailVerificationVerifyEmailLinkClicked: (OriginalComponent) => (props) => {
+                        return (
+                            <div>
+                                <OriginalComponent {...props} />
+                            </div>
+                        );
+                    },
                 },
             },
         },
@@ -378,6 +419,35 @@ function getThirdPartyEmailPasswordConfigs() {
                     name: "Custom",
                 },
             ],
+        },
+        override: {
+            components: {
+                ThirdPartySignInAndUpProvidersForm: (OriginalComponent) => (props) => {
+                    return (
+                        <div>
+                            <OriginalComponent {...props} />
+                        </div>
+                    );
+                },
+                EmailPasswordResetPasswordEmail: (OriginalComponent) => (props) => {
+                    return (
+                        <div>
+                            <OriginalComponent {...props} />
+                        </div>
+                    );
+                },
+            },
+            emailVerification: {
+                components: {
+                    EmailVerificationVerifyEmailLinkClicked: (OriginalComponent) => (props) => {
+                        return (
+                            <div>
+                                <OriginalComponent {...props} />
+                            </div>
+                        );
+                    },
+                },
+            },
         },
     });
 }
