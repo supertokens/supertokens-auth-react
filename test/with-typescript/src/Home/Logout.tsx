@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function Logout({ logoutClicked }: { logoutClicked: () => void }) {
     return (
         <div

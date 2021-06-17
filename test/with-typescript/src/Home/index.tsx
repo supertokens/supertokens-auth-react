@@ -1,3 +1,4 @@
+import React from "react";
 import Logout from "./Logout";
 import SuccessView from "./SuccessView";
 import { useSessionContext } from "../../../../recipe/session";
