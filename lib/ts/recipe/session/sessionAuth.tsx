@@ -18,95 +18,44 @@
  */
 import React from "react";
 import SessionContext from "./sessionContext";
-import { getUserId, getJWTPayloadSecurely, doesSessionExist } from "./";
+import { useAuthentication } from "../../components/useAuthentication";
+import { Redirect } from "../../components/Redirect";
 
-type PropType = {
-    requireAuth?: boolean; // false by default
+type RequireAuthProps = {
+    requireAuth: true;
     redirectToLogin: () => void;
 };
 
-type StateType =
-    | { status: "LOADING" }
-    | {
-          status: "READY";
-          userId: string;
-          doesSessionExist: boolean;
-          jwtPayload: any;
-      };
+type NoRequireAuthProps = {
+    requireAuth?: false;
+};
 
-export default class SessionAuth extends React.PureComponent<PropType, StateType> {
-    /*
-     * Constructor.
-     */
-    constructor(props: PropType) {
-        super(props);
-        this.state = {
-            status: "LOADING",
-        };
-    }
+type Props = NoRequireAuthProps | RequireAuthProps;
 
-    redirectToLogin = async (): Promise<void> => {
-        if (this.props.redirectToLogin === undefined) {
-            throw new Error(
-                "Please provide the redirectToLogin prop when using SessionAuth, or use requireAuth={false}"
-            );
-        }
-        this.props.redirectToLogin();
-    };
+/**
+ * SessionAuth provides a layer of compatibility between AuthenticationContext and previous APIs.
+ * It maps AuthenticationContext to SessionContext
+ */
+export const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
+    const authentication = useAuthentication();
 
-    async componentDidMount(): Promise<void> {
-        const sessionExists = await doesSessionExist();
-        if (sessionExists === false) {
-            if (this.props.requireAuth !== true) {
-                this.setState((oldState) => {
-                    return {
-                        ...oldState,
-                        status: "READY",
-                        userId: "",
-                        doesSessionExist: false,
-                        jwtPayload: {},
-                    };
-                });
-            } else {
-                return await this.redirectToLogin();
-            }
-        } else {
-            const userIdPromise = getUserId();
-
-            const jwtPayloadPromise = getJWTPayloadSecurely();
-
-            const userId = await userIdPromise;
-
-            const jwtPayload = await jwtPayloadPromise;
-
-            this.setState((oldState) => {
-                return {
-                    ...oldState,
-                    status: "READY",
-                    userId,
-                    doesSessionExist: true,
-                    jwtPayload,
-                };
-            });
-        }
-    }
-
-    /*
-     * Render.
-     */
-    render = (): JSX.Element | null => {
-        if (this.state.status === "READY") {
-            return (
-                <SessionContext.Provider
-                    value={{
-                        userId: this.state.userId,
-                        doesSessionExist: this.state.doesSessionExist,
-                        jwtPayload: this.state.jwtPayload,
-                    }}>
-                    {this.props.children}
-                </SessionContext.Provider>
-            );
-        }
+    // If the context is null, we are still waiting to know whether session exists.
+    if (authentication === undefined) {
         return null;
-    };
-}
+    }
+
+    if (authentication.isAuthenticated() === false && props.requireAuth === true) {
+        return <Redirect fn={props.redirectToLogin} />;
+    }
+
+    return (
+        <SessionContext.Provider
+            value={{
+                doesSessionExist: authentication.isAuthenticated(),
+                jwtPayload: authentication.getJwtPayload(),
+                userId: authentication.getUserId(),
+            }}>
+            {children}
+        </SessionContext.Provider>
+    );
+};

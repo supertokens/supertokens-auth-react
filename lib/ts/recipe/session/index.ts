@@ -15,14 +15,14 @@
 
 import Session from "./recipe";
 import { RecipeInterface } from "supertokens-website";
-import SessionAuthComponent from "./sessionAuth";
+import { SessionAuth as SessionAuthWrapper } from "./sessionAuth";
 import useSessionContextFunc from "./useSessionContext";
 import { InputType } from "./types";
 
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
 
-    static SessionAuth = SessionAuthComponent;
+    static SessionAuth = SessionAuthWrapper;
 
     static init(config?: InputType) {
         return Session.init(config);
