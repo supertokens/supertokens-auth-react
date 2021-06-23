@@ -16,46 +16,82 @@
 /*
  * Imports.
  */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SessionContext from "./sessionContext";
-import { useAuthentication } from "../../components/useAuthentication";
-import { Redirect } from "../../components/Redirect";
+import Session from "./recipe";
+import { OnHandleEventContext, SessionContextType } from "./types";
 
-type RequireAuthProps = {
-    requireAuth: true;
+type Props = {
+    requireAuth?: boolean;
     redirectToLogin: () => void;
 };
-
-type NoRequireAuthProps = {
-    requireAuth?: false;
-};
-
-type Props = NoRequireAuthProps | RequireAuthProps;
 
 /**
  * SessionAuth provides a layer of compatibility between AuthenticationContext and previous APIs.
  * It maps AuthenticationContext to SessionContext
  */
-export const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
-    const authentication = useAuthentication();
+const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
+    const [sessionContext, setSessionContext] = useState<SessionContextType>();
+    const session = Session.getInstanceOrThrow();
 
-    // If the context is null, we are still waiting to know whether session exists.
-    if (authentication === undefined) {
+    const buildSessionContext = async (): Promise<SessionContextType> => {
+        const sessionExists = await session.doesSessionExist();
+
+        if (!sessionExists) {
+            return {
+                doesSessionExist: sessionExists,
+                jwtPayload: {},
+                userId: "",
+            };
+        }
+
+        const [jwtPayload, userId] = await Promise.all([session.getJWTPayloadSecurely(), session.getUserId()]);
+
+        return {
+            doesSessionExist: sessionExists,
+            jwtPayload,
+            userId,
+        };
+    };
+
+    const updateSessionContext = async () => {
+        const sessionContext = await buildSessionContext();
+
+        setSessionContext(sessionContext);
+    };
+
+    const onHandleEvent = async (ctx: OnHandleEventContext) => {
+        switch (ctx.action) {
+            case "REFRESH_SESSION":
+            case "SIGN_OUT":
+            case "UNAUTHORISED":
+                return updateSessionContext();
+            default:
+                return;
+        }
+    };
+
+    // Read the current state
+    useEffect(() => {
+        updateSessionContext();
+    }, []);
+
+    // Setup listener
+    useEffect(() => session.addEventListener(onHandleEvent), []);
+
+    // If the context is undefined, we are still waiting to know whether session exists.
+    if (sessionContext === undefined) {
         return null;
     }
 
-    if (authentication.isAuthenticated() === false && props.requireAuth === true) {
-        return <Redirect fn={props.redirectToLogin} />;
+    // If the session doesn't exist and we require auth, redirect to login
+    if (sessionContext.doesSessionExist === false && props.requireAuth === true) {
+        props.redirectToLogin();
+
+        return null;
     }
 
-    return (
-        <SessionContext.Provider
-            value={{
-                doesSessionExist: authentication.isAuthenticated(),
-                jwtPayload: authentication.getJwtPayload(),
-                userId: authentication.getUserId(),
-            }}>
-            {children}
-        </SessionContext.Provider>
-    );
+    return <SessionContext.Provider value={sessionContext}>{children}</SessionContext.Provider>;
 };
+
+export default SessionAuth;

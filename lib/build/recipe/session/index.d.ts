@@ -1,9 +1,13 @@
+/// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
 import { RecipeInterface } from "supertokens-website";
-import SessionAuthComponent from "./sessionAuth";
 import { InputType } from "./types";
 export default class SessionAPIWrapper {
     static useSessionContext: () => import("./types").SessionContextType;
-    static SessionAuth: typeof SessionAuthComponent;
+    static SessionAuth: import("react").FunctionComponent<{
+        requireAuth?: boolean | undefined;
+        redirectToLogin: () => void;
+    }>;
     static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
     static getUserId(): Promise<string>;
     static getJWTPayloadSecurely(): Promise<any>;
@@ -13,7 +17,10 @@ export default class SessionAPIWrapper {
     static signOut(): Promise<void>;
 }
 declare const useSessionContext: () => import("./types").SessionContextType;
-declare const SessionAuth: typeof SessionAuthComponent;
+declare const SessionAuth: import("react").FunctionComponent<{
+    requireAuth?: boolean | undefined;
+    redirectToLogin: () => void;
+}>;
 declare const init: typeof SessionAPIWrapper.init;
 declare const getUserId: typeof SessionAPIWrapper.getUserId;
 declare const getJWTPayloadSecurely: typeof SessionAPIWrapper.getJWTPayloadSecurely;

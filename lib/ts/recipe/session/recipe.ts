@@ -19,18 +19,27 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
-import { InputType } from "./types";
+import { InputType, OnHandleEventContext } from "./types";
 import sessionSdk from "supertokens-website";
 
-export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
+type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
+
+export default class Session extends RecipeModule<unknown, unknown, unknown, ConfigType> {
     static instance?: Session;
     static RECIPE_ID = "session";
 
-    constructor(config: InputType & { recipeId: string; appInfo: NormalisedAppInfo }) {
+    private eventListeners = new Set<(ctx: OnHandleEventContext) => void>();
+
+    constructor(config: ConfigType) {
         super(config);
+
+        if (config.onHandleEvent !== undefined) {
+            this.addEventListener(config.onHandleEvent);
+        }
 
         sessionSdk.init({
             ...config,
+            onHandleEvent: this.onHandleEvent,
             preAPIHook: async (context) => {
                 const response = {
                     ...context,
@@ -80,6 +89,16 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
 
     attemptRefreshingSession = async (): Promise<boolean> => {
         return sessionSdk.attemptRefreshingSession();
+    };
+
+    addEventListener(listener: (ctx: OnHandleEventContext) => void): () => void {
+        this.eventListeners.add(listener);
+
+        return () => this.eventListeners.delete(listener);
+    }
+
+    private onHandleEvent = (ctx: OnHandleEventContext) => {
+        this.eventListeners.forEach((listener) => listener(ctx));
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
