@@ -6,7 +6,7 @@ declare type ConfigType = InputType & {
     recipeId: string;
     appInfo: NormalisedAppInfo;
 };
-export default class Session extends RecipeModule<unknown, unknown, unknown, ConfigType> {
+export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
     static instance?: Session;
     static RECIPE_ID: string;
     private eventListeners;
