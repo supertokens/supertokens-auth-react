@@ -19,7 +19,7 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
-import { InputType, OnHandleEventContext } from "./types";
+import { InputType, RecipeEvent } from "./types";
 import sessionSdk from "supertokens-website";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
@@ -28,7 +28,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static instance?: Session;
     static RECIPE_ID = "session";
 
-    private eventListeners = new Set<(ctx: OnHandleEventContext) => void>();
+    private eventListeners = new Set<(ctx: RecipeEvent) => void>();
 
     constructor(config: ConfigType) {
         super(config);
@@ -91,13 +91,16 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return sessionSdk.attemptRefreshingSession();
     };
 
-    addEventListener(listener: (ctx: OnHandleEventContext) => void): () => void {
+    /**
+     * @returns Function to remove event listener
+     */
+    addEventListener(listener: (ctx: RecipeEvent) => void): () => void {
         this.eventListeners.add(listener);
 
         return () => this.eventListeners.delete(listener);
     }
 
-    private onHandleEvent = (ctx: OnHandleEventContext) => {
+    private onHandleEvent = (ctx: RecipeEvent) => {
         this.eventListeners.forEach((listener) => listener(ctx));
     };
 

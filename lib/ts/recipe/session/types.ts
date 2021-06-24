@@ -15,8 +15,8 @@
 
 import { RecipeInterface } from "supertokens-website";
 
-export type OnHandleEventContext = {
-    action: "SIGN_OUT" | "REFRESH_SESSION" | "UNAUTHORISED";
+export type RecipeEvent = {
+    action: "SIGN_OUT" | "REFRESH_SESSION" | "UNAUTHORISED" | "SESSION_CREATED";
 };
 
 export type InputType = {
@@ -32,7 +32,7 @@ export type InputType = {
         requestInit: RequestInit;
         url: string;
     }) => Promise<{ url: string; requestInit: RequestInit }>;
-    onHandleEvent?: (context: OnHandleEventContext) => void;
+    onHandleEvent?: (event: RecipeEvent) => void;
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
     };

@@ -19,7 +19,8 @@
 import React, { useEffect, useState } from "react";
 import SessionContext from "./sessionContext";
 import Session from "./recipe";
-import { OnHandleEventContext, SessionContextType } from "./types";
+import { RecipeEvent, SessionContextType } from "./types";
+import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
 
 type Props = {
     requireAuth?: boolean;
@@ -31,67 +32,77 @@ type Props = {
  * It maps AuthenticationContext to SessionContext
  */
 const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
-    const [sessionContext, setSessionContext] = useState<SessionContextType>();
+    const [context, setContext] = useState<SessionContextType>();
+
     const session = Session.getInstanceOrThrow();
 
-    const buildSessionContext = async (): Promise<SessionContextType> => {
-        const sessionExists = await session.doesSessionExist();
+    const setInitialContext = async (): Promise<void> => {
+        const sessionExists = await doesSessionExist();
 
-        if (!sessionExists) {
-            return {
+        if (sessionExists === false) {
+            return setContext({
                 doesSessionExist: sessionExists,
                 jwtPayload: {},
                 userId: "",
-            };
+            });
         }
 
-        const [jwtPayload, userId] = await Promise.all([session.getJWTPayloadSecurely(), session.getUserId()]);
+        const [jwtPayload, userId] = await Promise.all([getJWTPayloadSecurely(), getUserId()]);
 
-        return {
+        return setContext({
             doesSessionExist: sessionExists,
             jwtPayload,
             userId,
-        };
+        });
     };
 
-    const updateSessionContext = async () => {
-        const sessionContext = await buildSessionContext();
-
-        setSessionContext(sessionContext);
-    };
-
-    const onHandleEvent = async (ctx: OnHandleEventContext) => {
-        switch (ctx.action) {
+    const onHandleEvent = async (event: RecipeEvent) => {
+        switch (event.action) {
+            case "SESSION_CREATED":
+                return setContext({
+                    doesSessionExist: true,
+                    userId: await getUserId(),
+                    jwtPayload: await getJWTPayloadSecurely(),
+                });
             case "REFRESH_SESSION":
+                return setContext({
+                    doesSessionExist: true,
+                    userId: context === undefined ? "" : context.userId,
+                    jwtPayload: await getJWTPayloadSecurely(),
+                });
             case "SIGN_OUT":
             case "UNAUTHORISED":
-                return updateSessionContext();
+                return setContext({
+                    doesSessionExist: false,
+                    userId: "",
+                    jwtPayload: {},
+                });
             default:
                 return;
         }
     };
 
-    // Read the current state
+    // Read and set the current state
     useEffect(() => {
-        updateSessionContext();
+        setInitialContext();
     }, []);
 
-    // Setup listener
+    // Setup listener. This will call addEventListener teardown function when component is unmounted
     useEffect(() => session.addEventListener(onHandleEvent), []);
 
     // If the context is undefined, we are still waiting to know whether session exists.
-    if (sessionContext === undefined) {
+    if (context === undefined) {
         return null;
     }
 
     // If the session doesn't exist and we require auth, redirect to login
-    if (sessionContext.doesSessionExist === false && props.requireAuth === true) {
+    if (context.doesSessionExist === false && props.requireAuth === true) {
         props.redirectToLogin();
 
         return null;
     }
 
-    return <SessionContext.Provider value={sessionContext}>{children}</SessionContext.Provider>;
+    return <SessionContext.Provider value={context}>{children}</SessionContext.Provider>;
 };
 
 export default SessionAuth;
