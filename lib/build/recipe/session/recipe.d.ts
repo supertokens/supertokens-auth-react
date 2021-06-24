@@ -1,7 +1,7 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import { InputType, OnHandleEventContext } from "./types";
+import { InputType, RecipeEvent } from "./types";
 declare type ConfigType = InputType & {
     recipeId: string;
     appInfo: NormalisedAppInfo;
@@ -18,7 +18,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     doesSessionExist: () => Promise<boolean>;
     signOut: () => Promise<void>;
     attemptRefreshingSession: () => Promise<boolean>;
-    addEventListener(listener: (ctx: OnHandleEventContext) => void): () => void;
+    /**
+     * @returns Function to remove event listener
+     */
+    addEventListener(listener: (ctx: RecipeEvent) => void): () => void;
     private onHandleEvent;
     static addAxiosInterceptors(axiosInstance: any): void;
     static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any>;
