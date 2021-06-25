@@ -63,7 +63,8 @@ import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_U
 describe("SuperTokens SignIn", function () {
     let browser;
     let page;
-    let consoleLogs;
+    let consoleLogs = [];
+
     before(async function () {
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
             method: "POST",
@@ -93,7 +94,6 @@ describe("SuperTokens SignIn", function () {
 
     beforeEach(async function () {
         page = await browser.newPage();
-        consoleLogs = [];
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
             if (log.startsWith("ST_LOGS")) {
@@ -101,15 +101,7 @@ describe("SuperTokens SignIn", function () {
             }
         });
         await clearBrowserCookies(page);
-        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
-        assert.deepStrictEqual(consoleLogs, [
-            "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-            "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-            "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-            "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-            "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-            "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-        ]);
+        consoleLogs = [];
     });
 
     describe("SignIn test ", function () {
@@ -125,14 +117,7 @@ describe("SuperTokens SignIn", function () {
 
             const adornments = await getInputAdornmentsSuccess(page);
             assert.strictEqual(adornments.length, 0);
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-            ]);
+            assert.deepStrictEqual(consoleLogs, []);
         });
 
         it('Should switch between signup and sign in widget when "Sign Up" is clicked.', async function () {
@@ -145,29 +130,14 @@ describe("SuperTokens SignIn", function () {
 
             buttonLabel = await getSubmitFormButtonLabel(page);
             assert.strictEqual(buttonLabel, "SIGN IN");
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-            ]);
+            assert.deepStrictEqual(consoleLogs, []);
         });
 
         it('Should switch to resetPassword when "Forgot password" is clicked.', async function () {
             await clickForgotPasswordLink(page);
             const buttonLabel = await getSubmitFormButtonLabel(page);
             assert.strictEqual(buttonLabel, "Email me");
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL RESET_PASSWORD",
-            ]);
+            assert.deepStrictEqual(consoleLogs, ["ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL RESET_PASSWORD"]);
         });
 
         it("Should show error messages with incorrect inputs", async function () {
@@ -217,12 +187,6 @@ describe("SuperTokens SignIn", function () {
             const generalError = await getGeneralError(page);
             assert.strictEqual(generalError, "Incorrect email and password combination");
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
@@ -333,12 +297,6 @@ describe("SuperTokens SignIn", function () {
             assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
             assert.deepStrictEqual(cookies[0].value, "remove");
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
                 "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
@@ -498,12 +456,6 @@ describe("SuperTokens SignIn", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
@@ -596,23 +548,19 @@ describe("SuperTokens SignIn", function () {
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                    "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
                     "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                     "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                     "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 ]);
@@ -649,23 +597,19 @@ describe("SuperTokens SignIn", function () {
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                    "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
                     "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                     "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                     "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 ]);
