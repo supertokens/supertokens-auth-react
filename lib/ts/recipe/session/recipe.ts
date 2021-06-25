@@ -94,11 +94,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     /**
      * @returns Function to remove event listener
      */
-    addEventListener(listener: (ctx: RecipeEvent) => void): () => void {
+    addEventListener = (listener: (ctx: RecipeEvent) => void): (() => void) => {
         this.eventListeners.add(listener);
 
         return () => this.eventListeners.delete(listener);
-    }
+    };
 
     private onHandleEvent = (ctx: RecipeEvent) => {
         this.eventListeners.forEach((listener) => listener(ctx));

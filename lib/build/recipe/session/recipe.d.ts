@@ -21,7 +21,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     /**
      * @returns Function to remove event listener
      */
-    addEventListener(listener: (ctx: RecipeEvent) => void): () => void;
+    addEventListener: (listener: (ctx: RecipeEvent) => void) => () => void;
     private onHandleEvent;
     static addAxiosInterceptors(axiosInstance: any): void;
     static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any>;
