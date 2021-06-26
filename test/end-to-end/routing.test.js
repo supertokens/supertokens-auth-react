@@ -36,7 +36,7 @@ import {
     getSubmitFormButtonLabelWithoutShadowDom,
     assertNoSTComponents,
     toggleSignInSignUp,
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
 } from "../helpers";
 /*
  * Tests.
@@ -59,7 +59,7 @@ describe("SuperTokens Routing in Test App", function () {
     describe("with react-router-dom", function () {
         before(async function () {
             page = await browser.newPage();
-            await clearBrowserCookies(page);
+            await clearBrowserCookiesWithoutAffectingConsole(page, []);
         });
 
         describe("with emailpassword", function () {
@@ -109,7 +109,7 @@ describe("SuperTokens Routing in Test App", function () {
         describe("with thirdparty", function () {
             before(async function () {
                 page = await browser.newPage();
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 // set auth recipe type.
                 await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?authRecipe=thirdparty`);
             });
@@ -158,7 +158,7 @@ describe("SuperTokens Routing in Test App", function () {
         describe("with both emailpassword and thirdparty", function () {
             before(async function () {
                 page = await browser.newPage();
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 // set auth recipe type.
                 await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?authRecipe=both`);
             });
@@ -251,7 +251,7 @@ describe("SuperTokens Routing in Test App", function () {
 
     describe("without react-router-dom", function () {
         before(async function () {
-            await clearBrowserCookies(page);
+            await clearBrowserCookiesWithoutAffectingConsole(page, []);
             page = await browser.newPage();
         });
 
@@ -311,7 +311,7 @@ describe("SuperTokens Routing in Test App", function () {
     describe("with custom websiteBasePath", function () {
         describe("=/custom", function () {
             before(async function () {
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 page = await browser.newPage();
                 // Update websiteBasePath config.
                 await page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/custom`);
@@ -343,7 +343,7 @@ describe("SuperTokens Routing in Test App", function () {
 
         describe("=/", function () {
             before(async function () {
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 page = await browser.newPage();
                 // Update websiteBasePath config.
                 await page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/`);
@@ -379,7 +379,7 @@ describe("SuperTokens Routing in Test App", function () {
 
         describe("default to signup = true", function () {
             before(async function () {
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 page = await browser.newPage();
                 // Update defaultToSignUp config.
                 await page.goto(`${TEST_CLIENT_BASE_URL}/?defaultToSignUp=true`);
@@ -400,7 +400,7 @@ describe("SuperTokens Routing in Test App", function () {
 
         describe("useShadowDom = false", function () {
             before(async function () {
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 page = await browser.newPage();
                 // Update useShadowDom config.
                 await page.goto(`${TEST_CLIENT_BASE_URL}/?useShadowDom=false`);

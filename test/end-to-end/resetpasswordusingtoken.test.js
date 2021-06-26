@@ -29,7 +29,7 @@ import {
     TEST_SERVER_BASE_URL,
 } from "../constants";
 import {
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
     getInputAdornmentsError,
     getFieldErrors,
     getGeneralError,
@@ -101,9 +101,8 @@ describe("SuperTokens Reset password", function () {
     describe("Reset password enter email form test", function () {
         beforeEach(async function () {
             page = await browser.newPage();
-            await clearBrowserCookies(page);
-            // Catch console.log sent from PRE API HOOKS.
             consoleLogs = [];
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
                 if (log.startsWith("ST_LOGS")) {
@@ -190,7 +189,7 @@ describe("SuperTokens Reset password", function () {
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?token=TOKEN`);
         });
 

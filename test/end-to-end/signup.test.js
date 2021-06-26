@@ -23,7 +23,7 @@ import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
 import {
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
     getLabelsText,
     getInputNames,
     getPlaceholders,
@@ -86,7 +86,7 @@ describe("SuperTokens SignUp", function () {
 
     beforeEach(async function () {
         consoleLogs = [];
-        await clearBrowserCookies(page);
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
         await toggleSignInSignUp(page);
     });
@@ -216,7 +216,7 @@ describe("SuperTokens SignUp", function () {
             assert.strictEqual(pathname, onSuccessFulRedirectUrl);
 
             // Clear cookies, try to signup with same address.
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, {
                 waitUntil: "domcontentloaded",
             });

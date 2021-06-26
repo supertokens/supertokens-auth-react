@@ -4,7 +4,7 @@ import { TEST_SERVER_BASE_URL } from "../constants";
 import { AuthPage } from "./pages/AuthPage";
 import { EmailVerificationPage } from "./pages/EmailVerificationPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
-import { clearBrowserCookies } from "../helpers";
+import { clearBrowserCookiesWithoutAffectingConsole } from "../helpers";
 
 describe("Embed components", async () => {
     let browser;
@@ -26,7 +26,7 @@ describe("Embed components", async () => {
 
     beforeEach(async () => {
         page = await browser.newPage();
-        await clearBrowserCookies(page);
+        await clearBrowserCookiesWithoutAffectingConsole(page, []);
     });
 
     after(async function () {

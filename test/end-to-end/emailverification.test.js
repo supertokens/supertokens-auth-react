@@ -23,7 +23,7 @@ import assert from "assert";
 import puppeteer from "puppeteer";
 import { SEND_VERIFY_EMAIL_API, VERIFY_EMAIL_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import {
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
     clickLinkWithRightArrow,
     getVerificationEmailErrorTitle,
     getVerificationEmailTitle,
@@ -84,7 +84,7 @@ describe("SuperTokens Email Verification", function () {
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         });
 
         it("Should redirect to login page when email verification screen is accessed without a valid session", async function () {
@@ -199,7 +199,7 @@ describe("SuperTokens Email Verification", function () {
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         });
 
         it("Should show invalid token screen when token is invalid or expired", async function () {
@@ -256,7 +256,7 @@ describe("SuperTokens Email Verification", function () {
         });
 
         it("Should allow to verify an email without a valid session", async function () {
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
@@ -284,7 +284,7 @@ describe("SuperTokens Email Verification", function () {
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?mode=REQUIRED`);
         });
         it("Should redirect to onSuccessfulRedirect when email is already verified", async function () {
@@ -321,7 +321,7 @@ describe("SuperTokens Email Verification server errors", function () {
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
         });
 
@@ -381,7 +381,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         });
 
         it("Should ignore email verification when isEmailVerified server request fails", async function () {

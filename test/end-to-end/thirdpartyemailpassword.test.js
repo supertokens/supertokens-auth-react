@@ -23,7 +23,7 @@ import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
 import {
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
     assertProviders,
     clickOnProviderButton,
     defaultSignUp,
@@ -84,7 +84,7 @@ describe("SuperTokens Third Party Email Password", function () {
 
     beforeEach(async function () {
         consoleLogs = [];
-        await clearBrowserCookies(page);
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`);
     });
 

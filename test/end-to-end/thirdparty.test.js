@@ -23,7 +23,7 @@ import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
 import {
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
     assertProviders,
     assertNoSTComponents,
     generateState,
@@ -81,7 +81,7 @@ describe("SuperTokens Third Party", function () {
 
     beforeEach(async function () {
         consoleLogs = [];
-        await clearBrowserCookies(page);
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
     });
 
     describe("Third Party test", function () {
