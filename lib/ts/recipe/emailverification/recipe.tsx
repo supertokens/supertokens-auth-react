@@ -37,6 +37,7 @@ import { normaliseEmailVerificationFeature } from "./utils";
 import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
+import { SessionAuth } from "../session";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -101,7 +102,11 @@ export default class EmailVerification extends RecipeModule<
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
-        return <EmailVerificationFeature recipe={this} {...props} />;
+        return (
+            <SessionAuth redirectToLogin={() => undefined} requireAuth={false}>
+                <EmailVerificationFeature recipe={this} {...props} />
+            </SessionAuth>
+        );
     };
 
     async isEmailVerified(): Promise<boolean> {

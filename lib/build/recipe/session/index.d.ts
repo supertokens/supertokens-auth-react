@@ -1,10 +1,10 @@
 /// <reference types="react" />
 /// <reference types="@emotion/react/types/css-prop" />
 import { RecipeInterface } from "supertokens-website";
-import { InputType } from "./types";
+import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 export default class SessionAPIWrapper {
-    static useSessionContext: () => import("./types").SessionContextType;
+    static useSessionContext: () => SessionContextType;
     static SessionAuth: import("react").FunctionComponent<{
         requireAuth?: boolean | undefined;
         redirectToLogin: () => void;
@@ -17,7 +17,7 @@ export default class SessionAPIWrapper {
     static addAxiosInterceptors(axiosInstance: any): void;
     static signOut(): Promise<void>;
 }
-declare const useSessionContext: () => import("./types").SessionContextType;
+declare const useSessionContext: () => SessionContextType;
 declare const SessionAuth: import("react").FunctionComponent<{
     requireAuth?: boolean | undefined;
     redirectToLogin: () => void;
@@ -42,4 +42,5 @@ export {
     RecipeInterface,
     InputType,
     SessionContext,
+    SessionContextType,
 };
