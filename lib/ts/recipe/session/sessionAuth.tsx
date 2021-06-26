@@ -88,17 +88,23 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     }, []);
 
     // Setup listener. This will call addEventListener teardown function when component is unmounted
-    useEffect(() => session.addEventListener(onHandleEvent), []);
+    useEffect(() => {
+        return session.addEventListener(onHandleEvent);
+    }, []);
+
+    useEffect(() => {
+        // If the session doesn't exist and we require auth, redirect to login
+        if (context !== undefined && context.doesSessionExist === false && props.requireAuth === true) {
+            props.redirectToLogin();
+        }
+    }, [context, props]);
 
     // If the context is undefined, we are still waiting to know whether session exists.
     if (context === undefined) {
         return null;
     }
 
-    // If the session doesn't exist and we require auth, redirect to login
     if (context.doesSessionExist === false && props.requireAuth === true) {
-        props.redirectToLogin();
-
         return null;
     }
 

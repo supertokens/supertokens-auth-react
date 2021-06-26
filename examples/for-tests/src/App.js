@@ -285,7 +285,7 @@ export function DashboardNoAuthRequired() {
     if (sessionContext.doesSessionExist) {
         return Dashboard();
     } else {
-        return <div class="not-logged-in">Not logged in</div>;
+        return <div className="not-logged-in">Not logged in</div>;
     }
 }
 
@@ -302,7 +302,6 @@ export function Dashboard() {
         } else {
             await EmailPassword.signOut();
         }
-        window.location.href = "/auth";
     }
 
     async function fetchSessionInfoUsingAxios() {
