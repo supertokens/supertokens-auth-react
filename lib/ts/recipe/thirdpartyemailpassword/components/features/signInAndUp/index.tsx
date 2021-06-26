@@ -24,23 +24,12 @@ import { SignInAndUpTheme } from "../../..";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { SessionContextType, SessionContext } from "../../../../session";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };
 
 class SignInAndUp extends PureComponent<PropType, { status: "LOADING" | "READY" }> {
-    static contextType = SessionContext;
-
-    constructor(props: PropType) {
-        super(props);
-
-        this.state = {
-            status: "LOADING",
-        };
-    }
-
     getIsEmbedded = (): boolean => {
         if (this.props.isEmbedded !== undefined) {
             return this.props.isEmbedded;
@@ -49,11 +38,6 @@ class SignInAndUp extends PureComponent<PropType, { status: "LOADING" | "READY" 
     };
 
     render = (): JSX.Element => {
-        // Before session is verified, return empty fragment, prevent UI glitch.
-        if (this.state.status === "LOADING") {
-            return <Fragment />;
-        }
-
         const componentOverrides = this.props.recipe.config.override.components;
 
         const props = {
@@ -75,27 +59,6 @@ class SignInAndUp extends PureComponent<PropType, { status: "LOADING" | "READY" 
                 </FeatureWrapper>
             </ComponentOverrideContext.Provider>
         );
-    };
-
-    componentDidMount = async (): Promise<void> => {
-        const sessionContext: SessionContextType = this.context;
-        if (sessionContext.doesSessionExist) {
-            this.props.recipe.config.onHandleEvent({
-                action: "SESSION_ALREADY_EXISTS",
-            });
-            return await this.props.recipe.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
-        }
-
-        this.setState((oldState) => {
-            if (oldState.status !== "LOADING") {
-                return oldState;
-            }
-
-            return {
-                ...oldState,
-                status: "READY",
-            };
-        });
     };
 }
 

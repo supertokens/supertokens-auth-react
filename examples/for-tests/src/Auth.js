@@ -9,6 +9,5 @@ export default function Auth(props) {
     } else if (props.authRecipe === "thirdpartyemailpassword") {
         return <ThirdPartyEmailPasswordAuth {...props}>{props.children}</ThirdPartyEmailPasswordAuth>;
     }
-
     return <EmailPasswordAuth {...props}>{props.children}</EmailPasswordAuth>;
 }

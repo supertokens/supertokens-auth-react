@@ -39,7 +39,7 @@ import SignInAndUp from "./components/features/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
-import { SessionAuth } from "../session";
+import AuthWidgetWrapper from "../authRecipeModule/authWidgetWrapper";
 
 /*
  * Class.
@@ -112,9 +112,15 @@ export default class EmailPassword extends AuthRecipeModule<
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <SessionAuth requireAuth={false} redirectToLogin={() => undefined}>
+                <AuthWidgetWrapper
+                    onSessionAlreadyExists={() => {
+                        this.config.onHandleEvent({
+                            action: "SESSION_ALREADY_EXISTS",
+                        });
+                        this.redirect({ action: "SUCCESS", isNewUser: false }, props.history);
+                    }}>
                     <SignInAndUp recipe={this} {...props} />
-                </SessionAuth>
+                </AuthWidgetWrapper>
             );
         } else if (componentName === "resetpassword") {
             return <ResetPasswordUsingToken recipe={this} {...props} />;

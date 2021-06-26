@@ -38,7 +38,7 @@ import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
-import { SessionAuth } from "../session";
+import AuthWidgetWrapper from "../authRecipeModule/authWidgetWrapper";
 
 /*
  * Class.
@@ -101,18 +101,24 @@ export default class ThirdParty extends AuthRecipeModule<
 
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback" | "emailverification",
-        prop: any
+        props: any
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <SessionAuth requireAuth={false} redirectToLogin={() => undefined}>
-                    <SignInAndUp recipe={this} {...prop} />;
-                </SessionAuth>
+                <AuthWidgetWrapper
+                    onSessionAlreadyExists={() => {
+                        this.config.onHandleEvent({
+                            action: "SESSION_ALREADY_EXISTS",
+                        });
+                        this.redirect({ action: "SUCCESS", isNewUser: false }, props.history);
+                    }}>
+                    <SignInAndUp recipe={this} {...props} />;
+                </AuthWidgetWrapper>
             );
         } else if (componentName === "signinupcallback") {
-            return <SignInAndUpCallback recipe={this} {...prop} />;
+            return <SignInAndUpCallback recipe={this} {...props} />;
         } else {
-            return this.getAuthRecipeModuleFeatureComponent(componentName, prop);
+            return this.getAuthRecipeModuleFeatureComponent(componentName, props);
         }
     };
 

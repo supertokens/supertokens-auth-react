@@ -12,9 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Styling issues with SVG icons
 -   In `emailVerificationAuth`, querying for is email verified only if a session exists
 -   A few test app issues
--   Updates session context on session changes: https://github.com/supertokens/supertokens-auth-react/issues/228
--   Adds SessionAuth wrapper to emailverification feature component
+
+## Refactor
+
+-   Uses `SessionAuth` for all our components: https://github.com/supertokens/supertokens-auth-react/issues/241
+-   Creates an `AuthWidgetWrapper` component that will redirect login UI if already logged in
+
+### Added
+
 -   Allows for `SessionAuth` to be inside another `SessionAuth`.
+-   Updates session context on session changes: https://github.com/supertokens/supertokens-auth-react/issues/228
 
 ### Breaking changes
 

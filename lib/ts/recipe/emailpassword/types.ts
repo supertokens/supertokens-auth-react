@@ -449,14 +449,9 @@ declare global {
     }
 }
 
-export type SignInAndUpState =
-    | {
-          status: "LOADING" | "READY";
-      }
-    | {
-          status: "SUCCESSFUL";
-          user: User;
-      };
+export type SignInAndUpState = {
+    user?: User;
+};
 
 export interface RecipeInterface {
     submitNewPassword: (input: {

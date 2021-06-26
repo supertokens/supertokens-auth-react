@@ -29,20 +29,17 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { SignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { SessionContextType, SessionContext } from "../../../../session";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };
 
 class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
-    static contextType = SessionContext;
-
     constructor(props: PropType) {
         super(props);
 
         this.state = {
-            status: "LOADING",
+            user: undefined,
         };
     }
 
@@ -54,7 +51,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     };
 
     onSignInSuccess = async (): Promise<void> => {
-        if (this.state.status !== "SUCCESSFUL") {
+        if (this.state.user === undefined) {
             return;
         }
 
@@ -69,7 +66,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     };
 
     onSignUpSuccess = async (): Promise<void> => {
-        if (this.state.status !== "SUCCESSFUL") {
+        if (this.state.user === undefined) {
             return;
         }
 
@@ -135,27 +132,6 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         }));
     }
 
-    componentDidMount = async (): Promise<void> => {
-        const sessionContext: SessionContextType = this.context;
-        if (sessionContext.doesSessionExist) {
-            this.props.recipe.config.onHandleEvent({
-                action: "SESSION_ALREADY_EXISTS",
-            });
-            return await this.props.recipe.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
-        }
-
-        this.setState((oldState) => {
-            if (oldState.status !== "LOADING") {
-                return oldState;
-            }
-
-            return {
-                ...oldState,
-                status: "READY",
-            };
-        });
-    };
-
     getModifiedRecipeImplementation = (): RecipeInterface => {
         return {
             ...this.props.recipe.recipeImpl,
@@ -163,10 +139,9 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                 const response = await this.props.recipe.recipeImpl.signIn(input);
 
                 this.setState((oldState) => {
-                    return oldState.status !== "READY" || response.status !== "OK"
+                    return response.status !== "OK"
                         ? oldState
                         : {
-                              status: "SUCCESSFUL",
                               user: response.user,
                           };
                 });
@@ -177,10 +152,9 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                 const response = await this.props.recipe.recipeImpl.signUp(input);
 
                 this.setState((oldState) => {
-                    return oldState.status !== "READY" || response.status !== "OK"
+                    return response.status !== "OK"
                         ? oldState
                         : {
-                              status: "SUCCESSFUL",
                               user: response.user,
                           };
                 });
@@ -191,11 +165,6 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     };
 
     render = (): JSX.Element => {
-        // Before session is verified, return empty fragment, prevent UI glitch.
-        if (this.state.status === "LOADING") {
-            return <Fragment />;
-        }
-
         const componentOverrides = this.props.recipe.config.override.components;
 
         const signInAndUpFeature = this.props.recipe.config.signInAndUpFeature;

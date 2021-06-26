@@ -30,12 +30,9 @@ import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
 import { getRedirectToPathFromURL } from "../../../../../utils";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { SessionContextType, SessionContext } from "../../../../session";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
-    static contextType = SessionContext;
-
     constructor(props: PropType) {
         super(props);
 
@@ -56,7 +53,6 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
             }
         }
         this.state = {
-            status: "LOADING",
             error,
         };
     }
@@ -66,27 +62,6 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
             return this.props.isEmbedded;
         }
         return false;
-    };
-
-    componentDidMount = async (): Promise<void> => {
-        const sessionContext: SessionContextType = this.context;
-        if (sessionContext.doesSessionExist) {
-            this.props.recipe.config.onHandleEvent({
-                action: "SESSION_ALREADY_EXISTS",
-            });
-            await this.props.recipe.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
-            return;
-        }
-
-        this.setState((oldState) => {
-            if (oldState.status !== "LOADING") {
-                return oldState;
-            }
-            return {
-                ...oldState,
-                status: "READY",
-            };
-        });
     };
 
     getModifiedRecipeImplementation = (): RecipeInterface => {
@@ -106,10 +81,6 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
     };
 
     render = (): JSX.Element => {
-        if (this.state.status === "LOADING") {
-            return <Fragment />;
-        }
-
         const componentOverrides = this.props.recipe.config.override.components;
 
         const signInAndUpFeature = this.props.recipe.config.signInAndUpFeature;
