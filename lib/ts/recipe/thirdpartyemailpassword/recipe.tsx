@@ -41,6 +41,7 @@ import RecipeImplementation from "./recipeImplementation";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import EmailVerification from "../emailverification/recipe";
+import { SessionAuth } from "../session";
 
 export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     GetRedirectionURLContext,
@@ -162,7 +163,11 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         prop: any
     ): JSX.Element => {
         if (componentName === "signinup") {
-            return <SignInAndUp recipe={this} {...prop} />;
+            return (
+                <SessionAuth requireAuth={false} redirectToLogin={() => undefined}>
+                    <SignInAndUp recipe={this} {...prop} />
+                </SessionAuth>
+            );
         } else if (componentName === "resetpassword") {
             return this.emailPasswordRecipe.getFeatureComponent(componentName, prop);
         } else {
