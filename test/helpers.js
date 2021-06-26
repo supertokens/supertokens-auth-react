@@ -491,7 +491,7 @@ export async function loginWithGithub(page) {
     await page.focus("input[type=password]");
     await page.keyboard.type(process.env.GITHUB_PASSWORD);
     await Promise.all([page.keyboard.press("Enter"), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-    await new Promise((res) => setTimeout(res, 1000));
+    await new Promise((res) => setTimeout(res, 1500));
 }
 
 export async function defaultSignUp(page, rid = "emailpassword") {
