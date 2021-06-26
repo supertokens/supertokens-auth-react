@@ -88,9 +88,12 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     useEffect(() => {
         if (isDefaultContext(parentSessionContext)) {
             setInitialContext();
-            session.addEventListener(onHandleEvent);
+            // we return here cause addEventListener returns a function that removes
+            // the listener, and this function will be called by useEffect on
+            // component unmount
+            return session.addEventListener(onHandleEvent);
         } else {
-            setContext(parentSessionContext);
+            return setContext(parentSessionContext);
         }
     }, [parentSessionContext]);
 

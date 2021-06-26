@@ -29,15 +29,15 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { SignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { SessionContextType, SessionContext } from "../../../../session";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };
 
 class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
-    /*
-     * Constructor.
-     */
+    static contextType = SessionContext;
+
     constructor(props: PropType) {
         super(props);
 
@@ -136,8 +136,8 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     }
 
     componentDidMount = async (): Promise<void> => {
-        const sessionExists = await this.props.recipe.doesSessionExist();
-        if (sessionExists) {
+        const sessionContext: SessionContextType = this.context;
+        if (sessionContext.doesSessionExist) {
             this.props.recipe.config.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS",
             });
