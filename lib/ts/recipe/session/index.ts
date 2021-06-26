@@ -17,7 +17,8 @@ import Session from "./recipe";
 import { RecipeInterface } from "supertokens-website";
 import SessionAuthWrapper from "./sessionAuth";
 import useSessionContextFunc from "./useSessionContext";
-import { InputType } from "./types";
+import { InputType, SessionContextType } from "./types";
+import SessionContext from "./sessionContext";
 
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
@@ -76,4 +77,6 @@ export {
     signOut,
     RecipeInterface,
     InputType,
+    SessionContext,
+    SessionContextType,
 };

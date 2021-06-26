@@ -39,6 +39,7 @@ import SignInAndUp from "./components/features/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
+import AuthWidgetWrapper from "../authRecipeModule/authWidgetWrapper";
 
 /*
  * Class.
@@ -110,7 +111,13 @@ export default class EmailPassword extends AuthRecipeModule<
         props: any | undefined
     ): JSX.Element => {
         if (componentName === "signinup") {
-            return <SignInAndUp recipe={this} {...props} />;
+            return (
+                <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
+                    authRecipe={this}
+                    history={props.history}>
+                    <SignInAndUp recipe={this} {...props} />
+                </AuthWidgetWrapper>
+            );
         } else if (componentName === "resetpassword") {
             return <ResetPasswordUsingToken recipe={this} {...props} />;
         } else {

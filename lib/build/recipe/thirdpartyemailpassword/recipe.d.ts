@@ -34,7 +34,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     );
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getDefaultRedirectionURL: (context: import("../emailpassword").GetRedirectionURLContext) => Promise<string>;
-    getFeatureComponent: (componentName: "emailverification" | "signinup" | "resetpassword", prop: any) => JSX.Element;
+    getFeatureComponent: (componentName: "emailverification" | "signinup" | "resetpassword", props: any) => JSX.Element;
     static init(
         config: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>;

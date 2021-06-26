@@ -16,8 +16,8 @@
 /*
  * Imports.
  */
-import React, { useEffect, useState } from "react";
-import SessionContext from "./sessionContext";
+import React, { useEffect, useState, useContext } from "react";
+import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEvent, SessionContextType } from "./types";
 import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
@@ -32,6 +32,8 @@ type Props = {
  * It maps AuthenticationContext to SessionContext
  */
 const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
+    const parentSessionContext = useContext(SessionContext);
+
     const [context, setContext] = useState<SessionContextType>();
 
     const session = Session.getInstanceOrThrow();
@@ -84,21 +86,30 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
     // Read and set the current state
     useEffect(() => {
-        setInitialContext();
-    }, []);
+        if (isDefaultContext(parentSessionContext)) {
+            setInitialContext();
+            // we return here cause addEventListener returns a function that removes
+            // the listener, and this function will be called by useEffect on
+            // component unmount
+            return session.addEventListener(onHandleEvent);
+        } else {
+            return setContext(parentSessionContext);
+        }
+    }, [parentSessionContext]);
 
-    // Setup listener. This will call addEventListener teardown function when component is unmounted
-    useEffect(() => session.addEventListener(onHandleEvent), []);
+    useEffect(() => {
+        // If the session doesn't exist and we require auth, redirect to login
+        if (context !== undefined && context.doesSessionExist === false && props.requireAuth === true) {
+            props.redirectToLogin();
+        }
+    }, [context, props]);
 
     // If the context is undefined, we are still waiting to know whether session exists.
     if (context === undefined) {
         return null;
     }
 
-    // If the session doesn't exist and we require auth, redirect to login
     if (context.doesSessionExist === false && props.requireAuth === true) {
-        props.redirectToLogin();
-
         return null;
     }
 

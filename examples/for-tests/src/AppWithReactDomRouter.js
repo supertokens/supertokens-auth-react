@@ -23,7 +23,7 @@ function AppWithReactDomRouter(props) {
                         </Route>
 
                         <Route path="/dashboard-no-auth">
-                            <Auth requireAuth={false}>
+                            <Auth requireAuth={false} {...props}>
                                 <DashboardNoAuthRequired />
                             </Auth>
                         </Route>

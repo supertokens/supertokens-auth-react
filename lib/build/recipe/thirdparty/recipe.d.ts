@@ -29,7 +29,7 @@ export default class ThirdParty extends AuthRecipeModule<
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getFeatureComponent: (
         componentName: "emailverification" | "signinup" | "signinupcallback",
-        prop: any
+        props: any
     ) => JSX.Element;
     getDefaultRedirectionURL: (
         context: import("../authRecipeModule/types").GetRedirectionURLContext

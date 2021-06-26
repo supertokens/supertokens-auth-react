@@ -73,7 +73,6 @@ export declare type SignInAndUpThemeProps = {
     error: string | undefined;
 };
 export declare type ThirdPartySignInAndUpState = {
-    status: "LOADING" | "READY";
     error?: string;
 };
 export declare type StateObject = {

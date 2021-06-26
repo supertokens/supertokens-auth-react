@@ -225,14 +225,9 @@ declare global {
         documentMode?: any;
     }
 }
-export declare type SignInAndUpState =
-    | {
-          status: "LOADING" | "READY";
-      }
-    | {
-          status: "SUCCESSFUL";
-          user: User;
-      };
+export declare type SignInAndUpState = {
+    user?: User;
+};
 export interface RecipeInterface {
     submitNewPassword: (input: {
         formFields: {

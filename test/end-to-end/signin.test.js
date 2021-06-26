@@ -22,7 +22,7 @@ import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
 import {
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
     clickForgotPasswordLink,
     getFieldErrors,
     getGeneralError,
@@ -100,8 +100,7 @@ describe("SuperTokens SignIn", function () {
                 consoleLogs.push(log);
             }
         });
-        await clearBrowserCookies(page);
-        consoleLogs = [];
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
     });
 
     describe("SignIn test ", function () {
@@ -190,15 +189,13 @@ describe("SuperTokens SignIn", function () {
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
         });
 
         it("Successful Sign In with no required session page", async function () {
             await toggleSignInSignUp(page);
             await defaultSignUp(page);
-            await clearBrowserCookies(page);
-
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             let cookies = await page.cookies();
             assert.deepStrictEqual(cookies.length, 1);
             assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
@@ -210,7 +207,10 @@ describe("SuperTokens SignIn", function () {
 
             assert.strictEqual(text, "Not logged in");
 
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             // sign in..
 
             let showPasswordIcon = await getShowPasswordIcon(page);
@@ -289,7 +289,14 @@ describe("SuperTokens SignIn", function () {
 
             // Logout
             const logoutButton = await getLogoutButton(page);
-            await Promise.all([await logoutButton.click(), page.waitForNavigation()]);
+            await Promise.all([logoutButton.click()]);
+            await new Promise((r) => setTimeout(r, 2500));
+            let text2 = await getTextInDashboardNoAuth(page);
+            assert.strictEqual(text2, "Not logged in");
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             cookies = await page.cookies();
@@ -299,77 +306,52 @@ describe("SuperTokens SignIn", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_UP",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE SIGN_OUT",
                 "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
         });
 
         it("Successful Sign In", async function () {
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
 
             let cookies = await page.cookies();
             assert.deepStrictEqual(cookies.length, 1);
             assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
             assert.deepStrictEqual(cookies[0].value, "remove");
 
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
 
             let showPasswordIcon = await getShowPasswordIcon(page);
             assert.strictEqual(showPasswordIcon, null);
@@ -452,33 +434,19 @@ describe("SuperTokens SignIn", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE SIGN_OUT",
                 "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
         });
 
@@ -488,6 +456,14 @@ describe("SuperTokens SignIn", function () {
                 `${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=%2Fredirect-here`,
                 `${TEST_CLIENT_BASE_URL}/redirect-here`
             );
+
+            // test that if we visit auth again, we end up in redirect-heree again
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?rid=emailpassword&redirectToPath=%2Fredirect-heree`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/redirect-heree");
         });
 
         it("Successful Sign In with redirect to, redirectToPath directly without trailing slash", async function () {
@@ -518,7 +494,7 @@ describe("SuperTokens SignIn", function () {
 
         describe("Successful Sign In with redirect to, with EmailPasswordAuth", async function () {
             it("First sign in", async function () {
-                await clearBrowserCookies(page);
+                consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 let cookies = await page.cookies();
                 assert.deepStrictEqual(cookies.length, 1);
                 assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
@@ -544,30 +520,21 @@ describe("SuperTokens SignIn", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                     "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                     "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 ]);
             });
 
             it("Test case sensitive redirect", async function () {
-                await clearBrowserCookies(page);
+                consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 let cookies = await page.cookies();
                 assert.deepStrictEqual(cookies.length, 1);
                 assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
@@ -593,37 +560,31 @@ describe("SuperTokens SignIn", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                     "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                     "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                    "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 ]);
             });
 
             it("Login in again without redirectToPath params, make sure redirectToPath was clean up from session storage", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                    // Login again will not redirect to custom path.
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                // Login again will not redirect to custom path.
 
-                    // Set correct values.
-                    await setInputValues(page, [
-                        { name: "email", value: "john.doe@supertokens.io" },
-                        { name: "password", value: "Str0ngP@ssw0rd" },
-                    ]);
+                // Set correct values.
+                await setInputValues(page, [
+                    { name: "email", value: "john.doe@supertokens.io" },
+                    { name: "password", value: "Str0ngP@ssw0rd" },
+                ]);
 
                 // Submit.
                 await Promise.all([
@@ -656,15 +617,13 @@ describe("SuperTokens SignIn => Server Error", function () {
 
     beforeEach(async function () {
         page = await browser.newPage();
-        await clearBrowserCookies(page);
-        consoleLogs = [];
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
             if (log.startsWith("ST_LOGS")) {
                 consoleLogs.push(log);
             }
         });
-        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
     });
 
     it("Server Error shows Something went wrong general error", async function () {
@@ -685,16 +644,14 @@ describe("SuperTokens SignIn => Server Error", function () {
         assert.deepStrictEqual(consoleLogs, [
             "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
             "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-            "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
             "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
-            "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
         ]);
     });
 });
 
 async function assertSignInRedirectTo(page, startUrl, finalUrl) {
-    await clearBrowserCookies(page);
+    await clearBrowserCookiesWithoutAffectingConsole(page, []);
     await Promise.all([page.goto(startUrl), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
     // Set correct values.

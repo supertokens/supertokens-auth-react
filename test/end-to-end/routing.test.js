@@ -36,7 +36,7 @@ import {
     getSubmitFormButtonLabelWithoutShadowDom,
     assertNoSTComponents,
     toggleSignInSignUp,
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
 } from "../helpers";
 /*
  * Tests.
@@ -59,17 +59,23 @@ describe("SuperTokens Routing in Test App", function () {
     describe("with react-router-dom", function () {
         before(async function () {
             page = await browser.newPage();
-            await clearBrowserCookies(page);
+            await clearBrowserCookiesWithoutAffectingConsole(page, []);
         });
 
         describe("with emailpassword", function () {
             it("/about should not load any SuperTokens components", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/about`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/about`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
 
             it("/auth should load SignInAndUp components", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signInButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(signInButtonLabel, "SIGN IN");
                 const labels = await getLabelsText(page);
@@ -77,31 +83,46 @@ describe("SuperTokens Routing in Test App", function () {
             });
 
             it("/auth?rid=emailpassword should load SignInAndUp components", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=emailpassword`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=emailpassword`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signInButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(signInButtonLabel, "SIGN IN");
             });
 
             it("/auth?rid=unknown-rid should load first component (sign up widget)", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=unknown`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=unknown`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signInButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(signInButtonLabel, "SIGN IN");
             });
 
             it("/auth/reset-password should load reset-password SuperTokens component with Send Email", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(resetPasswordButtonLabel, "Email me");
             });
 
             it("/auth/reset-password?token=TOKEN should load reset-password SuperTokens component with Change Password", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(resetPasswordButtonLabel, "Change password");
             });
 
             it("/auth/unknown-path should not render any ST component", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/unknown-path`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/unknown-path`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
         });
@@ -109,48 +130,75 @@ describe("SuperTokens Routing in Test App", function () {
         describe("with thirdparty", function () {
             before(async function () {
                 page = await browser.newPage();
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 // set auth recipe type.
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?authRecipe=thirdparty`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?authRecipe=thirdparty`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             after(async function () {
                 // reset auth recipe type.
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/?authRecipe=emailpassword`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/?authRecipe=emailpassword`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             it("/about should not load any SuperTokens components", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/about`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/about`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
 
             it("/auth should load SignInAndUp components", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertProviders(page);
             });
 
             it("/auth?rid=emailpassword should load SignInAndUp components for thirdparty", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=emailpassword`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=emailpassword`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertProviders(page);
             });
 
             it("/auth?rid=unknown-rid should load first component (signInAndUp widget for thirdparty)", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=unknown`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=unknown`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertProviders(page);
             });
 
             it("/auth/reset-password should not load any ST component", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
 
             it("/auth/reset-password?token=TOKEN should not load any ST component", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
 
             it("/auth/unknown-path should not render any ST component", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/unknown-path`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/unknown-path`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
         });
@@ -158,23 +206,35 @@ describe("SuperTokens Routing in Test App", function () {
         describe("with both emailpassword and thirdparty", function () {
             before(async function () {
                 page = await browser.newPage();
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 // set auth recipe type.
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?authRecipe=both`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?authRecipe=both`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             after(async function () {
                 // reset auth recipe type.
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/?authRecipe=emailpassword`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/?authRecipe=emailpassword`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             it("/about should not load any SuperTokens components", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/about`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/about`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
 
             it("/auth should load SignInAndUp components", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signInButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(signInButtonLabel, "SIGN IN");
                 const labels = await getLabelsText(page);
@@ -182,7 +242,10 @@ describe("SuperTokens Routing in Test App", function () {
             });
 
             it("/auth?rid=emailpassword should load SignInAndUp components for emailpassword", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=emailpassword`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=emailpassword`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signInButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(signInButtonLabel, "SIGN IN");
                 const labels = await getLabelsText(page);
@@ -190,12 +253,18 @@ describe("SuperTokens Routing in Test App", function () {
             });
 
             it("/auth?rid=thirdparty should load SignInAndUp components for thirdparty", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=thirdparty`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=thirdparty`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertProviders(page);
             });
 
             it("/auth?rid=unknown should load first component (signInAndUp widget for emailpassword)", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=unknown`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?rid=unknown`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signInButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(signInButtonLabel, "SIGN IN");
                 const labels = await getLabelsText(page);
@@ -203,47 +272,68 @@ describe("SuperTokens Routing in Test App", function () {
             });
 
             it("/auth/reset-password?rid=unknown should load reset-password SuperTokens component with Send Email", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?rid=unknown`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?rid=unknown`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(resetPasswordButtonLabel, "Email me");
             });
 
             it("/auth/reset-password?rid=emailpassword should load reset-password SuperTokens component with Send Email", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?rid=emailpassword`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?rid=emailpassword`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(resetPasswordButtonLabel, "Email me");
             });
 
             it("/auth/reset-password?rid=thirdparty should load reset-password SuperTokens component with Send Email", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?rid=thirdparty`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?rid=thirdparty`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(resetPasswordButtonLabel, "Email me");
             });
 
             it("/auth/reset-password?token=TOKEN should load reset-password SuperTokens component with Change Password", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(resetPasswordButtonLabel, "Change password");
             });
 
             it("/auth/reset-password?token=TOKEN&rid=emailpassword should load reset-password SuperTokens component with Change Password", async function () {
-                await page.goto(
-                    `${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN&rid=emailpassword`
-                );
+                await Promise.all([
+                    page.goto(
+                        `${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN&rid=emailpassword`
+                    ),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(resetPasswordButtonLabel, "Change password");
             });
 
             it("/auth/reset-password?token=TOKEN&rid=thirdparty should load reset-password SuperTokens component with Change Password", async function () {
-                await page.goto(
-                    `${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN&rid=thirdparty`
-                );
+                await Promise.all([
+                    page.goto(
+                        `${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN&rid=thirdparty`
+                    ),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(resetPasswordButtonLabel, "Change password");
             });
 
             it("/auth/unknown-path should not render any ST component", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/unknown-path`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/unknown-path`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
         });
@@ -251,45 +341,63 @@ describe("SuperTokens Routing in Test App", function () {
 
     describe("without react-router-dom", function () {
         before(async function () {
-            await clearBrowserCookies(page);
+            await clearBrowserCookiesWithoutAffectingConsole(page, []);
             page = await browser.newPage();
         });
 
         it("/about should not load any SuperTokens components", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/about?router=no-router`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/about?router=no-router`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             await assertNoSTComponents(page);
         });
 
         it("/auth should load SignInAndUp components", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
             assert.strictEqual(signInButtonLabel, "SIGN IN");
         });
 
         it("/auth/reset-password should load reset-password SuperTokens component with Send Email", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?router=no-router`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?router=no-router`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
             assert.strictEqual(resetPasswordButtonLabel, "Email me");
         });
 
         it("/auth/reset-password?token=TOKEN should load reset-password SuperTokens component with Change Password", async function () {
-            await page.goto(
-                `${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN&router=no-router`
-            );
+            await Promise.all([
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/reset-password?token=TOKEN&router=no-router`
+                ),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
             assert.strictEqual(resetPasswordButtonLabel, "Change password");
         });
 
         it("/auth?rid=emailpassword should load SignInAndUp components", async function () {
-            await page.goto(
-                `${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router&rid=emailpassword&router=no-router`
-            );
+            await Promise.all([
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router&rid=emailpassword&router=no-router`
+                ),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
             assert.strictEqual(signInButtonLabel, "SIGN IN");
         });
 
         it("/auth?rid=unknown-rid should load first SuperTokens components that matches", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router&rid=unknown`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}?router=no-router&rid=unknown`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             await assert.strictEqual(pathname, DEFAULT_WEBSITE_BASE_PATH);
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
@@ -297,12 +405,18 @@ describe("SuperTokens Routing in Test App", function () {
         });
 
         it("/auth/unknown-path should not render any ST component", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/unknown-path?router=no-router`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}${DEFAULT_WEBSITE_BASE_PATH}/unknown-path?router=no-router`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             await assertNoSTComponents(page);
         });
 
         it("/custom-supertokens-login should load SignIn SuperTokens components", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/custom-supertokens-login`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/custom-supertokens-login`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             const signInButtonLabel = await getSubmitFormButtonLabel(page);
             assert.strictEqual(signInButtonLabel, "SIGN IN");
         });
@@ -311,52 +425,76 @@ describe("SuperTokens Routing in Test App", function () {
     describe("with custom websiteBasePath", function () {
         describe("=/custom", function () {
             before(async function () {
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 page = await browser.newPage();
                 // Update websiteBasePath config.
-                await page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/custom`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/custom`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             after(async function () {
                 page = await browser.newPage();
                 // Reset websiteBasePath config.
-                await page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/auth`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             it("/custom should show signin/signup", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/custom`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/custom`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signInButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(signInButtonLabel, "SIGN IN");
             });
 
             it("/custom/reset-password should show signin/signup", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/custom/reset-password`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/custom/reset-password`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(resetPasswordButtonLabel, "Email me");
             });
 
             it("/auth should not show signin/signup", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
         });
 
         describe("=/", function () {
             before(async function () {
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 page = await browser.newPage();
                 // Update websiteBasePath config.
-                await page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             after(async function () {
                 page = await browser.newPage();
                 // Reset websiteBasePath config.
-                await page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/auth`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/?websiteBasePath=/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             it("/ should show signin/signup", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signUpButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(signUpButtonLabel, "SIGN IN");
                 // Click on forgot password link.
@@ -366,33 +504,48 @@ describe("SuperTokens Routing in Test App", function () {
             });
 
             it("/reset-password should show signin/signup", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/reset-password`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/reset-password`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(resetPasswordButtonLabel, "Email me");
             });
 
             it("/auth should not show signin/signup", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
         });
 
         describe("default to signup = true", function () {
             before(async function () {
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 page = await browser.newPage();
                 // Update defaultToSignUp config.
-                await page.goto(`${TEST_CLIENT_BASE_URL}/?defaultToSignUp=true`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/?defaultToSignUp=true`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             after(async function () {
                 page = await browser.newPage();
                 // Reset defaultToSignUp config.
-                await page.goto(`${TEST_CLIENT_BASE_URL}/?defaultToSignUp=false`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/?defaultToSignUp=false`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             it("/auth should show signin form", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signUpButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(signUpButtonLabel, "SIGN UP");
             });
@@ -400,20 +553,29 @@ describe("SuperTokens Routing in Test App", function () {
 
         describe("useShadowDom = false", function () {
             before(async function () {
-                await clearBrowserCookies(page);
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
                 page = await browser.newPage();
                 // Update useShadowDom config.
-                await page.goto(`${TEST_CLIENT_BASE_URL}/?useShadowDom=false`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/?useShadowDom=false`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             after(async function () {
                 page = await browser.newPage();
                 // Reset useShadowDom config.
-                await page.goto(`${TEST_CLIENT_BASE_URL}/?useShadowDom=true`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/?useShadowDom=true`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
             });
 
             it("/auth should show signin form", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signInButtonLabel = await getSubmitFormButtonLabelWithoutShadowDom(page);
                 assert.strictEqual(signInButtonLabel, "SIGN IN");
             });

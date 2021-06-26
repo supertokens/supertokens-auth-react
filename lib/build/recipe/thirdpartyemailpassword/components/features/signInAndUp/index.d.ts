@@ -1,9 +1,13 @@
 import { PureComponent } from "react";
 import { FeatureBaseProps } from "../../../../../types";
 import Recipe from "../../../recipe";
+declare type PropType = FeatureBaseProps & {
+    recipe: Recipe;
+};
 declare class SignInAndUp extends PureComponent<
-    FeatureBaseProps & {
-        recipe: Recipe;
+    PropType,
+    {
+        status: "LOADING" | "READY";
     }
 > {
     getIsEmbedded: () => boolean;

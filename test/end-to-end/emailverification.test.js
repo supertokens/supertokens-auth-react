@@ -23,7 +23,7 @@ import assert from "assert";
 import puppeteer from "puppeteer";
 import { SEND_VERIFY_EMAIL_API, VERIFY_EMAIL_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import {
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
     clickLinkWithRightArrow,
     getVerificationEmailErrorTitle,
     getVerificationEmailTitle,
@@ -61,7 +61,10 @@ describe("SuperTokens Email Verification", function () {
             headless: true,
         });
         page = await browser.newPage();
-        await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
     });
 
     after(async function () {
@@ -84,7 +87,7 @@ describe("SuperTokens Email Verification", function () {
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         });
 
         it("Should redirect to login page when email verification screen is accessed without a valid session", async function () {
@@ -94,7 +97,10 @@ describe("SuperTokens Email Verification", function () {
         });
 
         it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             await toggleSignInSignUp(page);
             await defaultSignUp(page);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -102,35 +108,36 @@ describe("SuperTokens Email Verification", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_UP",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION IS_EMAIL_VERIFIED",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
             ]);
         });
 
         it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             await setInputValues(page, [
                 { name: "email", value: "john.doe@supertokens.io" },
                 { name: "password", value: "Str0ngP@ssw0rd" },
             ]);
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            await new Promise((r) => setTimeout(r, 2000));
             let pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
             // Click on resend email should show "Email Resent" success message
@@ -148,44 +155,32 @@ describe("SuperTokens Email Verification", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION IS_EMAIL_VERIFIED",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION SEND_VERIFICATION_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
                 "ST_LOGS SESSION OVERRIDE SIGN_OUT",
                 "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
         });
     });
@@ -199,7 +194,7 @@ describe("SuperTokens Email Verification", function () {
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         });
 
         it("Should show invalid token screen when token is invalid or expired", async function () {
@@ -218,14 +213,9 @@ describe("SuperTokens Email Verification", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS VERIFY_EMAIL",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
         });
 
@@ -236,37 +226,26 @@ describe("SuperTokens Email Verification", function () {
             assert.deepStrictEqual(title, "Email verification successful!");
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/auth");
+            assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS VERIFY_EMAIL",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT EMAIL_VERIFIED_SUCCESSFUL",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
         });
 
         it("Should allow to verify an email without a valid session", async function () {
-            await clearBrowserCookies(page);
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`),
+                page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200),
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION VERIFY_EMAIL",
@@ -284,7 +263,7 @@ describe("SuperTokens Email Verification", function () {
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?mode=REQUIRED`);
         });
         it("Should redirect to onSuccessfulRedirect when email is already verified", async function () {
@@ -321,7 +300,7 @@ describe("SuperTokens Email Verification server errors", function () {
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
         });
 
@@ -381,7 +360,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
         });
 
         it("Should ignore email verification when isEmailVerified server request fails", async function () {
