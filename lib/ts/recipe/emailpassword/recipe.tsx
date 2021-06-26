@@ -112,13 +112,9 @@ export default class EmailPassword extends AuthRecipeModule<
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <AuthWidgetWrapper
-                    onSessionAlreadyExists={() => {
-                        this.config.onHandleEvent({
-                            action: "SESSION_ALREADY_EXISTS",
-                        });
-                        this.redirect({ action: "SUCCESS", isNewUser: false }, props.history);
-                    }}>
+                <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
+                    authRecipe={this}
+                    history={props.history}>
                     <SignInAndUp recipe={this} {...props} />
                 </AuthWidgetWrapper>
             );

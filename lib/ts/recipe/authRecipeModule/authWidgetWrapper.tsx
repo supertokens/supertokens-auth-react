@@ -16,18 +16,35 @@
 /*
  * Imports.
  */
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { SessionAuth, SessionContext } from "../session";
+import AuthRecipeModule from ".";
+import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { getRedirectToPathFromURL } from "../../utils";
 
-type Props = {
-    onSessionAlreadyExists: () => void;
+type Props<
+    T,
+    S,
+    R,
+    N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
+> = {
+    onSessionAlreadyExists?: () => void;
+    authRecipe: AuthRecipeModule<T, S, R, N>;
+    history: any;
 };
 
 /**
  * AuthWidgetWrapper shows the children component only if no session exists,
  * else it calls onSessionAlreadyExists
  */
-const AuthWidgetWrapper: React.FC<Props> = ({ ...props }) => {
+const AuthWidgetWrapper = <
+    T,
+    S,
+    R,
+    N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
+>(
+    props: Props<T, S, R, N> & { children?: React.ReactNode }
+): React.ReactElement | null => {
     return (
         <SessionAuth requireAuth={false} redirectToLogin={() => undefined}>
             <Redirector {...props} />
@@ -35,19 +52,50 @@ const AuthWidgetWrapper: React.FC<Props> = ({ ...props }) => {
     );
 };
 
-const Redirector: React.FC<Props> = ({ children, ...props }) => {
+const Redirector = <
+    T,
+    S,
+    R,
+    N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
+>(
+    props: Props<T, S, R, N> & { children?: React.ReactNode }
+): React.ReactElement | null => {
     const sessionContext = useContext(SessionContext);
 
-    useEffect(() => {
-        if (sessionContext.doesSessionExist) {
-            props.onSessionAlreadyExists();
-        }
-    }, [sessionContext, props]);
+    const [alwaysShow, updateAlwaysShow] = useState(false);
 
-    if (sessionContext.doesSessionExist) {
+    useEffect(() => {
+        // we want to do this just once, so we supply it an empty array.
+        // if we supply it with props, sessionContext,
+        // then once the user signs in, then this will route the
+        // user to the dashboard, as opposed to the sign up / sign in functions.
+        if (sessionContext.doesSessionExist) {
+            if (props.onSessionAlreadyExists !== undefined) {
+                props.onSessionAlreadyExists();
+            } else {
+                props.authRecipe.config.onHandleEvent({
+                    action: "SESSION_ALREADY_EXISTS",
+                });
+                props.authRecipe.redirect(
+                    {
+                        action: "SUCCESS",
+                        isNewUser: false,
+                        redirectToPath: getRedirectToPathFromURL(),
+                    },
+                    props.history
+                );
+            }
+        } else {
+            // this means even if a session exists, we will still show the children
+            // cause the child component will take care of redirecting etc..
+            updateAlwaysShow(true);
+        }
+    }, []);
+
+    if (sessionContext.doesSessionExist && !alwaysShow) {
         return null;
     } else {
-        return <>{children}</>;
+        return <>{props.children}</>;
     }
 };
 

@@ -22,7 +22,7 @@ import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
 import {
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
     clickForgotPasswordLink,
     getFieldErrors,
     getGeneralError,
@@ -100,8 +100,7 @@ describe("SuperTokens SignIn", function () {
                 consoleLogs.push(log);
             }
         });
-        await clearBrowserCookies(page);
-        consoleLogs = [];
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
     });
 
     describe("SignIn test ", function () {
@@ -190,14 +189,13 @@ describe("SuperTokens SignIn", function () {
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
         });
 
         it("Successful Sign In with no required session page", async function () {
             await toggleSignInSignUp(page);
             await defaultSignUp(page);
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
 
             let cookies = await page.cookies();
             assert.deepStrictEqual(cookies.length, 1);
@@ -362,7 +360,7 @@ describe("SuperTokens SignIn", function () {
         });
 
         it("Successful Sign In", async function () {
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
 
             let cookies = await page.cookies();
             assert.deepStrictEqual(cookies.length, 1);
@@ -518,7 +516,7 @@ describe("SuperTokens SignIn", function () {
 
         describe("Successful Sign In with redirect to, with EmailPasswordAuth", async function () {
             it("First sign in", async function () {
-                await clearBrowserCookies(page);
+                consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 let cookies = await page.cookies();
                 assert.deepStrictEqual(cookies.length, 1);
                 assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
@@ -567,7 +565,7 @@ describe("SuperTokens SignIn", function () {
             });
 
             it("Test case sensitive redirect", async function () {
-                await clearBrowserCookies(page);
+                consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 let cookies = await page.cookies();
                 assert.deepStrictEqual(cookies.length, 1);
                 assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
@@ -656,8 +654,7 @@ describe("SuperTokens SignIn => Server Error", function () {
 
     beforeEach(async function () {
         page = await browser.newPage();
-        await clearBrowserCookies(page);
-        consoleLogs = [];
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
             if (log.startsWith("ST_LOGS")) {
@@ -694,7 +691,7 @@ describe("SuperTokens SignIn => Server Error", function () {
 });
 
 async function assertSignInRedirectTo(page, startUrl, finalUrl) {
-    await clearBrowserCookies(page);
+    await clearBrowserCookiesWithoutAffectingConsole(page, []);
     await Promise.all([page.goto(startUrl), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
     // Set correct values.

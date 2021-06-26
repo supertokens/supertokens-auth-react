@@ -354,10 +354,24 @@ export async function clearBrowserCookies(page) {
     const client = await page.target().createCDPSession();
     await client.send("Network.clearBrowserCookies");
     await client.send("Network.clearBrowserCache");
+    // we need this navigation cause the the /auth page will reset the cookie according to how the tests expect it
     await Promise.all([
         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
+}
+
+export async function clearBrowserCookiesWithoutAffectingConsole(page, console) {
+    let toReturn = [...console];
+    const client = await page.target().createCDPSession();
+    await client.send("Network.clearBrowserCookies");
+    await client.send("Network.clearBrowserCache");
+    // we need this navigation cause the the /auth page will reset the cookie according to how the tests expect it
+    await Promise.all([
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+    ]);
+    return toReturn;
 }
 
 export async function clickForgotPasswordLink(page) {
