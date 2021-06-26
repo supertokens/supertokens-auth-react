@@ -20,10 +20,14 @@ import { PureComponent, ReactElement } from "react";
 
 import { FeatureBaseProps } from "../../types";
 import Recipe from "./recipe";
+import { SessionContext } from "../session";
+import { SessionContextType } from "../session/types";
 
 type Prop = FeatureBaseProps & { recipe: Recipe };
 
 export default class EmailVerificationAuth extends PureComponent<Prop, { status: "LOADING" | "READY" }> {
+    static contextType = SessionContext;
+
     constructor(props: Prop) {
         super(props);
         this.state = {
@@ -32,20 +36,31 @@ export default class EmailVerificationAuth extends PureComponent<Prop, { status:
     }
 
     async componentDidMount(): Promise<void> {
-        // If email verification mode is off or optional, return.
-        if (this.props.recipe.config.mode !== "REQUIRED") {
-            this.setState((oldState) => {
-                return {
-                    ...oldState,
-                    status: "READY",
-                };
-            });
-            return;
-        }
-        // Otherwise, make sure that the email is valid, otherwise, redirect to email validation screen.
-        const isEmailVerified = await this.props.recipe.isEmailVerified();
-        if (isEmailVerified === false) {
-            return await this.props.recipe.redirect({ action: "VERIFY_EMAIL" }, this.props.history);
+        const sessionContext: SessionContextType = this.context;
+
+        if (sessionContext.doesSessionExist) {
+            // If email verification mode is off or optional, return.
+            if (this.props.recipe.config.mode !== "REQUIRED") {
+                this.setState((oldState) => {
+                    return {
+                        ...oldState,
+                        status: "READY",
+                    };
+                });
+                return;
+            }
+            // Otherwise, make sure that the email is valid, otherwise, redirect to email validation screen.
+            const isEmailVerified = await this.props.recipe.isEmailVerified();
+            if (isEmailVerified === false) {
+                return await this.props.recipe.redirect({ action: "VERIFY_EMAIL" }, this.props.history);
+            } else {
+                this.setState((oldState) => {
+                    return {
+                        ...oldState,
+                        status: "READY",
+                    };
+                });
+            }
         } else {
             this.setState((oldState) => {
                 return {

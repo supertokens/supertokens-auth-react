@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [0.15.0] - 2021-06-26
+
+### Fixed:
+
+-   Styling issues with SVG icons
+-   In `emailVerificationAuth`, querying for is email verified only if a session exists
+-   A few test app issues
+-   Updates session context on session changes: https://github.com/supertokens/supertokens-auth-react/issues/228
+
+### Breaking changes
+
+-   If using auth wrapper without `requireAuth=false`, and the user signs out, then the user is automatically redirected to /auth
+
 ## [0.14.0] - 2021-05-24
 
 ### Added:
