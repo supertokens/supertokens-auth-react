@@ -92,19 +92,25 @@ describe("SuperTokens SignUp", function () {
 
     describe("redirectToAuth test", function () {
         it("Show signin first", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             let elem = await getLoginWithRedirectToSignIn(page);
             await page.evaluate((e) => e.click(), elem);
-            await page.waitForNavigation();
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
             let text = await getAuthPageHeaderText(page);
             assert.deepStrictEqual(text, "Sign In");
         });
 
         it("Show signup first", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             let elem = await getLoginWithRedirectToSignUp(page);
             await page.evaluate((e) => e.click(), elem);
-            await page.waitForNavigation();
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
             let text = await getAuthPageHeaderText(page);
             assert.deepStrictEqual(text, "Sign Up");
         });
@@ -135,14 +141,7 @@ describe("SuperTokens SignUp", function () {
 
             const adornments = await getInputAdornmentsSuccess(page);
             assert.strictEqual(adornments.length, 0);
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-            ]);
+            assert.deepStrictEqual(consoleLogs, []);
         });
 
         it("Should show error messages", async function () {
@@ -183,12 +182,6 @@ describe("SuperTokens SignUp", function () {
             formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, ["Email is invalid", "You must be over 18 to register"]);
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
             ]);
@@ -208,7 +201,7 @@ describe("SuperTokens SignUp", function () {
             );
             // doesSessionExist return true, hence, redirecting to success URL
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, {
-                waitUntil: "domcontentloaded",
+                waitUntil: "networkidle0",
             });
 
             pathname = await page.evaluate(() => window.location.pathname);
@@ -217,7 +210,7 @@ describe("SuperTokens SignUp", function () {
             // Clear cookies, try to signup with same address.
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, {
-                waitUntil: "domcontentloaded",
+                waitUntil: "networkidle0",
             });
             await toggleSignInSignUp(page);
 
@@ -236,53 +229,31 @@ describe("SuperTokens SignUp", function () {
             formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, []);
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_UP",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
         });
     });
