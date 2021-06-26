@@ -38,6 +38,7 @@ import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
+import { SessionAuth } from "../session";
 
 /*
  * Class.
@@ -103,7 +104,11 @@ export default class ThirdParty extends AuthRecipeModule<
         prop: any
     ): JSX.Element => {
         if (componentName === "signinup") {
-            return <SignInAndUp recipe={this} {...prop} />;
+            return (
+                <SessionAuth requireAuth={false} redirectToLogin={() => undefined}>
+                    <SignInAndUp recipe={this} {...prop} />;
+                </SessionAuth>
+            );
         } else if (componentName === "signinupcallback") {
             return <SignInAndUpCallback recipe={this} {...prop} />;
         } else {

@@ -30,9 +30,12 @@ import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
 import { getRedirectToPathFromURL } from "../../../../../utils";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { SessionContextType, SessionContext } from "../../../../session";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
+    static contextType = SessionContext;
+
     constructor(props: PropType) {
         super(props);
 
@@ -66,8 +69,8 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
     };
 
     componentDidMount = async (): Promise<void> => {
-        const sessionExists = await this.props.recipe.doesSessionExist();
-        if (sessionExists) {
+        const sessionContext: SessionContextType = this.context;
+        if (sessionContext.doesSessionExist) {
             this.props.recipe.config.onHandleEvent({
                 action: "SESSION_ALREADY_EXISTS",
             });

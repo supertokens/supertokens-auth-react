@@ -141,7 +141,8 @@ let recipeList = [
                         return implementation.addFetchInterceptorsAndReturnModifiedFetch(...args);
                     },
                     doesSessionExist(...args) {
-                        log(`DOES_SESSION_EXIST`);
+                        // we do not log here cause then supertokens-website repo
+                        // will call that log unpredictably.
                         return implementation.doesSessionExist(...args);
                     },
                     getJWTPayloadSecurely(...args) {
