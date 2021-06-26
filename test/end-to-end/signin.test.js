@@ -624,7 +624,6 @@ describe("SuperTokens SignIn => Server Error", function () {
                 consoleLogs.push(log);
             }
         });
-        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
     });
 
     it("Server Error shows Something went wrong general error", async function () {

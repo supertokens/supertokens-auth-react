@@ -87,7 +87,6 @@ describe("SuperTokens SignUp", function () {
     beforeEach(async function () {
         consoleLogs = [];
         consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-        await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
         await toggleSignInSignUp(page);
     });
 

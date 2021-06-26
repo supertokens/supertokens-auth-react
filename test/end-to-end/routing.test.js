@@ -336,7 +336,10 @@ describe("SuperTokens Routing in Test App", function () {
             });
 
             it("/auth should not show signin/signup", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
         });
@@ -372,7 +375,10 @@ describe("SuperTokens Routing in Test App", function () {
             });
 
             it("/auth should not show signin/signup", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 await assertNoSTComponents(page);
             });
         });
@@ -392,7 +398,10 @@ describe("SuperTokens Routing in Test App", function () {
             });
 
             it("/auth should show signin form", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signUpButtonLabel = await getSubmitFormButtonLabel(page);
                 assert.strictEqual(signUpButtonLabel, "SIGN UP");
             });
@@ -413,7 +422,10 @@ describe("SuperTokens Routing in Test App", function () {
             });
 
             it("/auth should show signin form", async function () {
-                await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
                 const signInButtonLabel = await getSubmitFormButtonLabelWithoutShadowDom(page);
                 assert.strictEqual(signInButtonLabel, "SIGN IN");
             });
