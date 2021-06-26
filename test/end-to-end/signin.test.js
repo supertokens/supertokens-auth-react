@@ -642,8 +642,6 @@ describe("SuperTokens SignIn => Server Error", function () {
         const generalError = await getGeneralError(page);
         assert.strictEqual(generalError, SOMETHING_WENT_WRONG_ERROR);
         assert.deepStrictEqual(consoleLogs, [
-            "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-            "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
             "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
             "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
         ]);

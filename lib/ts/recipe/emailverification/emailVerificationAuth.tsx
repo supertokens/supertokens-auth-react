@@ -29,7 +29,18 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     useEffect(() => {
         async function doTask() {
             if (sessionContext.doesSessionExist && props.recipe.config.mode === "REQUIRED") {
-                const isEmailVerified = await props.recipe.isEmailVerified();
+                let isEmailVerified;
+                try {
+                    isEmailVerified = await props.recipe.isEmailVerified();
+                } catch (_) {
+                    /* if there is an error, we assume that the email is verified
+                     * so that the user can see the content on the page...
+                     *
+                     * This is not a security issue since the backend should check
+                     * for email verification on each request anyway (via sessions...)
+                     */
+                    isEmailVerified = true;
+                }
                 if (isEmailVerified === false) {
                     await props.recipe.redirect({ action: "VERIFY_EMAIL" }, props.history);
                 } else {
