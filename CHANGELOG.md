@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   In `emailVerificationAuth`, querying for is email verified only if a session exists
 -   A few test app issues
 -   Updates session context on session changes: https://github.com/supertokens/supertokens-auth-react/issues/228
+-   Adds SessionAuth wrapper to emailverification feature component
+-   Allows for `SessionAuth` to be inside another `SessionAuth`.
 
 ### Breaking changes
 

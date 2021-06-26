@@ -16,8 +16,8 @@
 /*
  * Imports.
  */
-import React, { useEffect, useState } from "react";
-import SessionContext from "./sessionContext";
+import React, { useEffect, useState, useContext } from "react";
+import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEvent, SessionContextType } from "./types";
 import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
@@ -32,6 +32,8 @@ type Props = {
  * It maps AuthenticationContext to SessionContext
  */
 const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
+    const parentSessionContext = useContext(SessionContext);
+
     const [context, setContext] = useState<SessionContextType>();
 
     const session = Session.getInstanceOrThrow();
@@ -84,13 +86,13 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
     // Read and set the current state
     useEffect(() => {
-        setInitialContext();
-    }, []);
-
-    // Setup listener. This will call addEventListener teardown function when component is unmounted
-    useEffect(() => {
-        return session.addEventListener(onHandleEvent);
-    }, []);
+        if (isDefaultContext(parentSessionContext)) {
+            setInitialContext();
+            session.addEventListener(onHandleEvent);
+        } else {
+            setContext(parentSessionContext);
+        }
+    }, [parentSessionContext]);
 
     useEffect(() => {
         // If the session doesn't exist and we require auth, redirect to login
