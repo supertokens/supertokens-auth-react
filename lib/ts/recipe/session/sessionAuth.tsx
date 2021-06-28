@@ -34,7 +34,9 @@ type Props = {
 const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     const parentSessionContext = useContext(SessionContext);
 
-    const [context, setContext] = useState<SessionContextType>();
+    const [context, setContext] = useState<SessionContextType | undefined>(undefined);
+
+    const [forceShow, setForceShow] = useState(false);
 
     const session = Session.getInstanceOrThrow();
 
@@ -98,18 +100,29 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     }, [parentSessionContext]);
 
     useEffect(() => {
-        // If the session doesn't exist and we require auth, redirect to login
-        if (context !== undefined && context.doesSessionExist === false && props.requireAuth === true) {
-            props.redirectToLogin();
+        if (context === undefined) {
+            return;
         }
-    }, [context, props]);
+
+        // If the session doesn't exist and we require auth, redirect to login
+        if (context.doesSessionExist === false && props.requireAuth === true) {
+            props.redirectToLogin();
+        } else {
+            // since we are rendering children, we will continue to show them always
+            // so that in case a session expiry popup needs to be shown, then the
+            // UI will not blank out completely.
+            if (!forceShow) {
+                setForceShow(true);
+            }
+        }
+    }, [context, props, forceShow]);
 
     // If the context is undefined, we are still waiting to know whether session exists.
     if (context === undefined) {
         return null;
     }
 
-    if (context.doesSessionExist === false && props.requireAuth === true) {
+    if (context.doesSessionExist === false && props.requireAuth === true && !forceShow) {
         return null;
     }
 
