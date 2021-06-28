@@ -27,10 +27,6 @@ type Props = {
     redirectToLogin: () => void;
 };
 
-/**
- * SessionAuth provides a layer of compatibility between AuthenticationContext and previous APIs.
- * It maps AuthenticationContext to SessionContext
- */
 const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     const parentSessionContext = useContext(SessionContext);
 
