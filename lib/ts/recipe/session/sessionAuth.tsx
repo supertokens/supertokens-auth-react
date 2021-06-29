@@ -21,6 +21,7 @@ import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEvent, SessionContextType } from "./types";
 import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
+import { RequireSession } from "./RequireSession";
 
 type Props = {
     requireAuth?: boolean;
@@ -131,11 +132,11 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
         return null;
     }
 
-    if (context.doesSessionExist === false && requireAuth === true) {
-        return null;
-    }
-
-    return <SessionContext.Provider value={context}>{children}</SessionContext.Provider>;
+    return (
+        <SessionContext.Provider value={context}>
+            <RequireSession requireSession={requireAuth}>{children}</RequireSession>
+        </SessionContext.Provider>
+    );
 };
 
 export default SessionAuth;
