@@ -106,8 +106,20 @@ describe("SessionAuth", () => {
             });
         });
 
+        test("call onSessionExpired on UNAUTHORISED", () => {
+            // given
+            const mockOnSessionExpired = jest.fn();
+
+            MockSession.addEventListener.mockImplementationOnce((fn) => fn({ action: "UNAUTHORISED" }));
+
+            // when
+            const result = render(<SessionAuth redirectToLogin={() => {}} onSessionExpired={mockOnSessionExpired} />);
+
+            // then
+            expect(mockOnSessionExpired).toHaveBeenCalled();
+        });
+
         test.todo("update context on SESSION_REFRESH");
         test.todo("update context on SIGN_OUT");
-        test.todo("don't update context on UNAUTHORISED and call onSessionExpired");
     });
 });
