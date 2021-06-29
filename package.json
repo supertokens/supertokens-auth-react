@@ -10,6 +10,7 @@
         "@babel/register": "7.12.1",
         "@emotion/babel-plugin": "^11.1.0",
         "@emotion/eslint-plugin": "^11.1.0",
+        "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^11.2.7",
         "@types/chroma-js": "2.1.3",
         "@types/jest": "^26.0.23",
