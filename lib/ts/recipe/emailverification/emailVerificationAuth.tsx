@@ -51,19 +51,15 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
         doTask();
     }, [sessionContext, props]);
 
-    if (sessionContext.doesSessionExist) {
-        if (props.recipe.config.mode !== "REQUIRED") {
-            return <>{children}</>;
-        } else {
-            if (isEmailVerified) {
-                return <>{children}</>;
-            } else {
-                return null;
-            }
-        }
-    } else {
+    if (sessionContext.doesSessionExist === false) {
         return <>{children}</>;
     }
+
+    if (props.recipe.config.mode !== "REQUIRED") {
+        return <>{children}</>;
+    }
+
+    return isEmailVerified ? <>{children}</> : null;
 };
 
 export default EmailVerificationAuth;
