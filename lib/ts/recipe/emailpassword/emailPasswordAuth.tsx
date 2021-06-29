@@ -26,7 +26,13 @@ import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
 
-class EmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?: boolean; recipe: Recipe }> {
+type Props = FeatureBaseProps & {
+    recipe: Recipe;
+    requireAuth?: boolean;
+    onSessionExpired?: () => void;
+};
+
+class EmailPasswordAuth extends PureComponent<Props> {
     /*
      * Render.
      */
@@ -36,7 +42,8 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?:
                 redirectToLogin={() => {
                     EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, this.props.history);
                 }}
-                requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}>
+                requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}
+                onSessionExpired={this.props.onSessionExpired}>
                 <EmailVerificationAuth recipe={this.props.recipe.emailVerification} history={this.props.history}>
                     {this.props.children}
                 </EmailVerificationAuth>
@@ -48,14 +55,19 @@ class EmailPasswordAuth extends PureComponent<FeatureBaseProps & { requireAuth?:
 export default function EmailPasswordAuthWrapper({
     children,
     requireAuth,
+    onSessionExpired,
 }: {
     children: JSX.Element;
     requireAuth?: boolean;
+    onSessionExpired?: () => void;
 }): JSX.Element {
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
     if (reactRouterDom === undefined) {
         return (
-            <EmailPasswordAuth requireAuth={requireAuth} recipe={EmailPassword.getInstanceOrThrow()}>
+            <EmailPasswordAuth
+                onSessionExpired={onSessionExpired}
+                requireAuth={requireAuth}
+                recipe={EmailPassword.getInstanceOrThrow()}>
                 {children}
             </EmailPasswordAuth>
         );
