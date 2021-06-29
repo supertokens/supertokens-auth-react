@@ -8,6 +8,7 @@ export default class SessionAPIWrapper {
     static SessionAuth: import("react").FunctionComponent<{
         requireAuth?: boolean | undefined;
         redirectToLogin: () => void;
+        onSessionExpired?: (() => void) | undefined;
     }>;
     static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
     static getUserId(): Promise<string>;
@@ -21,6 +22,7 @@ declare const useSessionContext: () => SessionContextType;
 declare const SessionAuth: import("react").FunctionComponent<{
     requireAuth?: boolean | undefined;
     redirectToLogin: () => void;
+    onSessionExpired?: (() => void) | undefined;
 }>;
 declare const init: typeof SessionAPIWrapper.init;
 declare const getUserId: typeof SessionAPIWrapper.getUserId;

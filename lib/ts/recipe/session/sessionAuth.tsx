@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEvent, SessionContextType } from "./types";
@@ -25,18 +25,18 @@ import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
 type Props = {
     requireAuth?: boolean;
     redirectToLogin: () => void;
+    onSessionExpired?: () => void;
 };
 
 const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
+    const { requireAuth, redirectToLogin, onSessionExpired } = props;
+
     const parentSessionContext = useContext(SessionContext);
-
     const [context, setContext] = useState<SessionContextType | undefined>(undefined);
-
-    const [forceShow, setForceShow] = useState(false);
 
     const session = Session.getInstanceOrThrow();
 
-    const setInitialContext = async (): Promise<void> => {
+    const setInitialContext = useCallback(async (): Promise<void> => {
         const sessionExists = await doesSessionExist();
 
         if (sessionExists === false) {
@@ -54,33 +54,51 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
             jwtPayload,
             userId,
         });
-    };
+    }, []);
 
-    const onHandleEvent = async (event: RecipeEvent) => {
-        switch (event.action) {
-            case "SESSION_CREATED":
-                return setContext({
-                    doesSessionExist: true,
-                    userId: await getUserId(),
-                    jwtPayload: await getJWTPayloadSecurely(),
-                });
-            case "REFRESH_SESSION":
-                return setContext({
-                    doesSessionExist: true,
-                    userId: context === undefined ? "" : context.userId,
-                    jwtPayload: await getJWTPayloadSecurely(),
-                });
-            case "SIGN_OUT":
-            case "UNAUTHORISED":
-                return setContext({
-                    doesSessionExist: false,
-                    userId: "",
-                    jwtPayload: {},
-                });
-            default:
-                return;
-        }
-    };
+    const onHandleEvent = useCallback(
+        async (event: RecipeEvent) => {
+            switch (event.action) {
+                case "SESSION_CREATED":
+                    return setContext({
+                        doesSessionExist: true,
+                        userId: await getUserId(),
+                        jwtPayload: await getJWTPayloadSecurely(),
+                    });
+                case "REFRESH_SESSION":
+                    return setContext({
+                        doesSessionExist: true,
+                        userId: context === undefined ? "" : context.userId,
+                        jwtPayload: await getJWTPayloadSecurely(),
+                    });
+                case "SIGN_OUT":
+                    setContext({
+                        doesSessionExist: false,
+                        userId: "",
+                        jwtPayload: {},
+                    });
+
+                    return;
+                case "UNAUTHORISED":
+                    // If there's onSessionExpired handler, use it without setting state...
+                    if (onSessionExpired !== undefined) {
+                        onSessionExpired();
+
+                        return;
+                    }
+
+                    // ...else fallback to default behaviour
+                    setContext({
+                        doesSessionExist: false,
+                        userId: "",
+                        jwtPayload: {},
+                    });
+
+                    return;
+            }
+        },
+        [context, onSessionExpired]
+    );
 
     // Read and set the current state
     useEffect(() => {
@@ -90,9 +108,9 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
             // the listener, and this function will be called by useEffect on
             // component unmount
             return session.addEventListener(onHandleEvent);
-        } else {
-            return setContext(parentSessionContext);
         }
+
+        return setContext(parentSessionContext);
     }, [parentSessionContext]);
 
     useEffect(() => {
@@ -101,24 +119,19 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
         }
 
         // If the session doesn't exist and we require auth, redirect to login
-        if (context.doesSessionExist === false && props.requireAuth === true) {
-            props.redirectToLogin();
-        } else {
-            // since we are rendering children, we will continue to show them always
-            // so that in case a session expiry popup needs to be shown, then the
-            // UI will not blank out completely.
-            if (!forceShow) {
-                setForceShow(true);
-            }
+        if (context.doesSessionExist === false && requireAuth === true) {
+            redirectToLogin();
+
+            return;
         }
-    }, [context, props, forceShow]);
+    }, [context, requireAuth, redirectToLogin]);
 
     // If the context is undefined, we are still waiting to know whether session exists.
     if (context === undefined) {
         return null;
     }
 
-    if (context.doesSessionExist === false && props.requireAuth === true && !forceShow) {
+    if (context.doesSessionExist === false && requireAuth === true) {
         return null;
     }
 
