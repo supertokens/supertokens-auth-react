@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import "@testing-library/jest-dom";
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import SessionAuth from "../../../../lib/ts/recipe/session/sessionAuth";
 import SessionContext from "../../../../lib/ts/recipe/session/SessionContext";
@@ -13,6 +13,25 @@ const MockSession = {
     doesSessionExist: jest.fn().mockResolvedValue(true),
 };
 
+const MockSessionConsumer = () => {
+    const session = useContext<SessionContextType>(SessionContext);
+
+    if (!session.doesSessionExist) {
+        return (
+            <>
+                <h1>Session doesn't exist</h1>
+            </>
+        );
+    }
+
+    return (
+        <>
+            <span>userId: {session.userId}</span>
+            <span>jwtPayload: {JSON.stringify(session.jwtPayload)}</span>
+        </>
+    );
+};
+
 const setMockResolves = (ctx: SessionContextType) => {
     MockSession.getUserId.mockResolvedValueOnce(ctx.userId);
     MockSession.getJWTPayloadSecurely.mockResolvedValueOnce(ctx.jwtPayload);
@@ -21,8 +40,6 @@ const setMockResolves = (ctx: SessionContextType) => {
 
 jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession as any);
 
-// This test will generate warnings about updates without act(...)
-//
 describe("SessionAuth", () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -53,38 +70,19 @@ describe("SessionAuth", () => {
     });
 
     test("set initial context", async () => {
-        // given
-        const MockChild = jest.fn(() => "waitForMe");
-        setMockResolves({
-            doesSessionExist: true,
-            userId: "initial-user-id",
-            jwtPayload: {
-                testKey: "testValue",
-            },
-        });
-
         // when
         const result = render(
             <SessionAuth redirectToLogin={() => {}}>
-                <SessionContext.Consumer>{MockChild}</SessionContext.Consumer>
+                <MockSessionConsumer />
             </SessionAuth>
         );
 
-        expect(await result.findByText("waitForMe")).toBeInTheDocument();
-
         // then
-        expect(MockChild).toHaveBeenCalledWith({
-            doesSessionExist: true,
-            userId: "initial-user-id",
-            jwtPayload: {
-                testKey: "testValue",
-            },
-        });
+        expect(await result.findByText(/^userId:/)).toHaveTextContent(`userId: mock-user-id`);
+        expect(await result.findByText(/^jwtPayload:/)).toHaveTextContent(`jwtPayload: ${JSON.stringify({})}`);
     });
 
     describe("handle events", () => {
-        const MockChild = jest.fn(() => "waitForMe");
-
         test("update context on SESSION_CREATED", async () => {
             // given
             MockSession.addEventListener.mockImplementationOnce((fn) => fn({ action: "SESSION_CREATED" }));
@@ -92,18 +90,13 @@ describe("SessionAuth", () => {
             // when
             const result = render(
                 <SessionAuth redirectToLogin={() => {}}>
-                    <SessionContext.Consumer>{MockChild}</SessionContext.Consumer>
+                    <MockSessionConsumer />
                 </SessionAuth>
             );
 
-            expect(await result.findByText("waitForMe")).toBeInTheDocument();
-
             // then
-            expect(MockChild).toHaveBeenCalledWith({
-                doesSessionExist: true,
-                jwtPayload: {},
-                userId: "mock-user-id",
-            });
+            expect(await result.findByText(/^userId:/)).toHaveTextContent(`userId: mock-user-id`);
+            expect(await result.findByText(/^jwtPayload:/)).toHaveTextContent(`jwtPayload: ${JSON.stringify({})}`);
         });
 
         test("call onSessionExpired on UNAUTHORISED", () => {
@@ -119,7 +112,33 @@ describe("SessionAuth", () => {
             expect(mockOnSessionExpired).toHaveBeenCalled();
         });
 
-        test.todo("update context on SESSION_REFRESH");
+        test("update context on SESSION_REFRESH", async () => {
+            // given
+            let listenerFn: (event: any) => void;
+            MockSession.addEventListener.mockImplementationOnce((fn) => (listenerFn = fn));
+
+            const result = render(
+                <SessionAuth redirectToLogin={() => {}} requireAuth={true}>
+                    <MockSessionConsumer />
+                </SessionAuth>
+            );
+
+            expect(await result.findByText(/^jwtPayload:/)).toHaveTextContent(`jwtPayload: ${JSON.stringify({})}`);
+
+            const mockJwtPayload = {
+                afterRefreshKey: "afterRefreshValue",
+            };
+
+            MockSession.getJWTPayloadSecurely.mockResolvedValueOnce(mockJwtPayload);
+
+            // when
+            act(() => listenerFn({ action: "REFRESH_SESSION" }));
+
+            expect(await result.findByText(/^jwtPayload:/)).toHaveTextContent(
+                `jwtPayload: ${JSON.stringify(mockJwtPayload)}`
+            );
+        });
+
         test.todo("update context on SIGN_OUT");
     });
 });
