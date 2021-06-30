@@ -26,24 +26,35 @@ import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
 
-/*
- * Component.
- */
+type Props = FeatureBaseProps & {
+    recipe: Recipe;
+    requireAuth?: boolean;
+    onSessionExpired?: () => void;
+};
 
-class ThirdPartyAuth extends PureComponent<FeatureBaseProps & { requireAuth?: boolean; recipe: Recipe }> {
+class ThirdPartyAuth extends PureComponent<Props> {
     /*
      * Render.
      */
     render = (): JSX.Element | null => {
+        const emailVerification = (
+            <EmailVerificationAuth recipe={this.props.recipe.emailVerification} history={this.props.history}>
+                {this.props.children}
+            </EmailVerificationAuth>
+        );
+
+        if (this.props.requireAuth === false) {
+            return <SessionAuth onSessionExpired={this.props.onSessionExpired}>{emailVerification}</SessionAuth>;
+        }
+
         return (
             <SessionAuth
                 redirectToLogin={() => {
                     ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, this.props.history);
                 }}
-                requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}>
-                <EmailVerificationAuth recipe={this.props.recipe.emailVerification} history={this.props.history}>
-                    {this.props.children}
-                </EmailVerificationAuth>
+                requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}
+                onSessionExpired={this.props.onSessionExpired}>
+                {emailVerification}
             </SessionAuth>
         );
     };
@@ -52,14 +63,19 @@ class ThirdPartyAuth extends PureComponent<FeatureBaseProps & { requireAuth?: bo
 export default function ThirdPartyAuthWrapper({
     children,
     requireAuth,
+    onSessionExpired,
 }: {
     children: JSX.Element;
     requireAuth?: boolean;
+    onSessionExpired?: () => void;
 }): JSX.Element {
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
     if (reactRouterDom === undefined) {
         return (
-            <ThirdPartyAuth requireAuth={requireAuth} recipe={ThirdParty.getInstanceOrThrow()}>
+            <ThirdPartyAuth
+                requireAuth={requireAuth}
+                recipe={ThirdParty.getInstanceOrThrow()}
+                onSessionExpired={onSessionExpired}>
                 {children}
             </ThirdPartyAuth>
         );

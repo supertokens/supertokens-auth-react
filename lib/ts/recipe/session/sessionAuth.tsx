@@ -16,97 +16,138 @@
 /*
  * Imports.
  */
-import React from "react";
-import SessionContext from "./sessionContext";
-import { getUserId, getJWTPayloadSecurely, doesSessionExist } from "./";
+import React, { useEffect, useState, useContext, useCallback } from "react";
+import SessionContext, { isDefaultContext } from "./SessionContext";
+import Session from "./recipe";
+import { RecipeEvent, SessionContextType } from "./types";
+import { RequireSession } from "./RequireSession";
+import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
 
-type PropType = {
-    requireAuth?: boolean; // false by default
+const hasParentProvider = (ctx: SessionContextType) => !isDefaultContext(ctx);
+
+type PropsWithoutAuth = {
+    requireAuth?: false;
+};
+
+type PropsWithAuth = {
+    requireAuth: true;
     redirectToLogin: () => void;
 };
 
-type StateType =
-    | { status: "LOADING" }
-    | {
-          status: "READY";
-          userId: string;
-          doesSessionExist: boolean;
-          jwtPayload: any;
-      };
+type Props = (PropsWithoutAuth | PropsWithAuth) & {
+    onSessionExpired?: () => void;
+};
 
-export default class SessionAuth extends React.PureComponent<PropType, StateType> {
-    /*
-     * Constructor.
-     */
-    constructor(props: PropType) {
-        super(props);
-        this.state = {
-            status: "LOADING",
-        };
+const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
+    if (props.requireAuth === true && props.redirectToLogin === undefined) {
+        throw new Error("You have to provide redirectToLogin function when requireAuth is true");
     }
 
-    redirectToLogin = async (): Promise<void> => {
-        if (this.props.redirectToLogin === undefined) {
-            throw new Error(
-                "Please provide the redirectToLogin prop when using SessionAuth, or use requireAuth={false}"
-            );
-        }
-        this.props.redirectToLogin();
-    };
+    const parentSessionContext = useContext(SessionContext);
+    const [context, setContext] = useState<SessionContextType | undefined>(undefined);
 
-    async componentDidMount(): Promise<void> {
+    const session = Session.getInstanceOrThrow();
+
+    const setInitialContext = useCallback(async (): Promise<void> => {
         const sessionExists = await doesSessionExist();
+
         if (sessionExists === false) {
-            if (this.props.requireAuth !== true) {
-                this.setState((oldState) => {
-                    return {
-                        ...oldState,
-                        status: "READY",
-                        userId: "",
-                        doesSessionExist: false,
-                        jwtPayload: {},
-                    };
-                });
-            } else {
-                return await this.redirectToLogin();
-            }
-        } else {
-            const userIdPromise = getUserId();
-
-            const jwtPayloadPromise = getJWTPayloadSecurely();
-
-            const userId = await userIdPromise;
-
-            const jwtPayload = await jwtPayloadPromise;
-
-            this.setState((oldState) => {
-                return {
-                    ...oldState,
-                    status: "READY",
-                    userId,
-                    doesSessionExist: true,
-                    jwtPayload,
-                };
+            return setContext({
+                doesSessionExist: sessionExists,
+                jwtPayload: {},
+                userId: "",
             });
         }
+
+        const [jwtPayload, userId] = await Promise.all([getJWTPayloadSecurely(), getUserId()]);
+
+        return setContext({
+            doesSessionExist: sessionExists,
+            jwtPayload,
+            userId,
+        });
+    }, []);
+
+    const onHandleEvent = useCallback(
+        async (event: RecipeEvent) => {
+            switch (event.action) {
+                case "SESSION_CREATED":
+                    setContext({
+                        doesSessionExist: true,
+                        userId: await getUserId(),
+                        jwtPayload: await getJWTPayloadSecurely(),
+                    });
+                    return;
+                case "REFRESH_SESSION":
+                    setContext({
+                        doesSessionExist: true,
+                        userId: context === undefined ? "" : context.userId,
+                        jwtPayload: await getJWTPayloadSecurely(),
+                    });
+                    return;
+                case "SIGN_OUT":
+                    setContext({
+                        doesSessionExist: false,
+                        userId: "",
+                        jwtPayload: {},
+                    });
+                    return;
+                case "UNAUTHORISED":
+                    // If there's onSessionExpired handler, use it without setting state...
+                    if (props.onSessionExpired !== undefined) {
+                        props.onSessionExpired();
+                        return;
+                    }
+
+                    // ...else fallback to default behaviour
+                    setContext({
+                        doesSessionExist: false,
+                        userId: "",
+                        jwtPayload: {},
+                    });
+                    return;
+            }
+        },
+        [context, props]
+    );
+
+    // Read and set the current state
+    useEffect(() => {
+        // If there's a parent provider, it already listens for events, so we don't have to
+        if (hasParentProvider(parentSessionContext)) {
+            setContext(parentSessionContext);
+            return;
+        }
+
+        setInitialContext();
+        // we return here cause addEventListener returns a function that removes
+        // the listener, and this function will be called by useEffect on
+        // component unmount
+        return session.addEventListener(onHandleEvent);
+    }, [parentSessionContext, session, setInitialContext]);
+
+    useEffect(() => {
+        if (context === undefined) {
+            return;
+        }
+
+        // If the session doesn't exist and we require auth, redirect to login
+        if (context.doesSessionExist === false && props.requireAuth === true) {
+            props.redirectToLogin();
+            return;
+        }
+    }, [context, props]);
+
+    // If the context is undefined, we are still waiting to know whether session exists.
+    if (context === undefined) {
+        return null;
     }
 
-    /*
-     * Render.
-     */
-    render = (): JSX.Element | null => {
-        if (this.state.status === "READY") {
-            return (
-                <SessionContext.Provider
-                    value={{
-                        userId: this.state.userId,
-                        doesSessionExist: this.state.doesSessionExist,
-                        jwtPayload: this.state.jwtPayload,
-                    }}>
-                    {this.props.children}
-                </SessionContext.Provider>
-            );
-        }
-        return null;
-    };
-}
+    return (
+        <SessionContext.Provider value={context}>
+            <RequireSession requireSession={props.requireAuth}>{children}</RequireSession>
+        </SessionContext.Provider>
+    );
+};
+
+export default SessionAuth;

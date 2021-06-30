@@ -1,22 +1,13 @@
 import React from "react";
-declare type PropType = {
-    requireAuth?: boolean;
+declare type PropsWithoutAuth = {
+    requireAuth?: false;
+};
+declare type PropsWithAuth = {
+    requireAuth: true;
     redirectToLogin: () => void;
 };
-declare type StateType =
-    | {
-          status: "LOADING";
-      }
-    | {
-          status: "READY";
-          userId: string;
-          doesSessionExist: boolean;
-          jwtPayload: any;
-      };
-export default class SessionAuth extends React.PureComponent<PropType, StateType> {
-    constructor(props: PropType);
-    redirectToLogin: () => Promise<void>;
-    componentDidMount(): Promise<void>;
-    render: () => JSX.Element | null;
-}
-export {};
+declare type Props = (PropsWithoutAuth | PropsWithAuth) & {
+    onSessionExpired?: () => void;
+};
+declare const SessionAuth: React.FC<Props>;
+export default SessionAuth;

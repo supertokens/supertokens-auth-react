@@ -53,7 +53,6 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
             }
         }
         this.state = {
-            status: "LOADING",
             error,
         };
     }
@@ -63,27 +62,6 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
             return this.props.isEmbedded;
         }
         return false;
-    };
-
-    componentDidMount = async (): Promise<void> => {
-        const sessionExists = await this.props.recipe.doesSessionExist();
-        if (sessionExists) {
-            this.props.recipe.config.onHandleEvent({
-                action: "SESSION_ALREADY_EXISTS",
-            });
-            await this.props.recipe.redirect({ action: "SUCCESS", isNewUser: false }, this.props.history);
-            return;
-        }
-
-        this.setState((oldState) => {
-            if (oldState.status !== "LOADING") {
-                return oldState;
-            }
-            return {
-                ...oldState,
-                status: "READY",
-            };
-        });
     };
 
     getModifiedRecipeImplementation = (): RecipeInterface => {
@@ -103,10 +81,6 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
     };
 
     render = (): JSX.Element => {
-        if (this.state.status === "LOADING") {
-            return <Fragment />;
-        }
-
         const componentOverrides = this.props.recipe.config.override.components;
 
         const signInAndUpFeature = this.props.recipe.config.signInAndUpFeature;

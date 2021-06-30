@@ -38,6 +38,7 @@ import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
+import AuthWidgetWrapper from "../authRecipeModule/authWidgetWrapper";
 
 /*
  * Class.
@@ -100,14 +101,20 @@ export default class ThirdParty extends AuthRecipeModule<
 
     getFeatureComponent = (
         componentName: "signinup" | "signinupcallback" | "emailverification",
-        prop: any
+        props: any
     ): JSX.Element => {
         if (componentName === "signinup") {
-            return <SignInAndUp recipe={this} {...prop} />;
+            return (
+                <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
+                    authRecipe={this}
+                    history={props.history}>
+                    <SignInAndUp recipe={this} {...props} />;
+                </AuthWidgetWrapper>
+            );
         } else if (componentName === "signinupcallback") {
-            return <SignInAndUpCallback recipe={this} {...prop} />;
+            return <SignInAndUpCallback recipe={this} {...props} />;
         } else {
-            return this.getAuthRecipeModuleFeatureComponent(componentName, prop);
+            return this.getAuthRecipeModuleFeatureComponent(componentName, props);
         }
     };
 

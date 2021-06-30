@@ -1,9 +1,23 @@
+/// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
 import { RecipeInterface } from "supertokens-website";
-import SessionAuthComponent from "./sessionAuth";
-import { InputType } from "./types";
+import { InputType, SessionContextType } from "./types";
+import SessionContext from "./SessionContext";
 export default class SessionAPIWrapper {
-    static useSessionContext: () => import("./types").SessionContextType;
-    static SessionAuth: typeof SessionAuthComponent;
+    static useSessionContext: () => SessionContextType;
+    static SessionAuth: import("react").FunctionComponent<
+        | ({
+              requireAuth?: false | undefined;
+          } & {
+              onSessionExpired?: (() => void) | undefined;
+          })
+        | ({
+              requireAuth: true;
+              redirectToLogin: () => void;
+          } & {
+              onSessionExpired?: (() => void) | undefined;
+          })
+    >;
     static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
     static getUserId(): Promise<string>;
     static getJWTPayloadSecurely(): Promise<any>;
@@ -12,8 +26,20 @@ export default class SessionAPIWrapper {
     static addAxiosInterceptors(axiosInstance: any): void;
     static signOut(): Promise<void>;
 }
-declare const useSessionContext: () => import("./types").SessionContextType;
-declare const SessionAuth: typeof SessionAuthComponent;
+declare const useSessionContext: () => SessionContextType;
+declare const SessionAuth: import("react").FunctionComponent<
+    | ({
+          requireAuth?: false | undefined;
+      } & {
+          onSessionExpired?: (() => void) | undefined;
+      })
+    | ({
+          requireAuth: true;
+          redirectToLogin: () => void;
+      } & {
+          onSessionExpired?: (() => void) | undefined;
+      })
+>;
 declare const init: typeof SessionAPIWrapper.init;
 declare const getUserId: typeof SessionAPIWrapper.getUserId;
 declare const getJWTPayloadSecurely: typeof SessionAPIWrapper.getJWTPayloadSecurely;
@@ -33,4 +59,6 @@ export {
     signOut,
     RecipeInterface,
     InputType,
+    SessionContext,
+    SessionContextType,
 };

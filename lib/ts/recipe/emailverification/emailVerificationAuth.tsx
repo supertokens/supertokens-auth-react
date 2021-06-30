@@ -13,53 +13,53 @@
  * under the License.
  */
 
-/*
- * Imports.
- */
-import { PureComponent, ReactElement } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import { FeatureBaseProps } from "../../types";
 import Recipe from "./recipe";
+import { SessionContext } from "../session";
 
-type Prop = FeatureBaseProps & { recipe: Recipe };
+type Props = FeatureBaseProps & { recipe: Recipe };
 
-export default class EmailVerificationAuth extends PureComponent<Prop, { status: "LOADING" | "READY" }> {
-    constructor(props: Prop) {
-        super(props);
-        this.state = {
-            status: "LOADING",
-        };
+const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
+    const sessionContext = useContext(SessionContext);
+
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
+
+    useEffect(() => {
+        async function doTask() {
+            if (sessionContext.doesSessionExist && props.recipe.config.mode === "REQUIRED") {
+                let isEmailVerified;
+                try {
+                    isEmailVerified = await props.recipe.isEmailVerified();
+                } catch (_) {
+                    /* if there is an error, we assume that the email is verified
+                     * so that the user can see the content on the page...
+                     *
+                     * This is not a security issue since the backend should check
+                     * for email verification on each request anyway (via sessions...)
+                     */
+                    isEmailVerified = true;
+                }
+                if (isEmailVerified === false) {
+                    await props.recipe.redirect({ action: "VERIFY_EMAIL" }, props.history);
+                } else {
+                    setIsEmailVerified(true);
+                }
+            }
+        }
+        doTask();
+    }, [sessionContext, props]);
+
+    if (sessionContext.doesSessionExist === false) {
+        return <>{children}</>;
     }
 
-    async componentDidMount(): Promise<void> {
-        // If email verification mode is off or optional, return.
-        if (this.props.recipe.config.mode !== "REQUIRED") {
-            this.setState((oldState) => {
-                return {
-                    ...oldState,
-                    status: "READY",
-                };
-            });
-            return;
-        }
-        // Otherwise, make sure that the email is valid, otherwise, redirect to email validation screen.
-        const isEmailVerified = await this.props.recipe.isEmailVerified();
-        if (isEmailVerified === false) {
-            return await this.props.recipe.redirect({ action: "VERIFY_EMAIL" }, this.props.history);
-        } else {
-            this.setState((oldState) => {
-                return {
-                    ...oldState,
-                    status: "READY",
-                };
-            });
-        }
+    if (props.recipe.config.mode !== "REQUIRED") {
+        return <>{children}</>;
     }
 
-    render = (): JSX.Element | null => {
-        if (this.state.status === "LOADING") {
-            return null;
-        }
-        return this.props.children as ReactElement<any>;
-    };
-}
+    return isEmailVerified ? <>{children}</> : null;
+};
+
+export default EmailVerificationAuth;

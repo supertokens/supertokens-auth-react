@@ -12,7 +12,6 @@ declare class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
     onSignInSuccess: () => Promise<void>;
     onSignUpSuccess: () => Promise<void>;
     getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[];
-    componentDidMount: () => Promise<void>;
     getModifiedRecipeImplementation: () => RecipeInterface;
     render: () => JSX.Element;
 }

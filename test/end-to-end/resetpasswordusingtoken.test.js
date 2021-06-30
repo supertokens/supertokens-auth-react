@@ -29,7 +29,7 @@ import {
     TEST_SERVER_BASE_URL,
 } from "../constants";
 import {
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
     getInputAdornmentsError,
     getFieldErrors,
     getGeneralError,
@@ -101,9 +101,8 @@ describe("SuperTokens Reset password", function () {
     describe("Reset password enter email form test", function () {
         beforeEach(async function () {
             page = await browser.newPage();
-            await clearBrowserCookies(page);
-            // Catch console.log sent from PRE API HOOKS.
             consoleLogs = [];
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
                 if (log.startsWith("ST_LOGS")) {
@@ -173,7 +172,6 @@ describe("SuperTokens Reset password", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SEND_PASSWORD_RESET_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT RESET_PASSWORD_EMAIL_SENT",
             ]);
         });
@@ -190,7 +188,7 @@ describe("SuperTokens Reset password", function () {
                     consoleLogs.push(log);
                 }
             });
-            await clearBrowserCookies(page);
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?token=TOKEN`);
         });
 
@@ -272,13 +270,9 @@ describe("SuperTokens Reset password", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SUBMIT_NEW_PASSWORD",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SUBMIT_NEW_PASSWORD",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SUBMIT_NEW_PASSWORD",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
         });
 

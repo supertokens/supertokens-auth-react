@@ -59,15 +59,15 @@ export default function ShowPasswordIcon({
                         <path
                             fill="none"
                             stroke="#707070"
-                            stroke-linecap="round"
-                            stroke-width="2.25px"
+                            strokeLinecap="round"
+                            strokeWidth="2.25px"
                             d="M11.981 0L0 11.981"
                             transform="translate(-822 -420.048) translate(825.084 421.639)"
                         />
                         <path
                             fill="none"
                             stroke={secondaryColor}
-                            stroke-linecap="round"
+                            strokeLinecap="round"
                             d="M13.978 0L0 13.978"
                             transform="translate(-822 -420.048) translate(825.084 421.639)"
                         />

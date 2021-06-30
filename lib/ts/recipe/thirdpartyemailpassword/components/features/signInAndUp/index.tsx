@@ -25,15 +25,11 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
-/*
- * Component.
- */
+type PropType = FeatureBaseProps & {
+    recipe: Recipe;
+};
 
-class SignInAndUp extends PureComponent<
-    FeatureBaseProps & {
-        recipe: Recipe;
-    }
-> {
+class SignInAndUp extends PureComponent<PropType, { status: "LOADING" | "READY" }> {
     getIsEmbedded = (): boolean => {
         if (this.props.isEmbedded !== undefined) {
             return this.props.isEmbedded;

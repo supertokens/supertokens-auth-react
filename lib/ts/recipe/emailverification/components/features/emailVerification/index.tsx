@@ -22,19 +22,18 @@ import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import { RecipeInterface } from "../../../types";
 import { getWindowOrThrow } from "../../../../../utils";
-import Session from "../../../../session";
 import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { SessionContextType, SessionContext } from "../../../../session";
 
 type Prop = FeatureBaseProps & { recipe: Recipe };
 
 class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING"; token: string | undefined }> {
-    /*
-     * Constructor.
-     */
+    static contextType = SessionContext;
+
     constructor(props: Prop) {
         super(props);
 
@@ -74,13 +73,19 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
     };
 
     async componentDidMount(): Promise<void> {
+        const sessionContext: SessionContextType = this.context;
         // Redirect to login if no existing session and no token.
         // We don't redirect if a token exists because the user might
         // be verifying their token on another browser
         if (this.state.token === undefined) {
-            const sessionExists = await Session.doesSessionExist();
-            if (sessionExists === false) {
+            if (!sessionContext.doesSessionExist) {
                 return await this.props.recipe.config.redirectToSignIn(this.props.history);
+            }
+
+            // we check if the email is already verified, and if it is, then we redirect the user
+            const isVerified = await this.props.recipe.recipeImpl.isEmailVerified({ config: this.props.recipe.config });
+            if (isVerified) {
+                return this.props.recipe.config.postVerificationRedirect(this.props.history);
             }
         }
 

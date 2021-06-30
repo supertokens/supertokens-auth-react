@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [0.15.0] - 2021-07-01
+
+### Fixed:
+
+-   Styling issues with SVG icons
+-   In `emailVerificationAuth`, querying for is email verified only if a session exists
+-   A few test app issues
+-   If visiting auth page with session already existing, then we respect redirectTo query param
+
+## Refactor
+
+-   Uses `SessionAuth` for all our components: https://github.com/supertokens/supertokens-auth-react/issues/241
+-   Creates an `AuthWidgetWrapper` component that will redirect login UI if already logged in
+
+### Added
+
+-   Allows for `SessionAuth` to be inside another `SessionAuth`.
+-   Updates session context on session changes: https://github.com/supertokens/supertokens-auth-react/issues/228
+-   `onSessionExpired` optional prop on `SessionAuth`, `EmailPasswordAuth`, `ThirdPartyAuth` and `ThirdPartyEmailPasswordAuth`
+
+### Breaking changes
+
+-   If using auth wrapper without `requireAuth=false`, and the user signs out, then the user is automatically redirected to /auth
+
 ## [0.14.0] - 2021-05-24
 
 ### Added:

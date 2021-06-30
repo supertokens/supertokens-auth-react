@@ -129,7 +129,6 @@ export type SignInAndUpThemeProps = {
 };
 
 export type ThirdPartySignInAndUpState = {
-    status: "LOADING" | "READY";
     error?: string;
 };
 

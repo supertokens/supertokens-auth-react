@@ -23,7 +23,7 @@ import assert from "assert";
 import { spawn } from "child_process";
 import puppeteer from "puppeteer";
 import {
-    clearBrowserCookies,
+    clearBrowserCookiesWithoutAffectingConsole,
     assertProviders,
     assertNoSTComponents,
     generateState,
@@ -81,7 +81,7 @@ describe("SuperTokens Third Party", function () {
 
     beforeEach(async function () {
         consoleLogs = [];
-        await clearBrowserCookies(page);
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
     });
 
     describe("Third Party test", function () {
@@ -104,10 +104,21 @@ describe("SuperTokens Third Party", function () {
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/dashboard");
             assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE REDIRECT_TO_THIRD_PARTY_LOGIN",
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN_UP",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS THIRD_PARTY_SIGN_IN_UP",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
         });
 
@@ -141,47 +152,47 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(pathname, "/CasE/Case-SensItive1-PAth");
         });
 
-        it("Successful signin with facebook", async function () {
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-            await assertProviders(page);
-            await clickOnProviderButton(page, "Facebook");
-            await Promise.all([
-                loginWithFacebook(page),
-                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
-            ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN_UP",
-                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
-            ]);
-        });
+        // it("Successful signin with facebook", async function () {
+        //     await Promise.all([
+        //         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+        //         page.waitForNavigation({ waitUntil: "networkidle0" }),
+        //     ]);
+        //     await assertProviders(page);
+        //     await clickOnProviderButton(page, "Facebook");
+        //     await Promise.all([
+        //         loginWithFacebook(page),
+        //         page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+        //     ]);
+        //     const pathname = await page.evaluate(() => window.location.pathname);
+        //     assert.deepStrictEqual(pathname, "/dashboard");
+        //     assert.deepStrictEqual(consoleLogs, [
+        //         "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
+        //         "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN_UP",
+        //         "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
+        //         "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
+        //     ]);
+        // });
 
-        it("Successful signin with google", async function () {
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
-            await assertProviders(page);
-            await clickOnProviderButton(page, "Google");
-            await Promise.all([
-                loginWithGoogle(page),
-                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
-            ]);
-            const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
-                "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN_UP",
-                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
-            ]);
-        });
+        // it("Successful signin with google", async function () {
+        //     await Promise.all([
+        //         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+        //         page.waitForNavigation({ waitUntil: "networkidle0" }),
+        //     ]);
+        //     await assertProviders(page);
+        //     await clickOnProviderButton(page, "Google");
+        //     await Promise.all([
+        //         loginWithGoogle(page),
+        //         page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+        //     ]);
+        //     const pathname = await page.evaluate(() => window.location.pathname);
+        //     assert.deepStrictEqual(pathname, "/dashboard");
+        //     assert.deepStrictEqual(consoleLogs, [
+        //         "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
+        //         "ST_LOGS THIRD_PARTY PRE_API_HOOKS SIGN_IN_UP",
+        //         "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
+        //         "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
+        //     ]);
+        // });
     });
 
     describe("Third Party callback error tests", function () {
@@ -193,13 +204,9 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -225,13 +232,9 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -257,13 +260,9 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -287,9 +286,6 @@ describe("SuperTokens Third Party", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
             ]);
@@ -316,13 +312,9 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -348,13 +340,9 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
-                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
-                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS SESSION OVERRIDE DOES_SESSION_EXIST",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);

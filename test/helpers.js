@@ -350,14 +350,17 @@ export async function setInputValues(page, fields) {
     return await new Promise((r) => setTimeout(r, 300));
 }
 
-export async function clearBrowserCookies(page) {
+export async function clearBrowserCookiesWithoutAffectingConsole(page, console) {
+    let toReturn = [...console];
     const client = await page.target().createCDPSession();
     await client.send("Network.clearBrowserCookies");
     await client.send("Network.clearBrowserCache");
+    // we need this navigation cause the the /auth page will reset the cookie according to how the tests expect it
     await Promise.all([
         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
+    return toReturn;
 }
 
 export async function clickForgotPasswordLink(page) {
@@ -488,7 +491,7 @@ export async function loginWithGithub(page) {
     await page.focus("input[type=password]");
     await page.keyboard.type(process.env.GITHUB_PASSWORD);
     await Promise.all([page.keyboard.press("Enter"), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-    await new Promise((res) => setTimeout(res, 1000));
+    await new Promise((res) => setTimeout(res, 1500));
 }
 
 export async function defaultSignUp(page, rid = "emailpassword") {
