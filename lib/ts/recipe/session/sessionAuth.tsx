@@ -17,7 +17,7 @@
  * Imports.
  */
 import React, { useEffect, useState, useContext, useCallback } from "react";
-import SessionContext, { isDefaultContext } from "./sessionContext";
+import SessionContext, { isDefaultContext } from "./SessionContext";
 import Session from "./recipe";
 import { RecipeEvent, SessionContextType } from "./types";
 import { RequireSession } from "./RequireSession";

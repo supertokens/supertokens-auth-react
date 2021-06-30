@@ -8,7 +8,7 @@ export default class RecipeImplementation implements RecipeInterface {
         status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
     }>;
     sendVerificationEmail: (input: { config: NormalisedConfig }) => Promise<{
-        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+        status: "OK" | "EMAIL_ALREADY_VERIFIED_ERROR";
     }>;
     isEmailVerified: (input: { config: NormalisedConfig }) => Promise<boolean>;
 }

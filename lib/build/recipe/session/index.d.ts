@@ -2,7 +2,7 @@
 /// <reference types="@emotion/react/types/css-prop" />
 import { RecipeInterface } from "supertokens-website";
 import { InputType, SessionContextType } from "./types";
-import SessionContext from "./sessionContext";
+import SessionContext from "./SessionContext";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
     static SessionAuth: import("react").FunctionComponent<{

@@ -55,6 +55,6 @@ export default class RecipeImplementation implements RecipeInterface {
         config: TPConfig;
         state?: StateObject | undefined;
     }) => Promise<{
-        status: "ERROR" | "OK";
+        status: "OK" | "ERROR";
     }>;
 }

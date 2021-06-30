@@ -20,7 +20,6 @@ declare const AuthWidgetWrapper: <
     S,
     R,
     N extends NormalisedConfig<
-        | import("../emailverification").GetRedirectionURLContext
         | {
               action: "SUCCESS";
               isNewUser: boolean;
@@ -29,9 +28,9 @@ declare const AuthWidgetWrapper: <
         | {
               action: "SIGN_IN_AND_UP";
           }
+        | import("../emailverification").GetRedirectionURLContext
         | T,
         import("../emailverification").PreAPIHookContext | S,
-        | import("../emailverification").OnHandleEventContext
         | {
               action: "SESSION_ALREADY_EXISTS";
           }
@@ -43,6 +42,7 @@ declare const AuthWidgetWrapper: <
                   email: string;
               };
           }
+        | import("../emailverification").OnHandleEventContext
         | R
     >
 >(
