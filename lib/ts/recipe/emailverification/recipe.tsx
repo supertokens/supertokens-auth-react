@@ -103,7 +103,7 @@ export default class EmailVerification extends RecipeModule<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
         return (
-            <SessionAuth redirectToLogin={() => undefined} requireAuth={false}>
+            <SessionAuth requireAuth={false}>
                 <EmailVerificationFeature recipe={this} {...props} />
             </SessionAuth>
         );

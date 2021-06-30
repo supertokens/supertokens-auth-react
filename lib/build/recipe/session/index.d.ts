@@ -5,11 +5,19 @@ import { InputType, SessionContextType } from "./types";
 import SessionContext from "./SessionContext";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
-    static SessionAuth: import("react").FunctionComponent<{
-        requireAuth?: boolean | undefined;
-        redirectToLogin: () => void;
-        onSessionExpired?: (() => void) | undefined;
-    }>;
+    static SessionAuth: import("react").FunctionComponent<
+        | ({
+              requireAuth?: false | undefined;
+          } & {
+              onSessionExpired?: (() => void) | undefined;
+          })
+        | ({
+              requireAuth: true;
+              redirectToLogin: () => void;
+          } & {
+              onSessionExpired?: (() => void) | undefined;
+          })
+    >;
     static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
     static getUserId(): Promise<string>;
     static getJWTPayloadSecurely(): Promise<any>;
@@ -19,11 +27,19 @@ export default class SessionAPIWrapper {
     static signOut(): Promise<void>;
 }
 declare const useSessionContext: () => SessionContextType;
-declare const SessionAuth: import("react").FunctionComponent<{
-    requireAuth?: boolean | undefined;
-    redirectToLogin: () => void;
-    onSessionExpired?: (() => void) | undefined;
-}>;
+declare const SessionAuth: import("react").FunctionComponent<
+    | ({
+          requireAuth?: false | undefined;
+      } & {
+          onSessionExpired?: (() => void) | undefined;
+      })
+    | ({
+          requireAuth: true;
+          redirectToLogin: () => void;
+      } & {
+          onSessionExpired?: (() => void) | undefined;
+      })
+>;
 declare const init: typeof SessionAPIWrapper.init;
 declare const getUserId: typeof SessionAPIWrapper.getUserId;
 declare const getJWTPayloadSecurely: typeof SessionAPIWrapper.getJWTPayloadSecurely;

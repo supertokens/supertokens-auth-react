@@ -46,7 +46,7 @@ const AuthWidgetWrapper = <
     props: Props<T, S, R, N> & { children?: React.ReactNode }
 ): React.ReactElement | null => {
     return (
-        <SessionAuth requireAuth={false} redirectToLogin={() => undefined}>
+        <SessionAuth requireAuth={false}>
             <Redirector {...props} />
         </SessionAuth>
     );

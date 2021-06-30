@@ -37,6 +37,16 @@ class ThirdPartyAuth extends PureComponent<Props> {
      * Render.
      */
     render = (): JSX.Element | null => {
+        const emailVerification = (
+            <EmailVerificationAuth recipe={this.props.recipe.emailVerification} history={this.props.history}>
+                {this.props.children}
+            </EmailVerificationAuth>
+        );
+
+        if (this.props.requireAuth === false) {
+            return <SessionAuth onSessionExpired={this.props.onSessionExpired}>{emailVerification}</SessionAuth>;
+        }
+
         return (
             <SessionAuth
                 redirectToLogin={() => {
@@ -44,9 +54,7 @@ class ThirdPartyAuth extends PureComponent<Props> {
                 }}
                 requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}
                 onSessionExpired={this.props.onSessionExpired}>
-                <EmailVerificationAuth recipe={this.props.recipe.emailVerification} history={this.props.history}>
-                    {this.props.children}
-                </EmailVerificationAuth>
+                {emailVerification}
             </SessionAuth>
         );
     };

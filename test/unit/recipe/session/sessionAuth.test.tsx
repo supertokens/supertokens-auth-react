@@ -47,7 +47,7 @@ describe("SessionAuth", () => {
 
     test("setup event listener when no parent provider", () => {
         // when
-        const result = render(<SessionAuth redirectToLogin={() => {}} />);
+        const result = render(<SessionAuth />);
 
         // then
         expect(MockSession.addEventListener).toHaveBeenCalledTimes(1);
@@ -59,7 +59,7 @@ describe("SessionAuth", () => {
         MockSession.addEventListener.mockImplementationOnce(() => mockUnsubscribe);
 
         // when
-        const result = render(<SessionAuth redirectToLogin={() => {}}>mockRenderedText</SessionAuth>);
+        const result = render(<SessionAuth>mockRenderedText</SessionAuth>);
 
         expect(await result.findByText(`mockRenderedText`)).toBeInTheDocument();
 
@@ -72,7 +72,7 @@ describe("SessionAuth", () => {
     test("set initial context", async () => {
         // when
         const result = render(
-            <SessionAuth redirectToLogin={() => {}}>
+            <SessionAuth>
                 <MockSessionConsumer />
             </SessionAuth>
         );
@@ -89,7 +89,7 @@ describe("SessionAuth", () => {
 
             // when
             const result = render(
-                <SessionAuth redirectToLogin={() => {}}>
+                <SessionAuth>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
@@ -106,7 +106,7 @@ describe("SessionAuth", () => {
             MockSession.addEventListener.mockImplementationOnce((fn) => fn({ action: "UNAUTHORISED" }));
 
             // when
-            const result = render(<SessionAuth redirectToLogin={() => {}} onSessionExpired={mockOnSessionExpired} />);
+            const result = render(<SessionAuth onSessionExpired={mockOnSessionExpired} />);
 
             // then
             expect(mockOnSessionExpired).toHaveBeenCalled();

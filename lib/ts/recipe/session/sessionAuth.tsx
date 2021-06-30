@@ -25,14 +25,23 @@ import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
 
 const hasParentProvider = (ctx: SessionContextType) => !isDefaultContext(ctx);
 
-type Props = {
-    requireAuth?: boolean;
+type PropsWithoutAuth = {
+    requireAuth?: false;
+};
+
+type PropsWithAuth = {
+    requireAuth: true;
     redirectToLogin: () => void;
+};
+
+type Props = (PropsWithoutAuth | PropsWithAuth) & {
     onSessionExpired?: () => void;
 };
 
 const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
-    const { requireAuth, redirectToLogin, onSessionExpired } = props;
+    if (props.requireAuth === true && props.redirectToLogin === undefined) {
+        throw new Error("You have to provide redirectToLogin function when requireAuth is true");
+    }
 
     const parentSessionContext = useContext(SessionContext);
     const [context, setContext] = useState<SessionContextType | undefined>(undefined);
@@ -85,8 +94,8 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                     return;
                 case "UNAUTHORISED":
                     // If there's onSessionExpired handler, use it without setting state...
-                    if (onSessionExpired !== undefined) {
-                        onSessionExpired();
+                    if (props.onSessionExpired !== undefined) {
+                        props.onSessionExpired();
                         return;
                     }
 
@@ -99,7 +108,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                     return;
             }
         },
-        [context, onSessionExpired]
+        [context, props]
     );
 
     // Read and set the current state
@@ -115,7 +124,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
         // the listener, and this function will be called by useEffect on
         // component unmount
         return session.addEventListener(onHandleEvent);
-    }, [parentSessionContext]);
+    }, [parentSessionContext, session, setInitialContext]);
 
     useEffect(() => {
         if (context === undefined) {
@@ -123,11 +132,11 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
         }
 
         // If the session doesn't exist and we require auth, redirect to login
-        if (context.doesSessionExist === false && requireAuth === true) {
-            redirectToLogin();
+        if (context.doesSessionExist === false && props.requireAuth === true) {
+            props.redirectToLogin();
             return;
         }
-    }, [context, requireAuth, redirectToLogin]);
+    }, [context, props]);
 
     // If the context is undefined, we are still waiting to know whether session exists.
     if (context === undefined) {
@@ -136,7 +145,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
     return (
         <SessionContext.Provider value={context}>
-            <RequireSession requireSession={requireAuth}>{children}</RequireSession>
+            <RequireSession requireSession={props.requireAuth}>{children}</RequireSession>
         </SessionContext.Provider>
     );
 };
