@@ -1,4 +1,5 @@
 import React from "react";
+import "@testing-library/jest-dom";
 import { render } from "@testing-library/react";
 
 import { ComponentOverrideContext } from "../../lib/ts/components/componentOverride/componentOverrideContext";
@@ -74,10 +75,10 @@ describe("Theme component overrides", () => {
                 <WithProvider overrideMap={overrideMap}>
                     <Component />
                 </WithProvider>
-            ).findByTestId("override");
+            );
 
             // then
-            expect(result.textContent).toBe("Override");
+            expect(await result.findByTestId("override")).toHaveTextContent("Override");
         });
     });
 });
