@@ -58,6 +58,27 @@ describe("ThirdPartyEmailPassword", function () {
         );
     });
 
+    it("Initializing without empty third party providers", async function () {
+        SuperTokens.init({
+            appInfo: {
+                appName: "SuperTokens",
+                websiteDomain: "supertokens.io",
+                apiDomain: "api.supertokens.io",
+            },
+            recipeList: [
+                ThirdPartyEmailPassword.init({
+                    signInAndUpFeature: {
+                        providers: [],
+                    },
+                }),
+            ],
+        });
+        assert(
+            ThirdPartyEmailPasswordRaw.getInstanceOrThrow().emailPasswordRecipe !== undefined &&
+                ThirdPartyEmailPasswordRaw.getInstanceOrThrow().thirdPartyRecipe === undefined
+        );
+    });
+
     it("Initializing with disable email password", async function () {
         SuperTokens.init({
             appInfo: {
