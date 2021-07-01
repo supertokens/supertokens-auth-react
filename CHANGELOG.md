@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed:
 
--   Allows 0 thirdparty providers to be passed into thirdpartyemailpassword
+-   Allows zero thirdparty providers to be passed into thirdpartyemailpassword
+-   Respects `disableEmailPassword` config provided to thirdpartyemailpassword
 
 ## Changed:
 
