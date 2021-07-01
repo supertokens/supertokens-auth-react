@@ -31,10 +31,9 @@ import Recipe from "./recipe";
 /*
  * Methods.
  */
-export function normaliseThirdPartyConfig(config: Config, allowEmptyProviders = false): NormalisedConfig {
+export function normaliseThirdPartyConfig(config: Config): NormalisedConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
-        config.signInAndUpFeature,
-        allowEmptyProviders
+        config.signInAndUpFeature
     );
 
     const override: any = {
@@ -51,8 +50,7 @@ export function normaliseThirdPartyConfig(config: Config, allowEmptyProviders = 
 }
 
 export function normaliseSignInAndUpFeature(
-    config: SignInAndUpFeatureUserInput | undefined,
-    allowEmptyProviders: boolean
+    config: SignInAndUpFeatureUserInput | undefined
 ): NormalisedSignInAndUpFeatureConfig {
     if (config === undefined) {
         config = {};
@@ -62,7 +60,7 @@ export function normaliseSignInAndUpFeature(
         config.providers = [];
     }
 
-    if (allowEmptyProviders === false && config.providers.length === 0) {
+    if (config.providers.length === 0) {
         throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
     }
 

@@ -51,9 +51,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID = "thirdpartyemailpassword";
 
-    emailPasswordRecipe: EmailPassword;
+    emailPasswordRecipe: EmailPassword | undefined;
 
-    thirdPartyRecipe: ThirdParty;
+    thirdPartyRecipe: ThirdParty | undefined;
 
     recipeImpl: RecipeInterface;
 
@@ -76,6 +76,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined
                 ? recipes.emailPasswordInstance
+                : this.config.disableEmailPassword
+                ? undefined
                 : new EmailPassword(
                       {
                           appInfo: this.config.appInfo,
@@ -101,9 +103,14 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
                       }
                   );
 
+        // we initialise this recipe only if the user has provided thirdparty
+        // providers.
         this.thirdPartyRecipe =
             recipes.thirdPartyInstance !== undefined
                 ? recipes.thirdPartyInstance
+                : this.config.signInAndUpFeature.providers === undefined ||
+                  this.config.signInAndUpFeature.providers.length === 0
+                ? undefined
                 : new ThirdParty(
                       {
                           appInfo: this.config.appInfo,
@@ -130,10 +137,21 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
-        const features: RecipeFeatureComponentMap = {
-            ...this.emailPasswordRecipe.getFeatures(),
-            ...this.thirdPartyRecipe.getFeatures(),
-        };
+        let features: RecipeFeatureComponentMap = {};
+
+        if (this.emailPasswordRecipe !== undefined) {
+            features = {
+                ...features,
+                ...this.emailPasswordRecipe.getFeatures(),
+            };
+        }
+
+        if (this.thirdPartyRecipe !== undefined) {
+            features = {
+                ...features,
+                ...this.thirdPartyRecipe.getFeatures(),
+            };
+        }
 
         if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
@@ -151,6 +169,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "RESET_PASSWORD") {
+            if (this.emailPasswordRecipe === undefined) {
+                throw new Error("Should not come here...");
+            }
             return this.emailPasswordRecipe.getDefaultRedirectionURL(context);
         } else {
             return this.getAuthRecipeModuleDefaultRedirectionURL(context);
@@ -164,6 +185,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         if (componentName === "signinup") {
             return <SignInAndUp recipe={this} {...prop} />;
         } else if (componentName === "resetpassword") {
+            if (this.emailPasswordRecipe === undefined) {
+                throw new Error("Should not come here...");
+            }
             return this.emailPasswordRecipe.getFeatureComponent(componentName, prop);
         } else {
             return this.getAuthRecipeModuleFeatureComponent(componentName, prop);

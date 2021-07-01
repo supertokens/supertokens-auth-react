@@ -21,8 +21,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
 > {
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID: string;
-    emailPasswordRecipe: EmailPassword;
-    thirdPartyRecipe: ThirdParty;
+    emailPasswordRecipe: EmailPassword | undefined;
+    thirdPartyRecipe: ThirdParty | undefined;
     recipeImpl: RecipeInterface;
     constructor(
         config: Config,

@@ -5,9 +5,6 @@ import {
     PreAPIHookContext as EmailPasswordPreAPIHookContext,
 } from "../emailpassword";
 import {
-    NormalisedResetPasswordUsingTokenFeatureConfig,
-    NormalisedSignInFormFeatureConfig,
-    NormalisedSignUpFormFeatureConfig,
     ResetPasswordUsingTokenUserInput,
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
@@ -53,7 +50,7 @@ export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
-    resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
+    resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     disableEmailPassword: boolean;
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
@@ -65,14 +62,14 @@ export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     defaultToSignUp?: boolean;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;
-    providers: (Provider | CustomProviderConfig)[];
+    providers?: (Provider | CustomProviderConfig)[];
 };
 export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     disableDefaultImplementation: boolean;
-    providers: Provider[];
     defaultToSignUp: boolean;
-    signUpForm: NormalisedSignUpFormFeatureConfig;
-    signInForm: NormalisedSignInFormFeatureConfig;
+    signUpForm?: SignUpFormFeatureUserInput;
+    signInForm?: SignInFormFeatureUserInput;
+    providers?: (Provider | CustomProviderConfig)[];
 };
 export declare type GetRedirectionURLContext =
     | EmailPasswordGetRedirectionURLContext
@@ -81,8 +78,8 @@ export declare type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPa
 export declare type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     history?: any;
-    emailPasswordRecipe: EPRecipe;
-    thirdPartyRecipe: TPRecipe;
+    emailPasswordRecipe?: EPRecipe;
+    thirdPartyRecipe?: TPRecipe;
     config: NormalisedConfig;
 };
 export declare type SignInAndUpInput =
