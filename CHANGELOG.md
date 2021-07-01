@@ -5,7 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## [0.14.0] - 2021-05-24
+## [0.14.1] - 2021-07-01
+
+### Refactor:
+
+-   Normalisation of thirdpartyemailpassword input
+
+### Fixed:
+
+-   Allows 0 thirdparty providers to be passed into thirdpartyemailpassword
+
+## Changed:
+
+-   Makes `signInAndUpFeature` config optional in `thirdpartyemailpassword.init`
+
+## [0.14.0] - 2021-06-24
 
 ### Added:
 

@@ -23,9 +23,6 @@ import {
     PreAPIHookContext as EmailPasswordPreAPIHookContext,
 } from "../emailpassword";
 import {
-    NormalisedResetPasswordUsingTokenFeatureConfig,
-    NormalisedSignInFormFeatureConfig,
-    NormalisedSignUpFormFeatureConfig,
     ResetPasswordUsingTokenUserInput,
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
@@ -76,7 +73,7 @@ export type Config = UserInput &
 
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
-    resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
+    resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     disableEmailPassword: boolean;
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
@@ -85,59 +82,19 @@ export type NormalisedConfig = {
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
-    /*
-     * Disable default implementation with default routes.
-     */
     disableDefaultImplementation?: boolean;
-
-    /*
-     * Should default to Sign up form.
-     */
     defaultToSignUp?: boolean;
-
-    /*
-     * SignUp form config.
-     */
-
     signUpForm?: SignUpFormFeatureUserInput;
-
-    /*
-     * SignIn form config.
-     */
-
     signInForm?: SignInFormFeatureUserInput;
-
-    /*
-     * Providers
-     */
-    providers: (Provider | CustomProviderConfig)[];
+    providers?: (Provider | CustomProviderConfig)[];
 };
 
 export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
-    /*
-     * Disable default implementation with default routes.
-     */
     disableDefaultImplementation: boolean;
-
-    /*
-     * Providers
-     */
-    providers: Provider[];
-
-    /*
-     * Default to sign up form.
-     */
     defaultToSignUp: boolean;
-
-    /*
-     * SignUp form config.
-     */
-    signUpForm: NormalisedSignUpFormFeatureConfig;
-
-    /*
-     * SignIn form config.
-     */
-    signInForm: NormalisedSignInFormFeatureConfig;
+    signUpForm?: SignUpFormFeatureUserInput;
+    signInForm?: SignInFormFeatureUserInput;
+    providers?: (Provider | CustomProviderConfig)[];
 };
 
 export type GetRedirectionURLContext = EmailPasswordGetRedirectionURLContext | ThirdPartyGetRedirectionURLContext;
@@ -149,7 +106,7 @@ export type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswor
 export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     history?: any;
     emailPasswordRecipe: EPRecipe;
-    thirdPartyRecipe: TPRecipe;
+    thirdPartyRecipe?: TPRecipe;
     config: NormalisedConfig;
 };
 

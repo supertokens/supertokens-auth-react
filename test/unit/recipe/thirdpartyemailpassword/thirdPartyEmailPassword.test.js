@@ -23,6 +23,7 @@ import ThirdPartyEmailPassword from "../../../../recipe/thirdpartyemailpassword"
 import { Google, Github, Facebook } from "../../../../recipe/thirdpartyemailpassword";
 import assert from "assert";
 import SuperTokens from "../../../../";
+import SuperTokensRaw from "../../../../lib/build/superTokens";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -31,17 +32,28 @@ require("jsdom-global")();
  * Tests.
  */
 describe("ThirdPartyEmailPassword", function () {
+    before(async function () {});
 
-    before(async function () {
-
+    beforeEach(function () {
+        SuperTokensRaw.reset();
     });
 
     afterEach(async function () {
         Google.reset();
     });
 
+    it("Initializing without any third party providers", async function () {
+        SuperTokens.init({
+            appInfo: {
+                appName: "SuperTokens",
+                websiteDomain: "supertokens.io",
+                apiDomain: "api.supertokens.io",
+            },
+            recipeList: [ThirdPartyEmailPassword.init({})],
+        });
+    });
 
-    it.only("Initializing without any third party providers", async function () {
+    it("Initializing with disable email password", async function () {
         SuperTokens.init({
             appInfo: {
                 appName: "SuperTokens",
@@ -49,8 +61,33 @@ describe("ThirdPartyEmailPassword", function () {
                 apiDomain: "api.supertokens.io",
             },
             recipeList: [
-                ThirdPartyEmailPassword.init({}),
+                ThirdPartyEmailPassword.init({
+                    disableEmailPassword: true,
+                    signInAndUpFeature: {
+                        providers: [Google.init()],
+                    },
+                }),
             ],
         });
+    });
+
+    it("Initializing with disable email password and no third party - should throw an error", async function () {
+        try {
+            SuperTokens.init({
+                appInfo: {
+                    appName: "SuperTokens",
+                    websiteDomain: "supertokens.io",
+                    apiDomain: "api.supertokens.io",
+                },
+                recipeList: [
+                    ThirdPartyEmailPassword.init({
+                        disableEmailPassword: true,
+                    }),
+                ],
+            });
+            fail();
+        } catch (err) {
+            assert(err.message === "You need to enable either email password or third party providers login.");
+        }
     });
 });

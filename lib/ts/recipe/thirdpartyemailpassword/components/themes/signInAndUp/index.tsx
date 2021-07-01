@@ -73,7 +73,7 @@ class SignInAndUpTheme extends React.PureComponent<
                             });
                         }}
                     />
-                    {this.props.config.signInAndUpFeature.providers.length > 0 && (
+                    {this.props.thirdPartyRecipe !== undefined && (
                         <Fragment>
                             <ThirdPartySignInAndUp
                                 recipe={this.props.thirdPartyRecipe}
@@ -86,20 +86,19 @@ class SignInAndUpTheme extends React.PureComponent<
                             </ThirdPartySignInAndUp>
                         </Fragment>
                     )}
-                    {this.props.config.disableEmailPassword !== true &&
-                        this.props.config.signInAndUpFeature.providers.length > 0 && (
+                    {this.props.config.disableEmailPassword !== true && this.props.thirdPartyRecipe !== undefined && (
+                        <div
+                            data-supertokens="thirdPartyEmailPasswordDivider"
+                            css={styles.thirdPartyEmailPasswordDivider}>
+                            <div data-supertokens="divider" css={styles.divider}></div>
                             <div
-                                data-supertokens="thirdPartyEmailPasswordDivider"
-                                css={styles.thirdPartyEmailPasswordDivider}>
-                                <div data-supertokens="divider" css={styles.divider}></div>
-                                <div
-                                    data-supertokens="thirdPartyEmailPasswordDividerOr"
-                                    css={styles.thirdPartyEmailPasswordDividerOr}>
-                                    or
-                                </div>
-                                <div data-supertokens="divider" css={styles.divider}></div>
+                                data-supertokens="thirdPartyEmailPasswordDividerOr"
+                                css={styles.thirdPartyEmailPasswordDividerOr}>
+                                or
                             </div>
-                        )}
+                            <div data-supertokens="divider" css={styles.divider}></div>
+                        </div>
+                    )}
                     {this.props.config.disableEmailPassword !== true && (
                         <EmailPasswordSignInAndUp
                             recipe={this.props.emailPasswordRecipe}

@@ -53,7 +53,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
 
     emailPasswordRecipe: EmailPassword;
 
-    thirdPartyRecipe: ThirdParty;
+    thirdPartyRecipe: ThirdParty | undefined;
 
     recipeImpl: RecipeInterface;
 
@@ -101,9 +101,14 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
                       }
                   );
 
+        // we initialise this recipe only if the user has provided thirdparty
+        // providers.
         this.thirdPartyRecipe =
             recipes.thirdPartyInstance !== undefined
                 ? recipes.thirdPartyInstance
+                : this.config.signInAndUpFeature.providers === undefined ||
+                  this.config.signInAndUpFeature.providers.length === 0
+                ? undefined
                 : new ThirdParty(
                       {
                           appInfo: this.config.appInfo,
@@ -130,10 +135,16 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
-        const features: RecipeFeatureComponentMap = {
+        let features: RecipeFeatureComponentMap = {
             ...this.emailPasswordRecipe.getFeatures(),
-            ...this.thirdPartyRecipe.getFeatures(),
         };
+
+        if (this.thirdPartyRecipe !== undefined) {
+            features = {
+                ...features,
+                ...this.thirdPartyRecipe.getFeatures(),
+            };
+        }
 
         if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
