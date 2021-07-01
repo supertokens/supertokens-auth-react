@@ -105,7 +105,7 @@ export type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswor
 
 export type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     history?: any;
-    emailPasswordRecipe: EPRecipe;
+    emailPasswordRecipe?: EPRecipe;
     thirdPartyRecipe?: TPRecipe;
     config: NormalisedConfig;
 };

@@ -51,7 +51,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     static instance?: ThirdPartyEmailPassword;
     static RECIPE_ID = "thirdpartyemailpassword";
 
-    emailPasswordRecipe: EmailPassword;
+    emailPasswordRecipe: EmailPassword | undefined;
 
     thirdPartyRecipe: ThirdParty | undefined;
 
@@ -76,6 +76,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined
                 ? recipes.emailPasswordInstance
+                : this.config.disableEmailPassword
+                ? undefined
                 : new EmailPassword(
                       {
                           appInfo: this.config.appInfo,
@@ -135,9 +137,14 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
-        let features: RecipeFeatureComponentMap = {
-            ...this.emailPasswordRecipe.getFeatures(),
-        };
+        let features: RecipeFeatureComponentMap = {};
+
+        if (this.emailPasswordRecipe !== undefined) {
+            features = {
+                ...features,
+                ...this.emailPasswordRecipe.getFeatures(),
+            };
+        }
 
         if (this.thirdPartyRecipe !== undefined) {
             features = {
@@ -162,6 +169,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "RESET_PASSWORD") {
+            if (this.emailPasswordRecipe === undefined) {
+                throw new Error("Should not come here...");
+            }
             return this.emailPasswordRecipe.getDefaultRedirectionURL(context);
         } else {
             return this.getAuthRecipeModuleDefaultRedirectionURL(context);
@@ -175,6 +185,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
         if (componentName === "signinup") {
             return <SignInAndUp recipe={this} {...prop} />;
         } else if (componentName === "resetpassword") {
+            if (this.emailPasswordRecipe === undefined) {
+                throw new Error("Should not come here...");
+            }
             return this.emailPasswordRecipe.getFeatureComponent(componentName, prop);
         } else {
             return this.getAuthRecipeModuleFeatureComponent(componentName, prop);

@@ -20,6 +20,7 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import ThirdPartyEmailPassword from "../../../../recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPasswordRaw from "../../../../lib/build/recipe/thirdpartyemailpassword/recipe";
 import { Google, Github, Facebook } from "../../../../recipe/thirdpartyemailpassword";
 import assert from "assert";
 import SuperTokens from "../../../../";
@@ -51,6 +52,10 @@ describe("ThirdPartyEmailPassword", function () {
             },
             recipeList: [ThirdPartyEmailPassword.init({})],
         });
+        assert(
+            ThirdPartyEmailPasswordRaw.getInstanceOrThrow().emailPasswordRecipe !== undefined &&
+                ThirdPartyEmailPasswordRaw.getInstanceOrThrow().thirdPartyRecipe === undefined
+        );
     });
 
     it("Initializing with disable email password", async function () {
@@ -69,6 +74,10 @@ describe("ThirdPartyEmailPassword", function () {
                 }),
             ],
         });
+        assert(
+            ThirdPartyEmailPasswordRaw.getInstanceOrThrow().emailPasswordRecipe === undefined &&
+                ThirdPartyEmailPasswordRaw.getInstanceOrThrow().thirdPartyRecipe !== undefined
+        );
     });
 
     it("Initializing with disable email password and no third party - should throw an error", async function () {

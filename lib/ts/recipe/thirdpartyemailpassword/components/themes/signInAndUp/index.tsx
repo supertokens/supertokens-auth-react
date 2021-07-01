@@ -99,7 +99,7 @@ class SignInAndUpTheme extends React.PureComponent<
                             <div data-supertokens="divider" css={styles.divider}></div>
                         </div>
                     )}
-                    {this.props.config.disableEmailPassword !== true && (
+                    {this.props.emailPasswordRecipe !== undefined && (
                         <EmailPasswordSignInAndUp
                             recipe={this.props.emailPasswordRecipe}
                             history={this.props.history}

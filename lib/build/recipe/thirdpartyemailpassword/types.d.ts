@@ -78,7 +78,7 @@ export declare type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPa
 export declare type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     history?: any;
-    emailPasswordRecipe: EPRecipe;
+    emailPasswordRecipe?: EPRecipe;
     thirdPartyRecipe?: TPRecipe;
     config: NormalisedConfig;
 };
