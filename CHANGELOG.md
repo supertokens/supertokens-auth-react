@@ -29,7 +29,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   If using auth wrapper without `requireAuth=false`, and the user signs out, then the user is automatically redirected to /auth
 
-## [0.14.0] - 2021-05-24
+## [0.14.1] - 2021-07-01
+
+### Refactor:
+
+-   Normalisation of thirdpartyemailpassword input
+
+### Fixed:
+
+-   Allows zero thirdparty providers to be passed into thirdpartyemailpassword
+-   Respects `disableEmailPassword` config provided to thirdpartyemailpassword
+
+## Changed:
+
+-   Makes `signInAndUpFeature` config optional in `thirdpartyemailpassword.init`
+
+## [0.14.0] - 2021-06-24
 
 ### Added:
 

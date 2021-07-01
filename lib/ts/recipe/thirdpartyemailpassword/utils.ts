@@ -16,26 +16,28 @@
 /*
  * Imports.
  */
-import { Config, NormalisedConfig, RecipeInterface } from "./types";
+import {
+    Config,
+    NormalisedConfig,
+    RecipeInterface,
+    NormalisedSignInAndUpFeatureConfig,
+    SignInAndUpFeatureUserInput,
+} from "./types";
 
-import { normaliseEmailPasswordConfig } from "../emailpassword/utils";
-import { normaliseThirdPartyConfig } from "../thirdparty/utils";
-import { Config as ThirdPartyConfig } from "../thirdparty/types";
-import { Config as EmailPasswordConfig } from "../emailpassword/types";
 import { normaliseAuthRecipeModuleConfig } from "../authRecipeModule/utils";
 
 /*
  * Methods.
  */
 export function normaliseThirdPartyEmailPasswordConfig(config: Config): NormalisedConfig {
-    const thirdPartyUserInput = castToThirdPartyConfig(config);
-    const emailPasswordUserInput = castToEmailPasswordConfig(config);
-
-    const emailPasswordConfig = normaliseEmailPasswordConfig(emailPasswordUserInput);
-    const thirdPartyConfig = normaliseThirdPartyConfig(thirdPartyUserInput, true);
     const disableEmailPassword = config.disableEmailPassword === true;
 
-    if (disableEmailPassword && thirdPartyConfig.signInAndUpFeature.providers.length === 0) {
+    if (
+        disableEmailPassword &&
+        (config.signInAndUpFeature === undefined ||
+            config.signInAndUpFeature.providers === undefined ||
+            config.signInAndUpFeature.providers.length === 0)
+    ) {
         throw new Error("You need to enable either email password or third party providers login.");
     }
 
@@ -45,30 +47,32 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
         ...config.override,
     };
 
+    const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInUpFeatureConfig(
+        config.signInAndUpFeature
+    );
+
     return {
         ...normaliseAuthRecipeModuleConfig(config),
-        signInAndUpFeature: {
-            ...thirdPartyConfig.signInAndUpFeature,
-            ...emailPasswordConfig.signInAndUpFeature,
-        },
-        resetPasswordUsingTokenFeature: emailPasswordConfig.resetPasswordUsingTokenFeature,
+        signInAndUpFeature,
+        resetPasswordUsingTokenFeature: config.resetPasswordUsingTokenFeature,
         disableEmailPassword,
         override,
     };
 }
 
-function castToEmailPasswordConfig(config: Config): EmailPasswordConfig {
-    return config as EmailPasswordConfig;
-}
+function normaliseSignInUpFeatureConfig(config?: SignInAndUpFeatureUserInput): NormalisedSignInAndUpFeatureConfig {
+    const disableDefaultImplementation =
+        config === undefined || config.disableDefaultImplementation === undefined
+            ? false
+            : config.disableDefaultImplementation;
 
-function castToThirdPartyConfig(config: Config): ThirdPartyConfig {
-    if (config.signInAndUpFeature === undefined) {
-        config.signInAndUpFeature = {
-            providers: [],
-        };
-    }
-    if (config.signInAndUpFeature.providers === undefined) {
-        config.signInAndUpFeature.providers = [];
-    }
-    return config as ThirdPartyConfig;
+    const defaultToSignUp =
+        config === undefined || config.defaultToSignUp === undefined ? false : config.defaultToSignUp;
+
+    return {
+        ...config,
+        disableDefaultImplementation,
+        defaultToSignUp,
+        style: config === undefined || config.style === undefined ? {} : config.style,
+    };
 }
