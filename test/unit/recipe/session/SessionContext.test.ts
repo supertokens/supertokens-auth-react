@@ -1,4 +1,4 @@
-import { isDefaultContext } from "../../../../lib/ts/recipe/session/SessionContext";
+import { isDefaultContext } from "../../../../lib/ts/recipe/session/sessionContext";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
 
 describe("SessionContext", () => {

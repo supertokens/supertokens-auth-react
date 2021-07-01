@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import SessionContext from "./SessionContext";
+import SessionContext from "./sessionContext";
 
 type Props = {
     requireSession?: boolean;

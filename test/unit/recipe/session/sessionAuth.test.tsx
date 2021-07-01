@@ -3,7 +3,7 @@ import "@testing-library/jest-dom";
 import { act, render } from "@testing-library/react";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import SessionAuth from "../../../../lib/ts/recipe/session/sessionAuth";
-import SessionContext from "../../../../lib/ts/recipe/session/SessionContext";
+import SessionContext from "../../../../lib/ts/recipe/session/sessionContext";
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
 
 const MockSession = {
