@@ -14,11 +14,14 @@ export const withOverride = <TComponent extends React.FunctionComponent<any> | R
             throw new Error("Using withOverride HOC without a parent Provider");
         }
 
-        const OverrideComponent = ctx[overrideKey];
+        const OverrideComponentFactory = ctx[overrideKey];
 
-        const EffectiveComponent =
-            OverrideComponent === undefined ? DefaultComponent : OverrideComponent(DefaultComponent);
+        if (OverrideComponentFactory === undefined) {
+            return <DefaultComponent {...props} />;
+        }
 
-        return <EffectiveComponent {...props} />;
+        const OverrideComponent = OverrideComponentFactory(DefaultComponent);
+
+        return <OverrideComponent key="withOverride_OverrideComponent" {...props} />;
     };
 };
