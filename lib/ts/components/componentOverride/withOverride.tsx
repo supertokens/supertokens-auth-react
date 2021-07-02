@@ -22,6 +22,6 @@ export const withOverride = <TComponent extends React.FunctionComponent<any> | R
 
         const OverrideComponent = OverrideComponentFactory(DefaultComponent);
 
-        return <OverrideComponent key="withOverride_OverrideComponent" {...props} />;
+        return <OverrideComponent {...props} />;
     };
 };
