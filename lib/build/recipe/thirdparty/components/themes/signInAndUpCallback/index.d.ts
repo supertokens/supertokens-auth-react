@@ -1,3 +1,3 @@
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
-export declare const SignInAndUpCallbackTheme: (props: {}) => jsx.JSX.Element;
+/// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
+export declare const SignInAndUpCallbackTheme: import("react").ComponentType<{}>;

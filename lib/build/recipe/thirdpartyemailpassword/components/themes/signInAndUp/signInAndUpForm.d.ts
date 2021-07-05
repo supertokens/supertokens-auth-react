@@ -1,8 +1,8 @@
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
+/// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
 import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
-export declare const SignInAndUpForm: (
-    props: EmailPasswordSignInAndUpThemeProps & {
+export declare const SignInAndUpForm: import("react").ComponentType<
+    EmailPasswordSignInAndUpThemeProps & {
         isSignUp: boolean;
     }
-) => jsx.JSX.Element;
+>;

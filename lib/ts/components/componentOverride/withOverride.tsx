@@ -1,27 +1,19 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { useContext } from "react";
-import { ComponentOverrideContext } from "./componentOverrideContext";
+import React from "react";
+import { useComponentOverride } from "./useComponentOverride";
 
-export const withOverride = <TComponent extends React.FunctionComponent<any> | React.ComponentClass<any>>(
+export const withOverride = <TComponent extends React.ComponentType<any>>(
     overrideKey: string,
     DefaultComponent: TComponent
-) => {
+): React.ComponentType<React.ComponentProps<TComponent>> => {
     return (props: React.ComponentProps<TComponent>) => {
-        const ctx = useContext(ComponentOverrideContext);
+        const OverrideComponent = useComponentOverride(overrideKey);
 
-        if (ctx === "IS_DEFAULT") {
-            throw new Error("Using withOverride HOC without a parent Provider");
+        if (OverrideComponent !== null) {
+            return <OverrideComponent DefaultComponent={DefaultComponent} {...props} />;
         }
 
-        const OverrideComponentFactory = ctx[overrideKey];
-
-        if (OverrideComponentFactory === undefined) {
-            return <DefaultComponent {...props} />;
-        }
-
-        const OverrideComponent = OverrideComponentFactory(DefaultComponent);
-
-        return <OverrideComponent {...props} />;
+        return <DefaultComponent {...props} />;
     };
 };

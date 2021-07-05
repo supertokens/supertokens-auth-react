@@ -1,8 +1,7 @@
 /// <reference types="react" />
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
-export declare const SignUpForm: (
-    props: import("../../../../../types").ThemeBaseProps & {
+/// <reference types="@emotion/react/types/css-prop" />
+export declare const SignUpForm: import("react").ComponentType<
+    import("../../../../../types").ThemeBaseProps & {
         formFields: import("../../../types").FormFieldThemeProps[];
     } & {
         recipeImplementation: import("../../../types").RecipeInterface;
@@ -13,4 +12,4 @@ export declare const SignUpForm: (
         header?: JSX.Element | undefined;
         footer?: JSX.Element | undefined;
     }
-) => jsx.JSX.Element;
+>;

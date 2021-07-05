@@ -1,4 +1,4 @@
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
+/// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
 import { SendVerifyEmailThemeProps } from "../../../types";
-export declare const SendVerifyEmail: (props: SendVerifyEmailThemeProps) => jsx.JSX.Element;
+export declare const SendVerifyEmail: import("react").ComponentType<SendVerifyEmailThemeProps>;

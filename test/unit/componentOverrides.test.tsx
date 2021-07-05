@@ -25,13 +25,14 @@ import { SendVerifyEmail } from "../../lib/ts/recipe/emailverification/component
 import { VerifyEmailLinkClicked } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/verifyEmailLinkClicked";
 import { Header as ThirdPartyEmailPasswordHeader } from "../../lib/ts/recipe/thirdpartyemailpassword/components/themes/signInAndUp/header";
 import { SignInAndUpForm } from "../../lib/ts/recipe/thirdpartyemailpassword/components/themes/signInAndUp/signInAndUpForm";
+import { ComponentOverride } from "../../lib/ts/components/componentOverride/componentOverride";
 
 type AllComponentsOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap &
     EmailVerificationOverrideMap &
     ThirdPartyEmailPasswordOverrideMap;
 
-const makeOverride = jest.fn(() => () => <h1 data-testid="override">Override</h1>);
+const makeOverride = () => () => <h1 data-testid="override">Override</h1>;
 const WithProvider: React.FC<any> = ({ overrideMap, children }) => {
     return <ComponentOverrideContext.Provider value={overrideMap}>{children}</ComponentOverrideContext.Provider>;
 };
@@ -63,8 +64,8 @@ describe("Theme component overrides", () => {
     Object.entries(overrides).forEach(([key, Component]) => {
         test(`${key} can be overrode`, async () => {
             // given
-            const overrideMap = {
-                [key]: makeOverride,
+            const overrideMap: Record<string, ComponentOverride<any>> = {
+                [key]: makeOverride(),
             };
 
             // Since we do not pass props to component, if the override is not applied

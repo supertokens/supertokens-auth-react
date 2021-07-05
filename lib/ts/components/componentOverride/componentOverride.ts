@@ -1,5 +1,9 @@
 import React from "react";
 
-export interface ComponentOverride<TComponent extends React.FunctionComponent<any>> {
-    (Component: TComponent): React.FunctionComponent<React.ComponentProps<TComponent>>;
-}
+export type ComponentOverrideProps<TComponent extends React.ComponentType<any>> = React.ComponentProps<TComponent> & {
+    DefaultComponent: TComponent;
+};
+
+export type ComponentOverride<TComponent extends React.ComponentType<any>> = React.ComponentType<
+    ComponentOverrideProps<TComponent>
+>;
