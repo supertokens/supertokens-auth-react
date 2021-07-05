@@ -1,3 +1,5 @@
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
-export declare const SignInHeader: (props: { onClick: (() => void) | undefined }) => jsx.JSX.Element;
+/// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
+export declare const SignInHeader: import("react").ComponentType<{
+    onClick: (() => void) | undefined;
+}>;

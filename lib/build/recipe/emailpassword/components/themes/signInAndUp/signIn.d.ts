@@ -1,4 +1,4 @@
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
+/// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
 import { SignInThemeProps } from "../../../types";
-export declare const SignIn: (props: SignInThemeProps) => jsx.JSX.Element;
+export declare const SignIn: import("react").ComponentType<SignInThemeProps>;

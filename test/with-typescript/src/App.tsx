@@ -280,24 +280,24 @@ function getEmailPasswordConfigs() {
                 };
             },
             components: {
-                EmailPasswordSignIn: (OriginalComponent) => (props) => {
+                EmailPasswordSignIn: ({ DefaultComponent, ...props }) => {
                     return (
                         <div>
-                            <OriginalComponent {...props} />
+                            <DefaultComponent {...props} />
                         </div>
                     );
                 },
-                EmailPasswordSignInHeader: (OriginalComponent) => (props) => {
+                EmailPasswordSignInHeader: ({ DefaultComponent, ...props }) => {
                     return (
                         <div>
-                            <OriginalComponent {...props} />
+                            <DefaultComponent {...props} />
                         </div>
                     );
                 },
-                EmailPasswordSubmitNewPassword: (OriginalComponent) => (props) => {
+                EmailPasswordSubmitNewPassword: ({ DefaultComponent, ...props }) => {
                     return (
                         <div>
-                            <OriginalComponent {...props} />
+                            <DefaultComponent {...props} />
                         </div>
                     );
                 },
@@ -317,10 +317,10 @@ function getEmailPasswordConfigs() {
                     };
                 },
                 components: {
-                    EmailVerificationSendVerifyEmail: (OriginalComponent) => (props) => {
+                    EmailVerificationSendVerifyEmail: ({ DefaultComponent, ...props }) => {
                         return (
                             <div>
-                                <OriginalComponent {...props} />
+                                <DefaultComponent {...props} />
                             </div>
                         );
                     },
@@ -363,10 +363,10 @@ function getThirdPartyConfigs() {
                 };
             },
             components: {
-                ThirdPartySignInAndUpCallbackTheme: (OriginalComponent) => () => {
+                ThirdPartySignInAndUpCallbackTheme: ({ DefaultComponent }) => {
                     return (
                         <div>
-                            <OriginalComponent />
+                            <DefaultComponent />
                         </div>
                     );
                 },
@@ -378,10 +378,10 @@ function getThirdPartyConfigs() {
                     };
                 },
                 components: {
-                    EmailVerificationVerifyEmailLinkClicked: (OriginalComponent) => (props) => {
+                    EmailVerificationVerifyEmailLinkClicked: ({ DefaultComponent, ...props }) => {
                         return (
                             <div>
-                                <OriginalComponent {...props} />
+                                <DefaultComponent {...props} />
                             </div>
                         );
                     },
@@ -422,27 +422,27 @@ function getThirdPartyEmailPasswordConfigs() {
         },
         override: {
             components: {
-                ThirdPartySignInAndUpProvidersForm: (OriginalComponent) => (props) => {
+                ThirdPartySignInAndUpProvidersForm: ({ DefaultComponent, ...props }) => {
                     return (
                         <div>
-                            <OriginalComponent {...props} />
+                            <DefaultComponent {...props} />
                         </div>
                     );
                 },
-                EmailPasswordResetPasswordEmail: (OriginalComponent) => (props) => {
+                EmailPasswordResetPasswordEmail: ({ DefaultComponent, ...props }) => {
                     return (
                         <div>
-                            <OriginalComponent {...props} />
+                            <DefaultComponent {...props} />
                         </div>
                     );
                 },
             },
             emailVerification: {
                 components: {
-                    EmailVerificationVerifyEmailLinkClicked: (OriginalComponent) => (props) => {
+                    EmailVerificationVerifyEmailLinkClicked: ({ DefaultComponent, ...props }) => {
                         return (
                             <div>
-                                <OriginalComponent {...props} />
+                                <DefaultComponent {...props} />
                             </div>
                         );
                     },

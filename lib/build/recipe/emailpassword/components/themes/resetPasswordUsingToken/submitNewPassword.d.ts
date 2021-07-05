@@ -1,4 +1,4 @@
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
+/// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
 import { SubmitNewPasswordProps } from "../../../types";
-export declare const SubmitNewPassword: (props: SubmitNewPasswordProps) => jsx.JSX.Element;
+export declare const SubmitNewPassword: import("react").ComponentType<SubmitNewPasswordProps>;
