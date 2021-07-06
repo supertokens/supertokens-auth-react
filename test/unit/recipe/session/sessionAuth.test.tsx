@@ -83,6 +83,19 @@ describe("SessionAuth", () => {
     });
 
     describe("handle events", () => {
+        test("call onSessionExpired on UNAUTHORISED", () => {
+            // given
+            const mockOnSessionExpired = jest.fn();
+
+            MockSession.addEventListener.mockImplementationOnce((fn) => fn({ action: "UNAUTHORISED" }));
+
+            // when
+            const result = render(<SessionAuth onSessionExpired={mockOnSessionExpired} />);
+
+            // then
+            expect(mockOnSessionExpired).toHaveBeenCalled();
+        });
+
         test("update context on SESSION_CREATED", async () => {
             // given
             MockSession.addEventListener.mockImplementationOnce((fn) => fn({ action: "SESSION_CREATED" }));
@@ -99,23 +112,14 @@ describe("SessionAuth", () => {
             expect(await result.findByText(/^jwtPayload:/)).toHaveTextContent(`jwtPayload: ${JSON.stringify({})}`);
         });
 
-        test("call onSessionExpired on UNAUTHORISED", () => {
-            // given
-            const mockOnSessionExpired = jest.fn();
-
-            MockSession.addEventListener.mockImplementationOnce((fn) => fn({ action: "UNAUTHORISED" }));
-
-            // when
-            const result = render(<SessionAuth onSessionExpired={mockOnSessionExpired} />);
-
-            // then
-            expect(mockOnSessionExpired).toHaveBeenCalled();
-        });
-
         test("update context on SESSION_REFRESH", async () => {
             // given
             let listenerFn: (event: any) => void;
-            MockSession.addEventListener.mockImplementationOnce((fn) => (listenerFn = fn));
+            MockSession.addEventListener.mockImplementationOnce((fn) => {
+                listenerFn = fn;
+
+                return () => {};
+            });
 
             const result = render(
                 <SessionAuth redirectToLogin={() => {}} requireAuth={true}>
@@ -140,5 +144,101 @@ describe("SessionAuth", () => {
         });
 
         test.todo("update context on SIGN_OUT");
+    });
+
+    describe("onSessionExpired", () => {
+        beforeEach(() => {
+            MockSession.doesSessionExist.mockReset();
+            MockSession.getJWTPayloadSecurely.mockReset();
+            MockSession.getUserId.mockReset();
+        });
+
+        test("not update context when prop is passed", async () => {
+            // given
+            const mockOnSessionExpired = jest.fn();
+            let unauthorisedListener: (event: any) => void;
+
+            MockSession.addEventListener.mockImplementationOnce((listener) => {
+                unauthorisedListener = listener;
+
+                return () => {};
+            });
+
+            setMockResolves({
+                doesSessionExist: true,
+                jwtPayload: { foo: "bar" },
+                userId: "before-id",
+            });
+
+            const result = render(
+                <SessionAuth onSessionExpired={mockOnSessionExpired}>
+                    <MockSessionConsumer />
+                </SessionAuth>
+            );
+
+            const UserId = () => result.findByText(/^userId/);
+            const JwtPayload = () => result.findByText(/^jwtPayload/);
+
+            expect(await UserId()).toHaveTextContent(`userId: before-id`);
+            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+
+            setMockResolves({
+                doesSessionExist: false,
+                jwtPayload: { foo: "baz" },
+                userId: "after-id",
+            });
+
+            // when
+            await act(() => unauthorisedListener({ action: "UNAUTHORISED" }));
+
+            // then
+            expect(await UserId()).toHaveTextContent(`userId: before-id`);
+            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+        });
+
+        test("not update context when prop is passed in parent SessionAuth", async () => {
+            // given
+            const mockOnSessionExpired = jest.fn();
+            let unauthorisedListener: () => void;
+
+            MockSession.addEventListener.mockImplementation((fn) => {
+                unauthorisedListener = () => fn({ action: "UNAUTHORISED" });
+
+                return () => {};
+            });
+
+            MockSession.doesSessionExist.mockResolvedValue(true);
+            MockSession.getUserId.mockResolvedValue("before-id");
+            MockSession.getJWTPayloadSecurely.mockResolvedValue({
+                foo: "bar",
+            });
+
+            const result = render(
+                <SessionAuth onSessionExpired={mockOnSessionExpired}>
+                    <SessionAuth>
+                        <MockSessionConsumer />
+                    </SessionAuth>
+                </SessionAuth>
+            );
+
+            const UserId = () => result.findByText(/^userId/);
+            const JwtPayload = () => result.findByText(/^jwtPayload/);
+
+            expect(await UserId()).toHaveTextContent(`userId: before-id`);
+            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+
+            MockSession.doesSessionExist.mockResolvedValue(false);
+            MockSession.getUserId.mockResolvedValue("after-id");
+            MockSession.getJWTPayloadSecurely.mockResolvedValue({
+                foo: "baz",
+            });
+
+            // when
+            await act(() => unauthorisedListener());
+
+            // then
+            expect(await UserId()).toHaveTextContent(`userId: before-id`);
+            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+        });
     });
 });

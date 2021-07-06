@@ -16,11 +16,11 @@
 /*
  * Imports.
  */
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, { useEffect, useState, useContext, useCallback, useRef } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEvent, SessionContextType } from "./types";
-import { RequireSession } from "./RequireSession";
+import { RequireSession } from "./requireSession";
 import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
 
 const hasParentProvider = (ctx: SessionContextType) => !isDefaultContext(ctx);
@@ -46,7 +46,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     const parentSessionContext = useContext(SessionContext);
     const [context, setContext] = useState<SessionContextType | undefined>(undefined);
 
-    const session = Session.getInstanceOrThrow();
+    const session = useRef(Session.getInstanceOrThrow());
 
     const setInitialContext = useCallback(async (): Promise<void> => {
         const sessionExists = await doesSessionExist();
@@ -100,31 +100,44 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                     }
 
                     // ...else fallback to default behaviour
-                    setContext({
-                        doesSessionExist: false,
-                        userId: "",
-                        jwtPayload: {},
-                    });
+                    if (!hasParentProvider(parentSessionContext)) {
+                        setContext({
+                            doesSessionExist: false,
+                            userId: "",
+                            jwtPayload: {},
+                        });
+                    }
                     return;
             }
         },
-        [context, props]
+        [parentSessionContext, context, props]
     );
 
-    // Read and set the current state
     useEffect(() => {
         // If there's a parent provider, it already listens for events, so we don't have to
         if (hasParentProvider(parentSessionContext)) {
             setContext(parentSessionContext);
             return;
         }
+    }, [parentSessionContext]);
 
-        setInitialContext();
+    // Read and set the current state
+    useEffect(() => {
+        if (hasParentProvider(parentSessionContext)) {
+            return;
+        }
+
+        if (context === undefined) {
+            setInitialContext();
+        }
+    }, [context, parentSessionContext, setInitialContext]);
+
+    useEffect(() => {
         // we return here cause addEventListener returns a function that removes
         // the listener, and this function will be called by useEffect on
         // component unmount
-        return session.addEventListener(onHandleEvent);
-    }, [parentSessionContext, session, setInitialContext]);
+        return session.current.addEventListener(onHandleEvent);
+    }, [onHandleEvent]);
 
     useEffect(() => {
         if (context === undefined) {
@@ -145,7 +158,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
     return (
         <SessionContext.Provider value={context}>
-            <RequireSession requireSession={props.requireAuth}>{children}</RequireSession>
+            <RequireSession requireSession={props.requireAuth !== undefined}>{children}</RequireSession>
         </SessionContext.Provider>
     );
 };
