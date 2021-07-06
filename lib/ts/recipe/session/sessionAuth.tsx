@@ -20,7 +20,6 @@ import React, { useEffect, useState, useContext, useCallback, useRef } from "rea
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEvent, SessionContextType } from "./types";
-import { RequireSession } from "./requireSession";
 import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
 
 const hasParentProvider = (ctx: SessionContextType) => !isDefaultContext(ctx);
@@ -162,13 +161,12 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
         return null;
     }
 
-    return (
-        <SessionContext.Provider value={context}>
-            <RequireSession requireSession={props.requireAuth !== undefined ? props.requireAuth : false}>
-                {children}
-            </RequireSession>
-        </SessionContext.Provider>
-    );
+    // if we are going to redirectToLogin, we should not render anything
+    if (props.requireAuth === true && context.doesSessionExist === false) {
+        return null;
+    }
+
+    return <SessionContext.Provider value={context}>{children}</SessionContext.Provider>;
 };
 
 export default SessionAuth;
