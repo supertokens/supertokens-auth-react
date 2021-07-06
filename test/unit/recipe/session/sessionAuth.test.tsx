@@ -8,9 +8,9 @@ import { SessionContextType } from "../../../../lib/ts/recipe/session";
 
 const MockSession = {
     addEventListener: jest.fn(),
-    getUserId: jest.fn().mockResolvedValue("mock-user-id"),
-    getJWTPayloadSecurely: jest.fn().mockResolvedValue({}),
-    doesSessionExist: jest.fn().mockResolvedValue(true),
+    getUserId: jest.fn(),
+    getJWTPayloadSecurely: jest.fn(),
+    doesSessionExist: jest.fn(),
 };
 
 const MockSessionConsumer = () => {
@@ -33,9 +33,9 @@ const MockSessionConsumer = () => {
 };
 
 const setMockResolves = (ctx: SessionContextType) => {
-    MockSession.getUserId.mockResolvedValueOnce(ctx.userId);
-    MockSession.getJWTPayloadSecurely.mockResolvedValueOnce(ctx.jwtPayload);
-    MockSession.doesSessionExist.mockResolvedValueOnce(ctx.doesSessionExist);
+    MockSession.getUserId.mockResolvedValue(ctx.userId);
+    MockSession.getJWTPayloadSecurely.mockResolvedValue(ctx.jwtPayload);
+    MockSession.doesSessionExist.mockResolvedValue(ctx.doesSessionExist);
 };
 
 jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession as any);
@@ -43,6 +43,12 @@ jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession a
 describe("SessionAuth", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+
+        setMockResolves({
+            userId: "mock-user-id",
+            jwtPayload: {},
+            doesSessionExist: true,
+        });
     });
 
     test("setup event listener when no parent provider", () => {
@@ -80,6 +86,72 @@ describe("SessionAuth", () => {
         // then
         expect(await result.findByText(/^userId:/)).toHaveTextContent(`userId: mock-user-id`);
         expect(await result.findByText(/^jwtPayload:/)).toHaveTextContent(`jwtPayload: ${JSON.stringify({})}`);
+    });
+
+    describe("children rendering", () => {
+        const testCases = [
+            {
+                requireAuth: false,
+                doesSessionExist: false,
+                shouldRender: true,
+            },
+            {
+                requireAuth: undefined,
+                doesSessionExist: false,
+                shouldRender: true,
+            },
+            {
+                requireAuth: true,
+                doesSessionExist: false,
+                shouldRender: false,
+            },
+            {
+                requireAuth: false,
+                doesSessionExist: true,
+                shouldRender: true,
+            },
+            {
+                requireAuth: undefined,
+                doesSessionExist: true,
+                shouldRender: true,
+            },
+            {
+                requireAuth: true,
+                doesSessionExist: true,
+                shouldRender: true,
+            },
+        ];
+
+        testCases.forEach(({ doesSessionExist, requireAuth, shouldRender }) => {
+            test(`${shouldRender ? "do" : "don't"} render when requireAuth=${requireAuth} and session ${
+                doesSessionExist ? "exists" : "doesn't exist"
+            }`, async () => {
+                // given
+                const noop = jest.fn();
+                setMockResolves({
+                    doesSessionExist,
+                    jwtPayload: {},
+                    userId: "mock-id",
+                });
+
+                // when
+                const result = render(
+                    // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
+                    <SessionAuth requireAuth={requireAuth as any} redirectToLogin={noop}>
+                        <h1>Children</h1>
+                    </SessionAuth>
+                );
+
+                const child = await result.findByText(/Children/i).catch(() => null);
+
+                // then
+                if (shouldRender) {
+                    expect(child).toBeInTheDocument();
+                } else {
+                    expect(child).not.toBeInTheDocument();
+                }
+            });
+        });
     });
 
     describe("handle events", () => {

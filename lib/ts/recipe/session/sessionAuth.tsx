@@ -164,7 +164,9 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
     return (
         <SessionContext.Provider value={context}>
-            <RequireSession requireSession={props.requireAuth !== undefined}>{children}</RequireSession>
+            <RequireSession requireSession={props.requireAuth !== undefined ? props.requireAuth : false}>
+                {children}
+            </RequireSession>
         </SessionContext.Provider>
     );
 };
