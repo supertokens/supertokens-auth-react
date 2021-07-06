@@ -20,7 +20,7 @@ import React, { useEffect, useState, useContext, useCallback, useRef } from "rea
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEvent, SessionContextType } from "./types";
-import { RequireSession } from "./RequireSession";
+import { RequireSession } from "./requireSession";
 import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
 
 const hasParentProvider = (ctx: SessionContextType) => !isDefaultContext(ctx);
