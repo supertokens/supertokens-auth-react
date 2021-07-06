@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking changes
 
 -   If using auth wrapper without `requireAuth=false`, and the user signs out, then the user is automatically redirected to /auth
+-   The components override API has changed from `(DefaultComponent) => (props) => React.Element` to `({ DefaultComponent, …props }) => React.Element`.
 
 ## [0.14.1] - 2021-07-01
 

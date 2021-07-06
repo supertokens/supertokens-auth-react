@@ -72,25 +72,31 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
         async (event: RecipeEvent) => {
             switch (event.action) {
                 case "SESSION_CREATED":
-                    setContext({
-                        doesSessionExist: true,
-                        userId: await getUserId(),
-                        jwtPayload: await getJWTPayloadSecurely(),
-                    });
+                    if (!hasParentProvider(parentSessionContext)) {
+                        setContext({
+                            doesSessionExist: true,
+                            userId: await getUserId(),
+                            jwtPayload: await getJWTPayloadSecurely(),
+                        });
+                    }
                     return;
                 case "REFRESH_SESSION":
-                    setContext({
-                        doesSessionExist: true,
-                        userId: context === undefined ? "" : context.userId,
-                        jwtPayload: await getJWTPayloadSecurely(),
-                    });
+                    if (!hasParentProvider(parentSessionContext)) {
+                        setContext({
+                            doesSessionExist: true,
+                            userId: context === undefined ? "" : context.userId,
+                            jwtPayload: await getJWTPayloadSecurely(),
+                        });
+                    }
                     return;
                 case "SIGN_OUT":
-                    setContext({
-                        doesSessionExist: false,
-                        userId: "",
-                        jwtPayload: {},
-                    });
+                    if (!hasParentProvider(parentSessionContext)) {
+                        setContext({
+                            doesSessionExist: false,
+                            userId: "",
+                            jwtPayload: {},
+                        });
+                    }
                     return;
                 case "UNAUTHORISED":
                     // If there's onSessionExpired handler, use it without setting state...
@@ -134,8 +140,8 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
     useEffect(() => {
         // we return here cause addEventListener returns a function that removes
-        // the listener, and this function will be called by useEffect on
-        // component unmount
+        // the listener, and this function will be called by useEffect when
+        // onHandleEvent changes or if the component is unmounting.
         return session.current.addEventListener(onHandleEvent);
     }, [onHandleEvent]);
 
