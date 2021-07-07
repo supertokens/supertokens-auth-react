@@ -40,7 +40,8 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                     config.onHandleEvent(event);
                 }
                 if (event.action === "SESSION_CREATED" || event.action === "REFRESH_SESSION") {
-                    const [jwtPayload, userId] = await Promise.all([this.getJWTPayloadSecurely(), this.getUserId()]);
+                    const jwtPayload = await this.getJWTPayloadSecurely();
+                    const userId = await this.getUserId();
                     this.onHandleEvent({
                         action: event.action,
                         sessionContext: {

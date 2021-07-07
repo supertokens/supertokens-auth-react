@@ -67,15 +67,15 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                         jwtPayload: {},
                         userId: "",
                     };
+                } else {
+                    const jwtPayload = await getJWTPayloadSecurely();
+                    const userId = await getUserId();
+                    toSetContext = {
+                        doesSessionExist: sessionExists,
+                        jwtPayload,
+                        userId,
+                    };
                 }
-
-                const [jwtPayload, userId] = await Promise.all([getJWTPayloadSecurely(), getUserId()]);
-
-                toSetContext = {
-                    doesSessionExist: sessionExists,
-                    jwtPayload,
-                    userId,
-                };
             }
 
             // if this component is unmounting, or the context has already

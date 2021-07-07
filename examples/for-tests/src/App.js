@@ -284,13 +284,13 @@ export function DashboardNoAuthRequired() {
     let sessionContext = useSessionContext();
 
     if (sessionContext.doesSessionExist) {
-        return Dashboard();
+        return Dashboard(false);
     } else {
         return <div className="not-logged-in">Not logged in</div>;
     }
 }
 
-export function Dashboard() {
+export function Dashboard(redirectOnLogout = true) {
     const [sessionInfoUsingAxios, setSessionInfoUsingAxios] = useState(undefined);
     const [sessionInfoUsingFetch, setSessionInfoUsingFetch] = useState(undefined);
 
@@ -303,7 +303,9 @@ export function Dashboard() {
         } else {
             await EmailPassword.signOut();
         }
-        window.location.href = "/auth";
+        if (redirectOnLogout) {
+            window.location.href = "/auth";
+        }
     }
 
     async function fetchSessionInfoUsingAxios() {
