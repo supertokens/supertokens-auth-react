@@ -78,7 +78,9 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                 };
             }
 
-            if (cancelUseEffect) {
+            // if this component is unmounting, or the context has already
+            // been set, then we don't need to proceed...
+            if (cancelUseEffect || context !== undefined) {
                 return;
             }
 
