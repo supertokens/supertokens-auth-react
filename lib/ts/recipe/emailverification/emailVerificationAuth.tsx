@@ -27,6 +27,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     const [isEmailVerified, setIsEmailVerified] = useState(false);
 
     useEffect(() => {
+        let thisUseEffectMustReturnImmediately = false;
         async function doTask() {
             if (sessionContext.doesSessionExist && props.recipe.config.mode === "REQUIRED") {
                 let isEmailVerified;
@@ -41,6 +42,11 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
                      */
                     isEmailVerified = true;
                 }
+
+                if (thisUseEffectMustReturnImmediately) {
+                    return;
+                }
+
                 if (isEmailVerified === false) {
                     await props.recipe.redirect({ action: "VERIFY_EMAIL" }, props.history);
                 } else {
@@ -49,6 +55,12 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
             }
         }
         doTask();
+        return () => {
+            // this means that the sessionContext or props have changed..
+            // so we should not update state or do anything anymore in this useEffect.
+            // We need this cause we are doing an async task in this.
+            thisUseEffectMustReturnImmediately = true;
+        };
     }, [sessionContext, props]);
 
     if (sessionContext.doesSessionExist === false) {
