@@ -19,7 +19,7 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
-import { InputType, RecipeEvent } from "./types";
+import { InputType, RecipeEventWithSessionContext } from "./types";
 import sessionSdk from "supertokens-website";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
@@ -28,18 +28,38 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static instance?: Session;
     static RECIPE_ID = "session";
 
-    private eventListeners = new Set<(ctx: RecipeEvent) => void>();
+    private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
 
     constructor(config: ConfigType) {
         super(config);
 
-        if (config.onHandleEvent !== undefined) {
-            this.addEventListener(config.onHandleEvent);
-        }
-
         sessionSdk.init({
             ...config,
-            onHandleEvent: this.onHandleEvent,
+            onHandleEvent: async (event) => {
+                if (config.onHandleEvent !== undefined) {
+                    config.onHandleEvent(event);
+                }
+                if (event.action === "SESSION_CREATED" || event.action === "REFRESH_SESSION") {
+                    const [jwtPayload, userId] = await Promise.all([this.getJWTPayloadSecurely(), this.getUserId()]);
+                    this.onHandleEvent({
+                        action: event.action,
+                        sessionContext: {
+                            doesSessionExist: true,
+                            userId,
+                            jwtPayload,
+                        },
+                    });
+                } else if (event.action === "SIGN_OUT" || event.action === "UNAUTHORISED") {
+                    this.onHandleEvent({
+                        action: event.action,
+                        sessionContext: {
+                            doesSessionExist: false,
+                            userId: "",
+                            jwtPayload: {},
+                        },
+                    });
+                }
+            },
             preAPIHook: async (context) => {
                 const response = {
                     ...context,
@@ -94,13 +114,13 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     /**
      * @returns Function to remove event listener
      */
-    addEventListener = (listener: (ctx: RecipeEvent) => void): (() => void) => {
+    addEventListener = (listener: (ctx: RecipeEventWithSessionContext) => void): (() => void) => {
         this.eventListeners.add(listener);
 
         return () => this.eventListeners.delete(listener);
     };
 
-    private onHandleEvent = (ctx: RecipeEvent) => {
+    private onHandleEvent = (ctx: RecipeEventWithSessionContext) => {
         this.eventListeners.forEach((listener) => listener(ctx));
     };
 

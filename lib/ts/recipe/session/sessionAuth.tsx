@@ -16,12 +16,14 @@
 /*
  * Imports.
  */
-import React, { useEffect, useState, useContext, useCallback, useRef } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
-import { RecipeEvent, SessionContextType } from "./types";
+import { RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
 
+// if it's not the default context, it means SessionAuth from top has
+// given us a sessionContext.
 const hasParentProvider = (ctx: SessionContextType) => !isDefaultContext(ctx);
 
 type PropsWithoutAuth = {
@@ -47,122 +49,91 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
     const session = useRef(Session.getInstanceOrThrow());
 
-    const setInitialContext = useCallback(async (): Promise<void> => {
-        const sessionExists = await doesSessionExist();
+    // on mount
+    useEffect(() => {
+        let cancelUseEffect = false;
+        async function setInitialContextAndMaybeRedirect() {
+            // setting context from parent or manually
+            let toSetContext: SessionContextType;
 
-        if (sessionExists === false) {
-            return setContext({
-                doesSessionExist: sessionExists,
-                jwtPayload: {},
-                userId: "",
-            });
+            if (hasParentProvider(parentSessionContext)) {
+                toSetContext = parentSessionContext;
+            } else {
+                const sessionExists = await doesSessionExist();
+
+                if (sessionExists === false) {
+                    toSetContext = {
+                        doesSessionExist: sessionExists,
+                        jwtPayload: {},
+                        userId: "",
+                    };
+                }
+
+                const [jwtPayload, userId] = await Promise.all([getJWTPayloadSecurely(), getUserId()]);
+
+                toSetContext = {
+                    doesSessionExist: sessionExists,
+                    jwtPayload,
+                    userId,
+                };
+            }
+
+            if (cancelUseEffect) {
+                return;
+            }
+
+            if (!toSetContext.doesSessionExist && props.requireAuth === true) {
+                props.redirectToLogin();
+            } else {
+                setContext(toSetContext);
+            }
         }
 
-        const [jwtPayload, userId] = await Promise.all([getJWTPayloadSecurely(), getUserId()]);
-
-        return setContext({
-            doesSessionExist: sessionExists,
-            jwtPayload,
-            userId,
-        });
+        setInitialContextAndMaybeRedirect();
+        return () => {
+            cancelUseEffect = true;
+        };
     }, []);
 
-    const onHandleEvent = useCallback(
-        async (event: RecipeEvent) => {
+    // subscribe to events on mount
+    useEffect(() => {
+        function onHandleEvent(event: RecipeEventWithSessionContext) {
             switch (event.action) {
                 case "SESSION_CREATED":
-                    if (!hasParentProvider(parentSessionContext)) {
-                        setContext({
-                            doesSessionExist: true,
-                            userId: await getUserId(),
-                            jwtPayload: await getJWTPayloadSecurely(),
-                        });
-                    }
+                    setContext(event.sessionContext);
                     return;
                 case "REFRESH_SESSION":
-                    if (!hasParentProvider(parentSessionContext)) {
-                        setContext({
-                            doesSessionExist: true,
-                            userId: context === undefined ? "" : context.userId,
-                            jwtPayload: await getJWTPayloadSecurely(),
-                        });
-                    }
+                    setContext(event.sessionContext);
                     return;
                 case "SIGN_OUT":
-                    if (!hasParentProvider(parentSessionContext)) {
-                        setContext({
-                            doesSessionExist: false,
-                            userId: "",
-                            jwtPayload: {},
-                        });
+                    if (props.requireAuth !== true) {
+                        setContext(event.sessionContext);
                     }
                     return;
                 case "UNAUTHORISED":
-                    // If there's onSessionExpired handler, use it without setting state...
-                    if (props.onSessionExpired !== undefined) {
-                        props.onSessionExpired();
-                        return;
-                    }
-
-                    // ...else fallback to default behaviour
-                    if (!hasParentProvider(parentSessionContext)) {
-                        setContext({
-                            doesSessionExist: false,
-                            userId: "",
-                            jwtPayload: {},
-                        });
+                    if (props.requireAuth === true) {
+                        if (props.onSessionExpired !== undefined) {
+                            props.onSessionExpired();
+                        } else {
+                            props.redirectToLogin();
+                        }
+                    } else {
+                        setContext(event.sessionContext);
+                        if (props.onSessionExpired !== undefined) {
+                            props.onSessionExpired();
+                        }
                     }
                     return;
             }
-        },
-        [parentSessionContext, context, props]
-    );
-
-    useEffect(() => {
-        // If there's a parent provider, it already listens for events, so we don't have to
-        if (hasParentProvider(parentSessionContext)) {
-            setContext(parentSessionContext);
-            return;
-        }
-    }, [parentSessionContext]);
-
-    // Read and set the current state
-    useEffect(() => {
-        if (hasParentProvider(parentSessionContext)) {
-            return;
         }
 
-        if (context === undefined) {
-            setInitialContext();
-        }
-    }, [context, parentSessionContext, setInitialContext]);
-
-    useEffect(() => {
         // we return here cause addEventListener returns a function that removes
         // the listener, and this function will be called by useEffect when
         // onHandleEvent changes or if the component is unmounting.
         return session.current.addEventListener(onHandleEvent);
-    }, [onHandleEvent]);
+    }, []);
 
-    useEffect(() => {
-        if (context === undefined) {
-            return;
-        }
-
-        // If the session doesn't exist and we require auth, redirect to login
-        if (context.doesSessionExist === false && props.requireAuth === true) {
-            props.redirectToLogin();
-            return;
-        }
-    }, [context, props]);
-
-    // If the context is undefined, we are still waiting to know whether session exists.
     if (context === undefined) {
-        return null;
-    }
-
-    // if we are going to redirectToLogin, we should not render anything
-    if (props.requireAuth === true && context.doesSessionExist === false) {
         return null;
     }
 
