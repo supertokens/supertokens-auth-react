@@ -57,10 +57,13 @@ function SuperTokensRouteWithRecipeId({
     const featureComponentWithRecipeId =
         SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(normalisedPath);
 
-    if (featureComponentWithRecipeId === undefined) {
+    const WithRouterComponent = React.useRef<any>(
+        featureComponentWithRecipeId === undefined ? undefined : withRouter(featureComponentWithRecipeId.component)
+    );
+
+    if (WithRouterComponent.current === undefined) {
         return null;
     }
 
-    const WithRouterComponent = withRouter(featureComponentWithRecipeId.component);
-    return <WithRouterComponent />;
+    return <WithRouterComponent.current />;
 }

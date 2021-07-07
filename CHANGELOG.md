@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   In `emailVerificationAuth`, querying for is email verified only if a session exists
 -   A few test app issues
 -   If visiting auth page with session already existing, then we respect redirectTo query param
+-   Uses `useRef` hook when using `withRouter` so that the underlying component is not unmounted.
 
 ## Refactor
 
