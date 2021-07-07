@@ -303,6 +303,7 @@ export function Dashboard() {
         } else {
             await EmailPassword.signOut();
         }
+        window.location.href = "/auth";
     }
 
     async function fetchSessionInfoUsingAxios() {
