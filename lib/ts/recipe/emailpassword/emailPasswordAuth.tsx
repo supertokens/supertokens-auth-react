@@ -83,7 +83,10 @@ export default function EmailPasswordAuthWrapper({
 
     const Component = reactRouterDom.withRouter(EmailPasswordAuth);
     return (
-        <Component requireAuth={requireAuth} recipe={EmailPassword.getInstanceOrThrow()}>
+        <Component
+            onSessionExpired={onSessionExpired}
+            requireAuth={requireAuth}
+            recipe={EmailPassword.getInstanceOrThrow()}>
             {children}
         </Component>
     );

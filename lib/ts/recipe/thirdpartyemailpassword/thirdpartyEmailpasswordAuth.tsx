@@ -86,7 +86,10 @@ export default function ThirdPartyAuthWrapper({
 
     const Component = reactRouterDom.withRouter(ThirdPartyEmailPasswordAuth);
     return (
-        <Component requireAuth={requireAuth} recipe={ThirdPartyEmailPassword.getInstanceOrThrow()}>
+        <Component
+            onSessionExpired={onSessionExpired}
+            requireAuth={requireAuth}
+            recipe={ThirdPartyEmailPassword.getInstanceOrThrow()}>
             {children}
         </Component>
     );
