@@ -54,8 +54,10 @@ function SuperTokensRouteWithRecipeId({
     withRouter: WithRouterType;
 }): JSX.Element | null {
     const normalisedPath = new NormalisedURLPath(path);
-    const featureComponentWithRecipeId =
-        SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(normalisedPath);
+
+    const featureComponentWithRecipeId = React.useMemo(() => {
+        return SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(normalisedPath);
+    }, [normalisedPath.getAsStringDangerous()]);
 
     const WithRouterComponent = React.useRef<any>(
         featureComponentWithRecipeId === undefined ? undefined : withRouter(featureComponentWithRecipeId.component)
