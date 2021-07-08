@@ -18,6 +18,7 @@ import DarkTheme from "./Themes/Dark";
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import { logWithPrefix } from "./logWithPrefix";
+import { withRouter } from "react-router-dom";
 
 Session.addAxiosInterceptors(axios);
 
@@ -67,6 +68,9 @@ if (getQueryParams("useReactRouterDom")) {
 }
 
 const defaultToSignUp = window.localStorage.getItem("defaultToSignUp") === "true";
+
+const doNotUseReactRouterDom =
+    localStorage.getItem("useReactRouterDom") === "false" || getQueryParams("router") === "no-router";
 
 const theme = getTheme();
 
@@ -198,12 +202,9 @@ SuperTokens.init({
     recipeList,
 });
 
-let doNotUseReactRouterDom = localStorage.getItem("useReactRouterDom") === "false";
-
 /* App */
 function App() {
-    const router = getQueryParams("router");
-    if (router === "no-router" || doNotUseReactRouterDom) {
+    if (doNotUseReactRouterDom) {
         return <AppWithoutRouter />;
     }
 
@@ -280,17 +281,26 @@ export function Contact() {
     return <h2>/Contact</h2>;
 }
 
-export function DashboardNoAuthRequired() {
+export const DashboardNoAuthRequired = doNotUseReactRouterDom
+    ? DashboardNoAuthRequiredHelper
+    : withRouter(DashboardNoAuthRequiredHelper);
+
+export function DashboardNoAuthRequiredHelper(props) {
     let sessionContext = useSessionContext();
 
     if (sessionContext.doesSessionExist) {
-        return Dashboard(false);
+        return Dashboard({ redirectOnLogout: false, ...props });
     } else {
         return <div className="not-logged-in">Not logged in</div>;
     }
 }
 
-export function Dashboard(redirectOnLogout = true) {
+export const Dashboard = doNotUseReactRouterDom ? DashboardHelper : withRouter(DashboardHelper);
+
+export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
+    if (redirectOnLogout === undefined) {
+        redirectOnLogout = true;
+    }
     const [sessionInfoUsingAxios, setSessionInfoUsingAxios] = useState(undefined);
     const [sessionInfoUsingFetch, setSessionInfoUsingFetch] = useState(undefined);
 
@@ -304,7 +314,11 @@ export function Dashboard(redirectOnLogout = true) {
             await EmailPassword.signOut();
         }
         if (redirectOnLogout) {
-            window.location.href = "/auth";
+            if (props.history === undefined) {
+                window.location.href = "/auth";
+            } else {
+                props.history.push("/auth");
+            }
         }
     }
 

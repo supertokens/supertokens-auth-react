@@ -446,7 +446,6 @@ describe("SuperTokens SignIn", function () {
                 "ST_LOGS SESSION OVERRIDE SIGN_OUT",
                 "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
             ]);
         });
 
