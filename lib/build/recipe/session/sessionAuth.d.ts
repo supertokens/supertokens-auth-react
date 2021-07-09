@@ -4,7 +4,7 @@ declare type PropsWithoutAuth = {
 };
 declare type PropsWithAuth = {
     requireAuth: true;
-    redirectToLogin?: () => void;
+    redirectToLogin: () => void;
 };
 declare type Props = (PropsWithoutAuth | PropsWithAuth) & {
     onSessionExpired?: () => void;

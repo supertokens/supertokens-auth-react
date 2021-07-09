@@ -262,7 +262,7 @@ describe("SessionAuth", () => {
             });
 
             const result = render(
-                <SessionAuth requireAuth={true} onSessionExpired={mockOnSessionExpired}>
+                <SessionAuth requireAuth={true} redirectToLogin={() => {}}>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
@@ -309,7 +309,7 @@ describe("SessionAuth", () => {
 
             const result = render(
                 <SessionAuth onSessionExpired={mockOnSessionExpired}>
-                    <SessionAuth requireAuth={true} onSessionExpired={mockOnSessionExpired}>
+                    <SessionAuth requireAuth={true} redirectToLogin={() => {}}>
                         <MockSessionConsumer />
                     </SessionAuth>
                 </SessionAuth>

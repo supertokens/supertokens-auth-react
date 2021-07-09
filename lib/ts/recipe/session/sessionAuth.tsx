@@ -32,36 +32,22 @@ type PropsWithoutAuth = {
 
 type PropsWithAuth = {
     requireAuth: true;
-    redirectToLogin?: () => void;
+    redirectToLogin: () => void;
 };
 
 type Props = (PropsWithoutAuth | PropsWithAuth) & {
     onSessionExpired?: () => void;
 };
 
-const noop = () => {
-    return;
-};
-
 const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
-    if (props.requireAuth === true) {
-        if (props.redirectToLogin === undefined && props.onSessionExpired === undefined) {
-            throw new Error(
-                "You have to provide redirectToLogin or onSessionExpired function when requireAuth is true"
-            );
-        }
+    if (props.requireAuth === true && props.redirectToLogin === undefined) {
+        throw new Error("You have to provide redirectToLogin or onSessionExpired function when requireAuth is true");
     }
 
     const parentSessionContext = useContext(SessionContext);
     const [context, setContext] = useState<SessionContextType | undefined>(undefined);
 
     const session = useRef(Session.getInstanceOrThrow());
-
-    const redirectToLogin = props.requireAuth
-        ? props.redirectToLogin !== undefined
-            ? props.redirectToLogin
-            : noop
-        : noop;
 
     // on mount
     useEffect(() => {
@@ -90,16 +76,16 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
         };
 
         async function setInitialContextAndMaybeRedirect() {
+            const toSetContext = await buildContext();
+
             // if this component is unmounting, or the context has already
             // been set, then we don't need to proceed...
             if (cancelUseEffect || context !== undefined) {
                 return;
             }
 
-            const toSetContext = await buildContext();
-
             if (!toSetContext.doesSessionExist && props.requireAuth === true) {
-                redirectToLogin();
+                props.redirectToLogin();
             } else {
                 setContext(toSetContext);
             }
@@ -131,7 +117,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                         if (props.onSessionExpired !== undefined) {
                             props.onSessionExpired();
                         } else {
-                            redirectToLogin();
+                            props.redirectToLogin();
                         }
                     } else {
                         setContext(event.sessionContext);
