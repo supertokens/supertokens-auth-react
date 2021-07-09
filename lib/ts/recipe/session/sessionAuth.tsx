@@ -133,7 +133,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
         // the listener, and this function will be called by useEffect when
         // onHandleEvent changes or if the component is unmounting.
         return session.current.addEventListener(onHandleEvent);
-    }, []);
+    }, [props]);
 
     if (context === undefined) {
         return null;

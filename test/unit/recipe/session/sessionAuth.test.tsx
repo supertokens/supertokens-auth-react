@@ -165,7 +165,7 @@ describe("SessionAuth", () => {
             const result = render(<SessionAuth onSessionExpired={mockOnSessionExpired} />);
 
             // then
-            expect(mockOnSessionExpired).toHaveBeenCalled();
+            expect(mockOnSessionExpired).toHaveBeenCalledTimes(1);
         });
 
         test("update context on SESSION_CREATED", async () => {
