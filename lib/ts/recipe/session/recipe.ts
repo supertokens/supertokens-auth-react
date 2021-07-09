@@ -19,7 +19,7 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
-import { InputType, RecipeEventWithSessionContext } from "./types";
+import { InputType, RecipeEvent, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import sessionSdk from "supertokens-website";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
@@ -35,31 +35,12 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
 
         sessionSdk.init({
             ...config,
-            onHandleEvent: async (event) => {
+            onHandleEvent: (event) => {
                 if (config.onHandleEvent !== undefined) {
                     config.onHandleEvent(event);
                 }
-                if (event.action === "SESSION_CREATED" || event.action === "REFRESH_SESSION") {
-                    const jwtPayload = await this.getJWTPayloadSecurely();
-                    const userId = await this.getUserId();
-                    this.onHandleEvent({
-                        action: event.action,
-                        sessionContext: {
-                            doesSessionExist: true,
-                            userId,
-                            jwtPayload,
-                        },
-                    });
-                } else if (event.action === "SIGN_OUT" || event.action === "UNAUTHORISED") {
-                    this.onHandleEvent({
-                        action: event.action,
-                        sessionContext: {
-                            doesSessionExist: false,
-                            userId: "",
-                            jwtPayload: {},
-                        },
-                    });
-                }
+
+                this.notifyListeners(event);
             },
             preAPIHook: async (context) => {
                 const response = {
@@ -121,9 +102,38 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return () => this.eventListeners.delete(listener);
     };
 
-    private onHandleEvent = (ctx: RecipeEventWithSessionContext) => {
-        this.eventListeners.forEach((listener) => listener(ctx));
+    private notifyListeners = async (event: RecipeEvent) => {
+        const sessionContext = await this.getSessionContext(event);
+
+        this.eventListeners.forEach((listener) =>
+            listener({
+                sessionContext,
+                action: event.action,
+            })
+        );
     };
+
+    private async getSessionContext({ action }: RecipeEvent): Promise<SessionContextType> {
+        if (action === "SESSION_CREATED" || action === "REFRESH_SESSION") {
+            const [userId, jwtPayload] = await Promise.all([this.getUserId(), this.getJWTPayloadSecurely()]);
+
+            return {
+                doesSessionExist: true,
+                jwtPayload,
+                userId,
+            };
+        }
+
+        if (action === "SIGN_OUT" || action === "UNAUTHORISED") {
+            return {
+                doesSessionExist: false,
+                jwtPayload: {},
+                userId: "",
+            };
+        }
+
+        throw new Error(`Unhandled recipe event: ${action}`);
+    }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     static addAxiosInterceptors(axiosInstance: any): void {

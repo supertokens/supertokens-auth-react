@@ -13,7 +13,7 @@ export default class SessionAPIWrapper {
           })
         | ({
               requireAuth: true;
-              redirectToLogin: () => void;
+              redirectToLogin?: (() => void) | undefined;
           } & {
               onSessionExpired?: (() => void) | undefined;
           })
@@ -35,7 +35,7 @@ declare const SessionAuth: import("react").FunctionComponent<
       })
     | ({
           requireAuth: true;
-          redirectToLogin: () => void;
+          redirectToLogin?: (() => void) | undefined;
       } & {
           onSessionExpired?: (() => void) | undefined;
       })
