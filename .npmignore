@@ -22,3 +22,5 @@ frontendDriverInterfaceSupported.json
 examples/
 .prettierignore
 other/
+
+jest.config.js
