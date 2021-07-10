@@ -43,6 +43,11 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     if (props.requireAuth === true && props.redirectToLogin === undefined) {
         throw new Error("You have to provide redirectToLogin or onSessionExpired function when requireAuth is true");
     }
+    const requireAuth = useRef(props.requireAuth);
+
+    if (props.requireAuth !== requireAuth.current) {
+        throw new Error("requireAuth prop should not change.");
+    }
 
     const parentSessionContext = useContext(SessionContext);
     const [context, setContext] = useState<SessionContextType | undefined>(undefined);
