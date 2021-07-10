@@ -19,6 +19,8 @@ export type RecipeEvent = {
     action: "SIGN_OUT" | "REFRESH_SESSION" | "UNAUTHORISED" | "SESSION_CREATED";
 };
 
+export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextType };
+
 export type InputType = {
     apiDomain?: string;
     apiBasePath?: string;

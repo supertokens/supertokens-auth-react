@@ -19,7 +19,7 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
-import { InputType, RecipeEvent } from "./types";
+import { InputType, RecipeEvent, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import sessionSdk from "supertokens-website";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
@@ -28,18 +28,20 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static instance?: Session;
     static RECIPE_ID = "session";
 
-    private eventListeners = new Set<(ctx: RecipeEvent) => void>();
+    private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
 
     constructor(config: ConfigType) {
         super(config);
 
-        if (config.onHandleEvent !== undefined) {
-            this.addEventListener(config.onHandleEvent);
-        }
-
         sessionSdk.init({
             ...config,
-            onHandleEvent: this.onHandleEvent,
+            onHandleEvent: (event) => {
+                if (config.onHandleEvent !== undefined) {
+                    config.onHandleEvent(event);
+                }
+
+                this.notifyListeners(event);
+            },
             preAPIHook: async (context) => {
                 const response = {
                     ...context,
@@ -94,15 +96,44 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     /**
      * @returns Function to remove event listener
      */
-    addEventListener = (listener: (ctx: RecipeEvent) => void): (() => void) => {
+    addEventListener = (listener: (ctx: RecipeEventWithSessionContext) => void): (() => void) => {
         this.eventListeners.add(listener);
 
         return () => this.eventListeners.delete(listener);
     };
 
-    private onHandleEvent = (ctx: RecipeEvent) => {
-        this.eventListeners.forEach((listener) => listener(ctx));
+    private notifyListeners = async (event: RecipeEvent) => {
+        const sessionContext = await this.getSessionContext(event);
+
+        this.eventListeners.forEach((listener) =>
+            listener({
+                sessionContext,
+                action: event.action,
+            })
+        );
     };
+
+    private async getSessionContext({ action }: RecipeEvent): Promise<SessionContextType> {
+        if (action === "SESSION_CREATED" || action === "REFRESH_SESSION") {
+            const [userId, jwtPayload] = await Promise.all([this.getUserId(), this.getJWTPayloadSecurely()]);
+
+            return {
+                doesSessionExist: true,
+                jwtPayload,
+                userId,
+            };
+        }
+
+        if (action === "SIGN_OUT" || action === "UNAUTHORISED") {
+            return {
+                doesSessionExist: false,
+                jwtPayload: {},
+                userId: "",
+            };
+        }
+
+        throw new Error(`Unhandled recipe event: ${action}`);
+    }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     static addAxiosInterceptors(axiosInstance: any): void {

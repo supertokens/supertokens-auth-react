@@ -54,6 +54,7 @@ function SuperTokensRouteWithRecipeId({
     withRouter: WithRouterType;
 }): JSX.Element | null {
     const normalisedPath = new NormalisedURLPath(path);
+
     const featureComponentWithRecipeId =
         SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(normalisedPath);
 

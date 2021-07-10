@@ -226,7 +226,7 @@ describe("SuperTokens Email Verification", function () {
             assert.deepStrictEqual(title, "Email verification successful!");
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             const pathname = await page.evaluate(() => window.location.pathname);
-            assert.deepStrictEqual(pathname, "/dashboard");
+            assert.deepStrictEqual(pathname, "/auth");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -234,6 +234,7 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT EMAIL_VERIFIED_SUCCESSFUL",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
             ]);
         });
 
