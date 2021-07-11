@@ -20,7 +20,7 @@ import { jsx } from "@emotion/react";
 import { Fragment, PureComponent } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
-import { getWindowOrThrow } from "../../../../../utils";
+import { getCurrentNormalisedUrlPath } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
@@ -42,10 +42,8 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
 
     componentDidMount = async (): Promise<void> => {
         try {
-            const providerId =
-                getWindowOrThrow().location.pathname.split("/")[
-                    getWindowOrThrow().location.pathname.split("/").length - 1
-                ];
+            const pathName = getCurrentNormalisedUrlPath().getAsStringDangerous();
+            const providerId = pathName.split("/")[pathName.split("/").length - 1];
             const response = await this.props.recipe.recipeImpl.signInAndUp({
                 thirdPartyId: providerId,
                 config: this.props.recipe.config,

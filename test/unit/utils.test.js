@@ -31,6 +31,8 @@ describe("Config tests", function () {
             return new NormalisedURLPath(input).getAsStringDangerous();
         }
 
+        assert.strictEqual(normaliseURLPathOrThrowError(""), "");
+        assert.strictEqual(normaliseURLPathOrThrowError(" "), "");
         assert.strictEqual(normaliseURLPathOrThrowError("exists?email=john.doe%40gmail.com"), "/exists");
         assert.strictEqual(
             normaliseURLPathOrThrowError("/auth/email/exists?email=john.doe%40gmail.com"),

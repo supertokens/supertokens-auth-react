@@ -22,7 +22,7 @@ import RecipeModule from "../recipeModule";
 import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { RecipeFeatureComponentMap } from "../../types";
 import EmailVerification from "../emailverification/recipe";
-import { getWindowOrThrow } from "../../utils";
+import { getCurrentNormalisedUrlPath } from "../../utils";
 
 export default abstract class AuthRecipeModule<
     T,
@@ -95,7 +95,7 @@ export default abstract class AuthRecipeModule<
     };
 
     redirectToAuthWithRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
-        const redirectToPath = getWindowOrThrow().location.pathname;
+        const redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
         if (queryParams === undefined) {
             queryParams = {};
         }

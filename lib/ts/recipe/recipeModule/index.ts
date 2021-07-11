@@ -15,7 +15,7 @@
 
 import { RecipeFeatureComponentMap } from "../../types";
 
-import { appendQueryParamsToURL, getWindowOrThrow } from "../../utils";
+import { appendQueryParamsToURL, redirectWithFullPageReload, getWindowOrThrow, redirectWithHistory } from "../../utils";
 import { NormalisedConfig } from "./types";
 import NormalisedURLDomain from "../../normalisedURLDomain";
 
@@ -43,18 +43,18 @@ export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T
             const origin = new NormalisedURLDomain(getWindowOrThrow().location.origin).getAsStringDangerous();
             if (origin !== this.config.appInfo.websiteDomain.getAsStringDangerous()) {
                 redirectUrl = `${this.config.appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
-                getWindowOrThrow().location.href = redirectUrl;
+                redirectWithFullPageReload(redirectUrl);
                 return;
             }
 
             // If history was provided, use to redirect without reloading.
             if (history !== undefined) {
-                history.push(redirectUrl);
+                redirectWithHistory(redirectUrl, history);
                 return;
             }
         }
         // Otherwise, redirect in app.
-        getWindowOrThrow().location.href = redirectUrl;
+        redirectWithFullPageReload(redirectUrl);
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

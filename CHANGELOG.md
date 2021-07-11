@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   A few test app issues
 -   If visiting auth page with session already existing, then we respect redirectTo query param
 -   Uses `useRef` hook when using `withRouter` so that the underlying component is not unmounted.
+-   If `redirectToPath` is "", and we are not using react-router-dom, then we redirect to `/`, otherwise we might be stuck in an infinite redirect loop.
 
 ## Refactor
 

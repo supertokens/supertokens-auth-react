@@ -189,3 +189,17 @@ export function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean {
         return recipeIdFromSearch === recipeId;
     };
 }
+
+export function redirectWithFullPageReload(to: string): void {
+    if (to.trim() === "") {
+        to = "/";
+    }
+    getWindowOrThrow().location.href = to;
+}
+
+export function redirectWithHistory(to: string, history: any): void {
+    if (to.trim() === "") {
+        to = "/";
+    }
+    history.push(to);
+}

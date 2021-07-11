@@ -2,7 +2,7 @@ import { RecipeInterface, NormalisedConfig, StateObject } from "./types";
 import { User } from "../authRecipeModule/types";
 import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
-import { appendQueryParamsToURL, getWindowOrThrow, getQueryParams } from "../../utils";
+import { appendQueryParamsToURL, getWindowOrThrow, getQueryParams, redirectWithFullPageReload } from "../../utils";
 
 export default class RecipeImplementation implements RecipeInterface {
     querier: Querier;
@@ -159,7 +159,7 @@ export default class RecipeImplementation implements RecipeInterface {
         });
 
         // 4. Redirect to provider authorisation URL.
-        getWindowOrThrow().location.href = urlWithState;
+        redirectWithFullPageReload(urlWithState);
 
         return { status: "OK" };
     };
