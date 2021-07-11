@@ -125,7 +125,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                     setContext(event.sessionContext);
                     return;
                 case "SIGN_OUT":
-                    if (props.requireAuth !== false) {
+                    if (props.requireAuth !== true) {
                         setContext(event.sessionContext);
                     }
                     return;
