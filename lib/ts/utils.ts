@@ -213,7 +213,7 @@ export function setSessionStorage(key: string, value: string): void {
 }
 
 export function getSessionStorage(key: string): string {
-    return getWindowOrThrow().sessionStorage.setItem(key);
+    return getWindowOrThrow().sessionStorage.getItem(key);
 }
 
 export function getOriginOfPage(): NormalisedURLDomain {
