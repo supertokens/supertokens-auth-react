@@ -171,7 +171,7 @@ export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<s
     }
 }
 
-export function getWindowOrThrow(): any {
+function getWindowOrThrow(): any {
     // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
     if (typeof window === "undefined") {
         throw new Error(WINDOW_UNDEFINED_ERROR);
@@ -202,4 +202,20 @@ export function redirectWithHistory(to: string, history: any): void {
         to = "/";
     }
     history.push(to);
+}
+
+export function isIE(): boolean {
+    return getWindowOrThrow().document.documentMode !== undefined;
+}
+
+export function setSessionStorage(key: string, value: string): void {
+    getWindowOrThrow().sessionStorage.setItem(key, value);
+}
+
+export function getSessionStorage(key: string): string {
+    return getWindowOrThrow().sessionStorage.setItem(key);
+}
+
+export function getOriginOfPage(): NormalisedURLDomain {
+    return new NormalisedURLDomain(getWindowOrThrow().location.origin);
 }

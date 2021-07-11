@@ -201,7 +201,10 @@ describe("SuperTokens SignIn", function () {
             assert.deepStrictEqual(cookies[0].name, "sIRTFrontend");
             assert.deepStrictEqual(cookies[0].value, "remove");
 
-            await page.goto(`${TEST_CLIENT_BASE_URL}/dashboard-no-auth`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/dashboard-no-auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
 
             let text = await getTextInDashboardNoAuth(page);
 
@@ -424,7 +427,7 @@ describe("SuperTokens SignIn", function () {
 
             // Logout
             const logoutButton = await getLogoutButton(page);
-            await Promise.all([await logoutButton.click(), page.waitForNavigation()]);
+            await Promise.all([await logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             cookies = await page.cookies();

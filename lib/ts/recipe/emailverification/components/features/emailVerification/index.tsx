@@ -21,7 +21,7 @@ import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import { RecipeInterface } from "../../../types";
-import { getWindowOrThrow } from "../../../../../utils";
+import { getQueryParams } from "../../../../../utils";
 import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
@@ -37,8 +37,7 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
     constructor(props: Prop) {
         super(props);
 
-        const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
-        const token = urlParams.get("token");
+        const token = getQueryParams("token");
         if (token === null) {
             this.state = {
                 status: "LOADING",

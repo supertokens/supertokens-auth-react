@@ -2,7 +2,13 @@ import { RecipeInterface, NormalisedConfig, StateObject } from "./types";
 import { User } from "../authRecipeModule/types";
 import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
-import { appendQueryParamsToURL, getWindowOrThrow, getQueryParams, redirectWithFullPageReload } from "../../utils";
+import {
+    appendQueryParamsToURL,
+    getSessionStorage,
+    setSessionStorage,
+    getQueryParams,
+    redirectWithFullPageReload,
+} from "../../utils";
 
 export default class RecipeImplementation implements RecipeInterface {
     querier: Querier;
@@ -95,7 +101,7 @@ export default class RecipeImplementation implements RecipeInterface {
 
     getOAuthState = (): StateObject | undefined => {
         try {
-            const state = JSON.parse(getWindowOrThrow().sessionStorage.getItem("supertokens-oauth-state"));
+            const state = JSON.parse(getSessionStorage("supertokens-oauth-state"));
             if (state === null) {
                 return undefined;
             }
@@ -119,7 +125,7 @@ export default class RecipeImplementation implements RecipeInterface {
             rid: state.rid,
             expiresAt,
         });
-        getWindowOrThrow().sessionStorage.setItem("supertokens-oauth-state", value);
+        setSessionStorage("supertokens-oauth-state", value);
     };
 
     redirectToThirdPartyLogin = async (input: {

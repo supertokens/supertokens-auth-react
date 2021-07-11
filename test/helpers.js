@@ -468,7 +468,7 @@ export async function clickOnProviderButton(page, provider) {
 export async function loginWithGoogle(page) {
     await page.focus("input[type=email]");
     await page.keyboard.type(process.env.GOOGLE_EMAIL);
-    await Promise.all([page.click('input[name="signIn"]'), page.waitForNavigation()]);
+    await Promise.all([page.click('input[name="signIn"]'), page.waitForNavigation({ waitUntil: "networkidle0" })]);
     await page.focus("input[type=password]");
     await page.keyboard.type(process.env.GOOGLE_PASSWORD);
     // Submit login

@@ -15,9 +15,8 @@
 
 import { RecipeFeatureComponentMap } from "../../types";
 
-import { appendQueryParamsToURL, redirectWithFullPageReload, getWindowOrThrow, redirectWithHistory } from "../../utils";
+import { appendQueryParamsToURL, redirectWithFullPageReload, getOriginOfPage, redirectWithHistory } from "../../utils";
 import { NormalisedConfig } from "./types";
-import NormalisedURLDomain from "../../normalisedURLDomain";
 
 /*
  * Class.
@@ -40,7 +39,7 @@ export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T
             new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
         } catch (e) {
             // For multi tenancy, If mismatch between websiteDomain and current location, prepand URL relative path with websiteDomain.
-            const origin = new NormalisedURLDomain(getWindowOrThrow().location.origin).getAsStringDangerous();
+            const origin = getOriginOfPage().getAsStringDangerous();
             if (origin !== this.config.appInfo.websiteDomain.getAsStringDangerous()) {
                 redirectUrl = `${this.config.appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
                 redirectWithFullPageReload(redirectUrl);

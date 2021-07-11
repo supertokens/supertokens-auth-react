@@ -1,5 +1,5 @@
 import { Config, NormalisedConfig } from "./types";
-import { getWindowOrThrow } from "../../utils";
+import { isIE } from "../../utils";
 
 export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): NormalisedConfig<T, S, R> {
     let { preAPIHook, onHandleEvent, getRedirectionURL } = config;
@@ -39,9 +39,8 @@ function getShouldUseShadowDomBasedOnBrowser(useShadowDom?: boolean): boolean {
      * In order to disable unsupported shadowDom
      * https://github.com/supertokens/supertokens-auth-react/issues/99
      */
-    const isIE = getWindowOrThrow().document.documentMode !== undefined;
     // If browser is Internet Explorer, always disable shadow dom.
-    if (isIE === true) {
+    if (isIE() === true) {
         return false;
     }
 

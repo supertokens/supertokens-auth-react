@@ -179,7 +179,7 @@ describe("SuperTokens Third Party Email Password", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
             const emailPasswordUserId = await getUserIdWithFetch(page);
             const logoutButton = await getLogoutButton(page);
-            await Promise.all([await logoutButton.click(), page.waitForNavigation()]);
+            await Promise.all([await logoutButton.click(), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");

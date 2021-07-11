@@ -1,3 +1,4 @@
+import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
@@ -12,7 +13,10 @@ export declare function validateForm(
 ): Promise<FormFieldError[]>;
 export declare function getCurrentNormalisedUrlPath(): NormalisedURLPath;
 export declare function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string;
-export declare function getWindowOrThrow(): any;
 export declare function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean;
 export declare function redirectWithFullPageReload(to: string): void;
 export declare function redirectWithHistory(to: string, history: any): void;
+export declare function isIE(): boolean;
+export declare function setSessionStorage(key: string, value: string): void;
+export declare function getSessionStorage(key: string): string;
+export declare function getOriginOfPage(): NormalisedURLDomain;

@@ -23,7 +23,7 @@ import { PureComponent, Fragment } from "react";
 import { ResetPasswordUsingTokenTheme } from "../../..";
 import { FeatureBaseProps } from "../../../../../types";
 
-import { getWindowOrThrow } from "../../../../../utils";
+import { getQueryParams } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
@@ -39,8 +39,7 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
     constructor(props: PropType) {
         super(props);
 
-        const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
-        const token = urlParams.get("token");
+        const token = getQueryParams("token");
         if (token === null) {
             this.state = { token: undefined };
         } else {

@@ -25,7 +25,7 @@ import { ThemeBase } from "../themeBase";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../styles/styles";
-import { getWindowOrThrow } from "../../../../../utils";
+import { getQueryParams } from "../../../../../utils";
 
 /*
  * Component.
@@ -39,8 +39,7 @@ export class SignInAndUpTheme extends React.PureComponent<
     constructor(props: SignInAndUpThemeProps) {
         super(props);
 
-        const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
-        const show = urlParams.get("show");
+        const show = getQueryParams("show");
         let isSignUp = props.config.signInAndUpFeature.defaultToSignUp;
         if (show !== null) {
             isSignUp = show === "signup";

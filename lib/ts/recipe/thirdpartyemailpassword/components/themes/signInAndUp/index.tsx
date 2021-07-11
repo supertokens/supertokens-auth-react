@@ -32,7 +32,7 @@ import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../styles";
-import { getWindowOrThrow } from "../../../../../utils";
+import { getQueryParams } from "../../../../../utils";
 
 class SignInAndUpTheme extends React.PureComponent<
     ThirdPartyEmailPasswordSignInAndUpThemeProps,
@@ -45,8 +45,7 @@ class SignInAndUpTheme extends React.PureComponent<
     constructor(props: ThirdPartyEmailPasswordSignInAndUpThemeProps) {
         super(props);
 
-        const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
-        const show = urlParams.get("show");
+        const show = getQueryParams("show");
         let isSignUp = props.config.signInAndUpFeature.defaultToSignUp;
         if (show !== null) {
             isSignUp = show === "signup";
