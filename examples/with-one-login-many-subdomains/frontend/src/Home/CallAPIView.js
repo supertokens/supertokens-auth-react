@@ -9,15 +9,8 @@ export default function CallAPIView() {
 
     async function callAPIClicked() {
         // this will also automatically refresh the session if needed
-        try {
-            let response = await axios.get(getApiDomain() + "/sessioninfo");
-            window.alert("Session Information:\n" + JSON.stringify(response.data, null, 2));
-        } catch (err) {
-            if (err.status === 401) {
-                window.alert("Oops! Your session has expired!");
-                history.push("/auth");
-            }
-        }
+        let response = await axios.get(getApiDomain() + "/sessioninfo");
+        window.alert("Session Information:\n" + JSON.stringify(response.data, null, 2));
     }
 
     return (

@@ -37,7 +37,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: domainWhiteList,
+        origin: [domainWhiteList, "http://example.com:3000"],
         allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
         methods: ["GET", "PUT", "POST", "DELETE"],
         credentials: true,
