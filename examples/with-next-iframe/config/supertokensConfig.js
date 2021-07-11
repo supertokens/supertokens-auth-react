@@ -5,7 +5,7 @@ import ThirdPartyEmailPasswordReact from "supertokens-auth-react/recipe/thirdpar
 import SessionReact from "supertokens-auth-react/recipe/session";
 
 // const port = process.env.APP_PORT || 3000;
-export const websiteDomain = "https://988f94a941db.ngrok.io";
+export const websiteDomain = "https://c140f781e58e.ngrok.io";
 const apiBasePath = "/api/auth/";
 
 let appInfo = {
