@@ -50,7 +50,11 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     }
 
     const parentSessionContext = useContext(SessionContext);
-    const [context, setContext] = useState<SessionContextType | undefined>(undefined);
+
+    // assign the parent context here itself so that there is no flicker in the UI
+    const [context, setContext] = useState<SessionContextType | undefined>(
+        hasParentProvider(parentSessionContext) ? parentSessionContext : undefined
+    );
 
     const session = useRef(Session.getInstanceOrThrow());
 
@@ -85,21 +89,29 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
             // if this component is unmounting, or the context has already
             // been set, then we don't need to proceed...
-            if (cancelUseEffect || context !== undefined) {
+            if (cancelUseEffect) {
                 return;
             }
 
             if (!toSetContext.doesSessionExist && props.requireAuth === true) {
                 props.redirectToLogin();
             } else {
-                setContext(toSetContext);
+                if (context === undefined) {
+                    setContext(toSetContext);
+                }
             }
         }
-
-        setInitialContextAndMaybeRedirect();
-        return () => {
-            cancelUseEffect = true;
-        };
+        if (context === undefined) {
+            setInitialContextAndMaybeRedirect();
+            return () => {
+                cancelUseEffect = true;
+            };
+        } else {
+            if (!context.doesSessionExist && props.requireAuth === true) {
+                props.redirectToLogin();
+            }
+            return;
+        }
     }, []);
 
     // subscribe to events on mount
@@ -141,6 +153,13 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     }, [props]);
 
     if (context === undefined) {
+        return null;
+    }
+
+    // this will display null only if initially the below condition is true.
+    // cause if the session goes from existing to non existing, then
+    // the context is not updated if props.requireAuth === true
+    if (!context.doesSessionExist && props.requireAuth === true) {
         return null;
     }
 

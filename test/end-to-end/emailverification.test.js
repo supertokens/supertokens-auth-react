@@ -91,7 +91,10 @@ describe("SuperTokens Email Verification", function () {
         });
 
         it("Should redirect to login page when email verification screen is accessed without a valid session", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
         });
