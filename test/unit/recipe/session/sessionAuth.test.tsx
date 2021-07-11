@@ -338,4 +338,52 @@ describe("SessionAuth", () => {
             expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
         });
     });
+
+    describe("onSignOut", () => {
+        test("not update context when sign out event is fired and requireAuth is true", async () => {
+            // given
+            const mockOnSessionExpired = jest.fn();
+            let listenerFn: (event: any) => void;
+
+            MockSession.addEventListener.mockImplementation((fn) => {
+                listenerFn = fn;
+
+                return () => {};
+            });
+
+            MockSession.doesSessionExist.mockResolvedValue(true);
+            MockSession.getUserId.mockResolvedValue("before-id");
+            MockSession.getJWTPayloadSecurely.mockResolvedValue({
+                foo: "bar",
+            });
+
+            const result = render(
+                <SessionAuth requireAuth={true} redirectToLogin={() => {}}>
+                    <MockSessionConsumer />
+                </SessionAuth>
+            );
+
+            const UserId = () => result.findByText(/^userId/);
+            const JwtPayload = () => result.findByText(/^jwtPayload/);
+
+            expect(await UserId()).toHaveTextContent(`userId: before-id`);
+            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+
+            // when
+            await act(() =>
+                listenerFn({
+                    action: "SIGN_OUT",
+                    sessionContext: {
+                        doesSessionExist: false,
+                        jwtPayload: {},
+                        userId: "",
+                    },
+                })
+            );
+
+            // then
+            expect(await UserId()).toHaveTextContent(`userId: before-id`);
+            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+        });
+    });
 });
