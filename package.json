@@ -51,7 +51,7 @@
         "@emotion/server": "^11.1.0",
         "chroma-js": "^2.1.2",
         "react-shadow": "^19.0.2",
-        "supertokens-website": "github:supertokens/supertokens-website#8.1"
+        "supertokens-website": "^8.1.0"
     },
     "peerDependencies": {
         "react": ">=16.8.0"
