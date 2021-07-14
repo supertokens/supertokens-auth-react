@@ -24,7 +24,7 @@ import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/ve
 // So we have UserInputForAuthRecipeModule for AuthRecipeModule, and UserInput
 // for anyone who wants to use this recipe directly.
 export type UserInputForAuthRecipeModule = {
-    mode?: "OFF" | "REQUIRED";
+    mode?: "OFF" | "REQUIRED" | "OPTIONAL";
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
@@ -49,7 +49,7 @@ export type UserInput = UserInputForAuthRecipeModule & {
 export type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type NormalisedConfig = {
-    mode: "OFF" | "REQUIRED";
+    mode: "OFF" | "REQUIRED" | "OPTIONAL";
     disableDefaultImplementation: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
