@@ -57,7 +57,12 @@ export function getRedirectToPathFromURL(): string | undefined {
  * isTest
  */
 export function isTest(): boolean {
-    return process.env.TEST_MODE === "testing";
+    try {
+        return process.env.TEST_MODE === "testing";
+    } catch (err) {
+        // can get Uncaught ReferenceError: process is not defined error
+        return false;
+    }
 }
 
 export function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): NormalisedAppInfo {
