@@ -13,3 +13,5 @@
  * under the License.
  */
 export * from "../../lib/build/recipe/session";
+import * as _default from "../../lib/build/recipe/session";
+export default _default;

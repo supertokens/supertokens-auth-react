@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import axios from "axios";
 import Session from "../../../../recipe/session";
 import { useHistory } from "react-router-dom";

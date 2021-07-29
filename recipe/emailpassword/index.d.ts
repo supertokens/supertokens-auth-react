@@ -13,3 +13,5 @@
  * under the License.
  */
 export * from "../../lib/build/recipe/emailpassword";
+import * as _default from "../../lib/build/recipe/emailpassword";
+export default _default;
