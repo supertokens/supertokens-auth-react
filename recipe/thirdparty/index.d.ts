@@ -13,3 +13,5 @@
  * under the License.
  */
 export * from "../../lib/build/recipe/thirdparty";
+import * as _default from "../../lib/build/recipe/thirdparty";
+export default _default;
