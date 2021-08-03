@@ -26,13 +26,21 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
 
     const [isEmailVerified, setIsEmailVerified] = useState(false);
 
+    // we extract these three this way so that the useEffect below
+    // doesn't rerun just because the sessionContext or props objects
+    // have changed, even though the doesSessionExist & emailVerificationMode
+    // have not.
+    const doesSessionExist = sessionContext.doesSessionExist;
+    const emailVerificationMode = props.recipe.config.mode;
+    const propsRef = React.useRef(props);
+
     useEffect(() => {
         let thisUseEffectMustReturnImmediately = false;
         async function doTask() {
-            if (sessionContext.doesSessionExist && props.recipe.config.mode === "REQUIRED") {
+            if (doesSessionExist && emailVerificationMode === "REQUIRED") {
                 let isEmailVerified;
                 try {
-                    isEmailVerified = await props.recipe.isEmailVerified();
+                    isEmailVerified = await propsRef.current.recipe.isEmailVerified();
                 } catch (_) {
                     /* if there is an error, we assume that the email is verified
                      * so that the user can see the content on the page...
@@ -48,7 +56,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
                 }
 
                 if (isEmailVerified === false) {
-                    await props.recipe.redirect({ action: "VERIFY_EMAIL" }, props.history);
+                    await propsRef.current.recipe.redirect({ action: "VERIFY_EMAIL" }, propsRef.current.history);
                 } else {
                     setIsEmailVerified(true);
                 }
@@ -61,7 +69,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
             // We need this cause we are doing an async task in this.
             thisUseEffectMustReturnImmediately = true;
         };
-    }, [sessionContext, props]);
+    }, [doesSessionExist, emailVerificationMode]);
 
     if (sessionContext.doesSessionExist === false) {
         return <>{children}</>;
