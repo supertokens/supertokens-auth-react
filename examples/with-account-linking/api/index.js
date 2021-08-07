@@ -6,6 +6,7 @@ require("dotenv").config();
 let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
+let { override } = require("./override");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
@@ -14,7 +15,7 @@ const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${w
 
 supertokens.init({
     supertokens: {
-        connectionURI: "https://try.supertokens.io",
+        connectionURI: "http://localhost:3567",
     },
     appInfo: {
         appName: "SuperTokens Demo App",
@@ -32,13 +33,15 @@ supertokens.init({
                     clientSecret: process.env.GITHUB_CLIENT_SECRET,
                     clientId: process.env.GITHUB_CLIENT_ID,
                 }),
-
-                // we have commented the below because our app domain (ThirdPartyEmailPassword.demo.supertokens.io) is not approved by Facebook since it's only a demo app.
-                // ThirdPartyEmailPassword.Facebook({
-                //     clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-                //     clientId: process.env.FACEBOOK_CLIENT_ID
-                // })
             ],
+            override: {
+                functions: (ogImpl) => {
+                    // this returns a new set of functions
+                    // that use the customizes the behaviour of the
+                    // original implementation
+                    return override(ogImpl);
+                },
+            },
         }),
         Session.init(),
     ],
