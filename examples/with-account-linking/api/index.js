@@ -80,6 +80,7 @@ app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
 app.use(supertokens.errorHandler());
 
 app.use((err, req, res, next) => {
+    console.log(err);
     res.status(500).send("Internal error: " + err.message);
 });
 
