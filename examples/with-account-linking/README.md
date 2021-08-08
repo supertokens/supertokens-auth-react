@@ -39,8 +39,19 @@ SKIP_PREFLIGHT_CHECK=true
 
 ## How to store the data structures
 
-TODO:
+For this example, we store the required maps in memory (as JS objects). However, you will want to use a database for this and replace the queries to the maps we have with database queries.
+
+You will also want to change how custom userIds are generated to make them globally unique. We recommend using UUIDs, but you can also use an auto increment or ID column from your db.
 
 ## Drawbacks of this modification:
 
-TODO:
+-   Automatic account linking is not advisable from a security point of view. Let's take an example:
+
+    -   In this demo app, we have sign in with google and with github.
+    -   A user signs up with google to use this app.
+    -   They also have their person github account that uses their gmail ID.
+    -   If their github account is somehow compromised, then the attacker can then sign up to this app with their github account and then access this user's account.
+
+    Hence, by doing automatic account linking, we are increasing the attack surface. Instead, we recommend that if a user is sign up with another provider with the same email, we can notify them about this asking them to login with their original provider instead, or then to proceed with new account creation.
+
+-   The current implementation has some loss of information. With this implementation, when we query supertokens to get a user based on a custom userId, we get only one of the mapped users, and not all of them. This can be solved by saving the `ogImpl` instance in memory and using that directly to get user info based on supertokens' userId.
