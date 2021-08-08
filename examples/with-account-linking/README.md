@@ -52,6 +52,6 @@ You will also want to change how custom userIds are generated to make them globa
     -   They also have their person github account that uses their gmail ID.
     -   If their github account is somehow compromised, then the attacker can then sign up to this app with their github account and then access this user's account.
 
-    Hence, by doing automatic account linking, we are increasing the attack surface. Instead, we recommend that if a user is sign up with another provider with the same email, we can notify them about this asking them to login with their original provider instead, or then to proceed with new account creation.
+    Hence, by doing automatic account linking, we are increasing the attack surface for account takeover. Instead, we recommend that if a user is signing up with another provider but with the same email, we can ask them to login with their original provider instead, or then to proceed with new account creation.
 
 -   The current implementation has some loss of information. With this implementation, when we query supertokens to get a user based on a custom userId, we get only one of the mapped users, and not all of them. This can be solved by saving the `ogImpl` instance in memory and using that directly to get user info based on supertokens' userId.
