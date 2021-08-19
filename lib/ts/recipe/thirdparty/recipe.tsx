@@ -108,7 +108,7 @@ export default class ThirdParty extends AuthRecipeModule<
                 <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
                     authRecipe={this}
                     history={props.history}>
-                    <SignInAndUp recipe={this} {...props} />;
+                    <SignInAndUp recipe={this} {...props} />
                 </AuthWidgetWrapper>
             );
         } else if (componentName === "signinupcallback") {
