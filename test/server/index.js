@@ -18,6 +18,8 @@ let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
+let { verifySession } = require("supertokens-node/recipe/session/framework/express");
+let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let express = require("express");
 let cookieParser = require("cookie-parser");
 let bodyParser = require("body-parser");
@@ -134,7 +136,7 @@ app.use(
     })
 );
 
-app.use(SuperTokens.middleware());
+app.use(middleware());
 
 app.get("/ping", async (req, res) => {
     res.send("success");
@@ -163,7 +165,7 @@ app.post("/stopst", async (req, res) => {
 });
 
 // custom API that requires session verification
-app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
+app.get("/sessioninfo", verifySession(), async (req, res) => {
     let session = req.session;
     res.send({
         sessionHandle: session.getHandle(),
@@ -179,7 +181,7 @@ app.get("/token", async (_, res) => {
     });
 });
 
-app.use(SuperTokens.errorHandler());
+app.use(errorHandler());
 
 app.use(async (err, req, res, next) => {
     console.log(err);
