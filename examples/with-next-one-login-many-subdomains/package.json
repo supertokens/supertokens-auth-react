@@ -14,7 +14,7 @@
         "react": "17.0.1",
         "react-dom": "17.0.1",
         "supertokens-auth-react": "supertokens/supertokens-auth-react#0.15",
-        "supertokens-node": "supertokens/supertokens-node#6.0"
+        "supertokens-node": "supertokens/supertokens-node#7.0"
     },
     "license": "MIT"
 }
