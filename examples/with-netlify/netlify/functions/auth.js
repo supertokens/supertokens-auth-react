@@ -3,7 +3,7 @@ let supertokens = require("supertokens-node");
 let { middleware } = require("supertokens-node/framework/awsLambda");
 let middy = require("@middy/core");
 let cors = require("@middy/http-cors");
-let { getBackendConfig } = require("./config");
+let { getBackendConfig } = require("../../config/supertokensConfig");
 
 supertokens.init(getBackendConfig());
 
