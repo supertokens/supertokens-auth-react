@@ -52,7 +52,7 @@ export declare type Config = UserInput &
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
-    oAuthCallbackScreen: FeatureBaseConfig;
+    oAuthCallbackScreen?: FeatureBaseConfig;
     disableEmailPassword: boolean;
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
