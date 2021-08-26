@@ -54,6 +54,11 @@ if (mode !== null) {
     window.localStorage.setItem("mode", mode);
 }
 
+const themeQueryParams = getQueryParams("theme");
+if (themeQueryParams !== null) {
+    window.localStorage.setItem("useTheme", themeQueryParams);
+}
+
 const theme = getTheme();
 
 const rid = window.localStorage.getItem("rid") || "emailpassword";
@@ -116,7 +121,7 @@ function getTheme(): {
         style: {},
     };
 
-    const themeParams = getQueryParams("theme");
+    const themeParams = window.localStorage.getItem("useTheme");
 
     if (themeParams === "dark") {
         window.document.body.style.backgroundColor = "#1a1a1a";
