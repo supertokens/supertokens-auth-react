@@ -21,13 +21,5 @@ import { Fragment } from "react";
  */
 
 export function ThemeBase({ children }: { children: JSX.Element }): JSX.Element {
-    return (
-        <Fragment>
-            {children}
-            <link
-                href="//fonts.googleapis.com/css?family=Rubik:wght@300;400;600;500;700"
-                rel="stylesheet"
-                type="text/css"></link>
-        </Fragment>
-    );
+    return <Fragment>{children}</Fragment>;
 }

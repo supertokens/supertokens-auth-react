@@ -87,7 +87,8 @@ export const swingIn = keyframes`
 export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     return {
         container: {
-            fontFamily: "'Rubik', sans-serif",
+            fontFamily:
+                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
             margin: "12px auto",
             marginTop: "26px",
             marginBottom: "26px",
