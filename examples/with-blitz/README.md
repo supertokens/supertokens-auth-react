@@ -9,7 +9,7 @@ This is a [Blitz.js](https://github.com/blitz-js/blitz) app.
 Run your app in the development mode.
 
 ```
-blitz start
+yarn install && npx blitz start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
