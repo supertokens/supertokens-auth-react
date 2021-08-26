@@ -3,6 +3,7 @@ let EmailPassword = require("supertokens-node/recipe/emailpassword");
 
 function getBackendConfig() {
     return {
+        framework: "awsLambda",
         supertokens: {
             connectionURI: "https://try.supertokens.io",
         },
