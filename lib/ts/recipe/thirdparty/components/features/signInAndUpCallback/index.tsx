@@ -82,12 +82,15 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
     render = (): JSX.Element => {
         const componentOverrides = this.props.recipe.config.override.components;
 
+        const oAuthCallbackScreen = this.props.recipe.config.oAuthCallbackScreen;
+
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}
+                        styleFromInit={oAuthCallbackScreen.style}
                         getDefaultStyles={getStyles}>
                         <Fragment>
                             {/* No custom theme, use default. */}

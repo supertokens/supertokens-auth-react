@@ -40,6 +40,7 @@ export type ComponentOverrideMap = {
 
 export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
+    oAuthCallbackScreen?: FeatureBaseConfig;
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;
@@ -51,6 +52,7 @@ export type Config = UserInput &
 
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
+    oAuthCallbackScreen: FeatureBaseConfig;
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
         components: ComponentOverrideMap;
