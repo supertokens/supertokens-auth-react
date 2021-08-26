@@ -32,7 +32,7 @@ import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../styles";
-import { getQueryParams } from "../../../../../utils";
+import { getQueryParams, hasFontFamilyOverridden } from "../../../../../utils";
 
 class SignInAndUpTheme extends React.PureComponent<
     ThirdPartyEmailPasswordSignInAndUpThemeProps,
@@ -117,8 +117,10 @@ class SignInAndUpTheme extends React.PureComponent<
 }
 
 export default function SignInAndUpThemeWrapper(props: ThirdPartyEmailPasswordSignInAndUpThemeProps): JSX.Element {
+    const fontOverridden = hasFontFamilyOverridden(props.config.signInAndUpFeature.style);
+
     return (
-        <ThemeBase>
+        <ThemeBase fontOverridden={fontOverridden}>
             <StyleProvider
                 rawPalette={props.config.palette}
                 defaultPalette={defaultPalette}

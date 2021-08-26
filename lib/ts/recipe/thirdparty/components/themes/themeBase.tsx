@@ -20,14 +20,22 @@ import { Fragment } from "react";
  * Component
  */
 
-export function ThemeBase({ children }: { children: JSX.Element }): JSX.Element {
+export function ThemeBase({
+    children,
+    fontOverridden,
+}: {
+    children: JSX.Element;
+    fontOverridden: boolean;
+}): JSX.Element {
     return (
         <Fragment>
             {children}
-            <link
-                href="//fonts.googleapis.com/css?family=Rubik:wght@300;400;600;500;700"
-                rel="stylesheet"
-                type="text/css"></link>
+            {fontOverridden && (
+                <link
+                    href="//fonts.googleapis.com/css?family=Rubik:wght@300;400;600;500;700"
+                    rel="stylesheet"
+                    type="text/css"></link>
+            )}
         </Fragment>
     );
 }

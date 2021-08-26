@@ -23,6 +23,7 @@ import { SignUpFooter } from "./signUpFooter";
 import { SignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 import { ProvidersForm } from "./providersForm";
+import { hasFontFamilyOverridden } from "../../../../../utils";
 /*
  * Component.
  */
@@ -30,7 +31,7 @@ import { ProvidersForm } from "./providersForm";
 function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
     const styles = useContext(StyleContext);
     return (
-        <ThemeBase>
+        <ThemeBase fontOverridden={hasFontFamilyOverridden(styles)}>
             <div data-supertokens="container" css={styles.container}>
                 <div data-supertokens="row" css={styles.row}>
                     <div data-supertokens="headerTitle" css={styles.headerTitle}>

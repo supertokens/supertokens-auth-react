@@ -19,6 +19,7 @@
 import * as React from "react";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
+import { hasFontFamilyOverridden } from "../../../../../utils";
 import { getStyles } from "../../../../emailpassword/components/themes/styles/styles";
 import { ThemeBase } from "../../../../emailpassword/components/themes/themeBase";
 import { EmailVerificationThemeProps } from "../../../types";
@@ -60,8 +61,15 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
 }
 
 function EmailVerificationThemeWrapper(props: EmailVerificationThemeProps): JSX.Element {
+    const fontOverriddenFontOverridden = hasFontFamilyOverridden(
+        props.sendVerifyEmailScreen && props.sendVerifyEmailScreen.styleFromInit
+    );
+    const verifyEmailLinkClickedScreenFontOverridden = hasFontFamilyOverridden(
+        props.verifyEmailLinkClickedScreen && props.verifyEmailLinkClickedScreen.styleFromInit
+    );
+
     return (
-        <ThemeBase>
+        <ThemeBase fontOverridden={fontOverriddenFontOverridden && verifyEmailLinkClickedScreenFontOverridden}>
             <EmailVerificationTheme {...props} />
         </ThemeBase>
     );
