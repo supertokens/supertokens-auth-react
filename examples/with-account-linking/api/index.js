@@ -6,7 +6,7 @@ require("dotenv").config();
 let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
-let { middleware, errorHandler } = require("supertokens-node/framework/express");
+let supertokensExpress = require("supertokens-node/framework/express");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let { override } = require("./override");
 
@@ -67,7 +67,7 @@ app.use(
         contentSecurityPolicy: false,
     })
 );
-app.use(middleware());
+app.use(supertokensExpress.middleware());
 
 // custom API that requires session verification
 app.get("/sessioninfo", verifySession(), async (req, res) => {
@@ -80,7 +80,7 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
     });
 });
 
-app.use(errorHandler());
+app.use(supertokensExpress.errorHandler());
 
 app.use((err, req, res, next) => {
     console.log(err);
