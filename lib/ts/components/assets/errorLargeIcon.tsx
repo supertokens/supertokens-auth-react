@@ -36,6 +36,7 @@ export default function ErrorLargeIcon({ color }: { color: string }): JSX.Elemen
                 </g>
                 <text
                     fill="#fff"
+                    font-family="Rubik-Bold, Rubik"
                     font-size="18px"
                     fontWeight="700"
                     transform="translate(-824.894 -352.483) translate(838.997 377.437)">
