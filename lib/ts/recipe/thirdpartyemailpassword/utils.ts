@@ -51,9 +51,13 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
         config.signInAndUpFeature
     );
 
+    const oAuthCallbackScreen =
+        config.oAuthCallbackScreen === undefined ? {} : { style: config.oAuthCallbackScreen.style };
+
     return {
         ...normaliseAuthRecipeModuleConfig(config),
         signInAndUpFeature,
+        oAuthCallbackScreen,
         resetPasswordUsingTokenFeature: config.resetPasswordUsingTokenFeature,
         disableEmailPassword,
         override,

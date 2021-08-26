@@ -361,6 +361,9 @@ function getThirdPartyConfigs() {
                 },
             ],
         },
+        oAuthCallbackScreen: {
+            style: theme.style,
+        },
         override: {
             functions: (oI) => {
                 return {
@@ -424,6 +427,9 @@ function getThirdPartyEmailPasswordConfigs() {
                     name: "Custom",
                 },
             ],
+        },
+        oAuthCallbackScreen: {
+            style: theme.style,
         },
         override: {
             components: {

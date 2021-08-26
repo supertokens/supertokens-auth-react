@@ -122,6 +122,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
                           palette: this.config.palette,
                           preAPIHook: this.config.preAPIHook,
                           signInAndUpFeature: this.config.signInAndUpFeature,
+                          oAuthCallbackScreen: this.config.oAuthCallbackScreen,
                           useShadowDom: this.config.useShadowDom,
                           override: {
                               // eslint-disable-next-line @typescript-eslint/no-unused-vars

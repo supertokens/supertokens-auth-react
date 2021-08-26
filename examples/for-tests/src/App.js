@@ -558,6 +558,10 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
                 },
             ],
         },
+
+        oAuthCallbackScreen: {
+            style: theme.style,
+        },
     });
 }
 
@@ -666,5 +670,9 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
             ],
         },
         disableEmailPassword: false,
+
+        oAuthCallbackScreen: {
+            style: theme.style,
+        },
     });
 }

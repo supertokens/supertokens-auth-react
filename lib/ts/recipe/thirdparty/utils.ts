@@ -36,6 +36,9 @@ export function normaliseThirdPartyConfig(config: Config): NormalisedConfig {
         config.signInAndUpFeature
     );
 
+    const oAuthCallbackScreen =
+        config.oAuthCallbackScreen === undefined ? {} : { style: config.oAuthCallbackScreen.style };
+
     const override: any = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
         components: {},
@@ -45,6 +48,7 @@ export function normaliseThirdPartyConfig(config: Config): NormalisedConfig {
     return {
         ...normaliseRecipeModuleConfig(config),
         signInAndUpFeature,
+        oAuthCallbackScreen,
         override,
     };
 }

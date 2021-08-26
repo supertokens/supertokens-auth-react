@@ -39,6 +39,7 @@ export declare type ComponentOverrideMap = EmailPasswordOverrideMap &
     };
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
+    oAuthCallbackScreen?: FeatureBaseConfig;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     disableEmailPassword?: boolean;
     override?: {
@@ -51,6 +52,7 @@ export declare type Config = UserInput &
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
+    oAuthCallbackScreen: FeatureBaseConfig;
     disableEmailPassword: boolean;
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
