@@ -1,4 +1,4 @@
-import { NormalisedAppInfo } from "../../types";
+import { NormalisedAppInfo, Styles } from "../../types";
 
 export type UserInput<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
     getRedirectionURL?: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
@@ -11,6 +11,7 @@ export type UserInput<GetRedirectionURLContextType, PreAPIHookContextType, OnHan
 export type Config<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
     recipeId: string;
     appInfo: NormalisedAppInfo;
+    rootInputStyle?: Styles;
 } & UserInput<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType>;
 
 export type NormalisedConfig<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
@@ -21,4 +22,5 @@ export type NormalisedConfig<GetRedirectionURLContextType, PreAPIHookContextType
     onHandleEvent: (context: OnHandleEventContextType) => void;
     useShadowDom: boolean;
     palette: Record<string, string>;
+    rootStyle: Styles;
 };

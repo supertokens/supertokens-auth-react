@@ -7,9 +7,11 @@ import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recip
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction<any, any, any, any>[];
+    style?: Styles;
 };
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
-    appInfo: NormalisedAppInfo
+    appInfo: NormalisedAppInfo,
+    rootInputStyle?: Styles
 ) => RecipeModule<T, S, R, N>;
 export declare type AppInfoUserInput = {
     appName: string;
