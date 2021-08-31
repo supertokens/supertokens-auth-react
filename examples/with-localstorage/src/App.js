@@ -48,7 +48,8 @@ axios.interceptors.response.use(
             const respCookies = res.headers["st-cookie"];
 
             if (respCookies) {
-                localStorage.setItem("st-cookie", respCookies);
+                const splitCookies = parseSetCookieString(splitCookiesString(respCookies), { decodeValues: false });
+                localStorage.setItem("st-cookie", splitCookies.map((c) => `${c.name}=${c.value}`).join("; "));
             }
         }
         return res;
@@ -59,7 +60,8 @@ axios.interceptors.response.use(
             const respCookies = res.headers["st-cookie"];
 
             if (respCookies) {
-                localStorage.setItem("st-cookie", respCookies);
+                const splitCookies = parseSetCookieString(splitCookiesString(respCookies), { decodeValues: false });
+                localStorage.setItem("st-cookie", splitCookies.map((c) => `${c.name}=${c.value}`).join("; "));
             }
         }
         return Promise.reject(error);
