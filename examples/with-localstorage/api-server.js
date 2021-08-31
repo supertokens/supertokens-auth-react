@@ -51,6 +51,14 @@ supertokens.init({
                             return session;
                         },
 
+                        refreshSession: async (input) => {
+                            const session = await origImpl.refreshSession(input);
+
+                            updateHeaders(session.res);
+
+                            return session;
+                        },
+
                         getSession: async (input) => {
                             const stCookies = input.req.headers["st-cookie"];
 
