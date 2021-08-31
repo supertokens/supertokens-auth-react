@@ -11,17 +11,22 @@ const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
 
-/**
- *
- * @param {Response} res
- */
 function updateHeaders(res) {
-    const cookies = res.getHeader("Set-Cookie");
-    if (cookies) {
-        res.setHeader("st-cookie", cookies);
+    if (!res.headersSent) {
+        const cookies = res.getHeader("Set-Cookie");
+        if (cookies) {
+            // We need to copy the Set-Cookie header into another one, since Set-Cookie is not accessible on the frontend
+            res.setHeader("st-cookie", cookies);
+            // We need to make the new header accessible to the frontend
+            res.setHeader(
+                "access-control-expose-headers",
+                `st-cookie, ${res.getHeader("access-control-expose-headers")}`
+            );
+
+            // This is not strictly necessary
+            res.removeHeader("Set-Cookie");
+        }
     }
-    res.setHeader("access-control-expose-headers", `st-cookie, ${res.getHeader("access-control-expose-headers")}`);
-    res.removeHeader("Set-Cookie"); // This is not strictly necessary
 }
 
 supertokens.init({

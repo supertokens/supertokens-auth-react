@@ -22,16 +22,26 @@ For a detailed comparison please see [our blog](https://supertokens.io/blog/cook
 
 ## How the modification works
 
+The basic idea behind it is that we can use a custom header to transfer tokens. This way, the frontend can access and
+store them in localstorage or wherever desired and use them to authenticate requests.
+
+### Backend
+
+On the backend, we need to do two things:
+
+-   Load tokens from a custom header instead of the `Cookie` header
+-   Use a custom header to communicate changes to the tokens instead of setting them as cookies
+
 ### Frontend
 
 On the frontend we need to do two things:
 
--   before making a request to the API, we need to add a special header that contains the information we would normally send as cookies
--   after getting a response from the API, we need to inspect the headers and store what we would normally store in cookies
+-   When making a request to the API, we need to add a custom header that contains the tokens we would normally send as cookies
+-   After getting a response from the API, we need to inspect the headers and store the contents of a custom header
 
-We can achieve these by replacing the global fetch function with a "patched" version. This must be done before initializing SuperTokens (calling SuperTokens.init) as the SDK uses the fetch function internally.
+We can achieve these by replacing the global fetch function with a "patched" version. This must be done before initializing SuperTokens (calling `SuperTokens.init`) as the SDK uses the fetch function internally.
 
-If you use Axios to make requests, you also need to add an interceptor that will do the same.
+If you use `axios` (or a similar library) to make requests, you also need to add an interceptor that will do the same.
 
 ## Project setup
 
