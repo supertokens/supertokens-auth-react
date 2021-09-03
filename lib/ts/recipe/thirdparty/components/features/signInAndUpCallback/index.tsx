@@ -67,6 +67,26 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
             if (response.status === "OK") {
                 const state = this.props.recipe.recipeImpl.getOAuthState();
                 const redirectToPath = state === undefined ? undefined : state.redirectToPath;
+
+                if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
+                    let isEmailVerified = true;
+                    try {
+                        isEmailVerified = await this.props.recipe.emailVerification.isEmailVerified();
+                    } catch (ignored) {}
+                    if (!isEmailVerified) {
+                        await this.props.recipe.savePostEmailVerificationSuccessRedirectState({
+                            redirectToPath: redirectToPath,
+                            isNewUser: true,
+                            action: "SUCCESS",
+                        });
+                        return this.props.recipe.emailVerification.redirect(
+                            {
+                                action: "VERIFY_EMAIL",
+                            },
+                            this.props.history
+                        );
+                    }
+                }
                 return this.props.recipe.redirect(
                     { action: "SUCCESS", isNewUser: response.createdNewUser, redirectToPath },
                     this.props.history
