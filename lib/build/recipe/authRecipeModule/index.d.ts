@@ -15,6 +15,7 @@ export default abstract class AuthRecipeModule<
             emailVerificationInstance: EmailVerification | undefined;
         }
     );
+    savePostEmailVerificationSuccessRedirectState: (context: T) => Promise<void>;
     getAuthRecipeModuleDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getAuthRecipeModuleFeatureComponent: (componentName: "emailverification", props: any) => JSX.Element;
     getAuthRecipeModuleFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;

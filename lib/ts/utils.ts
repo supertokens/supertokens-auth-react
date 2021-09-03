@@ -224,3 +224,19 @@ export function getSessionStorage(key: string): string {
 export function getOriginOfPage(): NormalisedURLDomain {
     return new NormalisedURLDomain(getWindowOrThrow().location.origin);
 }
+
+export function getLocalStorage(key: string): string | null {
+    const res = getWindowOrThrow().localStorage.getItem(key);
+    if (res === null || res === undefined) {
+        return null;
+    }
+    return res;
+}
+
+export function setLocalStorage(key: string, value: string): void {
+    getWindowOrThrow().localStorage.setItem(key, value);
+}
+
+export function removeFromLocalStorage(key: string): void {
+    getWindowOrThrow().localStorage.removeItem(key);
+}
