@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
--   Added option to apply styling to all components
+-   Added option to apply styling to all components: https://github.com/supertokens/supertokens-auth-react/issues/312
 
 ## [0.15.6] -
 
