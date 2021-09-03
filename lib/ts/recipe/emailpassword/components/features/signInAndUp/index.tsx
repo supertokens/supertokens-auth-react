@@ -55,6 +55,26 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
             return;
         }
 
+        if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
+            let isEmailVerified = true;
+            try {
+                isEmailVerified = await this.props.recipe.emailVerification.isEmailVerified();
+            } catch (ignored) {}
+            if (!isEmailVerified) {
+                await this.props.recipe.savePostEmailVerificationSuccessRedirectState({
+                    redirectToPath: getRedirectToPathFromURL(),
+                    isNewUser: false,
+                    action: "SUCCESS",
+                });
+                return this.props.recipe.emailVerification.redirect(
+                    {
+                        action: "VERIFY_EMAIL",
+                    },
+                    this.props.history
+                );
+            }
+        }
+
         return await this.props.recipe.redirect(
             {
                 action: "SUCCESS",
@@ -71,6 +91,11 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         }
 
         if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
+            await this.props.recipe.savePostEmailVerificationSuccessRedirectState({
+                redirectToPath: getRedirectToPathFromURL(),
+                isNewUser: true,
+                action: "SUCCESS",
+            });
             return await this.props.recipe.emailVerification.redirect(
                 {
                     action: "VERIFY_EMAIL",
