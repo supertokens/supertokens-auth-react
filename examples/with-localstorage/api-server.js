@@ -23,7 +23,7 @@ function updateHeaders(res) {
                 `st-cookie, ${res.getHeader("access-control-expose-headers")}`
             );
 
-            // This is not strictly necessary
+            // This is not strictly necessary, it's more for testing purposes
             res.removeHeader("Set-Cookie");
         }
     }
@@ -49,29 +49,48 @@ supertokens.init({
                         ...origImpl,
 
                         createNewSession: async (input) => {
+                            // We start with calling the original implementation because it doesn't need a session
                             const session = await origImpl.createNewSession(input);
 
+                            // We need to copy the Set-Cookies header into the custom header in the response.
                             updateHeaders(session.res);
 
                             return session;
                         },
 
                         refreshSession: async (input) => {
+                            // Before calling the original implementation, we need to check the custom header.
+                            const stCookies = input.req.headers["st-cookie"];
+
+                            // If it was defined, we should overwrite the original cookies header with it.
+                            // Since the format matches, SuperTokens can access and parse them.
+                            if (stCookies) {
+                                input.req.headers["cookie"] = input.req.headers["st-cookie"];
+                            }
+
+                            // Calling the original implementation
                             const session = await origImpl.refreshSession(input);
 
+                            // We need to copy the Set-Cookies header into the custom header in the response.
                             updateHeaders(session.res);
 
                             return session;
                         },
 
                         getSession: async (input) => {
+                            // Before calling the original implementation, we need to check the custom header.
                             const stCookies = input.req.headers["st-cookie"];
 
+                            // If it was defined, we should overwrite the original cookies header with it.
+                            // Since the format matches, SuperTokens can access and parse them.
                             if (stCookies) {
                                 input.req.headers["cookie"] = input.req.headers["st-cookie"];
                             }
+
+                            // Calling the original implementation
                             const res = origImpl.getSession(input);
 
+                            // This method can change cookie values, so we need to copy the Set-Cookies header into the custom header in the response.
                             updateHeaders(input.res);
 
                             return res;
@@ -84,32 +103,11 @@ supertokens.init({
                         ...origImpl,
 
                         signOutPOST: async (input) => {
+                            // We don't need to overwrite cookies before calling the original implementation since it loads the session using the
+                            // getSession function we already handled above
                             await origImpl.signOutPOST(input);
 
-                            updateHeaders(input.options.res);
-                        },
-
-                        verifySession: async (input) => {
-                            const stCookies = input.options.req.headers["st-cookie"];
-
-                            if (stCookies) {
-                                input.options.req.headers["cookie"] = input.options.req.headers["st-cookie"];
-                            }
-
-                            await origImpl.verifySession(input);
-
-                            updateHeaders(input.options.res);
-                        },
-
-                        refreshPOST: async (input) => {
-                            const stCookies = input.options.req.headers["st-cookie"];
-
-                            if (stCookies) {
-                                input.options.req.headers["cookie"] = input.options.req.headers["st-cookie"];
-                            }
-
-                            await origImpl.refreshPOST(input);
-
+                            // signOutPOST clears cookie values, so we need to copy the Set-Cookies header into the custom header in the response.
                             updateHeaders(input.options.res);
                         },
                     };
