@@ -111,6 +111,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}
                         styleFromInit={oAuthCallbackScreen.style}
+                        rootStyleFromInit={this.props.recipe.config.rootStyle}
                         getDefaultStyles={getStyles}>
                         <Fragment>
                             {/* No custom theme, use default. */}

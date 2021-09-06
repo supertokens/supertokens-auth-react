@@ -42,6 +42,7 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
                 rawPalette={props.config.palette}
                 defaultPalette={defaultPalette}
                 styleFromInit={props.submitNewPasswordForm.styleFromInit}
+                rootStyleFromInit={props.config.rootStyle}
                 getDefaultStyles={getStyles}>
                 <SubmitNewPassword {...props.submitNewPasswordForm} />
             </StyleProvider>
@@ -54,6 +55,7 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
             rawPalette={props.config.palette}
             defaultPalette={defaultPalette}
             styleFromInit={props.enterEmailForm.styleFromInit}
+            rootStyleFromInit={props.config.rootStyle}
             getDefaultStyles={getStyles}>
             <ResetPasswordEmail {...props.enterEmailForm} />
         </StyleProvider>
