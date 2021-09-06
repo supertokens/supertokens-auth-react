@@ -24,8 +24,7 @@ import { ResetPasswordEmail } from "./resetPasswordEmail";
 import { SubmitNewPassword } from "./submitNewPassword";
 import { getStyles } from "../styles/styles";
 import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette } from "../../../../../styles/styles";
-import { hasFontFamilyOverridden } from "../../../../../utils";
+import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 
 /*
  * Component.
@@ -64,17 +63,10 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
 }
 
 function ResetPasswordUsingTokenThemeWrapper(props: ResetPasswordUsingTokenThemeProps): JSX.Element {
-    const enterEmailFormFontOverridden = hasFontFamilyOverridden(
-        props.enterEmailForm.styleFromInit && props.enterEmailForm.styleFromInit
-    );
-    const submitNewPasswordFormFontOverridden = hasFontFamilyOverridden(
-        props.submitNewPasswordForm &&
-            props.submitNewPasswordForm.styleFromInit &&
-            props.submitNewPasswordForm.styleFromInit
-    );
+    const hasFont = hasFontDefined(props.config.rootStyle);
 
     return (
-        <ThemeBase fontOverridden={enterEmailFormFontOverridden && submitNewPasswordFormFontOverridden}>
+        <ThemeBase loadDefaultFont={!hasFont}>
             <ResetPasswordUsingTokenTheme {...props} />
         </ThemeBase>
     );

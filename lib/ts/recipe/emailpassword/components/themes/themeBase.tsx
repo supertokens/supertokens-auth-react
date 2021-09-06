@@ -22,15 +22,15 @@ import { Fragment } from "react";
 
 export function ThemeBase({
     children,
-    fontOverridden,
+    loadDefaultFont,
 }: {
     children: JSX.Element;
-    fontOverridden: boolean;
+    loadDefaultFont: boolean;
 }): JSX.Element {
     return (
         <Fragment>
             {children}
-            {!fontOverridden && (
+            {loadDefaultFont && (
                 <link
                     href="//fonts.googleapis.com/css?family=Rubik:wght@300;400;600;500;700"
                     rel="stylesheet"

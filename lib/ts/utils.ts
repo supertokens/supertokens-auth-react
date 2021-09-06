@@ -22,7 +22,7 @@ import {
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField, Styles } from "./types";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 
 /*
  * getRecipeIdFromPath
@@ -223,10 +223,6 @@ export function getSessionStorage(key: string): string {
 
 export function getOriginOfPage(): NormalisedURLDomain {
     return new NormalisedURLDomain(getWindowOrThrow().location.origin);
-}
-
-export function hasFontFamilyOverridden(style: Styles | undefined) {
-    return (style && style.container && style.container.fontFamily) !== undefined;
 }
 
 export function getLocalStorage(key: string): string | null {

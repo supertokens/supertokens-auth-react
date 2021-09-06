@@ -23,9 +23,9 @@ import { SignUp } from "./signUp";
 import { SignIn } from "./signIn";
 import { ThemeBase } from "../themeBase";
 import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette } from "../../../../../styles/styles";
+import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 import { getStyles } from "../styles/styles";
-import { getQueryParams, hasFontFamilyOverridden } from "../../../../../utils";
+import { getQueryParams } from "../../../../../utils";
 
 /*
  * Component.
@@ -100,15 +100,10 @@ export class SignInAndUpTheme extends React.PureComponent<
 }
 
 function SignInAndUpThemeWrapper(props: SignInAndUpThemeProps): JSX.Element {
-    const signInFontOverridden = hasFontFamilyOverridden(
-        props.signInForm.styleFromInit && props.signInForm.styleFromInit
-    );
-    const signUpFormFontOverridden = hasFontFamilyOverridden(
-        props.signUpForm.styleFromInit && props.signUpForm.styleFromInit
-    );
+    const hasFont = hasFontDefined(props.config.rootStyle);
 
     return (
-        <ThemeBase fontOverridden={signInFontOverridden && signUpFormFontOverridden}>
+        <ThemeBase loadDefaultFont={!hasFont}>
             <SignInAndUpTheme {...props} />
         </ThemeBase>
     );
