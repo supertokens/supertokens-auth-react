@@ -22,7 +22,7 @@ import RecipeModule from "../recipeModule";
 import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { RecipeFeatureComponentMap } from "../../types";
 import EmailVerification from "../emailverification/recipe";
-import { getCurrentNormalisedUrlPath } from "../../utils";
+import { getCurrentNormalisedUrlPath, setLocalStorage, getLocalStorage, removeFromLocalStorage } from "../../utils";
 
 export default abstract class AuthRecipeModule<
     T,
@@ -46,13 +46,21 @@ export default abstract class AuthRecipeModule<
                       recipeId: config.recipeId,
                       signOut: this.signOut,
                       postVerificationRedirect: async (history: any) => {
-                          this.redirect(
-                              {
-                                  action: "SUCCESS",
-                                  isNewUser: false,
-                              },
-                              history
-                          );
+                          try {
+                              // if there is a SUCCESS context saved in localstorage, we use that in the redirect.
+                              const successContextStr = getLocalStorage("supertokens-post-email-verification");
+                              if (successContextStr !== null) {
+                                  this.redirect(JSON.parse(successContextStr), history);
+                              } else {
+                                  // else, we do the default behaviour
+                                  this.redirect({
+                                      action: "SUCCESS",
+                                      isNewUser: false,
+                                  });
+                              }
+                          } finally {
+                              removeFromLocalStorage("supertokens-post-email-verification");
+                          }
                       },
                       redirectToSignIn: async (history: any) => {
                           this.redirectToAuthWithoutRedirectToPath(undefined, history);
@@ -67,6 +75,14 @@ export default abstract class AuthRecipeModule<
                   })
                 : recipes.emailVerificationInstance;
     }
+
+    // this function is used by auth recipes to save the success context before
+    // redirecting to email verification screen - so that post verification,
+    // the user is redirected to the correct place.
+    savePostEmailVerificationSuccessRedirectState = async (context: T): Promise<void> => {
+        const jsonContext = JSON.stringify(context);
+        setLocalStorage("supertokens-post-email-verification", jsonContext);
+    };
 
     getAuthRecipeModuleDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "SIGN_IN_AND_UP") {

@@ -104,6 +104,7 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}
                         styleFromInit={signInAndUpFeature.style}
+                        rootStyleFromInit={this.props.recipe.config.rootStyle}
                         getDefaultStyles={getStyles}>
                         <Fragment>
                             {/* No custom theme, use default. */}

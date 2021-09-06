@@ -35,6 +35,7 @@ import {
     getGeneralSuccess,
     toggleSignInSignUp,
     defaultSignUp,
+    signUp,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -130,6 +131,42 @@ describe("SuperTokens Email Verification", function () {
             ]);
         });
 
+        it("Should redirect to verify email screen on successful sign up when mode is REQUIRED and email is not verified and then post verification should redirect with original redirectPath and newUser", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await toggleSignInSignUp(page);
+            const rid = "emailpassword";
+            return await signUp(
+                page,
+                [
+                    { name: "email", value: "john.doe2@supertokens.io" },
+                    { name: "password", value: "Str0ngP@ssw0rd" },
+                    { name: "name", value: "John Doe" },
+                    { name: "age", value: "20" },
+                ],
+                '{"formFields":[{"id":"email","value":"john.doe2@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+                rid
+            );
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+
+            // we wait for email to be created
+            await new Promise((r) => setTimeout(r, 1000));
+
+            // we fetch the email verification link and go to that
+            const latestURLWithToken = await getLatestURLWithToken();
+            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
+
+            // click on the continue button
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            // check that we are in /redirect-here
+            pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/redirect-here");
+        });
+
         it("Should redirect to verify email screen on successful sign in when mode is REQUIRED and email is not verified", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
@@ -164,9 +201,6 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED",
                 "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",

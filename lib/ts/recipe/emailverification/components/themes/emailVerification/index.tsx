@@ -42,6 +42,7 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
                 rawPalette={props.config.palette}
                 defaultPalette={defaultPalette}
                 styleFromInit={props.sendVerifyEmailScreen.styleFromInit}
+                rootStyleFromInit={props.config.rootStyle}
                 getDefaultStyles={getStyles}>
                 <SendVerifyEmail {...props.sendVerifyEmailScreen} />
             </StyleProvider>
@@ -54,6 +55,7 @@ export function EmailVerificationTheme(props: EmailVerificationThemeProps): JSX.
             rawPalette={props.config.palette}
             defaultPalette={defaultPalette}
             styleFromInit={props.verifyEmailLinkClickedScreen.styleFromInit}
+            rootStyleFromInit={props.config.rootStyle}
             getDefaultStyles={getStyles}>
             <VerifyEmailLinkClicked {...props.verifyEmailLinkClickedScreen} />
         </StyleProvider>

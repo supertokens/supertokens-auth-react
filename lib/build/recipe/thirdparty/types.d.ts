@@ -23,6 +23,7 @@ export declare type ComponentOverrideMap = {
 };
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
+    oAuthCallbackScreen?: FeatureBaseConfig;
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;
@@ -32,6 +33,7 @@ export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
+    oAuthCallbackScreen: FeatureBaseConfig;
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
         components: ComponentOverrideMap;

@@ -67,6 +67,26 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
             if (response.status === "OK") {
                 const state = this.props.recipe.recipeImpl.getOAuthState();
                 const redirectToPath = state === undefined ? undefined : state.redirectToPath;
+
+                if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
+                    let isEmailVerified = true;
+                    try {
+                        isEmailVerified = await this.props.recipe.emailVerification.isEmailVerified();
+                    } catch (ignored) {}
+                    if (!isEmailVerified) {
+                        await this.props.recipe.savePostEmailVerificationSuccessRedirectState({
+                            redirectToPath: redirectToPath,
+                            isNewUser: true,
+                            action: "SUCCESS",
+                        });
+                        return this.props.recipe.emailVerification.redirect(
+                            {
+                                action: "VERIFY_EMAIL",
+                            },
+                            this.props.history
+                        );
+                    }
+                }
                 return this.props.recipe.redirect(
                     { action: "SUCCESS", isNewUser: response.createdNewUser, redirectToPath },
                     this.props.history
@@ -82,12 +102,16 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
     render = (): JSX.Element => {
         const componentOverrides = this.props.recipe.config.override.components;
 
+        const oAuthCallbackScreen = this.props.recipe.config.oAuthCallbackScreen;
+
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}
+                        styleFromInit={oAuthCallbackScreen.style}
+                        rootStyleFromInit={this.props.recipe.config.rootStyle}
                         getDefaultStyles={getStyles}>
                         <Fragment>
                             {/* No custom theme, use default. */}

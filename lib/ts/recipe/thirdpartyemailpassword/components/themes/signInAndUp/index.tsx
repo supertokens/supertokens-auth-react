@@ -125,6 +125,7 @@ export default function SignInAndUpThemeWrapper(props: ThirdPartyEmailPasswordSi
                 rawPalette={props.config.palette}
                 defaultPalette={defaultPalette}
                 styleFromInit={props.config.signInAndUpFeature.style}
+                rootStyleFromInit={props.config.rootStyle}
                 getDefaultStyles={getStyles}>
                 <SignInAndUpTheme {...props} />
             </StyleProvider>

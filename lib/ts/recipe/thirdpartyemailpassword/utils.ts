@@ -54,6 +54,7 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
     return {
         ...normaliseAuthRecipeModuleConfig(config),
         signInAndUpFeature,
+        oAuthCallbackScreen: config.oAuthCallbackScreen,
         resetPasswordUsingTokenFeature: config.resetPasswordUsingTokenFeature,
         disableEmailPassword,
         override,

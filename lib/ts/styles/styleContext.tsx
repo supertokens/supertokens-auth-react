@@ -15,6 +15,7 @@
 import { CSSObject } from "@emotion/react";
 import React from "react";
 import { NormalisedDefaultStyles, NormalisedPalette, Styles } from "../types";
+import { getMergedStyles } from "./styles";
 
 type NormalisedStyle = {
     palette: NormalisedPalette;
@@ -33,35 +34,40 @@ const StyleContext = React.createContext<NormalisedStyle>({
 export function StyleProvider({
     children,
     styleFromInit,
+    rootStyleFromInit,
     getDefaultStyles,
     defaultPalette,
     rawPalette,
 }: {
     children: JSX.Element;
     styleFromInit?: Styles;
+    rootStyleFromInit: Styles;
     getDefaultStyles: (palette: NormalisedPalette) => NormalisedDefaultStyles;
     defaultPalette: NormalisedPalette;
     rawPalette: Record<string, string>;
 }): JSX.Element {
     const palette = getMergedPalette(defaultPalette, rawPalette);
 
-    const styles: NormalisedStyle = {
-        palette,
-        ...getDefaultStyles(palette),
-    };
+    let mergedStyles = getDefaultStyles(palette);
+    if (rootStyleFromInit !== undefined) {
+        // Palette is a reserved word, delete it if exists.
+        delete rootStyleFromInit.palette;
+
+        mergedStyles = getMergedStyles(mergedStyles, rootStyleFromInit);
+    }
+
     if (styleFromInit !== undefined) {
         // Palette is a reserved word, delete it if exists.
         delete styleFromInit.palette;
 
-        Object.keys(styleFromInit).forEach((key) => [
-            (styles[key] = {
-                ...styles[key],
-                ...styleFromInit[key],
-            }),
-        ]);
+        mergedStyles = getMergedStyles(mergedStyles, styleFromInit);
     }
 
-    return <StyleContext.Provider value={styles}>{children}</StyleContext.Provider>;
+    const value: NormalisedStyle = {
+        palette,
+        ...mergedStyles,
+    };
+    return <StyleContext.Provider value={value}>{children}</StyleContext.Provider>;
 }
 
 /*

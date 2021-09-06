@@ -72,6 +72,11 @@ const defaultToSignUp = window.localStorage.getItem("defaultToSignUp") === "true
 const doNotUseReactRouterDom =
     localStorage.getItem("useReactRouterDom") === "false" || getQueryParams("router") === "no-router";
 
+const themeQueryParams = getQueryParams("theme");
+if (themeQueryParams !== null) {
+    window.localStorage.setItem("useTheme", themeQueryParams);
+}
+
 const theme = getTheme();
 
 function getTheme() {
@@ -85,7 +90,7 @@ function getTheme() {
         },
     };
 
-    const themeParams = getQueryParams("theme");
+    const themeParams = window.localStorage.getItem("useTheme");
 
     if (themeParams === "dark") {
         window.document.body.style.backgroundColor = "#1a1a1a";
@@ -558,6 +563,10 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
                 },
             ],
         },
+
+        oAuthCallbackScreen: {
+            style: theme.style,
+        },
     });
 }
 
@@ -666,5 +675,9 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
             ],
         },
         disableEmailPassword: false,
+
+        oAuthCallbackScreen: {
+            style: theme.style,
+        },
     });
 }

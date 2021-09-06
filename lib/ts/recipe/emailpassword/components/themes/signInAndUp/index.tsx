@@ -58,6 +58,7 @@ export class SignInAndUpTheme extends React.PureComponent<
                     rawPalette={this.props.config.palette}
                     defaultPalette={defaultPalette}
                     styleFromInit={this.props.signUpForm.styleFromInit}
+                    rootStyleFromInit={this.props.config.rootStyle}
                     getDefaultStyles={getStyles}>
                     <SignUp
                         {...this.props.signUpForm}
@@ -80,6 +81,7 @@ export class SignInAndUpTheme extends React.PureComponent<
                 rawPalette={this.props.config.palette}
                 defaultPalette={defaultPalette}
                 styleFromInit={this.props.signInForm.styleFromInit}
+                rootStyleFromInit={this.props.config.rootStyle}
                 getDefaultStyles={getStyles}>
                 <SignIn
                     {...this.props.signInForm}
