@@ -19,7 +19,7 @@
 
 import React from "react";
 import AuthRecipeModule from "../authRecipeModule";
-import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo, Styles } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -129,14 +129,12 @@ export default class EmailPassword extends AuthRecipeModule<
         config?: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
         return (
-            appInfo: NormalisedAppInfo,
-            rootInputStyle?: Styles
+            appInfo: NormalisedAppInfo
         ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
             EmailPassword.instance = new EmailPassword(
                 {
                     ...config,
                     appInfo,
-                    rootInputStyle,
                     recipeId: EmailPassword.RECIPE_ID,
                 },
                 {

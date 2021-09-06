@@ -58,7 +58,7 @@ export default class SuperTokens {
         }
 
         this.recipeList = config.recipeList.map((recipe) => {
-            return recipe(this.appInfo, config.style);
+            return recipe(this.appInfo);
         });
     }
 

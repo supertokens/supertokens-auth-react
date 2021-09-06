@@ -19,7 +19,7 @@
 
 import React from "react";
 import RecipeModule from "../recipeModule";
-import { RecipeFeatureComponentMap, Styles } from "../../types";
+import { RecipeFeatureComponentMap } from "../../types";
 import {
     Config,
     NormalisedConfig,
@@ -61,13 +61,11 @@ export default class EmailVerification extends RecipeModule<
         config: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
         return (
-            appInfo: NormalisedAppInfo,
-            rootInputStyle?: Styles
+            appInfo: NormalisedAppInfo
         ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
             EmailVerification.instance = new EmailVerification({
                 ...config,
                 appInfo,
-                rootInputStyle,
                 recipeId: EmailVerification.RECIPE_ID,
             });
             return EmailVerification.instance;

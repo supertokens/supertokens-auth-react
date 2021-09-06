@@ -33,13 +33,10 @@ export type SuperTokensConfig = {
      * List of recipes for authentication and session management.
      */
     recipeList: CreateRecipeFunction<any, any, any, any>[];
-
-    style?: Styles;
 };
 
 export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
-    appInfo: NormalisedAppInfo,
-    rootInputStyle?: Styles
+    appInfo: NormalisedAppInfo
 ) => RecipeModule<T, S, R, N>;
 
 export type AppInfoUserInput = {

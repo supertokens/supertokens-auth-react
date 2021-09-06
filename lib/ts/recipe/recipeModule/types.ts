@@ -6,12 +6,12 @@ export type UserInput<GetRedirectionURLContextType, PreAPIHookContextType, OnHan
     onHandleEvent?: (context: OnHandleEventContextType) => void;
     useShadowDom?: boolean;
     palette?: Record<string, string>;
+    style?: Styles;
 };
 
 export type Config<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
     recipeId: string;
     appInfo: NormalisedAppInfo;
-    rootInputStyle?: Styles;
 } & UserInput<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType>;
 
 export type NormalisedConfig<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
