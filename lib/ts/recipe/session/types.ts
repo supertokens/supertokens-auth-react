@@ -15,9 +15,14 @@
 
 import { RecipeInterface } from "supertokens-website";
 
-export type RecipeEvent = {
-    action: "SIGN_OUT" | "REFRESH_SESSION" | "UNAUTHORISED" | "SESSION_CREATED";
-};
+export type RecipeEvent =
+    | {
+          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED";
+      }
+    | {
+          action: "UNAUTHORISED";
+          sessionExpiredOrRevoked: boolean;
+      };
 
 export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextType };
 

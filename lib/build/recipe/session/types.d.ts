@@ -1,7 +1,12 @@
 import { RecipeInterface } from "supertokens-website";
-export declare type RecipeEvent = {
-    action: "SIGN_OUT" | "REFRESH_SESSION" | "UNAUTHORISED" | "SESSION_CREATED";
-};
+export declare type RecipeEvent =
+    | {
+          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED";
+      }
+    | {
+          action: "UNAUTHORISED";
+          sessionExpiredOrRevoked: boolean;
+      };
 export declare type RecipeEventWithSessionContext = RecipeEvent & {
     sessionContext: SessionContextType;
 };
