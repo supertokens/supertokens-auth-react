@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Added option to apply styling to all components: https://github.com/supertokens/supertokens-auth-react/issues/312
 -   Not loading Rubik font in the library if the user has defined a font to use: https://github.com/supertokens/supertokens-auth-react/issues/303
+-   Update to supertokens-website dependency version
+-   Updated the typings of the `UNAUTHORISED` event to include the new `sessionExpiredOrRevoked` property.
 
 ## [0.15.6] -
 

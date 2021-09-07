@@ -108,7 +108,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         this.eventListeners.forEach((listener) =>
             listener({
                 sessionContext,
-                action: event.action,
+                ...event,
             })
         );
     };

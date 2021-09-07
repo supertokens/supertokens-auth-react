@@ -157,6 +157,8 @@ function getRecipeList() {
                 if (context.action === "REFRESH_SESSION") {
                 } else if (context.action === "SIGN_OUT") {
                 } else if (context.action === "UNAUTHORISED") {
+                    if (context.sessionExpiredOrRevoked) {
+                    }
                 }
             },
             preAPIHook: async (context) => {
