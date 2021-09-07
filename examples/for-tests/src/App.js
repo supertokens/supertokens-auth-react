@@ -82,7 +82,6 @@ const theme = getTheme();
 function getTheme() {
     let theme = {
         colors: {},
-        style: {},
     };
 
     const themeParams = window.localStorage.getItem("useTheme");
@@ -375,6 +374,11 @@ function SessionInfoTable({ sessionInfo }) {
 
 function getEmailPasswordConfigs({ disableDefaultImplementation }) {
     return EmailPassword.init({
+        style: {
+            container: {
+                fontFamily: "cursive",
+            },
+        },
         override: {
             emailVerification: {
                 functions: (implementation) => {
@@ -475,6 +479,11 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
 
 function getThirdPartyConfigs({ disableDefaultImplementation }) {
     return ThirdParty.init({
+        style: {
+            container: {
+                fontFamily: "cursive",
+            },
+        },
         preAPIHook: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
             return context;

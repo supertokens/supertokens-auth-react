@@ -30,7 +30,7 @@ import { SignInAndUpForm as EmailPasswordSignInAndUpForm } from "../../themes/si
 import { SignInAndUpThemeProps as ThirdPartySignInAndUpThemeProps } from "../../../../thirdparty/types";
 import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
-import { defaultPalette } from "../../../../../styles/styles";
+import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 import { getStyles } from "../styles";
 import { getQueryParams } from "../../../../../utils";
 
@@ -117,8 +117,10 @@ class SignInAndUpTheme extends React.PureComponent<
 }
 
 export default function SignInAndUpThemeWrapper(props: ThirdPartyEmailPasswordSignInAndUpThemeProps): JSX.Element {
+    const hasFont = hasFontDefined(props.config.rootStyle);
+
     return (
-        <ThemeBase>
+        <ThemeBase loadDefaultFont={!hasFont}>
             <StyleProvider
                 rawPalette={props.config.palette}
                 defaultPalette={defaultPalette}

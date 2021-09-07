@@ -16,7 +16,7 @@
 /** @jsx jsx */
 import { CSSObject, keyframes } from "@emotion/react";
 import chroma from "chroma-js";
-import { NormalisedPalette, NormalisedDefaultStyles } from "../types";
+import { NormalisedPalette, NormalisedDefaultStyles, Styles } from "../types";
 
 /*
  * Palette
@@ -269,4 +269,8 @@ export function getMergedStyles(
     }
 
     return styles;
+}
+
+export function hasFontDefined(style: Styles | undefined) {
+    return (style && style.container && (style.container.fontFamily || style.container.font)) !== undefined;
 }

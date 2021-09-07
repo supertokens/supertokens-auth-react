@@ -23,7 +23,7 @@ import { SignUp } from "./signUp";
 import { SignIn } from "./signIn";
 import { ThemeBase } from "../themeBase";
 import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette } from "../../../../../styles/styles";
+import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 import { getStyles } from "../styles/styles";
 import { getQueryParams } from "../../../../../utils";
 
@@ -100,8 +100,10 @@ export class SignInAndUpTheme extends React.PureComponent<
 }
 
 function SignInAndUpThemeWrapper(props: SignInAndUpThemeProps): JSX.Element {
+    const hasFont = hasFontDefined(props.config.rootStyle);
+
     return (
-        <ThemeBase>
+        <ThemeBase loadDefaultFont={!hasFont}>
             <SignInAndUpTheme {...props} />
         </ThemeBase>
     );

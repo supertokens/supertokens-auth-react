@@ -19,18 +19,22 @@
 import { jsx } from "@emotion/react";
 import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
+import { hasFontDefined } from "../../../../../styles/styles";
 import { SignUpFooter } from "./signUpFooter";
 import { SignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 import { ProvidersForm } from "./providersForm";
+
 /*
  * Component.
  */
 
 function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
     const styles = useContext(StyleContext);
+    const hasFont = hasFontDefined(props.config.rootStyle);
+
     return (
-        <ThemeBase>
+        <ThemeBase loadDefaultFont={!hasFont}>
             <div data-supertokens="container" css={styles.container}>
                 <div data-supertokens="row" css={styles.row}>
                     <div data-supertokens="headerTitle" css={styles.headerTitle}>

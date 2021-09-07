@@ -24,7 +24,7 @@ import { ResetPasswordEmail } from "./resetPasswordEmail";
 import { SubmitNewPassword } from "./submitNewPassword";
 import { getStyles } from "../styles/styles";
 import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette } from "../../../../../styles/styles";
+import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 
 /*
  * Component.
@@ -63,8 +63,10 @@ export function ResetPasswordUsingTokenTheme(props: ResetPasswordUsingTokenTheme
 }
 
 function ResetPasswordUsingTokenThemeWrapper(props: ResetPasswordUsingTokenThemeProps): JSX.Element {
+    const hasFont = hasFontDefined(props.config.rootStyle);
+
     return (
-        <ThemeBase>
+        <ThemeBase loadDefaultFont={!hasFont}>
             <ResetPasswordUsingTokenTheme {...props} />
         </ThemeBase>
     );
