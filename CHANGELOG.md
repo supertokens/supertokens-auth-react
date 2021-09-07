@@ -5,43 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## [0.15.7]
+## [0.15.8]
 
-## Added
+### Added
 
--   Added option to apply styling to all components: https://github.com/supertokens/supertokens-auth-react/issues/312
--   Not loading Rubik font in the library if the user has defined a font to use: https://github.com/supertokens/supertokens-auth-react/issues/303
 -   Update to supertokens-website dependency version
 -   Updated the typings of the `UNAUTHORISED` event to include the new `sessionExpiredOrRevoked` property.
 
+## [0.15.7]
+
+### Added
+
+-   Added option to apply styling to all components: https://github.com/supertokens/supertokens-auth-react/issues/312
+-   Not loading Rubik font in the library if the user has defined a font to use: https://github.com/supertokens/supertokens-auth-react/issues/303
+
 ## [0.15.6] -
 
-## Fixes
+### Fixes
 
 -   Saving of success event post sign up / in, so that it can be fired post email verification: https://github.com/supertokens/supertokens-auth-react/issues/315
 
 ## [0.15.5] -
 
-## Fixes
+### Fixes
 
 -   Fixes custom styling of the OAuth callback screen
 -   Persisting theme choice in test application
 
 ## [0.15.4] - 2021-08-19
 
-## Fixes
+### Fixes
 
 -   Fixes extra semicolon at the end of thirdparty sign in up component.
 
 ## [0.15.3] - 2021-08-04
 
-## Fixes
+### Fixes
 
 -   https://github.com/supertokens/supertokens-auth-react/issues/299
 
 ## [0.15.2] - 2021-07-29
 
-## Fixes
+### Fixes
 
 -   Fixes typescript issue with default imports. (Related to https://github.com/supertokens/supertokens-auth-react/issues/297)
 
@@ -62,7 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Uses `useRef` hook when using `withRouter` so that the underlying component is not unmounted.
 -   If `redirectToPath` is "", and we are not using react-router-dom, then we redirect to `/`, otherwise we might be stuck in an infinite redirect loop.
 
-## Refactor
+### Refactor
 
 -   Uses `SessionAuth` for all our components: https://github.com/supertokens/supertokens-auth-react/issues/241
 -   Creates an `AuthWidgetWrapper` component that will redirect login UI if already logged in
@@ -90,7 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Allows zero thirdparty providers to be passed into thirdpartyemailpassword
 -   Respects `disableEmailPassword` config provided to thirdpartyemailpassword
 
-## Changed:
+### Changed:
 
 -   Makes `signInAndUpFeature` config optional in `thirdpartyemailpassword.init`
 
