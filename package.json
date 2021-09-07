@@ -12,11 +12,11 @@
         "@emotion/eslint-plugin": "^11.1.0",
         "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^11.2.7",
-        "@testing-library/user-event": "^13.1.9",
+        "@testing-library/user-event": "^13.2.1",
         "@types/chroma-js": "2.1.3",
         "@types/jest": "^26.0.24",
         "@types/node": "14.11.10",
-        "@types/react": "^17.0.14",
+        "@types/react": "^17.0.20",
         "@types/react-router-dom": "5.1.6",
         "@typescript-eslint/eslint-plugin": "4.6.0",
         "@typescript-eslint/eslint-plugin-tslint": "4.6.0",
@@ -27,7 +27,7 @@
         "eslint-plugin-react-hooks": "4.2.0",
         "eslint-plugin-supertokens-auth-react": "file:eslint",
         "isomorphic-fetch": "^3.0.0",
-        "jest": "^27.0.6",
+        "jest": "^27.1.0",
         "jsdom": "16.4.0",
         "jsdom-global": "3.0.2",
         "mocha": "6.1.4",
@@ -38,20 +38,20 @@
         "puppeteer": "5.3.1",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
-        "react-router-dom": "^5.2.0",
+        "react-router-dom": "^5.3.0",
         "regenerator-runtime": "0.13.7",
-        "ts-jest": "^27.0.3",
+        "ts-jest": "^27.0.5",
         "ts-prune": "^0.8.9",
         "tslint": "6.1.3",
         "typescript": "3.5.2"
     },
     "dependencies": {
         "@emotion/cache": "^11.1.0",
-        "@emotion/react": "^11.1.0",
+        "@emotion/react": "^11.4.1",
         "@emotion/server": "^11.1.0",
         "chroma-js": "^2.1.2",
         "react-shadow": "^19.0.2",
-        "supertokens-website": "^8.1.0"
+        "supertokens-website": "^8.2.0"
     },
     "peerDependencies": {
         "react": ">=16.8.0"
