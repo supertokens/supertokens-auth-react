@@ -9,9 +9,8 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "cors": "^2.8.5",
-        "express": "^4.17.1",
-        "serverless-http": "^2.7.0",
-        "supertokens-node": "supertokens/supertokens-node#6.0"
+        "@middy/core": "^2.5.1",
+        "@middy/http-cors": "^2.5.1",
+        "supertokens-node": "supertokens/supertokens-node#7.0"
     }
 }

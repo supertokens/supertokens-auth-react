@@ -19,7 +19,7 @@ GOOGLE_CLIENT_SECRET=hK_o4jHasdvasS_asCdsadvgaoHz4
 SKIP_PREFLIGHT_CHECK=true
 ```
 
-4. Run `npm run start`
+4. Run `npm run build && npm run start`
 5. Open `http://localhost:3000` on your browser
 6. Sign up with google, note down the userId post login, and logout
 7. Sign up with email & password using the same email as your google one, and post login, you will see that the userId is the same as in step (6).

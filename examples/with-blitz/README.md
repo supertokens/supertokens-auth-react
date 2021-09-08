@@ -1,15 +1,11 @@
-[![Blitz.js](https://raw.githubusercontent.com/blitz-js/art/master/github-cover-photo.png)](https://blitzjs.com)
-
-This is a [Blitz.js](https://github.com/blitz-js/blitz) app.
-
-# **name**
+# THIS IS WORK IN PROGRESS.
 
 ## Getting Started
 
 Run your app in the development mode.
 
 ```
-blitz start
+yarn install && npx blitz start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

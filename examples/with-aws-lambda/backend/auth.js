@@ -1,29 +1,17 @@
 "use strict";
-const express = require("express");
-const serverless = require("serverless-http");
 let supertokens = require("supertokens-node");
+let { middleware } = require("supertokens-node/framework/awsLambda");
+let middy = require("@middy/core");
+let cors = require("@middy/http-cors");
 let { getBackendConfig } = require("./config");
-const cors = require("cors");
-
-const app = express();
 
 supertokens.init(getBackendConfig());
 
-app.use(
+module.exports.handler = middy(middleware()).use(
     cors({
-        origin: true,
-        allowedHeaders: ["Content-Type", ...supertokens.getAllCORSHeaders()],
+        origin: getBackendConfig().appInfo.websiteDomain,
         credentials: true,
-        methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+        headers: ["Content-Type", ...supertokens.getAllCORSHeaders()].join(", "),
+        methods: "OPTIONS,POST,GET,PUT,DELETE",
     })
 );
-
-app.use(supertokens.middleware());
-
-app.use(supertokens.errorHandler());
-
-app.use((err, req, res, next) => {
-    res.status(500).send("Something went wrong");
-});
-
-module.exports.handler = serverless(app);

@@ -1,36 +1,27 @@
 "use strict";
-const express = require("express");
-const serverless = require("serverless-http");
 let supertokens = require("supertokens-node");
+let { verifySession } = require("supertokens-node/recipe/session/framework/awsLambda");
+let middy = require("@middy/core");
+let cors = require("@middy/http-cors");
 let { getBackendConfig } = require("./config");
-let Session = require("supertokens-node/recipe/session");
-const cors = require("cors");
-
-const app = express();
 
 supertokens.init(getBackendConfig());
 
-app.use(
+const handler = async (event, _) => {
+    return {
+        body: JSON.stringify({
+            sessionHandle: event.session.getHandle(),
+            userId: event.session.getUserId(),
+            jwtPayload: event.session.getJWTPayload(),
+        }),
+    };
+};
+
+module.exports.handler = middy(verifySession(handler)).use(
     cors({
-        origin: true,
-        allowedHeaders: ["Content-Type", ...supertokens.getAllCORSHeaders()],
+        origin: getBackendConfig().appInfo.websiteDomain,
         credentials: true,
-        methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+        headers: ["Content-Type", ...supertokens.getAllCORSHeaders()].join(", "),
+        methods: "OPTIONS,POST,GET,PUT,DELETE",
     })
 );
-
-app.use("/user", Session.verifySession(), (req, res) => {
-    res.json({
-        sessionHandle: req.session.getHandle(),
-        userId: req.session.getUserId(),
-        jwtPayload: req.session.getJWTPayload(),
-    });
-});
-
-app.use(supertokens.errorHandler());
-
-app.use((err, req, res, next) => {
-    res.status(500).send("Something went wrong");
-});
-
-module.exports.handler = serverless(app);
