@@ -153,7 +153,6 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
 app.use(errorHandler());
 
 app.use((err, req, res, next) => {
-    console.log(err);
     res.status(500).send("Internal error: " + err.message);
 });
 
