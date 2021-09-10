@@ -3,7 +3,9 @@ const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
 let supertokens = require("supertokens-node");
+let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let Session = require("supertokens-node/recipe/session");
+let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -12,24 +14,25 @@ const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
 
 function updateHeaders(res) {
-    if (!res.headersSent) {
-        const cookies = res.getHeader("Set-Cookie");
+    if (!res.original.headersSent) {
+        const cookies = res.original.getHeader("Set-Cookie");
         if (cookies) {
             // We need to copy the Set-Cookie header into another one, since Set-Cookie is not accessible on the frontend
-            res.setHeader("st-cookie", cookies);
+            res.original.setHeader("st-cookie", cookies);
             // We need to make the new header accessible to the frontend
-            res.setHeader(
+            res.original.setHeader(
                 "access-control-expose-headers",
-                `st-cookie, ${res.getHeader("access-control-expose-headers")}`
+                `st-cookie, ${res.original.getHeader("access-control-expose-headers")}`
             );
 
             // This is not strictly necessary, it's more for testing purposes
-            res.removeHeader("Set-Cookie");
+            res.original.removeHeader("Set-Cookie");
         }
     }
 }
 
 supertokens.init({
+    framework: "express",
     supertokens: {
         connectionURI: "https://try.supertokens.io",
     },
@@ -60,12 +63,12 @@ supertokens.init({
 
                         refreshSession: async (input) => {
                             // Before calling the original implementation, we need to check the custom header.
-                            const stCookies = input.req.headers["st-cookie"];
+                            const stCookies = input.req.original.headers["st-cookie"];
 
                             // If it was defined, we should overwrite the original cookies header with it.
                             // Since the format matches, SuperTokens can access and parse them.
                             if (stCookies) {
-                                input.req.headers["cookie"] = input.req.headers["st-cookie"];
+                                input.req.original.headers["cookie"] = input.req.original.headers["st-cookie"];
                             }
 
                             // Calling the original implementation
@@ -79,12 +82,12 @@ supertokens.init({
 
                         getSession: async (input) => {
                             // Before calling the original implementation, we need to check the custom header.
-                            const stCookies = input.req.headers["st-cookie"];
+                            const stCookies = input.req.original.headers["st-cookie"];
 
                             // If it was defined, we should overwrite the original cookies header with it.
                             // Since the format matches, SuperTokens can access and parse them.
                             if (stCookies) {
-                                input.req.headers["cookie"] = input.req.headers["st-cookie"];
+                                input.req.original.headers["cookie"] = input.req.original.headers["st-cookie"];
                             }
 
                             // Calling the original implementation
@@ -134,10 +137,10 @@ app.use(
         contentSecurityPolicy: false,
     })
 );
-app.use(supertokens.middleware());
+app.use(middleware());
 
 // custom API that requires session verification
-app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
+app.get("/sessioninfo", verifySession(), async (req, res) => {
     let session = req.session;
     res.send({
         sessionHandle: session.getHandle(),
@@ -147,9 +150,10 @@ app.get("/sessioninfo", Session.verifySession(), async (req, res) => {
     });
 });
 
-app.use(supertokens.errorHandler());
+app.use(errorHandler());
 
 app.use((err, req, res, next) => {
+    console.log(err);
     res.status(500).send("Internal error: " + err.message);
 });
 
