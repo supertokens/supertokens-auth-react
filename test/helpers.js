@@ -18,7 +18,7 @@
  */
 import {
     ST_ROOT_SELECTOR,
-    TEST_SERVER_BASE_URL,
+    TEST_APPLICATION_SERVER_BASE_URL,
     SIGN_UP_API,
     EMAIL_EXISTS_API,
     TEST_CLIENT_BASE_URL,
@@ -430,7 +430,7 @@ async function assertValidator(actualValidate, expectedValidate, values) {
 }
 
 export async function getLatestURLWithToken() {
-    const response = await fetch(`${TEST_SERVER_BASE_URL}/token`);
+    const response = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/token`);
     const { latestURLWithToken } = await response.json();
     return latestURLWithToken;
 }

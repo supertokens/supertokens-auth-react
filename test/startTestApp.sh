@@ -8,13 +8,15 @@
 trap "exit 1" TERM
 export EXIT_PID=$$
 
+apiPort=$1
+
 function startFrontEnd () {
     (
         echo "Starting test example app"
         # go to test app.
         cd ./examples/for-tests/
         # Run static react app on PORT 3031.
-        BROWSER=none PORT=3031 npm run start
+        BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start
     )
 }
 
@@ -33,7 +35,7 @@ function startEndToEnd () {
     done
     sleep 2 # Because the server is responding does not mean the app is ready. Let's wait another 5secs to make sure the app is up.
     echo "Start mocha testing"
-    TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000
+    APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000
     testPassed=$?;
     echo "testPassed exit code: $testPassed"
     killServers
