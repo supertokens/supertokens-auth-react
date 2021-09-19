@@ -195,10 +195,13 @@ describe("SuperTokens SignUp", function () {
 
             const cookies = await page.cookies();
 
-            assert.deepStrictEqual(
-                cookies.map((c) => c.name),
-                ["sIRTFrontend", "sFrontToken", "sIdRefreshToken", "sAccessToken"]
-            );
+            let cookieNames = cookies.map((c) => c.name);
+            assert(cookieNames.filter((i) => i === "sIRTFrontend").length === 1);
+            assert(cookieNames.filter((i) => i === "sFrontToken").length === 1);
+            assert(cookieNames.filter((i) => i === "sIdRefreshToken").length === 1);
+            assert(cookieNames.filter((i) => i === "sAccessToken").length === 1);
+            assert(cookieNames.length === 4);
+
             // doesSessionExist return true, hence, redirecting to success URL
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth`, {
                 waitUntil: "networkidle0",

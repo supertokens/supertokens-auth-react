@@ -257,10 +257,14 @@ describe("SuperTokens SignIn", function () {
 
             // Verify cookies were set.
             cookies = await page.cookies();
-            assert.deepStrictEqual(
-                cookies.map((c) => c.name),
-                ["sIRTFrontend", "sFrontToken", "sIdRefreshToken", "sAccessToken"]
-            );
+            {
+                let cookieNames = cookies.map((c) => c.name);
+                assert(cookieNames.filter((i) => i === "sIRTFrontend").length === 1);
+                assert(cookieNames.filter((i) => i === "sFrontToken").length === 1);
+                assert(cookieNames.filter((i) => i === "sIdRefreshToken").length === 1);
+                assert(cookieNames.filter((i) => i === "sAccessToken").length === 1);
+                assert(cookieNames.length === 4);
+            }
 
             // Redirected to onSuccessFulRedirectUrl
             const onSuccessFulRedirectUrl = "/dashboard";
@@ -397,10 +401,14 @@ describe("SuperTokens SignIn", function () {
 
             // Verify cookies were set.
             cookies = await page.cookies();
-            assert.deepStrictEqual(
-                cookies.map((c) => c.name),
-                ["sIRTFrontend", "sFrontToken", "sIdRefreshToken", "sAccessToken"]
-            );
+            {
+                let cookieNames = cookies.map((c) => c.name);
+                assert(cookieNames.filter((i) => i === "sIRTFrontend").length === 1);
+                assert(cookieNames.filter((i) => i === "sFrontToken").length === 1);
+                assert(cookieNames.filter((i) => i === "sIdRefreshToken").length === 1);
+                assert(cookieNames.filter((i) => i === "sAccessToken").length === 1);
+                assert(cookieNames.length === 4);
+            }
 
             // Redirected to onSuccessFulRedirectUrl
             const onSuccessFulRedirectUrl = "/dashboard";
