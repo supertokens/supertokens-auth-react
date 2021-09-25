@@ -1,6 +1,6 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-# SuperTokens Demo app
+# SuperTokens EmailPassword Demo app
 
 This demo app demonstrates the following use cases:
 
@@ -37,6 +37,12 @@ The app will start on `http://localhost:3000`
     -   `REACT_APP_API_URL`: In case the API is not hosted on `localhost`. This must contain the port as well.
     -   `REACT_APP_WEBSITE_PORT`: To change the port of the website server. The default is `3000`
     -   `REACT_APP_WEBSITE_URL`: In case the website is not hosted on `localhost`. This must contain the port as well.
+
+## Production build
+
+```bash
+npm run build && npm run start
+```
 
 ## Author
 
