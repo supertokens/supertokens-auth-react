@@ -18,20 +18,18 @@ npm install
 
 # Providers credentials
 
-Copy the `.env.example` file and add your credentials:
+Create a `.env` file (from the `.env.example` file) and add your credentials:
 
 ```bash
-   cp .env.example .env
+cp .env.example .env
 ```
 
 Please refer to the corresponding documentations to get your client ids and client secrets for each of the providers you want to integrate with:<br/>
 
 -   <a href="https://developers.google.com/identity/sign-in/web/sign-in#create_authorization_credentials" rel="noopener noreferrer" target="_blank" >Google</a><br/>
 -   <a href="https://docs.github.com/en/developers/apps/creating-an-oauth-app" rel="noopener noreferrer" target="_blank" >Github</a><br/>
--   <a href="https://developers.facebook.com/docs/development/create-an-app" rel="noopener noreferrer" target="_blank" >Facebook</a><br/>
-</div>
 
-Set redirect URI to http://localhost:3000/auth/callback/{providerId} in each developer panels (make sure to replace `providerId` with `google | facebook | github`).
+Set redirect URI to http://localhost:3000/auth/callback/{providerId} in each developer panels (make sure to replace `providerId` with `google` or `github`).
 
 ## Run the demo app
 
@@ -52,6 +50,12 @@ The app will start on `http://localhost:3000`
     -   `REACT_APP_API_URL`: In case the API is not hosted on `localhost`. This must contain the port as well.
     -   `REACT_APP_WEBSITE_PORT`: To change the port of the website server. The default is `3000`
     -   `REACT_APP_WEBSITE_URL`: In case the website is not hosted on `localhost`. This must contain the port as well.
+
+## Production build
+
+```bash
+npm run build && npm run start
+```
 
 ## Author
 
