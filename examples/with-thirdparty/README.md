@@ -41,15 +41,19 @@ npm run dev
 
 The app will start on `http://localhost:3000`
 
+If you would like to modify the website (http://localhost:3000) or the API server (http://localhost:3001) URL:
+
+-   Change the `apiPort` or `apiDomain` values in `api-server.js`
+-   Change the `apiPort` or `apiUrl` values in `src/App.js`
+-   Change the `websitePort` or `websiteDomain` values in `api-server.js`
+-   Change the `websitePort` or `websiteUrl` values in `src/App.js`
+-   Change the `websitePort` in `server.js`
+
 ## Project structure & Parameters
 
 -   The frontend code is located in the `src` folder.
 -   The backend API is in the `api-server.js` file.
--   You can provide the following params to the `npm run` commands:
-    -   `REACT_APP_API_PORT`: To change the port for the API. The default is `3001`
-    -   `REACT_APP_API_URL`: In case the API is not hosted on `localhost`. This must contain the port as well.
-    -   `REACT_APP_WEBSITE_PORT`: To change the port of the website server. The default is `3000`
-    -   `REACT_APP_WEBSITE_URL`: In case the website is not hosted on `localhost`. This must contain the port as well.
+-   The file `server.js` is used for serving the react app from the `build` folder (for production use)
 
 ## Production build
 
