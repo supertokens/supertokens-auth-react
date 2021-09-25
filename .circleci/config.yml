@@ -38,7 +38,7 @@ jobs:
                   name: updating emailpassword
                   command: |
                       ssh ubuntu@ssh.supertokens.io '\
-                          cd /supertokens-auth-react/examples/with-emailpassword/ && \
+                          cd supertokens-auth-react/examples/with-emailpassword/ && \
                           git reset --hard && \
                           git pull && \
                           (rm -f package-lock.json || true) && \
@@ -51,7 +51,7 @@ jobs:
                   name: updating thirdparty
                   command: |
                       ssh ubuntu@ssh.supertokens.io '\
-                          cd /supertokens-auth-react/examples/with-thirdparty/ && \
+                          cd supertokens-auth-react/examples/with-thirdparty/ && \
                           git reset --hard && \
                           git pull && \
                           (rm -f package-lock.json || true) && \
@@ -64,7 +64,7 @@ jobs:
                   name: updating thirdpartyemailpassword
                   command: |
                       ssh ubuntu@ssh.supertokens.io '\
-                          cd /supertokens-auth-react/examples/with-thirdpartyemailpassword/ && \
+                          cd supertokens-auth-react/examples/with-thirdpartyemailpassword/ && \
                           git reset --hard && \
                           git pull && \
                           (rm -f package-lock.json || true) && \
