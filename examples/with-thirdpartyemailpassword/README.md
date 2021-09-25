@@ -1,10 +1,12 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-# SuperTokens Demo app
+# SuperTokens ThirdPartyEmailPassword Demo app
 
 This demo app demonstrates the following use cases:
 
 -   Social Login / Sign up
+-   Email & Password login
+-   Forgot password flow
 -   Logout
 -   Session management & Calling APIs
 

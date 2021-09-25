@@ -1,6 +1,6 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-# SuperTokens Demo app
+# SuperTokens ThirdParty Demo app
 
 This demo app demonstrates the following use cases:
 
