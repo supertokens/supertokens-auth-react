@@ -5,7 +5,6 @@ import ThirdPartyEmailPassword, {
     ThirdPartyEmailPasswordAuth,
     Google,
     Github,
-    Facebook,
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
@@ -34,13 +33,7 @@ SuperTokens.init({
     recipeList: [
         ThirdPartyEmailPassword.init({
             signInAndUpFeature: {
-                providers: [
-                    Github.init(),
-                    Google.init(),
-
-                    // we have commented the below because our app domain (thirdpartyemailpassword.demo.supertokens.io) is not approved by Facebook since it's only a demo app.
-                    // Facebook.init()
-                ],
+                providers: [Github.init(), Google.init()],
             },
             emailVerificationFeature: {
                 mode: "REQUIRED",
