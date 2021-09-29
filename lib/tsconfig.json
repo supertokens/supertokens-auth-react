@@ -11,7 +11,7 @@
         "declaration": true,
         "jsx": "react",
         "esModuleInterop": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "skipLibCheck": true,
         "strict": true,
         "noUnusedLocals": true,
