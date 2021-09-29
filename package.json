@@ -51,11 +51,11 @@
         "@emotion/server": "^11.1.0",
         "chroma-js": "^2.1.2",
         "react-shadow": "^19.0.2",
-        "supertokens-website": "^8.2.0"
+        "supertokens-website": "^8.2.0",
+        "prop-types": "*"
     },
     "peerDependencies": {
-        "react": ">=16.8.0",
-        "prop-types": "^15.6.0"
+        "react": ">=16.8.0"
     },
     "scripts": {
         "init": "npm i -d && (cd ./test/server && npm i ) && (cd ./examples/for-tests && npm i -d) && (cd ./test/with-typescript && npm i -d)",
