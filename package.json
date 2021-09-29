@@ -55,7 +55,7 @@
     },
     "peerDependencies": {
         "react": ">=16.8.0",
-        "prop-types": "^15.6.2"
+        "prop-types": "^15.6.0"
     },
     "scripts": {
         "init": "npm i -d && (cd ./test/server && npm i ) && (cd ./examples/for-tests && npm i -d) && (cd ./test/with-typescript && npm i -d)",
