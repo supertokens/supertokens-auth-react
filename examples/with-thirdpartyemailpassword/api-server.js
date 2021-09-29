@@ -18,6 +18,7 @@ supertokens.init({
     framework: "express",
     supertokens: {
         connectionURI: "https://try.supertokens.io",
+        apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
         appName: "SuperTokens Demo App",

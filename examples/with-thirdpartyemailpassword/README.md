@@ -26,7 +26,7 @@ Create a `.env` file (from the `.env.example` file) and add your credentials:
 cp .env.example .env
 ```
 
-Please refer to the corresponding documentations to get your client ids and client secrets for each of the providers you want to integrate with:<br/>
+Please refer to the corresponding documentations to get your **client IDs** and **client secrets** for each of the providers you want to integrate with:<br/>
 
 -   <a href="https://developers.google.com/identity/sign-in/web/sign-in#create_authorization_credentials" rel="noopener noreferrer" target="_blank" >Google</a> (authorisation callback URL: `http://localhost:3000/auth/callback/google`)
 -   <a href="https://docs.github.com/en/developers/apps/creating-an-oauth-app" rel="noopener noreferrer" target="_blank" >Github</a> (authorisation callback URL: `http://localhost:3000/auth/callback/github`)
