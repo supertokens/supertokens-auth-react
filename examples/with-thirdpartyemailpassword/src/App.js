@@ -58,8 +58,13 @@ function App() {
             <Router>
                 <div className="fill">
                     <Switch>
+                        {/* This shows the login UI on "/auth" route */}
                         {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+
                         <Route path="/">
+                            {/* This protects the "/" route so that it shows 
+                            <Home /> only if the user is logged in.
+                            Else it redirects the user to "/auth" */}
                             <ThirdPartyEmailPasswordAuth
                                 onSessionExpired={() => {
                                     updateShowSessionExpiredPopup(true);
