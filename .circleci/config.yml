@@ -44,7 +44,7 @@ jobs:
                           (rm -f package-lock.json || true) && \
                           (rm -rf node_modules || true) && \
                           npm i && \
-                          API_PORT=10001 API_URL=https://api-emailpassword.demo.supertokens.io WEBSITE_PORT=10000 WEBSITE_URL=https://emailpassword.demo.supertokens.io npm run build && \
+                          REACT_APP_API_PORT=10001 REACT_APP_API_URL=https://api-emailpassword.demo.supertokens.io REACT_APP_WEBSITE_PORT=10000 REACT_APP_WEBSITE_URL=https://emailpassword.demo.supertokens.io npm run build && \
                           docker rm demo-app -f || true && \
                           bash /home/ubuntu/supertokens-auth-react/examples/with-emailpassword/scripts/start_container.sh'
             - run:
@@ -57,7 +57,7 @@ jobs:
                           (rm -f package-lock.json || true) && \
                           (rm -rf node_modules || true) && \
                           npm i && \
-                          API_PORT=10001 API_URL=https://api-thirdparty.demo.supertokens.io WEBSITE_PORT=10000 WEBSITE_URL=https://thirdparty.demo.supertokens.io npm run build && \
+                          REACT_APP_API_PORT=10001 REACT_APP_API_URL=https://api-thirdparty.demo.supertokens.io REACT_APP_WEBSITE_PORT=10000 REACT_APP_WEBSITE_URL=https://thirdparty.demo.supertokens.io npm run build && \
                           docker rm demo-app-thirdparty -f || true && \
                           bash /home/ubuntu/supertokens-auth-react/examples/with-thirdparty/scripts/start_container.sh'
             - run:
@@ -70,7 +70,7 @@ jobs:
                           (rm -f package-lock.json || true) && \
                           (rm -rf node_modules || true) && \
                           npm i && \
-                          API_PORT=10001 API_URL=https://api-thirdpartyemailpassword.demo.supertokens.io WEBSITE_PORT=10000 WEBSITE_URL=https://thirdpartyemailpassword.demo.supertokens.io npm run build && \
+                          REACT_APP_API_PORT=10001 REACT_APP_API_URL=https://api-thirdpartyemailpassword.demo.supertokens.io REACT_APP_WEBSITE_PORT=10000 REACT_APP_WEBSITE_URL=https://thirdpartyemailpassword.demo.supertokens.io npm run build && \
                           docker rm demo-app-thirdpartyemailpassword -f || true && \
                           bash /home/ubuntu/supertokens-auth-react/examples/with-thirdpartyemailpassword/scripts/start_container.sh'
             - slack/status

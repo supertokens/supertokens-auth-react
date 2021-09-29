@@ -10,10 +10,10 @@
             "merge_logs": true,
             "env": {
                 "NODE_ENV": "production",
-                "API_PORT": "10001",
-                "API_URL": "https://api-thirdpartyemailpassword.demo.supertokens.io",
-                "WEBSITE_PORT": "10000",
-                "WEBSITE_URL": "https://thirdpartyemailpassword.demo.supertokens.io"
+                "REACT_APP_API_PORT": "10001",
+                "REACT_APP_API_URL": "https://api-thirdpartyemailpassword.demo.supertokens.io",
+                "REACT_APP_WEBSITE_PORT": "10000",
+                "REACT_APP_WEBSITE_URL": "https://thirdpartyemailpassword.demo.supertokens.io"
             }
         },
         {
@@ -26,10 +26,10 @@
             "merge_logs": true,
             "env": {
                 "NODE_ENV": "production",
-                "API_PORT": "10001",
-                "API_URL": "https://api-thirdpartyemailpassword.demo.supertokens.io",
-                "WEBSITE_PORT": "10000",
-                "WEBSITE_URL": "https://thirdpartyemailpassword.demo.supertokens.io"
+                "REACT_APP_API_PORT": "10001",
+                "REACT_APP_API_URL": "https://api-thirdpartyemailpassword.demo.supertokens.io",
+                "REACT_APP_WEBSITE_PORT": "10000",
+                "REACT_APP_WEBSITE_URL": "https://thirdpartyemailpassword.demo.supertokens.io"
             }
         }
     ]
