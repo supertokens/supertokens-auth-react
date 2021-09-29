@@ -32,8 +32,8 @@
         "eject": "react-scripts eject",
         "api-server": "node api-server.js",
         "api-server:dev": "nodemon api-server.js",
-        "server": "node server.js",
-        "server:dev": "nodemon server.js",
+        "server": "node ignore_this.js",
+        "server:dev": "nodemon ignore_this.js",
         "dev": "npm-run-all --parallel spa api-server:dev",
         "prod": "npm-run-all --parallel server api-server",
         "release": "bash -c './scripts/release.sh'"

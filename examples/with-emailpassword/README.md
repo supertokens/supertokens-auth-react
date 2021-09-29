@@ -34,13 +34,11 @@ If you would like to modify the website (http://localhost:3000) or the API serve
 -   Change the `apiPort` or `apiUrl` values in `src/App.js`
 -   Change the `websitePort` or `websiteDomain` values in `api-server.js`
 -   Change the `websitePort` or `websiteUrl` values in `src/App.js`
--   Change the `websitePort` in `server.js`
 
 ## Project structure & Parameters
 
 -   The frontend code is located in the `src` folder.
 -   The backend API is in the `api-server.js` file.
--   The file `server.js` is used for serving the react app from the `build` folder (for production use)
 
 ## Production build
 

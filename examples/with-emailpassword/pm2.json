@@ -1,7 +1,7 @@
 {
     "apps": [
         {
-            "script": "server.js",
+            "script": "ignore_this.js",
             "name": "server",
             "exec_mode": "cluster",
             "instances": 1,
@@ -10,10 +10,10 @@
             "merge_logs": true,
             "env": {
                 "NODE_ENV": "production",
-                "REACT_APP_API_PORT": "10001",
-                "REACT_APP_API_URL": "https://api-emailpassword.demo.supertokens.io",
-                "REACT_APP_WEBSITE_PORT": "10000",
-                "REACT_APP_WEBSITE_URL": "https://emailpassword.demo.supertokens.io"
+                "API_PORT": "10001",
+                "API_URL": "https://api-emailpassword.demo.supertokens.io",
+                "WEBSITE_PORT": "10000",
+                "WEBSITE_URL": "https://emailpassword.demo.supertokens.io"
             }
         },
         {
@@ -26,10 +26,10 @@
             "merge_logs": true,
             "env": {
                 "NODE_ENV": "production",
-                "REACT_APP_API_PORT": "10001",
-                "REACT_APP_API_URL": "https://api-emailpassword.demo.supertokens.io",
-                "REACT_APP_WEBSITE_PORT": "10000",
-                "REACT_APP_WEBSITE_URL": "https://emailpassword.demo.supertokens.io"
+                "API_PORT": "10001",
+                "API_URL": "https://api-emailpassword.demo.supertokens.io",
+                "WEBSITE_PORT": "10000",
+                "WEBSITE_URL": "https://emailpassword.demo.supertokens.io"
             }
         }
     ]

@@ -5,7 +5,7 @@ const { join } = require("path");
 
 const app = express();
 
-const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
+const websitePort = process.env.WEBSITE_PORT || 3000;
 
 app.use(morgan("dev"));
 app.use(

@@ -28,10 +28,8 @@ cp .env.example .env
 
 Please refer to the corresponding documentations to get your client ids and client secrets for each of the providers you want to integrate with:<br/>
 
--   <a href="https://developers.google.com/identity/sign-in/web/sign-in#create_authorization_credentials" rel="noopener noreferrer" target="_blank" >Google</a><br/>
--   <a href="https://docs.github.com/en/developers/apps/creating-an-oauth-app" rel="noopener noreferrer" target="_blank" >Github</a><br/>
-
-Set redirect URI to http://localhost:3000/auth/callback/{providerId} in each developer panels (make sure to replace `providerId` with `google` or `github`).
+-   <a href="https://developers.google.com/identity/sign-in/web/sign-in#create_authorization_credentials" rel="noopener noreferrer" target="_blank" >Google</a> (authorisation callback URL: `http://localhost:3000/auth/callback/google`)
+-   <a href="https://docs.github.com/en/developers/apps/creating-an-oauth-app" rel="noopener noreferrer" target="_blank" >Github</a> (authorisation callback URL: `http://localhost:3000/auth/callback/github`)
 
 ## Run the demo app
 
@@ -49,13 +47,11 @@ If you would like to modify the website (http://localhost:3000) or the API serve
 -   Change the `apiPort` or `apiUrl` values in `src/App.js`
 -   Change the `websitePort` or `websiteDomain` values in `api-server.js`
 -   Change the `websitePort` or `websiteUrl` values in `src/App.js`
--   Change the `websitePort` in `server.js`
 
 ## Project structure & Parameters
 
 -   The frontend code is located in the `src` folder.
 -   The backend API is in the `api-server.js` file.
--   The file `server.js` is used for serving the react app from the `build` folder (for production use)
 
 ## Production build
 
