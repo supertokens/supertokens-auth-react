@@ -26,9 +26,9 @@ export function getWebsiteDomain() {
 
 SuperTokens.init({
     appInfo: {
-        appName: "SuperTokens Demo App",
-        apiDomain: getApiDomain(),
-        websiteDomain: getWebsiteDomain(),
+        appName: "SuperTokens Demo App", // TODO: Your app name
+        apiDomain: getApiDomain(), // TODO: Change to your app's API domain
+        websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
     },
     recipeList: [
         ThirdPartyEmailPassword.init({
