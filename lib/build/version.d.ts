@@ -1,2 +1,2 @@
-export declare const package_version = "0.15.11";
+export declare const package_version = "0.16.0";
 export declare const supported_fdi: string[];
