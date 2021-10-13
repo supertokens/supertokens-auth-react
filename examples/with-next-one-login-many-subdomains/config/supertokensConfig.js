@@ -26,17 +26,17 @@ export let backendConfig = () => {
             ThirdPartyEmailPasswordNode.init({
                 providers: [
                     ThirdPartyEmailPasswordNode.Google({
-                        clientSecret: process.env.GOOGLE_CLIENT_SECRET || "PLACEHOLDER",
-                        clientId: process.env.GOOGLE_CLIENT_ID || "PLACEHOLDER",
+                        clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                        clientSecret: "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",
                     }),
                     ThirdPartyEmailPasswordNode.Github({
-                        clientSecret: process.env.GITHUB_CLIENT_SECRET || "PLACEHOLDER",
-                        clientId: process.env.GITHUB_CLIENT_ID || "PLACEHOLDER",
+                        clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+                        clientId: "467101b197249757c71f",
                     }),
-                    ThirdPartyEmailPasswordNode.Facebook({
-                        clientSecret: process.env.FACEBOOK_CLIENT_SECRET || "PLACEHOLDER",
-                        clientId: process.env.FACEBOOK_CLIENT_ID || "PLACEHOLDER",
-                    }),
+                    // ThirdPartyEmailPasswordNode.Facebook({
+                    //     clientSecret: process.env.FACEBOOK_CLIENT_SECRET || "PLACEHOLDER",
+                    //     clientId: process.env.FACEBOOK_CLIENT_ID || "PLACEHOLDER",
+                    // }),
                 ],
             }),
             SessionNode.init(),
@@ -57,7 +57,6 @@ export let frontendConfig = () => {
                     providers: [
                         ThirdPartyEmailPasswordReact.Google.init(),
                         ThirdPartyEmailPasswordReact.Github.init(),
-                        ThirdPartyEmailPasswordReact.Facebook.init(),
                     ],
                 },
             }),

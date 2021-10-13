@@ -31,12 +31,13 @@ supertokens.init({
             signInAndUpFeature: {
                 providers: [
                     ThirdParty.Google({
-                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                        clientId: process.env.GOOGLE_CLIENT_ID,
+                        clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                        clientSecret: "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",
+    
                     }),
                     ThirdParty.Github({
-                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                        clientId: process.env.GITHUB_CLIENT_ID,
+                        clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+                        clientId: "467101b197249757c71f",
                     }),
 
                     // we have commented the below because our app domain (thirdparty.demo.supertokens.io) is not approved by Facebook since it's only a demo app.
