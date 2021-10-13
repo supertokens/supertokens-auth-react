@@ -35,17 +35,6 @@ If you would like to modify the website (http://localhost:3000) or the API serve
 -   Change the `websitePort` or `websiteDomain` values in `api-server.js`
 -   Change the `websitePort` or `websiteUrl` values in `src/App.js`
 
-## Providers credentials
-
-The demo is currently configured with development OAuth credentials for Google and Github. These keys are to be used for testing purposes and you should use your own keys for production.
-
-Please refer to the corresponding documentations to get your **client IDs** and **client secrets** for each of the providers you want to integrate with:<br/>
-
--   <a href="https://developers.google.com/identity/sign-in/web/sign-in#create_authorization_credentials" rel="noopener noreferrer" target="_blank" >Google</a> (authorisation callback URL: `http://localhost:3000/auth/callback/google`)
--   <a href="https://docs.github.com/en/developers/apps/creating-an-oauth-app" rel="noopener noreferrer" target="_blank" >Github</a> (authorisation callback URL: `http://localhost:3000/auth/callback/github`)
-
-You can now set your provider's **client ID** and **client secret** in `api-server.js`
-
 ## Project structure & Parameters
 
 -   The frontend code is located in the `src` folder.
