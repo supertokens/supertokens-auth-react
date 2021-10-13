@@ -31,7 +31,6 @@ supertokens.init({
                 ThirdPartyEmailPassword.Google({
                     clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
                     clientSecret: "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",
-
                 }),
                 ThirdPartyEmailPassword.Github({
                     clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",

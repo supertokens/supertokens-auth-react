@@ -57,10 +57,7 @@ export let frontendConfig = () => {
                     mode: "REQUIRED",
                 },
                 signInAndUpFeature: {
-                    providers: [
-                        ThirdPartyEmailPasswordReact.Google.init(),
-                        ThirdPartyEmailPasswordReact.Github.init(),
-                    ],
+                    providers: [ThirdPartyEmailPasswordReact.Google.init(), ThirdPartyEmailPasswordReact.Github.init()],
                 },
             }),
             SessionReact.init({
