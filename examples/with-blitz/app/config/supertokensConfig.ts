@@ -1,11 +1,11 @@
 import ThirdPartyEmailPasswordReact, {
   Google,
-  Facebook,
+  Github,
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword"
 import SessionReact from "supertokens-auth-react/recipe/session"
 import ThirdPartyEmailPasswordNode, {
   Google as GoogleNode,
-  Facebook as FacebookNode,
+  Github as GithubNode,
 } from "supertokens-node/recipe/thirdpartyemailpassword"
 import SessionNode from "supertokens-node/recipe/session"
 
@@ -22,7 +22,7 @@ export let frontendConfig = () => {
     recipeList: [
       ThirdPartyEmailPasswordReact.init({
         signInAndUpFeature: {
-          providers: [Google.init(), Facebook.init()],
+          providers: [Google.init(), Github.init()],
         },
       }),
       SessionReact.init(),
@@ -39,13 +39,15 @@ export let backendConfig = () => {
     recipeList: [
       ThirdPartyEmailPasswordNode.init({
         providers: [
+          // We have provided you with development keys which you can use for testing.
+          // IMPORTANT: Please replace them with your own OAuth keys for production use.
           GoogleNode({
-            clientSecret: "TODO ADD SECRET",
-            clientId: "TODO ADD SECRET",
+            clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+            clientSecret: "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",
           }),
-          FacebookNode({
-            clientSecret: "TODO ADD SECRET",
-            clientId: "TODO ADD SECRET",
+          GithubNode({
+            clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+            clientId: "467101b197249757c71f",
           }),
         ],
       }),
