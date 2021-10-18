@@ -74,6 +74,14 @@ jobs:
                           docker rm demo-app-thirdpartyemailpassword -f || true && \
                           bash /home/ubuntu/supertokens-auth-react/examples/with-thirdpartyemailpassword/scripts/start_container.sh'
             - slack/status
+    update-docs:
+        docker:
+            - image: rishabhpoddar/supertokens_website_sdk_testing
+        steps:
+            - checkout
+            - run: cd ../ && git clone git@github.com:supertokens/supertokens-backend-website.git
+            - run: (cd .circleci && ./updateDocsInWebsite.sh)
+            - slack/status
 
 workflows:
     version: 2
@@ -96,6 +104,13 @@ workflows:
                       branches:
                           ignore: /.*/
             - update-demo-apps:
+                  context:
+                      - slack-notification
+                  filters:
+                      branches:
+                          only:
+                              - master
+            - update-docs:
                   context:
                       - slack-notification
                   filters:

@@ -5,7 +5,7 @@ import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
-    static SessionAuth: import("react").FunctionComponent<
+    static SessionAuth: import("react").FC<
         | ({
               requireAuth?: false | undefined;
           } & {
@@ -27,7 +27,7 @@ export default class SessionAPIWrapper {
     static signOut(): Promise<void>;
 }
 declare const useSessionContext: () => SessionContextType;
-declare const SessionAuth: import("react").FunctionComponent<
+declare const SessionAuth: import("react").FC<
     | ({
           requireAuth?: false | undefined;
       } & {
