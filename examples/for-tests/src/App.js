@@ -153,9 +153,9 @@ let recipeList = [
                         // will call that log unpredictably.
                         return implementation.doesSessionExist(...args);
                     },
-                    getJWTPayloadSecurely(...args) {
+                    getAccessTokenPayloadSecurely(...args) {
                         log(`GET_JWT_PAYLOAD_SECURELY`);
-                        return implementation.getJWTPayloadSecurely(...args);
+                        return implementation.getAccessTokenPayloadSecurely(...args);
                     },
                     getUserId(...args) {
                         log(`GET_USER_ID`);
