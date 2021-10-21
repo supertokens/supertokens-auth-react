@@ -77,8 +77,8 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return sessionSdk.getUserId();
     };
 
-    getJWTPayloadSecurely = async (): Promise<any> => {
-        return sessionSdk.getJWTPayloadSecurely();
+    getAccessTokenPayloadSecurely = async (): Promise<any> => {
+        return sessionSdk.getAccessTokenPayloadSecurely();
     };
 
     doesSessionExist = (): Promise<boolean> => {
@@ -115,11 +115,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
 
     private async getSessionContext({ action }: RecipeEvent): Promise<SessionContextType> {
         if (action === "SESSION_CREATED" || action === "REFRESH_SESSION") {
-            const [userId, jwtPayload] = await Promise.all([this.getUserId(), this.getJWTPayloadSecurely()]);
+            const [userId, accessTokenPayload] = await Promise.all([
+                this.getUserId(),
+                this.getAccessTokenPayloadSecurely(),
+            ]);
 
             return {
                 doesSessionExist: true,
-                jwtPayload,
+                accessTokenPayload,
                 userId,
             };
         }
@@ -127,7 +130,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         if (action === "SIGN_OUT" || action === "UNAUTHORISED") {
             return {
                 doesSessionExist: false,
-                jwtPayload: {},
+                accessTokenPayload: {},
                 userId: "",
             };
         }

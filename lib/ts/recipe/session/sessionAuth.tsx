@@ -20,7 +20,7 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEventWithSessionContext, SessionContextType } from "./types";
-import { doesSessionExist, getJWTPayloadSecurely, getUserId } from "./index";
+import { doesSessionExist, getAccessTokenPayloadSecurely, getUserId } from "./index";
 
 // if it's not the default context, it means SessionAuth from top has
 // given us a sessionContext.
@@ -72,14 +72,14 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
             if (sessionExists === false) {
                 return {
                     doesSessionExist: false,
-                    jwtPayload: {},
+                    accessTokenPayload: {},
                     userId: "",
                 };
             }
 
             return {
                 doesSessionExist: true,
-                jwtPayload: await getJWTPayloadSecurely(),
+                accessTokenPayload: await getAccessTokenPayloadSecurely(),
                 userId: await getUserId(),
             };
         };

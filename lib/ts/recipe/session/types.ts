@@ -48,5 +48,5 @@ export type InputType = {
 export type SessionContextType = {
     doesSessionExist: boolean;
     userId: string;
-    jwtPayload: any;
+    accessTokenPayload: any;
 };

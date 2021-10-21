@@ -33,8 +33,8 @@ export default class SessionAPIWrapper {
         return Session.getInstanceOrThrow().getUserId();
     }
 
-    static async getJWTPayloadSecurely(): Promise<any> {
-        return Session.getInstanceOrThrow().getJWTPayloadSecurely();
+    static async getAccessTokenPayloadSecurely(): Promise<any> {
+        return Session.getInstanceOrThrow().getAccessTokenPayloadSecurely();
     }
 
     static async attemptRefreshingSession(): Promise<boolean> {
@@ -59,7 +59,7 @@ const useSessionContext = SessionAPIWrapper.useSessionContext;
 const SessionAuth = SessionAPIWrapper.SessionAuth;
 const init = SessionAPIWrapper.init;
 const getUserId = SessionAPIWrapper.getUserId;
-const getJWTPayloadSecurely = SessionAPIWrapper.getJWTPayloadSecurely;
+const getAccessTokenPayloadSecurely = SessionAPIWrapper.getAccessTokenPayloadSecurely;
 const attemptRefreshingSession = SessionAPIWrapper.attemptRefreshingSession;
 const doesSessionExist = SessionAPIWrapper.doesSessionExist;
 const addAxiosInterceptors = SessionAPIWrapper.addAxiosInterceptors;
@@ -70,7 +70,7 @@ export {
     SessionAuth,
     init,
     getUserId,
-    getJWTPayloadSecurely,
+    getAccessTokenPayloadSecurely,
     attemptRefreshingSession,
     doesSessionExist,
     addAxiosInterceptors,

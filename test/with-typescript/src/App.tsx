@@ -179,8 +179,8 @@ function getRecipeList() {
                         doesSessionExist: (input) => {
                             return oI.doesSessionExist(input);
                         },
-                        getJWTPayloadSecurely: (input) => {
-                            return oI.getJWTPayloadSecurely(input);
+                        getAccessTokenPayloadSecurely: (input) => {
+                            return oI.getAccessTokenPayloadSecurely(input);
                         },
                         getUserId: (config) => {
                             return oI.getUserId(config);

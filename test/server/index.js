@@ -167,12 +167,21 @@ app.post("/stopst", async (req, res) => {
 // custom API that requires session verification
 app.get("/sessioninfo", verifySession(), async (req, res) => {
     let session = req.session;
-    res.send({
-        sessionHandle: session.getHandle(),
-        userId: session.getUserId(),
-        jwtPayload: session.getJWTPayload(),
-        sessionData: await session.getSessionData(),
-    });
+    if (session.getJWTPayload !== undefined) {
+        res.send({
+            sessionHandle: session.getHandle(),
+            userId: session.getUserId(),
+            accessTokenPayload: session.getJWTPayload(),
+            sessionData: await session.getSessionData(),
+        });
+    } else {
+        res.send({
+            sessionHandle: session.getHandle(),
+            userId: session.getUserId(),
+            accessTokenPayload: session.getAccessTokenPayload(),
+            sessionData: await session.getSessionData(),
+        });
+    }
 });
 
 app.get("/token", async (_, res) => {

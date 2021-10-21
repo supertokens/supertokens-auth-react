@@ -34,5 +34,5 @@ export declare type InputType = {
 export declare type SessionContextType = {
     doesSessionExist: boolean;
     userId: string;
-    jwtPayload: any;
+    accessTokenPayload: any;
 };

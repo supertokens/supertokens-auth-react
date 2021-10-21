@@ -5,7 +5,7 @@ describe("SessionContext", () => {
     test("return true if user id is DEFAULT_USER_ID", () => {
         // given
         const mockSessionContext: SessionContextType = {
-            jwtPayload: {},
+            accessTokenPayload: {},
             userId: "DEFAULT_USER_ID",
             doesSessionExist: false,
         };
@@ -20,7 +20,7 @@ describe("SessionContext", () => {
     test("return false if user id isn't DEFAULT_USER_ID", () => {
         // given
         const mockSessionContext: SessionContextType = {
-            jwtPayload: {},
+            accessTokenPayload: {},
             doesSessionExist: false,
             userId: "NOT_DEFAULT_USER_ID",
         };

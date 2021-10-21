@@ -14,7 +14,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     getFeatureComponent: (_: string) => JSX.Element;
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getUserId: () => Promise<string>;
-    getJWTPayloadSecurely: () => Promise<any>;
+    getAccessTokenPayloadSecurely: () => Promise<any>;
     doesSessionExist: () => Promise<boolean>;
     signOut: () => Promise<void>;
     attemptRefreshingSession: () => Promise<boolean>;

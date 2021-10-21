@@ -9,7 +9,7 @@ import { SessionContextType } from "../../../../lib/ts/recipe/session";
 const MockSession = {
     addEventListener: jest.fn(),
     getUserId: jest.fn(),
-    getJWTPayloadSecurely: jest.fn(),
+    getAccessTokenPayloadSecurely: jest.fn(),
     doesSessionExist: jest.fn(),
 };
 
@@ -27,14 +27,14 @@ const MockSessionConsumer = () => {
     return (
         <>
             <span>userId: {session.userId}</span>
-            <span>jwtPayload: {JSON.stringify(session.jwtPayload)}</span>
+            <span>accessTokenPayload: {JSON.stringify(session.accessTokenPayload)}</span>
         </>
     );
 };
 
 const setMockResolves = (ctx: SessionContextType) => {
     MockSession.getUserId.mockResolvedValue(ctx.userId);
-    MockSession.getJWTPayloadSecurely.mockResolvedValue(ctx.jwtPayload);
+    MockSession.getAccessTokenPayloadSecurely.mockResolvedValue(ctx.accessTokenPayload);
     MockSession.doesSessionExist.mockResolvedValue(ctx.doesSessionExist);
 };
 
@@ -46,7 +46,7 @@ describe("SessionAuth", () => {
 
         setMockResolves({
             userId: "mock-user-id",
-            jwtPayload: {},
+            accessTokenPayload: {},
             doesSessionExist: true,
         });
     });
@@ -85,7 +85,9 @@ describe("SessionAuth", () => {
 
         // then
         expect(await result.findByText(/^userId:/)).toHaveTextContent(`userId: mock-user-id`);
-        expect(await result.findByText(/^jwtPayload:/)).toHaveTextContent(`jwtPayload: ${JSON.stringify({})}`);
+        expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
+            `accessTokenPayload: ${JSON.stringify({})}`
+        );
     });
 
     describe("children rendering", () => {
@@ -130,7 +132,7 @@ describe("SessionAuth", () => {
                 const noop = jest.fn();
                 setMockResolves({
                     doesSessionExist,
-                    jwtPayload: {},
+                    accessTokenPayload: {},
                     userId: "mock-id",
                 });
 
@@ -190,7 +192,7 @@ describe("SessionAuth", () => {
                     sessionContext: {
                         doesSessionExist: true,
                         userId: "session-created-user-id",
-                        jwtPayload: {
+                        accessTokenPayload: {
                             foo: "bar",
                         },
                     },
@@ -199,8 +201,8 @@ describe("SessionAuth", () => {
 
             // then
             expect(await result.findByText(/^userId:/)).toHaveTextContent(`userId: session-created-user-id`);
-            expect(await result.findByText(/^jwtPayload:/)).toHaveTextContent(
-                `jwtPayload: ${JSON.stringify({ foo: "bar" })}`
+            expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
+                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
             );
         });
 
@@ -219,9 +221,11 @@ describe("SessionAuth", () => {
                 </SessionAuth>
             );
 
-            expect(await result.findByText(/^jwtPayload:/)).toHaveTextContent(`jwtPayload: ${JSON.stringify({})}`);
+            expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
+                `accessTokenPayload: ${JSON.stringify({})}`
+            );
 
-            const mockJwtPayload = {
+            const mockAccessTokenPayload = {
                 afterRefreshKey: "afterRefreshValue",
             };
 
@@ -232,13 +236,13 @@ describe("SessionAuth", () => {
                     sessionContext: {
                         doesSessionExist: true,
                         userId: "mock-user-id",
-                        jwtPayload: mockJwtPayload,
+                        accessTokenPayload: mockAccessTokenPayload,
                     },
                 })
             );
 
-            expect(await result.findByText(/^jwtPayload:/)).toHaveTextContent(
-                `jwtPayload: ${JSON.stringify(mockJwtPayload)}`
+            expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
+                `accessTokenPayload: ${JSON.stringify(mockAccessTokenPayload)}`
             );
         });
     });
@@ -257,7 +261,7 @@ describe("SessionAuth", () => {
 
             setMockResolves({
                 doesSessionExist: true,
-                jwtPayload: { foo: "bar" },
+                accessTokenPayload: { foo: "bar" },
                 userId: "before-id",
             });
 
@@ -268,10 +272,12 @@ describe("SessionAuth", () => {
             );
 
             const UserId = () => result.findByText(/^userId/);
-            const JwtPayload = () => result.findByText(/^jwtPayload/);
+            const AccessTokenPayload = () => result.findByText(/^accessTokenPayload/);
 
             expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+            expect(await AccessTokenPayload()).toHaveTextContent(
+                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
+            );
 
             // when
             await act(() =>
@@ -279,7 +285,7 @@ describe("SessionAuth", () => {
                     action: "UNAUTHORISED",
                     sessionContext: {
                         doesSessionExist: false,
-                        jwtPayload: { foo: "baz" },
+                        accessTokenPayload: { foo: "baz" },
                         userId: "after-id",
                     },
                 })
@@ -287,7 +293,9 @@ describe("SessionAuth", () => {
 
             // then
             expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+            expect(await AccessTokenPayload()).toHaveTextContent(
+                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
+            );
         });
 
         test("not update context when prop is passed in parent SessionAuth", async () => {
@@ -303,7 +311,7 @@ describe("SessionAuth", () => {
 
             MockSession.doesSessionExist.mockResolvedValue(true);
             MockSession.getUserId.mockResolvedValue("before-id");
-            MockSession.getJWTPayloadSecurely.mockResolvedValue({
+            MockSession.getAccessTokenPayloadSecurely.mockResolvedValue({
                 foo: "bar",
             });
 
@@ -316,10 +324,12 @@ describe("SessionAuth", () => {
             );
 
             const UserId = () => result.findByText(/^userId/);
-            const JwtPayload = () => result.findByText(/^jwtPayload/);
+            const AccessTokenPayload = () => result.findByText(/^accessTokenPayload/);
 
             expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+            expect(await AccessTokenPayload()).toHaveTextContent(
+                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
+            );
 
             // when
             await act(() =>
@@ -327,7 +337,7 @@ describe("SessionAuth", () => {
                     action: "UNAUTHORISED",
                     sessionContext: {
                         doesSessionExist: false,
-                        jwtPayload: {},
+                        accessTokenPayload: {},
                         userId: "",
                     },
                 })
@@ -335,7 +345,9 @@ describe("SessionAuth", () => {
 
             // then
             expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+            expect(await AccessTokenPayload()).toHaveTextContent(
+                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
+            );
         });
     });
 
@@ -353,7 +365,7 @@ describe("SessionAuth", () => {
 
             MockSession.doesSessionExist.mockResolvedValue(true);
             MockSession.getUserId.mockResolvedValue("before-id");
-            MockSession.getJWTPayloadSecurely.mockResolvedValue({
+            MockSession.getAccessTokenPayloadSecurely.mockResolvedValue({
                 foo: "bar",
             });
 
@@ -364,10 +376,12 @@ describe("SessionAuth", () => {
             );
 
             const UserId = () => result.findByText(/^userId/);
-            const JwtPayload = () => result.findByText(/^jwtPayload/);
+            const AccessTokenPayload = () => result.findByText(/^accessTokenPayload/);
 
             expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+            expect(await AccessTokenPayload()).toHaveTextContent(
+                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
+            );
 
             // when
             await act(() =>
@@ -375,7 +389,7 @@ describe("SessionAuth", () => {
                     action: "SIGN_OUT",
                     sessionContext: {
                         doesSessionExist: false,
-                        jwtPayload: {},
+                        accessTokenPayload: {},
                         userId: "",
                     },
                 })
@@ -383,7 +397,9 @@ describe("SessionAuth", () => {
 
             // then
             expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await JwtPayload()).toHaveTextContent(`jwtPayload: ${JSON.stringify({ foo: "bar" })}`);
+            expect(await AccessTokenPayload()).toHaveTextContent(
+                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
+            );
         });
     });
 });

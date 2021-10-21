@@ -20,7 +20,7 @@ export default class SessionAPIWrapper {
     >;
     static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
     static getUserId(): Promise<string>;
-    static getJWTPayloadSecurely(): Promise<any>;
+    static getAccessTokenPayloadSecurely(): Promise<any>;
     static attemptRefreshingSession(): Promise<boolean>;
     static doesSessionExist(): Promise<boolean>;
     static addAxiosInterceptors(axiosInstance: any): void;
@@ -42,7 +42,7 @@ declare const SessionAuth: import("react").FC<
 >;
 declare const init: typeof SessionAPIWrapper.init;
 declare const getUserId: typeof SessionAPIWrapper.getUserId;
-declare const getJWTPayloadSecurely: typeof SessionAPIWrapper.getJWTPayloadSecurely;
+declare const getAccessTokenPayloadSecurely: typeof SessionAPIWrapper.getAccessTokenPayloadSecurely;
 declare const attemptRefreshingSession: typeof SessionAPIWrapper.attemptRefreshingSession;
 declare const doesSessionExist: typeof SessionAPIWrapper.doesSessionExist;
 declare const addAxiosInterceptors: typeof SessionAPIWrapper.addAxiosInterceptors;
@@ -52,7 +52,7 @@ export {
     SessionAuth,
     init,
     getUserId,
-    getJWTPayloadSecurely,
+    getAccessTokenPayloadSecurely,
     attemptRefreshingSession,
     doesSessionExist,
     addAxiosInterceptors,

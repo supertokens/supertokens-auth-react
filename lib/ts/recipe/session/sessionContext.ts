@@ -4,7 +4,7 @@ import { SessionContextType } from "./types";
 const SessionContext = React.createContext<SessionContextType>({
     doesSessionExist: false,
     userId: "DEFAULT_USER_ID",
-    jwtPayload: {},
+    accessTokenPayload: {},
 });
 
 export function isDefaultContext(sessionContext: SessionContextType): boolean {
