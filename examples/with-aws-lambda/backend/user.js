@@ -12,7 +12,7 @@ const handler = async (event, _) => {
         body: JSON.stringify({
             sessionHandle: event.session.getHandle(),
             userId: event.session.getUserId(),
-            jwtPayload: event.session.getJWTPayload(),
+            accessTokenPayload: event.session.getAccessTokenPayload(),
         }),
     };
 };

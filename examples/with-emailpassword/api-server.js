@@ -53,7 +53,7 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
     res.send({
         sessionHandle: session.getHandle(),
         userId: session.getUserId(),
-        jwtPayload: session.getJWTPayload(),
+        accessTokenPayload: session.getAccessTokenPayload(),
         sessionData: await session.getSessionData(),
     });
 });
