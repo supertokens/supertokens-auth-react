@@ -54,7 +54,6 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
         sessionHandle: session.getHandle(),
         userId: session.getUserId(),
         accessTokenPayload: session.getAccessTokenPayload(),
-        sessionData: await session.getSessionData(),
     });
 });
 
