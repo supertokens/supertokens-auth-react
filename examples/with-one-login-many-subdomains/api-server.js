@@ -65,7 +65,7 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
     });
 });
 
-app.get("/user-subdomain", Session.verifySession(), async (req, res) => {
+app.get("/user-subdomain", verifySession(), async (req, res) => {
     const session = req.session;
     const userDetails = await EmailPassword.getUserById(session.getUserId());
     const subdomain = getUserDomain(userDetails.email);
