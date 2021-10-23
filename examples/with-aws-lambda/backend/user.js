@@ -9,6 +9,10 @@ supertokens.init(getBackendConfig());
 
 const handler = async (event, _) => {
     return {
+        statusCode: 200,
+        headers: {
+            "content-type": "application/json",
+        },
         body: JSON.stringify({
             sessionHandle: event.session.getHandle(),
             userId: event.session.getUserId(),
