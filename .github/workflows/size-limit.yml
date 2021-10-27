@@ -12,4 +12,3 @@ jobs:
             - uses: porcellus/size-limit-action@feature/continue_on_base_branch_error
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-                  skip_step: build
