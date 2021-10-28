@@ -10,167 +10,167 @@ import {
     redirectWithFullPageReload,
 } from "../../utils";
 
-export default class RecipeImplementation implements RecipeInterface {
-    querier: Querier;
+export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface {
+    const querier = new Querier(recipeId, appInfo);
+    return {
+        getOAuthAuthorisationURL: async function (input: {
+            thirdPartyId: string;
+            config: NormalisedConfig;
+        }): Promise<string> {
+            const response: AuthorisationURLAPIResponse = await querier.get(
+                "/authorisationurl",
+                {},
+                { thirdPartyId: input.thirdPartyId },
+                (context) => {
+                    return input.config.preAPIHook({
+                        ...context,
+                        action: "GET_AUTHORISATION_URL",
+                    });
+                }
+            );
 
-    constructor(recipeId: string, appInfo: NormalisedAppInfo) {
-        this.querier = new Querier(recipeId, appInfo);
-    }
+            return response.url;
+        },
 
-    getOAuthAuthorisationURL = async (input: { thirdPartyId: string; config: NormalisedConfig }): Promise<string> => {
-        const response: AuthorisationURLAPIResponse = await this.querier.get(
-            "/authorisationurl",
-            {},
-            { thirdPartyId: input.thirdPartyId },
-            (context) => {
-                return input.config.preAPIHook({
-                    ...context,
-                    action: "GET_AUTHORISATION_URL",
+        signInAndUp: async function (input: { thirdPartyId: string; config: NormalisedConfig }): Promise<
+            | {
+                  status: "OK";
+                  user: User;
+                  createdNewUser: boolean;
+              }
+            | {
+                  status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
+              }
+            | {
+                  status: "FIELD_ERROR";
+                  error: string;
+              }
+        > {
+            const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
+
+            const stateFromStorage = this.getOAuthState();
+
+            const code = getQueryParams("code");
+
+            const stateFromQueryParams = getQueryParams("state");
+
+            if (
+                getQueryParams("error") !== null ||
+                stateFromStorage === undefined ||
+                stateFromStorage.thirdPartyId !== input.thirdPartyId ||
+                stateFromStorage.state !== stateFromQueryParams ||
+                code === null ||
+                provider === undefined
+            ) {
+                return { status: "GENERAL_ERROR" };
+            }
+
+            const redirectURI = await provider.getRedirectURL();
+
+            const response: SignInAndUpAPIResponse = await querier.post(
+                "/signinup",
+                {
+                    body: JSON.stringify({
+                        code,
+                        thirdPartyId: input.thirdPartyId,
+                        redirectURI,
+                    }),
+                },
+                (context) => {
+                    return input.config.preAPIHook({
+                        ...context,
+                        action: "THIRD_PARTY_SIGN_IN_UP",
+                    });
+                }
+            );
+
+            if (response.status === "OK") {
+                input.config.onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: response.createdNewUser,
+                    user: response.user,
                 });
             }
-        );
 
-        return response.url;
-    };
+            return response;
+        },
+        getOAuthState: function (): StateObject | undefined {
+            try {
+                const state = JSON.parse(getSessionStorage("supertokens-oauth-state"));
+                if (state === null) {
+                    return undefined;
+                }
 
-    signInAndUp = async (input: {
-        thirdPartyId: string;
-        config: NormalisedConfig;
-    }): Promise<
-        | {
-              status: "OK";
-              user: User;
-              createdNewUser: boolean;
-          }
-        | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
-          }
-        | {
-              status: "FIELD_ERROR";
-              error: string;
-          }
-    > => {
-        const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
+                if (Date.now() > state.expiresAt) {
+                    return undefined;
+                }
 
-        const stateFromStorage = this.getOAuthState();
-
-        const code = getQueryParams("code");
-
-        const stateFromQueryParams = getQueryParams("state");
-
-        if (
-            getQueryParams("error") !== null ||
-            stateFromStorage === undefined ||
-            stateFromStorage.thirdPartyId !== input.thirdPartyId ||
-            stateFromStorage.state !== stateFromQueryParams ||
-            code === null ||
-            provider === undefined
-        ) {
-            return { status: "GENERAL_ERROR" };
-        }
-
-        const redirectURI = await provider.getRedirectURL();
-
-        const response: SignInAndUpAPIResponse = await this.querier.post(
-            "/signinup",
-            {
-                body: JSON.stringify({
-                    code,
-                    thirdPartyId: input.thirdPartyId,
-                    redirectURI,
-                }),
-            },
-            (context) => {
-                return input.config.preAPIHook({
-                    ...context,
-                    action: "THIRD_PARTY_SIGN_IN_UP",
-                });
+                return state;
+            } catch (e) {
+                return undefined;
             }
-        );
+        },
 
-        if (response.status === "OK") {
-            input.config.onHandleEvent({
-                action: "SUCCESS",
-                isNewUser: response.createdNewUser,
-                user: response.user,
+        setOAuthState: function (state: StateObject) {
+            const expiresAt = Date.now() + 1000 * 60 * 10; // 10 minutes expiry.
+            const value = JSON.stringify({
+                redirectToPath: state.redirectToPath,
+                state: state.state,
+                thirdPartyId: state.thirdPartyId,
+                rid: state.rid,
+                expiresAt,
             });
-        }
+            setSessionStorage("supertokens-oauth-state", value);
+        },
 
-        return response;
-    };
-
-    getOAuthState = (): StateObject | undefined => {
-        try {
-            const state = JSON.parse(getSessionStorage("supertokens-oauth-state"));
-            if (state === null) {
-                return undefined;
+        redirectToThirdPartyLogin: async function (input: {
+            thirdPartyId: string;
+            config: NormalisedConfig;
+            state?: StateObject;
+        }): Promise<{ status: "OK" | "ERROR" }> {
+            const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
+            if (provider === undefined) {
+                return { status: "ERROR" };
             }
 
-            if (Date.now() > state.expiresAt) {
-                return undefined;
-            }
+            // 1. Generate state.
+            const state =
+                input.state === undefined || input.state.state === undefined
+                    ? provider.generateState()
+                    : input.state.state;
 
-            return state;
-        } catch (e) {
-            return undefined;
-        }
-    };
+            // 2. Store state in Session Storage.
+            this.setOAuthState({
+                ...input.state,
+                rid:
+                    input.state === undefined || input.state.rid === undefined
+                        ? input.config.recipeId
+                        : input.state.rid,
+                thirdPartyId:
+                    input.state === undefined || input.state.thirdPartyId === undefined
+                        ? input.thirdPartyId
+                        : input.state.thirdPartyId,
+                state,
+            });
 
-    setOAuthState = (state: StateObject) => {
-        const expiresAt = Date.now() + 1000 * 60 * 10; // 10 minutes expiry.
-        const value = JSON.stringify({
-            redirectToPath: state.redirectToPath,
-            state: state.state,
-            thirdPartyId: state.thirdPartyId,
-            rid: state.rid,
-            expiresAt,
-        });
-        setSessionStorage("supertokens-oauth-state", value);
-    };
+            // 3. Get Authorisation URL.
+            const url = await this.getOAuthAuthorisationURL({
+                thirdPartyId: provider.id,
+                config: input.config,
+            });
 
-    redirectToThirdPartyLogin = async (input: {
-        thirdPartyId: string;
-        config: NormalisedConfig;
-        state?: StateObject;
-    }): Promise<{ status: "OK" | "ERROR" }> => {
-        const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
-        if (provider === undefined) {
-            return { status: "ERROR" };
-        }
+            const urlWithState = appendQueryParamsToURL(url, {
+                state,
+                redirect_uri: provider.getRedirectURL(),
+            });
 
-        // 1. Generate state.
-        const state =
-            input.state === undefined || input.state.state === undefined ? provider.generateState() : input.state.state;
+            // 4. Redirect to provider authorisation URL.
+            redirectWithFullPageReload(urlWithState);
 
-        // 2. Store state in Session Storage.
-        this.setOAuthState({
-            ...input.state,
-            rid: input.state === undefined || input.state.rid === undefined ? input.config.recipeId : input.state.rid,
-            thirdPartyId:
-                input.state === undefined || input.state.thirdPartyId === undefined
-                    ? input.thirdPartyId
-                    : input.state.thirdPartyId,
-            state,
-        });
-
-        // 3. Get Authorisation URL.
-        const url = await this.getOAuthAuthorisationURL({
-            thirdPartyId: provider.id,
-            config: input.config,
-        });
-
-        const urlWithState = appendQueryParamsToURL(url, {
-            state,
-            redirect_uri: provider.getRedirectURL(),
-        });
-
-        // 4. Redirect to provider authorisation URL.
-        redirectWithFullPageReload(urlWithState);
-
-        return { status: "OK" };
+            return { status: "OK" };
+        },
     };
 }
-
 type SignInAndUpAPIResponse =
     | {
           status: "OK";

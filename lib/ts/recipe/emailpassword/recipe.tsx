@@ -65,7 +65,7 @@ export default class EmailPassword extends AuthRecipeModule<
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
         this.recipeImpl = this.config.override.functions(
-            new RecipeImplementation(this.config.recipeId, this.config.appInfo)
+            RecipeImplementation(this.config.recipeId, this.config.appInfo)
         );
     }
 

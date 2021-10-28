@@ -53,7 +53,7 @@ export default class EmailVerification extends RecipeModule<
     constructor(config: Config) {
         super(normaliseEmailVerificationFeature(config));
         this.recipeImpl = this.config.override.functions(
-            new RecipeImplementation(this.config.recipeId, this.config.appInfo)
+            RecipeImplementation(this.config.recipeId, this.config.appInfo)
         );
     }
 
