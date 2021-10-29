@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Uses non arrow functions in api and recipe interface impl to allow for "true" inheritance in override: https://github.com/supertokens/supertokens-node/issues/199
 -   Uses `bind(this)` when calling original implementation
+-   Added bundle size checking for PRs
 
 ## [0.17.0] - 2021-10-01
 
