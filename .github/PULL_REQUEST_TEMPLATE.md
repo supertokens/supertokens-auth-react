@@ -29,6 +29,7 @@
 -   [ ] Issue this PR against the latest non released version branch.
     -   To know which one it is, run find the latest released tag (`git tag`) in the format `vX.Y.Z`, and then find the latest branch (`git branch --all`) whose `X.Y` is greater than the latest released tag.
     -   If no such branch exists, then create one from the latest released branch.
+-   [ ] If added a new recipe interface, then make sure that the implementation of it uses NON arrow functions only (like `someFunc: function () {..}`). If creating a sub recipe, make sure to use `bind(this)` when calling the original implementation from your functions
 
 ## Remaining TODOs for this PR
 

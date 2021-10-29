@@ -4,207 +4,202 @@ import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
 import { validateForm } from "../../utils";
 
-export default class RecipeImplementation implements RecipeInterface {
-    querier: Querier;
+export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface {
+    const querier = new Querier(recipeId, appInfo);
+    return {
+        submitNewPassword: async function (input: {
+            formFields: {
+                id: string;
+                value: string;
+            }[];
+            token: string;
+            config: NormalisedConfig;
+        }): Promise<SubmitNewPasswordAPIResponse> {
+            // first we validate on the frontend
+            const validationErrors = await validateForm(
+                input.formFields,
+                input.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+            );
 
-    constructor(recipeId: string, appInfo: NormalisedAppInfo) {
-        this.querier = new Querier(recipeId, appInfo);
-    }
+            if (validationErrors.length > 0) {
+                return {
+                    status: "FIELD_ERROR",
+                    formFields: validationErrors,
+                };
+            }
 
-    submitNewPassword = async (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        token: string;
-        config: NormalisedConfig;
-    }): Promise<SubmitNewPasswordAPIResponse> => {
-        // first we validate on the frontend
-        const validationErrors = await validateForm(
-            input.formFields,
-            input.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
-        );
+            // Verify that both passwords match.
+            if (input.formFields[0].value !== input.formFields[1].value) {
+                return {
+                    status: "FIELD_ERROR",
+                    formFields: [
+                        {
+                            id: input.formFields[1].id,
+                            error: "Confirmation password doesn't match",
+                        },
+                    ],
+                };
+            }
 
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
+            // then we call API
+            const response: SubmitNewPasswordAPIResponse = await querier.post(
+                "/user/password/reset",
+                { body: JSON.stringify({ formFields: [input.formFields[0]], token: input.token, method: "token" }) },
+                (context) => {
+                    return input.config.preAPIHook({
+                        ...context,
+                        action: "SUBMIT_NEW_PASSWORD",
+                    });
+                }
+            );
 
-        // Verify that both passwords match.
-        if (input.formFields[0].value !== input.formFields[1].value) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: [
-                    {
-                        id: input.formFields[1].id,
-                        error: "Confirmation password doesn't match",
-                    },
-                ],
-            };
-        }
-
-        // then we call API
-        const response: SubmitNewPasswordAPIResponse = await this.querier.post(
-            "/user/password/reset",
-            { body: JSON.stringify({ formFields: [input.formFields[0]], token: input.token, method: "token" }) },
-            (context) => {
-                return input.config.preAPIHook({
-                    ...context,
-                    action: "SUBMIT_NEW_PASSWORD",
+            if (response.status === "OK") {
+                input.config.onHandleEvent({
+                    action: "PASSWORD_RESET_SUCCESSFUL",
                 });
             }
-        );
 
-        if (response.status === "OK") {
-            input.config.onHandleEvent({
-                action: "PASSWORD_RESET_SUCCESSFUL",
-            });
-        }
+            return response;
+        },
 
-        return response;
-    };
+        sendPasswordResetEmail: async function (input: {
+            formFields: {
+                id: string;
+                value: string;
+            }[];
+            config: NormalisedConfig;
+        }): Promise<SendPasswordResetEmailAPIResponse> {
+            // first we validate on the frontend
+            const validationErrors = await validateForm(
+                input.formFields,
+                input.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
+            );
 
-    sendPasswordResetEmail = async (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        config: NormalisedConfig;
-    }): Promise<SendPasswordResetEmailAPIResponse> => {
-        // first we validate on the frontend
-        const validationErrors = await validateForm(
-            input.formFields,
-            input.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
-        );
+            if (validationErrors.length > 0) {
+                return {
+                    status: "FIELD_ERROR",
+                    formFields: validationErrors,
+                };
+            }
 
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
+            // then we call API
+            const response: SendPasswordResetEmailAPIResponse = await querier.post(
+                "/user/password/reset/token",
+                { body: JSON.stringify({ formFields: input.formFields }) },
+                (context) => {
+                    return input.config.preAPIHook({
+                        ...context,
+                        action: "SEND_RESET_PASSWORD_EMAIL",
+                    });
+                }
+            );
 
-        // then we call API
-        const response: SendPasswordResetEmailAPIResponse = await this.querier.post(
-            "/user/password/reset/token",
-            { body: JSON.stringify({ formFields: input.formFields }) },
-            (context) => {
-                return input.config.preAPIHook({
-                    ...context,
-                    action: "SEND_RESET_PASSWORD_EMAIL",
+            if (response.status === "OK") {
+                input.config.onHandleEvent({
+                    action: "RESET_PASSWORD_EMAIL_SENT",
                 });
             }
-        );
+            return response;
+        },
 
-        if (response.status === "OK") {
-            input.config.onHandleEvent({
-                action: "RESET_PASSWORD_EMAIL_SENT",
-            });
-        }
-        return response;
-    };
+        signUp: async function (input: {
+            formFields: {
+                id: string;
+                value: string;
+            }[];
+            config: NormalisedConfig;
+        }): Promise<SignUpAPIResponse> {
+            // first we validate on the frontend
+            const validationErrors = await validateForm(
+                input.formFields,
+                input.config.signInAndUpFeature.signUpForm.formFields
+            );
 
-    signUp = async (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        config: NormalisedConfig;
-    }): Promise<SignUpAPIResponse> => {
-        // first we validate on the frontend
-        const validationErrors = await validateForm(
-            input.formFields,
-            input.config.signInAndUpFeature.signUpForm.formFields
-        );
+            if (validationErrors.length > 0) {
+                return {
+                    status: "FIELD_ERROR",
+                    formFields: validationErrors,
+                };
+            }
 
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
+            // then we call API
+            const response: SignUpAPIResponse = await querier.post(
+                "/signup",
+                { body: JSON.stringify({ formFields: input.formFields }) },
+                (context) => {
+                    return input.config.preAPIHook({
+                        ...context,
+                        action: "EMAIL_PASSWORD_SIGN_UP",
+                    });
+                }
+            );
 
-        // then we call API
-        const response: SignUpAPIResponse = await this.querier.post(
-            "/signup",
-            { body: JSON.stringify({ formFields: input.formFields }) },
-            (context) => {
-                return input.config.preAPIHook({
-                    ...context,
-                    action: "EMAIL_PASSWORD_SIGN_UP",
+            if (response.status === "OK") {
+                input.config.onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: true,
+                    user: response.user,
                 });
             }
-        );
 
-        if (response.status === "OK") {
-            input.config.onHandleEvent({
-                action: "SUCCESS",
-                isNewUser: true,
-                user: response.user,
-            });
-        }
+            return response;
+        },
+        signIn: async function (input: {
+            formFields: {
+                id: string;
+                value: string;
+            }[];
+            config: NormalisedConfig;
+        }): Promise<SignInAPIResponse> {
+            // first we validate on the frontend
+            const validationErrors = await validateForm(
+                input.formFields,
+                input.config.signInAndUpFeature.signInForm.formFields
+            );
 
-        return response;
-    };
+            if (validationErrors.length > 0) {
+                return {
+                    status: "FIELD_ERROR",
+                    formFields: validationErrors,
+                };
+            }
 
-    signIn = async (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        config: NormalisedConfig;
-    }): Promise<SignInAPIResponse> => {
-        // first we validate on the frontend
-        const validationErrors = await validateForm(
-            input.formFields,
-            input.config.signInAndUpFeature.signInForm.formFields
-        );
+            // then we call API
+            const response: SignInAPIResponse = await querier.post(
+                "/signin",
+                { body: JSON.stringify({ formFields: input.formFields }) },
+                (context) => {
+                    return input.config.preAPIHook({
+                        ...context,
+                        action: "EMAIL_PASSWORD_SIGN_IN",
+                    });
+                }
+            );
 
-        if (validationErrors.length > 0) {
-            return {
-                status: "FIELD_ERROR",
-                formFields: validationErrors,
-            };
-        }
-
-        // then we call API
-        const response: SignInAPIResponse = await this.querier.post(
-            "/signin",
-            { body: JSON.stringify({ formFields: input.formFields }) },
-            (context) => {
-                return input.config.preAPIHook({
-                    ...context,
-                    action: "EMAIL_PASSWORD_SIGN_IN",
+            if (response.status === "OK") {
+                input.config.onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: false,
+                    user: response.user,
                 });
             }
-        );
+            return response;
+        },
+        doesEmailExist: async function (input: { email: string; config: NormalisedConfig }): Promise<boolean> {
+            const response: EmailExistsAPIResponse = await querier.get(
+                "/signup/email/exists",
+                {},
+                { email: input.email },
+                (context) => {
+                    return input.config.preAPIHook({
+                        ...context,
+                        action: "EMAIL_EXISTS",
+                    });
+                }
+            );
 
-        if (response.status === "OK") {
-            input.config.onHandleEvent({
-                action: "SUCCESS",
-                isNewUser: false,
-                user: response.user,
-            });
-        }
-        return response;
-    };
-
-    doesEmailExist = async (input: { email: string; config: NormalisedConfig }): Promise<boolean> => {
-        const response: EmailExistsAPIResponse = await this.querier.get(
-            "/signup/email/exists",
-            {},
-            { email: input.email },
-            (context) => {
-                return input.config.preAPIHook({
-                    ...context,
-                    action: "EMAIL_EXISTS",
-                });
-            }
-        );
-
-        return response.exists;
+            return response.exists;
+        },
     };
 }
 
