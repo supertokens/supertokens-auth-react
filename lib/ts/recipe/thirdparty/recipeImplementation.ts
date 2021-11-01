@@ -161,7 +161,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
 
             // for some third party providers, the redirect_uri is set on the backend itself (for example in the case of apple). In these cases, we don't set them here...
             const urlObj = new URL(url);
-            const alreadyContainsRedirectURI = urlObj.searchParams.get("redirect_uri") !== undefined;
+            const alreadyContainsRedirectURI = urlObj.searchParams.get("redirect_uri") !== null;
 
             const urlWithState = alreadyContainsRedirectURI
                 ? appendQueryParamsToURL(url, {
