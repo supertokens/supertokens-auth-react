@@ -12,6 +12,10 @@
     justify-content: center;
     flex: 1;
 }
+.already-error-text {
+    text-align: center;
+    color: red;
+}
 
 .sessionButton {
     padding-left: 13px;
