@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import ThirdParty, { ThirdPartyAuth, Google, Github } from "supertokens-auth-react/recipe/thirdparty";
+import ThirdParty, { ThirdPartyAuth, Google, Github, Apple } from "supertokens-auth-react/recipe/thirdparty";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
@@ -29,7 +29,7 @@ SuperTokens.init({
     recipeList: [
         ThirdParty.init({
             signInAndUpFeature: {
-                providers: [Github.init(), Google.init()],
+                providers: [Github.init(), Google.init(), Apple.init()],
             },
             emailVerificationFeature: {
                 mode: "REQUIRED",
