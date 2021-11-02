@@ -39,7 +39,7 @@ supertokens.init({
                     clientId: "467101b197249757c71f",
                 }),
                 ThirdPartyEmailPassword.Apple({
-                    clientId: "io.supertokens.example.service",
+                    clientId: "4398792-io.supertokens.example.service",
                     clientSecret: {
                         keyId: "7M48Y4RYDL",
                         privateKey:
