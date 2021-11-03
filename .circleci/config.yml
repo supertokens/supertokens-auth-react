@@ -25,6 +25,7 @@ jobs:
             - run: npm run init
             - run: cd ./examples/for-tests && npm run link
             - run: (cd .circleci/ && ./doTests.sh)
+            - run: npm run size
             - slack/status
 
     update-demo-apps:
