@@ -74,6 +74,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                         code,
                         thirdPartyId: input.thirdPartyId,
                         redirectURI,
+                        clientId: provider.clientId,
                     }),
                 },
                 (context) => {

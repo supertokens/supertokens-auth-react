@@ -354,7 +354,9 @@ function getThirdPartyConfigs() {
             termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
             providers: [
                 ThirdParty.Github.init(),
-                ThirdParty.Google.init(),
+                ThirdParty.Google.init({
+                    clientId: "some client ID",
+                }),
                 ThirdParty.Facebook.init(),
                 ThirdParty.Apple.init(),
                 {

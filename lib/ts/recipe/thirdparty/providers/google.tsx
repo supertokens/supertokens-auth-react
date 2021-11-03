@@ -38,6 +38,7 @@ export default class Google extends Provider {
         super({
             id: "google",
             name: "Google",
+            clientId: config?.clientId,
         });
 
         if (config === undefined) {

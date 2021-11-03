@@ -38,6 +38,7 @@ export default class Github extends Provider {
         super({
             id: "github",
             name: "Github",
+            clientId: config?.clientId,
         });
 
         if (config === undefined) {

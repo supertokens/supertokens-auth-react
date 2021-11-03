@@ -22,6 +22,8 @@ export type ProviderConfig = {
      * Provider Name
      */
     name: string;
+
+    clientId?: string; // optional clientId to be sent during signinup API
 };
 
 export type BuiltInProviderConfig = {
@@ -29,6 +31,8 @@ export type BuiltInProviderConfig = {
      * Button Component
      */
     buttonComponent?: JSX.Element;
+
+    clientId?: string; // optional clientId to be sent during signinup API
 };
 
 export type CustomProviderConfig = {
@@ -41,6 +45,8 @@ export type CustomProviderConfig = {
      * Provider Name
      */
     name: string;
+
+    clientId?: string;
 
     /*
      * Button Component
