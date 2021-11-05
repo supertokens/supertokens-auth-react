@@ -99,11 +99,11 @@
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "110kb"
+            "limit": "100kb"
         },
         {
             "path": "recipe/emailpassword/index.js",
-            "limit": "110kb"
+            "limit": "100kb"
         }
     ],
     "repository": {
