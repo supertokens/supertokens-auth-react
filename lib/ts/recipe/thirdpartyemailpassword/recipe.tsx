@@ -42,6 +42,7 @@ import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementa
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipeModule/authWidgetWrapper";
+import OverrideableBuilder from "supertokens-js-override";
 
 export default class ThirdPartyEmailPassword extends AuthRecipeModule<
     GetRedirectionURLContext,
@@ -70,9 +71,10 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
-        this.recipeImpl = this.config.override.functions(
-            RecipeImplementation(this.config.recipeId, this.config.appInfo)
-        );
+        {
+            const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
+            this.recipeImpl = builder.override(this.config.override.functions).build();
+        }
 
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined

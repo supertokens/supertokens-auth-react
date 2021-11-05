@@ -16,6 +16,7 @@ import { ComponentOverride } from "../../components/componentOverride/componentO
 import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
 import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
+import OverrideableBuilder from "supertokens-js-override";
 export declare type ComponentOverrideMap = {
     ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
     ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
@@ -25,7 +26,10 @@ export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     oAuthCallbackScreen?: FeatureBaseConfig;
     override?: {
-        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -35,7 +39,10 @@ export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     oAuthCallbackScreen: FeatureBaseConfig;
     override: {
-        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -83,7 +90,7 @@ export declare type StateObject = {
     thirdPartyId?: string;
     redirectToPath?: string;
 };
-export interface RecipeInterface {
+export declare type RecipeInterface = {
     getOAuthState(): StateObject | undefined;
     setOAuthState(state: StateObject): void;
     redirectToThirdPartyLogin: (input: {
@@ -108,4 +115,4 @@ export interface RecipeInterface {
               error: string;
           }
     >;
-}
+};

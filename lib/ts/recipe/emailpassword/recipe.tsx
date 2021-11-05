@@ -40,6 +40,7 @@ import ResetPasswordUsingToken from "./components/features/resetPasswordUsingTok
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipeModule/authWidgetWrapper";
+import OverrideableBuilder from "supertokens-js-override";
 
 /*
  * Class.
@@ -64,9 +65,11 @@ export default class EmailPassword extends AuthRecipeModule<
         super(normaliseEmailPasswordConfig(config), {
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
-        this.recipeImpl = this.config.override.functions(
-            RecipeImplementation(this.config.recipeId, this.config.appInfo)
-        );
+
+        {
+            const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
+            this.recipeImpl = builder.override(this.config.override.functions).build();
+        }
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {

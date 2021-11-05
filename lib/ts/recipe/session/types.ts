@@ -14,6 +14,7 @@
  */
 
 import { RecipeInterface } from "supertokens-website";
+import OverrideableBuilder from "supertokens-js-override";
 
 export type RecipeEvent =
     | {
@@ -41,7 +42,10 @@ export type InputType = {
     }) => Promise<{ url: string; requestInit: RequestInit }>;
     onHandleEvent?: (event: RecipeEvent) => void;
     override?: {
-        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 };
 

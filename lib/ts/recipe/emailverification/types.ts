@@ -18,6 +18,7 @@ import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModul
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
+import OverrideableBuilder from "supertokens-js-override";
 
 // For AuthRecipeModule, we don't need to take signOut,
 // redirectToSignIn and postVerificationRedirect as inputs from the user.
@@ -40,7 +41,10 @@ export type UserInput = UserInputForAuthRecipeModule & {
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override?: {
-        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components?: ComponentOverrideMap;
     };
 };
@@ -57,7 +61,10 @@ export type NormalisedConfig = {
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override: {
-        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -97,7 +104,7 @@ export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
     token: string;
 };
 
-export interface RecipeInterface {
+export type RecipeInterface = {
     verifyEmail: (input: {
         token: string;
         config: NormalisedConfig;
@@ -108,4 +115,4 @@ export interface RecipeInterface {
     }) => Promise<{ status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK" }>;
 
     isEmailVerified: (input: { config: NormalisedConfig }) => Promise<boolean>;
-}
+};

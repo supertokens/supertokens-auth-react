@@ -18,6 +18,7 @@ import {
     UserInput as AuthRecipeModuleUserInput,
     UserInputOverride as AuthRecipeUserInputOverride,
 } from "../authRecipeModule/types";
+import OverrideableBuilder from "supertokens-js-override";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SignInHeader } from "./components/themes/signInAndUp/signInHeader";
 import { SignIn } from "./components/themes/signInAndUp/signIn";
@@ -45,7 +46,10 @@ export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     override?: {
-        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -55,7 +59,10 @@ export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
     override: {
-        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -228,7 +235,7 @@ declare global {
 export declare type SignInAndUpState = {
     user?: User;
 };
-export interface RecipeInterface {
+export declare type RecipeInterface = {
     submitNewPassword: (input: {
         formFields: {
             id: string;
@@ -308,5 +315,5 @@ export interface RecipeInterface {
           }
     >;
     doesEmailExist: (input: { email: string; config: NormalisedConfig }) => Promise<boolean>;
-}
+};
 export {};

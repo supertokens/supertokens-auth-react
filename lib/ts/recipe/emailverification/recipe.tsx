@@ -38,6 +38,7 @@ import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
+import OverrideableBuilder from "supertokens-js-override";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -52,9 +53,11 @@ export default class EmailVerification extends RecipeModule<
 
     constructor(config: Config) {
         super(normaliseEmailVerificationFeature(config));
-        this.recipeImpl = this.config.override.functions(
-            RecipeImplementation(this.config.recipeId, this.config.appInfo)
-        );
+
+        {
+            const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
+            this.recipeImpl = builder.override(this.config.override.functions).build();
+        }
     }
 
     static init(
