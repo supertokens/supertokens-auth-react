@@ -3,6 +3,7 @@ import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModul
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
+import OverrideableBuilder from "supertokens-js-override";
 export declare type UserInputForAuthRecipeModule = {
     mode?: "OFF" | "REQUIRED";
     disableDefaultImplementation?: boolean;
@@ -18,7 +19,10 @@ export declare type UserInput = UserInputForAuthRecipeModule & {
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override?: {
-        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components?: ComponentOverrideMap;
     };
 };
@@ -33,7 +37,10 @@ export declare type NormalisedConfig = {
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override: {
-        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -66,7 +73,7 @@ export declare type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
     onTokenInvalidRedirect: () => Promise<void>;
     token: string;
 };
-export interface RecipeInterface {
+export declare type RecipeInterface = {
     verifyEmail: (input: { token: string; config: NormalisedConfig }) => Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
     }>;
@@ -74,4 +81,4 @@ export interface RecipeInterface {
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
     }>;
     isEmailVerified: (input: { config: NormalisedConfig }) => Promise<boolean>;
-}
+};

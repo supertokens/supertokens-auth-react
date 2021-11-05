@@ -4,6 +4,8 @@ import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImpleme
 import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
 import { NormalisedConfig as EPConfig } from "../../emailpassword/types";
 import { NormalisedConfig as TPConfig, StateObject } from "../../thirdparty/types";
+import DerivedEP from "./emailPasswordImplementation";
+import DerivedTP from "./thirdPartyImplementation";
 
 export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface {
     const emailpasswordImpl = EmailPasswordRecipeImplementation(recipeId, appInfo);
@@ -18,7 +20,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             token: string;
             config: EPConfig;
         }) {
-            return emailpasswordImpl.submitNewPassword(input);
+            return emailpasswordImpl.submitNewPassword.bind(DerivedEP(this))(input);
         },
         sendPasswordResetEmail: async function (input: {
             formFields: {
@@ -27,18 +29,18 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             }[];
             config: EPConfig;
         }) {
-            return emailpasswordImpl.sendPasswordResetEmail(input);
+            return emailpasswordImpl.sendPasswordResetEmail.bind(DerivedEP(this))(input);
         },
         doesEmailExist: async function (input: { email: string; config: EPConfig }) {
-            return emailpasswordImpl.doesEmailExist(input);
+            return emailpasswordImpl.doesEmailExist.bind(DerivedEP(this))(input);
         },
         getOAuthAuthorisationURL: async function (input: { thirdPartyId: string; config: TPConfig }) {
-            return thirdPartyImpl.getOAuthAuthorisationURL(input);
+            return thirdPartyImpl.getOAuthAuthorisationURL.bind(DerivedTP(this))(input);
         },
         signInAndUp: async function (input: SignInAndUpInput): Promise<SignInAndUpOutput> {
             if (input.type === "emailpassword") {
                 if (input.isSignIn) {
-                    const response = await emailpasswordImpl.signIn(input);
+                    const response = await emailpasswordImpl.signIn.bind(DerivedEP(this))(input);
                     if (response.status === "OK") {
                         return {
                             ...response,
@@ -52,7 +54,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                         };
                     }
                 } else {
-                    const response = await emailpasswordImpl.signUp(input);
+                    const response = await emailpasswordImpl.signUp.bind(DerivedEP(this))(input);
                     if (response.status === "OK") {
                         return {
                             ...response,
@@ -67,7 +69,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     }
                 }
             } else {
-                const response = await thirdPartyImpl.signInAndUp(input);
+                const response = await thirdPartyImpl.signInAndUp.bind(DerivedTP(this))(input);
                 return {
                     ...response,
                     type: "thirdparty",
@@ -75,13 +77,13 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             }
         },
         getOAuthState: function () {
-            return thirdPartyImpl.getOAuthState();
+            return thirdPartyImpl.getOAuthState.bind(DerivedTP(this))();
         },
         setOAuthState: function (input: StateObject) {
-            return thirdPartyImpl.setOAuthState(input);
+            return thirdPartyImpl.setOAuthState.bind(DerivedTP(this))(input);
         },
         redirectToThirdPartyLogin: function (input: { thirdPartyId: string; config: TPConfig; state?: StateObject }) {
-            return thirdPartyImpl.redirectToThirdPartyLogin(input);
+            return thirdPartyImpl.redirectToThirdPartyLogin.bind(DerivedTP(this))(input);
         },
     };
 }

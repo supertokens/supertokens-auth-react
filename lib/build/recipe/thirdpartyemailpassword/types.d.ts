@@ -27,6 +27,7 @@ import {
 } from "../authRecipeModule/types";
 import EPRecipe from "../emailpassword/recipe";
 import TPRecipe from "../thirdparty/recipe";
+import OverrideableBuilder from "supertokens-js-override";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpassword/types";
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
@@ -43,7 +44,10 @@ export declare type UserInput = {
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
     disableEmailPassword?: boolean;
     override?: {
-        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -55,7 +59,10 @@ export declare type NormalisedConfig = {
     oAuthCallbackScreen?: FeatureBaseConfig;
     disableEmailPassword: boolean;
     override: {
-        functions: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
@@ -127,7 +134,7 @@ export declare type SignInAndUpOutput =
           status: "FIELD_ERROR";
           error: string;
       };
-export interface RecipeInterface {
+export declare type RecipeInterface = {
     submitNewPassword: (input: {
         formFields: {
             id: string;
@@ -173,4 +180,4 @@ export interface RecipeInterface {
     redirectToThirdPartyLogin: (input: { thirdPartyId: string; config: TPConfig; state?: StateObject }) => Promise<{
         status: "OK" | "ERROR";
     }>;
-}
+};

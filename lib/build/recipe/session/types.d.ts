@@ -1,4 +1,5 @@
 import { RecipeInterface } from "supertokens-website";
+import OverrideableBuilder from "supertokens-js-override";
 export declare type RecipeEvent =
     | {
           action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED";
@@ -28,7 +29,10 @@ export declare type InputType = {
     }>;
     onHandleEvent?: (event: RecipeEvent) => void;
     override?: {
-        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
+        functions?: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
     };
 };
 export declare type SessionContextType = {
