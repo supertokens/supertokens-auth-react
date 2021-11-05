@@ -3,8 +3,8 @@ import { RecipeInterface as TPEPRecipeInterface } from "../";
 
 export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
     return {
-        doesEmailExist: oI.doesEmailExist,
-        sendPasswordResetEmail: oI.sendPasswordResetEmail,
+        doesEmailExist: oI.doesEmailExist.bind(oI),
+        sendPasswordResetEmail: oI.sendPasswordResetEmail.bind(oI),
         signIn: async function (input) {
             const response = await oI.signInAndUp({
                 type: "emailpassword",
@@ -55,6 +55,6 @@ export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
                 throw Error("Should never come here");
             }
         },
-        submitNewPassword: oI.submitNewPassword,
+        submitNewPassword: oI.submitNewPassword.bind(oI),
     };
 }
