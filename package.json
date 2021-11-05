@@ -53,7 +53,8 @@
         "chroma-js": "^2.1.2",
         "react-shadow": "^19.0.2",
         "supertokens-website": "git+https://github.com/supertokens/supertokens-website.git#10.0",
-        "prop-types": "*"
+        "prop-types": "*",
+        "supertokens-js-override": "git+https://github.com/supertokens/supertokens-js-override.git#v0.0.3"
     },
     "peerDependencies": {
         "react": ">=16.8.0"
