@@ -38,6 +38,7 @@ export default class Facebook extends Provider {
         super({
             id: "facebook",
             name: "Facebook",
+            clientId: config?.clientId,
         });
 
         if (config === undefined) {

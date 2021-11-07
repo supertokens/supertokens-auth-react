@@ -3,6 +3,7 @@ import { ProviderConfig } from "./types";
 export default abstract class Provider {
     id: string;
     name: string;
+    clientId?: string;
     constructor(config: ProviderConfig);
     getDefaultButton(name?: string): JSX.Element;
     getRedirectURL(): string;

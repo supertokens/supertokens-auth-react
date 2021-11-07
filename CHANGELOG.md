@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Fixes issue two in https://github.com/supertokens/supertokens-node/issues/199
 -   Adds FDI 1.10 as supported
+-   Does not set `redirect_uri` third party authorisation URL if it's already set by the backend.
+-   Adds an optional `clientId` input to providers to be sent during the `signinup` API.
 
 ## [0.17.1] - 2021-10-28
 

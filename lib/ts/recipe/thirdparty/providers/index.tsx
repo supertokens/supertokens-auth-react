@@ -32,6 +32,7 @@ export default abstract class Provider {
      */
     id: string;
     name: string;
+    clientId?: string;
 
     /*
      * Constructor.
@@ -40,6 +41,7 @@ export default abstract class Provider {
     constructor(config: ProviderConfig) {
         this.id = config.id;
         this.name = config.name;
+        this.clientId = config.clientId;
     }
 
     /*

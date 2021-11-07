@@ -40,12 +40,15 @@ supertokens.init({
                         clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
                         clientId: "467101b197249757c71f",
                     }),
-
-                    // we have commented the below because our app domain (thirdparty.demo.supertokens.io) is not approved by Facebook since it's only a demo app.
-                    // ThirdParty.Facebook({
-                    //     clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-                    //     clientId: process.env.FACEBOOK_CLIENT_ID
-                    // })
+                    ThirdParty.Apple({
+                        clientId: "4398792-io.supertokens.example.service",
+                        clientSecret: {
+                            keyId: "7M48Y4RYDL",
+                            privateKey:
+                                "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
+                            teamId: "YWQCXGJRJL",
+                        },
+                    }),
                 ],
             },
         }),

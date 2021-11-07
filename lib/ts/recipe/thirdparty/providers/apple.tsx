@@ -38,6 +38,7 @@ export default class Apple extends Provider {
         super({
             id: "apple",
             name: "Apple",
+            clientId: config?.clientId,
         });
 
         if (config === undefined) {

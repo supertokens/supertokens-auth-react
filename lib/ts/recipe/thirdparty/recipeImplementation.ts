@@ -74,6 +74,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                         code,
                         thirdPartyId: input.thirdPartyId,
                         redirectURI,
+                        clientId: provider.clientId,
                     }),
                 },
                 (context) => {
@@ -159,10 +160,18 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                 config: input.config,
             });
 
-            const urlWithState = appendQueryParamsToURL(url, {
-                state,
-                redirect_uri: provider.getRedirectURL(),
-            });
+            // for some third party providers, the redirect_uri is set on the backend itself (for example in the case of apple). In these cases, we don't set them here...
+            const urlObj = new URL(url);
+            const alreadyContainsRedirectURI = urlObj.searchParams.get("redirect_uri") !== null;
+
+            const urlWithState = alreadyContainsRedirectURI
+                ? appendQueryParamsToURL(url, {
+                      state,
+                  })
+                : appendQueryParamsToURL(url, {
+                      state,
+                      redirect_uri: provider.getRedirectURL(),
+                  });
 
             // 4. Redirect to provider authorisation URL.
             redirectWithFullPageReload(urlWithState);
