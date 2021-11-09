@@ -30,6 +30,7 @@
     -   To know which one it is, run find the latest released tag (`git tag`) in the format `vX.Y.Z`, and then find the latest branch (`git branch --all`) whose `X.Y` is greater than the latest released tag.
     -   If no such branch exists, then create one from the latest released branch.
 -   [ ] If added a new recipe interface, then make sure that the implementation of it uses NON arrow functions only (like `someFunc: function () {..}`).
+-   [ ] If I added a new recipe, I also added the recipe entry point into the `size-limit` section of `package.json` with the size limit set to the current size rounded up.
 
 ## Remaining TODOs for this PR
 
