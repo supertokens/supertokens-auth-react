@@ -3,7 +3,7 @@ const override = (ogImpl) => {
         ...ogImpl,
 
         // this will be called for sign in or sign up for OAuth login providers
-        signInUp: async (input) => {
+        signInUp: async function (input) {
             // first we let the user sign in / up via the default implementation.
             // If signing up, this will create a new user object in SuperTokens with a new userId.
             let result = await ogImpl.signInUp(input);
@@ -27,7 +27,7 @@ const override = (ogImpl) => {
         },
 
         // this will be called for sign up via email & password
-        signUp: async (input) => {
+        signUp: async function (input) {
             let result = await ogImpl.signUp(input);
             if (result.status !== "OK") {
                 return result;
@@ -47,7 +47,7 @@ const override = (ogImpl) => {
         },
 
         // this will be called for sign in via email / password
-        signIn: async (input) => {
+        signIn: async function (input) {
             let result = await ogImpl.signIn(input);
             if (result.status !== "OK") {
                 return result;
@@ -65,7 +65,7 @@ const override = (ogImpl) => {
                 },
             };
         },
-        getUserById: async (input) => {
+        getUserById: async function (input) {
             // The input would be a custom userId. We can't give the custom userId
             // to supertokens' function because it won't recognize it. So we need to
             // find the associated supertokens' userId.
@@ -85,7 +85,7 @@ const override = (ogImpl) => {
                 ...updateAndGetUserFromMaps(user),
             };
         },
-        getUserByThirdPartyInfo: async (input) => {
+        getUserByThirdPartyInfo: async function (input) {
             let user = await ogImpl.getUserByThirdPartyInfo(input);
             if (user === undefined) {
                 return undefined;
@@ -98,7 +98,7 @@ const override = (ogImpl) => {
                 ...updateAndGetUserFromMaps(user),
             };
         },
-        getUserByEmail: async (input) => {
+        getUserByEmail: async function (input) {
             let user = await ogImpl.getUserByEmail(input);
             if (user === undefined) {
                 return undefined;

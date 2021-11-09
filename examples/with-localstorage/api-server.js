@@ -51,7 +51,7 @@ supertokens.init({
                     return {
                         ...origImpl,
 
-                        createNewSession: async (input) => {
+                        createNewSession: async function (input) {
                             // We start with calling the original implementation because it doesn't need a session
                             const session = await origImpl.createNewSession(input);
 
@@ -61,7 +61,7 @@ supertokens.init({
                             return session;
                         },
 
-                        refreshSession: async (input) => {
+                        refreshSession: async function (input) {
                             // Before calling the original implementation, we need to check the custom header.
                             const stCookies = input.req.original.headers["st-cookie"];
 
@@ -80,7 +80,7 @@ supertokens.init({
                             return session;
                         },
 
-                        getSession: async (input) => {
+                        getSession: async function (input) {
                             // Before calling the original implementation, we need to check the custom header.
                             const stCookies = input.req.original.headers["st-cookie"];
 
@@ -105,7 +105,7 @@ supertokens.init({
                     return {
                         ...origImpl,
 
-                        signOutPOST: async (input) => {
+                        signOutPOST: async function (input) {
                             // We don't need to overwrite cookies before calling the original implementation since it loads the session using the
                             // getSession function we already handled above
                             await origImpl.signOutPOST(input);
