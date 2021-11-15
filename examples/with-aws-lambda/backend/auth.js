@@ -7,11 +7,15 @@ let { getBackendConfig } = require("./config");
 
 supertokens.init(getBackendConfig());
 
-module.exports.handler = middy(middleware()).use(
-    cors({
-        origin: getBackendConfig().appInfo.websiteDomain,
-        credentials: true,
-        headers: ["Content-Type", ...supertokens.getAllCORSHeaders()].join(", "),
-        methods: "OPTIONS,POST,GET,PUT,DELETE",
-    })
-);
+module.exports.handler = middy(middleware())
+    .use(
+        cors({
+            origin: getBackendConfig().appInfo.websiteDomain,
+            credentials: true,
+            headers: ["Content-Type", ...supertokens.getAllCORSHeaders()].join(", "),
+            methods: "OPTIONS,POST,GET,PUT,DELETE",
+        })
+    )
+    .onError((request) => {
+        throw request.error;
+    });
