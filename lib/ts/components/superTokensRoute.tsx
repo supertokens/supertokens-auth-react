@@ -26,37 +26,41 @@ import { WithRouterType } from "../types";
  * Component.
  */
 
-export function getSuperTokensRoutesForReactRouterDom(): JSX.Element[] {
-    const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
+export function getSuperTokensRoutesForReactRouterDom(supertokensInstance: SuperTokens): JSX.Element[] {
+    const reactRouterDom = supertokensInstance.getReactRouterDom();
     if (reactRouterDom === undefined) {
         return [];
     }
 
     const Route = reactRouterDom.Route;
     const withRouter: WithRouterType = reactRouterDom.withRouter;
-    const pathsToFeatureComponentWithRecipeIdMap =
-        SuperTokens.getInstanceOrThrow().getPathsToFeatureComponentWithRecipeIdMap();
+    const pathsToFeatureComponentWithRecipeIdMap = supertokensInstance.getPathsToFeatureComponentWithRecipeIdMap();
     return Object.keys(pathsToFeatureComponentWithRecipeIdMap).map((path) => {
         path = path === "" ? "/" : path;
         return (
             <Route exact key={`st-${path}`} path={path}>
-                <SuperTokensRouteWithRecipeId withRouter={withRouter} path={path} />
+                <SuperTokensRouteWithRecipeId
+                    supertokensInstance={supertokensInstance}
+                    withRouter={withRouter}
+                    path={path}
+                />
             </Route>
         );
     });
 }
 
 function SuperTokensRouteWithRecipeId({
+    supertokensInstance,
     path,
     withRouter,
 }: {
+    supertokensInstance: SuperTokens;
     path: string;
     withRouter: WithRouterType;
 }): JSX.Element | null {
     const normalisedPath = new NormalisedURLPath(path);
 
-    const featureComponentWithRecipeId =
-        SuperTokens.getInstanceOrThrow().getMatchingComponentForRouteAndRecipeId(normalisedPath);
+    const featureComponentWithRecipeId = supertokensInstance.getMatchingComponentForRouteAndRecipeId(normalisedPath);
 
     const WithRouterComponent = React.useRef<any>(
         featureComponentWithRecipeId === undefined ? undefined : withRouter(featureComponentWithRecipeId.component)

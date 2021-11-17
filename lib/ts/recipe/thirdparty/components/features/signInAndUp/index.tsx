@@ -19,7 +19,7 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import { SignInAndUpTheme } from "../../..";
+import SignInAndUpTheme from "../../themes/signInAndUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";

@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.17.3",
+    "version": "0.17.4",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "devDependencies": {
@@ -31,6 +31,7 @@
         "jest": "^27.1.0",
         "jsdom": "16.4.0",
         "jsdom-global": "3.0.2",
+        "madge": "^5.0.1",
         "mocha": "6.1.4",
         "npm-run-all": "^4.1.5",
         "prettier": "^2.3.2",
@@ -83,7 +84,8 @@
         "pretty-check": "npx pretty-quick --check .",
         "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
         "build-docs": "rm -rf ./docs && npx typedoc --out ./docs --tsconfig ./lib/tsconfig.json ./lib/ts/index.ts ./lib/ts/**/index.ts ./lib/ts/**/*/index.ts",
-        "size": "size-limit"
+        "size": "size-limit",
+        "check-circular-dependencies": "madge --circular --extensions js ./lib/build/"
     },
     "size-limit": [
         {

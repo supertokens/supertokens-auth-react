@@ -22,7 +22,7 @@ import * as React from "react";
 import { PureComponent, Fragment } from "react";
 
 import { FormFieldThemeProps } from "../../../types";
-import { SignInAndUpTheme } from "../../..";
+import SignInAndUpTheme from "../../themes/signInAndUp";
 import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import { getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
