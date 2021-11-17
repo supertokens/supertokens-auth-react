@@ -26,6 +26,7 @@ jobs:
             - run: cd ./examples/for-tests && npm run link
             - run: (cd .circleci/ && ./doTests.sh)
             - run: npm run size
+            - run: npm run check-circular-dependencies
             - slack/status
 
     update-demo-apps:
