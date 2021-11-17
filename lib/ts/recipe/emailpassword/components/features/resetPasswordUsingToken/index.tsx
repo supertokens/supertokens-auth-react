@@ -20,7 +20,7 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import { ResetPasswordUsingTokenTheme } from "../../..";
+import ResetPasswordUsingTokenTheme from "../../themes/resetPasswordUsingToken";
 import { FeatureBaseProps } from "../../../../../types";
 
 import { getQueryParams } from "../../../../../utils";

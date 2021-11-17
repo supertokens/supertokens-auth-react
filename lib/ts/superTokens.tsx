@@ -103,7 +103,7 @@ export default class SuperTokens {
             );
         }
         SuperTokens.reactRouterDom = reactRouterDom;
-        return getSuperTokensRoutesForReactRouterDom();
+        return getSuperTokensRoutesForReactRouterDom(SuperTokens.getInstanceOrThrow());
     }
 
     /*

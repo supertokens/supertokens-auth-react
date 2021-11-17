@@ -1,2 +1,3 @@
 /// <reference types="react" />
-export declare function getSuperTokensRoutesForReactRouterDom(): JSX.Element[];
+import SuperTokens from "../superTokens";
+export declare function getSuperTokensRoutesForReactRouterDom(supertokensInstance: SuperTokens): JSX.Element[];

@@ -20,10 +20,10 @@ import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import { FeatureBaseProps } from "../../../../../types";
-import { SignInAndUpTheme } from "../../..";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import SignInAndUpTheme from "../../themes/signInAndUp";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
