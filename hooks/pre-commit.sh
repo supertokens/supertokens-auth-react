@@ -33,7 +33,7 @@ else
    echo "$(tput setaf 1)* No$(tput sgr 0)"
 fi
 
-npm run check-circular-dependencies >/dev/null 2>/dev/null
+npm run check-circular-dependencies
 circDep=$?
 
 echo "$(tput setaf 3)* No circular dependencies?$(tput sgr 0)"

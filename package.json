@@ -85,7 +85,7 @@
         "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
         "build-docs": "rm -rf ./docs && npx typedoc --out ./docs --tsconfig ./lib/tsconfig.json ./lib/ts/index.ts ./lib/ts/**/index.ts ./lib/ts/**/*/index.ts",
         "size": "size-limit",
-        "check-circular-dependencies": "madge --circular --extensions js ./lib/build/"
+        "check-circular-dependencies": "npx madge --circular --extensions js ./lib/build/"
     },
     "size-limit": [
         {
