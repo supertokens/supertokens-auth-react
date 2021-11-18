@@ -6,6 +6,7 @@ import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recip
 export default class SuperTokens {
     private static instance?;
     private static reactRouterDom?;
+    private static reactRouterDomIsV6;
     appInfo: NormalisedAppInfo;
     recipeList: RecipeModule<any, any, any, any>[];
     private pathsToFeatureComponentWithRecipeIdMap?;

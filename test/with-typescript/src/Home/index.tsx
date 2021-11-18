@@ -2,16 +2,16 @@ import * as React from "react";
 import Logout from "./Logout";
 import SuccessView from "./SuccessView";
 import { useSessionContext } from "../../../../recipe/session";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { signOut } from "../../../../recipe/emailpassword";
 
 export default function Home() {
     const userId = useSessionContext().userId;
-    const history = useHistory();
+    const navigate = useNavigate();
 
     async function logoutClicked() {
         await signOut();
-        history.push("/auth");
+        navigate("/auth");
     }
 
     return (
