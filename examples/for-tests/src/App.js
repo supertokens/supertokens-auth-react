@@ -3,6 +3,7 @@ import "./App.css";
 
 import AppWithoutRouter from "./AppWithoutRouter";
 import AppWithReactDomRouter from "./AppWithReactDomRouter";
+import AppWithReactDomRouterV5 from "./AppWithReactDomRouterV5";
 import Footer from "./Footer";
 /* SuperTokens imports */
 import SuperTokens from "supertokens-auth-react";
@@ -18,7 +19,22 @@ import DarkTheme from "./Themes/Dark";
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import { logWithPrefix } from "./logWithPrefix";
-import { withRouter } from "react-router-dom";
+let { useNavigate } = require("react-router-dom");
+let withRouter = undefined;
+const loadv5RRD = window.localStorage.getItem("react-router-dom-is-v5") === "true";
+if (loadv5RRD) {
+    withRouter = require("react-router-domv5").withRouter;
+}
+
+if (withRouter === undefined) {
+    withRouter = function (Child) {
+        return (props) => {
+            const navigate = useNavigate();
+            // we make navigate to history because we use history in the code everywhere.
+            return <Child {...props} history={navigate} />;
+        };
+    };
+}
 
 Session.addAxiosInterceptors(axios);
 
@@ -212,7 +228,11 @@ function App() {
         return <AppWithoutRouter />;
     }
 
-    return <AppWithReactDomRouter authRecipe={authRecipe} />;
+    if (loadv5RRD) {
+        return <AppWithReactDomRouterV5 authRecipe={authRecipe} />;
+    } else {
+        return <AppWithReactDomRouter authRecipe={authRecipe} />;
+    }
 }
 
 function getQueryParams(param) {
@@ -321,7 +341,11 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             if (props.history === undefined) {
                 window.location.href = "/auth";
             } else {
-                props.history.push("/auth");
+                if (props.history.push !== undefined) {
+                    props.history.push("/auth");
+                } else {
+                    props.history("/auth");
+                }
             }
         }
     }
