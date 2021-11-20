@@ -52,7 +52,7 @@ function SuperTokensRouteWithRecipeId({
     supertokensInstance: SuperTokens;
     path: string;
 }): JSX.Element | null {
-    const history = (supertokensInstance.getReactRouterDom() as any).useNavigate();
+    const history = supertokensInstance.getReactRouterDom()?.useHistoryCustom();
     const normalisedPath = new NormalisedURLPath(path);
 
     const featureComponentWithRecipeId = supertokensInstance.getMatchingComponentForRouteAndRecipeId(normalisedPath);

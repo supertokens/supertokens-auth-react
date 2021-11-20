@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { PureComponent, useRef } from "react";
+import { PureComponent } from "react";
 
 import ThirdParty from "./recipe";
 import { FeatureBaseProps } from "../../types";
@@ -70,15 +70,14 @@ export default function ThirdPartyAuthWrapper({
     onSessionExpired?: () => void;
 }): JSX.Element {
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
-    const Component = useRef<typeof ThirdPartyAuth>(
-        reactRouterDom === undefined ? ThirdPartyAuth : reactRouterDom.withRouter(ThirdPartyAuth)
-    );
+    const history = reactRouterDom === undefined ? undefined : reactRouterDom.useHistoryCustom();
     return (
-        <Component.current
+        <ThirdPartyAuth
+            history={history}
             onSessionExpired={onSessionExpired}
             requireAuth={requireAuth}
             recipe={ThirdParty.getInstanceOrThrow()}>
             {children}
-        </Component.current>
+        </ThirdPartyAuth>
     );
 }

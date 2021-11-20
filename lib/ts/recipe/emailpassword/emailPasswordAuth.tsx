@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { PureComponent, useRef } from "react";
+import { PureComponent } from "react";
 
 import EmailPassword from "./recipe";
 import { FeatureBaseProps } from "../../types";
@@ -70,15 +70,15 @@ export default function EmailPasswordAuthWrapper({
     onSessionExpired?: () => void;
 }): JSX.Element {
     const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
-    const Component = useRef<typeof EmailPasswordAuth>(
-        reactRouterDom === undefined ? EmailPasswordAuth : reactRouterDom.withRouter(EmailPasswordAuth)
-    );
+    const history = reactRouterDom === undefined ? undefined : reactRouterDom.useHistoryCustom();
+
     return (
-        <Component.current
+        <EmailPasswordAuth
+            history={history}
             onSessionExpired={onSessionExpired}
             requireAuth={requireAuth}
             recipe={EmailPassword.getInstanceOrThrow()}>
             {children}
-        </Component.current>
+        </EmailPasswordAuth>
     );
 }
