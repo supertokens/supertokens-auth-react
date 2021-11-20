@@ -60,7 +60,7 @@ import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_U
 /*
  * Tests.
  */
-describe("SuperTokens SignIn", function () {
+describe("SuperTokens SignIn with react router dom v5", function () {
     let browser;
     let page;
     let consoleLogs = [];
@@ -94,6 +94,15 @@ describe("SuperTokens SignIn", function () {
 
     beforeEach(async function () {
         page = await browser.newPage();
+        // we set react-router-domv5 to true in localstorage
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+        await page.evaluate(() => {
+            localStorage.setItem("react-router-dom-is-v5", "true");
+            localStorage.setItem("useReactRouterDom", "true");
+        });
         page.on("console", (consoleObj) => {
             const log = consoleObj.text();
             if (log.startsWith("ST_LOGS")) {

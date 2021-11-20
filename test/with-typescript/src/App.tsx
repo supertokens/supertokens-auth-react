@@ -18,7 +18,7 @@ import ThirdPartyEmailPassword, {
     PreAPIHookContext as ThirdPartyEmailPasswordPreAPIHookContext,
 } from "../../../recipe/thirdpartyemailpassword";
 import Home from "./Home";
-import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
+import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
@@ -79,19 +79,25 @@ function App() {
         <div className="App">
             <Router>
                 <div className="fill">
-                    <Switch>
+                    <Routes>
                         {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-                        <Route path="/">
-                            <Auth>
-                                <Home />
-                            </Auth>
-                        </Route>
-                        <Route path="/redirect-to-this-custom-path">
-                            <Auth>
-                                <Home />
-                            </Auth>
-                        </Route>
-                    </Switch>
+                        <Route
+                            path="/"
+                            element={
+                                <Auth>
+                                    <Home />
+                                </Auth>
+                            }
+                        />
+                        <Route
+                            path="/redirect-to-this-custom-path"
+                            element={
+                                <Auth>
+                                    <Home />
+                                </Auth>
+                            }
+                        />
+                    </Routes>
                 </div>
                 <div className="footer">
                     <Footer />

@@ -206,7 +206,15 @@ export function redirectWithHistory(to: string, history: any): void {
     if (to.trim() === "") {
         to = "/";
     }
-    history.push(to);
+
+    if (history.push !== undefined) {
+        // we are using react-router-dom that is before v6
+        history.push(to);
+    } else {
+        // in react-router-dom v6, it is just navigate(to), and we are renaming
+        // naviagte to history, so it becomes history(to).
+        history(to);
+    }
 }
 
 export function isIE(): boolean {
