@@ -22,7 +22,7 @@ import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensCon
 import { getCurrentNormalisedUrlPath, isTest, normaliseInputAppInfoOrThrowError } from "./utils";
 import NormalisedURLPath from "./normalisedURLPath";
 import { getSuperTokensRoutesForReactRouterDom } from "./components/superTokensRoute";
-import { getSuperTokensRoutesForReactRouterDomV6 } from "./components/superTokensRouteV6";
+import { getSuperTokensRoutesForReactRouterDomV6, useNavigateHookForRRDV6 } from "./components/superTokensRouteV6";
 import { BaseFeatureComponentMap } from "./types";
 import { SSR_ERROR } from "./constants";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
@@ -108,14 +108,12 @@ export default class SuperTokens {
         if (SuperTokens.reactRouterDomIsV6 === undefined) {
             SuperTokens.reactRouterDomIsV6 = reactRouterDom.withRouter === undefined;
         }
-
         if (SuperTokens.reactRouterDomIsV6) {
             // since v6 doesn't have withRouter, we add this: https://stackoverflow.com/questions/62365009/how-to-get-parameter-value-from-react-router-dom-v6-in-class
             SuperTokens.reactRouterDom.withRouter = function (Child: any) {
                 return (props: any) => {
-                    const navigate = reactRouterDom.useNavigate();
-                    // we make navigate to history because we use history in the code everywhere.
-                    return <Child {...props} history={navigate} />;
+                    const history = useNavigateHookForRRDV6(reactRouterDom);
+                    return <Child {...props} history={history} />;
                 };
             };
 
