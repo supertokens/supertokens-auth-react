@@ -262,6 +262,7 @@ describe("SuperTokens Email Verification", function () {
             const title = await getTextByDataSupertokens(page, "headerTitle");
             assert.deepStrictEqual(title, "Email verification successful!");
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" })]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             assert.deepStrictEqual(consoleLogs, [

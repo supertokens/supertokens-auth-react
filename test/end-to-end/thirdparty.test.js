@@ -123,6 +123,8 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
@@ -215,6 +217,8 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -245,6 +249,8 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -275,6 +281,8 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -329,6 +337,8 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -359,6 +369,8 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
