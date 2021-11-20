@@ -115,30 +115,16 @@ export default class SuperTokens {
             // which gets shown when visiting a social auth callback url like
             // /auth/callback/github, without a valid code or state. This then
             // doesn't navigate the user to the auth page.
-            const useNavigateHookForRRDV6 = function (): (to: string) => void {
+            const useNavigateHookForRRDV6 = function (): any {
                 const navigateHook = reactRouterDom.useNavigate();
-                const actualResolve = React.useRef<any>(undefined);
-                const toReturn = function (to: string) {
-                    if (actualResolve.current === undefined) {
-                        setTimeout(() => {
-                            toReturn(to);
-                        }, 0);
-                    } else {
-                        actualResolve.current(to);
-                    }
-                };
+                const [to, setTo] = React.useState(undefined);
                 React.useEffect(() => {
-                    function somFunc() {
-                        new Promise((resolve) => {
-                            actualResolve.current = resolve;
-                        }).then((to) => {
-                            navigateHook(to);
-                            somFunc();
-                        });
+                    if (to !== undefined) {
+                        setTo(undefined);
+                        navigateHook(to);
                     }
-                    somFunc();
-                }, [navigateHook]);
-                return toReturn;
+                }, [to, navigateHook, setTo]);
+                return setTo;
             };
             SuperTokens.reactRouterDom.useHistoryCustom = useNavigateHookForRRDV6;
 
