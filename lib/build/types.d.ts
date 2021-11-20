@@ -58,7 +58,6 @@ export declare type NormalisedFormField = {
     autoComplete?: string;
 };
 export declare type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
-export declare type WithRouterType = (Component: ReactComponentClass) => ReactComponentClass;
 export declare type Styles = Record<string, CSSObject>;
 export declare type FeatureBaseConfig = {
     style?: Styles;

@@ -22,7 +22,7 @@ import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensCon
 import { getCurrentNormalisedUrlPath, isTest, normaliseInputAppInfoOrThrowError } from "./utils";
 import NormalisedURLPath from "./normalisedURLPath";
 import { getSuperTokensRoutesForReactRouterDom } from "./components/superTokensRoute";
-import { getSuperTokensRoutesForReactRouterDomV6, useNavigateHookForRRDV6 } from "./components/superTokensRouteV6";
+import { getSuperTokensRoutesForReactRouterDomV6 } from "./components/superTokensRouteV6";
 import { BaseFeatureComponentMap } from "./types";
 import { SSR_ERROR } from "./constants";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
@@ -109,16 +109,42 @@ export default class SuperTokens {
             SuperTokens.reactRouterDomIsV6 = reactRouterDom.withRouter === undefined;
         }
         if (SuperTokens.reactRouterDomIsV6) {
-            // since v6 doesn't have withRouter, we add this: https://stackoverflow.com/questions/62365009/how-to-get-parameter-value-from-react-router-dom-v6-in-class
-            SuperTokens.reactRouterDom.withRouter = function (Child: any) {
-                return (props: any) => {
-                    const history = useNavigateHookForRRDV6(reactRouterDom);
-                    return <Child {...props} history={history} />;
+            // this function wraps the react-router-dom v6 useNavigate function in a way
+            // that enforces that it runs within a useEffect. The reason we do this is
+            // cause of https://github.com/remix-run/react-router/issues/7460
+            // which gets shown when visiting a social auth callback url like
+            // /auth/callback/github, without a valid code or state. This then
+            // doesn't navigate the user to the auth page.
+            const useNavigateHookForRRDV6 = function (): (to: string) => void {
+                const navigateHook = reactRouterDom.useNavigate();
+                const actualResolve = React.useRef<any>(undefined);
+                const toReturn = function (to: string) {
+                    if (actualResolve.current === undefined) {
+                        setTimeout(() => {
+                            toReturn(to);
+                        }, 0);
+                    } else {
+                        actualResolve.current(to);
+                    }
                 };
+                React.useEffect(() => {
+                    function somFunc() {
+                        new Promise((resolve) => {
+                            actualResolve.current = resolve;
+                        }).then((to) => {
+                            navigateHook(to);
+                            somFunc();
+                        });
+                    }
+                    somFunc();
+                }, [navigateHook]);
+                return toReturn;
             };
+            SuperTokens.reactRouterDom.useHistoryCustom = useNavigateHookForRRDV6;
 
             return getSuperTokensRoutesForReactRouterDomV6(SuperTokens.getInstanceOrThrow());
         }
+        SuperTokens.reactRouterDom.useHistoryCustom = reactRouterDom.useHistory;
         return getSuperTokensRoutesForReactRouterDom(SuperTokens.getInstanceOrThrow());
     }
 
@@ -196,7 +222,7 @@ export default class SuperTokens {
         return recipe as RecipeModule<T, S, R, N>;
     }
 
-    getReactRouterDom = (): { Route: any; withRouter: any } | undefined => {
+    getReactRouterDom = (): { Route: any; useHistoryCustom: () => any } | undefined => {
         return SuperTokens.reactRouterDom;
     };
 

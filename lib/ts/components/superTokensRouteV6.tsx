@@ -45,8 +45,6 @@ export function getSuperTokensRoutesForReactRouterDomV6(supertokensInstance: Sup
     });
 }
 
-// TODO: We want to use withRouter here too.. But it doesn't change
-// the UI on navigation.
 function SuperTokensRouteWithRecipeId({
     supertokensInstance,
     path,
@@ -54,7 +52,7 @@ function SuperTokensRouteWithRecipeId({
     supertokensInstance: SuperTokens;
     path: string;
 }): JSX.Element | null {
-    const history = useNavigateHookForRRDV6(supertokensInstance.getReactRouterDom());
+    const history = supertokensInstance.getReactRouterDom()?.useHistoryCustom();
     const normalisedPath = new NormalisedURLPath(path);
 
     const featureComponentWithRecipeId = supertokensInstance.getMatchingComponentForRouteAndRecipeId(normalisedPath);
@@ -64,36 +62,4 @@ function SuperTokensRouteWithRecipeId({
     }
 
     return <featureComponentWithRecipeId.component history={history} />;
-}
-
-// this function wraps the react-router-dom v6 useNavigate function in a way
-// that enforces that it runs within a useEffect. The reason we do this is
-// cause of https://github.com/remix-run/react-router/issues/7460
-// which gets shown when visiting a social auth callback url like
-// /auth/callback/github, without a valid code or state. This then
-// doesn't navigate the user to the auth page.
-export function useNavigateHookForRRDV6(reactRouterDom: any): (to: string) => void {
-    const navigateHook = reactRouterDom.useNavigate();
-    const actualResolve = React.useRef<any>(undefined);
-    const toReturn = function (to: string) {
-        if (actualResolve.current === undefined) {
-            setTimeout(() => {
-                toReturn(to);
-            }, 0);
-        } else {
-            actualResolve.current(to);
-        }
-    };
-    React.useEffect(() => {
-        function somFunc() {
-            new Promise((resolve) => {
-                actualResolve.current = resolve;
-            }).then((to) => {
-                navigateHook(to);
-                somFunc();
-            });
-        }
-        somFunc();
-    }, [navigateHook]);
-    return toReturn;
 }

@@ -28,7 +28,7 @@ export default class SuperTokens {
     getReactRouterDom: () =>
         | {
               Route: any;
-              withRouter: any;
+              useHistoryCustom: () => any;
           }
         | undefined;
     static reset(): void;

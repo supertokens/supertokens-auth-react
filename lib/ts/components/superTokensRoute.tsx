@@ -20,7 +20,6 @@
 import * as React from "react";
 import NormalisedURLPath from "../normalisedURLPath";
 import SuperTokens from "../superTokens";
-import { WithRouterType } from "../types";
 
 /*
  * Component.
@@ -33,17 +32,12 @@ export function getSuperTokensRoutesForReactRouterDom(supertokensInstance: Super
     }
 
     const Route = reactRouterDom.Route;
-    const withRouter: WithRouterType = reactRouterDom.withRouter;
     const pathsToFeatureComponentWithRecipeIdMap = supertokensInstance.getPathsToFeatureComponentWithRecipeIdMap();
     return Object.keys(pathsToFeatureComponentWithRecipeIdMap).map((path) => {
         path = path === "" ? "/" : path;
         return (
             <Route exact key={`st-${path}`} path={path}>
-                <SuperTokensRouteWithRecipeId
-                    supertokensInstance={supertokensInstance}
-                    withRouter={withRouter}
-                    path={path}
-                />
+                <SuperTokensRouteWithRecipeId supertokensInstance={supertokensInstance} path={path} />
             </Route>
         );
     });
@@ -52,23 +46,18 @@ export function getSuperTokensRoutesForReactRouterDom(supertokensInstance: Super
 function SuperTokensRouteWithRecipeId({
     supertokensInstance,
     path,
-    withRouter,
 }: {
     supertokensInstance: SuperTokens;
     path: string;
-    withRouter: WithRouterType;
 }): JSX.Element | null {
+    const history = supertokensInstance.getReactRouterDom()?.useHistoryCustom();
     const normalisedPath = new NormalisedURLPath(path);
 
     const featureComponentWithRecipeId = supertokensInstance.getMatchingComponentForRouteAndRecipeId(normalisedPath);
 
-    const WithRouterComponent = React.useRef<any>(
-        featureComponentWithRecipeId === undefined ? undefined : withRouter(featureComponentWithRecipeId.component)
-    );
-
-    if (WithRouterComponent.current === undefined) {
+    if (featureComponentWithRecipeId === undefined) {
         return null;
     }
 
-    return <WithRouterComponent.current />;
+    return <featureComponentWithRecipeId.component history={history} />;
 }

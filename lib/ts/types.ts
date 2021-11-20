@@ -196,7 +196,6 @@ export type NormalisedFormField = {
 };
 
 export type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
-export type WithRouterType = (Component: ReactComponentClass) => ReactComponentClass;
 
 export type Styles = Record<string, CSSObject>;
 
