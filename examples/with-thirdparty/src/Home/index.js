@@ -2,16 +2,16 @@ import React from "react";
 import Logout from "./Logout";
 import SuccessView from "./SuccessView";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { signOut } from "supertokens-auth-react/recipe/thirdparty";
 
 export default function Home() {
     const { userId } = useSessionContext();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     async function logoutClicked() {
         await signOut();
-        history.push("/auth");
+        navigate("/auth");
     }
 
     return (

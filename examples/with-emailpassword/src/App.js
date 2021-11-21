@@ -4,7 +4,7 @@ import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
-import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
+import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 
@@ -43,23 +43,26 @@ function App() {
         <div className="App">
             <Router>
                 <div className="fill">
-                    <Switch>
+                    <Routes>
                         {/* This shows the login UI on "/auth" route */}
                         {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
 
-                        <Route path="/">
-                            {/* This protects the "/" route so that it shows 
-                            <Home /> only if the user is logged in.
-                            Else it redirects the user to "/auth" */}
-                            <EmailPassword.EmailPasswordAuth
-                                onSessionExpired={() => {
-                                    updateShowSessionExpiredPopup(true);
-                                }}>
-                                <Home />
-                                {showSessionExpiredPopup && <SessionExpiredPopup />}
-                            </EmailPassword.EmailPasswordAuth>
-                        </Route>
-                    </Switch>
+                        <Route
+                            path="/"
+                            element={
+                                /* This protects the "/" route so that it shows 
+                                <Home /> only if the user is logged in.
+                                Else it redirects the user to "/auth" */
+                                <EmailPassword.EmailPasswordAuth
+                                    onSessionExpired={() => {
+                                        updateShowSessionExpiredPopup(true);
+                                    }}>
+                                    <Home />
+                                    {showSessionExpiredPopup && <SessionExpiredPopup />}
+                                </EmailPassword.EmailPasswordAuth>
+                            }
+                        />
+                    </Routes>
                 </div>
                 <Footer />
             </Router>
