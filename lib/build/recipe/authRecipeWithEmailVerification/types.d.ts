@@ -6,15 +6,8 @@ import {
     ComponentOverrideMap as EmailVerificationComponentOverrideMap,
     RecipeInterface,
 } from "../emailverification/types";
-import {
-    Config as RecipeModuleConfig,
-    NormalisedConfig as NormalisedRecipeModuleConfig,
-    UserInput as UserInputRecipeModule,
-} from "../recipeModule/types";
-export declare type User = {
-    id: string;
-    email: string;
-};
+import * as AuthRecipeType from "../authRecipe/types";
+export declare type User = AuthRecipeType.User;
 export declare type UserInputOverride = {
     emailVerification?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
@@ -23,8 +16,8 @@ export declare type UserInputOverride = {
 };
 export declare type UserInput<T, S, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
-} & UserInputRecipeModule<T, S, R>;
-export declare type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
+} & AuthRecipeType.UserInput<T, S, R>;
+export declare type Config<T, S, R> = UserInput<T, S, R> & AuthRecipeType.Config<T, S, R>;
 export declare type NormalisedConfig<T, S, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
     override?: {
@@ -33,28 +26,9 @@ export declare type NormalisedConfig<T, S, R> = {
             components?: EmailVerificationComponentOverrideMap;
         };
     };
-} & NormalisedRecipeModuleConfig<T, S, R>;
+} & AuthRecipeType.NormalisedConfig<T, S, R>;
 export declare type GetRedirectionURLContext =
-    | {
-          action: "SUCCESS";
-          isNewUser: boolean;
-          redirectToPath?: string;
-      }
-    | {
-          action: "SIGN_IN_AND_UP";
-      }
+    | AuthRecipeType.GetRedirectionURLContext
     | EmailVerificationGetRedirectionURLContext;
 export declare type PreAPIHookContext = EmailVerificationPreAPIHookContext;
-export declare type OnHandleEventContext =
-    | {
-          action: "SESSION_ALREADY_EXISTS";
-      }
-    | {
-          action: "SUCCESS";
-          isNewUser: boolean;
-          user: {
-              id: string;
-              email: string;
-          };
-      }
-    | EmailVerificationOnHandleEventContext;
+export declare type OnHandleEventContext = AuthRecipeType.OnHandleEventContext | EmailVerificationOnHandleEventContext;

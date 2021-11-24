@@ -18,7 +18,7 @@
  */
 
 import React from "react";
-import AuthRecipeModule from "../authRecipeModule";
+import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -38,13 +38,13 @@ import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
-import AuthWidgetWrapper from "../authRecipeModule/authWidgetWrapper";
+import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import OverrideableBuilder from "supertokens-js-override";
 
 /*
  * Class.
  */
-export default class ThirdParty extends AuthRecipeModule<
+export default class ThirdParty extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
@@ -98,7 +98,7 @@ export default class ThirdParty extends AuthRecipeModule<
 
         return {
             ...features,
-            ...this.getAuthRecipeModuleFeatures(),
+            ...this.getAuthRecipeWithEmailVerificationFeatures(),
         };
     };
 
@@ -117,12 +117,12 @@ export default class ThirdParty extends AuthRecipeModule<
         } else if (componentName === "signinupcallback") {
             return <SignInAndUpCallback recipe={this} {...props} />;
         } else {
-            return this.getAuthRecipeModuleFeatureComponent(componentName, props);
+            return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);
         }
     };
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        return this.getAuthRecipeModuleDefaultRedirectionURL(context);
+        return this.getAuthRecipeWithEmailVerificationDefaultRedirectionURL(context);
     };
 
     static init(

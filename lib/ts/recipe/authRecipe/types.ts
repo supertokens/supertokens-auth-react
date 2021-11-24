@@ -14,14 +14,6 @@
  */
 
 import {
-    UserInputForAuthRecipeModule as EmailVerificationUserInput,
-    GetRedirectionURLContext as EmailVerificationGetRedirectionURLContext,
-    OnHandleEventContext as EmailVerificationOnHandleEventContext,
-    PreAPIHookContext as EmailVerificationPreAPIHookContext,
-    ComponentOverrideMap as EmailVerificationComponentOverrideMap,
-    RecipeInterface,
-} from "../emailverification/types";
-import {
     Config as RecipeModuleConfig,
     NormalisedConfig as NormalisedRecipeModuleConfig,
     UserInput as UserInputRecipeModule,
@@ -32,28 +24,11 @@ export type User = {
     email: string;
 };
 
-export type UserInputOverride = {
-    emailVerification?: {
-        functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
-        components?: EmailVerificationComponentOverrideMap;
-    };
-};
-
-export type UserInput<T, S, R> = {
-    emailVerificationFeature?: EmailVerificationUserInput;
-} & UserInputRecipeModule<T, S, R>;
+export type UserInput<T, S, R> = UserInputRecipeModule<T, S, R>;
 
 export type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
 
-export type NormalisedConfig<T, S, R> = {
-    emailVerificationFeature?: EmailVerificationUserInput;
-    override?: {
-        emailVerification?: {
-            functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
-            components?: EmailVerificationComponentOverrideMap;
-        };
-    };
-} & NormalisedRecipeModuleConfig<T, S, R>;
+export type NormalisedConfig<T, S, R> = NormalisedRecipeModuleConfig<T, S, R>;
 
 export type GetRedirectionURLContext =
     | {
@@ -63,10 +38,7 @@ export type GetRedirectionURLContext =
       }
     | {
           action: "SIGN_IN_AND_UP";
-      }
-    | EmailVerificationGetRedirectionURLContext;
-
-export type PreAPIHookContext = EmailVerificationPreAPIHookContext;
+      };
 
 export type OnHandleEventContext =
     | {
@@ -76,5 +48,4 @@ export type OnHandleEventContext =
           action: "SUCCESS";
           isNewUser: boolean;
           user: { id: string; email: string };
-      }
-    | EmailVerificationOnHandleEventContext;
+      };

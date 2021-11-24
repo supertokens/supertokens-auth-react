@@ -18,18 +18,13 @@
  */
 import React, { useEffect, useContext, useState } from "react";
 import { SessionAuth, SessionContext } from "../session";
-import AuthRecipeModule from ".";
-import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import AuthRecipe from ".";
+import { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
 import { getRedirectToPathFromURL } from "../../utils";
 
-type Props<
-    T,
-    S,
-    R,
-    N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
-> = {
+type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>> = {
     onSessionAlreadyExists?: () => void;
-    authRecipe: AuthRecipeModule<T, S, R, N>;
+    authRecipe: AuthRecipe<T, S, R, N>;
     history: any;
 };
 
@@ -41,7 +36,7 @@ const AuthWidgetWrapper = <
     T,
     S,
     R,
-    N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
+    N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>
 >(
     props: Props<T, S, R, N> & { children?: React.ReactNode }
 ): React.ReactElement | null => {
@@ -52,12 +47,7 @@ const AuthWidgetWrapper = <
     );
 };
 
-const Redirector = <
-    T,
-    S,
-    R,
-    N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
->(
+const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>>(
     props: Props<T, S, R, N> & { children?: React.ReactNode }
 ): React.ReactElement | null => {
     const sessionContext = useContext(SessionContext);

@@ -23,7 +23,7 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
     UserInputOverride as AuthRecipeUserInputOverride,
-} from "../authRecipeModule/types";
+} from "../authRecipeWithEmailVerification/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 

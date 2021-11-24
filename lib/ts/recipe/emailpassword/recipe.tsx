@@ -18,7 +18,7 @@
  */
 
 import React from "react";
-import AuthRecipeModule from "../authRecipeModule";
+import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -39,13 +39,13 @@ import SignInAndUp from "./components/features/signInAndUp";
 import ResetPasswordUsingToken from "./components/features/resetPasswordUsingToken";
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
-import AuthWidgetWrapper from "../authRecipeModule/authWidgetWrapper";
+import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import OverrideableBuilder from "supertokens-js-override";
 
 /*
  * Class.
  */
-export default class EmailPassword extends AuthRecipeModule<
+export default class EmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
@@ -94,7 +94,7 @@ export default class EmailPassword extends AuthRecipeModule<
 
         return {
             ...features,
-            ...this.getAuthRecipeModuleFeatures(),
+            ...this.getAuthRecipeWithEmailVerificationFeatures(),
         };
     };
 
@@ -106,7 +106,7 @@ export default class EmailPassword extends AuthRecipeModule<
             }`;
         }
 
-        return this.getAuthRecipeModuleDefaultRedirectionURL(context);
+        return this.getAuthRecipeWithEmailVerificationDefaultRedirectionURL(context);
     };
 
     getFeatureComponent = (
@@ -124,7 +124,7 @@ export default class EmailPassword extends AuthRecipeModule<
         } else if (componentName === "resetpassword") {
             return <ResetPasswordUsingToken recipe={this} {...props} />;
         } else {
-            return this.getAuthRecipeModuleFeatureComponent(componentName, props);
+            return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);
         }
     };
 

@@ -32,7 +32,7 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
     UserInputOverride as AuthRecipeUserInputOverride,
-} from "../authRecipeModule/types";
+} from "../authRecipeWithEmailVerification/types";
 import OverrideableBuilder from "supertokens-js-override";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";

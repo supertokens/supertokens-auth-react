@@ -11,9 +11,9 @@ export default class Wrapper {
     static init(
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
-        import("../authRecipeModule/types").GetRedirectionURLContext,
+        import("../authRecipeWithEmailVerification/types").GetRedirectionURLContext,
         PreAPIHookContext,
-        import("../authRecipeModule/types").OnHandleEventContext,
+        import("../authRecipeWithEmailVerification/types").OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
     static signOut(): Promise<void>;

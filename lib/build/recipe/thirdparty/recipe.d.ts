@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import AuthRecipeModule from "../authRecipeModule";
+import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
 import { CreateRecipeFunction } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -11,7 +11,7 @@ import {
     RecipeInterface,
 } from "./types";
 import EmailVerification from "../emailverification/recipe";
-export default class ThirdParty extends AuthRecipeModule<
+export default class ThirdParty extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
@@ -32,7 +32,7 @@ export default class ThirdParty extends AuthRecipeModule<
         props: any
     ) => JSX.Element;
     getDefaultRedirectionURL: (
-        context: import("../authRecipeModule/types").GetRedirectionURLContext
+        context: import("../authRecipeWithEmailVerification/types").GetRedirectionURLContext
     ) => Promise<string>;
     static init(
         config: UserInput

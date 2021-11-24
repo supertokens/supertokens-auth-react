@@ -17,19 +17,18 @@
  * Imports.
  */
 
-import Session from "../session/recipe";
-import RecipeModule from "../recipeModule";
+import AuthRecipe from "../authRecipe";
 import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { RecipeFeatureComponentMap } from "../../types";
 import EmailVerification from "../emailverification/recipe";
-import { getCurrentNormalisedUrlPath, setLocalStorage, getLocalStorage, removeFromLocalStorage } from "../../utils";
+import { setLocalStorage, getLocalStorage, removeFromLocalStorage } from "../../utils";
 
-export default abstract class AuthRecipeModule<
+export default abstract class AuthRecipeWithEmailVerification<
     T,
     S,
     R,
     N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
-> extends RecipeModule<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext, N> {
+> extends AuthRecipe<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext, N> {
     emailVerification: EmailVerification;
 
     constructor(
@@ -84,7 +83,9 @@ export default abstract class AuthRecipeModule<
         setLocalStorage("supertokens-post-email-verification", jsonContext);
     };
 
-    getAuthRecipeModuleDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
+    getAuthRecipeWithEmailVerificationDefaultRedirectionURL = async (
+        context: GetRedirectionURLContext
+    ): Promise<string> => {
         if (context.action === "SIGN_IN_AND_UP") {
             return `${this.config.appInfo.websiteBasePath.getAsStringDangerous()}?rid=${this.config.recipeId}`;
         } else if (context.action === "SUCCESS") {
@@ -94,50 +95,14 @@ export default abstract class AuthRecipeModule<
         }
     };
 
-    getAuthRecipeModuleFeatureComponent = (componentName: "emailverification", props: any): JSX.Element => {
+    getAuthRecipeWithEmailVerificationFeatureComponent = (
+        componentName: "emailverification",
+        props: any
+    ): JSX.Element => {
         return this.emailVerification.getFeatureComponent(componentName, props);
     };
 
-    getAuthRecipeModuleFeatures = (): RecipeFeatureComponentMap => {
+    getAuthRecipeWithEmailVerificationFeatures = (): RecipeFeatureComponentMap => {
         return this.emailVerification.getFeatures();
-    };
-
-    signOut = async (): Promise<void> => {
-        return await Session.getInstanceOrThrow().signOut();
-    };
-
-    doesSessionExist = async (): Promise<boolean> => {
-        return await Session.getInstanceOrThrow().doesSessionExist();
-    };
-
-    redirectToAuthWithRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
-        const redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
-        if (queryParams === undefined) {
-            queryParams = {};
-        }
-        queryParams = {
-            ...queryParams,
-            redirectToPath,
-        };
-        this.redirectToAuthWithoutRedirectToPath(show, history, queryParams);
-    };
-
-    redirectToAuthWithoutRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
-        if (queryParams === undefined) {
-            queryParams = {};
-        }
-        if (show !== undefined) {
-            queryParams = {
-                ...queryParams,
-                show,
-            };
-        }
-        this.redirect(
-            {
-                action: "SIGN_IN_AND_UP",
-            },
-            history,
-            queryParams
-        );
     };
 }

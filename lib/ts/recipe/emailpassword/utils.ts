@@ -35,7 +35,7 @@ import {
     defaultPasswordValidator,
     defaultValidate,
 } from "./validators";
-import { normaliseAuthRecipeModuleConfig } from "../authRecipeModule/utils";
+import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
 import { RecipeInterface } from "./types";
 
 export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
@@ -69,7 +69,7 @@ export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
     };
 
     return {
-        ...normaliseAuthRecipeModuleConfig(config),
+        ...normaliseAuthRecipeWithEmailVerificationConfig(config),
         signInAndUpFeature,
         resetPasswordUsingTokenFeature,
         override,

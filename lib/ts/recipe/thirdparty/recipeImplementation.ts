@@ -1,5 +1,5 @@
 import { RecipeInterface, NormalisedConfig, StateObject } from "./types";
-import { User } from "../authRecipeModule/types";
+import { User } from "../authRecipeWithEmailVerification/types";
 import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
 import {

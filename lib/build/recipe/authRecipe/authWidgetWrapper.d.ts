@@ -1,14 +1,9 @@
 import React from "react";
-import AuthRecipeModule from ".";
-import { NormalisedConfig, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-declare type Props<
-    T,
-    S,
-    R,
-    N extends NormalisedConfig<T | GetRedirectionURLContext, S | PreAPIHookContext, R | OnHandleEventContext>
-> = {
+import AuthRecipe from ".";
+import { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
+declare type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>> = {
     onSessionAlreadyExists?: () => void;
-    authRecipe: AuthRecipeModule<T, S, R, N>;
+    authRecipe: AuthRecipe<T, S, R, N>;
     history: any;
 };
 /**
@@ -19,10 +14,13 @@ declare const AuthWidgetWrapper: <
     T,
     S,
     R,
-    N extends NormalisedConfig<
-        | import("../emailverification").GetRedirectionURLContext
+    N extends import("../recipeModule/types").NormalisedConfig<
         | {
               action: "SUCCESS";
+              /**
+               * AuthWidgetWrapper shows the children component only if no session exists,
+               * else it calls onSessionAlreadyExists
+               */
               isNewUser: boolean;
               redirectToPath?: string | undefined;
           }
@@ -30,8 +28,7 @@ declare const AuthWidgetWrapper: <
               action: "SIGN_IN_AND_UP";
           }
         | T,
-        import("../emailverification").PreAPIHookContext | S,
-        | import("../emailverification").OnHandleEventContext
+        S,
         | {
               action: "SESSION_ALREADY_EXISTS";
           }

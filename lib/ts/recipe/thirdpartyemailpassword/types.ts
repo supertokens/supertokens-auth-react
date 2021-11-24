@@ -42,7 +42,7 @@ import {
     UserInput as AuthRecipeModuleUserInput,
     User,
     UserInputOverride as AuthRecipeUserInputOverride,
-} from "../authRecipeModule/types";
+} from "../authRecipeWithEmailVerification/types";
 import EPRecipe from "../emailpassword/recipe";
 import TPRecipe from "../thirdparty/recipe";
 import OverrideableBuilder from "supertokens-js-override";

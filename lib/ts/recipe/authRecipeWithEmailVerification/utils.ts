@@ -14,11 +14,13 @@
  */
 
 import { Config, NormalisedConfig } from "./types";
-import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
+import { normaliseAuthRecipe } from "../authRecipe/utils";
 
-export function normaliseAuthRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): NormalisedConfig<T, S, R> {
+export function normaliseAuthRecipeWithEmailVerificationConfig<T, S, R>(
+    config: Config<T, S, R>
+): NormalisedConfig<T, S, R> {
     return {
-        ...normaliseRecipeModuleConfig(config),
+        ...normaliseAuthRecipe(config),
         emailVerificationFeature: config.emailVerificationFeature,
     };
 }

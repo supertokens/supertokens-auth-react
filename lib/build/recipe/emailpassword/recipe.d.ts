@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import AuthRecipeModule from "../authRecipeModule";
+import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
 import { CreateRecipeFunction } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -11,7 +11,7 @@ import {
     RecipeInterface,
 } from "./types";
 import EmailVerification from "../emailverification/recipe";
-export default class EmailPassword extends AuthRecipeModule<
+export default class EmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

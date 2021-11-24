@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import AuthRecipeModule from "../authRecipeModule";
+import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
 import { CreateRecipeFunction } from "../../types";
 import {
     Config,
@@ -13,7 +13,7 @@ import {
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import EmailVerification from "../emailverification/recipe";
-export default class ThirdPartyEmailPassword extends AuthRecipeModule<
+export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
