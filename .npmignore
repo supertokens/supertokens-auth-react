@@ -25,3 +25,4 @@ examples/
 other/
 jest.config.js
 docs/
+init.sh
