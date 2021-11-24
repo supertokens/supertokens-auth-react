@@ -47,7 +47,8 @@
         "ts-prune": "^0.8.9",
         "tslint": "6.1.3",
         "typedoc": "^0.22.5",
-        "typescript": "3.8.3"
+        "typescript": "3.8.3",
+        "@testing-library/dom": "^8.11.1"
     },
     "dependencies": {
         "@emotion/cache": "^11.1.0",
