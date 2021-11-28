@@ -206,7 +206,7 @@ function getDefaultPasswordFormField(): NormalisedFormField {
 }
 
 export function normaliseResetPasswordUsingTokenFeature(
-    signUpPasswordFieldValidate: (value: any) => Promise<string | undefined>,
+    signUpPasswordFieldValidate: (value: any) => Promise<string | undefined> | string | undefined,
     signUpEmailField: NormalisedFormField,
     config?: ResetPasswordUsingTokenUserInput
 ): NormalisedResetPasswordUsingTokenFeatureConfig {

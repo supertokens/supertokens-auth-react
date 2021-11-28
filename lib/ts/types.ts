@@ -134,6 +134,11 @@ export type FormFieldBaseConfig = {
     label: string;
 
     /*
+        Custom label component
+    */
+    labelComponent?: JSX.Element;
+
+    /*
      * placeholder of the input field.
      */
     placeholder?: string;
@@ -173,6 +178,7 @@ export type NormalisedFormField = {
      * Label of the input field.
      */
     label: string;
+    labelComponent?: JSX.Element;
 
     /*
      * placeholder of the input field.
@@ -182,7 +188,7 @@ export type NormalisedFormField = {
     /*
      * Validation function of the input field. Returns an error as a string, or undefined.
      */
-    validate: (value: any) => Promise<string | undefined>;
+    validate: (value: any) => Promise<string | undefined> | string | undefined;
 
     /*
      * Whether the field is optional or not.

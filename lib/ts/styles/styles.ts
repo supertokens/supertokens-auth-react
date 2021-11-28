@@ -218,6 +218,11 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         button: getButtonStyle(palette.colors.primary),
+
+        linkButton: {
+            backgroundColor: "transparent",
+            border: 0,
+        },
     };
 }
 

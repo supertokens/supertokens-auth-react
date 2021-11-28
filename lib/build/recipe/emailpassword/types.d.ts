@@ -194,31 +194,35 @@ export declare type EnterEmailState = {
 export declare type SubmitNewPasswordState = {
     status: "READY" | "SUCCESS";
 };
-export declare type FormBaseState =
+export declare type FormBaseState = {
+    formFields: FormFieldState[];
+    unmounting: AbortController;
+} & (
     | {
           formFields: FormFieldState[];
           status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
+          unmounting: AbortController;
       }
     | {
-          formFields: FormFieldState[];
           status: "GENERAL_ERROR";
           generalError: string;
-      };
-export declare type FormBaseProps = {
+      }
+);
+export declare type FormBaseProps<T> = {
     header?: JSX.Element;
     footer?: JSX.Element;
     formFields: FormFieldThemeProps[];
     showLabels: boolean;
     buttonLabel: string;
+    error?: string;
     validateOnBlur?: boolean;
     onSuccess?: () => void;
-    callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
+    callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse<T>>;
 };
-export declare type FormBaseAPIResponse =
-    | {
+export declare type FormBaseAPIResponse<T> =
+    | ({
           status: "OK";
-          user?: User;
-      }
+      } & T)
     | {
           status: "GENERAL_ERROR";
           message: string;

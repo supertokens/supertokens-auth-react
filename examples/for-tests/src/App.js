@@ -8,6 +8,7 @@ import Footer from "./Footer";
 /* SuperTokens imports */
 import SuperTokens from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import axios from "axios";
@@ -68,6 +69,12 @@ if (getQueryParams("mode")) {
 }
 
 const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
+
+if (getQueryParams("passwordlessContactInfoType")) {
+    window.localStorage.setItem("passwordlessContactInfoType", getQueryParams("passwordlessContactInfoType"));
+}
+
+const passwordlessContactInfoType = window.localStorage.getItem("passwordlessContactInfoType") || "EMAIL";
 
 if (getQueryParams("authRecipe")) {
     window.localStorage.setItem("authRecipe", getQueryParams("authRecipe"));
@@ -210,6 +217,8 @@ if (authRecipe === "thirdparty") {
     recipeList = [getEmailPasswordConfigs(testContext), getThirdPartyConfigs(testContext), ...recipeList];
 } else if (authRecipe === "thirdpartyemailpassword") {
     recipeList = [getThirdPartyEmailPasswordConfigs(testContext), ...recipeList];
+} else if (authRecipe === "passwordless") {
+    recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
 }
 
 SuperTokens.init({
@@ -288,6 +297,8 @@ function goToAuth(show) {
     }
     if (recipe === "emailpassword") {
         EmailPassword.redirectToAuth(show);
+    } else if (recipe === "passwordless") {
+        Passwordless.redirectToAuth(show);
     } else if (recipe === "thirdparty") {
         ThirdParty.redirectToAuth(show);
     } else if (recipe === "thirdpartyemailpassword") {
@@ -334,6 +345,8 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             await ThirdParty.signOut();
         } else if (useRecipe === "thirdpartyemailpassword") {
             await ThirdPartyEmailPassword.signOut();
+        } else if (useRecipe === "passwordless") {
+            await Passwordless.signOut();
         } else {
             await EmailPassword.signOut();
         }
@@ -497,6 +510,91 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
                 termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
                 formFields,
             },
+        },
+    });
+}
+
+function getPasswordlessConfigs({ disableDefaultImplementation }) {
+    return Passwordless.init({
+        style: {
+            container: {
+                fontFamily: "cursive",
+            },
+        },
+        override: {
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS PASSWORDLESS OVERRIDE`);
+
+                return {
+                    doesEmailExist(...args) {
+                        log(`DOES_EMAIL_EXIST`);
+                        return implementation.doesEmailExist(...args);
+                    },
+                    doesPhoneNumberExist(...args) {
+                        log(`DOES_PHONE_NUMBER_EXIST`);
+                        return implementation.doesPhoneNumberExist(...args);
+                    },
+                    createCode(...args) {
+                        log(`CREATE_CODE`);
+                        return implementation.createCode(...args);
+                    },
+                    consumeCode(...args) {
+                        log(`CONSUME_CODE`);
+                        return implementation.consumeCode(...args);
+                    },
+                    getLoginAttemptInfo(...args) {
+                        log(`GET_LOGIN_ATTEMPT_INFO`);
+                        return implementation.getLoginAttemptInfo(...args);
+                    },
+                    setLoginAttemptInfo(...args) {
+                        log(`SET_LOGIN_ATTEMPT_INFO`);
+                        return implementation.setLoginAttemptInfo(...args);
+                    },
+                    clearLoginAttemptInfo(...args) {
+                        log(`CLEAR_LOGIN_ATTEMPT_INFO`);
+                        return implementation.clearLoginAttemptInfo(...args);
+                    },
+                };
+            },
+        },
+        palette: theme.colors,
+        preAPIHook: async (context) => {
+            console.log(`ST_LOGS PASSWORDLESS PRE_API_HOOKS ${context.action}`);
+            return context;
+        },
+        getRedirectionURL: async (context) => {
+            console.log(`ST_LOGS PASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
+            if (context.action === "SUCCESS") {
+                return context.redirectToPath || "/dashboard";
+            }
+        },
+        onHandleEvent: async (context) => {
+            console.log(`ST_LOGS PASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
+        },
+        useShadowDom,
+        contactInfoType: passwordlessContactInfoType,
+        resendCodeTimeGap: 30,
+        emailForm: {
+            disableDefaultImplementation,
+            style: theme.style,
+
+            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+        },
+        mobileForm: {
+            disableDefaultImplementation,
+            style: theme.style,
+
+            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+        },
+        userInputCodeForm: {
+            disableDefaultImplementation,
+            style: theme.style,
+        },
+        linkClickedScreen: {
+            disableDefaultImplementation,
+            style: theme.style,
         },
     });
 }

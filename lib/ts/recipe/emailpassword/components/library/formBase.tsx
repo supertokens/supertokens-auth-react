@@ -22,7 +22,7 @@ import { createRef, FormEvent, Fragment, PureComponent } from "react";
 import { Button, FormRow, Input, InputError, Label } from ".";
 
 import { APIFormField } from "../../../../types";
-import { FormBaseProps, FormBaseState, FormFieldState, InputRef } from "../../types";
+import { FormBaseProps, FormBaseState, InputRef } from "../../types";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 import StyleContext from "../../../../styles/styleContext";
@@ -31,23 +31,50 @@ import StyleContext from "../../../../styles/styleContext";
  * Component.
  */
 
-export default class FormBase extends PureComponent<FormBaseProps, FormBaseState> {
+export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBaseState> {
     static contextType = StyleContext;
 
     /*
      * Constructor.
      */
-    constructor(props: FormBaseProps) {
+    constructor(props: FormBaseProps<T>) {
         super(props);
 
-        this.state = {
+        const baseState = {
             formFields: props.formFields.map((field) => ({
                 ...field,
                 validated: false,
                 ref: createRef<InputRef>(),
             })),
-            status: "IN_PROGRESS",
+            unmounting: new AbortController(),
         };
+
+        if (props.error === undefined) {
+            this.state = {
+                ...baseState,
+                status: "IN_PROGRESS",
+            };
+        } else {
+            this.state = {
+                ...baseState,
+                status: "GENERAL_ERROR",
+                generalError: props.error,
+            };
+        }
+    }
+
+    componentDidUpdate(prevProps: FormBaseProps<T>) {
+        if (this.props.error !== prevProps.error) {
+            this.setState((os) =>
+                os.status === "GENERAL_ERROR" && this.props.error === os.generalError
+                    ? os
+                    : {
+                          ...os,
+                          status: "GENERAL_ERROR",
+                          generalError: this.props.error,
+                      }
+            );
+        }
     }
 
     /*
@@ -56,7 +83,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
 
     handleInputFocus = async (field: APIFormField): Promise<void> => {
         this.setState((oldState) => {
-            return this.getNewState(oldState.formFields, field, "focus", undefined);
+            return this.getNewState(oldState, field, "focus", undefined);
         });
     };
 
@@ -78,18 +105,18 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             if (oldState.status === "GENERAL_ERROR") {
                 return oldState;
             }
-            return this.getNewState(oldState.formFields, field, "blur", error);
+            return this.getNewState(oldState, field, "blur", error);
         });
     };
 
     getNewState(
-        formFields: FormFieldState[],
+        oldState: FormBaseState,
         field: APIFormField,
         event: "blur" | "focus",
         error: string | undefined
     ): FormBaseState {
         // Add error to formFields array for corresponding field.
-        formFields = formFields.map((formField) => {
+        const formFields = oldState.formFields.map((formField) => {
             if (formField.id !== field.id) {
                 return formField;
             }
@@ -121,10 +148,15 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         }
 
         return {
+            unmounting: oldState.unmounting,
             status,
             formFields,
         };
     }
+
+    componentWillUnmount = () => {
+        this.state.unmounting.abort();
+    };
 
     onFormSubmit = async (e: FormEvent): Promise<void> => {
         // Prevent default event propagation.
@@ -147,6 +179,9 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         // Call API.
         try {
             const result = await this.props.callAPI(fields);
+            if (this.state.unmounting.signal.aborted) {
+                return;
+            }
             // If successful
             if (result.status === "OK") {
                 // Set Success state.
@@ -233,7 +268,12 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                         return (
                             <FormRow key={field.id} hasError={field.error !== undefined}>
                                 <Fragment>
-                                    {showLabels && <Label value={field.label} showIsRequired={field.showIsRequired} />}
+                                    {showLabels &&
+                                        (field.labelComponent !== undefined ? (
+                                            field.labelComponent
+                                        ) : (
+                                            <Label value={field.label} showIsRequired={field.showIsRequired} />
+                                        ))}
 
                                     <Input
                                         type={type}

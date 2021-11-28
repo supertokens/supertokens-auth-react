@@ -39,6 +39,7 @@ export declare type BaseFeatureComponentMap = Record<string, ComponentWithRecipe
 export declare type FormFieldBaseConfig = {
     id: string;
     label: string;
+    labelComponent?: JSX.Element;
     placeholder?: string;
 };
 export declare type FormField = FormFieldBaseConfig & {
@@ -52,8 +53,9 @@ export declare type APIFormField = {
 export declare type NormalisedFormField = {
     id: string;
     label: string;
+    labelComponent?: JSX.Element;
     placeholder: string;
-    validate: (value: any) => Promise<string | undefined>;
+    validate: (value: any) => Promise<string | undefined> | string | undefined;
     optional: boolean;
     autoComplete?: string;
 };

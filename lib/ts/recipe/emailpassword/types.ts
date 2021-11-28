@@ -383,18 +383,22 @@ export type SubmitNewPasswordState = {
     status: "READY" | "SUCCESS";
 };
 
-export type FormBaseState =
+export type FormBaseState = {
+    formFields: FormFieldState[];
+    unmounting: AbortController;
+} & (
     | {
           formFields: FormFieldState[];
           status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
+          unmounting: AbortController;
       }
     | {
-          formFields: FormFieldState[];
           status: "GENERAL_ERROR";
           generalError: string;
-      };
+      }
+);
 
-export type FormBaseProps = {
+export type FormBaseProps<T> = {
     header?: JSX.Element;
 
     footer?: JSX.Element;
@@ -405,25 +409,22 @@ export type FormBaseProps = {
 
     buttonLabel: string;
 
+    error?: string;
+
     validateOnBlur?: boolean;
 
     onSuccess?: () => void;
 
-    callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
+    callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse<T>>;
 };
 
-export type FormBaseAPIResponse =
-    | {
+export type FormBaseAPIResponse<T> =
+    | ({
           /*
            * Success.
            */
           status: "OK";
-
-          /*
-           * User object.
-           */
-          user?: User;
-      }
+      } & T)
     | {
           /*
            * General Errors.

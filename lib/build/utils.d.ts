@@ -4,6 +4,7 @@ import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function getQueryParams(param: string): string | null;
+export declare function getURLHash(): string;
 export declare function getRedirectToPathFromURL(): string | undefined;
 export declare function isTest(): boolean;
 export declare function normaliseInputAppInfoOrThrowError(appInfo: AppInfoUserInput): NormalisedAppInfo;

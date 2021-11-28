@@ -39,6 +39,11 @@ export function getQueryParams(param: string): string | null {
     return urlParams.get(param);
 }
 
+export function getURLHash(): string {
+    // By default it is returined with the "#" at the beginning, we cut that off here.
+    return getWindowOrThrow().location.hash.substr(1);
+}
+
 export function getRedirectToPathFromURL(): string | undefined {
     const param = getQueryParams("redirectToPath");
     if (param === null) {

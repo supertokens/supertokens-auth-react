@@ -44,6 +44,20 @@ export function mockWindowLocation(url) {
     }
 }
 
+export async function waitForSTElement(page, selector) {
+    const res = await page.waitForFunction(
+        (elementSelector, rootSelector) =>
+            document.querySelector(rootSelector).shadowRoot.querySelector(elementSelector),
+        { polling: 50 },
+        selector,
+        ST_ROOT_SELECTOR
+    );
+    if (res) {
+        return res.asElement();
+    }
+    return res;
+}
+
 /*
  * Selectors and actions helpers.
  * Using Puppeteer within shadowDom https://github.com/puppeteer/puppeteer/issues/858#issuecomment-438540596

@@ -24,7 +24,7 @@ export declare function normaliseSignInFormFeatureConfig(
 ): NormalisedSignInFormFeatureConfig;
 export declare function getDefaultFormFields(): NormalisedFormField[];
 export declare function normaliseResetPasswordUsingTokenFeature(
-    signUpPasswordFieldValidate: (value: any) => Promise<string | undefined>,
+    signUpPasswordFieldValidate: (value: any) => Promise<string | undefined> | string | undefined,
     signUpEmailField: NormalisedFormField,
     config?: ResetPasswordUsingTokenUserInput
 ): NormalisedResetPasswordUsingTokenFeatureConfig;
