@@ -355,8 +355,9 @@ app.get("/test/getAllDevices", (req, res) => {
 app.use(errorHandler());
 
 app.use(async (err, req, res, next) => {
-    console.log(err);
-    res.send(500).send(err);
+    try {
+        res.sendStatus(500).send(err);
+    } catch (ignored) {}
 });
 
 let server = http.createServer(app);

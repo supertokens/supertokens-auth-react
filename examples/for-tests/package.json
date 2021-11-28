@@ -12,6 +12,7 @@
     },
     "scripts": {
         "link": "(cd ../../ && npm link) && npm link supertokens-auth-react && (cd ../../ && SRC=./examples/for-tests npm run link-dependencies)",
+        "link-node-16": "(cd ../../ && npm link) && npm link supertokens-auth-react && rm -rf node_modules/react && rm -rf node_modules/react-router-dom",
         "start": "PORT=3031 react-scripts start",
         "dev": "npx npm-run-all --parallel start server",
         "server": "cd ../../ && npm run server",
