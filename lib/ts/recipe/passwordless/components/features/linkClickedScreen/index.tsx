@@ -44,16 +44,19 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
         try {
             const preAuthSessionId = getQueryParams("preAuthSessionId");
             const linkCode = getURLHash();
-            if (preAuthSessionId === null || linkCode.length === 0) {
+
+            if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
                 return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                     error: "signin",
                 });
             }
+
             const response = await this.props.recipe.recipeImpl.consumeCode({
                 preAuthSessionId,
                 linkCode,
                 config: this.props.recipe.config,
             });
+
             if (response.status === "GENERAL_ERROR") {
                 return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                     error: "custom",
@@ -61,6 +64,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 });
             }
             if (response.status === "RESTART_FLOW_ERROR") {
+                this.props.recipe.recipeImpl.clearLoginAttemptInfo();
                 return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                     error: "signin",
                 });

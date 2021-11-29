@@ -26,7 +26,7 @@ import { ComponentOverride } from "../../components/componentOverride/componentO
 
 export type RecipeInterface = {
     createCode: (
-        input: ({ email: string } | { phoneNumber: string } | { deviceId: string; preAuthSessionId: string }) & {
+        input: ({ email: string } | { phoneNumber: string }) & {
             config: NormalisedConfig;
         }
     ) => Promise<
@@ -37,7 +37,16 @@ export type RecipeInterface = {
               flowType: "USER_INPUT_CODE" | "MAGICLINK" | "USER_INPUT_CODE_AND_LINK";
           }
         | { status: "GENERAL_ERROR"; message: string }
-        | { status: "RESTART_FLOW_ERROR" }
+    >;
+    resendCode: (
+        input: { deviceId: string; preAuthSessionId: string } & {
+            config: NormalisedConfig;
+        }
+    ) => Promise<
+        | {
+              status: "OK" | "RESTART_FLOW_ERROR";
+          }
+        | { status: "GENERAL_ERROR"; message: string }
     >;
 
     consumeCode: (
@@ -112,7 +121,12 @@ export type PreAPIHookContext = {
     /*
      * Pre API Hook action.
      */
-    action: "PASSWORDLESS_CREATE_CODE" | "PASSWORDLESS_CONSUME_CODE" | "EMAIL_EXISTS" | "PHONE_NUMBER_EXISTS";
+    action:
+        | "PASSWORDLESS_CREATE_CODE"
+        | "PASSWORDLESS_CONSUME_CODE"
+        | "PASSWORDLESS_RESEND_CODE"
+        | "EMAIL_EXISTS"
+        | "PHONE_NUMBER_EXISTS";
 
     /*
      * Request object containing query params, body, headers.

@@ -57,7 +57,7 @@ class PasswordlessLinkEmailSent extends PureComponent<LinkEmailSentThemeProps, L
 
     resendEmail = async (): Promise<void> => {
         try {
-            const response = await this.props.recipeImplementation.createCode({
+            const response = await this.props.recipeImplementation.resendCode({
                 deviceId: this.props.loginAttemptInfo.deviceId,
                 preAuthSessionId: this.props.loginAttemptInfo.preAuthSessionId,
                 config: this.props.config,

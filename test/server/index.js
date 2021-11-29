@@ -150,6 +150,7 @@ app.post("/startst", async (req, res) => {
 
 app.post("/beforeeach", async (req, res) => {
     users = [];
+    flowTypes = new Map();
     deviceStore = new Map();
     maximumCodeInputAttempts = 3;
 
@@ -197,6 +198,7 @@ app.get("/token", async (_, res) => {
 
 // Passwordless mocks
 let users = [];
+let flowTypes = new Map();
 let deviceStore = new Map();
 let maximumCodeInputAttempts = 3;
 
@@ -233,13 +235,12 @@ function getLinkCode() {
     return urlSafe(crypto.randomBytes(32).toString("base64"));
 }
 
-function getAndStoreNewDevice(email, phone, flowType) {
+function getAndStoreNewDevice(email, phone) {
     const device = {
         email,
         phone,
         deviceId: getDeviceId(),
         preAuthSessionId: getPreAuthSessionId(),
-        flowType,
         failedAttempts: 0,
         codes: [
             {
@@ -253,31 +254,31 @@ function getAndStoreNewDevice(email, phone, flowType) {
 }
 
 app.post("/auth/signinup/code", (req, res) => {
-    let device;
-    if (req.body.deviceId) {
-        device = deviceStore.get(req.body.deviceId);
-        if (!device) {
-            res.send({
-                status: "RESTART_FLOW_ERROR",
-            });
-            return;
-        }
-        device.codes.push({
-            userInputCode: device.codes[device.codes.length - 1] + "x",
-            linkCode: getLinkCode(),
-        });
-    } else {
-        const flowType = (req.body.email || req.body.phoneNumber).startsWith("link")
-            ? "MAGICLINK"
-            : "USER_INPUT_CODE_AND_LINK";
-        device = getAndStoreNewDevice(req.body.email, req.body.phoneNumber, flowType);
-    }
-
+    const flowType = flowTypes.get(req.body.email || req.body.phoneNumber) || "USER_INPUT_CODE_AND_LINK";
+    const device = getAndStoreNewDevice(req.body.email, req.body.phoneNumber);
     res.send({
         status: "OK",
         preAuthSessionId: device.preAuthSessionId,
         deviceId: device.deviceId,
-        flowType: device.flowType,
+        flowType,
+    });
+});
+
+app.post("/auth/signinup/code/resend", (req, res) => {
+    const device = deviceStore.get(req.body.deviceId);
+    if (!device) {
+        res.send({
+            status: "RESTART_FLOW_ERROR",
+        });
+        return;
+    }
+    device.codes.push({
+        userInputCode: device.codes[device.codes.length - 1] + "x",
+        linkCode: getLinkCode(),
+    });
+
+    res.send({
+        status: "OK",
     });
 });
 
@@ -325,7 +326,7 @@ app.post("/auth/signinup/code/consume", async (req, res) => {
         const dev = Array.from(deviceStore.values()).find((d) =>
             d.codes.some((code) => code.linkCode === req.body.linkCode)
         );
-        if (!dev) {
+        if (!dev || dev.preAuthSessionId !== req.body.preAuthSessionId) {
             res.send({
                 status: "RESTART_FLOW_ERROR",
             });
@@ -341,8 +342,13 @@ app.post("/auth/signinup/code/consume", async (req, res) => {
     }
 });
 
+app.post("/test/setFlowForUser", (req, res) => {
+    flowTypes.set(req.body.contactInfo, req.body.flowType);
+
+    res.sendStatus(200);
+});
+
 app.get("/test/getDevice", (req, res) => {
-    console.log(deviceStore.get(req.query.deviceId));
     res.send(deviceStore.get(req.query.deviceId));
 });
 

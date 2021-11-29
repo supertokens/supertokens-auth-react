@@ -54,12 +54,6 @@ export const MobileForm = withOverride(
                         config: props.config,
                     });
 
-                    if (response.status === "RESTART_FLOW_ERROR") {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "Something went wrong, please try again.",
-                        };
-                    }
                     return response;
                 }}
                 validateOnBlur={false}

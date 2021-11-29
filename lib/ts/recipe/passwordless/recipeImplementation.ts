@@ -15,10 +15,11 @@ type CreateCodeApiResponse =
     | {
           status: "GENERAL_ERROR";
           message: string;
-      }
-    | {
-          status: "RESTART_FLOW_ERROR";
       };
+
+type ResendCodeApiResponse = {
+    status: "OK" | "RESTART_FLOW_ERROR";
+};
 
 type ConsumeCodeApiResponse =
     | {
@@ -77,17 +78,28 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     phoneNumber: input.phoneNumber,
                 };
             }
-            if ("deviceId" in input) {
-                bodyObj = {
-                    deviceId: input.deviceId,
-                    preAuthSessionId: input.preAuthSessionId,
-                };
-            }
 
             return await querier.post("/signinup/code", { body: JSON.stringify(bodyObj) }, (context) => {
                 return input.config.preAPIHook({
                     ...context,
                     action: "PASSWORDLESS_CREATE_CODE",
+                });
+            });
+        },
+        resendCode: async function (
+            input: { deviceId: string; preAuthSessionId: string } & {
+                config: NormalisedConfig;
+            }
+        ): Promise<ResendCodeApiResponse> {
+            const bodyObj = {
+                deviceId: input.deviceId,
+                preAuthSessionId: input.preAuthSessionId,
+            };
+
+            return await querier.post("/signinup/code/resend", { body: JSON.stringify(bodyObj) }, (context) => {
+                return input.config.preAPIHook({
+                    ...context,
+                    action: "PASSWORDLESS_RESEND_CODE",
                 });
             });
         },

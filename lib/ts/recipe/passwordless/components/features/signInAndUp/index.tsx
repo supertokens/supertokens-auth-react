@@ -74,14 +74,8 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                 let contactInfo;
                 if ("email" in input) {
                     contactInfo = input.email;
-                } else if ("phoneNumber" in input) {
-                    contactInfo = input.phoneNumber;
                 } else {
-                    if (this.state.loginAttemptInfo === undefined) {
-                        throw new Error("ResendWithoutSavedInfo");
-                    }
-                    const storedContactInfo = this.state.loginAttemptInfo.contactInfo;
-                    contactInfo = storedContactInfo;
+                    contactInfo = input.phoneNumber;
                 }
                 const res = await this.props.recipe.recipeImpl.createCode(input);
                 if (res.status === "OK") {
@@ -90,6 +84,25 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                         lastResend: new Date().getTime(),
                         contactInfoType: this.props.recipe.config.contactInfoType,
                         contactInfo,
+                    };
+                    this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
+                    this.setState((os) => ({
+                        ...os,
+                        loginAttemptInfo,
+                    }));
+                }
+                return res;
+            },
+            resendCode: async (input) => {
+                if (!this.state.loginAttemptInfo) {
+                    // This should never happen, but it makes TS happy
+                    throw new Error("Resend without loginAttemptInfo");
+                }
+                const res = await this.props.recipe.recipeImpl.resendCode(input);
+                if (res.status === "OK") {
+                    const loginAttemptInfo = {
+                        ...this.state.loginAttemptInfo,
+                        lastResend: new Date().getTime(),
                     };
                     this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
                     this.setState((os) => ({
@@ -135,13 +148,8 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
     };
 
     componentDidMount = async (): Promise<void> => {
-        if (this.state.error) {
-            await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
-            this.setState((s) => ({ ...s, loaded: true }));
-        } else {
-            const loginAttemptInfo = await this.getModifiedRecipeImplementation().getLoginAttemptInfo();
-            this.setState((s) => ({ ...s, loaded: true, loginAttemptInfo }));
-        }
+        const loginAttemptInfo = await this.getModifiedRecipeImplementation().getLoginAttemptInfo();
+        this.setState((s) => ({ ...s, loaded: true, loginAttemptInfo }));
     };
 
     render = (): JSX.Element => {

@@ -17,10 +17,6 @@ export declare type RecipeInterface = {
             | {
                   phoneNumber: string;
               }
-            | {
-                  deviceId: string;
-                  preAuthSessionId: string;
-              }
         ) & {
             config: NormalisedConfig;
         }
@@ -35,8 +31,21 @@ export declare type RecipeInterface = {
               status: "GENERAL_ERROR";
               message: string;
           }
+    >;
+    resendCode: (
+        input: {
+            deviceId: string;
+            preAuthSessionId: string;
+        } & {
+            config: NormalisedConfig;
+        }
+    ) => Promise<
         | {
-              status: "RESTART_FLOW_ERROR";
+              status: "OK" | "RESTART_FLOW_ERROR";
+          }
+        | {
+              status: "GENERAL_ERROR";
+              message: string;
           }
     >;
     consumeCode: (
@@ -110,7 +119,12 @@ export declare type RecipeInterface = {
     clearLoginAttemptInfo: () => Promise<void> | void;
 };
 export declare type PreAPIHookContext = {
-    action: "PASSWORDLESS_CREATE_CODE" | "PASSWORDLESS_CONSUME_CODE" | "EMAIL_EXISTS" | "PHONE_NUMBER_EXISTS";
+    action:
+        | "PASSWORDLESS_CREATE_CODE"
+        | "PASSWORDLESS_CONSUME_CODE"
+        | "PASSWORDLESS_RESEND_CODE"
+        | "EMAIL_EXISTS"
+        | "PHONE_NUMBER_EXISTS";
     requestInit: RequestInit;
     url: string;
 };

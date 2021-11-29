@@ -47,7 +47,7 @@ export const UserInputCodeForm = withOverride(
 
         async function resend() {
             try {
-                const response = await props.recipeImplementation.createCode({
+                const response = await props.recipeImplementation.resendCode({
                     deviceId: props.loginAttemptInfo.deviceId,
                     preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                     config: props.config,
