@@ -233,7 +233,7 @@ describe("SuperTokens Passwordless", function () {
 
                 await page.waitFor(500);
 
-                await waitForSTElement(page, "[data-supertokens=sendCodeEmailIcon]");
+                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -467,7 +467,7 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
     await submitForm(page);
 
     if (forLinkOnly) {
-        await waitForSTElement(page, "[data-supertokens=sendCodeEmailIcon]");
+        await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
     } else {
         await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
     }

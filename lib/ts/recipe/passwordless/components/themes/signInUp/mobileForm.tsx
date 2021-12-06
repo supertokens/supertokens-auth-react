@@ -18,7 +18,7 @@ import { jsx } from "@emotion/react";
 import { SignInUpMobileFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
-import { defaultPhoneNumberValidator } from "../../../validators";
+import PhoneNumberInput from "./phoneNumberInput";
 
 export const MobileForm = withOverride(
     "PasswordlessMobileForm",
@@ -34,9 +34,10 @@ export const MobileForm = withOverride(
                     {
                         id: "phoneNumber",
                         label: "Mobile",
+                        inputComponent: PhoneNumberInput,
                         optional: false,
                         placeholder: "+16175551212",
-                        validate: props.config.validatePhoneNumber || defaultPhoneNumberValidator,
+                        validate: props.config.validatePhoneNumber,
                     },
                 ]}
                 buttonLabel={"CONTINUE"}
@@ -56,7 +57,7 @@ export const MobileForm = withOverride(
 
                     return response;
                 }}
-                validateOnBlur={false}
+                validateOnBlur={true}
                 showLabels={true}
                 header={props.header}
                 footer={props.footer}

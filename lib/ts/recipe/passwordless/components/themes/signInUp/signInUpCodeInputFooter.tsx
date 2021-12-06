@@ -18,7 +18,7 @@ import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { SignInUpCodeInputFooterProps } from "../../../types";
-import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
+import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 
 export const SignInUpCodeInputFooter = withOverride(
     "PasswordlessSignInUpCodeInputFooter",
@@ -31,11 +31,11 @@ export const SignInUpCodeInputFooter = withOverride(
         return (
             <Fragment>
                 <div
-                    data-supertokens="secondaryText secondaryLinkWithArrow"
-                    css={[styles.secondaryText, styles.secondaryLinkWithArrow]}
+                    data-supertokens="secondaryText secondaryLinkWithLeftArrow"
+                    css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
                     onClick={() => recipeImplementation.clearLoginAttemptInfo()}>
-                    Change {loginAttemptInfo.contactInfoType === "EMAIL" ? "email" : "phone number"}{" "}
-                    <ArrowRightIcon color={styles.palette.colors.textPrimary} />
+                    <ArrowLeftIcon color={styles.palette.colors.textPrimary} /> Change{" "}
+                    {loginAttemptInfo.contactInfoType === "EMAIL" ? "email" : "phone number"}
                 </div>
             </Fragment>
         );

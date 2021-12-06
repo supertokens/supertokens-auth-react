@@ -165,6 +165,15 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             },
         },
 
+        secondaryLinkWithLeftArrow: {
+            marginTop: "10px",
+            cursor: "pointer",
+            "&:hover svg": {
+                position: "relative",
+                left: "-4px",
+            },
+        },
+
         sendVerifyEmailResend: {
             marginTop: "13px",
             fontWeight: 300,

@@ -13,6 +13,8 @@
  * under the License.
  */
 
+import { isValidPhoneNumber } from "react-phone-number-input/min";
+
 /*
  * defaultEmailValidator.
  */
@@ -35,13 +37,11 @@ export function defaultEmailValidator(value: any): string | undefined {
     return undefined;
 }
 
-const PhoneE164RegEx = /^\+[1-9]\d{10,14}$/;
-
 export function defaultPhoneNumberValidator(value: string) {
     if (typeof value !== "string") {
         return "Phone number must be of type string";
     }
-    if (!PhoneE164RegEx.test(value)) {
+    if (!isValidPhoneNumber(value)) {
         return "Phone number is invalid";
     }
     return undefined;

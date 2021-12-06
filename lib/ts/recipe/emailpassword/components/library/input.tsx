@@ -35,7 +35,7 @@ import ErrorIcon from "../../../../components/assets/errorIcon";
  * Props.
  */
 
-type InputProps = {
+export type InputProps = {
     errorStyle?: CSSObject;
     type: string;
     name: string;

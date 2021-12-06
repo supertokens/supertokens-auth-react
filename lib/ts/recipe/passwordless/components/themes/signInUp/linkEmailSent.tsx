@@ -26,11 +26,11 @@ import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
 import { LinkEmailSentThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { ResendLinkButton } from "./resendLinkButton";
+import { ResendButton } from "./resendButton";
+import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
 
 type LinkEmailSentState = {
     status: "READY" | "EMAIL_RESENT" | "ERROR";
-    secsUntilResendEnabled?: number;
     resendNotifTimeout?: any;
 };
 
@@ -101,8 +101,12 @@ class PasswordlessLinkEmailSent extends PureComponent<LinkEmailSentThemeProps, L
                             Link resent
                         </div>
                     )}
-                    <div data-supertokens="sendCodeEmailIcon" css={styles.sendCodeEmailIcon}>
-                        <EmailLargeIcon />
+                    <div data-supertokens="sendCodeIcon" css={styles.sendCodeIcon}>
+                        {this.props.loginAttemptInfo.contactInfoType === "EMAIL" ? (
+                            <EmailLargeIcon />
+                        ) : (
+                            <SMSLargeIcon />
+                        )}
                     </div>
                     <div
                         data-supertokens="headerTitle headerTinyTitle"
@@ -116,16 +120,17 @@ class PasswordlessLinkEmailSent extends PureComponent<LinkEmailSentThemeProps, L
                         login or sign up
                     </div>
                     {status !== "EMAIL_RESENT" && (
-                        <ResendLinkButton
+                        <ResendButton
                             loginAttemptInfo={this.props.loginAttemptInfo}
                             resendCodeTimeGap={this.props.config.resendCodeTimeGap}
+                            target={"link"}
                             onClick={this.resendEmail}
                         />
                     )}
                     {
                         <div
-                            data-supertokens="secondaryText secondaryLinkWithArrow"
-                            css={[styles.secondaryText, styles.secondaryLinkWithArrow]}
+                            data-supertokens="secondaryText secondaryLinkWithLeftArrow"
+                            css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
                             onClick={() => this.props.recipeImplementation.clearLoginAttemptInfo()}>
                             <ArrowLeftIcon color={styles.palette.colors.textPrimary} /> Change{" "}
                             {this.props.loginAttemptInfo.contactInfoType === "EMAIL" ? "email" : "phone number"}{" "}

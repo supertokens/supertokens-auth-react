@@ -518,7 +518,7 @@ function getPasswordlessConfigs({ disableDefaultImplementation }) {
     return Passwordless.init({
         style: {
             container: {
-                fontFamily: "cursive",
+                // fontFamily: "cursive",
             },
         },
         override: {
@@ -537,6 +537,10 @@ function getPasswordlessConfigs({ disableDefaultImplementation }) {
                     createCode(...args) {
                         log(`CREATE_CODE`);
                         return implementation.createCode(...args);
+                    },
+                    resendCode(...args) {
+                        log(`RESEND_CODE`);
+                        return implementation.resendCode(...args);
                     },
                     consumeCode(...args) {
                         log(`CONSUME_CODE`);

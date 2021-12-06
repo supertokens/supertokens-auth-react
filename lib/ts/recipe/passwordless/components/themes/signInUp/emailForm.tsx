@@ -56,7 +56,7 @@ export const EmailForm = withOverride(
 
                     return response;
                 }}
-                validateOnBlur={false}
+                validateOnBlur={true}
                 showLabels={true}
                 header={props.header}
                 footer={props.footer}

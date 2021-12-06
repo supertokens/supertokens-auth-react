@@ -275,17 +275,31 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                                             <Label value={field.label} showIsRequired={field.showIsRequired} />
                                         ))}
 
-                                    <Input
-                                        type={type}
-                                        name={field.id}
-                                        validated={field.validated}
-                                        placeholder={field.placeholder}
-                                        ref={field.ref}
-                                        autoComplete={field.autoComplete}
-                                        onInputFocus={this.handleInputFocus}
-                                        onInputBlur={onInputBlur}
-                                        hasError={field.error !== undefined}
-                                    />
+                                    {field.inputComponent !== undefined ? (
+                                        <field.inputComponent
+                                            type={type}
+                                            name={field.id}
+                                            validated={field.validated}
+                                            placeholder={field.placeholder}
+                                            ref={field.ref}
+                                            autoComplete={field.autoComplete}
+                                            onInputFocus={this.handleInputFocus}
+                                            onInputBlur={onInputBlur}
+                                            hasError={field.error !== undefined}
+                                        />
+                                    ) : (
+                                        <Input
+                                            type={type}
+                                            name={field.id}
+                                            validated={field.validated}
+                                            placeholder={field.placeholder}
+                                            ref={field.ref}
+                                            autoComplete={field.autoComplete}
+                                            onInputFocus={this.handleInputFocus}
+                                            onInputBlur={onInputBlur}
+                                            hasError={field.error !== undefined}
+                                        />
+                                    )}
 
                                     {field.error && <InputError error={field.error} />}
                                 </Fragment>

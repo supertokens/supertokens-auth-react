@@ -23,7 +23,7 @@ import { Label } from "../../../../emailpassword/components/library";
 import React, { useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
-import { ResendLinkButton } from "./resendLinkButton";
+import { ResendButton } from "./resendButton";
 
 export const UserInputCodeForm = withOverride(
     "PasswordlessUserInputCodeForm",
@@ -70,9 +70,10 @@ export const UserInputCodeForm = withOverride(
         const CodeLabel = (
             <div css={styles.codeInputLabelWrapper} data-supertokens="codeInputLabelWrapper">
                 <Label css={styles.codeInputLabel} value={"Code"} data-supertokens="codeInputLabel" />
-                <ResendLinkButton
+                <ResendButton
                     loginAttemptInfo={props.loginAttemptInfo}
                     resendCodeTimeGap={props.config.resendCodeTimeGap}
+                    target={"OTP"}
                     onClick={resend}
                 />
             </div>
@@ -130,9 +131,11 @@ export const UserInputCodeForm = withOverride(
                                 formFields: [
                                     {
                                         id: "userInputCode",
-                                        error: `Invalid OTP. Attempts left: ${
+                                        error: `Invalid OTP. Attempts left: ${(
                                             response.maximumCodeInputAttempts - response.failedCodeInputAttemptCount
-                                        }`,
+                                        )
+                                            .toString()
+                                            .padStart(2, "0")}`,
                                     },
                                 ],
                             };
@@ -144,9 +147,11 @@ export const UserInputCodeForm = withOverride(
                                 formFields: [
                                     {
                                         id: "userInputCode",
-                                        error: `Expired OTP. Attempts left: ${
+                                        error: `Expired OTP. Attempts left: ${(
                                             response.maximumCodeInputAttempts - response.failedCodeInputAttemptCount
-                                        }`,
+                                        )
+                                            .toString()
+                                            .padStart(2, "0")}`,
                                     },
                                 ],
                             };

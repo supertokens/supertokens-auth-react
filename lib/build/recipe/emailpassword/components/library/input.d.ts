@@ -4,7 +4,7 @@
 import { CSSObject } from "@emotion/react";
 import { APIFormField } from "../../../../types";
 import { InputRef } from "../../types";
-declare type InputProps = {
+export declare type InputProps = {
     errorStyle?: CSSObject;
     type: string;
     name: string;

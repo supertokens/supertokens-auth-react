@@ -58,14 +58,24 @@ function SignInUpTheme(props: SignInUpProps): JSX.Element {
                                         {...recipeAndConfig}
                                         error={props.error}
                                         header={<SignInUpHeader />}
-                                        footer={<SignInUpFooter />}
+                                        footer={
+                                            <SignInUpFooter
+                                                privacyPolicyLink={props.config.emailForm.privacyPolicyLink}
+                                                termsOfServiceLink={props.config.emailForm.termsOfServiceLink}
+                                            />
+                                        }
                                     />
                                 ) : (
                                     <MobileForm
                                         {...recipeAndConfig}
                                         error={props.error}
                                         header={<SignInUpHeader />}
-                                        footer={<SignInUpFooter />}
+                                        footer={
+                                            <SignInUpFooter
+                                                privacyPolicyLink={props.config.mobileForm.privacyPolicyLink}
+                                                termsOfServiceLink={props.config.mobileForm.termsOfServiceLink}
+                                            />
+                                        }
                                     />
                                 )
                             ) : (

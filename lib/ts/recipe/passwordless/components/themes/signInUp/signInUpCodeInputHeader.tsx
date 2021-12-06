@@ -29,8 +29,11 @@ export const SignInUpCodeInputHeader = withOverride(
                 <div data-supertokens="headerTitle" css={styles.headerTitle}>
                     Enter OTP
                 </div>
-                <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                    An OTP was sent to you at <strong>{loginAttemptInfo.contactInfo}</strong>
+                <div
+                    data-supertokens="headerSubtitle secondaryText"
+                    css={[styles.headerSubtitle, styles.secondaryText]}>
+                    An OTP was sent to you at <br />
+                    <strong>{loginAttemptInfo.contactInfo}</strong>
                 </div>
                 <div data-supertokens="divider" css={styles.divider}></div>
             </Fragment>

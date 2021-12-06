@@ -24,15 +24,17 @@ import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { LoginAttemptInfo } from "../../../types";
 
-export const ResendLinkButton = withOverride(
-    "PasswordlessResendLinkButton",
-    function PasswordlessResendLinkButton({
+export const ResendButton = withOverride(
+    "PasswordlessResendButton",
+    function PasswordlessResendButton({
         loginAttemptInfo,
         resendCodeTimeGap,
+        target,
         onClick,
     }: {
         loginAttemptInfo: LoginAttemptInfo;
         resendCodeTimeGap: number;
+        target: string;
         onClick: () => void;
     }): JSX.Element | null {
         const styles = useContext(StyleContext);
@@ -62,8 +64,8 @@ export const ResendLinkButton = withOverride(
                 type="button"
                 disabled={secsUntilResend !== undefined}
                 onClick={onClick}
-                css={[styles.link, styles.linkButton, styles.sendVerifyEmailResend]}
-                data-supertokens="link linkButton sendVerifyEmailResend">
+                css={[styles.link, styles.linkButton, styles.resendCodeBtn]}
+                data-supertokens="link linkButton resendCodeBtn">
                 {secsUntilResend !== undefined ? (
                     <React.Fragment>
                         Resend again in{" "}
@@ -75,7 +77,7 @@ export const ResendLinkButton = withOverride(
                         </strong>
                     </React.Fragment>
                 ) : (
-                    "Resend link"
+                    `Resend ${target}`
                 )}
             </button>
         );

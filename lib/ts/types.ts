@@ -16,8 +16,10 @@ import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
-import { ComponentClass } from "react";
+import { ComponentClass, ForwardRefExoticComponent, RefAttributes } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
+import { InputProps } from "./recipe/emailpassword/components/library/input";
+import { InputRef } from "./recipe/emailpassword/types";
 
 /*
  * Recipe Module Manager Config Types.
@@ -179,6 +181,7 @@ export type NormalisedFormField = {
      */
     label: string;
     labelComponent?: JSX.Element;
+    inputComponent?: ForwardRefExoticComponent<InputProps & RefAttributes<InputRef>>;
 
     /*
      * placeholder of the input field.
