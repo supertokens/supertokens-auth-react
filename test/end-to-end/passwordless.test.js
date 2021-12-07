@@ -21,7 +21,7 @@
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
-import { clearBrowserCookiesWithoutAffectingConsole, setInputValues, waitForSTElement } from "../helpers";
+import { clearBrowserCookiesWithoutAffectingConsole, setInputValues, waitForSTElement, waitFor } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -41,16 +41,17 @@ describe("SuperTokens Passwordless", function () {
     let page;
     let consoleLogs = [];
 
-    const examplePhoneNumber = "+16175551212";
+    const examplePhoneNumber = "+36701231212";
     const exampleEmail = "test@example.com";
 
     getTestCases("EMAIL", "email", exampleEmail);
-    getTestCases("PHONE", "phoneNumber", examplePhoneNumber);
+    getTestCases("PHONE", "phoneNumber_text", examplePhoneNumber);
 
     function getTestCases(contactInfoType, inputName, contactInfo) {
         describe(`${contactInfoType} + UserInputCode`, function () {
             before(async function () {
                 ({ browser, page } = await initBrowser(contactInfoType, consoleLogs));
+                await setFlow(contactInfoType, "USER_INPUT_CODE");
             });
 
             after(async function () {
@@ -81,10 +82,19 @@ describe("SuperTokens Passwordless", function () {
                 await submitForm(page);
 
                 await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
-                await setInputValues(page, [{ name: "userInputCode", value: "1111" }]);
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getDevice(loginAttemptInfo);
+                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
-                await page.waitForNavigation();
+                try {
+                    await page.waitForNavigation();
+                } catch (ex) {
+                    throw ex;
+                }
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/dashboard");
                 assert.deepStrictEqual(consoleLogs, [
@@ -117,7 +127,7 @@ describe("SuperTokens Passwordless", function () {
 
                 await waitForSTElement(page, "input[name=userInputCode]");
                 for (let i = 3; i > 0; i--) {
-                    await setInputValues(page, [{ name: "userInputCode", value: "22223" }]);
+                    await setInputValues(page, [{ name: "userInputCode", value: "000000" }]);
                     await submitForm(page);
 
                     if (i === 1) {
@@ -127,7 +137,7 @@ describe("SuperTokens Passwordless", function () {
                         const error = await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
                         assert.deepStrictEqual(
                             await error.evaluate((e) => e.textContent),
-                            `Invalid OTP. Attempts left: ${i - 1}`
+                            `Invalid OTP. Attempts left: 0${i - 1}`
                         );
                     }
                 }
@@ -162,8 +172,13 @@ describe("SuperTokens Passwordless", function () {
                 await submitForm(page);
 
                 await waitForSTElement(page, "input[name=userInputCode]");
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getDevice(loginAttemptInfo);
+                await waitFor(1500);
                 for (let i = 3; i > 0; i--) {
-                    await setInputValues(page, [{ name: "userInputCode", value: "expired" }]);
+                    await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                     await submitForm(page);
 
                     if (i === 1) {
@@ -173,7 +188,7 @@ describe("SuperTokens Passwordless", function () {
                         const error = await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
                         assert.deepStrictEqual(
                             await error.evaluate((e) => e.textContent),
-                            `Expired OTP. Attempts left: ${i - 1}`
+                            `Expired OTP. Attempts left: 0${i - 1}`
                         );
                     }
                 }
@@ -202,6 +217,7 @@ describe("SuperTokens Passwordless", function () {
         describe(`${contactInfoType} + Link`, function () {
             before(async function () {
                 ({ browser, page } = await initBrowser(contactInfoType, consoleLogs));
+                await setFlow(contactInfoType, "MAGIC_LINK");
             });
 
             after(async function () {
@@ -227,29 +243,16 @@ describe("SuperTokens Passwordless", function () {
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
-                await setFlowType(contactInfo, "MAGICLINK");
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
-
-                await page.waitFor(500);
 
                 await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-
-                const deviceResp = await fetch(
-                    `${TEST_SERVER_BASE_URL}/test/getDevice?deviceId=${encodeURIComponent(loginAttemptInfo.deviceId)}`,
-                    {
-                        method: "GET",
-                    }
-                );
-                const device = await deviceResp.json();
-
-                await page.goto(
-                    `${TEST_CLIENT_BASE_URL}/auth/verify?preAuthSessionId=${device.preAuthSessionId}#${device.codes[0].linkCode}`
-                );
+                const device = await getDevice(loginAttemptInfo);
+                await page.goto(device.codes[0].urlWithLinkCode);
                 await page.waitForNavigation({ waitUntil: "networkidle0" });
 
                 const pathname = await page.evaluate(() => window.location.pathname);
@@ -315,7 +318,7 @@ describe("SuperTokens Passwordless", function () {
                 consoleLogs.length = 0;
 
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify?preAuthSessionId=asdf#${device.codes[0].linkCode}`),
+                    page.goto(device.codes[0].urlWithLinkCode.replace(device.preAuthSessionId, "asdf")),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
@@ -337,7 +340,8 @@ describe("SuperTokens Passwordless", function () {
                 consoleLogs.length = 0;
 
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify?preAuthSessionId=${device.preAuthSessionId}#asfd`),
+                    page.goto(device.codes[0].urlWithLinkCode.replace(/#.*/, "#asdf")),
+                    ,
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
@@ -359,7 +363,7 @@ describe("SuperTokens Passwordless", function () {
                 consoleLogs.length = 0;
 
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify#${device.codes[0].linkCode}`),
+                    page.goto(device.codes[0].urlWithLinkCode.replace(/[?&]preAuthSessionId=[^&#]+/, "")),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
@@ -378,7 +382,7 @@ describe("SuperTokens Passwordless", function () {
                 consoleLogs.length = 0;
 
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify?preAuthSessionId=${device.preAuthSessionId}`),
+                    page.goto(device.codes[0].urlWithLinkCode.replace(/#.*/, "")),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
@@ -389,6 +393,116 @@ describe("SuperTokens Passwordless", function () {
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
                     "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                ]);
+            });
+        });
+
+        describe(`${contactInfoType} + Link/Code`, function () {
+            before(async function () {
+                ({ browser, page } = await initBrowser(contactInfoType, consoleLogs));
+                await setFlow(contactInfoType, "USER_INPUT_CODE_AND_MAGIC_LINK");
+            });
+
+            after(async function () {
+                await browser.close();
+                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                    method: "POST",
+                }).catch(console.error);
+
+                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                    method: "POST",
+                }).catch(console.error);
+            });
+
+            beforeEach(async function () {
+                await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+                page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+
+                consoleLogs.length = 0;
+            });
+
+            it("Successful signin with link", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getDevice(loginAttemptInfo);
+
+                await page.goto(device.codes[0].urlWithLinkCode);
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/dashboard");
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
+                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                ]);
+            });
+
+            it("Successful signin with user input code", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getDevice(loginAttemptInfo);
+                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                await submitForm(page);
+
+                try {
+                    await page.waitForNavigation();
+                } catch (ex) {
+                    throw ex;
+                }
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/dashboard");
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
+                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
             });
 
@@ -407,7 +521,7 @@ describe("SuperTokens Passwordless", function () {
                 }
 
                 await Promise.all([
-                    page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify?preAuthSessionId=${device.preAuthSessionId}`),
+                    page.goto(device.codes[0].urlWithLinkCode),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
@@ -431,6 +545,9 @@ describe("SuperTokens Passwordless", function () {
                         "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
+                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                        "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
                         "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
                         "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
                     ],
@@ -441,12 +558,24 @@ describe("SuperTokens Passwordless", function () {
     }
 });
 
-async function setFlowType(contactInfo, flowType) {
-    await fetch(`${TEST_SERVER_BASE_URL}/test/setFlowForUser`, {
+async function getDevice(loginAttemptInfo) {
+    const deviceResp = await fetch(
+        `${TEST_SERVER_BASE_URL}/test/getDevice?preAuthSessionId=${encodeURIComponent(
+            loginAttemptInfo.preAuthSessionId
+        )}`,
+        {
+            method: "GET",
+        }
+    );
+    return await deviceResp.json();
+}
+
+function setFlow(contactInfoType, flowType) {
+    return fetch(`${TEST_SERVER_BASE_URL}/test/setFlow`, {
         method: "POST",
         headers: [["content-type", "application/json"]],
         body: JSON.stringify({
-            contactInfo,
+            contactInfoType,
             flowType,
         }),
     });
@@ -457,11 +586,6 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
         page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
-    if (forLinkOnly) {
-        await setFlowType(contactInfo, "MAGICLINK");
-    } else {
-        await setFlowType(contactInfo, "USER_INPUT_CODE_AND_LINK");
-    }
     await waitForSTElement(page, `[data-supertokens~=input][name=${inputName}]`);
     await setInputValues(page, [{ name: inputName, value: contactInfo }]);
     await submitForm(page);
@@ -479,13 +603,7 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
         await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
     }
 
-    const deviceResp = await fetch(
-        `${TEST_SERVER_BASE_URL}/test/getDevice?deviceId=${encodeURIComponent(loginAttemptInfo.deviceId)}`,
-        {
-            method: "GET",
-        }
-    );
-    return deviceResp.json();
+    return getDevice(loginAttemptInfo);
 }
 
 async function initBrowser(contactInfoType, consoleLogs) {
@@ -495,6 +613,13 @@ async function initBrowser(contactInfoType, consoleLogs) {
 
     await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
         method: "POST",
+        headers: [["content-type", "application/json"]],
+        body: JSON.stringify({
+            configUpdates: [
+                { key: "passwordless_code_lifetime", value: 1000 },
+                { key: "passwordless_max_code_input_attempts", value: 3 },
+            ],
+        }),
     }).catch(console.error);
 
     const browser = await puppeteer.launch({

@@ -14,8 +14,17 @@
  */
 require("dotenv").config();
 let SuperTokens = require("supertokens-node");
+let { default: SuperTokensRaw } = require("supertokens-node/lib/build/supertokens");
+const { default: PasswordlessRaw } = require("supertokens-node/lib/build/recipe/passwordless/recipe");
+const { default: EmailPasswordRaw } = require("supertokens-node/lib/build/recipe/emailpassword/recipe");
+const { default: ThirdPartyRaw } = require("supertokens-node/lib/build/recipe/thirdparty/recipe");
+const {
+    default: ThirdPartyEmailPasswordRaw,
+} = require("supertokens-node/lib/build/recipe/thirdpartyemailpassword/recipe");
+const { default: SessionRaw } = require("supertokens-node/lib/build/recipe/session/recipe");
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
+let Passwordless = require("supertokens-node/recipe/passwordless");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
@@ -26,7 +35,7 @@ let cookieParser = require("cookie-parser");
 let bodyParser = require("body-parser");
 let http = require("http");
 let cors = require("cors");
-let { startST, killAllST, setupST, cleanST } = require("./utils");
+let { startST, killAllST, setupST, cleanST, setKeyValueInConfig } = require("./utils");
 
 let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
 let jsonParser = bodyParser.json({ limit: "20mb" });
@@ -40,6 +49,19 @@ const WEB_PORT = process.env.WEB_PORT || 3031;
 const websiteDomain = `http://localhost:${WEB_PORT}`;
 let latestURLWithToken = "";
 
+let deviceStore = new Map();
+function saveCode({ email, phoneNumber, preAuthSessionId, urlWithLinkCode, userInputCode }) {
+    const device = deviceStore.get(preAuthSessionId) || {
+        preAuthSessionId,
+        codes: [],
+    };
+    device.codes.push({
+        urlWithLinkCode,
+        userInputCode,
+    });
+    console.log({ email, phoneNumber, urlWithLinkCode, userInputCode });
+    deviceStore.set(preAuthSessionId, device);
+}
 const formFields = (process.env.MIN_FIELDS && []) || [
     {
         id: "name",
@@ -60,73 +82,7 @@ const formFields = (process.env.MIN_FIELDS && []) || [
         optional: true,
     },
 ];
-SuperTokens.init({
-    appInfo: {
-        appName: "SuperTokens",
-        apiDomain: "localhost:" + (process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT),
-        websiteDomain,
-    },
-    supertokens: {
-        connectionURI: "http://localhost:9000",
-    },
-    recipeList: [
-        EmailPassword.init({
-            signUpFeature: {
-                formFields,
-            },
-            resetPasswordUsingTokenFeature: {
-                createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
-                    console.log(passwordResetURLWithToken);
-                    latestURLWithToken = passwordResetURLWithToken;
-                },
-            },
-            emailVerificationFeature: {
-                createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
-                    console.log(emailVerificationURLWithToken);
-                    latestURLWithToken = emailVerificationURLWithToken;
-                },
-            },
-        }),
-        ThirdParty.init({
-            signInAndUpFeature: {
-                providers: [
-                    ThirdParty.Google({
-                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                        clientId: process.env.GOOGLE_CLIENT_ID,
-                    }),
-                    ThirdParty.Github({
-                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                        clientId: process.env.GITHUB_CLIENT_ID,
-                    }),
-                    ThirdParty.Facebook({
-                        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-                        clientId: process.env.FACEBOOK_CLIENT_ID,
-                    }),
-                ],
-            },
-        }),
-        ThirdPartyEmailPassword.init({
-            signUpFeature: {
-                formFields,
-            },
-            providers: [
-                ThirdPartyEmailPassword.Google({
-                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                    clientId: process.env.GOOGLE_CLIENT_ID,
-                }),
-                ThirdPartyEmailPassword.Github({
-                    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                    clientId: process.env.GITHUB_CLIENT_ID,
-                }),
-                ThirdPartyEmailPassword.Facebook({
-                    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-                    clientId: process.env.FACEBOOK_CLIENT_ID,
-                }),
-            ],
-        }),
-        Session.init({}),
-    ],
-});
+initST();
 
 app.use(
     cors({
@@ -144,6 +100,11 @@ app.get("/ping", async (req, res) => {
 });
 
 app.post("/startst", async (req, res) => {
+    if (req.body && req.body.configUpdates) {
+        for (const update of req.body.configUpdates) {
+            await setKeyValueInConfig(update.key, update.value);
+        }
+    }
     let pid = await startST();
     res.send(pid + "");
 });
@@ -196,172 +157,27 @@ app.get("/token", async (_, res) => {
     });
 });
 
-// Passwordless mocks
-let users = [];
-let flowTypes = new Map();
-let deviceStore = new Map();
-let maximumCodeInputAttempts = 3;
-
-function getUserId() {
-    return crypto.randomUUID();
-}
-
-function getOrCreateUser(email, phoneNumber) {
-    let user = users.find((u) => u.email === email || u.phone === phoneNumber);
-    let createdNewUser = !user;
-    if (createdNewUser) {
-        user = {
-            id: getUserId(),
-            email,
-            phoneNumber,
-        };
-        users.push(user);
-    }
-    return { createdNewUser, user };
-}
-
-function getDeviceId() {
-    return crypto.randomBytes(32).toString("base64");
-}
-
-function urlSafe(str) {
-    return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
-}
-function getPreAuthSessionId() {
-    return urlSafe(crypto.randomBytes(32).toString("base64"));
-}
-
-function getLinkCode() {
-    return urlSafe(crypto.randomBytes(32).toString("base64"));
-}
-
-function getAndStoreNewDevice(email, phone) {
-    const device = {
-        email,
-        phone,
-        deviceId: getDeviceId(),
-        preAuthSessionId: getPreAuthSessionId(),
-        failedAttempts: 0,
-        codes: [
-            {
-                linkCode: getLinkCode(),
-                userInputCode: "1111",
-            },
-        ],
-    };
-    deviceStore.set(device.deviceId, device);
-    return device;
-}
-
-app.post("/auth/signinup/code", (req, res) => {
-    const flowType = flowTypes.get(req.body.email || req.body.phoneNumber) || "USER_INPUT_CODE_AND_LINK";
-    const device = getAndStoreNewDevice(req.body.email, req.body.phoneNumber);
-    res.send({
-        status: "OK",
-        preAuthSessionId: device.preAuthSessionId,
-        deviceId: device.deviceId,
-        flowType,
+app.post("/test/setFlow", (req, res) => {
+    initST({
+        passwordlessConfig: {
+            contactMethod: req.body.contactInfoType,
+            flowType: req.body.flowType,
+            createAndSendCustomTextMessage: saveCode,
+            createAndSendCustomEmail: saveCode,
+        },
     });
-});
-
-app.post("/auth/signinup/code/resend", (req, res) => {
-    const device = deviceStore.get(req.body.deviceId);
-    if (!device) {
-        res.send({
-            status: "RESTART_FLOW_ERROR",
-        });
-        return;
-    }
-    device.codes.push({
-        userInputCode: device.codes[device.codes.length - 1] + "x",
-        linkCode: getLinkCode(),
-    });
-
-    res.send({
-        status: "OK",
-    });
-});
-
-app.post("/auth/signinup/code/consume", async (req, res) => {
-    if (req.body.deviceId) {
-        const dev = deviceStore.get(req.body.deviceId);
-        if (!dev) {
-            res.send({
-                status: "RESTART_FLOW_ERROR",
-            });
-            return;
-        }
-        if (dev.codes.some((code) => code.userInputCode === req.body.userInputCode)) {
-            const userInfo = getOrCreateUser(dev.email, dev.phone);
-            await Session.createNewSession(res, userInfo.user.id);
-            res.send({
-                status: "OK",
-                ...userInfo,
-            });
-            return;
-        } else {
-            ++dev.failedAttempts;
-            if (dev.failedAttempts >= maximumCodeInputAttempts) {
-                res.send({
-                    status: "RESTART_FLOW_ERROR",
-                });
-                return;
-            } else if (req.body.userInputCode.startsWith("expire")) {
-                res.send({
-                    status: "EXPIRED_USER_INPUT_CODE_ERROR",
-                    failedCodeInputAttemptCount: dev.failedAttempts,
-                    maximumCodeInputAttempts,
-                });
-                return;
-            } else {
-                res.send({
-                    status: "INCORRECT_USER_INPUT_CODE_ERROR",
-                    failedCodeInputAttemptCount: dev.failedAttempts,
-                    maximumCodeInputAttempts,
-                });
-                return;
-            }
-        }
-    } else {
-        const dev = Array.from(deviceStore.values()).find((d) =>
-            d.codes.some((code) => code.linkCode === req.body.linkCode)
-        );
-        if (!dev || dev.preAuthSessionId !== req.body.preAuthSessionId) {
-            res.send({
-                status: "RESTART_FLOW_ERROR",
-            });
-            return;
-        } else {
-            const userInfo = getOrCreateUser(dev.email, dev.phone);
-            await Session.createNewSession(res, userInfo.user.id);
-            res.send({
-                status: "OK",
-                ...userInfo,
-            });
-        }
-    }
-});
-
-app.post("/test/setFlowForUser", (req, res) => {
-    flowTypes.set(req.body.contactInfo, req.body.flowType);
-
     res.sendStatus(200);
 });
 
 app.get("/test/getDevice", (req, res) => {
-    res.send(deviceStore.get(req.query.deviceId));
-});
-
-app.get("/test/getAllDevices", (req, res) => {
-    res.send({
-        devices: Array.from(deviceStore.values()),
-    });
+    res.send(deviceStore.get(req.query.preAuthSessionId));
 });
 
 app.use(errorHandler());
 
 app.use(async (err, req, res, next) => {
     try {
+        console.error(err);
         res.sendStatus(500).send(err);
     } catch (ignored) {}
 });
@@ -389,3 +205,85 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
         console.log(`processId: ${pid}`);
     }
 })(process.env.START === "true");
+
+function initST({ passwordlessConfig } = {}) {
+    PasswordlessRaw.reset();
+    EmailPasswordRaw.reset();
+    ThirdPartyRaw.reset();
+    ThirdPartyEmailPasswordRaw.reset();
+    SessionRaw.reset();
+
+    SuperTokensRaw.reset();
+    SuperTokens.init({
+        appInfo: {
+            appName: "SuperTokens",
+            apiDomain: "localhost:" + (process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT),
+            websiteDomain,
+        },
+        supertokens: {
+            connectionURI: "http://localhost:9000",
+        },
+        recipeList: [
+            Passwordless.init(
+                passwordlessConfig || {
+                    contactMethod: "PHONE",
+                    flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+                    createAndSendCustomTextMessage: saveCode,
+                }
+            ),
+            EmailPassword.init({
+                signUpFeature: {
+                    formFields,
+                },
+                resetPasswordUsingTokenFeature: {
+                    createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
+                        latestURLWithToken = passwordResetURLWithToken;
+                    },
+                },
+                emailVerificationFeature: {
+                    createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
+                        latestURLWithToken = emailVerificationURLWithToken;
+                    },
+                },
+            }),
+            ThirdParty.init({
+                signInAndUpFeature: {
+                    providers: [
+                        ThirdParty.Google({
+                            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                            clientId: process.env.GOOGLE_CLIENT_ID,
+                        }),
+                        ThirdParty.Github({
+                            clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                            clientId: process.env.GITHUB_CLIENT_ID,
+                        }),
+                        ThirdParty.Facebook({
+                            clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+                            clientId: process.env.FACEBOOK_CLIENT_ID,
+                        }),
+                    ],
+                },
+            }),
+            ThirdPartyEmailPassword.init({
+                signUpFeature: {
+                    formFields,
+                },
+                providers: [
+                    ThirdPartyEmailPassword.Google({
+                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                        clientId: process.env.GOOGLE_CLIENT_ID,
+                    }),
+                    ThirdPartyEmailPassword.Github({
+                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                        clientId: process.env.GITHUB_CLIENT_ID,
+                    }),
+                    ThirdPartyEmailPassword.Facebook({
+                        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+                        clientId: process.env.FACEBOOK_CLIENT_ID,
+                    }),
+                ],
+            }),
+            Session.init({}),
+        ],
+    });
+}

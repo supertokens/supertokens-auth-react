@@ -44,10 +44,19 @@ export function mockWindowLocation(url) {
     }
 }
 
+export async function waitFor(ms) {
+    return new Promise((res) => setTimeout(res, ms));
+}
+
+/*
+ * Selectors and actions helpers.
+ * Using Puppeteer within shadowDom https://github.com/puppeteer/puppeteer/issues/858#issuecomment-438540596
+ */
+
 export async function waitForSTElement(page, selector) {
     const res = await page.waitForFunction(
         (elementSelector, rootSelector) =>
-            document.querySelector(rootSelector).shadowRoot.querySelector(elementSelector),
+            document.querySelector(rootSelector)?.shadowRoot.querySelector(elementSelector),
         { polling: 50 },
         selector,
         ST_ROOT_SELECTOR
@@ -57,11 +66,6 @@ export async function waitForSTElement(page, selector) {
     }
     return res;
 }
-
-/*
- * Selectors and actions helpers.
- * Using Puppeteer within shadowDom https://github.com/puppeteer/puppeteer/issues/858#issuecomment-438540596
- */
 
 export async function getSubmitFormButtonLabel(page) {
     return await page.evaluate(
