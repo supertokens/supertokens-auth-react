@@ -29,6 +29,7 @@ import { getStyles } from "../../../components/themes/styles";
 import { RecipeInterface, LoginAttemptInfo } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { FeatureBaseProps } from "../../../../../types";
+import { formatPhoneNumberIntl } from "react-phone-number-input/min";
 
 type SignInUpState = {
     error: string | undefined;
@@ -75,7 +76,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                 if ("email" in input) {
                     contactInfo = input.email;
                 } else {
-                    contactInfo = input.phoneNumber;
+                    contactInfo = formatPhoneNumberIntl(input.phoneNumber);
                 }
                 const res = await this.props.recipe.recipeImpl.createCode(input);
                 if (res.status === "OK") {
@@ -88,6 +89,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                     this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
                     this.setState((os) => ({
                         ...os,
+                        error: undefined,
                         loginAttemptInfo,
                     }));
                 }
@@ -107,6 +109,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                     this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
                     this.setState((os) => ({
                         ...os,
+                        error: undefined,
                         loginAttemptInfo,
                     }));
                 } else if (res.status === "RESTART_FLOW_ERROR") {
@@ -115,6 +118,14 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                     this.setState((os) => ({
                         ...os,
                         error: "Please try again.",
+                        loginAttemptInfo: undefined,
+                    }));
+                } else if (res.status === "GENERAL_ERROR") {
+                    await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+
+                    this.setState((os) => ({
+                        ...os,
+                        error: res.message,
                         loginAttemptInfo: undefined,
                     }));
                 }

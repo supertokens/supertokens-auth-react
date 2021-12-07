@@ -3,7 +3,7 @@ import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
 import { PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY } from "./constants";
 
-type FlowType = "USER_INPUT_CODE" | "MAGICLINK" | "USER_INPUT_CODE_AND_LINK";
+type FlowType = "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
 
 type CreateCodeApiResponse =
     | {

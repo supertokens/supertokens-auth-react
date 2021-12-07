@@ -27,14 +27,23 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             justifyContent: "space-between",
             alignItems: "center",
         },
-        headerSubtitle: {
-            marginTop: "10px",
-            lineHeight: "21px",
+        sendCodeText: {
+            marginTop: "15px",
+            marginBottom: "20px",
+            "& strong": {
+                whiteSpace: "nowrap",
+            },
+        },
+        secondaryLinkWithLeftArrow: {
+            marginBottom: "40px",
         },
         resendCodeBtn: {
             width: "auto",
             marginTop: 0,
             lineHeight: "24px",
+            "&:disabled": {
+                color: palette.colors.textLabel,
+            },
             "&:hover": {
                 textDecoration: "underline",
             },
@@ -98,31 +107,30 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             alignItems: "center",
             height: "34px",
 
-            "& div": {
-                margin: "0 16px",
+            padding: "0 8px",
+
+            "&[aria-selected='true']": {
+                background: palette.colors.selectedBackground,
             },
-        },
-        phoneInputCountryOptionSelected: {
-            background: palette.colors.selectedBackground,
         },
         phoneInputCountryOptionLabel: {
             color: palette.colors.textLabel,
-            // flex: "1 1",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
-        },
-        phoneInputCountryOptionSelectedLabel: {
-            color: palette.colors.textLink,
+            margin: "0 16px",
+            "[aria-selected='true'] &": {
+                color: palette.colors.textLink,
+            },
         },
         phoneInputCountryOptionCallingCode: {
-            marginLeft: "1em",
             color: palette.colors.textLabel,
             opacity: 0.5,
+            "[aria-selected='true'] &": {
+                opacity: 1,
+            },
         },
-        phoneInputCountryOptionSelectedCallingCode: {
-            opacity: 1,
-        },
+
         phoneInputCountrySelect: {
             display: "flex",
             alignItems: "center",

@@ -51,13 +51,13 @@ export const ResendButton = withOverride(
                 } else {
                     setSecsUntilResend(Math.ceil(timer / 1000));
                 }
-            });
+            }, 500);
 
             return () => {
                 // This can safely run twice
                 clearInterval(interval);
             };
-        }, [resendCodeTimeGap, loginAttemptInfo, setSecsUntilResend]);
+        }, [loginAttemptInfo, resendCodeTimeGap, setSecsUntilResend]);
 
         return (
             <button
@@ -68,7 +68,7 @@ export const ResendButton = withOverride(
                 data-supertokens="link linkButton resendCodeBtn">
                 {secsUntilResend !== undefined ? (
                     <React.Fragment>
-                        Resend again in{" "}
+                        Resend in{" "}
                         <strong>
                             {Math.floor(secsUntilResend / 60)
                                 .toString()

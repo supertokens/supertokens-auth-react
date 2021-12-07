@@ -63,8 +63,8 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                     message: response.message,
                 });
             }
+
             if (response.status === "RESTART_FLOW_ERROR") {
-                this.props.recipe.recipeImpl.clearLoginAttemptInfo();
                 return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                     error: "signin",
                 });
@@ -88,6 +88,11 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
 
         const linkClickedScreen = this.props.recipe.config.linkClickedScreen;
 
+        const props = {
+            recipeImplementation: this.props.recipe.recipeImpl,
+            config: this.props.recipe.config,
+        };
+
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
@@ -99,7 +104,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                         getDefaultStyles={getStyles}>
                         <Fragment>
                             {/* No custom theme, use default. */}
-                            {this.props.children === undefined && <LinkClickedScreen />}
+                            {this.props.children === undefined && <LinkClickedScreen {...props} />}
 
                             {/* Otherwise, custom theme is provided, propagate props. */}
                             {this.props.children}

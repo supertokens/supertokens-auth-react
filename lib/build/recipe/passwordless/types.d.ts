@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
@@ -9,6 +8,16 @@ import {
 } from "../authRecipe/types";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { CountryCode } from "libphonenumber-js";
+import SignInUpTheme from "./components/themes/signInUp";
+import { SignInUpHeader } from "./components/themes/signInUp/signInUpHeader";
+import { SignInUpFooter } from "./components/themes/signInUp/signInUpFooter";
+import { EmailForm } from "./components/themes/signInUp/emailForm";
+import { MobileForm } from "./components/themes/signInUp/mobileForm";
+import { UserInputCodeForm } from "./components/themes/signInUp/userInputCodeForm";
+import { LinkClickedScreen } from "./components/themes/linkClickedScreen";
+import { SignInUpCodeInputHeader } from "./components/themes/signInUp/signInUpCodeInputHeader";
+import { SignInUpCodeInputFooter } from "./components/themes/signInUp/signInUpCodeInputFooter";
+import { LinkSent as LinkSentScreen } from "./components/themes/signInUp/linkSent";
 export declare type RecipeInterface = {
     createCode: (
         input: (
@@ -26,7 +35,7 @@ export declare type RecipeInterface = {
               status: "OK";
               deviceId: string;
               preAuthSessionId: string;
-              flowType: "USER_INPUT_CODE" | "MAGICLINK" | "USER_INPUT_CODE_AND_LINK";
+              flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
           }
         | {
               status: "GENERAL_ERROR";
@@ -96,7 +105,7 @@ export declare type RecipeInterface = {
                     preAuthSessionId: string;
                     contactInfo: string;
                     contactInfoType: "EMAIL" | "PHONE";
-                    flowType: "USER_INPUT_CODE" | "MAGICLINK" | "USER_INPUT_CODE_AND_LINK";
+                    flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
                     lastResend: number;
                 }
           >
@@ -105,7 +114,7 @@ export declare type RecipeInterface = {
               preAuthSessionId: string;
               contactInfo: string;
               contactInfoType: "EMAIL" | "PHONE";
-              flowType: "USER_INPUT_CODE" | "MAGICLINK" | "USER_INPUT_CODE_AND_LINK";
+              flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
               lastResend: number;
           }
         | undefined;
@@ -114,7 +123,7 @@ export declare type RecipeInterface = {
         preAuthSessionId: string;
         contactInfo: string;
         contactInfoType: "EMAIL" | "PHONE";
-        flowType: "USER_INPUT_CODE" | "MAGICLINK" | "USER_INPUT_CODE_AND_LINK";
+        flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
         lastResend: number;
     }) => Promise<void> | void;
     clearLoginAttemptInfo: () => Promise<void> | void;
@@ -205,7 +214,7 @@ export declare type LoginAttemptInfo = {
     contactInfo: string;
     contactInfoType: "EMAIL" | "PHONE";
     lastResend: number;
-    flowType: "USER_INPUT_CODE" | "MAGICLINK" | "USER_INPUT_CODE_AND_LINK";
+    flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
 };
 export declare type SignInUpEmailFormProps = {
     error?: string;
@@ -231,6 +240,7 @@ export declare type LinkClickedScreenProps = {
     onSuccess?: () => void;
 };
 export declare type LinkEmailSentThemeProps = {
+    error?: string;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
@@ -245,20 +255,15 @@ export declare type SignInUpCodeInputHeaderProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
 };
-declare const SignInUp: React.ComponentType<SignInUpProps>;
-declare const SignInUpEmailForm: React.ComponentType<SignInUpEmailFormProps>;
-declare const SignInUpPhoneNumberForm: React.ComponentType<SignInUpMobileFormProps>;
-declare const SignInUpCodeInputForm: React.ComponentType<SignInUpUserInputCodeFormProps>;
-declare const SignInUpHeader: React.ComponentType;
-declare const SignInUpFooter: React.ComponentType;
-declare const LinkClickedScreen: React.ComponentType<LinkClickedScreenProps>;
 export declare type ComponentOverrideMap = {
-    PasswordlessSignInUp?: ComponentOverride<typeof SignInUp>;
+    PasswordlessSignInUp?: ComponentOverride<typeof SignInUpTheme>;
     PasswordlessSignInUpHeader?: ComponentOverride<typeof SignInUpHeader>;
     PasswordlessSignInUpFooter?: ComponentOverride<typeof SignInUpFooter>;
-    PasswordlessSignInUpEmailForm?: ComponentOverride<typeof SignInUpEmailForm>;
-    PasswordlessSignInUpPhoneNumberForm?: ComponentOverride<typeof SignInUpPhoneNumberForm>;
-    PasswordlessSignInUpCodeInputForm?: ComponentOverride<typeof SignInUpCodeInputForm>;
+    PasswordlessSignInUpEmailForm?: ComponentOverride<typeof EmailForm>;
+    PasswordlessSignInUpPhoneNumberForm?: ComponentOverride<typeof MobileForm>;
+    PasswordlessSignInUpCodeInputForm?: ComponentOverride<typeof UserInputCodeForm>;
+    PasswordlessSignInUpCodeInputHeader?: ComponentOverride<typeof SignInUpCodeInputHeader>;
+    PasswordlessSignInUpCodeInputFooter?: ComponentOverride<typeof SignInUpCodeInputFooter>;
+    PasswordlessLinkSentScreen?: ComponentOverride<typeof LinkSentScreen>;
     PasswordlessLinkClickedScreen?: ComponentOverride<typeof LinkClickedScreen>;
 };
-export {};

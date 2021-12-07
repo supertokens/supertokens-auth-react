@@ -23,7 +23,7 @@ import { hasFontDefined } from "../../../../../styles/styles";
 import { SignInUpProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 import { EmailForm } from "./emailForm";
-import { LinkEmailSent } from "./linkEmailSent";
+import { LinkSent } from "./linkSent";
 import { MobileForm } from "./mobileForm";
 import { SignInUpCodeInputFooter } from "./signInUpCodeInputFooter";
 import { SignInUpCodeInputHeader } from "./signInUpCodeInputHeader";
@@ -46,8 +46,8 @@ function SignInUpTheme(props: SignInUpProps): JSX.Element {
 
     return (
         <ThemeBase loadDefaultFont={!hasFont}>
-            {props.loginAttemptInfo && props.loginAttemptInfo.flowType === "MAGICLINK" ? (
-                <LinkEmailSent {...props} loginAttemptInfo={props.loginAttemptInfo} />
+            {props.loginAttemptInfo && props.loginAttemptInfo.flowType === "MAGIC_LINK" ? (
+                <LinkSent {...props} loginAttemptInfo={props.loginAttemptInfo} />
             ) : (
                 <div data-supertokens="container" css={styles.container}>
                     <div data-supertokens="row" css={styles.row}>

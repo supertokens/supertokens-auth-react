@@ -21,11 +21,12 @@ import { PureComponent } from "react";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { LinkClickedScreenProps } from "../../../types";
 /*
  * Component.
  */
 
-class PasswordlessLinkClickedScreen extends PureComponent {
+class PasswordlessLinkClickedScreen extends PureComponent<LinkClickedScreenProps> {
     static contextType = StyleContext;
 
     /*

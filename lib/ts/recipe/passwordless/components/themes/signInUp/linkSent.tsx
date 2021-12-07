@@ -38,14 +38,14 @@ type LinkEmailSentState = {
  * Component.
  */
 
-class PasswordlessLinkEmailSent extends PureComponent<LinkEmailSentThemeProps, LinkEmailSentState> {
+class PasswordlessLinkSent extends PureComponent<LinkEmailSentThemeProps, LinkEmailSentState> {
     static contextType = StyleContext;
 
     constructor(props: LinkEmailSentThemeProps) {
         super(props);
 
         this.state = {
-            status: "READY",
+            status: props.error !== undefined ? "ERROR" : "READY",
         };
     }
 
@@ -68,7 +68,7 @@ class PasswordlessLinkEmailSent extends PureComponent<LinkEmailSentThemeProps, L
                     status: "EMAIL_RESENT",
                     resendNotifTimeout: setTimeout(() => {
                         this.setState((os) => (os.status === "EMAIL_RESENT" ? { ...os, status: "READY" } : os));
-                    }, 2000), // We need this cast because for some reason this also has the node types loaded
+                    }, 2000),
                 }));
             } else {
                 this.setState({
@@ -113,11 +113,13 @@ class PasswordlessLinkEmailSent extends PureComponent<LinkEmailSentThemeProps, L
                         css={[styles.headerTitle, styles.headerTinyTitle]}>
                         Link sent!
                     </div>
-                    <div
-                        data-supertokens="primaryText sendCodeEmailText"
-                        css={[styles.primaryText, styles.sendCodeEmailText]}>
-                        We sent a link to <strong>{this.props.loginAttemptInfo.contactInfo}</strong>. Click the link to
-                        login or sign up
+                    <div data-supertokens="primaryText sendCodeText" css={[styles.primaryText, styles.sendCodeText]}>
+                        We sent a link to
+                        {this.props.loginAttemptInfo.contactInfoType === "EMAIL" ? "" : " your mobile number"}
+                        <br />
+                        <strong>{this.props.loginAttemptInfo.contactInfo}</strong>
+                        <br />
+                        Click the link to login or sign up
                     </div>
                     {status !== "EMAIL_RESENT" && (
                         <ResendButton
@@ -133,7 +135,7 @@ class PasswordlessLinkEmailSent extends PureComponent<LinkEmailSentThemeProps, L
                             css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
                             onClick={() => this.props.recipeImplementation.clearLoginAttemptInfo()}>
                             <ArrowLeftIcon color={styles.palette.colors.textPrimary} /> Change{" "}
-                            {this.props.loginAttemptInfo.contactInfoType === "EMAIL" ? "email" : "phone number"}{" "}
+                            {this.props.loginAttemptInfo.contactInfoType === "EMAIL" ? "email" : "phone number"}
                         </div>
                     }
                 </div>
@@ -142,4 +144,4 @@ class PasswordlessLinkEmailSent extends PureComponent<LinkEmailSentThemeProps, L
     }
 }
 
-export const LinkEmailSent = withOverride("PasswordlessLinkEmailSent", PasswordlessLinkEmailSent);
+export const LinkSent = withOverride("PasswordlessLinkSent", PasswordlessLinkSent);

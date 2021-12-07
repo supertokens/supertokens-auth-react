@@ -95,9 +95,7 @@ function PhoneNumberInput(
                     css={[styles.input, styles.phoneInputLibRoot]}
                     name={name + "_text"}
                     autoComplete={autoComplete}
-                    onChange={(newValue: string) => {
-                        return setPhoneNumber(newValue);
-                    }}
+                    onChange={(newValue: string) => setPhoneNumber(newValue === undefined ? "" : newValue)}
                     countryCallingCodeEditable={true}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
@@ -144,24 +142,17 @@ function CountrySelectWithIcon({
         return !isDisabled ? (
             <div
                 {...innerProps}
-                data-supertokens="phoneInputCountryOption phoneInputCountryOptionSelected"
-                css={[style.phoneInputCountryOption, isSelected && style.phoneInputCountryOptionSelected]}>
+                data-supertokens="phoneInputCountryOption"
+                css={style.phoneInputCountryOption}
+                aria-selected={isSelected}>
                 <Icon country={data.value} label={data.label} />
-                <span
-                    data-supertokens="phoneInputCountryOptionLabel phoneInputCountryOptionSelectedLabel"
-                    css={[
-                        style.phoneInputCountryOptionLabel,
-                        isSelected && style.phoneInputCountryOptionSelectedLabel,
-                    ]}>
+                <span data-supertokens="phoneInputCountryOptionLabel" css={style.phoneInputCountryOptionLabel}>
                     {data.label}
                 </span>
                 {data.value && (
                     <span
-                        data-supertokens="phoneInputCountryOptionCallingCode phoneInputCountryOptionSelectedCallingCode"
-                        css={[
-                            style.phoneInputCountryOptionCallingCode,
-                            isSelected && style.phoneInputCountryOptionSelectedCallingCode,
-                        ]}>
+                        data-supertokens="phoneInputCountryOptionCallingCode"
+                        css={style.phoneInputCountryOptionCallingCode}>
                         +{getCountryCallingCode(data.value)}
                     </span>
                 )}
