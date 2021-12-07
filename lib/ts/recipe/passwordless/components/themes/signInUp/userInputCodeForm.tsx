@@ -67,17 +67,6 @@ export const UserInputCodeForm = withOverride(
             }
         }
 
-        const CodeLabel = (
-            <div css={styles.codeInputLabelWrapper} data-supertokens="codeInputLabelWrapper">
-                <Label css={styles.codeInputLabel} value={"Code"} data-supertokens="codeInputLabel" />
-                <ResendButton
-                    loginAttemptInfo={props.loginAttemptInfo}
-                    resendCodeTimeGap={props.config.resendCodeTimeGap}
-                    target={"OTP"}
-                    onClick={resend}
-                />
-            </div>
-        );
         return (
             <React.Fragment>
                 {props.header}
@@ -98,7 +87,21 @@ export const UserInputCodeForm = withOverride(
                         {
                             id: "userInputCode",
                             label: "",
-                            labelComponent: CodeLabel,
+                            labelComponent: (
+                                <div css={styles.codeInputLabelWrapper} data-supertokens="codeInputLabelWrapper">
+                                    <Label
+                                        css={styles.codeInputLabel}
+                                        value={"Code"}
+                                        data-supertokens="codeInputLabel"
+                                    />
+                                    <ResendButton
+                                        loginAttemptInfo={props.loginAttemptInfo}
+                                        resendCodeTimeGap={props.config.resendCodeTimeGap}
+                                        target={"OTP"}
+                                        onClick={resend}
+                                    />
+                                </div>
+                            ),
                             optional: false,
                             placeholder: "A1223B",
                             validate: defaultValidate,

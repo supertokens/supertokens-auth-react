@@ -18,7 +18,7 @@ import { jsx } from "@emotion/react";
 import { SignInUpMobileFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
-import PhoneNumberInput from "./phoneNumberInput";
+import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 
 export const MobileForm = withOverride(
     "PasswordlessMobileForm",
@@ -34,9 +34,11 @@ export const MobileForm = withOverride(
                     {
                         id: "phoneNumber",
                         label: "Mobile",
-                        inputComponent: PhoneNumberInput,
+                        inputComponent: phoneNumberInputWithInjectedProps({
+                            defaultCountry: props.config.mobileForm.defaultCountry,
+                        }),
                         optional: false,
-                        placeholder: "+16175551212",
+                        placeholder: "+1 (389) 848-293-234",
                         validate: props.config.validatePhoneNumber,
                     },
                 ]}

@@ -23,6 +23,7 @@ import {
 } from "../authRecipe/types";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import type { CountryCode } from "libphonenumber-js";
 
 export type RecipeInterface = {
     createCode: (
@@ -176,6 +177,10 @@ export type NormalisedConfig = {
 
     mobileForm: {
         /*
+         * Must be a two-letter ISO country code (e.g.: "US")
+         */
+        defaultCountry?: CountryCode;
+        /*
          * Privacy policy link for the sign-up form.
          */
         privacyPolicyLink?: string;
@@ -216,6 +221,10 @@ export type UserInput = {
     } & FeatureBaseConfig;
 
     mobileForm?: {
+        /*
+         * Must be a two-letter ISO country code (e.g.: "US")
+         */
+        defaultCountry?: CountryCode;
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
     } & FeatureBaseConfig;

@@ -265,15 +265,20 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                             type = "password";
                         }
 
+                        // We can use this to access things that can be updated on the field as a prop
+                        const propField = this.props.formFields.find((f) => f.id === field.id);
+                        if (!propField) {
+                            throw new Error("FormFieldDisappeared");
+                        }
+
                         return (
                             <FormRow key={field.id} hasError={field.error !== undefined}>
                                 <Fragment>
-                                    {showLabels &&
-                                        (field.labelComponent !== undefined ? (
-                                            field.labelComponent
-                                        ) : (
-                                            <Label value={field.label} showIsRequired={field.showIsRequired} />
-                                        ))}
+                                    {showLabels && propField.labelComponent !== undefined ? (
+                                        propField.labelComponent
+                                    ) : (
+                                        <Label value={field.label} showIsRequired={field.showIsRequired} />
+                                    )}
 
                                     {field.inputComponent !== undefined ? (
                                         <field.inputComponent

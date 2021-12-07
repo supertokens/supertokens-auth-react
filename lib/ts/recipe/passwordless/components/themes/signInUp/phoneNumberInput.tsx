@@ -30,15 +30,30 @@ import { InputRef } from "../../../../emailpassword/types";
 import { InputProps } from "../../../../emailpassword/components/library/input";
 import ErrorIcon from "../../../../../components/assets/errorIcon";
 import CheckedIcon from "../../../../../components/assets/checkedIcon";
+import { CountryCode } from "libphonenumber-js";
+
+type PhoneNumberInputProps = {
+    defaultCountry?: CountryCode;
+};
 
 /*
  * Component.
  */
 function PhoneNumberInput(
-    { autoComplete, name, onInputBlur, onInputFocus, errorStyle, hasError, validated, placeholder }: InputProps,
+    {
+        defaultCountry,
+        autoComplete,
+        name,
+        onInputBlur,
+        onInputFocus,
+        errorStyle,
+        hasError,
+        validated,
+        placeholder,
+    }: InputProps & PhoneNumberInputProps,
     ref: RefObject<InputRef>
 ): JSX.Element {
-    const [phoneNumber, setPhoneNumber] = useState<string | undefined>("");
+    const [phoneNumber, setPhoneNumber] = useState<string>("");
     const styles = useContext(StyleContext);
 
     function handleFocus() {
@@ -78,6 +93,7 @@ function PhoneNumberInput(
                     data-supertokens="input phoneInputLibRoot"
                     countrySelectComponent={CountrySelectWithIcon}
                     css={[styles.input, styles.phoneInputLibRoot]}
+                    name={name + "_text"}
                     autoComplete={autoComplete}
                     onChange={(newValue: string) => {
                         return setPhoneNumber(newValue);
@@ -88,7 +104,7 @@ function PhoneNumberInput(
                     international={true}
                     withCountryCallingCode={true}
                     placeholder={placeholder}
-                    // defaultCountry="US"
+                    defaultCountry={defaultCountry}
                 />
                 {hasError === true && (
                     <div
@@ -191,4 +207,16 @@ function CountrySelectWithIcon({
     );
 }
 
-export default forwardRef(PhoneNumberInput as ForwardRefRenderFunction<InputRef, InputProps>);
+const PhoneNumberInputWithForwardRef = forwardRef(PhoneNumberInput as ForwardRefRenderFunction<InputRef, InputProps>);
+export default PhoneNumberInputWithForwardRef;
+
+// TODO: ForwardRefExoticComponent<P & T>
+function forwardRefWithInjectedProps<P, T>(Component: any, injectedProps: P) {
+    return forwardRef<InputRef, T>(((props: T, ref) => {
+        return <Component {...injectedProps} {...props} ref={ref} />;
+    }) as ForwardRefRenderFunction<InputRef, T>);
+}
+
+export const phoneNumberInputWithInjectedProps = function (props: PhoneNumberInputProps) {
+    return forwardRefWithInjectedProps<PhoneNumberInputProps, InputProps>(PhoneNumberInputWithForwardRef, props);
+};

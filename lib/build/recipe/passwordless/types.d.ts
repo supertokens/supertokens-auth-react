@@ -8,6 +8,7 @@ import {
     UserInput as AuthRecipeModuleUserInput,
 } from "../authRecipe/types";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
+import type { CountryCode } from "libphonenumber-js";
 export declare type RecipeInterface = {
     createCode: (
         input: (
@@ -152,6 +153,7 @@ export declare type NormalisedConfig = {
         termsOfServiceLink?: string;
     } & PasswordlessNormalisedBaseConfig;
     mobileForm: {
+        defaultCountry?: CountryCode;
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
     } & PasswordlessNormalisedBaseConfig;
@@ -178,6 +180,7 @@ export declare type UserInput = {
         termsOfServiceLink?: string;
     } & FeatureBaseConfig;
     mobileForm?: {
+        defaultCountry?: CountryCode;
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
     } & FeatureBaseConfig;
