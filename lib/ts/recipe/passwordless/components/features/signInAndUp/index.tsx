@@ -86,7 +86,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                         contactInfoType: this.props.recipe.config.contactInfoType,
                         contactInfo,
                     };
-                    this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
+                    await this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
                     this.setState((os) => ({
                         ...os,
                         error: undefined,
@@ -106,7 +106,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                         ...this.state.loginAttemptInfo,
                         lastResend: new Date().getTime(),
                     };
-                    this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
+                    await this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
                     this.setState((os) => ({
                         ...os,
                         error: undefined,
@@ -121,8 +121,6 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                         loginAttemptInfo: undefined,
                     }));
                 } else if (res.status === "GENERAL_ERROR") {
-                    await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
-
                     this.setState((os) => ({
                         ...os,
                         error: res.message,
