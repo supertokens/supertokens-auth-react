@@ -17,10 +17,6 @@ declare const AuthWidgetWrapper: <
     N extends import("../recipeModule/types").NormalisedConfig<
         | {
               action: "SUCCESS";
-              /**
-               * AuthWidgetWrapper shows the children component only if no session exists,
-               * else it calls onSessionAlreadyExists
-               */
               isNewUser: boolean;
               redirectToPath?: string | undefined;
           }

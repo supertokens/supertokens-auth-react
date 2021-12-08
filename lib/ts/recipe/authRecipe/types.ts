@@ -22,6 +22,7 @@ import {
 export type User = {
     id: string;
     email: string;
+    timeJoined: number;
 };
 
 export type UserInput<T, S, R> = UserInputRecipeModule<T, S, R>;

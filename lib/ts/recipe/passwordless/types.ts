@@ -82,6 +82,7 @@ export type RecipeInterface = {
                   id: string;
                   email?: string;
                   phoneNumber?: string;
+                  timeJoined: number;
               };
           }
         | {

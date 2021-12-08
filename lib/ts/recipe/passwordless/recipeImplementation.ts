@@ -29,6 +29,7 @@ type ConsumeCodeApiResponse =
               id: string;
               email?: string;
               phoneNumber?: string;
+              timeJoined: number;
           };
       }
     | {

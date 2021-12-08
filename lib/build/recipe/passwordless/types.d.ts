@@ -80,6 +80,7 @@ export declare type RecipeInterface = {
                   id: string;
                   email?: string;
                   phoneNumber?: string;
+                  timeJoined: number;
               };
           }
         | {
