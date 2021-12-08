@@ -2,6 +2,7 @@ import { RecipeInterface, NormalisedConfig } from "./types";
 import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
 import { PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY } from "./constants";
+import { getLocalStorage, removeFromLocalStorage, setLocalStorage } from "../../utils";
 
 type FlowType = "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
 
@@ -186,7 +187,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                   contactMethod: "EMAIL" | "PHONE";
                   lastResend: number;
               } {
-            const storedInfo = localStorage.getItem(PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY);
+            const storedInfo = getLocalStorage(PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY);
             if (!storedInfo) {
                 return undefined;
             }
@@ -212,7 +213,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             contactInfo: string;
             contactMethod: "EMAIL" | "PHONE";
         }): void {
-            localStorage.setItem(
+            setLocalStorage(
                 PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY,
                 JSON.stringify({
                     // This can make future changes/migrations a lot cleaner
@@ -222,7 +223,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             );
         },
         clearLoginAttemptInfo: function (): void {
-            localStorage.removeItem(PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY);
+            removeFromLocalStorage(PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY);
         },
     };
 }
