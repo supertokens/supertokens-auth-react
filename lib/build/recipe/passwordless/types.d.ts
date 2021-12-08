@@ -155,7 +155,7 @@ export declare type PasswordlessNormalisedBaseConfig = {
     disableDefaultImplementation?: boolean;
 } & NormalisedBaseConfig;
 export declare type NormalisedConfig = {
-    resendCodeTimeGap: number;
+    resendCodeTimeGapInSeconds: number;
     validateEmailAddress: (email: string) => Promise<string | undefined> | string | undefined;
     validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     emailForm: {
@@ -184,7 +184,7 @@ export declare type UserInput = {
     contactMethod: "PHONE" | "EMAIL";
     validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
     validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
-    resendCodeTimeGap?: number;
+    resendCodeTimeGapInSeconds?: number;
     emailForm?: {
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;

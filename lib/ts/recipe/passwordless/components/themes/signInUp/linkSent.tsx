@@ -120,7 +120,7 @@ class PasswordlessLinkSent extends PureComponent<LinkEmailSentThemeProps, LinkEm
                     {status !== "EMAIL_RESENT" && (
                         <ResendButton
                             loginAttemptInfo={this.props.loginAttemptInfo}
-                            resendCodeTimeGap={this.props.config.resendCodeTimeGap}
+                            resendCodeTimeGapInSeconds={this.props.config.resendCodeTimeGapInSeconds}
                             target={"link"}
                             onClick={this.resendEmail}
                         />

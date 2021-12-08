@@ -28,12 +28,12 @@ export const ResendButton = withOverride(
     "PasswordlessResendButton",
     function PasswordlessResendButton({
         loginAttemptInfo,
-        resendCodeTimeGap,
+        resendCodeTimeGapInSeconds,
         target,
         onClick,
     }: {
         loginAttemptInfo: LoginAttemptInfo;
-        resendCodeTimeGap: number;
+        resendCodeTimeGapInSeconds: number;
         target: string;
         onClick: () => void;
     }): JSX.Element | null {
@@ -44,7 +44,7 @@ export const ResendButton = withOverride(
         useEffect(() => {
             // This runs every time the loginAttemptInfo, so after every resend
             const interval = setInterval(() => {
-                const timer = loginAttemptInfo.lastResend + resendCodeTimeGap * 1000 - new Date().getTime();
+                const timer = loginAttemptInfo.lastResend + resendCodeTimeGapInSeconds * 1000 - new Date().getTime();
                 if (timer <= 0) {
                     setSecsUntilResend(undefined);
                     clearInterval(interval);
@@ -57,7 +57,7 @@ export const ResendButton = withOverride(
                 // This can safely run twice
                 clearInterval(interval);
             };
-        }, [loginAttemptInfo, resendCodeTimeGap, setSecsUntilResend]);
+        }, [loginAttemptInfo, resendCodeTimeGapInSeconds, setSecsUntilResend]);
 
         return (
             <button

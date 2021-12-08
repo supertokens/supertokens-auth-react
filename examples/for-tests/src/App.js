@@ -577,7 +577,7 @@ function getPasswordlessConfigs({ disableDefaultImplementation }) {
         },
         useShadowDom,
         contactMethod: passwordlessContactInfoType,
-        resendCodeTimeGap: 30,
+        resendCodeTimeGapInSeconds: 30,
         emailForm: {
             disableDefaultImplementation,
             style: theme.style,
