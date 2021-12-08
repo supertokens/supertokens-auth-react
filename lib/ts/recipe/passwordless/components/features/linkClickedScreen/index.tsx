@@ -26,13 +26,13 @@ import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
 import {} from "../../../types";
-import { LinkClickedScreen } from "../../themes/linkClickedScreen";
+import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
-class SignInAndUpCallback extends PureComponent<PropType, unknown> {
+class LinkClickedScreen extends PureComponent<PropType, unknown> {
     getIsEmbedded = (): boolean => {
         if (this.props.isEmbedded !== undefined) {
             return this.props.isEmbedded;
@@ -104,7 +104,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                         getDefaultStyles={getStyles}>
                         <Fragment>
                             {/* No custom theme, use default. */}
-                            {this.props.children === undefined && <LinkClickedScreen {...props} />}
+                            {this.props.children === undefined && <LinkClickedScreenTheme {...props} />}
 
                             {/* Otherwise, custom theme is provided, propagate props. */}
                             {this.props.children}
@@ -116,4 +116,4 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
     };
 }
 
-export default SignInAndUpCallback;
+export default LinkClickedScreen;
