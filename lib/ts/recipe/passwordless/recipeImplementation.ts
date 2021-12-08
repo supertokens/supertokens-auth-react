@@ -183,7 +183,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                   preAuthSessionId: string;
                   flowType: FlowType;
                   contactInfo: string;
-                  contactInfoType: "EMAIL" | "PHONE";
+                  contactMethod: "EMAIL" | "PHONE";
                   lastResend: number;
               } {
             const storedInfo = localStorage.getItem(PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY);
@@ -195,7 +195,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
 
                 return {
                     contactInfo: info.contactInfo,
-                    contactInfoType: info.contactInfoType,
+                    contactMethod: info.contactMethod,
                     deviceId: info.deviceId,
                     flowType: info.flowType,
                     preAuthSessionId: info.preAuthSessionId,
@@ -210,7 +210,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             preAuthSessionId: string;
             flowType: FlowType;
             contactInfo: string;
-            contactInfoType: "EMAIL" | "PHONE";
+            contactMethod: "EMAIL" | "PHONE";
         }): void {
             localStorage.setItem(
                 PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY,

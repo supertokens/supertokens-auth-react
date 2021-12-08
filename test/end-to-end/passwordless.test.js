@@ -47,11 +47,11 @@ describe("SuperTokens Passwordless", function () {
     getTestCases("EMAIL", "email", exampleEmail);
     getTestCases("PHONE", "phoneNumber_text", examplePhoneNumber);
 
-    function getTestCases(contactInfoType, inputName, contactInfo) {
-        describe(`${contactInfoType} + UserInputCode`, function () {
+    function getTestCases(contactMethod, inputName, contactInfo) {
+        describe(`${contactMethod} + UserInputCode`, function () {
             before(async function () {
-                ({ browser, page } = await initBrowser(contactInfoType, consoleLogs));
-                await setFlow(contactInfoType, "USER_INPUT_CODE");
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
+                await setFlow(contactMethod, "USER_INPUT_CODE");
             });
 
             after(async function () {
@@ -214,10 +214,10 @@ describe("SuperTokens Passwordless", function () {
             });
         });
 
-        describe(`${contactInfoType} + Link`, function () {
+        describe(`${contactMethod} + Link`, function () {
             before(async function () {
-                ({ browser, page } = await initBrowser(contactInfoType, consoleLogs));
-                await setFlow(contactInfoType, "MAGIC_LINK");
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
+                await setFlow(contactMethod, "MAGIC_LINK");
             });
 
             after(async function () {
@@ -394,10 +394,10 @@ describe("SuperTokens Passwordless", function () {
             });
         });
 
-        describe(`${contactInfoType} + Link/Code`, function () {
+        describe(`${contactMethod} + Link/Code`, function () {
             before(async function () {
-                ({ browser, page } = await initBrowser(contactInfoType, consoleLogs));
-                await setFlow(contactInfoType, "USER_INPUT_CODE_AND_MAGIC_LINK");
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
+                await setFlow(contactMethod, "USER_INPUT_CODE_AND_MAGIC_LINK");
             });
 
             after(async function () {
@@ -566,12 +566,12 @@ async function getDevice(loginAttemptInfo) {
     return await deviceResp.json();
 }
 
-function setFlow(contactInfoType, flowType) {
+function setFlow(contactMethod, flowType) {
     return fetch(`${TEST_SERVER_BASE_URL}/test/setFlow`, {
         method: "POST",
         headers: [["content-type", "application/json"]],
         body: JSON.stringify({
-            contactInfoType,
+            contactMethod,
             flowType,
         }),
     });
@@ -602,7 +602,7 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
     return getDevice(loginAttemptInfo);
 }
 
-async function initBrowser(contactInfoType, consoleLogs) {
+async function initBrowser(contactMethod, consoleLogs) {
     await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
         method: "POST",
     }).catch(console.error);
@@ -631,9 +631,7 @@ async function initBrowser(contactInfoType, consoleLogs) {
     });
 
     await Promise.all([
-        page.goto(
-            `${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactInfoType=${contactInfoType}`
-        ),
+        page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactInfoType=${contactMethod}`),
         //  page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 

@@ -104,7 +104,7 @@ export type RecipeInterface = {
                     deviceId: string;
                     preAuthSessionId: string;
                     contactInfo: string;
-                    contactInfoType: "EMAIL" | "PHONE";
+                    contactMethod: "EMAIL" | "PHONE";
                     flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
                     lastResend: number;
                 }
@@ -113,7 +113,7 @@ export type RecipeInterface = {
               deviceId: string;
               preAuthSessionId: string;
               contactInfo: string;
-              contactInfoType: "EMAIL" | "PHONE";
+              contactMethod: "EMAIL" | "PHONE";
               flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
               lastResend: number;
           }
@@ -122,7 +122,7 @@ export type RecipeInterface = {
         deviceId: string;
         preAuthSessionId: string;
         contactInfo: string;
-        contactInfoType: "EMAIL" | "PHONE";
+        contactMethod: "EMAIL" | "PHONE";
         flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
         lastResend: number;
     }) => Promise<void> | void;
@@ -203,7 +203,7 @@ export type NormalisedConfig = {
     userInputCodeForm: PasswordlessNormalisedBaseConfig;
     linkClickedScreen: PasswordlessNormalisedBaseConfig;
 
-    contactInfoType: "PHONE" | "EMAIL";
+    contactMethod: "PHONE" | "EMAIL";
 
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
@@ -219,7 +219,7 @@ export type PasswordlessFeatureBaseConfig = {
 } & FeatureBaseConfig;
 
 export type UserInput = {
-    contactInfoType: "PHONE" | "EMAIL";
+    contactMethod: "PHONE" | "EMAIL";
 
     validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
     validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
@@ -261,7 +261,7 @@ export type LoginAttemptInfo = {
     deviceId: string;
     preAuthSessionId: string;
     contactInfo: string;
-    contactInfoType: "EMAIL" | "PHONE";
+    contactMethod: "EMAIL" | "PHONE";
     lastResend: number;
     flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
 };

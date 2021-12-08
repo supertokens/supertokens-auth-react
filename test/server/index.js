@@ -160,7 +160,7 @@ app.get("/token", async (_, res) => {
 app.post("/test/setFlow", (req, res) => {
     initST({
         passwordlessConfig: {
-            contactMethod: req.body.contactInfoType,
+            contactMethod: req.body.contactMethod,
             flowType: req.body.flowType,
             createAndSendCustomTextMessage: saveCode,
             createAndSendCustomEmail: saveCode,

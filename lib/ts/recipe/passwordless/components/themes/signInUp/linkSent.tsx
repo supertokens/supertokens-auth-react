@@ -102,11 +102,7 @@ class PasswordlessLinkSent extends PureComponent<LinkEmailSentThemeProps, LinkEm
                         </div>
                     )}
                     <div data-supertokens="sendCodeIcon" css={styles.sendCodeIcon}>
-                        {this.props.loginAttemptInfo.contactInfoType === "EMAIL" ? (
-                            <EmailLargeIcon />
-                        ) : (
-                            <SMSLargeIcon />
-                        )}
+                        {this.props.loginAttemptInfo.contactMethod === "EMAIL" ? <EmailLargeIcon /> : <SMSLargeIcon />}
                     </div>
                     <div
                         data-supertokens="headerTitle headerTinyTitle"
@@ -115,7 +111,7 @@ class PasswordlessLinkSent extends PureComponent<LinkEmailSentThemeProps, LinkEm
                     </div>
                     <div data-supertokens="primaryText sendCodeText" css={[styles.primaryText, styles.sendCodeText]}>
                         We sent a link to
-                        {this.props.loginAttemptInfo.contactInfoType === "EMAIL" ? "" : " your mobile number"}
+                        {this.props.loginAttemptInfo.contactMethod === "EMAIL" ? "" : " your mobile number"}
                         <br />
                         <strong>{this.props.loginAttemptInfo.contactInfo}</strong>
                         <br />
@@ -135,7 +131,7 @@ class PasswordlessLinkSent extends PureComponent<LinkEmailSentThemeProps, LinkEm
                             css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
                             onClick={() => this.props.recipeImplementation.clearLoginAttemptInfo()}>
                             <ArrowLeftIcon color={styles.palette.colors.textPrimary} /> Change{" "}
-                            {this.props.loginAttemptInfo.contactInfoType === "EMAIL" ? "email" : "phone number"}
+                            {this.props.loginAttemptInfo.contactMethod === "EMAIL" ? "email" : "phone number"}
                         </div>
                     }
                 </div>

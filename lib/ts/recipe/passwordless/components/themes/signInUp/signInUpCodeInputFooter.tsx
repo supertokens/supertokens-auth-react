@@ -35,7 +35,7 @@ export const SignInUpCodeInputFooter = withOverride(
                     css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
                     onClick={() => recipeImplementation.clearLoginAttemptInfo()}>
                     <ArrowLeftIcon color={styles.palette.colors.textPrimary} /> Change{" "}
-                    {loginAttemptInfo.contactInfoType === "EMAIL" ? "email" : "phone number"}
+                    {loginAttemptInfo.contactMethod === "EMAIL" ? "email" : "phone number"}
                 </div>
             </Fragment>
         );

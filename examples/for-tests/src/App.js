@@ -576,7 +576,7 @@ function getPasswordlessConfigs({ disableDefaultImplementation }) {
             console.log(`ST_LOGS PASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
         },
         useShadowDom,
-        contactInfoType: passwordlessContactInfoType,
+        contactMethod: passwordlessContactInfoType,
         resendCodeTimeGap: 30,
         emailForm: {
             disableDefaultImplementation,

@@ -83,7 +83,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                     const loginAttemptInfo = {
                         ...res,
                         lastResend: new Date().getTime(),
-                        contactInfoType: this.props.recipe.config.contactInfoType,
+                        contactMethod: this.props.recipe.config.contactMethod,
                         contactInfo,
                     };
                     await this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
@@ -164,7 +164,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
     render = (): JSX.Element => {
         const componentOverrides = this.props.recipe.config.override.components;
 
-        const isEmail = this.props.recipe.config.contactInfoType === "EMAIL";
+        const isEmail = this.props.recipe.config.contactMethod === "EMAIL";
         const conf = isEmail ? this.props.recipe.config.emailForm : this.props.recipe.config.mobileForm;
 
         const props = {

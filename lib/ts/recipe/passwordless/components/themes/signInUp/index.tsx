@@ -53,7 +53,7 @@ function SignInUpTheme(props: SignInUpProps): JSX.Element {
                     <div data-supertokens="row" css={styles.row}>
                         {props.loaded &&
                             (!props.loginAttemptInfo ? (
-                                props.config.contactInfoType === "EMAIL" ? (
+                                props.config.contactMethod === "EMAIL" ? (
                                     <EmailForm
                                         {...recipeAndConfig}
                                         error={props.error}

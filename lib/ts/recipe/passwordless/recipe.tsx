@@ -64,7 +64,7 @@ export default class Passwordless extends AuthRecipe<
     getFeatures = (): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
         if (
-            this.config.contactInfoType === "EMAIL"
+            this.config.contactMethod === "EMAIL"
                 ? this.config.emailForm.disableDefaultImplementation !== true
                 : this.config.mobileForm.disableDefaultImplementation !== true
         ) {
