@@ -180,7 +180,15 @@ export type NormalisedFormField = {
      * Label of the input field.
      */
     label: string;
+
+    /*
+     * Custom component that replaces the label entirely
+     */
     labelComponent?: JSX.Element;
+
+    /*
+     * Custom component that replaces the standard input component
+     */
     inputComponent?: ForwardRefExoticComponent<InputProps & RefAttributes<InputRef>>;
 
     /*
