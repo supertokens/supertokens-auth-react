@@ -66,7 +66,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
 
             if (response.status === "RESTART_FLOW_ERROR") {
                 return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "signin",
+                    error: "restart_link",
                 });
             }
             if (response.status === "OK") {
