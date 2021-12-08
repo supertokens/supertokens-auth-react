@@ -15,9 +15,6 @@
 
 import { isValidPhoneNumber } from "react-phone-number-input/min";
 
-/*
- * defaultEmailValidator.
- */
 export function defaultEmailValidator(value: any): string | undefined {
     if (typeof value !== "string") {
         return "Email must be of type string";
@@ -47,10 +44,14 @@ export function defaultPhoneNumberValidator(value: string) {
     return undefined;
 }
 
-/*
- * defaultValidate
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function defaultValidate(_: any): Promise<string | undefined> {
+export async function userInputCodeValidate(value: any): Promise<string | undefined> {
+    if (typeof value !== "string") {
+        return "OTP must be of type string";
+    }
+
+    if (value.length === 0) {
+        return "OTP cannot be empty";
+    }
+
     return undefined;
 }

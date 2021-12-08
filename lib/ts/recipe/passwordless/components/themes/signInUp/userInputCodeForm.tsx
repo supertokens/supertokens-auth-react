@@ -18,7 +18,7 @@ import { jsx } from "@emotion/react";
 import { SignInUpUserInputCodeFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
-import { defaultValidate } from "../../../validators";
+import { userInputCodeValidate } from "../../../validators";
 import { Label } from "../../../../emailpassword/components/library";
 import React, { useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
@@ -104,7 +104,7 @@ export const UserInputCodeForm = withOverride(
                             ),
                             optional: false,
                             placeholder: "A1223B",
-                            validate: defaultValidate,
+                            validate: userInputCodeValidate,
                         },
                     ]}
                     onSuccess={props.onSuccess}
