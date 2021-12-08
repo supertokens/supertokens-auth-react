@@ -35,6 +35,13 @@ import { SignInUpCodeInputHeader } from "./components/themes/signInUp/signInUpCo
 import { SignInUpCodeInputFooter } from "./components/themes/signInUp/signInUpCodeInputFooter";
 import { LinkSent as LinkSentScreen } from "./components/themes/signInUp/linkSent";
 
+export type PasswordlessUser = {
+    id: string;
+    email?: string;
+    phoneNumber?: string;
+    timeJoined: number;
+};
+
 export type RecipeInterface = {
     createCode: (
         input: ({ email: string } | { phoneNumber: string }) & {
@@ -78,12 +85,7 @@ export type RecipeInterface = {
         | {
               status: "OK";
               createdUser: boolean;
-              user: {
-                  id: string;
-                  email?: string;
-                  phoneNumber?: string;
-                  timeJoined: number;
-              };
+              user: PasswordlessUser;
           }
         | {
               status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
@@ -155,13 +157,16 @@ export type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 
 export type OnHandleEventContext =
     | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: PasswordlessUser;
+      }
+    | {
           action: "PASSWORDLESS_RESTART_FLOW";
       }
     | {
           action: "PASSWORDLESS_CODE_SENT";
           isResend: boolean;
-          email?: string;
-          phoneNumber?: string;
       }
     | AuthRecipeModuleOnHandleEventContext;
 

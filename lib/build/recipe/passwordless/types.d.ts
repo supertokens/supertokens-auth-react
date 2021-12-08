@@ -18,6 +18,12 @@ import { LinkClickedScreen } from "./components/themes/linkClickedScreen";
 import { SignInUpCodeInputHeader } from "./components/themes/signInUp/signInUpCodeInputHeader";
 import { SignInUpCodeInputFooter } from "./components/themes/signInUp/signInUpCodeInputFooter";
 import { LinkSent as LinkSentScreen } from "./components/themes/signInUp/linkSent";
+export declare type PasswordlessUser = {
+    id: string;
+    email?: string;
+    phoneNumber?: string;
+    timeJoined: number;
+};
 export declare type RecipeInterface = {
     createCode: (
         input: (
@@ -76,12 +82,7 @@ export declare type RecipeInterface = {
         | {
               status: "OK";
               createdUser: boolean;
-              user: {
-                  id: string;
-                  email?: string;
-                  phoneNumber?: string;
-                  timeJoined: number;
-              };
+              user: PasswordlessUser;
           }
         | {
               status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
@@ -142,13 +143,16 @@ export declare type PreAPIHookContext = {
 export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 export declare type OnHandleEventContext =
     | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: PasswordlessUser;
+      }
+    | {
           action: "PASSWORDLESS_RESTART_FLOW";
       }
     | {
           action: "PASSWORDLESS_CODE_SENT";
           isResend: boolean;
-          email?: string;
-          phoneNumber?: string;
       }
     | AuthRecipeModuleOnHandleEventContext;
 export declare type PasswordlessNormalisedBaseConfig = {

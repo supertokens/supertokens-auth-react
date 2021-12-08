@@ -47,11 +47,14 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
 
         let error: string | undefined = undefined;
         const errorQueryParam = getQueryParams("error");
+        const messageQueryParam = getQueryParams("message");
         if (errorQueryParam !== null) {
             if (errorQueryParam === "signin") {
                 error = "Something went wrong. Please try again";
             } else if (errorQueryParam === "restart_link") {
                 error = "The link you tried to click expired or was revoked. Please try again.";
+            } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
+                error = messageQueryParam;
             }
         }
         this.state = {

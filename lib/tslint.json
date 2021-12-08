@@ -37,6 +37,7 @@
                 "variable-declaration": "nospace"
             }
         ],
+        "no-floating-promises": true,
         "variable-name": [true, "ban-keywords"],
         "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-separator", "check-type"]
     }

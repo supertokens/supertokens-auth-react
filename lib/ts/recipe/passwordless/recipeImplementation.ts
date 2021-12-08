@@ -81,12 +81,25 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                 };
             }
 
-            return await querier.post("/signinup/code", { body: JSON.stringify(bodyObj) }, (context) => {
-                return input.config.preAPIHook({
-                    ...context,
-                    action: "PASSWORDLESS_CREATE_CODE",
+            const response: CreateCodeApiResponse = await querier.post(
+                "/signinup/code",
+                { body: JSON.stringify(bodyObj) },
+                (context) => {
+                    return input.config.preAPIHook({
+                        ...context,
+                        action: "PASSWORDLESS_CREATE_CODE",
+                    });
+                }
+            );
+
+            if (response.status === "OK") {
+                input.config.onHandleEvent({
+                    action: "PASSWORDLESS_CODE_SENT",
+                    isResend: false,
                 });
-            });
+            }
+
+            return response;
         },
         resendCode: async function (
             input: { deviceId: string; preAuthSessionId: string } & {
@@ -98,12 +111,28 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                 preAuthSessionId: input.preAuthSessionId,
             };
 
-            return await querier.post("/signinup/code/resend", { body: JSON.stringify(bodyObj) }, (context) => {
-                return input.config.preAPIHook({
-                    ...context,
-                    action: "PASSWORDLESS_RESEND_CODE",
+            const response: ResendCodeApiResponse = await querier.post(
+                "/signinup/code/resend",
+                { body: JSON.stringify(bodyObj) },
+                (context) => {
+                    return input.config.preAPIHook({
+                        ...context,
+                        action: "PASSWORDLESS_RESEND_CODE",
+                    });
+                }
+            );
+
+            if (response.status === "RESTART_FLOW_ERROR") {
+                input.config.onHandleEvent({
+                    action: "PASSWORDLESS_RESTART_FLOW",
                 });
-            });
+            } else if (response.status === "OK") {
+                input.config.onHandleEvent({
+                    action: "PASSWORDLESS_CODE_SENT",
+                    isResend: true,
+                });
+            }
+            return response;
         },
         consumeCode: async function (
             input: (
@@ -136,12 +165,29 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                 };
             }
 
-            return await querier.post("/signinup/code/consume", { body: JSON.stringify(bodyObj) }, (context) => {
-                return input.config.preAPIHook({
-                    ...context,
-                    action: "PASSWORDLESS_CONSUME_CODE",
+            const response: ConsumeCodeApiResponse = await querier.post(
+                "/signinup/code/consume",
+                { body: JSON.stringify(bodyObj) },
+                (context) => {
+                    return input.config.preAPIHook({
+                        ...context,
+                        action: "PASSWORDLESS_CONSUME_CODE",
+                    });
+                }
+            );
+
+            if (response.status === "RESTART_FLOW_ERROR") {
+                input.config.onHandleEvent({
+                    action: "PASSWORDLESS_RESTART_FLOW",
                 });
-            });
+            } else if (response.status === "OK") {
+                input.config.onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: response.createdUser,
+                    user: response.user,
+                });
+            }
+            return response;
         },
         doesEmailExist: async function (input: { email: string; config: NormalisedConfig }): Promise<boolean> {
             const response: ExistsAPIResponse = await querier.get(
