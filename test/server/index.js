@@ -15,7 +15,6 @@
 require("dotenv").config();
 let SuperTokens = require("supertokens-node");
 let { default: SuperTokensRaw } = require("supertokens-node/lib/build/supertokens");
-const { default: PasswordlessRaw } = require("supertokens-node/lib/build/recipe/passwordless/recipe");
 const { default: EmailPasswordRaw } = require("supertokens-node/lib/build/recipe/emailpassword/recipe");
 const { default: ThirdPartyRaw } = require("supertokens-node/lib/build/recipe/thirdparty/recipe");
 const {
@@ -24,18 +23,28 @@ const {
 const { default: SessionRaw } = require("supertokens-node/lib/build/recipe/session/recipe");
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
-let Passwordless = require("supertokens-node/recipe/passwordless");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
-const crypto = require("crypto");
 let express = require("express");
 let cookieParser = require("cookie-parser");
 let bodyParser = require("body-parser");
 let http = require("http");
 let cors = require("cors");
 let { startST, killAllST, setupST, cleanST, setKeyValueInConfig } = require("./utils");
+
+let passwordlessSupported;
+let PasswordlessRaw;
+let Passwordless;
+
+try {
+    PasswordlessRaw = require("supertokens-node/lib/build/recipe/passwordless/recipe").default;
+    Passwordless = require("supertokens-node/recipe/passwordless");
+    passwordlessSupported = true;
+} catch (ex) {
+    passwordlessSupported = false;
+}
 
 let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
 let jsonParser = bodyParser.json({ limit: "20mb" });
@@ -173,6 +182,18 @@ app.get("/test/getDevice", (req, res) => {
     res.send(deviceStore.get(req.query.preAuthSessionId));
 });
 
+app.get("/test/featureFlags", (req, res) => {
+    const available = [];
+
+    if (passwordlessSupported) {
+        available.push("passwordless");
+    }
+
+    res.send({
+        available,
+    });
+});
+
 app.use(errorHandler());
 
 app.use(async (err, req, res, next) => {
@@ -207,13 +228,84 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
 })(process.env.START === "true");
 
 function initST({ passwordlessConfig } = {}) {
-    PasswordlessRaw.reset();
+    if (passwordlessSupported) {
+        PasswordlessRaw.reset();
+    }
+
     EmailPasswordRaw.reset();
     ThirdPartyRaw.reset();
     ThirdPartyEmailPasswordRaw.reset();
     SessionRaw.reset();
 
     SuperTokensRaw.reset();
+    const recipeList = [
+        EmailPassword.init({
+            signUpFeature: {
+                formFields,
+            },
+            resetPasswordUsingTokenFeature: {
+                createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
+                    latestURLWithToken = passwordResetURLWithToken;
+                },
+            },
+            emailVerificationFeature: {
+                createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
+                    latestURLWithToken = emailVerificationURLWithToken;
+                },
+            },
+        }),
+        ThirdParty.init({
+            signInAndUpFeature: {
+                providers: [
+                    ThirdParty.Google({
+                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                        clientId: process.env.GOOGLE_CLIENT_ID,
+                    }),
+                    ThirdParty.Github({
+                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                        clientId: process.env.GITHUB_CLIENT_ID,
+                    }),
+                    ThirdParty.Facebook({
+                        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+                        clientId: process.env.FACEBOOK_CLIENT_ID,
+                    }),
+                ],
+            },
+        }),
+        ThirdPartyEmailPassword.init({
+            signUpFeature: {
+                formFields,
+            },
+            providers: [
+                ThirdPartyEmailPassword.Google({
+                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                    clientId: process.env.GOOGLE_CLIENT_ID,
+                }),
+                ThirdPartyEmailPassword.Github({
+                    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                    clientId: process.env.GITHUB_CLIENT_ID,
+                }),
+                ThirdPartyEmailPassword.Facebook({
+                    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+                    clientId: process.env.FACEBOOK_CLIENT_ID,
+                }),
+            ],
+        }),
+        Session.init({}),
+    ];
+
+    if (passwordlessSupported) {
+        recipeList.push(
+            Passwordless.init(
+                passwordlessConfig || {
+                    contactMethod: "PHONE",
+                    flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+                    createAndSendCustomTextMessage: saveCode,
+                }
+            )
+        );
+    }
+
     SuperTokens.init({
         appInfo: {
             appName: "SuperTokens",
@@ -223,67 +315,6 @@ function initST({ passwordlessConfig } = {}) {
         supertokens: {
             connectionURI: "http://localhost:9000",
         },
-        recipeList: [
-            Passwordless.init(
-                passwordlessConfig || {
-                    contactMethod: "PHONE",
-                    flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
-                    createAndSendCustomTextMessage: saveCode,
-                }
-            ),
-            EmailPassword.init({
-                signUpFeature: {
-                    formFields,
-                },
-                resetPasswordUsingTokenFeature: {
-                    createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
-                        latestURLWithToken = passwordResetURLWithToken;
-                    },
-                },
-                emailVerificationFeature: {
-                    createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
-                        latestURLWithToken = emailVerificationURLWithToken;
-                    },
-                },
-            }),
-            ThirdParty.init({
-                signInAndUpFeature: {
-                    providers: [
-                        ThirdParty.Google({
-                            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                            clientId: process.env.GOOGLE_CLIENT_ID,
-                        }),
-                        ThirdParty.Github({
-                            clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                            clientId: process.env.GITHUB_CLIENT_ID,
-                        }),
-                        ThirdParty.Facebook({
-                            clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-                            clientId: process.env.FACEBOOK_CLIENT_ID,
-                        }),
-                    ],
-                },
-            }),
-            ThirdPartyEmailPassword.init({
-                signUpFeature: {
-                    formFields,
-                },
-                providers: [
-                    ThirdPartyEmailPassword.Google({
-                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                        clientId: process.env.GOOGLE_CLIENT_ID,
-                    }),
-                    ThirdPartyEmailPassword.Github({
-                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                        clientId: process.env.GITHUB_CLIENT_ID,
-                    }),
-                    ThirdPartyEmailPassword.Facebook({
-                        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-                        clientId: process.env.FACEBOOK_CLIENT_ID,
-                    }),
-                ],
-            }),
-            Session.init({}),
-        ],
+        recipeList,
     });
 }

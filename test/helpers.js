@@ -44,6 +44,16 @@ export function mockWindowLocation(url) {
     }
 }
 
+export async function getFeatureFlags() {
+    const response = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/featureFlags`);
+    if (response.status === 200) {
+        const { available } = await response.json();
+        return available;
+    } else {
+        return [];
+    }
+}
+
 export async function waitFor(ms) {
     return new Promise((res) => setTimeout(res, ms));
 }
