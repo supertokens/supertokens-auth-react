@@ -30,11 +30,13 @@ import { RecipeInterface, LoginAttemptInfo } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { FeatureBaseProps } from "../../../../../types";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
+import Session from "../../../../session";
 
 type SignInUpState = {
     error: string | undefined;
     loaded: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
+    checkSessionIntervalHandle: any;
 };
 
 type PropType = FeatureBaseProps & {
@@ -60,6 +62,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
         this.state = {
             loaded: false,
             loginAttemptInfo: undefined,
+            checkSessionIntervalHandle: undefined,
             error,
         };
     }
@@ -161,7 +164,29 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
 
     componentDidMount = async (): Promise<void> => {
         const loginAttemptInfo = await this.getModifiedRecipeImplementation().getLoginAttemptInfo();
-        this.setState((s) => ({ ...s, loaded: true, loginAttemptInfo }));
+
+        // We could be using storage events for this, but we need to keep customization in mind.
+        // Someone could be using something else other than localstorage.
+        const checkSessionIntervalHandle = setInterval(async () => {
+            // TODO: check if we can call into the session recipe from here.
+            const hasSession = await Session.doesSessionExist();
+            if (hasSession) {
+                return this.props.recipe.redirect(
+                    {
+                        action: "SUCCESS_IN_ANOTHER_TAB",
+                    },
+                    this.props.history
+                );
+            }
+        }, 2000);
+
+        this.setState((s) => ({ ...s, loaded: true, loginAttemptInfo, checkSessionIntervalHandle }));
+    };
+
+    componentWillUnmount = () => {
+        if (this.state.checkSessionIntervalHandle) {
+            clearInterval(this.state.checkSessionIntervalHandle);
+        }
     };
 
     render = (): JSX.Element => {

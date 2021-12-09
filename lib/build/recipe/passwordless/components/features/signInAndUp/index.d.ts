@@ -6,6 +6,7 @@ declare type SignInUpState = {
     error: string | undefined;
     loaded: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
+    checkSessionIntervalHandle: any;
 };
 declare type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -15,6 +16,7 @@ declare class SignInUp extends PureComponent<PropType, SignInUpState> {
     getIsEmbedded: () => boolean;
     getModifiedRecipeImplementation: () => RecipeInterface;
     componentDidMount: () => Promise<void>;
+    componentWillUnmount: () => void;
     render: () => JSX.Element;
 }
 export default SignInUp;

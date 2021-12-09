@@ -140,7 +140,11 @@ export declare type PreAPIHookContext = {
     requestInit: RequestInit;
     url: string;
 };
-export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
+export declare type GetRedirectionURLContext =
+    | {
+          action: "SUCCESS_IN_ANOTHER_TAB";
+      }
+    | AuthRecipeModuleGetRedirectionURLContext;
 export declare type OnHandleEventContext =
     | {
           action: "SUCCESS";
@@ -173,6 +177,7 @@ export declare type NormalisedConfig = {
     } & PasswordlessNormalisedBaseConfig;
     userInputCodeForm: PasswordlessNormalisedBaseConfig;
     linkClickedScreen: PasswordlessNormalisedBaseConfig;
+    successScreen: PasswordlessNormalisedBaseConfig;
     contactMethod: "PHONE" | "EMAIL";
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
@@ -200,6 +205,7 @@ export declare type UserInput = {
     } & FeatureBaseConfig;
     userInputCodeForm?: FeatureBaseConfig;
     linkClickedScreen?: FeatureBaseConfig;
+    successScreen?: FeatureBaseConfig;
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;
