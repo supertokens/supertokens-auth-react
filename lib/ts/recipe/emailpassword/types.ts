@@ -22,7 +22,7 @@ import {
     NormalisedFormField,
     ThemeBaseProps,
 } from "../../types";
-import { RefObject } from "react";
+import { ForwardRefExoticComponent, RefAttributes, RefObject } from "react";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -46,6 +46,7 @@ import { SignUpForm } from "./components/themes/signInAndUp/signUpForm";
 import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
 import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
+import { InputProps } from "./components/library/input";
 
 export type ComponentOverrideMap = {
     EmailPasswordSignIn?: ComponentOverride<typeof SignIn>;
@@ -267,6 +268,16 @@ export type NormalisedFormFieldWithError = NormalisedFormField & {
 };
 
 export type FormFieldThemeProps = NormalisedFormFieldWithError & {
+    /*
+     * Custom component that replaces the label entirely
+     */
+    labelComponent?: JSX.Element;
+
+    /*
+     * Custom component that replaces the standard input component
+     */
+    inputComponent?: ForwardRefExoticComponent<InputProps & RefAttributes<InputRef>>;
+
     /*
      * Show Is required (*) next to label
      */

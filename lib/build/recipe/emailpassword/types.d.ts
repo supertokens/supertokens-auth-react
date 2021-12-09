@@ -7,7 +7,7 @@ import {
     NormalisedFormField,
     ThemeBaseProps,
 } from "../../types";
-import { RefObject } from "react";
+import { ForwardRefExoticComponent, RefAttributes, RefObject } from "react";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -30,6 +30,7 @@ import { SignUpForm } from "./components/themes/signInAndUp/signUpForm";
 import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
 import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
+import { InputProps } from "./components/library/input";
 export declare type ComponentOverrideMap = {
     EmailPasswordSignIn?: ComponentOverride<typeof SignIn>;
     EmailPasswordSignInFooter?: ComponentOverride<typeof SignInFooter>;
@@ -137,6 +138,8 @@ export declare type NormalisedFormFieldWithError = NormalisedFormField & {
     error?: string;
 };
 export declare type FormFieldThemeProps = NormalisedFormFieldWithError & {
+    labelComponent?: JSX.Element;
+    inputComponent?: ForwardRefExoticComponent<InputProps & RefAttributes<InputRef>>;
     showIsRequired?: boolean;
     autoComplete?: string;
 };
