@@ -21,7 +21,13 @@
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
-import { clearBrowserCookiesWithoutAffectingConsole, setInputValues, waitForSTElement, waitFor } from "../helpers";
+import {
+    clearBrowserCookiesWithoutAffectingConsole,
+    setInputValues,
+    waitForSTElement,
+    waitFor,
+    getFeatureFlags,
+} from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -46,6 +52,14 @@ describe("SuperTokens Passwordless", function () {
 
     getTestCases("EMAIL", "email", exampleEmail);
     getTestCases("PHONE", "phoneNumber_text", examplePhoneNumber);
+
+    before(async function () {
+        const features = await getFeatureFlags();
+
+        if (!features.includes("passwordless")) {
+            this.skip();
+        }
+    });
 
     function getTestCases(contactMethod, inputName, contactInfo) {
         describe(`${contactMethod} + UserInputCode`, function () {
@@ -337,7 +351,6 @@ describe("SuperTokens Passwordless", function () {
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
                     "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
                     "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
                     "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
                 ]);
