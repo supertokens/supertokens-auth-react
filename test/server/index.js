@@ -68,7 +68,6 @@ function saveCode({ email, phoneNumber, preAuthSessionId, urlWithLinkCode, userI
         urlWithLinkCode,
         userInputCode,
     });
-    console.log({ email, phoneNumber, urlWithLinkCode, userInputCode });
     deviceStore.set(preAuthSessionId, device);
 }
 const formFields = (process.env.MIN_FIELDS && []) || [
@@ -119,10 +118,7 @@ app.post("/startst", async (req, res) => {
 });
 
 app.post("/beforeeach", async (req, res) => {
-    users = [];
-    flowTypes = new Map();
     deviceStore = new Map();
-    maximumCodeInputAttempts = 3;
 
     await killAllST();
     await setupST();
@@ -199,7 +195,7 @@ app.use(errorHandler());
 app.use(async (err, req, res, next) => {
     try {
         console.error(err);
-        res.sendStatus(500).send(err);
+        res.status(500).send(err);
     } catch (ignored) {}
 });
 
