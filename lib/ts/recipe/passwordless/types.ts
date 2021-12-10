@@ -154,11 +154,7 @@ export type PreAPIHookContext = {
     url: string;
 };
 
-export type GetRedirectionURLContext =
-    | {
-          action: "SUCCESS_IN_ANOTHER_TAB";
-      }
-    | AuthRecipeModuleGetRedirectionURLContext;
+export type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 
 export type OnHandleEventContext =
     | {

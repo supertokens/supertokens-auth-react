@@ -39,7 +39,6 @@ import SignInUp from "./components/features/signInAndUp";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
 import NormalisedURLPath from "../../normalisedURLPath";
-import { DEFAULT_SUCCESS_PATH } from "./constants";
 
 /*
  * Class.
@@ -87,12 +86,6 @@ export default class Passwordless extends AuthRecipe<
     };
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        if (context.action === "SUCCESS_IN_ANOTHER_TAB") {
-            const resetPasswordPath = new NormalisedURLPath(DEFAULT_SUCCESS_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(resetPasswordPath).getAsStringDangerous()}?rid=${
-                this.config.recipeId
-            }`;
-        }
         return this.getAuthRecipeDefaultRedirectionURL(context);
     };
 

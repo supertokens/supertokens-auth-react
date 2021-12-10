@@ -141,11 +141,7 @@ export declare type PreAPIHookContext = {
     requestInit: RequestInit;
     url: string;
 };
-export declare type GetRedirectionURLContext =
-    | {
-          action: "SUCCESS_IN_ANOTHER_TAB";
-      }
-    | AuthRecipeModuleGetRedirectionURLContext;
+export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 export declare type OnHandleEventContext =
     | {
           action: "SUCCESS";

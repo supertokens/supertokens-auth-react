@@ -21,7 +21,7 @@ export default class Passwordless extends AuthRecipe<
     recipeImpl: RecipeInterface;
     constructor(config: Config);
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
-    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
+    getDefaultRedirectionURL: (context: import("../authRecipe/types").GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (componentName: "signInUp" | "linkClickedScreen", props: any) => JSX.Element;
     static init(
         config: UserInput
