@@ -49,10 +49,10 @@ export default abstract class AuthRecipeWithEmailVerification<
                               // if there is a SUCCESS context saved in localstorage, we use that in the redirect.
                               const successContextStr = getLocalStorage("supertokens-post-email-verification");
                               if (successContextStr !== null) {
-                                  this.redirect(JSON.parse(successContextStr), history);
+                                  await this.redirect(JSON.parse(successContextStr), history);
                               } else {
                                   // else, we do the default behaviour
-                                  this.redirect({
+                                  await this.redirect({
                                       action: "SUCCESS",
                                       isNewUser: false,
                                   });
@@ -61,9 +61,8 @@ export default abstract class AuthRecipeWithEmailVerification<
                               removeFromLocalStorage("supertokens-post-email-verification");
                           }
                       },
-                      redirectToSignIn: async (history: any) => {
-                          this.redirectToAuthWithoutRedirectToPath(undefined, history);
-                      },
+                      redirectToSignIn: async (history: any) =>
+                          this.redirectToAuthWithoutRedirectToPath(undefined, history),
                       getRedirectionURL: config.getRedirectionURL,
                       onHandleEvent: config.onHandleEvent,
                       palette: config.palette,

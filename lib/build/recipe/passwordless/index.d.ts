@@ -18,7 +18,7 @@ export default class Wrapper {
                   show?: "signin" | "signup";
                   redirectBack?: boolean;
               }
-    ): void;
+    ): Promise<void>;
     static PasswordlessAuth: typeof PasswordlessAuth;
 }
 declare const init: typeof Wrapper.init;

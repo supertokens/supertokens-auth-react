@@ -51,7 +51,7 @@ class EmailVerificationSendVerifyEmail extends PureComponent<
             });
 
             if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                this.props.onEmailAlreadyVerified();
+                await this.props.onEmailAlreadyVerified();
             } else if (response.status === "OK") {
                 this.setState(() => ({
                     status: "EMAIL_RESENT",
@@ -71,7 +71,7 @@ class EmailVerificationSendVerifyEmail extends PureComponent<
         });
 
         if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-            this.props.onEmailAlreadyVerified();
+            await this.props.onEmailAlreadyVerified();
         }
     }
 

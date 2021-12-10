@@ -70,7 +70,7 @@ class LinkClickedScreen extends PureComponent<PropType, unknown> {
                 });
             }
             if (response.status === "OK") {
-                this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+                await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
                 return this.props.recipe.redirect(
                     { action: "SUCCESS", isNewUser: response.createdUser, redirectToPath: getRedirectToPathFromURL() },
                     this.props.history

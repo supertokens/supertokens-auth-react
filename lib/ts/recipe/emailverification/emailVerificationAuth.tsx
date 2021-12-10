@@ -62,7 +62,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
                 }
             }
         }
-        doTask();
+        void doTask();
         return () => {
             // this means that the sessionContext or props have changed..
             // so we should not update state or do anything anymore in this useEffect.

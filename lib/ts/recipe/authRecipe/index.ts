@@ -59,7 +59,7 @@ export default abstract class AuthRecipe<
             ...queryParams,
             redirectToPath,
         };
-        this.redirectToAuthWithoutRedirectToPath(show, history, queryParams);
+        return this.redirectToAuthWithoutRedirectToPath(show, history, queryParams);
     };
 
     redirectToAuthWithoutRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
@@ -72,7 +72,7 @@ export default abstract class AuthRecipe<
                 show,
             };
         }
-        this.redirect(
+        return this.redirect(
             {
                 action: "SIGN_IN_AND_UP",
             },

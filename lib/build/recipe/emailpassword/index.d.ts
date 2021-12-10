@@ -23,7 +23,7 @@ export default class Wrapper {
                   show?: "signin" | "signup";
                   redirectBack?: boolean;
               }
-    ): void;
+    ): Promise<void>;
     static EmailPasswordAuth: typeof EmailPasswordAuth;
     static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;

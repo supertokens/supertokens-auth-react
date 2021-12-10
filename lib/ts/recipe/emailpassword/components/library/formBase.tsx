@@ -274,11 +274,12 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                         return (
                             <FormRow key={field.id} hasError={field.error !== undefined}>
                                 <Fragment>
-                                    {showLabels && propField.labelComponent !== undefined ? (
-                                        propField.labelComponent
-                                    ) : (
-                                        <Label value={field.label} showIsRequired={field.showIsRequired} />
-                                    )}
+                                    {showLabels &&
+                                        (propField.labelComponent !== undefined ? (
+                                            propField.labelComponent
+                                        ) : (
+                                            <Label value={field.label} showIsRequired={field.showIsRequired} />
+                                        ))}
 
                                     {field.inputComponent !== undefined ? (
                                         <field.inputComponent

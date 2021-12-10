@@ -50,7 +50,10 @@ class ThirdPartyAuth extends PureComponent<Props> {
         return (
             <SessionAuth
                 redirectToLogin={() => {
-                    ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, this.props.history);
+                    void ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(
+                        undefined,
+                        this.props.history
+                    );
                 }}
                 requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}
                 onSessionExpired={this.props.onSessionExpired}>
