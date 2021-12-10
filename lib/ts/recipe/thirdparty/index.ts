@@ -53,7 +53,7 @@ export default class Wrapper {
                   show?: "signin" | "signup";
                   redirectBack?: boolean;
               }
-    ): void {
+    ): Promise<void> {
         if (input === undefined || typeof input === "string") {
             return ThirdParty.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
         } else {

@@ -14,10 +14,10 @@ export default abstract class AuthRecipe<
         show?: "signin" | "signup" | undefined,
         history?: any,
         queryParams?: any
-    ) => void;
+    ) => Promise<void>;
     redirectToAuthWithoutRedirectToPath: (
         show?: "signin" | "signup" | undefined,
         history?: any,
         queryParams?: any
-    ) => void;
+    ) => Promise<void>;
 }

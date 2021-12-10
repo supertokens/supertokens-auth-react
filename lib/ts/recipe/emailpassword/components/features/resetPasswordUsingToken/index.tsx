@@ -73,7 +73,7 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
                       recipeImplementation: this.props.recipe.recipeImpl,
                       config: this.props.recipe.config,
                       onSignInClicked: () => {
-                          this.props.recipe.redirectToAuthWithoutRedirectToPath("signin", this.props.history);
+                          void this.props.recipe.redirectToAuthWithoutRedirectToPath("signin", this.props.history);
                       },
                       token: this.state.token,
                   };

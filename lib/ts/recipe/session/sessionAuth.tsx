@@ -101,7 +101,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
             }
         }
         if (context === undefined) {
-            setInitialContextAndMaybeRedirect();
+            void setInitialContextAndMaybeRedirect();
             return () => {
                 cancelUseEffect = true;
             };

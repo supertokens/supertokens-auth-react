@@ -50,7 +50,7 @@ class ThirdPartyEmailPasswordAuth extends PureComponent<Props> {
         return (
             <SessionAuth
                 redirectToLogin={() => {
-                    ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(
+                    void ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(
                         undefined,
                         this.props.history
                     );

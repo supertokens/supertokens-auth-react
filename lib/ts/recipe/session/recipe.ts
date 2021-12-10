@@ -40,7 +40,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                     config.onHandleEvent(event);
                 }
 
-                this.notifyListeners(event);
+                void this.notifyListeners(event);
             },
             preAPIHook: async (context) => {
                 const response = {

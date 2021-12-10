@@ -66,7 +66,7 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
                 props.authRecipe.config.onHandleEvent({
                     action: "SESSION_ALREADY_EXISTS",
                 });
-                props.authRecipe.redirect(
+                void props.authRecipe.redirect(
                     {
                         action: "SUCCESS",
                         isNewUser: false,
