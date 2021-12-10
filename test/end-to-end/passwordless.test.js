@@ -32,7 +32,7 @@ import {
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
 
 // Using this temporarily instead of the helper, because we have multiple buttons in this form.
 // Modifying the original breaks other tests...
@@ -681,7 +681,7 @@ describe("SuperTokens Passwordless", function () {
 
 async function getDevice(loginAttemptInfo) {
     const deviceResp = await fetch(
-        `${TEST_SERVER_BASE_URL}/test/getDevice?preAuthSessionId=${encodeURIComponent(
+        `${TEST_APPLICATION_SERVER_BASE_URL}/test/getDevice?preAuthSessionId=${encodeURIComponent(
             loginAttemptInfo.preAuthSessionId
         )}`,
         {
@@ -692,7 +692,7 @@ async function getDevice(loginAttemptInfo) {
 }
 
 function setFlow(contactMethod, flowType) {
-    return fetch(`${TEST_SERVER_BASE_URL}/test/setFlow`, {
+    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setFlow`, {
         method: "POST",
         headers: [["content-type", "application/json"]],
         body: JSON.stringify({
@@ -729,6 +729,9 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
 
 async function initBrowser(contactMethod, consoleLogs) {
     await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+        method: "POST",
+    }).catch(console.error);
+    await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/beforeeach`, {
         method: "POST",
     }).catch(console.error);
 
