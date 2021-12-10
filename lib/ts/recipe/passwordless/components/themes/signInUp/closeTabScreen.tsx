@@ -20,13 +20,13 @@ import { jsx } from "@emotion/react";
 import { PureComponent } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { LinkClickedScreenProps } from "../../../types";
+import { CloseTabScreenProps } from "../../../types";
 import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
 /*
  * Component.
  */
 
-class PasswordlessSuccessScreen extends PureComponent<LinkClickedScreenProps> {
+class PasswordlessCloseTabScreen extends PureComponent<CloseTabScreenProps> {
     static contextType = StyleContext;
 
     /*
@@ -56,4 +56,4 @@ class PasswordlessSuccessScreen extends PureComponent<LinkClickedScreenProps> {
     };
 }
 
-export const SuccessScreen = withOverride("PasswordlessSuccessScreen", PasswordlessSuccessScreen);
+export const CloseTabScreen = withOverride("PasswordlessCloseTabScreen", PasswordlessCloseTabScreen);

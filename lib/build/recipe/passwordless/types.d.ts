@@ -18,6 +18,7 @@ import { LinkClickedScreen } from "./components/themes/linkClickedScreen";
 import { SignInUpCodeInputHeader } from "./components/themes/signInUp/signInUpCodeInputHeader";
 import { SignInUpCodeInputFooter } from "./components/themes/signInUp/signInUpCodeInputFooter";
 import { LinkSent as LinkSentScreen } from "./components/themes/signInUp/linkSent";
+import { CloseTabScreen } from "./components/themes/signInUp/closeTabScreen";
 export declare type PasswordlessUser = {
     id: string;
     email?: string;
@@ -177,7 +178,7 @@ export declare type NormalisedConfig = {
     } & PasswordlessNormalisedBaseConfig;
     userInputCodeForm: PasswordlessNormalisedBaseConfig;
     linkClickedScreen: PasswordlessNormalisedBaseConfig;
-    successScreen: PasswordlessNormalisedBaseConfig;
+    closeTabScreen: PasswordlessNormalisedBaseConfig;
     contactMethod: "PHONE" | "EMAIL";
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
@@ -205,7 +206,7 @@ export declare type UserInput = {
     } & FeatureBaseConfig;
     userInputCodeForm?: FeatureBaseConfig;
     linkClickedScreen?: FeatureBaseConfig;
-    successScreen?: FeatureBaseConfig;
+    closeTabScreen?: FeatureBaseConfig;
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;
@@ -214,6 +215,7 @@ export declare type UserInput = {
 export declare type SignInUpProps = {
     loginAttemptInfo?: LoginAttemptInfo;
     loaded: boolean;
+    successInAnotherTab: boolean;
     error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
@@ -250,6 +252,11 @@ export declare type LinkClickedScreenProps = {
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
+export declare type CloseTabScreenProps = {
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
+    onSuccess?: () => void;
+};
 export declare type LinkEmailSentThemeProps = {
     error?: string;
     loginAttemptInfo: LoginAttemptInfo;
@@ -277,4 +284,5 @@ export declare type ComponentOverrideMap = {
     PasswordlessSignInUpCodeInputFooter?: ComponentOverride<typeof SignInUpCodeInputFooter>;
     PasswordlessLinkSentScreen?: ComponentOverride<typeof LinkSentScreen>;
     PasswordlessLinkClickedScreen?: ComponentOverride<typeof LinkClickedScreen>;
+    PasswordlessCloseTabScreen?: ComponentOverride<typeof CloseTabScreen>;
 };

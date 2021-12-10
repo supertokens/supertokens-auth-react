@@ -77,6 +77,23 @@ export async function waitForSTElement(page, selector) {
     return res;
 }
 
+export async function waitForText(page, selector, text, timeout = 10000, pollDelay = 50) {
+    const start = new Date().getTime();
+
+    while (true) {
+        const header = await waitForSTElement(page, selector);
+        const headerText = await header.evaluate((e) => e.textContent);
+        if (headerText === text) {
+            break;
+        } else {
+            if (timeout < new Date().getTime() - start) {
+                assert.fail(`Timeout while waiting for "${selector}" to have text "${text}"`);
+            }
+            await waitFor(pollDelay);
+        }
+    }
+}
+
 export async function getSubmitFormButtonLabel(page) {
     return await page.evaluate(
         (ST_ROOT_SELECTOR) =>

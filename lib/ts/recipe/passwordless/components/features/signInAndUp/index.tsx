@@ -37,6 +37,7 @@ type SignInUpState = {
     loaded: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
     checkSessionIntervalHandle: any;
+    successInAnotherTab: boolean;
 };
 
 type PropType = FeatureBaseProps & {
@@ -64,6 +65,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
             loginAttemptInfo: undefined,
             checkSessionIntervalHandle: undefined,
             error,
+            successInAnotherTab: false,
         };
     }
 
@@ -171,12 +173,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
             // TODO: check if we can call into the session recipe from here.
             const hasSession = await Session.doesSessionExist();
             if (hasSession) {
-                return this.props.recipe.redirect(
-                    {
-                        action: "SUCCESS_IN_ANOTHER_TAB",
-                    },
-                    this.props.history
-                );
+                this.setState((os) => ({ ...os, successInAnotherTab: true }));
             }
         }, 2000);
 
@@ -208,6 +205,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
             },
             loaded: this.state.loaded,
             loginAttemptInfo: this.state.loginAttemptInfo,
+            successInAnotherTab: this.state.successInAnotherTab,
             error: this.state.error,
             recipeImplementation: this.getModifiedRecipeImplementation(),
             config: this.props.recipe.config,

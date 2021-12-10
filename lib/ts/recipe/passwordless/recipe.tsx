@@ -39,7 +39,6 @@ import SignInUp from "./components/features/signInAndUp";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
 import NormalisedURLPath from "../../normalisedURLPath";
-import SuccessScreen from "./components/features/successScreen";
 import { DEFAULT_SUCCESS_PATH } from "./constants";
 
 /*
@@ -83,15 +82,6 @@ export default class Passwordless extends AuthRecipe<
                 component: (props) => this.getFeatureComponent("linkClickedScreen", props),
             };
         }
-        if (this.config.linkClickedScreen.disableDefaultImplementation !== true) {
-            const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
-                new NormalisedURLPath("/success")
-            );
-            features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
-                component: (props) => this.getFeatureComponent("successScreen", props),
-            };
-        }
 
         return features;
     };
@@ -106,10 +96,7 @@ export default class Passwordless extends AuthRecipe<
         return this.getAuthRecipeDefaultRedirectionURL(context);
     };
 
-    getFeatureComponent = (
-        componentName: "signInUp" | "linkClickedScreen" | "successScreen",
-        props: any | undefined
-    ): JSX.Element => {
+    getFeatureComponent = (componentName: "signInUp" | "linkClickedScreen", props: any | undefined): JSX.Element => {
         if (componentName === "signInUp") {
             return (
                 <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
@@ -121,9 +108,6 @@ export default class Passwordless extends AuthRecipe<
         }
         if (componentName === "linkClickedScreen") {
             return <LinkClickedScreen recipe={this} {...props} />;
-        }
-        if (componentName === "successScreen") {
-            return <SuccessScreen recipe={this} {...props} />;
         }
         return <div>Not implemented</div>;
     };

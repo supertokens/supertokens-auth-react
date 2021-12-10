@@ -22,6 +22,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import { hasFontDefined } from "../../../../../styles/styles";
 import { SignInUpProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
+import { CloseTabScreen } from "./closeTabScreen";
 import { EmailForm } from "./emailForm";
 import { LinkSent } from "./linkSent";
 import { MobileForm } from "./mobileForm";
@@ -46,7 +47,9 @@ function SignInUpTheme(props: SignInUpProps): JSX.Element {
 
     return (
         <ThemeBase loadDefaultFont={!hasFont}>
-            {props.loginAttemptInfo && props.loginAttemptInfo.flowType === "MAGIC_LINK" ? (
+            {props.successInAnotherTab ? (
+                <CloseTabScreen {...recipeAndConfig} />
+            ) : props.loginAttemptInfo && props.loginAttemptInfo.flowType === "MAGIC_LINK" ? (
                 <LinkSent {...props} loginAttemptInfo={props.loginAttemptInfo} />
             ) : (
                 <div data-supertokens="container" css={styles.container}>

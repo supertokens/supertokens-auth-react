@@ -27,6 +27,7 @@ import {
     waitForSTElement,
     waitFor,
     getFeatureFlags,
+    waitForText,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -194,7 +195,7 @@ describe("SuperTokens Passwordless", function () {
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
                 const device = await getDevice(loginAttemptInfo);
-                await waitFor(1500);
+                await waitFor(2500);
                 for (let i = 3; i > 0; i--) {
                     await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                     await submitForm(page);
@@ -485,6 +486,51 @@ describe("SuperTokens Passwordless", function () {
                 ]);
             });
 
+            it("Successful signin with link in another tab", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getDevice(loginAttemptInfo);
+
+                const anotherTab = await browser.newPage();
+                await anotherTab.goto(device.codes[0].urlWithLinkCode);
+                await anotherTab.waitForNavigation({ waitUntil: "networkidle0" });
+
+                await waitForText(page, "[data-supertokens=headerTitle]", "Success!");
+
+                await page.reload({ waitUntil: ["networkidle0"] });
+
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/dashboard");
+
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
+                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
+                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                ]);
+            });
+
             it("Successful signin with user input code", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
@@ -503,13 +549,10 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
-                try {
-                    await page.waitForNavigation();
-                } catch (ex) {
-                    throw ex;
-                }
+                await page.waitForNavigation();
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/dashboard");
+
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
@@ -525,6 +568,57 @@ describe("SuperTokens Passwordless", function () {
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
                     "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                ]);
+            });
+
+            it("Successful signin with user input code in another tab", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getDevice(loginAttemptInfo);
+
+                const anotherTab = await browser.newPage();
+                await Promise.all([
+                    anotherTab.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    anotherTab.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await waitForSTElement(anotherTab, "[data-supertokens=input][name=userInputCode]");
+                await setInputValues(anotherTab, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                await submitForm(anotherTab);
+                await anotherTab.waitForNavigation();
+
+                await waitForText(page, "[data-supertokens=headerTitle]", "Success!");
+
+                await page.reload({ waitUntil: ["networkidle0"] });
+
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/dashboard");
+
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
+                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
                     "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
@@ -643,7 +737,7 @@ async function initBrowser(contactMethod, consoleLogs) {
         headers: [["content-type", "application/json"]],
         body: JSON.stringify({
             configUpdates: [
-                { key: "passwordless_code_lifetime", value: 1000 },
+                { key: "passwordless_code_lifetime", value: 2000 },
                 { key: "passwordless_max_code_input_attempts", value: 3 },
             ],
         }),
