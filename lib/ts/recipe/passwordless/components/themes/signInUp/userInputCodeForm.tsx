@@ -89,11 +89,7 @@ export const UserInputCodeForm = withOverride(
                             label: "",
                             labelComponent: (
                                 <div css={styles.codeInputLabelWrapper} data-supertokens="codeInputLabelWrapper">
-                                    <Label
-                                        css={styles.codeInputLabel}
-                                        value={"Code"}
-                                        data-supertokens="codeInputLabel"
-                                    />
+                                    <Label value={"Code"} data-supertokens="codeInputLabel" />
                                     <ResendButton
                                         loginAttemptInfo={props.loginAttemptInfo}
                                         resendCodeTimeGapInSeconds={props.config.resendCodeTimeGapInSeconds}

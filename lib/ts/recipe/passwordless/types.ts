@@ -24,16 +24,15 @@ import {
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import type { CountryCode } from "libphonenumber-js";
-import SignInUpTheme from "./components/themes/signInUp";
 import { SignInUpHeader } from "./components/themes/signInUp/signInUpHeader";
 import { SignInUpFooter } from "./components/themes/signInUp/signInUpFooter";
 import { EmailForm } from "./components/themes/signInUp/emailForm";
 import { MobileForm } from "./components/themes/signInUp/mobileForm";
 import { UserInputCodeForm } from "./components/themes/signInUp/userInputCodeForm";
 import { LinkClickedScreen } from "./components/themes/linkClickedScreen";
-import { SignInUpCodeInputHeader } from "./components/themes/signInUp/signInUpCodeInputHeader";
-import { SignInUpCodeInputFooter } from "./components/themes/signInUp/signInUpCodeInputFooter";
-import { LinkSent as LinkSentScreen } from "./components/themes/signInUp/linkSent";
+import { UserInputCodeFormHeader } from "./components/themes/signInUp/userInputCodeFormHeader";
+import { UserInputCodeFormFooter } from "./components/themes/signInUp/userInputCodeFormFooter";
+import { LinkSent } from "./components/themes/signInUp/linkSent";
 import { CloseTabScreen } from "./components/themes/signInUp/closeTabScreen";
 
 export type PasswordlessUser = {
@@ -315,30 +314,28 @@ export type LinkEmailSentThemeProps = {
     config: NormalisedConfig;
 };
 
-export type SignInUpCodeInputFooterProps = {
+export type UserInputCodeFormFooterProps = {
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
 };
 
-export type SignInUpCodeInputHeaderProps = {
+export type UserInputCodeFormHeaderProps = {
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
 };
 
 export type ComponentOverrideMap = {
-    PasswordlessSignInUp?: ComponentOverride<typeof SignInUpTheme>;
     PasswordlessSignInUpHeader?: ComponentOverride<typeof SignInUpHeader>;
     PasswordlessSignInUpFooter?: ComponentOverride<typeof SignInUpFooter>;
-    PasswordlessSignInUpEmailForm?: ComponentOverride<typeof EmailForm>;
-    PasswordlessSignInUpPhoneNumberForm?: ComponentOverride<typeof MobileForm>;
+    PasswordlessEmailForm?: ComponentOverride<typeof EmailForm>;
+    PasswordlessMobileForm?: ComponentOverride<typeof MobileForm>;
+    PasswordlessUserInputCodeFormHeader?: ComponentOverride<typeof UserInputCodeFormHeader>;
+    PasswordlessUserInputCodeFormFooter?: ComponentOverride<typeof UserInputCodeFormFooter>;
+    PasswordlessUserInputCodeForm?: ComponentOverride<typeof UserInputCodeForm>;
 
-    PasswordlessSignInUpCodeInputForm?: ComponentOverride<typeof UserInputCodeForm>;
-    PasswordlessSignInUpCodeInputHeader?: ComponentOverride<typeof SignInUpCodeInputHeader>;
-    PasswordlessSignInUpCodeInputFooter?: ComponentOverride<typeof SignInUpCodeInputFooter>;
-
-    PasswordlessLinkSentScreen?: ComponentOverride<typeof LinkSentScreen>;
+    PasswordlessLinkSent?: ComponentOverride<typeof LinkSent>;
 
     PasswordlessLinkClickedScreen?: ComponentOverride<typeof LinkClickedScreen>;
     PasswordlessCloseTabScreen?: ComponentOverride<typeof CloseTabScreen>;

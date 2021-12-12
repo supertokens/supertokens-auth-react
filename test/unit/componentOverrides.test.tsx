@@ -7,6 +7,7 @@ import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../../lib/ts/r
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../../lib/ts/recipe/thirdparty/types";
 import { ComponentOverrideMap as EmailVerificationOverrideMap } from "../../lib/ts/recipe/emailverification/types";
 import { ComponentOverrideMap as ThirdPartyEmailPasswordOverrideMap } from "../../lib/ts/recipe/thirdpartyemailpassword/types";
+import { ComponentOverrideMap as PasswordlessOverrideMap } from "../../lib/ts/recipe/passwordless/types";
 
 import { SignUp } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUp";
 import { SignUpHeader } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUpHeader";
@@ -25,12 +26,23 @@ import { SendVerifyEmail } from "../../lib/ts/recipe/emailverification/component
 import { VerifyEmailLinkClicked } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/verifyEmailLinkClicked";
 import { Header as ThirdPartyEmailPasswordHeader } from "../../lib/ts/recipe/thirdpartyemailpassword/components/themes/signInAndUp/header";
 import { SignInAndUpForm } from "../../lib/ts/recipe/thirdpartyemailpassword/components/themes/signInAndUp/signInAndUpForm";
+import { CloseTabScreen } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/closeTabScreen";
 import { ComponentOverride } from "../../lib/ts/components/componentOverride/componentOverride";
+import { LinkClickedScreen } from "../../lib/ts/recipe/passwordless/components/themes/linkClickedScreen";
+import { LinkSent } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/linkSent";
+import { UserInputCodeFormFooter } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/userInputCodeFormFooter";
+import { UserInputCodeFormHeader } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/userInputCodeFormHeader";
+import { UserInputCodeForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/userInputCodeForm";
+import { EmailForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/emailForm";
+import { SignInUpFooter } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/signInUpFooter";
+import { SignInUpHeader } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/signInUpHeader";
+import { MobileForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/mobileForm";
 
 type AllComponentsOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap &
     EmailVerificationOverrideMap &
-    ThirdPartyEmailPasswordOverrideMap;
+    ThirdPartyEmailPasswordOverrideMap &
+    PasswordlessOverrideMap;
 
 const makeOverride = () => () => <h1 data-testid="override">Override</h1>;
 const WithProvider: React.FC<any> = ({ overrideMap, children }) => {
@@ -59,10 +71,21 @@ describe("Theme component overrides", () => {
         EmailVerificationVerifyEmailLinkClicked: VerifyEmailLinkClicked,
         ThirdPartyEmailPasswordHeader: ThirdPartyEmailPasswordHeader,
         ThirdPartyEmailPasswordSignInAndUpForm: SignInAndUpForm,
+        PasswordlessEmailForm: EmailForm,
+        PasswordlessMobileForm: MobileForm,
+        PasswordlessSignInUpFooter: SignInUpFooter,
+        PasswordlessSignInUpHeader: SignInUpHeader,
+        PasswordlessUserInputCodeForm: UserInputCodeForm,
+        PasswordlessUserInputCodeFormFooter: UserInputCodeFormFooter,
+        PasswordlessUserInputCodeFormHeader: UserInputCodeFormHeader,
+        PasswordlessLinkSent: LinkSent,
+        PasswordlessCloseTabScreen: CloseTabScreen,
+        PasswordlessLinkClickedScreen: LinkClickedScreen,
     };
 
-    Object.entries(overrides).forEach(([key, Component]) => {
+    Object.entries(overrides).forEach(([key, comp]) => {
         test(`${key} can be overrode`, async () => {
+            const [Component, props] = comp instanceof Array ? comp : [comp, {}];
             // given
             const overrideMap: Record<string, ComponentOverride<any>> = {
                 [key]: makeOverride(),
@@ -74,7 +97,7 @@ describe("Theme component overrides", () => {
             // when
             const result = await render(
                 <WithProvider overrideMap={overrideMap}>
-                    <Component />
+                    <Component {...props} />
                 </WithProvider>
             );
 

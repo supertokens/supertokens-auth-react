@@ -17,15 +17,15 @@ import { jsx } from "@emotion/react";
 import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { SignInUpCodeInputFooterProps } from "../../../types";
+import { UserInputCodeFormFooterProps } from "../../../types";
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 
-export const SignInUpCodeInputFooter = withOverride(
-    "PasswordlessSignInUpCodeInputFooter",
-    function PasswordlessSignInUpCodeInputFooter({
+export const UserInputCodeFormFooter = withOverride(
+    "PasswordlessUserInputCodeFormFooter",
+    function PasswordlessUserInputCodeFormFooter({
         loginAttemptInfo,
         recipeImplementation,
-    }: SignInUpCodeInputFooterProps): JSX.Element {
+    }: UserInputCodeFormFooterProps): JSX.Element {
         const styles = useContext(StyleContext);
 
         return (

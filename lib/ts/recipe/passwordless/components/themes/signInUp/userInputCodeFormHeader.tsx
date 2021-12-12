@@ -17,11 +17,11 @@ import { jsx } from "@emotion/react";
 import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { SignInUpCodeInputHeaderProps } from "../../../types";
+import { UserInputCodeFormHeaderProps } from "../../../types";
 
-export const SignInUpCodeInputHeader = withOverride(
-    "PasswordlessSignInUpCodeInputHeader",
-    function PasswordlessSignInUpCodeInputHeader({ loginAttemptInfo }: SignInUpCodeInputHeaderProps): JSX.Element {
+export const UserInputCodeFormHeader = withOverride(
+    "PasswordlessUserInputCodeFormHeader",
+    function PasswordlessUserInputCodeFormHeader({ loginAttemptInfo }: UserInputCodeFormHeaderProps): JSX.Element {
         const styles = useContext(StyleContext);
 
         return (

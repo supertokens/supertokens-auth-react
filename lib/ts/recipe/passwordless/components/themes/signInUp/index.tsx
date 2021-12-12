@@ -26,8 +26,8 @@ import { CloseTabScreen } from "./closeTabScreen";
 import { EmailForm } from "./emailForm";
 import { LinkSent } from "./linkSent";
 import { MobileForm } from "./mobileForm";
-import { SignInUpCodeInputFooter } from "./signInUpCodeInputFooter";
-import { SignInUpCodeInputHeader } from "./signInUpCodeInputHeader";
+import { UserInputCodeFormFooter } from "./userInputCodeFormFooter";
+import { UserInputCodeFormHeader } from "./userInputCodeFormHeader";
 import { SignInUpFooter } from "./signInUpFooter";
 import { SignInUpHeader } from "./signInUpHeader";
 import { UserInputCodeForm } from "./userInputCodeForm";
@@ -87,13 +87,13 @@ function SignInUpTheme(props: SignInUpProps): JSX.Element {
                                     loginAttemptInfo={props.loginAttemptInfo}
                                     onSuccess={props.onSuccess}
                                     header={
-                                        <SignInUpCodeInputHeader
+                                        <UserInputCodeFormHeader
                                             {...recipeAndConfig}
                                             loginAttemptInfo={props.loginAttemptInfo}
                                         />
                                     }
                                     footer={
-                                        <SignInUpCodeInputFooter
+                                        <UserInputCodeFormFooter
                                             {...recipeAndConfig}
                                             loginAttemptInfo={props.loginAttemptInfo}
                                         />
