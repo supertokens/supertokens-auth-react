@@ -33,7 +33,7 @@ export const MobileForm = withOverride(
                 formFields={[
                     {
                         id: "phoneNumber",
-                        label: "Mobile",
+                        label: "Your Phone Number",
                         inputComponent: phoneNumberInputWithInjectedProps({
                             defaultCountry: props.config.mobileForm.defaultCountry,
                         }),

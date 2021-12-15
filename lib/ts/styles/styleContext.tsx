@@ -74,7 +74,8 @@ export function StyleProvider({
  * Helpers
  */
 function getMergedPalette(defaultPalette: NormalisedPalette, rawPalette: Record<string, string>): NormalisedPalette {
-    const palette = defaultPalette;
+    // We copy the defaultPalette into in order to not update the original
+    const palette = { colors: { ...defaultPalette.colors }, fonts: { ...defaultPalette.fonts } };
     for (const key in palette.colors) {
         if (rawPalette[key] !== undefined) {
             palette.colors[key] = rawPalette[key];

@@ -18,7 +18,7 @@
  */
 
 /** @jsx jsx */
-import { jsx } from "@emotion/react";
+import { CSSObject, jsx } from "@emotion/react";
 import Select, { components } from "react-select";
 
 import React, { forwardRef, ForwardRefRenderFunction, RefObject, useContext, useState } from "react";
@@ -46,7 +46,6 @@ function PhoneNumberInput(
         name,
         onInputBlur,
         onInputFocus,
-        errorStyle,
         hasError,
         validated,
         placeholder,
@@ -82,6 +81,7 @@ function PhoneNumberInput(
         });
     }
 
+    const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
     /*
      * Render.
      */
@@ -100,7 +100,6 @@ function PhoneNumberInput(
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     international={true}
-                    withCountryCallingCode={true}
                     placeholder={placeholder}
                     defaultCountry={defaultCountry}
                 />

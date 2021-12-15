@@ -47,7 +47,6 @@ export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
         },
         userInputCodeForm: normalisePasswordlessBaseConfig(config.userInputCodeForm),
         linkClickedScreen: normalisePasswordlessBaseConfig(config.linkClickedScreen),
-        closeTabScreen: normalisePasswordlessBaseConfig(config.closeTabScreen),
 
         contactMethod: config.contactMethod,
 

@@ -31,6 +31,12 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { FeatureBaseProps } from "../../../../../types";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
 import Session from "../../../../session";
+import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
+import {
+    SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR,
+    SIGN_IN_UP_LINK_ERROR,
+    SIGN_IN_UP_RESEND_RESTART_FLOW_ERROR,
+} from "../../../constants";
 
 type SignInUpState = {
     error: string | undefined;
@@ -53,9 +59,9 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
         const messageQueryParam = getQueryParams("message");
         if (errorQueryParam !== null) {
             if (errorQueryParam === "signin") {
-                error = "Something went wrong. Please try again";
+                error = SOMETHING_WENT_WRONG_ERROR;
             } else if (errorQueryParam === "restart_link") {
-                error = "The link you tried to click expired or was revoked. Please try again.";
+                error = SIGN_IN_UP_LINK_ERROR;
             } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
                 error = messageQueryParam;
             }
@@ -100,6 +106,12 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                         error: undefined,
                         loginAttemptInfo,
                     }));
+                } else if (res.status === "GENERAL_ERROR") {
+                    this.setState((os) => ({
+                        ...os,
+                        error: res.message,
+                        loginAttemptInfo: undefined,
+                    }));
                 }
                 return res;
             },
@@ -125,7 +137,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
 
                     this.setState((os) => ({
                         ...os,
-                        error: "Please try again.",
+                        error: SIGN_IN_UP_RESEND_RESTART_FLOW_ERROR,
                         loginAttemptInfo: undefined,
                     }));
                 } else if (res.status === "GENERAL_ERROR") {
@@ -137,6 +149,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                 }
                 return res;
             },
+
             consumeCode: async (input) => {
                 const res = await this.props.recipe.recipeImpl.consumeCode(input);
                 if (res.status === "RESTART_FLOW_ERROR") {
@@ -144,21 +157,28 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
 
                     this.setState((os) => ({
                         ...os,
-                        error: "Please try again.",
+                        error: SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR,
                         loginAttemptInfo: undefined,
                     }));
-                }
-                if (res.status === "OK") {
+                } else if (res.status === "GENERAL_ERROR") {
+                    this.setState((os) => ({
+                        ...os,
+                        error: res.message,
+                        loginAttemptInfo: undefined,
+                    }));
+                } else if (res.status === "OK") {
                     await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
                 }
 
                 return res;
             },
+
             clearLoginAttemptInfo: async () => {
                 await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
                 this.setState((os) => ({
                     ...os,
                     loginAttemptInfo: undefined,
+                    error: undefined,
                 }));
             },
         };

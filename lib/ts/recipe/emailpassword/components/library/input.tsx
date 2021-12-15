@@ -36,7 +36,6 @@ import ErrorIcon from "../../../../components/assets/errorIcon";
  */
 
 export type InputProps = {
-    errorStyle?: CSSObject;
     type: string;
     name: string;
     autoComplete?: string;

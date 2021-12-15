@@ -15,6 +15,7 @@
 
 /** @jsx jsx */
 import { CSSObject, keyframes } from "@emotion/react";
+import { Keyframes } from "@emotion/react/node_modules/@emotion/serialize";
 import chroma from "chroma-js";
 import { NormalisedPalette, NormalisedDefaultStyles, Styles } from "../types";
 
@@ -43,7 +44,7 @@ export const defaultPalette: NormalisedPalette = {
 /*
  * Default styles.
  */
-export const slideTop = keyframes`
+export const slideTop: Keyframes = keyframes`
     0% {
         transform: translateY(-5px);
     }
@@ -52,7 +53,7 @@ export const slideTop = keyframes`
     }
 `;
 
-export const swingIn = keyframes`
+export const swingIn: Keyframes = keyframes`
 0% {
     -webkit-transform: rotateX(-100deg);
             transform: rotateX(-100deg);

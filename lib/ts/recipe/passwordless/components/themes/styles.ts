@@ -22,6 +22,9 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     const baseStyles = getDefaultStyles(palette);
     const emailPasswordStyles = getEmailPasswordStyles(palette);
     const passwordlessStyles: NormalisedDefaultStyles = {
+        generalSuccess: {
+            marginBottom: "20px",
+        },
         codeInputLabelWrapper: {
             display: "flex",
             justifyContent: "space-between",
@@ -42,7 +45,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             marginTop: 0,
             lineHeight: "24px",
             "&:disabled": {
-                color: palette.colors.textLabel,
+                color: palette.colors.textPrimary,
             },
             "&:hover": {
                 textDecoration: "underline",
@@ -66,9 +69,12 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
                 width: "100%",
                 background: "transparent",
                 border: "none",
+                color: "inherit",
+                outline: "none",
             },
 
             "& .PhoneInputCountryIcon": {
+                color: palette.colors.textInput,
                 width: "calc(1em * 1.5)",
                 height: "1em",
             },
@@ -101,6 +107,9 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             borderRadius: 6,
             marginLeft: "-15px", // This is to counteract the padding of the inputWrapper class
             boxShadow: "0px 0px 3px 0px rgba(0, 0, 0, 0.16)",
+            "& > div": {
+                paddingTop: 0,
+            },
         },
         phoneInputCountryOption: {
             display: "flex",

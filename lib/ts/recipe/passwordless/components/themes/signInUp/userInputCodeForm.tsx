@@ -67,6 +67,12 @@ export const UserInputCodeForm = withOverride(
             }
         }
 
+        const resendTarget =
+            props.loginAttemptInfo.flowType === "USER_INPUT_CODE"
+                ? "OTP"
+                : props.loginAttemptInfo.contactMethod === "EMAIL"
+                ? "Email"
+                : "SMS";
         return (
             <React.Fragment>
                 {props.header}
@@ -74,7 +80,7 @@ export const UserInputCodeForm = withOverride(
                     <div
                         data-supertokens="generalSuccess resendSuccess"
                         css={[styles.generalSuccess, styles.resendSuccess]}>
-                        Code resent
+                        {resendTarget} resent
                     </div>
                 )}
                 {error !== undefined && (
@@ -89,11 +95,11 @@ export const UserInputCodeForm = withOverride(
                             label: "",
                             labelComponent: (
                                 <div css={styles.codeInputLabelWrapper} data-supertokens="codeInputLabelWrapper">
-                                    <Label value={"Code"} data-supertokens="codeInputLabel" />
+                                    <Label value={"OTP"} data-supertokens="codeInputLabel" />
                                     <ResendButton
                                         loginAttemptInfo={props.loginAttemptInfo}
                                         resendCodeTimeGapInSeconds={props.config.resendCodeTimeGapInSeconds}
-                                        target={"OTP"}
+                                        target={resendTarget}
                                         onClick={resend}
                                     />
                                 </div>

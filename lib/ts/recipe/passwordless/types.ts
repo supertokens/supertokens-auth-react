@@ -207,7 +207,6 @@ export type NormalisedConfig = {
     } & PasswordlessNormalisedBaseConfig;
     userInputCodeForm: PasswordlessNormalisedBaseConfig;
     linkClickedScreen: PasswordlessNormalisedBaseConfig;
-    closeTabScreen: PasswordlessNormalisedBaseConfig;
 
     contactMethod: "PHONE" | "EMAIL";
 
@@ -248,7 +247,6 @@ export type UserInput = {
     userInputCodeForm?: FeatureBaseConfig;
 
     linkClickedScreen?: FeatureBaseConfig;
-    closeTabScreen?: FeatureBaseConfig;
 
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;

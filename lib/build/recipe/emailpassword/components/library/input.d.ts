@@ -1,11 +1,8 @@
 /// <reference types="react" />
 /// <reference types="@emotion/react/types/css-prop" />
-/** @jsx jsx */
-import { CSSObject } from "@emotion/react";
 import { APIFormField } from "../../../../types";
 import { InputRef } from "../../types";
 export declare type InputProps = {
-    errorStyle?: CSSObject;
     type: string;
     name: string;
     autoComplete?: string;

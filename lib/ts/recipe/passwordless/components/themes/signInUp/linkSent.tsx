@@ -93,7 +93,7 @@ class PasswordlessLinkSent extends PureComponent<LinkEmailSentThemeProps, LinkEm
                 <div data-supertokens="row" css={styles.row}>
                     {status === "ERROR" && (
                         <div data-supertokens="generalError" css={styles.generalError}>
-                            {SOMETHING_WENT_WRONG_ERROR}
+                            {this.props.error === undefined ? SOMETHING_WENT_WRONG_ERROR : this.props.error}
                         </div>
                     )}
                     {resendActive && (
@@ -111,20 +111,18 @@ class PasswordlessLinkSent extends PureComponent<LinkEmailSentThemeProps, LinkEm
                     </div>
                     <div data-supertokens="primaryText sendCodeText" css={[styles.primaryText, styles.sendCodeText]}>
                         We sent a link to
-                        {this.props.loginAttemptInfo.contactMethod === "EMAIL" ? "" : " your mobile number"}
-                        <br />
+                        {this.props.loginAttemptInfo.contactMethod === "EMAIL" ? " " : " your mobile number "}
                         <strong>{this.props.loginAttemptInfo.contactInfo}</strong>
-                        <br />
-                        Click the link to login or sign up
+                        {this.props.loginAttemptInfo.contactMethod === "EMAIL"
+                            ? " Click the link to login or sign up"
+                            : ""}
                     </div>
-                    {status !== "EMAIL_RESENT" && (
-                        <ResendButton
-                            loginAttemptInfo={this.props.loginAttemptInfo}
-                            resendCodeTimeGapInSeconds={this.props.config.resendCodeTimeGapInSeconds}
-                            target={"link"}
-                            onClick={this.resendEmail}
-                        />
-                    )}
+                    <ResendButton
+                        loginAttemptInfo={this.props.loginAttemptInfo}
+                        resendCodeTimeGapInSeconds={this.props.config.resendCodeTimeGapInSeconds}
+                        target={"link"}
+                        onClick={this.resendEmail}
+                    />
                     {
                         <div
                             data-supertokens="secondaryText secondaryLinkWithLeftArrow"
