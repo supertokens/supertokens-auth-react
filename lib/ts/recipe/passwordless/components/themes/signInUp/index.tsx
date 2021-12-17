@@ -86,6 +86,7 @@ function SignInUpTheme(props: SignInUpProps): JSX.Element {
                                     {...recipeAndConfig}
                                     loginAttemptInfo={props.loginAttemptInfo}
                                     onSuccess={props.onSuccess}
+                                    error={props.error}
                                     header={
                                         <UserInputCodeFormHeader
                                             {...recipeAndConfig}

@@ -39,7 +39,7 @@ export const UserInputCodeForm = withOverride(
         const [error, setError] = useState<string | undefined>();
 
         useEffect(() => {
-            // This is just to clean u
+            // This is just to clean up on unmount and if the clear timeout changes
             return () => {
                 clearTimeout(clearResendNotifTimeout);
             };
@@ -83,11 +83,6 @@ export const UserInputCodeForm = withOverride(
                         {resendTarget} resent
                     </div>
                 )}
-                {error !== undefined && (
-                    <div data-supertokens="generalError" css={[styles.generalError]}>
-                        {error}
-                    </div>
-                )}
                 <FormBase
                     formFields={[
                         {
@@ -111,6 +106,7 @@ export const UserInputCodeForm = withOverride(
                     ]}
                     onSuccess={props.onSuccess}
                     buttonLabel={"CONTINUE"}
+                    error={error || props.error}
                     callAPI={async (formFields) => {
                         const userInputCode = formFields.find((field) => field.id === "userInputCode")?.value;
                         if (userInputCode === undefined || userInputCode.length === 0) {

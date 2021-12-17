@@ -287,6 +287,7 @@ export type SignInUpMobileFormProps = {
 };
 
 export type SignInUpUserInputCodeFormProps = {
+    error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     loginAttemptInfo: LoginAttemptInfo;

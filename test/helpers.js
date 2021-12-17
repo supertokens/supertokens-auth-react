@@ -63,13 +63,16 @@ export async function waitFor(ms) {
  * Using Puppeteer within shadowDom https://github.com/puppeteer/puppeteer/issues/858#issuecomment-438540596
  */
 
-export async function waitForSTElement(page, selector) {
+export async function waitForSTElement(page, selector, inverted = false) {
     const res = await page.waitForFunction(
-        (elementSelector, rootSelector) =>
-            document.querySelector(rootSelector)?.shadowRoot.querySelector(elementSelector),
+        (elementSelector, rootSelector, inverted) => {
+            const elem = document.querySelector(rootSelector)?.shadowRoot.querySelector(elementSelector);
+            return inverted ? elem === null : elem;
+        },
         { polling: 50 },
         selector,
-        ST_ROOT_SELECTOR
+        ST_ROOT_SELECTOR,
+        inverted
     );
     if (res) {
         return res.asElement();

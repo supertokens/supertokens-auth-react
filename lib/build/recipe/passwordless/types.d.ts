@@ -235,6 +235,7 @@ export declare type SignInUpMobileFormProps = {
     onSuccess?: () => void;
 };
 export declare type SignInUpUserInputCodeFormProps = {
+    error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     loginAttemptInfo: LoginAttemptInfo;
