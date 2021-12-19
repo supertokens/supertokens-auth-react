@@ -13,9 +13,10 @@
  * under the License.
  */
 
+import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 import { defaultEmailValidator } from "../emailpassword/validators";
-import { Config, NormalisedConfig, PasswordlessNormalisedBaseConfig, PasswordlessFeatureBaseConfig } from "./types";
+import { Config, NormalisedConfig } from "./types";
 import { RecipeInterface } from "./types";
 import { defaultPhoneNumberValidator } from "./validators";
 
@@ -54,10 +55,10 @@ export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     };
 }
 
-function normalisePasswordlessBaseConfig(config?: PasswordlessFeatureBaseConfig): PasswordlessNormalisedBaseConfig {
+function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T & NormalisedBaseConfig {
     const style = config && config.style !== undefined ? config.style : {};
     return {
-        ...config,
+        ...(config as T),
         style,
     };
 }

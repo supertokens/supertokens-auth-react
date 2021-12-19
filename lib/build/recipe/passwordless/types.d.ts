@@ -192,14 +192,14 @@ export declare type UserInput = {
     emailForm?: {
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
-    } & FeatureBaseConfig;
+    } & PasswordlessFeatureBaseConfig;
     mobileForm?: {
         defaultCountry?: CountryCode;
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
-    } & FeatureBaseConfig;
+    } & PasswordlessFeatureBaseConfig;
     userInputCodeForm?: FeatureBaseConfig;
-    linkClickedScreen?: FeatureBaseConfig;
+    linkClickedScreen?: PasswordlessFeatureBaseConfig;
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;

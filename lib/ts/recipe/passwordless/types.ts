@@ -234,7 +234,7 @@ export type UserInput = {
     emailForm?: {
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
-    } & FeatureBaseConfig;
+    } & PasswordlessFeatureBaseConfig;
 
     mobileForm?: {
         /*
@@ -243,10 +243,10 @@ export type UserInput = {
         defaultCountry?: CountryCode;
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
-    } & FeatureBaseConfig;
+    } & PasswordlessFeatureBaseConfig;
     userInputCodeForm?: FeatureBaseConfig;
 
-    linkClickedScreen?: FeatureBaseConfig;
+    linkClickedScreen?: PasswordlessFeatureBaseConfig;
 
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
