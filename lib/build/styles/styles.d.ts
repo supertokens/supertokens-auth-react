@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { CSSObject } from "@emotion/react";
-import { Keyframes } from "@emotion/react/node_modules/@emotion/serialize";
+import { Keyframes } from "@emotion/serialize";
 import { NormalisedPalette, NormalisedDefaultStyles, Styles } from "../types";
 export declare const defaultPalette: NormalisedPalette;
 export declare const slideTop: Keyframes;

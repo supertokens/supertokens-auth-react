@@ -44,6 +44,7 @@ export default abstract class AuthRecipeWithEmailVerification<
                       appInfo: config.appInfo,
                       recipeId: config.recipeId,
                       signOut: this.signOut,
+                      style: this.config.rootStyle,
                       postVerificationRedirect: async (history: any) => {
                           try {
                               // if there is a SUCCESS context saved in localstorage, we use that in the redirect.

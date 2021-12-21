@@ -15,7 +15,7 @@
 
 /** @jsx jsx */
 import { CSSObject, keyframes } from "@emotion/react";
-import { Keyframes } from "@emotion/react/node_modules/@emotion/serialize";
+import { Keyframes } from "@emotion/serialize";
 import chroma from "chroma-js";
 import { NormalisedPalette, NormalisedDefaultStyles, Styles } from "../types";
 
@@ -229,7 +229,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
 }
 
 export function getButtonStyle(color: string, brighten?: boolean): CSSObject {
-    const backgroundColor = brighten === true ? chroma(color).brighten(0.6).hex() : chroma(color).darken(0.2).hex();
+    const brightness = brighten === true ? 1.1 : 0.95;
 
     return {
         width: "100%",
@@ -237,11 +237,12 @@ export function getButtonStyle(color: string, brighten?: boolean): CSSObject {
         backgroundColor: color,
         color: "white",
         fontWeight: 700,
-        border: `1px solid ${chroma(color).darken(0.3).hex()}`,
+        borderWidth: "1px",
+        borderStyle: "solid",
+        borderColor: `${chroma(color).darken(0.3).hex()}`,
         borderRadius: "6px",
         backgroundPosition: "center",
-        backgroundImage: `radial-gradient(circle, transparent 1%, ${color} 1%)`,
-        transition: "background 0.4s",
+        transition: "all 0.4s",
         backgroundSize: "12000%",
         "&:disabled": {
             border: "none",
@@ -249,12 +250,12 @@ export function getButtonStyle(color: string, brighten?: boolean): CSSObject {
         },
         "&:active": {
             outline: "none",
-            backgroundColor,
-            transition: "background 0s",
+            filter: `brightness(${brightness})`,
+            transition: "all 0s",
             backgroundSize: "100%",
         },
         "&:hover": {
-            backgroundColor,
+            filter: `brightness(${brightness})`,
         },
         "&:focus": {
             outline: "none",
