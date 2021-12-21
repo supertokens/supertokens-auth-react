@@ -13,4 +13,4 @@
  * under the License.
  */
 export const package_version = "0.18.0";
-export const supported_fdi = ["1.8", "1.9", "1.10"];
+export const supported_fdi = ["1.8", "1.9", "1.10", "1.11"];

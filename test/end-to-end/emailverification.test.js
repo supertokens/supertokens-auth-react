@@ -138,7 +138,7 @@ describe("SuperTokens Email Verification", function () {
             ]);
             await toggleSignInSignUp(page);
             const rid = "emailpassword";
-            return await signUp(
+            await signUp(
                 page,
                 [
                     { name: "email", value: "john.doe2@supertokens.io" },

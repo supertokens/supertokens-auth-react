@@ -42,10 +42,12 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         providerButton: {
             display: "flex",
             flexDirection: "row",
+            paddingLeft: "0px",
+            paddingRight: "0px",
         },
 
         providerButtonLeft: {
-            width: "34px",
+            width: "40px",
         },
 
         providerButtonLogo: {
@@ -59,10 +61,8 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
 
         providerButtonText: {
-            marginTop: "auto",
-            marginBottom: "auto",
+            margin: "auto",
             textAlign: "center",
-            marginLeft: "20%",
             justifyContent: "center",
             "@media (max-width: 380px)": {
                 marginLeft: "10%",
