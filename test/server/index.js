@@ -224,16 +224,19 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
 })(process.env.START === "true");
 
 function initST({ passwordlessConfig } = {}) {
-    if (passwordlessSupported) {
-        PasswordlessRaw.reset();
+    if (process.env.TEST_MODE) {
+        if (passwordlessSupported) {
+            PasswordlessRaw.reset();
+        }
+
+        EmailPasswordRaw.reset();
+        ThirdPartyRaw.reset();
+        ThirdPartyEmailPasswordRaw.reset();
+        SessionRaw.reset();
+
+        SuperTokensRaw.reset();
     }
 
-    EmailPasswordRaw.reset();
-    ThirdPartyRaw.reset();
-    ThirdPartyEmailPasswordRaw.reset();
-    SessionRaw.reset();
-
-    SuperTokensRaw.reset();
     const recipeList = [
         EmailPassword.init({
             signUpFeature: {
