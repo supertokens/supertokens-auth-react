@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -27,10 +27,8 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
     },
     recipeList: [
-        EmailPassword.init({
-            emailVerificationFeature: {
-                mode: "REQUIRED",
-            },
+        Passwordless.init({
+            contactMethod: "EMAIL",
         }),
         Session.init(),
     ],
@@ -53,13 +51,13 @@ function App() {
                                 /* This protects the "/" route so that it shows 
                                 <Home /> only if the user is logged in.
                                 Else it redirects the user to "/auth" */
-                                <EmailPassword.EmailPasswordAuth
+                                <Passwordless.PasswordlessAuth
                                     onSessionExpired={() => {
                                         updateShowSessionExpiredPopup(true);
                                     }}>
                                     <Home />
                                     {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                </EmailPassword.EmailPasswordAuth>
+                                </Passwordless.PasswordlessAuth>
                             }
                         />
                     </Routes>

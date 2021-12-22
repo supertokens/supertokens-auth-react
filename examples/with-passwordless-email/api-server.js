@@ -6,7 +6,7 @@ let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
-let EmailPassword = require("supertokens-node/recipe/emailpassword");
+let Passwordless = require("supertokens-node/recipe/passwordless");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
@@ -17,7 +17,7 @@ supertokens.init({
     framework: "express",
     supertokens: {
         // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
-        connectionURI: "https://try.supertokens.io",
+        connectionURI: "http://localhost:3567",
         apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
@@ -25,7 +25,16 @@ supertokens.init({
         apiDomain, // TODO: Change to your app's API domain
         websiteDomain, // TODO: Change to your app's website domain
     },
-    recipeList: [EmailPassword.init(), Session.init()],
+    recipeList: [
+        Passwordless.init({
+            contactMethod: "EMAIL",
+            flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+            createAndSendCustomEmail: async function (input) {
+                console.log(input);
+            },
+        }),
+        Session.init(),
+    ],
 });
 
 const app = express();

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { redirectToAuth } from "supertokens-auth-react/recipe/emailpassword";
+import { redirectToAuth } from "supertokens-auth-react/recipe/passwordless";
 
 export default function SessionExpiredPopup() {
     useEffect(() => {
