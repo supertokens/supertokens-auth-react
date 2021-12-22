@@ -74,6 +74,19 @@ jobs:
                           REACT_APP_API_PORT=10001 REACT_APP_API_URL=https://api-thirdpartyemailpassword.demo.supertokens.io REACT_APP_WEBSITE_PORT=10000 REACT_APP_WEBSITE_URL=https://thirdpartyemailpassword.demo.supertokens.io npm run build && \
                           docker rm demo-app-thirdpartyemailpassword -f || true && \
                           bash /home/ubuntu/supertokens-auth-react/examples/with-thirdpartyemailpassword/scripts/start_container.sh'
+            - run:
+                  name: updating passwordless-email
+                  command: |
+                      ssh ubuntu@ssh.supertokens.io '\
+                          cd supertokens-auth-react/examples/with-passwordless-email/ && \
+                          git reset --hard && \
+                          git pull && \
+                          (rm -f package-lock.json || true) && \
+                          (rm -rf node_modules || true) && \
+                          npm i && \
+                          REACT_APP_API_PORT=10001 REACT_APP_API_URL=https://api-passwordless-email.demo.supertokens.io REACT_APP_WEBSITE_PORT=10000 REACT_APP_WEBSITE_URL=https://passwordless-email.demo.supertokens.io npm run build && \
+                          docker rm demo-app-passwordless-email -f || true && \
+                          bash /home/ubuntu/supertokens-auth-react/examples/with-passwordless-email/scripts/start_container.sh'
             - slack/status
     update-docs:
         docker:
