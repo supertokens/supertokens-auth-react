@@ -70,11 +70,11 @@ if (getQueryParams("mode")) {
 
 const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
-if (getQueryParams("passwordlessContactInfoType")) {
-    window.localStorage.setItem("passwordlessContactInfoType", getQueryParams("passwordlessContactInfoType"));
+if (getQueryParams("passwordlessContactMethodType")) {
+    window.localStorage.setItem("passwordlessContactMethodType", getQueryParams("passwordlessContactMethodType"));
 }
 
-const passwordlessContactInfoType = window.localStorage.getItem("passwordlessContactInfoType") || "EMAIL";
+const passwordlessContactMethodType = window.localStorage.getItem("passwordlessContactMethodType") || "EMAIL";
 
 if (getQueryParams("authRecipe")) {
     window.localStorage.setItem("authRecipe", getQueryParams("authRecipe"));
@@ -576,7 +576,7 @@ function getPasswordlessConfigs({ disableDefaultImplementation }) {
             console.log(`ST_LOGS PASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
         },
         useShadowDom,
-        contactMethod: passwordlessContactInfoType,
+        contactMethod: passwordlessContactMethodType,
         resendCodeTimeGapInSeconds: 30,
         emailForm: {
             disableDefaultImplementation,
