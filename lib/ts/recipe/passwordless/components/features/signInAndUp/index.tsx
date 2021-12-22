@@ -190,7 +190,6 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
         // We could be using storage events for this, but we need to keep customization in mind.
         // Someone could be using something else other than localstorage.
         const checkSessionIntervalHandle = setInterval(async () => {
-            // TODO: check if we can call into the session recipe from here.
             const hasSession = await Session.doesSessionExist();
             if (hasSession) {
                 this.setState((os) => ({ ...os, successInAnotherTab: true }));
