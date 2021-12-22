@@ -171,7 +171,7 @@ export declare type NormalisedConfig = {
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
     } & PasswordlessNormalisedBaseConfig;
-    userInputCodeForm: PasswordlessNormalisedBaseConfig;
+    userInputCodeForm: NormalisedBaseConfig;
     linkClickedScreen: PasswordlessNormalisedBaseConfig;
     contactMethod: "PHONE" | "EMAIL";
     override: {
@@ -198,6 +198,13 @@ export declare type UserInput = {
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
     } & PasswordlessFeatureBaseConfig;
+    /**
+     * This configures the OTP entry form.
+     *
+     * Please note that this doesn't include the disableDefaultImplementation property,
+     * since it's not a separate screen. Disabling the default mobileForm/emailForm will
+     * disable this form as well.
+     */
     userInputCodeForm?: FeatureBaseConfig;
     linkClickedScreen?: PasswordlessFeatureBaseConfig;
     override?: {

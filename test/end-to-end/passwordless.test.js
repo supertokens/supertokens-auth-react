@@ -1081,7 +1081,9 @@ async function initBrowser(contactMethod, consoleLogs) {
     });
 
     await Promise.all([
-        page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactMethodType=${contactMethod}`),
+        page.goto(
+            `${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactMethodType=${contactMethod}`
+        ),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
