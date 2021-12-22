@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.17.6",
+    "version": "0.17.7",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "devDependencies": {
@@ -67,7 +67,7 @@
         "react": ">=16.8.0"
     },
     "scripts": {
-        "init": "./init.sh",
+        "init": "bash ./init.sh",
         "start": "npm-run-all --parallel front server watch",
         "front": "(cd ./examples/for-tests/ && BROWSER=none PORT=3031 npm run start)",
         "server": "cd test/server/ && START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
