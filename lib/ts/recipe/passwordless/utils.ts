@@ -22,7 +22,11 @@ import { defaultPhoneNumberValidator } from "./validators";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     if (!["EMAIL", "PHONE"].includes(config.contactMethod)) {
-        throw new Error('Please pass one of "PHONE" or "EMAIL" as the contactMethod');
+        throw new Error("Please pass one of 'PHONE' or 'EMAIL' as the contactMethod");
+    }
+
+    if (config.resendCodeTimeGapInSeconds !== undefined && config.resendCodeTimeGapInSeconds <= 0) {
+        throw new Error("Please pass a positive number as resendCodeTimeGapInSeconds");
     }
 
     const override: any = {
