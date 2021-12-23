@@ -21,6 +21,10 @@ import { RecipeInterface } from "./types";
 import { defaultPhoneNumberValidator } from "./validators";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
+    if (!["EMAIL", "PHONE"].includes(config.contactMethod)) {
+        throw new Error('Please pass one of "PHONE" or "EMAIL" as the contactMethod');
+    }
+
     const override: any = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
         components: {},
