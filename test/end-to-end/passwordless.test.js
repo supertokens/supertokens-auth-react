@@ -169,6 +169,43 @@ describe("SuperTokens Passwordless", function () {
                 ]);
             });
 
+            it("Submitting empty id", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]");
+
+                const error = await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]");
+
+                assert.strictEqual(
+                    await error.evaluate((e) => e.textContent),
+                    `${contactMethod === "EMAIL" ? "Email" : "Phone number"} is invalid`
+                );
+                await waitForSTElement(page, "[data-supertokens~=generalError]", true);
+            });
+
+            it("Submitting invalid id", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: "123" }]);
+                await submitForm(page);
+
+                const error = await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]");
+
+                assert.strictEqual(
+                    await error.evaluate((e) => e.textContent),
+                    `${contactMethod === "EMAIL" ? "Email" : "Phone number"} is invalid`
+                );
+                await waitForSTElement(page, "[data-supertokens~=generalError]", true);
+            });
+
             it("Submitting incorrect codes", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),

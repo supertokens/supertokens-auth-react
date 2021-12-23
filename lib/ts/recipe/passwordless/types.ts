@@ -55,6 +55,7 @@ export type RecipeInterface = {
               flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
           }
         | { status: "GENERAL_ERROR"; message: string }
+        | { status: "FIELD_ERROR"; formFields: { id: string; error: string }[] }
     >;
     resendCode: (
         input: { deviceId: string; preAuthSessionId: string } & {

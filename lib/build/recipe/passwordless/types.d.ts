@@ -47,6 +47,13 @@ export declare type RecipeInterface = {
               status: "GENERAL_ERROR";
               message: string;
           }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+          }
     >;
     resendCode: (
         input: {
