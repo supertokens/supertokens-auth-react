@@ -239,6 +239,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                   contactInfo: string;
                   contactMethod: "EMAIL" | "PHONE";
                   lastResend: number;
+                  redirectToPath?: string;
               } {
             const storedInfo = getLocalStorage(PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY);
             if (!storedInfo) {
@@ -254,6 +255,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     flowType: info.flowType,
                     preAuthSessionId: info.preAuthSessionId,
                     lastResend: info.lastResend,
+                    redirectToPath: info.redirectToPath,
                 };
             } catch (ex) {
                 return undefined;
@@ -265,6 +267,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             flowType: FlowType;
             contactInfo: string;
             contactMethod: "EMAIL" | "PHONE";
+            redirectToPath?: string;
         }): void {
             setLocalStorage(
                 PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY,

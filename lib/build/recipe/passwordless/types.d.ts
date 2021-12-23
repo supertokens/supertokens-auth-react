@@ -116,6 +116,7 @@ export declare type RecipeInterface = {
                     contactMethod: "EMAIL" | "PHONE";
                     flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
                     lastResend: number;
+                    redirectToPath?: string;
                 }
           >
         | {
@@ -125,6 +126,7 @@ export declare type RecipeInterface = {
               contactMethod: "EMAIL" | "PHONE";
               flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
               lastResend: number;
+              redirectToPath?: string;
           }
         | undefined;
     setLoginAttemptInfo: (input: {
@@ -134,6 +136,7 @@ export declare type RecipeInterface = {
         contactMethod: "EMAIL" | "PHONE";
         flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
         lastResend: number;
+        redirectToPath?: string;
     }) => Promise<void> | void;
     clearLoginAttemptInfo: () => Promise<void> | void;
 };

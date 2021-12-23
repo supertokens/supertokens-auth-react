@@ -99,6 +99,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                         lastResend: new Date().getTime(),
                         contactMethod: this.props.recipe.config.contactMethod,
                         contactInfo,
+                        redirectToPath: getRedirectToPathFromURL(),
                     };
                     await this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
                     this.setState((os) => ({

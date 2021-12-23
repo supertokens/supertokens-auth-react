@@ -70,9 +70,15 @@ class LinkClickedScreen extends PureComponent<PropType, unknown> {
                 });
             }
             if (response.status === "OK") {
+                const loginAttemptInfo = await this.props.recipe.recipeImpl.getLoginAttemptInfo();
                 await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+                const pathFromUrl = getRedirectToPathFromURL();
                 return this.props.recipe.redirect(
-                    { action: "SUCCESS", isNewUser: response.createdUser, redirectToPath: getRedirectToPathFromURL() },
+                    {
+                        action: "SUCCESS",
+                        isNewUser: response.createdUser,
+                        redirectToPath: pathFromUrl !== undefined ? pathFromUrl : loginAttemptInfo?.redirectToPath,
+                    },
                     this.props.history
                 );
             }
