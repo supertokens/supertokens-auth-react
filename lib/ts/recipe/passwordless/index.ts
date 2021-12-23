@@ -18,6 +18,7 @@ import { UserInput } from "./types";
 import Passwordless from "./recipe";
 import PasswordlessAuth from "./passwordlessAuth";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import SignInUpTheme from "./components/themes/signInUp";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -49,6 +50,12 @@ export default class Wrapper {
     }
 
     static PasswordlessAuth = PasswordlessAuth;
+
+    static SignInAndUp = (prop?: any) => Passwordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
+    static SignInAndUpTheme = SignInUpTheme;
+
+    static LinkClicked = (prop?: any) =>
+        Passwordless.getInstanceOrThrow().getFeatureComponent("linkClickedScreen", prop);
 }
 
 const init = Wrapper.init;
