@@ -100,6 +100,7 @@ export const UserInputCodeForm = withOverride(
                                 </div>
                             ),
                             optional: false,
+                            clearOnSubmit: true,
                             placeholder: "A1223B",
                             validate: userInputCodeValidate,
                         },
@@ -132,11 +133,7 @@ export const UserInputCodeForm = withOverride(
                                 formFields: [
                                     {
                                         id: "userInputCode",
-                                        error: `Invalid OTP. Attempts left: ${(
-                                            response.maximumCodeInputAttempts - response.failedCodeInputAttemptCount
-                                        )
-                                            .toString()
-                                            .padStart(2, "0")}`,
+                                        error: "Invalid OTP.",
                                     },
                                 ],
                             };
@@ -148,11 +145,7 @@ export const UserInputCodeForm = withOverride(
                                 formFields: [
                                     {
                                         id: "userInputCode",
-                                        error: `Expired OTP. Attempts left: ${(
-                                            response.maximumCodeInputAttempts - response.failedCodeInputAttemptCount
-                                        )
-                                            .toString()
-                                            .padStart(2, "0")}`,
+                                        error: "Expired OTP.",
                                     },
                                 ],
                             };
@@ -160,7 +153,7 @@ export const UserInputCodeForm = withOverride(
 
                         return {
                             status: "GENERAL_ERROR",
-                            message: "Something went wrong, please try again.",
+                            message: SOMETHING_WENT_WRONG_ERROR,
                         };
                     }}
                     validateOnBlur={false}

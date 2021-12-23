@@ -35,7 +35,7 @@ export const EmailForm = withOverride(
                         id: "email",
                         label: "Email",
                         optional: false,
-                        placeholder: "youremail@example.com",
+                        placeholder: "Email address",
                         validate: props.config.validateEmailAddress || defaultEmailValidator,
                     },
                 ]}

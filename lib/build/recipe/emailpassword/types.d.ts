@@ -141,6 +141,7 @@ export declare type FormFieldThemeProps = NormalisedFormFieldWithError & {
     labelComponent?: JSX.Element;
     inputComponent?: ForwardRefExoticComponent<InputProps & RefAttributes<InputRef>>;
     showIsRequired?: boolean;
+    clearOnSubmit?: boolean;
     autoComplete?: string;
 };
 export declare type FormFieldState = FormFieldThemeProps & {

@@ -225,14 +225,11 @@ describe("SuperTokens Passwordless", function () {
                         const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                         assert.deepStrictEqual(
                             await error.evaluate((e) => e.textContent),
-                            `You entered the wrong OTP too many times. Please try again.`
+                            `Login timed out or you entered the wrong OTP too many times. Please try again.`
                         );
                     } else {
                         const error = await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
-                        assert.deepStrictEqual(
-                            await error.evaluate((e) => e.textContent),
-                            `Invalid OTP. Attempts left: 0${i - 1}`
-                        );
+                        assert.deepStrictEqual(await error.evaluate((e) => e.textContent), `Invalid OTP.`);
                     }
                 }
 
@@ -290,14 +287,11 @@ describe("SuperTokens Passwordless", function () {
                         const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                         assert.deepStrictEqual(
                             await error.evaluate((e) => e.textContent),
-                            `You entered the wrong OTP too many times. Please try again.`
+                            `Login timed out or you entered the wrong OTP too many times. Please try again.`
                         );
                     } else {
                         const error = await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
-                        assert.deepStrictEqual(
-                            await error.evaluate((e) => e.textContent),
-                            `Expired OTP. Attempts left: 0${i - 1}`
-                        );
+                        assert.deepStrictEqual(await error.evaluate((e) => e.textContent), `Expired OTP.`);
                     }
                 }
 

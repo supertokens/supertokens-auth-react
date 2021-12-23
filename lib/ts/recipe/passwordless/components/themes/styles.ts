@@ -30,11 +30,24 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             justifyContent: "space-between",
             alignItems: "center",
         },
+        headerSubtitle: {
+            "& strong": {
+                maxWidth: "100%",
+                display: "inline-block",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+            },
+        },
         sendCodeText: {
             marginTop: "15px",
             marginBottom: "20px",
             "& strong": {
+                maxWidth: "100%",
+                display: "inline-block",
                 whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
             },
         },
         secondaryLinkWithLeftArrow: {
@@ -46,6 +59,8 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             lineHeight: "24px",
             "&:disabled": {
                 color: palette.colors.textPrimary,
+                cursor: "no-drop",
+                textDecoration: "none",
             },
             "&:hover": {
                 textDecoration: "underline",

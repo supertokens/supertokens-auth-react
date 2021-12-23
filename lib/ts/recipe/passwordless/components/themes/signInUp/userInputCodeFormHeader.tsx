@@ -32,7 +32,8 @@ export const UserInputCodeFormHeader = withOverride(
                 <div
                     data-supertokens="headerSubtitle secondaryText"
                     css={[styles.headerSubtitle, styles.secondaryText]}>
-                    An OTP was sent to you at <br />
+                    {loginAttemptInfo.flowType === "USER_INPUT_CODE" ? "An OTP " : "An OTP and magic link "} was sent to
+                    you at <br />
                     <strong>{loginAttemptInfo.contactInfo}</strong>
                 </div>
                 <div data-supertokens="divider" css={styles.divider}></div>
