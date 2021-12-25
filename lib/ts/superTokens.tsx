@@ -26,6 +26,7 @@ import { getSuperTokensRoutesForReactRouterDomV6 } from "./components/superToken
 import { BaseFeatureComponentMap } from "./types";
 import { SSR_ERROR } from "./constants";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
+import { RoutingComponent } from "./components/routingComponent";
 
 /*
  * Class.
@@ -93,7 +94,7 @@ export default class SuperTokens {
         return SuperTokens.getInstanceOrThrow().canHandleRoute();
     }
 
-    static getRoutingComponent(): JSX.Element | undefined {
+    static getRoutingComponent(): JSX.Element | null {
         return SuperTokens.getInstanceOrThrow().getRoutingComponent();
     }
 
@@ -138,16 +139,19 @@ export default class SuperTokens {
      * Instance Methods.
      */
     canHandleRoute = (): boolean => {
-        return this.getRoutingComponent() !== undefined;
+        /**
+         * TODO: Ideally we don't want users to use this function in their render
+         * function at all since this might be an expensive operation like reading from localstorage.
+         *
+         * So instead, we should provide users with a wrapper component which they need to put their app components into and we render those children in case we can't handle the route
+         */
+        return this.getMatchingComponentForRouteAndRecipeId(getCurrentNormalisedUrlPath()) !== undefined;
     };
 
-    getRoutingComponent = (): JSX.Element | undefined => {
-        const normalisedPath = getCurrentNormalisedUrlPath();
-        const FeatureComponentWithRecipeId = this.getMatchingComponentForRouteAndRecipeId(normalisedPath);
-        if (FeatureComponentWithRecipeId === undefined) {
-            return undefined;
-        }
-        return <FeatureComponentWithRecipeId.component />;
+    getRoutingComponent = (): JSX.Element | null => {
+        return (
+            <RoutingComponent path={getCurrentNormalisedUrlPath().getAsStringDangerous()} supertokensInstance={this} />
+        );
     };
 
     getPathsToFeatureComponentWithRecipeIdMap = (): BaseFeatureComponentMap => {
