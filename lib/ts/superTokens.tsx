@@ -139,12 +139,6 @@ export default class SuperTokens {
      * Instance Methods.
      */
     canHandleRoute = (): boolean => {
-        /**
-         * TODO: Ideally we don't want users to use this function in their render
-         * function at all since this might be an expensive operation like reading from localstorage.
-         *
-         * So instead, we should provide users with a wrapper component which they need to put their app components into and we render those children in case we can't handle the route
-         */
         return this.getMatchingComponentForRouteAndRecipeId(getCurrentNormalisedUrlPath()) !== undefined;
     };
 
