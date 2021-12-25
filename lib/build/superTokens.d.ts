@@ -14,10 +14,10 @@ export default class SuperTokens {
     static init(config: SuperTokensConfig): void;
     static getInstanceOrThrow(): SuperTokens;
     static canHandleRoute(): boolean;
-    static getRoutingComponent(): JSX.Element | undefined;
+    static getRoutingComponent(): JSX.Element | null;
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[];
     canHandleRoute: () => boolean;
-    getRoutingComponent: () => JSX.Element | undefined;
+    getRoutingComponent: () => JSX.Element | null;
     getPathsToFeatureComponentWithRecipeIdMap: () => Record<string, ComponentWithRecipeAndMatchingMethod[]>;
     getMatchingComponentForRouteAndRecipeId: (
         normalisedUrl: NormalisedURLPath

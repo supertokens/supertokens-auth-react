@@ -32,7 +32,7 @@ export default class SuperTokensAPIWrapper {
         return SuperTokens.canHandleRoute();
     }
 
-    static getRoutingComponent(): JSX.Element | undefined {
+    static getRoutingComponent(): JSX.Element | null {
         return SuperTokens.getRoutingComponent();
     }
 
