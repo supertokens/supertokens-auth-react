@@ -42,17 +42,18 @@ export default function ProviderButton({ children, logo, providerName }: Provide
      */
     const styles = useContext(StyleContext);
     const providerStyle = styles[`provider${providerName}`];
+
     return (
         <button css={[styles.providerButton, providerStyle]} data-supertokens="providerButton">
-            <div css={styles.providerButtonLeft} data-supertokens="providerButtonLeft">
-                {logo !== undefined && (
+            {logo !== undefined && (
+                <div css={styles.providerButtonLeft} data-supertokens="providerButtonLeft">
                     <div css={styles.providerButtonLogo} data-supertokens="providerButtonLogo">
                         <div css={styles.providerButtonLogoCenter} data-supertokens="providerButtonLogoCenter">
                             {logo}
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
             <div css={styles.providerButtonText} data-supertokens="providerButtonText">
                 {children}
             </div>
