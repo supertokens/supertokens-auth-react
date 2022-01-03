@@ -89,6 +89,8 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 
 1. `npm run start`
 
+Note: To test different recipes you need to update the value of `authRecipe` in local storage. For example `thirdpartyemailpassword` would result in that recipe being used. If there is no value for `authRecipe` set, the Email Password recipe is used by default
+
 ## Pull Request
 
 1. Before submitting a pull request make sure all tests have passed
