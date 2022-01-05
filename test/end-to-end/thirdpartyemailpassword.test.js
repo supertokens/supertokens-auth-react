@@ -31,7 +31,7 @@ import {
     getLogoutButton,
     signUp,
     toggleSignInSignUp,
-    loginWithGithub,
+    loginWithAuth0,
     getLoginWithRedirectToSignIn,
     getLoginWithRedirectToSignUp,
     getAuthPageHeaderText,
@@ -130,11 +130,11 @@ describe("SuperTokens Third Party Email Password", function () {
             return;
         }
 
-        it("Successful signin/up with github", async function () {
+        it("Successful signin/up with auth0", async function () {
             await assertProviders(page);
-            await clickOnProviderButton(page, "Github");
+            await clickOnProviderButton(page, "Auth0");
             await Promise.all([
-                loginWithGithub(page),
+                loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -185,10 +185,10 @@ describe("SuperTokens Third Party Email Password", function () {
 
             pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
-            // 2. Sign in with github with same address.
-            await clickOnProviderButton(page, "Github");
+            // 2. Sign in with auth0 with same address.
+            await clickOnProviderButton(page, "Auth0");
             await Promise.all([
-                loginWithGithub(page),
+                loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             pathname = await page.evaluate(() => window.location.pathname);
