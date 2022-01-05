@@ -29,6 +29,7 @@ import {
     generateState,
     clickOnProviderButton,
     loginWithGithub,
+    loginWithAuth0,
     loginWithFacebook,
     loginWithGoogle,
 } from "../helpers";
@@ -89,6 +90,43 @@ describe("SuperTokens Third Party", function () {
         if (process.env.SKIP_OAUTH === "true") {
             return;
         }
+
+        it("Successful signin with Auth0", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+            await clickOnProviderButton(page, "Auth0");
+            await Promise.all([
+                loginWithAuth0(page),
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+            ]);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE REDIRECT_TO_THIRD_PARTY_LOGIN",
+                "ST_LOGS THIRD_PARTY OVERRIDE SET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_AUTHORISATION_URL",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS THIRD_PARTY_SIGN_IN_UP",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+            ]);
+        });
 
         it("Successful signin with github", async function () {
             await Promise.all([

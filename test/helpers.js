@@ -485,6 +485,15 @@ export async function loginWithFacebook(page) {
     await Promise.all([page.keyboard.press("Enter"), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 }
 
+export async function loginWithAuth0(page) {
+    await page.focus("input[type=email]");
+    await page.keyboard.type(process.env.AUTH0_EMAIL);
+    await page.focus("input[type=password]");
+    await page.keyboard.type(process.env.AUTH0_PASSWORD);
+    await Promise.all([page.keyboard.press("Enter"), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+    await new Promise((res) => setTimeout(res, 1500));
+}
+
 export async function loginWithGithub(page) {
     await page.focus("input[type=text]");
     await page.keyboard.type(process.env.GITHUB_EMAIL);
