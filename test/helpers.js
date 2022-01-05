@@ -441,7 +441,7 @@ export async function assertProviders(page) {
         "Continue with Google",
         "Continue with Facebook",
         "Continue with Apple",
-        "Continue with Custom",
+        "Continue with Auth0",
     ]);
 }
 
