@@ -586,8 +586,8 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
                 ThirdParty.Facebook.init(),
                 ThirdParty.Apple.init(),
                 {
-                    id: "custom",
-                    name: "Custom",
+                    id: "auth0",
+                    name: "Auth0",
                 },
             ],
         },
@@ -697,8 +697,8 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
                 ThirdPartyEmailPassword.Facebook.init(),
                 ThirdPartyEmailPassword.Apple.init(),
                 {
-                    id: "custom",
-                    name: "Custom",
+                    id: "auth0",
+                    name: "Auth0",
                 },
             ],
         },
