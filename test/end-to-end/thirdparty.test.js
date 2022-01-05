@@ -146,7 +146,7 @@ describe("SuperTokens Third Party", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Github");
+            await clickOnProviderButton(page, "Auth0");
             await Promise.all([
                 loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
