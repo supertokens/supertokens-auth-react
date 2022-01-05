@@ -38,7 +38,7 @@ export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     return {
         ...normaliseAuthRecipe(config),
         resendCodeTimeGapInSeconds:
-            config.resendCodeTimeGapInSeconds === undefined ? 900 : config.resendCodeTimeGapInSeconds,
+            config.resendCodeTimeGapInSeconds === undefined ? 60 : config.resendCodeTimeGapInSeconds,
 
         validateEmailAddress:
             config.validateEmailAddress === undefined ? defaultEmailValidator : config.validateEmailAddress,
