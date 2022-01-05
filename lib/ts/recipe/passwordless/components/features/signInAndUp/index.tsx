@@ -23,7 +23,7 @@ import SignInUpTheme from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
-import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
 import { getStyles } from "../../../components/themes/styles";
 import { RecipeInterface, LoginAttemptInfo, PasswordlessUser } from "../../../types";
@@ -176,6 +176,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
 
             clearLoginAttemptInfo: async () => {
                 await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+                clearErrorQueryParam();
                 this.setState((os) => ({
                     ...os,
                     loginAttemptInfo: undefined,

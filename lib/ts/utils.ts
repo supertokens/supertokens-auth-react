@@ -34,6 +34,14 @@ export function getRecipeIdFromSearch(search: string): string | null {
     return urlParams.get(RECIPE_ID_QUERY_PARAM);
 }
 
+export function clearErrorQueryParam(): void {
+    const myWindow = getWindowOrThrow();
+    const newURL = new URL(myWindow.location.href);
+    newURL.searchParams.delete("error");
+    newURL.searchParams.delete("message");
+    myWindow.history.replaceState(myWindow.history.state, undefined, newURL);
+}
+
 export function getQueryParams(param: string): string | null {
     const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
     return urlParams.get(param);
