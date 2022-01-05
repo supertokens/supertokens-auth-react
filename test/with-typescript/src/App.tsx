@@ -24,6 +24,7 @@ import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import DarkTheme from "./Themes/Dark";
 import { CSSObject } from "@emotion/react";
+import Passwordless from "../../../recipe/passwordless";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -486,3 +487,28 @@ function Auth(props: any) {
 
     return <EmailPassword.EmailPasswordAuth>{props.children}</EmailPassword.EmailPasswordAuth>;
 }
+
+Passwordless.init({
+    contactMethod: "EMAIL",
+    preAPIHook: async (context) => {
+        let url = context.url;
+
+        // is the fetch config object that contains the header, body etc..
+        let requestInit = context.requestInit;
+
+        let action = context.action;
+        if (action === "EMAIL_EXISTS") {
+        } else if (action === "PASSWORDLESS_CONSUME_CODE") {
+        } else if (action === "PASSWORDLESS_CREATE_CODE") {
+        } else if (action === "PASSWORDLESS_RESEND_CODE") {
+        } else if (action === "PHONE_NUMBER_EXISTS") {
+        }
+
+        // events such as sign out are in the
+        // session recipe pre API hook (See the info box below)
+        return {
+            requestInit,
+            url,
+        };
+    },
+});
