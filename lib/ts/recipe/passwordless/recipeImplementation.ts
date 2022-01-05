@@ -16,13 +16,6 @@ type CreateCodeApiResponse =
     | {
           status: "GENERAL_ERROR";
           message: string;
-      }
-    | {
-          status: "FIELD_ERROR";
-          formFields: {
-              id: string;
-              error: string;
-          }[];
       };
 
 type ResendCodeApiResponse = {
@@ -67,8 +60,8 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                 const validationRes = await input.config.validateEmailAddress(input.email);
                 if (validationRes !== undefined) {
                     return {
-                        status: "FIELD_ERROR",
-                        formFields: [{ id: "email", error: validationRes }],
+                        status: "GENERAL_ERROR",
+                        message: validationRes,
                     };
                 }
                 bodyObj = {
@@ -79,8 +72,8 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                 const validationRes = await input.config.validatePhoneNumber(input.phoneNumber);
                 if (validationRes !== undefined) {
                     return {
-                        status: "FIELD_ERROR",
-                        formFields: [{ id: "phoneNumber", error: validationRes }],
+                        status: "GENERAL_ERROR",
+                        message: validationRes,
                     };
                 }
                 bodyObj = {

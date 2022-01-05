@@ -177,15 +177,12 @@ describe("SuperTokens Passwordless", function () {
 
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]");
-
-                const error = await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]");
-
+                const error = await waitForSTElement(page, "[data-supertokens~=generalError]");
                 assert.strictEqual(
                     await error.evaluate((e) => e.textContent),
                     `${contactMethod === "EMAIL" ? "Email" : "Phone number"} is invalid`
                 );
-                await waitForSTElement(page, "[data-supertokens~=generalError]", true);
+                await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]", true);
             });
 
             it("Submitting invalid id", async function () {
@@ -197,13 +194,13 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: "123" }]);
                 await submitForm(page);
 
-                const error = await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]");
+                const error = await waitForSTElement(page, "[data-supertokens~=generalError]");
 
                 assert.strictEqual(
                     await error.evaluate((e) => e.textContent),
                     `${contactMethod === "EMAIL" ? "Email" : "Phone number"} is invalid`
                 );
-                await waitForSTElement(page, "[data-supertokens~=generalError]", true);
+                await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]", true);
             });
 
             it("Submitting incorrect codes", async function () {
@@ -225,10 +222,10 @@ describe("SuperTokens Passwordless", function () {
                         const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                         assert.deepStrictEqual(
                             await error.evaluate((e) => e.textContent),
-                            `Login timed out or you entered the wrong OTP too many times. Please try again.`
+                            `Login unsuccessful. Please try again.`
                         );
                     } else {
-                        const error = await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
+                        const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                         assert.deepStrictEqual(await error.evaluate((e) => e.textContent), `Invalid OTP.`);
                     }
                 }
@@ -287,10 +284,10 @@ describe("SuperTokens Passwordless", function () {
                         const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                         assert.deepStrictEqual(
                             await error.evaluate((e) => e.textContent),
-                            `Login timed out or you entered the wrong OTP too many times. Please try again.`
+                            `Login unsuccessful. Please try again.`
                         );
                     } else {
-                        const error = await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
+                        const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                         assert.deepStrictEqual(await error.evaluate((e) => e.textContent), `Expired OTP.`);
                     }
                 }
@@ -887,7 +884,7 @@ describe("SuperTokens Passwordless", function () {
                     if (i === 1) {
                         await waitForSTElement(page, "[data-supertokens~='generalError']");
                     } else {
-                        await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
+                        await waitForSTElement(page, "[data-supertokens~='generalError']");
                     }
                 }
 

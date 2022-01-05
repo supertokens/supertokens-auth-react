@@ -123,31 +123,21 @@ export const UserInputCodeForm = withOverride(
                             config: props.config,
                         });
 
-                        if (response.status === "OK") {
+                        if (response.status === "OK" || response.status === "GENERAL_ERROR") {
                             return response;
                         }
 
                         if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
                             return {
-                                status: "FIELD_ERROR",
-                                formFields: [
-                                    {
-                                        id: "userInputCode",
-                                        error: "Invalid OTP.",
-                                    },
-                                ],
+                                status: "GENERAL_ERROR",
+                                message: "Invalid OTP.",
                             };
                         }
 
                         if (response.status === "EXPIRED_USER_INPUT_CODE_ERROR") {
                             return {
-                                status: "FIELD_ERROR",
-                                formFields: [
-                                    {
-                                        id: "userInputCode",
-                                        error: "Expired OTP.",
-                                    },
-                                ],
+                                status: "GENERAL_ERROR",
+                                message: "Expired OTP.",
                             };
                         }
 

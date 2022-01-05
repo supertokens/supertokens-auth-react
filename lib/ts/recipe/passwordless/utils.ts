@@ -15,10 +15,9 @@
 
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
-import { defaultEmailValidator } from "../emailpassword/validators";
 import { Config, NormalisedConfig } from "./types";
 import { RecipeInterface } from "./types";
-import { defaultPhoneNumberValidator } from "./validators";
+import { defaultPhoneNumberValidator, defaultEmailValidator } from "./validators";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     if (!["EMAIL", "PHONE"].includes(config.contactMethod)) {

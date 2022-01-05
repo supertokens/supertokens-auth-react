@@ -19,6 +19,7 @@ import { SignInUpMobileFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
+import { defaultValidate } from "../../../../emailpassword/validators";
 
 export const MobileForm = withOverride(
     "PasswordlessMobileForm",
@@ -39,7 +40,7 @@ export const MobileForm = withOverride(
                         }),
                         optional: false,
                         placeholder: "+1 (389) 848-293-234",
-                        validate: props.config.validatePhoneNumber,
+                        validate: defaultValidate,
                     },
                 ]}
                 buttonLabel={"CONTINUE"}
@@ -52,6 +53,13 @@ export const MobileForm = withOverride(
                             message: "Please set your phone number",
                         };
                     }
+                    const validationRes = await props.config.validatePhoneNumber(phoneNumber);
+                    if (validationRes !== undefined) {
+                        return {
+                            status: "GENERAL_ERROR",
+                            message: validationRes,
+                        };
+                    }
                     const response = await props.recipeImplementation.createCode({
                         phoneNumber,
                         config: props.config,
@@ -59,7 +67,7 @@ export const MobileForm = withOverride(
 
                     return response;
                 }}
-                validateOnBlur={true}
+                validateOnBlur={false}
                 showLabels={true}
                 header={props.header}
                 footer={props.footer}
