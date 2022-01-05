@@ -71,7 +71,16 @@ export declare type PreAPIHookContext =
           requestInit: RequestInit;
           url: string;
       };
-export declare type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
+export declare type OnHandleEventContext =
+    | AuthRecipeModuleOnHandleEventContext
+    | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: {
+              id: string;
+              email: string;
+          };
+      };
 export declare type SignInAndUpThemeProps = {
     providers: {
         id: string;

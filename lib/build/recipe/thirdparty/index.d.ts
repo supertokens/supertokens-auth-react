@@ -13,7 +13,7 @@ export default class Wrapper {
     ): import("../../types").CreateRecipeFunction<
         import("../authRecipeWithEmailVerification/types").GetRedirectionURLContext,
         PreAPIHookContext,
-        import("../authRecipeWithEmailVerification/types").OnHandleEventContext,
+        OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
     static signOut(): Promise<void>;

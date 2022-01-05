@@ -360,6 +360,11 @@ export type OnHandleEventContext =
            * On Handle Event actions
            */
           action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+      }
+    | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: { id: string; email: string };
       };
 
 export type ResetPasswordUsingTokenThemeProps = {

@@ -11,7 +11,7 @@ export default class Wrapper {
     ): import("../../types").CreateRecipeFunction<
         import("../emailpassword").GetRedirectionURLContext,
         PreAPIHookContext,
-        import("../emailpassword").OnHandleEventContext,
+        OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
     static signOut(): Promise<void>;

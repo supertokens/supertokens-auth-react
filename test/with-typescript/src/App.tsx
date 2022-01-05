@@ -511,4 +511,19 @@ Passwordless.init({
             url,
         };
     },
+    onHandleEvent: (context) => {
+        if (context.action === "PASSWORDLESS_CODE_SENT") {
+        } else if (context.action === "PASSWORDLESS_RESTART_FLOW") {
+        } else if (context.action === "SESSION_ALREADY_EXISTS") {
+            // called when a user visits the login / sign up page with a valid session
+            // in this case, they are usually redirected to the main app
+        } else if (context.action === "SUCCESS") {
+            let user = context.user;
+            if (context.isNewUser) {
+                // sign up success
+            } else {
+                // sign in success
+            }
+        }
+    },
 });
