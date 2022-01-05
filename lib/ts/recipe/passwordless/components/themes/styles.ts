@@ -57,17 +57,14 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             width: "auto",
             marginTop: 0,
             lineHeight: "24px",
-            "&:disabled": {
-                color: palette.colors.textPrimary,
-                cursor: "no-drop",
-                textDecoration: "none",
-            },
             "&:hover": {
                 textDecoration: "underline",
             },
-        },
-        resendSuccess: {
-            display: "block",
+            "&:disabled": {
+                color: palette.colors.textPrimary,
+                cursor: "default",
+                textDecoration: "none",
+            },
         },
         phoneInputLibRoot: {
             display: "flex",
@@ -118,7 +115,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             boxShadow: "none",
         },
         phoneInputCountryDropdown: {
-            width: "320px",
+            width: "min(72.2vw, 320px)",
             borderRadius: 6,
             marginLeft: "-15px", // This is to counteract the padding of the inputWrapper class
             boxShadow: "0px 0px 3px 0px rgba(0, 0, 0, 0.16)",

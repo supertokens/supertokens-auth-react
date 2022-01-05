@@ -77,9 +77,7 @@ export const UserInputCodeForm = withOverride(
             <React.Fragment>
                 {props.header}
                 {clearResendNotifTimeout !== undefined && (
-                    <div
-                        data-supertokens="generalSuccess resendSuccess"
-                        css={[styles.generalSuccess, styles.resendSuccess]}>
+                    <div data-supertokens="generalSuccess" css={[styles.generalSuccess]}>
                         {resendTarget} resent
                     </div>
                 )}
