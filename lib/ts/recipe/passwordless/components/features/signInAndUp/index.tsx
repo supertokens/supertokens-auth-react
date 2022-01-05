@@ -111,7 +111,6 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                     this.setState((os) => ({
                         ...os,
                         error: res.message,
-                        loginAttemptInfo: undefined,
                     }));
                 }
                 return res;
@@ -145,7 +144,6 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                     this.setState((os) => ({
                         ...os,
                         error: res.message,
-                        loginAttemptInfo: undefined,
                     }));
                 }
                 return res;
@@ -159,12 +157,6 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                     this.setState((os) => ({
                         ...os,
                         error: SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR,
-                        loginAttemptInfo: undefined,
-                    }));
-                } else if (res.status === "GENERAL_ERROR") {
-                    this.setState((os) => ({
-                        ...os,
-                        error: res.message,
                         loginAttemptInfo: undefined,
                     }));
                 } else if (res.status === "OK") {

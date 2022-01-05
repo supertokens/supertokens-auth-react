@@ -321,6 +321,131 @@ describe("SuperTokens Passwordless", function () {
                 await waitForSTElement(page, "input[name=userInputCode]");
                 await waitForSTElement(page, "[data-supertokens~='generalError']", true);
             });
+
+            it("create code general error", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.method() === "POST" && request.url().endsWith("signinup/code")) {
+                        request.respond({
+                            status: 200,
+                            contentType: "application/json",
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "GENERAL_ERROR",
+                                message: "Test Message!!!",
+                            }),
+                        });
+                    } else {
+                        request.continue();
+                    }
+                };
+                page.on("request", requestHandler);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+                const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            });
+
+            it("resend code general error", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.method() === "POST" && request.url().endsWith("signinup/code/resend")) {
+                        request.respond({
+                            status: 200,
+                            contentType: "application/json",
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "GENERAL_ERROR",
+                                message: "Test Message!!!",
+                            }),
+                        });
+                    } else {
+                        request.continue();
+                    }
+                };
+                page.on("request", requestHandler);
+
+                const resendBtn = await waitForSTElement(page, "[data-supertokens~=resendCodeBtn]:not(:disabled)");
+                await resendBtn.click();
+
+                const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                // We also check that we remained on the OTP screen
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            });
+
+            it("consume code general error", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.method() === "POST" && request.url().endsWith("signinup/code/consume")) {
+                        request.respond({
+                            status: 200,
+                            contentType: "application/json",
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "GENERAL_ERROR",
+                                message: "Test Message!!!",
+                            }),
+                        });
+                    } else {
+                        request.continue();
+                    }
+                };
+                page.on("request", requestHandler);
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getDevice(loginAttemptInfo);
+                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                await submitForm(page);
+
+                const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                // We also check that we remained on the OTP screen
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            });
         });
 
         describe(`${contactMethod} + Link`, function () {
@@ -469,6 +594,133 @@ describe("SuperTokens Passwordless", function () {
                     "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
                     "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
                 ]);
+            });
+
+            it("create code general error", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.method() === "POST" && request.url().endsWith("signinup/code")) {
+                        request.respond({
+                            status: 200,
+                            contentType: "application/json",
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "GENERAL_ERROR",
+                                message: "Test Message!!!",
+                            }),
+                        });
+                    } else {
+                        request.continue();
+                    }
+                };
+                page.on("request", requestHandler);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+                const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            });
+
+            it("resend code general error", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.method() === "POST" && request.url().endsWith("signinup/code/resend")) {
+                        request.respond({
+                            status: 200,
+                            contentType: "application/json",
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "GENERAL_ERROR",
+                                message: "Test Message!!!",
+                            }),
+                        });
+                    } else {
+                        request.continue();
+                    }
+                };
+                page.on("request", requestHandler);
+
+                const resendBtn = await waitForSTElement(page, "[data-supertokens~=resendCodeBtn]:not(:disabled)");
+                await resendBtn.click();
+
+                const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                // We also check that we remained on the link sent screen
+                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            });
+
+            it("consume code general error", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.method() === "POST" && request.url().endsWith("signinup/code/consume")) {
+                        request.respond({
+                            status: 200,
+                            contentType: "application/json",
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "GENERAL_ERROR",
+                                message: "Test Message!!!",
+                            }),
+                        });
+                    } else {
+                        request.continue();
+                    }
+                };
+                page.on("request", requestHandler);
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getDevice(loginAttemptInfo);
+                await page.goto(device.codes[0].urlWithLinkCode);
+
+                // We have been redirected to linkSent
+                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/auth");
+
+                const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
             });
 
             it("No linkCode", async function () {
@@ -1013,6 +1265,41 @@ describe("SuperTokens Passwordless", function () {
                 await page.setRequestInterception(false);
             });
 
+            it("create code general error", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.method() === "POST" && request.url().endsWith("signinup/code")) {
+                        request.respond({
+                            status: 200,
+                            contentType: "application/json",
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "GENERAL_ERROR",
+                                message: "Test Message!!!",
+                            }),
+                        });
+                    } else {
+                        request.continue();
+                    }
+                };
+                page.on("request", requestHandler);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+                const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            });
+
             it("consume code network error", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here`),
@@ -1044,6 +1331,53 @@ describe("SuperTokens Passwordless", function () {
                 await page.setRequestInterception(false);
             });
 
+            it("consume code general error", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.method() === "POST" && request.url().endsWith("signinup/code/consume")) {
+                        request.respond({
+                            status: 200,
+                            contentType: "application/json",
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "GENERAL_ERROR",
+                                message: "Test Message!!!",
+                            }),
+                        });
+                    } else {
+                        request.continue();
+                    }
+                };
+                page.on("request", requestHandler);
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getDevice(loginAttemptInfo);
+                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                await submitForm(page);
+
+                const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                // We also check that we remained on the OTP screen
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            });
+
             it("resend code network error", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here`),
@@ -1067,6 +1401,49 @@ describe("SuperTokens Passwordless", function () {
                 const resendBtn = await waitForSTElement(page, "[data-supertokens~=resendCodeBtn]:not(:disabled)");
                 await resendBtn.click();
                 await waitForSTElement(page, "[data-supertokens~='generalError']");
+                page.off("request", requestHandler);
+                await page.setRequestInterception(false);
+            });
+
+            it("resend code general error", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+
+                await page.setRequestInterception(true);
+                const requestHandler = (request) => {
+                    if (request.method() === "POST" && request.url().endsWith("signinup/code/resend")) {
+                        request.respond({
+                            status: 200,
+                            contentType: "application/json",
+                            headers: {
+                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                                "access-control-allow-credentials": "true",
+                            },
+                            body: JSON.stringify({
+                                status: "GENERAL_ERROR",
+                                message: "Test Message!!!",
+                            }),
+                        });
+                    } else {
+                        request.continue();
+                    }
+                };
+                page.on("request", requestHandler);
+
+                const resendBtn = await waitForSTElement(page, "[data-supertokens~=resendCodeBtn]:not(:disabled)");
+                await resendBtn.click();
+
+                const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                // We also check that we remained on the OTP screen
+                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
             });
