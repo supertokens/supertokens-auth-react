@@ -26,7 +26,7 @@ import { defaultPalette } from "../../../../../styles/styles";
 import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
 import { getStyles } from "../../../components/themes/styles";
-import { RecipeInterface, LoginAttemptInfo } from "../../../types";
+import { RecipeInterface, LoginAttemptInfo, PasswordlessUser } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { FeatureBaseProps } from "../../../../../types";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
@@ -213,12 +213,15 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
         const conf = isEmail ? this.props.recipe.config.emailForm : this.props.recipe.config.mobileForm;
 
         const props = {
-            onSuccess: () => {
+            onSuccess: (result: { createdUser: boolean; user: PasswordlessUser }) => {
+                const pathFromUrl = getRedirectToPathFromURL();
+
                 return this.props.recipe.redirect(
                     {
                         action: "SUCCESS",
-                        isNewUser: false,
-                        redirectToPath: getRedirectToPathFromURL(),
+                        isNewUser: result.createdUser,
+                        redirectToPath:
+                            pathFromUrl !== undefined ? pathFromUrl : this.state.loginAttemptInfo?.redirectToPath,
                     },
                     this.props.history
                 );

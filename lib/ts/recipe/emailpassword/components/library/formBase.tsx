@@ -204,7 +204,7 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                     }),
                     () => {
                         if (this.props.onSuccess !== undefined) {
-                            this.props.onSuccess();
+                            this.props.onSuccess(result);
                         }
                     }
                 );

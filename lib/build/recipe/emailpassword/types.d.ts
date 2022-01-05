@@ -228,7 +228,11 @@ export declare type FormBaseProps<T> = {
     buttonLabel: string;
     error?: string;
     validateOnBlur?: boolean;
-    onSuccess?: () => void;
+    onSuccess?: (
+        result: T & {
+            status: "OK";
+        }
+    ) => void;
     callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse<T>>;
 };
 export declare type FormBaseAPIResponse<T> =

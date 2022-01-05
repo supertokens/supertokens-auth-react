@@ -274,7 +274,7 @@ export type SignInUpProps = {
     error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    onSuccess?: () => void;
+    onSuccess?: (result: { createdUser: boolean; user: PasswordlessUser }) => void;
 };
 export type LoginAttemptInfo = {
     deviceId: string;
@@ -282,6 +282,7 @@ export type LoginAttemptInfo = {
     contactInfo: string;
     contactMethod: "EMAIL" | "PHONE";
     lastResend: number;
+    redirectToPath?: string;
     flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
 };
 
@@ -304,7 +305,7 @@ export type SignInUpUserInputCodeFormProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     loginAttemptInfo: LoginAttemptInfo;
-    onSuccess?: () => void;
+    onSuccess?: (result: { createdUser: boolean; user: PasswordlessUser }) => void;
 };
 
 export type LinkClickedScreenProps = {

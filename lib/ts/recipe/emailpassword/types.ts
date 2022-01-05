@@ -434,7 +434,7 @@ export type FormBaseProps<T> = {
 
     validateOnBlur?: boolean;
 
-    onSuccess?: () => void;
+    onSuccess?: (result: T & { status: "OK" }) => void;
 
     callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse<T>>;
 };
