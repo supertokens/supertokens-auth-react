@@ -11,5 +11,5 @@ process.env.FACEBOOK_EMAIL = "";
 process.env.FACEBOOK_PASSWORD = "";
 
 // Auth0
-process.env.FACEBOOK_EMAIL = "";
-process.env.FACEBOOK_PASSWORD = "";
+process.env.AUTH0_EMAIL = "";
+process.env.AUTH0_PASSWORD = "";
