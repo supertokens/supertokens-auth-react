@@ -125,11 +125,6 @@ describe("SuperTokens Third Party Email Password", function () {
             assert.deepStrictEqual(pathname, "/dashboard");
         });
 
-        // In case OAuth configs are not set locally.
-        if (process.env.SKIP_OAUTH === "true") {
-            return;
-        }
-
         it("Successful signin/up with auth0", async function () {
             await assertProviders(page);
             await clickOnProviderButton(page, "Auth0");

@@ -83,11 +83,6 @@ describe("SuperTokens Third Party", function () {
     });
 
     describe("Third Party test", function () {
-        // In case OAuth configs are not set locally.
-        if (process.env.SKIP_OAUTH === "true") {
-            return;
-        }
-
         it("Successful signin with Auth0", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
