@@ -148,7 +148,7 @@ module.exports.customAuth0Provider = () => {
             return {
                 accessTokenAPI: {
                     // this contains info about the token endpoint which exchanges the auth code with the access token and profile info.
-                    url: `${process.env.AUTH0_DOMAIN}/oauth/token`,
+                    url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
                     params: {
                         // example post params
                         client_id: process.env.AUTH0_CLIENT_ID,
@@ -160,7 +160,7 @@ module.exports.customAuth0Provider = () => {
                 },
                 authorisationRedirect: {
                     // this contains info about forming the authorisation redirect URL without the state params and without the redirect_uri param
-                    url: `${process.env.AUTH0_DOMAIN}/authorize`,
+                    url: `https://${process.env.AUTH0_DOMAIN}/authorize`,
                     params: {
                         client_id: process.env.AUTH0_CLIENT_ID,
                         scope: "openid profile",
@@ -175,7 +175,7 @@ module.exports.customAuth0Provider = () => {
                     let authHeader = `Bearer ${accessToken}`;
                     let response = await axios({
                         method: "get",
-                        url: `${process.env.AUTH0_DOMAIN}/userinfo`,
+                        url: `https://${process.env.AUTH0_DOMAIN}/userinfo`,
                         headers: {
                             Authorization: authHeader,
                         },
