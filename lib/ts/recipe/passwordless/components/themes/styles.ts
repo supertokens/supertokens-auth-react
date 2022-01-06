@@ -14,7 +14,7 @@
  */
 
 /** @jsx jsx */
-import { getDefaultStyles, getMergedStyles } from "../../../../styles/styles";
+import { getDefaultStyles, getMergedStyles, swingIn } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";
 import { getStyles as getEmailPasswordStyles } from "../../../emailpassword/components/themes/styles/styles";
 
@@ -24,6 +24,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     const passwordlessStyles: NormalisedDefaultStyles = {
         generalSuccess: {
             marginBottom: "20px",
+            animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) alternate 2 both`,
         },
         codeInputLabelWrapper: {
             display: "flex",
