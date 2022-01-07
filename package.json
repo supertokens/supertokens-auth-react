@@ -52,7 +52,6 @@
     },
     "dependencies": {
         "@emotion/react": "^11.4.1",
-        "@emotion/server": "^11.1.0",
         "chroma-js": "^2.1.2",
         "prop-types": "*",
         "react-shadow": "^19.0.2",
