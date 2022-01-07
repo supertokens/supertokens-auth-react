@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Removes @emotion/cache from dependencies since `@emotion/react` already depends on it.
 
+### Fixes
+
+-   Rendering of UI in firefox with nextjs: https://github.com/supertokens/supertokens-auth-react/issues/354
+
 ## [0.17.8] - 2021-12-27
 
 ###
