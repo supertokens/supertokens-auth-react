@@ -44,7 +44,7 @@ cd ../project/test/server/
 npm i -d
 npm i git+https://github.com:supertokens/supertokens-node.git#$2
 cd ../../
-SKIP_OAUTH=true npm run test
+npm run test
 if [[ $? -ne 0 ]]
 then
     echo "test failed Main script... exiting!"

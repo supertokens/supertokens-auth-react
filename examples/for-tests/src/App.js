@@ -589,6 +589,10 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
                     id: "custom",
                     name: "Custom",
                 },
+                {
+                    id: "auth0",
+                    name: "Auth0",
+                },
             ],
         },
 
@@ -699,6 +703,10 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
                 {
                     id: "custom",
                     name: "Custom",
+                },
+                {
+                    id: "auth0",
+                    name: "Auth0",
                 },
             ],
         },
