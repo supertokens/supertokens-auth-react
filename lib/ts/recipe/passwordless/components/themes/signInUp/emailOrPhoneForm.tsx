@@ -30,17 +30,17 @@ export const EmailOrPhoneForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
-        const [phoneNumberVal, setPhoneNumberVal] = useState<string | undefined>();
+        const [phoneNumberInitialValue, setPhoneNumberInitialValue] = useState<string | undefined>();
         return (
             <FormBase
                 formFields={[
                     {
                         id: "emailOrPhone",
                         label: "Your Email address or Phone number",
-                        inputComponent: phoneNumberVal
+                        inputComponent: phoneNumberInitialValue
                             ? phoneNumberInputWithInjectedProps({
-                                  defaultCountry: props.config.signInUpFeature.defaultCountry || "HU",
-                                  initialValue: phoneNumberVal,
+                                  defaultCountry: props.config.signInUpFeature.defaultCountry,
+                                  initialValue: phoneNumberInitialValue,
                               })
                             : undefined,
                         optional: false,
@@ -87,8 +87,8 @@ export const EmailOrPhoneForm = withOverride(
                                 props.config.signInUpFeature.defaultCountry
                             );
 
-                        if (intPhoneNumber) {
-                            setPhoneNumberVal(intPhoneNumber);
+                        if (intPhoneNumber && phoneNumberInitialValue === undefined) {
+                            setPhoneNumberInitialValue(intPhoneNumber);
                             return {
                                 status: "GENERAL_ERROR",
                                 message: "Phone number must include the country code.",
