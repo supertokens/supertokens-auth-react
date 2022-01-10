@@ -91,7 +91,9 @@ export const UserInputCodeForm = withOverride(
                                     <Label value={"OTP"} data-supertokens="codeInputLabel" />
                                     <ResendButton
                                         loginAttemptInfo={props.loginAttemptInfo}
-                                        resendCodeTimeGapInSeconds={props.config.resendCodeTimeGapInSeconds}
+                                        resendCodeTimeGapInSeconds={
+                                            props.config.signInUpFeature.resendCodeTimeGapInSeconds
+                                        }
                                         target={resendTarget}
                                         onClick={resend}
                                     />

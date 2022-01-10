@@ -69,7 +69,7 @@ describe("Passwordless", function () {
     it("Initializing Passwordless with wrong resendCodeTimeGapInSeconds throws", async function () {
         await assert.throws(
             () =>
-                Passwordless.init({ contactMethod: "PHONE", resendCodeTimeGapInSeconds: 0 })(
+                Passwordless.init({ contactMethod: "PHONE", signInUpFeature: { resendCodeTimeGapInSeconds: 0 } })(
                     SuperTokens.getInstanceOrThrow().appInfo
                 ),
             new Error(`Please pass a positive number as resendCodeTimeGapInSeconds`)
@@ -77,16 +77,16 @@ describe("Passwordless", function () {
     });
 
     it("Initializing Passwordless with resendCodeTimeGap", async function () {
-        Passwordless.init({ contactMethod: "PHONE", resendCodeTimeGapInSeconds: 5 })(
+        Passwordless.init({ contactMethod: "PHONE", signInUpFeature: { resendCodeTimeGapInSeconds: 5 } })(
             SuperTokens.getInstanceOrThrow().appInfo
         );
-        assert.strictEqual(Passwordless.getInstanceOrThrow().config.resendCodeTimeGapInSeconds, 5);
+        assert.strictEqual(Passwordless.getInstanceOrThrow().config.signInUpFeature.resendCodeTimeGapInSeconds, 5);
     });
 
     it("Initializing Passwordless with TOS", async function () {
         Passwordless.init({
             contactMethod: "PHONE",
-            mobileForm: {
+            signInUpFeature: {
                 termsOfServiceLink,
                 privacyPolicyLink,
             },
@@ -98,11 +98,11 @@ describe("Passwordless", function () {
             SuperTokens.getInstanceOrThrow().appInfo
         );
         assert.deepStrictEqual(
-            Passwordless.getInstanceOrThrow().config.mobileForm.termsOfServiceLink,
+            Passwordless.getInstanceOrThrow().config.signInUpFeature.termsOfServiceLink,
             termsOfServiceLink
         );
         assert.deepStrictEqual(
-            Passwordless.getInstanceOrThrow().config.mobileForm.privacyPolicyLink,
+            Passwordless.getInstanceOrThrow().config.signInUpFeature.privacyPolicyLink,
             privacyPolicyLink
         );
     });

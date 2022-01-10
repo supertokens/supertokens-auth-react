@@ -13,20 +13,25 @@
  * under the License.
  */
 
+import { CountryCode } from "libphonenumber-js";
+import { parsePhoneNumber } from "libphonenumber-js/min";
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
-import { Config, NormalisedConfig } from "./types";
+import { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
 import { RecipeInterface } from "./types";
-import { defaultPhoneNumberValidator, defaultEmailValidator } from "./validators";
+import {
+    defaultPhoneNumberValidator,
+    defaultPhoneNumberValidatorForCombinedInput,
+    defaultEmailValidator,
+    defaultEmailValidatorForCombinedInput,
+} from "./validators";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
-    if (!["EMAIL", "PHONE"].includes(config.contactMethod)) {
+    if (!["EMAIL", "PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod)) {
         throw new Error("Please pass one of 'PHONE' or 'EMAIL' as the contactMethod");
     }
 
-    if (config.resendCodeTimeGapInSeconds !== undefined && config.resendCodeTimeGapInSeconds <= 0) {
-        throw new Error("Please pass a positive number as resendCodeTimeGapInSeconds");
-    }
+    const signInUpFeature = normalizeSignInUpFeatureConfig(config.signInUpFeature, config);
 
     const override: any = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
@@ -34,32 +39,91 @@ export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
         ...config.override,
     };
 
+    let validateEmailAddress: NormalisedConfig["validateEmailAddress"] = defaultEmailValidator;
+    if (
+        (config.contactMethod === "EMAIL" || config.contactMethod === "EMAIL_OR_PHONE") &&
+        config.validateEmailAddress !== undefined
+    ) {
+        validateEmailAddress = config.validateEmailAddress;
+    } else if (config.contactMethod === "EMAIL_OR_PHONE") {
+        validateEmailAddress = defaultEmailValidatorForCombinedInput;
+    }
+
+    let validatePhoneNumber: NormalisedConfig["validatePhoneNumber"] = defaultPhoneNumberValidator;
+    if (
+        (config.contactMethod === "PHONE" || config.contactMethod === "EMAIL_OR_PHONE") &&
+        config.validatePhoneNumber !== undefined
+    ) {
+        validatePhoneNumber = config.validatePhoneNumber;
+    } else if (config.contactMethod === "EMAIL_OR_PHONE") {
+        validatePhoneNumber = defaultPhoneNumberValidatorForCombinedInput;
+    }
+
     return {
         ...normaliseAuthRecipe(config),
-        resendCodeTimeGapInSeconds:
-            config.resendCodeTimeGapInSeconds === undefined ? 60 : config.resendCodeTimeGapInSeconds,
 
-        validateEmailAddress:
-            config.validateEmailAddress === undefined ? defaultEmailValidator : config.validateEmailAddress,
-        validatePhoneNumber:
-            config.validatePhoneNumber === undefined ? defaultPhoneNumberValidator : config.validatePhoneNumber,
+        validateEmailAddress,
+        validatePhoneNumber,
 
-        emailForm: {
-            ...config.emailForm,
-            ...normalisePasswordlessBaseConfig(config.emailForm),
-        },
+        signInUpFeature,
 
-        mobileForm: {
-            ...config.mobileForm,
-            ...normalisePasswordlessBaseConfig(config.mobileForm),
-        },
-        userInputCodeForm: normalisePasswordlessBaseConfig(config.userInputCodeForm),
-        linkClickedScreen: normalisePasswordlessBaseConfig(config.linkClickedScreen),
+        linkClickedScreenFeature: normalisePasswordlessBaseConfig(config.linkClickedScreenFeature),
 
         contactMethod: config.contactMethod,
 
         override,
     };
+}
+
+function normalizeSignInUpFeatureConfig(
+    signInUpInput:
+        | SignInUpFeatureConfigInput
+        | (SignInUpFeatureConfigInput & {
+              defaultCountry?: CountryCode | undefined;
+          })
+        | (SignInUpFeatureConfigInput & {
+              guessInternationPhoneNumberFromInputPhoneNumber?:
+                  | ((
+                        inputPhoneNumber: string,
+                        defaultCountryFromConfig?: CountryCode | undefined
+                    ) => string | Promise<string | undefined> | undefined)
+                  | undefined;
+          })
+        | undefined,
+    config: Config
+) {
+    if (signInUpInput?.resendCodeTimeGapInSeconds !== undefined && signInUpInput.resendCodeTimeGapInSeconds <= 0) {
+        throw new Error("Please pass a positive number as resendCodeTimeGapInSeconds");
+    }
+
+    const signInUpFeature = {
+        ...signInUpInput,
+        resendCodeTimeGapInSeconds:
+            signInUpInput?.resendCodeTimeGapInSeconds === undefined ? 60 : signInUpInput.resendCodeTimeGapInSeconds,
+
+        emailOrPhoneFormStyle:
+            signInUpInput?.emailOrPhoneFormStyle !== undefined ? signInUpInput.emailOrPhoneFormStyle : {},
+        linkSentScreenStyle: signInUpInput?.linkSentScreenStyle !== undefined ? signInUpInput.linkSentScreenStyle : {},
+        userInputCodeFormStyle:
+            signInUpInput?.userInputCodeFormStyle !== undefined ? signInUpInput.userInputCodeFormStyle : {},
+        closeTabScreenStyle: signInUpInput?.closeTabScreenStyle !== undefined ? signInUpInput.closeTabScreenStyle : {},
+        defaultCountry:
+            ["PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod) &&
+            signInUpInput !== undefined &&
+            "defaultCountry" in signInUpInput
+                ? signInUpInput.defaultCountry
+                : undefined,
+
+        guessInternationPhoneNumberFromInputPhoneNumber:
+            config.contactMethod === "EMAIL_OR_PHONE" &&
+            signInUpInput !== undefined &&
+            "guessInternationPhoneNumberFromInputPhoneNumber" in signInUpInput &&
+            signInUpInput.guessInternationPhoneNumberFromInputPhoneNumber !== undefined
+                ? signInUpInput.guessInternationPhoneNumberFromInputPhoneNumber
+                : defaultGuessInternationPhoneNumberFromInputPhoneNumber,
+    };
+
+    return signInUpFeature;
 }
 
 function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T & NormalisedBaseConfig {
@@ -68,4 +132,19 @@ function normalisePasswordlessBaseConfig<T>(config?: T & FeatureBaseConfig): T &
         ...(config as T),
         style,
     };
+}
+
+export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
+    value: string,
+    defaultCountryFromConfig?: CountryCode
+) {
+    if (defaultCountryFromConfig !== undefined) {
+        try {
+            return parsePhoneNumber(value, defaultCountryFromConfig).formatInternational();
+        } catch {
+            // The lib couldn't make sense of it, so we keep it unchanged
+        }
+    }
+
+    return value;
 }

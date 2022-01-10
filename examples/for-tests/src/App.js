@@ -76,6 +76,18 @@ if (getQueryParams("passwordlessContactMethodType")) {
 
 const passwordlessContactMethodType = window.localStorage.getItem("passwordlessContactMethodType") || "EMAIL";
 
+if (getQueryParams("passwordlessDefaultCountry")) {
+    window.localStorage.setItem("passwordlessDefaultCountry", getQueryParams("passwordlessDefaultCountry"));
+}
+
+const passwordlessDefaultCountry = window.localStorage.getItem("passwordlessDefaultCountry") || undefined;
+
+if (getQueryParams("passwordlessDisablePhoneGuess")) {
+    window.localStorage.setItem("passwordlessDisablePhoneGuess", getQueryParams("passwordlessDisablePhoneGuess"));
+}
+
+const passwordlessDisablePhoneGuess = window.localStorage.getItem("passwordlessDisablePhoneGuess") || undefined;
+
 if (getQueryParams("authRecipe")) {
     window.localStorage.setItem("authRecipe", getQueryParams("authRecipe"));
 }
@@ -577,26 +589,19 @@ function getPasswordlessConfigs({ disableDefaultImplementation }) {
         },
         useShadowDom,
         contactMethod: passwordlessContactMethodType,
-        resendCodeTimeGapInSeconds: 30,
-        emailForm: {
+        signInUpFeature: {
+            defaultCountry: passwordlessDefaultCountry,
+            guessInternationPhoneNumberFromInputPhoneNumber: passwordlessDisablePhoneGuess
+                ? () => undefined
+                : undefined,
+            resendCodeTimeGapInSeconds: 2,
             disableDefaultImplementation,
             style: theme.style,
 
             privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
         },
-        mobileForm: {
-            disableDefaultImplementation,
-            style: theme.style,
-
-            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-        },
-        userInputCodeForm: {
-            disableDefaultImplementation,
-            style: theme.style,
-        },
-        linkClickedScreen: {
+        linkClickedScreenFeature: {
             disableDefaultImplementation,
             style: theme.style,
         },

@@ -2,7 +2,7 @@
 import { UserInput } from "./types";
 import PasswordlessAuth from "./passwordlessAuth";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
-import SignInUpTheme from "./components/themes/signInUp";
+import SignInUpThemeWrapper from "./components/themes/signInUp";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -23,7 +23,7 @@ export default class Wrapper {
     ): Promise<void>;
     static PasswordlessAuth: typeof PasswordlessAuth;
     static SignInAndUp: (prop?: any) => JSX.Element;
-    static SignInAndUpTheme: typeof SignInUpTheme;
+    static SignInAndUpTheme: typeof SignInUpThemeWrapper;
     static LinkClicked: (prop?: any) => JSX.Element;
 }
 declare const init: typeof Wrapper.init;

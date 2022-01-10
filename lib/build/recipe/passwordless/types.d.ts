@@ -1,4 +1,4 @@
-import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -11,7 +11,7 @@ import type { CountryCode } from "libphonenumber-js";
 import { SignInUpHeader } from "./components/themes/signInUp/signInUpHeader";
 import { SignInUpFooter } from "./components/themes/signInUp/signInUpFooter";
 import { EmailForm } from "./components/themes/signInUp/emailForm";
-import { MobileForm } from "./components/themes/signInUp/mobileForm";
+import { PhoneForm } from "./components/themes/signInUp/phoneForm";
 import { UserInputCodeForm } from "./components/themes/signInUp/userInputCodeForm";
 import { LinkClickedScreen } from "./components/themes/linkClickedScreen";
 import { UserInputCodeFormHeader } from "./components/themes/signInUp/userInputCodeFormHeader";
@@ -162,21 +162,25 @@ export declare type PasswordlessNormalisedBaseConfig = {
     disableDefaultImplementation?: boolean;
 } & NormalisedBaseConfig;
 export declare type NormalisedConfig = {
-    resendCodeTimeGapInSeconds: number;
     validateEmailAddress: (email: string) => Promise<string | undefined> | string | undefined;
     validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
-    emailForm: {
-        privacyPolicyLink?: string;
-        termsOfServiceLink?: string;
-    } & PasswordlessNormalisedBaseConfig;
-    mobileForm: {
+    signInUpFeature: {
+        resendCodeTimeGapInSeconds: number;
         defaultCountry?: CountryCode;
+        guessInternationPhoneNumberFromInputPhoneNumber: (
+            inputPhoneNumber: string,
+            defaultCountryFromConfig?: CountryCode
+        ) => Promise<string | undefined> | string | undefined;
         privacyPolicyLink?: string;
         termsOfServiceLink?: string;
-    } & PasswordlessNormalisedBaseConfig;
-    userInputCodeForm: NormalisedBaseConfig;
-    linkClickedScreen: PasswordlessNormalisedBaseConfig;
-    contactMethod: "PHONE" | "EMAIL";
+        emailOrPhoneFormStyle: Styles;
+        userInputCodeFormStyle: Styles;
+        linkSentScreenStyle: Styles;
+        closeTabScreenStyle: Styles;
+        disableDefaultImplementation?: boolean;
+    };
+    linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
+    contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
         components: ComponentOverrideMap;
@@ -187,33 +191,46 @@ export declare type Config = UserInput &
 export declare type PasswordlessFeatureBaseConfig = {
     disableDefaultImplementation?: boolean;
 } & FeatureBaseConfig;
-export declare type UserInput = {
-    contactMethod: "PHONE" | "EMAIL";
-    validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
-    validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+export declare type SignInUpFeatureConfigInput = {
+    disableDefaultImplementation?: boolean;
     resendCodeTimeGapInSeconds?: number;
-    emailForm?: {
-        privacyPolicyLink?: string;
-        termsOfServiceLink?: string;
-    } & PasswordlessFeatureBaseConfig;
-    mobileForm?: {
-        defaultCountry?: CountryCode;
-        privacyPolicyLink?: string;
-        termsOfServiceLink?: string;
-    } & PasswordlessFeatureBaseConfig;
-    /**
-     * This configures the OTP entry form.
-     *
-     * Please note that this doesn't include the disableDefaultImplementation property,
-     * since it's not a separate screen. Disabling the default mobileForm/emailForm will
-     * disable this form as well.
-     */
-    userInputCodeForm?: FeatureBaseConfig;
-    linkClickedScreen?: PasswordlessFeatureBaseConfig;
+    privacyPolicyLink?: string;
+    termsOfServiceLink?: string;
+    emailOrPhoneFormStyle?: Styles;
+    userInputCodeFormStyle?: Styles;
+    linkSentScreenStyle?: Styles;
+    closeTabScreenStyle?: Styles;
+};
+export declare type UserInput = (
+    | {
+          contactMethod: "EMAIL";
+          validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
+          signInUpFeature?: SignInUpFeatureConfigInput;
+      }
+    | {
+          contactMethod: "PHONE";
+          validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+          signInUpFeature?: SignInUpFeatureConfigInput & {
+              defaultCountry?: CountryCode;
+          };
+      }
+    | {
+          contactMethod: "EMAIL_OR_PHONE";
+          validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
+          validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+          signInUpFeature?: SignInUpFeatureConfigInput & {
+              guessInternationPhoneNumberFromInputPhoneNumber?: (
+                  inputPhoneNumber: string,
+                  defaultCountryFromConfig?: CountryCode
+              ) => Promise<string | undefined> | string | undefined;
+          };
+      }
+) & {
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;
     };
+    linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 export declare type SignInUpProps = {
     loginAttemptInfo?: LoginAttemptInfo;
@@ -239,7 +256,13 @@ export declare type SignInUpEmailFormProps = {
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
-export declare type SignInUpMobileFormProps = {
+export declare type SignInUpPhoneFormProps = {
+    error?: string;
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
+    onSuccess?: () => void;
+};
+export declare type SignInUpEmailOrPhoneFormProps = {
     error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
@@ -260,9 +283,8 @@ export declare type LinkClickedScreenProps = {
 export declare type CloseTabScreenProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    onSuccess?: () => void;
 };
-export declare type LinkEmailSentThemeProps = {
+export declare type LinkSentThemeProps = {
     error?: string;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeInterface;
@@ -282,7 +304,7 @@ export declare type ComponentOverrideMap = {
     PasswordlessSignInUpHeader?: ComponentOverride<typeof SignInUpHeader>;
     PasswordlessSignInUpFooter?: ComponentOverride<typeof SignInUpFooter>;
     PasswordlessEmailForm?: ComponentOverride<typeof EmailForm>;
-    PasswordlessMobileForm?: ComponentOverride<typeof MobileForm>;
+    PasswordlessPhoneForm?: ComponentOverride<typeof PhoneForm>;
     PasswordlessUserInputCodeFormHeader?: ComponentOverride<typeof UserInputCodeFormHeader>;
     PasswordlessUserInputCodeFormFooter?: ComponentOverride<typeof UserInputCodeFormFooter>;
     PasswordlessUserInputCodeForm?: ComponentOverride<typeof UserInputCodeForm>;

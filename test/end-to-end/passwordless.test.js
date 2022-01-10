@@ -34,12 +34,6 @@ import {
 require("jsdom-global")();
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
 
-// Using this temporarily instead of the helper, because we have multiple buttons in this form.
-// Modifying the original breaks other tests...
-async function submitForm(page) {
-    const button = await waitForSTElement(page, "[data-supertokens='button'][type='submit']");
-    return button.click();
-}
 /*
  * Tests.
  */
@@ -51,8 +45,362 @@ describe("SuperTokens Passwordless", function () {
     const examplePhoneNumber = "+36701231212";
     const exampleEmail = "test@example.com";
 
-    getTestCases("EMAIL", "email", exampleEmail);
-    getTestCases("PHONE", "phoneNumber_text", examplePhoneNumber);
+    describe("with EMAIL", () => {
+        getTestCases("EMAIL", "email", exampleEmail);
+    });
+
+    describe("with PHONE", () => {
+        getTestCases("PHONE", "phoneNumber_text", examplePhoneNumber);
+    });
+
+    describe("with PHONE_OR_EMAIL", () => {
+        getTestCases("EMAIL_OR_PHONE", "emailOrPhone", exampleEmail);
+        getTestCases("EMAIL_OR_PHONE", "emailOrPhone", examplePhoneNumber);
+
+        describe("switching input type", () => {
+            const inputName = "emailOrPhone";
+            const contactMethod = "EMAIL_OR_PHONE";
+
+            before(async function () {
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
+                await setFlow(contactMethod, "USER_INPUT_CODE");
+            });
+
+            after(async function () {
+                await browser.close();
+                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                    method: "POST",
+                }).catch(console.error);
+
+                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                    method: "POST",
+                }).catch(console.error);
+            });
+
+            beforeEach(async function () {
+                await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+                page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+
+                consoleLogs.length = 0;
+            });
+
+            it("Successful signin", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: exampleEmail }]);
+                await submitForm(page);
+                const changeButton = await waitForSTElement(page, "[data-supertokens~=secondaryLinkWithLeftArrow]");
+                await changeButton.click();
+                await setInputValues(page, [{ name: inputName, value: exampleEmail }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getDevice(loginAttemptInfo);
+                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                await submitForm(page);
+
+                await page.waitForSelector(".sessionInfo-user-id");
+
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
+                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
+                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
+                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
+                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
+                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                ]);
+            });
+        });
+
+        describe("guessing phone numbers", () => {
+            describe("with default country defined", () => {
+                const inputName = "emailOrPhone";
+                const contactMethod = "EMAIL_OR_PHONE";
+
+                before(async function () {
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, { defaultCountry: "HU" }));
+                    await setFlow(contactMethod, "USER_INPUT_CODE");
+                });
+
+                after(async function () {
+                    await browser.close();
+                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                        method: "POST",
+                    }).catch(console.error);
+
+                    await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                        method: "POST",
+                    }).catch(console.error);
+                });
+
+                beforeEach(async function () {
+                    await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+                    page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+
+                    consoleLogs.length = 0;
+                });
+
+                it("should guess correctly for a local number", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "06701234324" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "+36701234324");
+                });
+
+                it("should guess correctly for a shorter local number", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "701234325" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "+36701234325");
+                });
+
+                it("should guess correctly for missed + sign", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "36701234326" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "+36701234326");
+                });
+
+                it("should not change for too long input", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "654654654654654654654" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "654654654654654654654");
+                });
+
+                it("should prepend country code for too short input", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "654" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "+36654");
+                });
+            });
+
+            describe("without default country defined", () => {
+                const inputName = "emailOrPhone";
+                const contactMethod = "EMAIL_OR_PHONE";
+
+                before(async function () {
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
+                    await setFlow(contactMethod, "USER_INPUT_CODE");
+                });
+
+                after(async function () {
+                    await browser.close();
+                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                        method: "POST",
+                    }).catch(console.error);
+
+                    await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                        method: "POST",
+                    }).catch(console.error);
+                });
+
+                beforeEach(async function () {
+                    await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+                    page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+
+                    consoleLogs.length = 0;
+                });
+
+                it("should show phone UI for a local number", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "06701234324" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "06701234324");
+                });
+
+                it("should show phone UI for a shorter local number", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "701234325" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "701234325");
+                });
+
+                it("should show phone UI for missed + sign", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "36701234326" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "36701234326");
+                });
+
+                it("should show phone UI for too long input", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "654654654654654654654" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "654654654654654654654");
+                });
+
+                it("should show phone UI for too short input", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "654" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    await checkInputValue(page, input, "654");
+                });
+            });
+
+            describe("with guessing disabled", () => {
+                const inputName = "emailOrPhone";
+                const contactMethod = "EMAIL_OR_PHONE";
+
+                before(async function () {
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, { disablePhoneGuess: true }));
+                    await setFlow(contactMethod, "USER_INPUT_CODE");
+                });
+
+                after(async function () {
+                    await browser.close();
+                    await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                        method: "POST",
+                    }).catch(console.error);
+
+                    await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                        method: "POST",
+                    }).catch(console.error);
+                });
+
+                beforeEach(async function () {
+                    await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+                    page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+
+                    consoleLogs.length = 0;
+                });
+
+                it("should not change for a local number", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "06701234324" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
+                    await checkInputValue(page, input, "06701234324");
+                });
+
+                it("should not change for a shorter local number", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "701234325" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
+                    await checkInputValue(page, input, "701234325");
+                });
+
+                it("should not change for missed + sign", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "36701234326" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
+                    await checkInputValue(page, input, "36701234326");
+                });
+
+                it("should not change for too long input", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "654654654654654654654" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
+                    await checkInputValue(page, input, "654654654654654654654");
+                });
+
+                it("should not change for too short input", async function () {
+                    await Promise.all([
+                        page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                        page.waitForNavigation({ waitUntil: "networkidle0" }),
+                    ]);
+
+                    await setInputValues(page, [{ name: inputName, value: "654" }]);
+                    await submitForm(page);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
+                    await checkInputValue(page, input, "654");
+                });
+            });
+        });
+    });
 
     before(async function () {
         const features = await getFeatureFlags();
@@ -63,7 +411,7 @@ describe("SuperTokens Passwordless", function () {
     });
 
     function getTestCases(contactMethod, inputName, contactInfo) {
-        describe(`${contactMethod} + UserInputCode`, function () {
+        describe(`UserInputCode`, function () {
             before(async function () {
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
                 await setFlow(contactMethod, "USER_INPUT_CODE");
@@ -96,7 +444,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -137,7 +485,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -180,7 +528,13 @@ describe("SuperTokens Passwordless", function () {
                 const error = await waitForSTElement(page, "[data-supertokens~=generalError]");
                 assert.strictEqual(
                     await error.evaluate((e) => e.textContent),
-                    `${contactMethod === "EMAIL" ? "Email" : "Phone number"} is invalid`
+                    `${
+                        contactMethod === "EMAIL_OR_PHONE"
+                            ? "Email or Phone number"
+                            : contactMethod === "EMAIL"
+                            ? "Email"
+                            : "Phone number"
+                    } is invalid`
                 );
                 await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]", true);
             });
@@ -198,7 +552,13 @@ describe("SuperTokens Passwordless", function () {
 
                 assert.strictEqual(
                     await error.evaluate((e) => e.textContent),
-                    `${contactMethod === "EMAIL" ? "Email" : "Phone number"} is invalid`
+                    `${
+                        contactMethod === "EMAIL_OR_PHONE"
+                            ? "Email or Phone number"
+                            : contactMethod === "EMAIL"
+                            ? "Email"
+                            : "Phone number"
+                    } is invalid`
                 );
                 await waitForSTElement(page, "[data-supertokens~=inputErrorMessage]", true);
             });
@@ -366,7 +726,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
@@ -395,7 +755,7 @@ describe("SuperTokens Passwordless", function () {
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                 assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
                 // We also check that we remained on the OTP screen
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
             });
@@ -409,7 +769,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
@@ -442,13 +802,13 @@ describe("SuperTokens Passwordless", function () {
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                 assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
                 // We also check that we remained on the OTP screen
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
             });
         });
 
-        describe(`${contactMethod} + Link`, function () {
+        describe(`Link`, function () {
             before(async function () {
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
                 await setFlow(contactMethod, "MAGIC_LINK");
@@ -480,7 +840,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -522,7 +882,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -563,7 +923,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -640,7 +1000,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
@@ -669,7 +1029,7 @@ describe("SuperTokens Passwordless", function () {
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                 assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
                 // We also check that we remained on the link sent screen
-                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
             });
@@ -683,7 +1043,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
@@ -713,7 +1073,7 @@ describe("SuperTokens Passwordless", function () {
                 await page.goto(device.codes[0].urlWithLinkCode);
 
                 // We have been redirected to linkSent
-                await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/auth");
 
@@ -840,7 +1200,7 @@ describe("SuperTokens Passwordless", function () {
             });
         });
 
-        describe(`${contactMethod} + Link/Code`, function () {
+        describe(`Link/Code`, function () {
             before(async function () {
                 ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
                 await setFlow(contactMethod, "USER_INPUT_CODE_AND_MAGIC_LINK");
@@ -872,7 +1232,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -914,7 +1274,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -956,7 +1316,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -967,7 +1327,7 @@ describe("SuperTokens Passwordless", function () {
                 await anotherTab.goto(device.codes[0].urlWithLinkCode);
                 await anotherTab.waitForSelector(".sessionInfo-user-id");
 
-                await waitForText(page, "[data-supertokens=headerTitle]", "Success!");
+                await waitForText(page, "[data-supertokens~=headerTitle]", "Success!");
 
                 await page.reload({ waitUntil: ["networkidle0"] });
 
@@ -1002,7 +1362,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -1043,7 +1403,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -1083,7 +1443,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -1095,12 +1455,12 @@ describe("SuperTokens Passwordless", function () {
                     anotherTab.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     anotherTab.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
-                await waitForSTElement(anotherTab, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(anotherTab, "[data-supertokens~=input][name=userInputCode]");
                 await setInputValues(anotherTab, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(anotherTab);
                 await anotherTab.waitForNavigation();
 
-                await waitForText(page, "[data-supertokens=headerTitle]", "Success!");
+                await waitForText(page, "[data-supertokens~=headerTitle]", "Success!");
 
                 await page.reload({ waitUntil: ["networkidle0"] });
 
@@ -1185,7 +1545,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -1206,7 +1566,7 @@ describe("SuperTokens Passwordless", function () {
                 const pathname = await anotherTab.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/auth");
 
-                await waitForSTElement(anotherTab, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(anotherTab, "[data-supertokens~=input][name=userInputCode]");
                 await waitForSTElement(anotherTab, "[data-supertokens~='generalError']");
 
                 await setInputValues(anotherTab, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
@@ -1309,7 +1669,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
@@ -1340,7 +1700,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
@@ -1373,7 +1733,7 @@ describe("SuperTokens Passwordless", function () {
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                 assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
                 // We also check that we remained on the OTP screen
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
             });
@@ -1387,7 +1747,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
@@ -1414,7 +1774,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
 
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
                 await page.setRequestInterception(true);
                 const requestHandler = (request) => {
@@ -1443,13 +1803,18 @@ describe("SuperTokens Passwordless", function () {
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
                 assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
                 // We also check that we remained on the OTP screen
-                await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
                 page.off("request", requestHandler);
                 await page.setRequestInterception(false);
             });
         });
     }
 });
+
+async function checkInputValue(page, input, expected) {
+    const actual = await page.evaluate((ele) => ele.value, input);
+    assert.equal(actual.replace(/\s/g, ""), expected);
+}
 
 async function getDevice(loginAttemptInfo) {
     const deviceResp = await fetch(
@@ -1484,9 +1849,9 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
     await submitForm(page);
 
     if (forLinkOnly) {
-        await waitForSTElement(page, "[data-supertokens=sendCodeIcon]");
+        await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
     } else {
-        await waitForSTElement(page, "[data-supertokens=input][name=userInputCode]");
+        await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
     }
 
     const loginAttemptInfo = JSON.parse(
@@ -1499,7 +1864,7 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
     return getDevice(loginAttemptInfo);
 }
 
-async function initBrowser(contactMethod, consoleLogs) {
+async function initBrowser(contactMethod, consoleLogs, { defaultCountry, disablePhoneGuess } = {}) {
     await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
         method: "POST",
     }).catch(console.error);
@@ -1532,10 +1897,18 @@ async function initBrowser(contactMethod, consoleLogs) {
 
     await Promise.all([
         page.goto(
-            `${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactMethodType=${contactMethod}`
+            `${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactMethodType=${contactMethod}` +
+                (defaultCountry !== undefined ? `&passwordlessDefaultCountry=${defaultCountry}` : "") +
+                (disablePhoneGuess !== undefined ? `&passwordlessDisablePhoneGuess=true` : "")
         ),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
 
     return { browser, page };
+}
+
+// We have multiple buttons in this form. Modifying the original would break other tests...
+async function submitForm(page) {
+    const button = await waitForSTElement(page, "[data-supertokens~='button'][type='submit']");
+    return button.click();
 }

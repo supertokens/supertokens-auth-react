@@ -19,13 +19,10 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import SignInUpTheme from "../../themes/signInUp";
+import SignInUpThemeWrapper from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette } from "../../../../../styles/styles";
 import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
-import { getStyles } from "../../../components/themes/styles";
 import { RecipeInterface, LoginAttemptInfo, PasswordlessUser } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { FeatureBaseProps } from "../../../../../types";
@@ -94,10 +91,11 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                 }
                 const res = await this.props.recipe.recipeImpl.createCode(input);
                 if (res.status === "OK") {
+                    const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
                     const loginAttemptInfo = {
                         ...res,
                         lastResend: new Date().getTime(),
-                        contactMethod: this.props.recipe.config.contactMethod,
+                        contactMethod,
                         contactInfo,
                         redirectToPath: getRedirectToPathFromURL(),
                     };
@@ -202,9 +200,6 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
     render = (): JSX.Element => {
         const componentOverrides = this.props.recipe.config.override.components;
 
-        const isEmail = this.props.recipe.config.contactMethod === "EMAIL";
-        const conf = isEmail ? this.props.recipe.config.emailForm : this.props.recipe.config.mobileForm;
-
         const props = {
             onSuccess: (result: { createdUser: boolean; user: PasswordlessUser }) => {
                 const pathFromUrl = getRedirectToPathFromURL();
@@ -230,20 +225,13 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
-                    <StyleProvider
-                        rawPalette={this.props.recipe.config.palette}
-                        defaultPalette={defaultPalette}
-                        styleFromInit={conf.style}
-                        rootStyleFromInit={this.props.recipe.config.rootStyle}
-                        getDefaultStyles={getStyles}>
-                        <Fragment>
-                            {/* No custom theme, use default. */}
-                            {this.props.children === undefined && <SignInUpTheme {...props} />}
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {this.props.children === undefined && <SignInUpThemeWrapper {...props} />}
 
-                            {/* Otherwise, custom theme is provided, propagate props. */}
-                            {this.props.children && React.cloneElement(this.props.children, props)}
-                        </Fragment>
-                    </StyleProvider>
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {this.props.children && React.cloneElement(this.props.children, props)}
+                    </Fragment>
                 </FeatureWrapper>
             </ComponentOverrideContext.Provider>
         );

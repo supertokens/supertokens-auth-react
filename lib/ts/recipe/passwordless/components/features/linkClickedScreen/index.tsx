@@ -92,7 +92,7 @@ class LinkClickedScreen extends PureComponent<PropType, unknown> {
     render = (): JSX.Element => {
         const componentOverrides = this.props.recipe.config.override.components;
 
-        const linkClickedScreen = this.props.recipe.config.linkClickedScreen;
+        const linkClickedScreen = this.props.recipe.config.linkClickedScreenFeature;
 
         const props = {
             recipeImplementation: this.props.recipe.recipeImpl,

@@ -33,6 +33,7 @@ import { CountryCode } from "libphonenumber-js";
 
 type PhoneNumberInputProps = {
     defaultCountry?: CountryCode;
+    initialValue?: string;
 };
 
 /*
@@ -43,6 +44,7 @@ function PhoneNumberInput(
         defaultCountry,
         autoComplete,
         name,
+        initialValue,
         onInputBlur,
         onInputFocus,
         hasError,
@@ -50,7 +52,8 @@ function PhoneNumberInput(
     }: InputProps & PhoneNumberInputProps,
     ref: RefObject<InputRef>
 ): JSX.Element {
-    const [phoneNumber, setPhoneNumber] = useState<string>("");
+    const [phoneNumber, setPhoneNumber] = useState<string>(initialValue || "");
+
     const styles = useContext(StyleContext);
 
     function handleFocus() {
@@ -93,6 +96,7 @@ function PhoneNumberInput(
                     css={[styles.input, styles.phoneInputLibRoot]}
                     name={name + "_text"}
                     autoComplete={autoComplete}
+                    value={phoneNumber}
                     onChange={(newValue: string) => setPhoneNumber(newValue === undefined ? "" : newValue)}
                     countryCallingCodeEditable={true}
                     onFocus={handleFocus}

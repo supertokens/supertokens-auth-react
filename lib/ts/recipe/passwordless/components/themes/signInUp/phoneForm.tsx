@@ -15,16 +15,16 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { SignInUpMobileFormProps } from "../../../types";
+import { SignInUpPhoneFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultValidate } from "../../../../emailpassword/validators";
 
-export const MobileForm = withOverride(
-    "PasswordlessMobileForm",
-    function PasswordlessMobileForm(
-        props: SignInUpMobileFormProps & {
+export const PhoneForm = withOverride(
+    "PasswordlessPhoneForm",
+    function PasswordlessPhoneForm(
+        props: SignInUpPhoneFormProps & {
             header?: JSX.Element;
             footer?: JSX.Element;
         }
@@ -36,7 +36,7 @@ export const MobileForm = withOverride(
                         id: "phoneNumber",
                         label: "Your Phone Number",
                         inputComponent: phoneNumberInputWithInjectedProps({
-                            defaultCountry: props.config.mobileForm.defaultCountry,
+                            defaultCountry: props.config.signInUpFeature.defaultCountry,
                         }),
                         optional: false,
                         placeholder: "+1 (389) 848-293-234",

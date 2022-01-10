@@ -36,7 +36,7 @@ import { UserInputCodeForm } from "../../lib/ts/recipe/passwordless/components/t
 import { EmailForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/emailForm";
 import { SignInUpFooter } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/signInUpFooter";
 import { SignInUpHeader } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/signInUpHeader";
-import { MobileForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/mobileForm";
+import { PhoneForm } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/phoneForm";
 
 type AllComponentsOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap &
@@ -72,7 +72,7 @@ describe("Theme component overrides", () => {
         ThirdPartyEmailPasswordHeader: ThirdPartyEmailPasswordHeader,
         ThirdPartyEmailPasswordSignInAndUpForm: SignInAndUpForm,
         PasswordlessEmailForm: EmailForm,
-        PasswordlessMobileForm: MobileForm,
+        PasswordlessPhoneForm: PhoneForm,
         PasswordlessSignInUpFooter: SignInUpFooter,
         PasswordlessSignInUpHeader: SignInUpHeader,
         PasswordlessUserInputCodeForm: UserInputCodeForm,

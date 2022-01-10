@@ -293,8 +293,8 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                                             <Label value={field.label} showIsRequired={field.showIsRequired} />
                                         ))}
 
-                                    {field.inputComponent !== undefined ? (
-                                        <field.inputComponent
+                                    {propField.inputComponent !== undefined ? (
+                                        <propField.inputComponent
                                             type={type}
                                             name={field.id}
                                             validated={field.validated}
