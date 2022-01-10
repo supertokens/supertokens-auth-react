@@ -32,7 +32,7 @@ let cookieParser = require("cookie-parser");
 let bodyParser = require("body-parser");
 let http = require("http");
 let cors = require("cors");
-let { startST, killAllST, setupST, cleanST, setKeyValueInConfig } = require("./utils");
+let { startST, killAllST, setupST, cleanST, setKeyValueInConfig, customAuth0Provider } = require("./utils");
 
 let passwordlessSupported;
 let PasswordlessRaw;
@@ -244,11 +244,13 @@ function initST({ passwordlessConfig } = {}) {
             },
             resetPasswordUsingTokenFeature: {
                 createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
+                    console.log(passwordResetURLWithToken);
                     latestURLWithToken = passwordResetURLWithToken;
                 },
             },
             emailVerificationFeature: {
                 createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
+                    console.log(emailVerificationURLWithToken);
                     latestURLWithToken = emailVerificationURLWithToken;
                 },
             },
@@ -268,6 +270,7 @@ function initST({ passwordlessConfig } = {}) {
                         clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
                         clientId: process.env.FACEBOOK_CLIENT_ID,
                     }),
+                    customAuth0Provider(),
                 ],
             },
         }),
@@ -288,6 +291,7 @@ function initST({ passwordlessConfig } = {}) {
                     clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
                     clientId: process.env.FACEBOOK_CLIENT_ID,
                 }),
+                customAuth0Provider(),
             ],
         }),
         Session.init({}),

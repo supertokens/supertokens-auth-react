@@ -63,16 +63,39 @@ export function StyleProvider({
         mergedStyles = getMergedStyles(mergedStyles, styleFromInit);
     }
 
-    const value: NormalisedStyle = {
+    let value: NormalisedStyle = {
         palette,
         ...mergedStyles,
     };
+
+    value = addNameToAllStylesRecursively(value, "");
+
     return <StyleContext.Provider value={value}>{children}</StyleContext.Provider>;
 }
 
 /*
  * Helpers
  */
+
+/**
+ * See https://github.com/supertokens/supertokens-auth-react/issues/354
+ * */
+function addNameToAllStylesRecursively(styles: any, propertyName: string): any {
+    styles = {
+        name: "-supertokens-efix-" + propertyName,
+        ...styles,
+    };
+    for (const property in styles) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (styles.hasOwnProperty(property)) {
+            if (typeof styles[property] == "object") {
+                styles[property] = addNameToAllStylesRecursively(styles[property], property);
+            }
+        }
+    }
+    return styles;
+}
+
 function getMergedPalette(defaultPalette: NormalisedPalette, rawPalette: Record<string, string>): NormalisedPalette {
     // We copy the defaultPalette into in order to not update the original
     const palette = { colors: { ...defaultPalette.colors }, fonts: { ...defaultPalette.fonts } };

@@ -28,9 +28,7 @@ import {
     assertNoSTComponents,
     generateState,
     clickOnProviderButton,
-    loginWithGithub,
-    loginWithFacebook,
-    loginWithGoogle,
+    loginWithAuth0,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -85,20 +83,15 @@ describe("SuperTokens Third Party", function () {
     });
 
     describe("Third Party test", function () {
-        // In case OAuth configs are not set locally.
-        if (process.env.SKIP_OAUTH === "true") {
-            return;
-        }
-
-        it("Successful signin with github", async function () {
+        it("Successful signin with Auth0", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Github");
+            await clickOnProviderButton(page, "Auth0");
             await Promise.all([
-                loginWithGithub(page),
+                loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -127,30 +120,30 @@ describe("SuperTokens Third Party", function () {
             ]);
         });
 
-        it("Successful signin with github and redirectToPath", async function () {
+        it("Successful signin with auth0 and redirectToPath", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=/hello`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Github");
+            await clickOnProviderButton(page, "Auth0");
             await Promise.all([
-                loginWithGithub(page),
+                loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/hello");
         });
 
-        it("Successful signin with github and redirectToPath case sensitive", async function () {
+        it("Successful signin with auth0 and redirectToPath case sensitive", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2FCasE%2FCase-SensItive1-PAth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Github");
+            await clickOnProviderButton(page, "Auth0");
             await Promise.all([
-                loginWithGithub(page),
+                loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
