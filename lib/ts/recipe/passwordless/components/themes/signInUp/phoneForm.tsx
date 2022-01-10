@@ -39,7 +39,7 @@ export const PhoneForm = withOverride(
                             defaultCountry: props.config.signInUpFeature.defaultCountry,
                         }),
                         optional: false,
-                        placeholder: "+1 (389) 848-293-234",
+                        placeholder: "Phone number",
                         validate: defaultValidate,
                     },
                 ]}

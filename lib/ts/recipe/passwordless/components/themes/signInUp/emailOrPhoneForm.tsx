@@ -44,7 +44,7 @@ export const EmailOrPhoneForm = withOverride(
                               })
                             : undefined,
                         optional: false,
-                        placeholder: "+1 (389) 848-293-234",
+                        placeholder: "Email address or Phone number",
                         validate: defaultValidate,
                     },
                 ]}
