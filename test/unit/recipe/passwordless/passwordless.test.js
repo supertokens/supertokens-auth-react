@@ -55,14 +55,14 @@ describe("Passwordless", function () {
     it("Initializing Passwordless with empty configs throws", async function () {
         await assert.throws(
             () => Passwordless.init()(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("Please pass one of 'PHONE' or 'EMAIL' as the contactMethod")
+            new Error("Please pass one of 'PHONE', 'EMAIL' or 'EMAIL_OR_PHONE' as the contactMethod")
         );
     });
 
     it("Initializing Passwordless with wrong contactMethod throws", async function () {
         await assert.throws(
             () => Passwordless.init({ contactMethod: "NOPE" })(SuperTokens.getInstanceOrThrow().appInfo),
-            new Error("Please pass one of 'PHONE' or 'EMAIL' as the contactMethod")
+            new Error("Please pass one of 'PHONE', 'EMAIL' or 'EMAIL_OR_PHONE' as the contactMethod")
         );
     });
 

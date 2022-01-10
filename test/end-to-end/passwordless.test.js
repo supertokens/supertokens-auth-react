@@ -207,7 +207,7 @@ describe("SuperTokens Passwordless", function () {
 
                     await setInputValues(page, [{ name: inputName, value: "654654654654654654654" }]);
                     await submitForm(page);
-                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
+                    const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone]`);
                     await checkInputValue(page, input, "654654654654654654654");
                 });
 
@@ -545,7 +545,7 @@ describe("SuperTokens Passwordless", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
-                await setInputValues(page, [{ name: inputName, value: "123" }]);
+                await setInputValues(page, [{ name: inputName, value: "email2example.com" }]);
                 await submitForm(page);
 
                 const error = await waitForSTElement(page, "[data-supertokens~=generalError]");

@@ -14,7 +14,7 @@
  */
 
 import { CountryCode } from "libphonenumber-js";
-import { parsePhoneNumber } from "libphonenumber-js/min";
+import parsePhoneNumber, { parseIncompletePhoneNumber } from "libphonenumber-js/min";
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 import { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
@@ -140,11 +140,20 @@ export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
 ) {
     if (defaultCountryFromConfig !== undefined) {
         try {
-            return parsePhoneNumber(value, defaultCountryFromConfig).formatInternational();
+            return parsePhoneNumber(value, {
+                defaultCountry: defaultCountryFromConfig,
+                extract: false,
+            })?.formatInternational();
         } catch {
             // The lib couldn't make sense of it, so we keep it unchanged
         }
     }
+    const incomplete = parseIncompletePhoneNumber(value);
 
+    // If the incomplete/extracted phonenumber is less than half the input we assume it's not a phone number.
+    // I.e.: if more than half of the input is numbers
+    if (incomplete.length < value.length / 2) {
+        return undefined;
+    }
     return value;
 }

@@ -4,4 +4,4 @@ export declare function normalisePasswordlessConfig(config: Config): NormalisedC
 export declare function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
     value: string,
     defaultCountryFromConfig?: CountryCode
-): string;
+): string | undefined;
