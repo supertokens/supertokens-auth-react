@@ -28,7 +28,7 @@ import {
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     if (!["EMAIL", "PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod)) {
-        throw new Error("Please pass one of 'PHONE' or 'EMAIL' as the contactMethod");
+        throw new Error("Please pass one of 'PHONE', 'EMAIL' or 'EMAIL_OR_PHONE' as the contactMethod");
     }
 
     const signInUpFeature = normalizeSignInUpFeatureConfig(config.signInUpFeature, config);
