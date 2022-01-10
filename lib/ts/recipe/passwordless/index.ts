@@ -51,8 +51,8 @@ export default class Wrapper {
 
     static PasswordlessAuth = PasswordlessAuth;
 
-    static SignInAndUp = (prop?: any) => Passwordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
-    static SignInAndUpTheme = SignInUpThemeWrapper;
+    static SignInUp = (prop?: any) => Passwordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
+    static SignInUpTheme = SignInUpThemeWrapper;
 
     static LinkClicked = (prop?: any) =>
         Passwordless.getInstanceOrThrow().getFeatureComponent("linkClickedScreen", prop);
@@ -61,9 +61,15 @@ export default class Wrapper {
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
 const redirectToAuth = Wrapper.redirectToAuth;
+const SignInUp = Wrapper.SignInUp;
+const SignInUpTheme = Wrapper.SignInUpTheme;
+const LinkClicked = Wrapper.LinkClicked;
 
 export {
     PasswordlessAuth,
+    SignInUp,
+    SignInUpTheme,
+    LinkClicked,
     init,
     signOut,
     redirectToAuth,
