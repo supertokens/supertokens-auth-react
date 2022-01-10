@@ -244,7 +244,7 @@ describe("SuperTokens", function () {
         assert.strictEqual(SuperTokens.canHandleRoute(), false);
     });
 
-    it("SuperTokens getRoutingComponent should work approriately", async function () {
+    it("SuperTokens canHandleRoute should work approriately", async function () {
         SuperTokens.init({
             ...defaultConfigs,
             recipeList: [EmailPassword.init()],
@@ -253,27 +253,27 @@ describe("SuperTokens", function () {
         const randomWebsitePath = SuperTokens.getInstanceOrThrow().appInfo.websiteDomain.getAsStringDangerous();
 
         mockWindowLocation(`${randomWebsitePath}/blog/`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
         mockWindowLocation(`${randomWebsitePath}/blog/.`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
         mockWindowLocation(`${randomWebsitePath}/blog/auth`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
         mockWindowLocation(`${randomWebsitePath}/auth`);
         mockWindowLocation(`${randomWebsitePath}/auth/404`);
-        assert.strictEqual(SuperTokens.getRoutingComponent(), undefined);
+        assert.strictEqual(SuperTokens.canHandleRoute(), false);
         mockWindowLocation(`${randomWebsitePath}/auth/`);
-        assert.notStrictEqual(SuperTokens.getRoutingComponent().type, undefined);
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
         mockWindowLocation(`${randomWebsitePath}/auth/.`);
-        assert.notStrictEqual(SuperTokens.getRoutingComponent().type, undefined);
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
         mockWindowLocation(`${randomWebsitePath}/auth?rid=emailpassword`);
-        assert.notStrictEqual(SuperTokens.getRoutingComponent().type, undefined);
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
         // returns first component if rid=unknown.
         mockWindowLocation(`${randomWebsitePath}/auth?rid=unknown-id`);
-        assert.notStrictEqual(SuperTokens.getRoutingComponent().type, undefined);
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
         mockWindowLocation(`${randomWebsitePath}/auth/reset-password`);
-        assert.notStrictEqual(SuperTokens.getRoutingComponent().type, undefined);
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
         mockWindowLocation(`${randomWebsitePath}/auth/reset-password?rid=unknown-id`);
-        assert.notStrictEqual(SuperTokens.getRoutingComponent().type, undefined);
+        assert.strictEqual(SuperTokens.canHandleRoute(), true);
     });
 });

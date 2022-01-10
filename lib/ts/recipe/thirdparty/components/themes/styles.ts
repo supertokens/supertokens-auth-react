@@ -40,10 +40,17 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
 
         providerButton: {
+            // Default button height in 34
+            minHeight: "34px",
+            // this will allow the button to scale with different font sizes and text lengths
+            height: "auto !important",
             display: "flex",
             flexDirection: "row",
             paddingLeft: "0px",
             paddingRight: "0px",
+            // This makes the button look somewhat cleaner if the text wraps
+            paddingTop: "2px",
+            paddingBottom: "2px",
         },
 
         providerButtonLeft: {
@@ -64,9 +71,6 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             margin: "auto",
             textAlign: "center",
             justifyContent: "center",
-            "@media (max-width: 380px)": {
-                marginLeft: "10%",
-            },
         },
 
         providerGoogle: getButtonStyle(providerColors.google),

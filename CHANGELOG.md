@@ -15,6 +15,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Passwordless recipe
 
+### Fixes
+
+-   Prevents checking of if route can be handled by supertokens on each rerender.
+
+### Breaking changes
+
+-   `getRoutingComponent` now returns ` JSX.Element | null` instead of ` JSX.Element | undefined`
+
+## [0.17.8] - 2021-12-27
+
+###
+
+-   Issuer where custom provider buttons would not render text in the center of the button
+
 ## [0.17.7] - 2021-12-21
 
 ### Fixes
