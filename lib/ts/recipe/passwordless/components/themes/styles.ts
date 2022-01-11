@@ -35,6 +35,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             "& strong": {
                 maxWidth: "100%",
                 display: "inline-block",
+                verticalAlign: "bottom",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -46,6 +47,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             "& strong": {
                 maxWidth: "100%",
                 display: "inline-block",
+                verticalAlign: "bottom",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
