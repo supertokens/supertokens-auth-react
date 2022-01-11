@@ -130,7 +130,7 @@ export const UserInputCodeForm = withOverride(
                         if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: "Invalid OTP.",
+                                message: "Invalid OTP",
                             };
                         }
 
