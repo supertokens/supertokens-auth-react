@@ -182,7 +182,7 @@ export type NormalisedConfig = {
     validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 
     signInUpFeature: {
-        resendCodeTimeGapInSeconds: number;
+        resendEmailOrSMSGapInSeconds: number;
         defaultCountry?: CountryCode;
         guessInternationPhoneNumberFromInputPhoneNumber: (
             inputPhoneNumber: string,
@@ -218,7 +218,7 @@ export type PasswordlessFeatureBaseConfig = {
 
 export type SignInUpFeatureConfigInput = {
     disableDefaultImplementation?: boolean;
-    resendCodeTimeGapInSeconds?: number;
+    resendEmailOrSMSGapInSeconds?: number;
 
     /*
      * Privacy policy link for the sign-up form.

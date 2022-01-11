@@ -586,7 +586,7 @@ describe("SuperTokens Passwordless", function () {
                         );
                     } else {
                         const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-                        assert.deepStrictEqual(await error.evaluate((e) => e.textContent), `Invalid OTP.`);
+                        assert.deepStrictEqual(await error.evaluate((e) => e.textContent), `Invalid OTP`);
                     }
                 }
 

@@ -594,7 +594,7 @@ function getPasswordlessConfigs({ disableDefaultImplementation }) {
             guessInternationPhoneNumberFromInputPhoneNumber: passwordlessDisablePhoneGuess
                 ? () => undefined
                 : undefined,
-            resendCodeTimeGapInSeconds: 2,
+            resendEmailOrSMSGapInSeconds: 2,
             disableDefaultImplementation,
             style: theme.style,
 

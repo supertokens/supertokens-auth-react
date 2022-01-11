@@ -92,14 +92,14 @@ function normalizeSignInUpFeatureConfig(
         | undefined,
     config: Config
 ) {
-    if (signInUpInput?.resendCodeTimeGapInSeconds !== undefined && signInUpInput.resendCodeTimeGapInSeconds <= 0) {
-        throw new Error("Please pass a positive number as resendCodeTimeGapInSeconds");
+    if (signInUpInput?.resendEmailOrSMSGapInSeconds !== undefined && signInUpInput.resendEmailOrSMSGapInSeconds <= 0) {
+        throw new Error("Please pass a positive number as resendEmailOrSMSGapInSeconds");
     }
 
     const signInUpFeature = {
         ...signInUpInput,
-        resendCodeTimeGapInSeconds:
-            signInUpInput?.resendCodeTimeGapInSeconds === undefined ? 60 : signInUpInput.resendCodeTimeGapInSeconds,
+        resendEmailOrSMSGapInSeconds:
+            signInUpInput?.resendEmailOrSMSGapInSeconds === undefined ? 60 : signInUpInput.resendEmailOrSMSGapInSeconds,
 
         emailOrPhoneFormStyle:
             signInUpInput?.emailOrPhoneFormStyle !== undefined ? signInUpInput.emailOrPhoneFormStyle : {},

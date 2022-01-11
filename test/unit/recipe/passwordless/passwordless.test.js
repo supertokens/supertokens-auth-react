@@ -66,21 +66,21 @@ describe("Passwordless", function () {
         );
     });
 
-    it("Initializing Passwordless with wrong resendCodeTimeGapInSeconds throws", async function () {
+    it("Initializing Passwordless with wrong resendEmailOrSMSGapInSecondsthrows", async function () {
         await assert.throws(
             () =>
-                Passwordless.init({ contactMethod: "PHONE", signInUpFeature: { resendCodeTimeGapInSeconds: 0 } })(
+                Passwordless.init({ contactMethod: "PHONE", signInUpFeature: { resendEmailOrSMSGapInSeconds: 0 } })(
                     SuperTokens.getInstanceOrThrow().appInfo
                 ),
-            new Error(`Please pass a positive number as resendCodeTimeGapInSeconds`)
+            new Error(`Please pass a positive number as resendEmailOrSMSGapInSeconds`)
         );
     });
 
     it("Initializing Passwordless with resendCodeTimeGap", async function () {
-        Passwordless.init({ contactMethod: "PHONE", signInUpFeature: { resendCodeTimeGapInSeconds: 5 } })(
+        Passwordless.init({ contactMethod: "PHONE", signInUpFeature: { resendEmailOrSMSGapInSeconds: 5 } })(
             SuperTokens.getInstanceOrThrow().appInfo
         );
-        assert.strictEqual(Passwordless.getInstanceOrThrow().config.signInUpFeature.resendCodeTimeGapInSeconds, 5);
+        assert.strictEqual(Passwordless.getInstanceOrThrow().config.signInUpFeature.resendEmailOrSMSGapInSeconds, 5);
     });
 
     it("Initializing Passwordless with TOS", async function () {
