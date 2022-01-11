@@ -14,7 +14,7 @@
  */
 
 /** @jsx jsx */
-import { getDefaultStyles, getMergedStyles } from "../../../../styles/styles";
+import { getDefaultStyles, getMergedStyles, swingIn } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";
 import { getStyles as getEmailPasswordStyles } from "../../../emailpassword/components/themes/styles/styles";
 
@@ -24,17 +24,31 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     const passwordlessStyles: NormalisedDefaultStyles = {
         generalSuccess: {
             marginBottom: "20px",
+            animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) alternate 2 both`,
         },
         codeInputLabelWrapper: {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
         },
+        headerSubtitle: {
+            "& strong": {
+                maxWidth: "100%",
+                display: "inline-block",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+            },
+        },
         sendCodeText: {
             marginTop: "15px",
             marginBottom: "20px",
             "& strong": {
+                maxWidth: "100%",
+                display: "inline-block",
                 whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
             },
         },
         secondaryLinkWithLeftArrow: {
@@ -44,15 +58,14 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             width: "auto",
             marginTop: 0,
             lineHeight: "24px",
-            "&:disabled": {
-                color: palette.colors.textPrimary,
-            },
             "&:hover": {
                 textDecoration: "underline",
             },
-        },
-        resendSuccess: {
-            display: "block",
+            "&:disabled": {
+                color: palette.colors.textPrimary,
+                cursor: "default",
+                textDecoration: "none",
+            },
         },
         phoneInputLibRoot: {
             display: "flex",
@@ -103,7 +116,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             boxShadow: "none",
         },
         phoneInputCountryDropdown: {
-            width: "320px",
+            width: "min(72.2vw, 320px)",
             borderRadius: 6,
             marginLeft: "-15px", // This is to counteract the padding of the inputWrapper class
             boxShadow: "0px 0px 3px 0px rgba(0, 0, 0, 0.16)",

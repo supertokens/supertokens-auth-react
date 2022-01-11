@@ -70,16 +70,9 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 
     - Make sure you copy `test/.env.example.js` to `test/.env.js` and add correct values.
     - Make sure you copy `test/server/.env.example` to `test/server/.env` and add correct values.
+    - To get them, please contact the SuperTokens team.
 
 6. Open a new terminal in `supertokens-auth-react` and run all tests
-
-    **If you'd like to skip oauth tests**
-
-    ```
-    SKIP_OAUTH=true npm run test
-    ```
-
-    **Otherwise**
 
     ```
     npm run test
@@ -88,6 +81,8 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 ## Run the test application.
 
 1. `npm run start`
+
+Note: To test different recipes you need to update the value of `authRecipe` in local storage. For example `thirdpartyemailpassword` would result in that recipe being used. If there is no value for `authRecipe` set, the Email Password recipe is used by default
 
 ## Pull Request
 

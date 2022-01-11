@@ -19,14 +19,11 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import SignInUpTheme from "../../themes/signInUp";
+import SignInUpThemeWrapper from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette } from "../../../../../styles/styles";
-import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
-import { getStyles } from "../../../components/themes/styles";
-import { RecipeInterface, LoginAttemptInfo } from "../../../types";
+import { RecipeInterface, LoginAttemptInfo, PasswordlessUser } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { FeatureBaseProps } from "../../../../../types";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
@@ -94,11 +91,13 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                 }
                 const res = await this.props.recipe.recipeImpl.createCode(input);
                 if (res.status === "OK") {
+                    const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
                     const loginAttemptInfo = {
                         ...res,
                         lastResend: new Date().getTime(),
-                        contactMethod: this.props.recipe.config.contactMethod,
+                        contactMethod,
                         contactInfo,
+                        redirectToPath: getRedirectToPathFromURL(),
                     };
                     await this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
                     this.setState((os) => ({
@@ -110,7 +109,6 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                     this.setState((os) => ({
                         ...os,
                         error: res.message,
-                        loginAttemptInfo: undefined,
                     }));
                 }
                 return res;
@@ -144,7 +142,6 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                     this.setState((os) => ({
                         ...os,
                         error: res.message,
-                        loginAttemptInfo: undefined,
                     }));
                 }
                 return res;
@@ -160,12 +157,6 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                         error: SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR,
                         loginAttemptInfo: undefined,
                     }));
-                } else if (res.status === "GENERAL_ERROR") {
-                    this.setState((os) => ({
-                        ...os,
-                        error: res.message,
-                        loginAttemptInfo: undefined,
-                    }));
                 } else if (res.status === "OK") {
                     await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
                 }
@@ -175,6 +166,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
 
             clearLoginAttemptInfo: async () => {
                 await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+                clearErrorQueryParam();
                 this.setState((os) => ({
                     ...os,
                     loginAttemptInfo: undefined,
@@ -190,7 +182,6 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
         // We could be using storage events for this, but we need to keep customization in mind.
         // Someone could be using something else other than localstorage.
         const checkSessionIntervalHandle = setInterval(async () => {
-            // TODO: check if we can call into the session recipe from here.
             const hasSession = await Session.doesSessionExist();
             if (hasSession) {
                 this.setState((os) => ({ ...os, successInAnotherTab: true }));
@@ -209,16 +200,16 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
     render = (): JSX.Element => {
         const componentOverrides = this.props.recipe.config.override.components;
 
-        const isEmail = this.props.recipe.config.contactMethod === "EMAIL";
-        const conf = isEmail ? this.props.recipe.config.emailForm : this.props.recipe.config.mobileForm;
-
         const props = {
-            onSuccess: () => {
+            onSuccess: (result: { createdUser: boolean; user: PasswordlessUser }) => {
+                const pathFromUrl = getRedirectToPathFromURL();
+
                 return this.props.recipe.redirect(
                     {
                         action: "SUCCESS",
-                        isNewUser: false,
-                        redirectToPath: getRedirectToPathFromURL(),
+                        isNewUser: result.createdUser,
+                        redirectToPath:
+                            pathFromUrl !== undefined ? pathFromUrl : this.state.loginAttemptInfo?.redirectToPath,
                     },
                     this.props.history
                 );
@@ -234,20 +225,13 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
-                    <StyleProvider
-                        rawPalette={this.props.recipe.config.palette}
-                        defaultPalette={defaultPalette}
-                        styleFromInit={conf.style}
-                        rootStyleFromInit={this.props.recipe.config.rootStyle}
-                        getDefaultStyles={getStyles}>
-                        <Fragment>
-                            {/* No custom theme, use default. */}
-                            {this.props.children === undefined && <SignInUpTheme {...props} />}
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {this.props.children === undefined && <SignInUpThemeWrapper {...props} />}
 
-                            {/* Otherwise, custom theme is provided, propagate props. */}
-                            {this.props.children && React.cloneElement(this.props.children, props)}
-                        </Fragment>
-                    </StyleProvider>
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {this.props.children && React.cloneElement(this.props.children, props)}
+                    </Fragment>
                 </FeatureWrapper>
             </ComponentOverrideContext.Provider>
         );

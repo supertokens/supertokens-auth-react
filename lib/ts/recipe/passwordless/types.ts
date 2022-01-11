@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
+import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -27,7 +27,7 @@ import type { CountryCode } from "libphonenumber-js";
 import { SignInUpHeader } from "./components/themes/signInUp/signInUpHeader";
 import { SignInUpFooter } from "./components/themes/signInUp/signInUpFooter";
 import { EmailForm } from "./components/themes/signInUp/emailForm";
-import { MobileForm } from "./components/themes/signInUp/mobileForm";
+import { PhoneForm } from "./components/themes/signInUp/phoneForm";
 import { UserInputCodeForm } from "./components/themes/signInUp/userInputCodeForm";
 import { LinkClickedScreen } from "./components/themes/linkClickedScreen";
 import { UserInputCodeFormHeader } from "./components/themes/signInUp/userInputCodeFormHeader";
@@ -109,6 +109,7 @@ export type RecipeInterface = {
                     contactMethod: "EMAIL" | "PHONE";
                     flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
                     lastResend: number;
+                    redirectToPath?: string;
                 }
           >
         | {
@@ -118,6 +119,7 @@ export type RecipeInterface = {
               contactMethod: "EMAIL" | "PHONE";
               flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
               lastResend: number;
+              redirectToPath?: string;
           }
         | undefined;
     setLoginAttemptInfo: (input: {
@@ -127,6 +129,7 @@ export type RecipeInterface = {
         contactMethod: "EMAIL" | "PHONE";
         flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
         lastResend: number;
+        redirectToPath?: string;
     }) => Promise<void> | void;
     clearLoginAttemptInfo: () => Promise<void> | void;
 };
@@ -175,40 +178,30 @@ export type PasswordlessNormalisedBaseConfig = {
 } & NormalisedBaseConfig;
 
 export type NormalisedConfig = {
-    resendCodeTimeGapInSeconds: number;
-
     validateEmailAddress: (email: string) => Promise<string | undefined> | string | undefined;
     validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 
-    emailForm: {
-        /*
-         * Privacy policy link for the sign-up form.
-         */
-        privacyPolicyLink?: string;
-        /*
-         * Terms and conditions link for the sign-up form.
-         */
-        termsOfServiceLink?: string;
-    } & PasswordlessNormalisedBaseConfig;
-
-    mobileForm: {
-        /*
-         * Must be a two-letter ISO country code (e.g.: "US")
-         */
+    signInUpFeature: {
+        resendCodeTimeGapInSeconds: number;
         defaultCountry?: CountryCode;
-        /*
-         * Privacy policy link for the sign-up form.
-         */
-        privacyPolicyLink?: string;
-        /*
-         * Terms and conditions link for the sign-up form.
-         */
-        termsOfServiceLink?: string;
-    } & PasswordlessNormalisedBaseConfig;
-    userInputCodeForm: PasswordlessNormalisedBaseConfig;
-    linkClickedScreen: PasswordlessNormalisedBaseConfig;
+        guessInternationPhoneNumberFromInputPhoneNumber: (
+            inputPhoneNumber: string,
+            defaultCountryFromConfig?: CountryCode
+        ) => Promise<string | undefined> | string | undefined;
 
-    contactMethod: "PHONE" | "EMAIL";
+        privacyPolicyLink?: string;
+        termsOfServiceLink?: string;
+
+        emailOrPhoneFormStyle: Styles;
+        userInputCodeFormStyle: Styles;
+        linkSentScreenStyle: Styles;
+        closeTabScreenStyle: Styles;
+
+        disableDefaultImplementation?: boolean;
+    };
+    linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
+
+    contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
 
     override: {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
@@ -223,35 +216,64 @@ export type PasswordlessFeatureBaseConfig = {
     disableDefaultImplementation?: boolean;
 } & FeatureBaseConfig;
 
-export type UserInput = {
-    contactMethod: "PHONE" | "EMAIL";
-
-    validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
-    validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
-
+export type SignInUpFeatureConfigInput = {
+    disableDefaultImplementation?: boolean;
     resendCodeTimeGapInSeconds?: number;
 
-    emailForm?: {
-        privacyPolicyLink?: string;
-        termsOfServiceLink?: string;
-    } & PasswordlessFeatureBaseConfig;
+    /*
+     * Privacy policy link for the sign-up form.
+     */
+    privacyPolicyLink?: string;
+    /*
+     * Terms and conditions link for the sign-up form.
+     */
+    termsOfServiceLink?: string;
 
-    mobileForm?: {
-        /*
-         * Must be a two-letter ISO country code (e.g.: "US")
-         */
-        defaultCountry?: CountryCode;
-        privacyPolicyLink?: string;
-        termsOfServiceLink?: string;
-    } & PasswordlessFeatureBaseConfig;
-    userInputCodeForm?: FeatureBaseConfig;
+    emailOrPhoneFormStyle?: Styles;
+    userInputCodeFormStyle?: Styles;
+    linkSentScreenStyle?: Styles;
+    closeTabScreenStyle?: Styles;
+};
 
-    linkClickedScreen?: PasswordlessFeatureBaseConfig;
+export type UserInput = (
+    | {
+          contactMethod: "EMAIL";
 
+          validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
+
+          signInUpFeature?: SignInUpFeatureConfigInput;
+      }
+    | {
+          contactMethod: "PHONE";
+
+          validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+
+          signInUpFeature?: SignInUpFeatureConfigInput & {
+              /*
+               * Must be a two-letter ISO country code (e.g.: "US")
+               */
+              defaultCountry?: CountryCode;
+          };
+      }
+    | {
+          contactMethod: "EMAIL_OR_PHONE";
+
+          validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
+          validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+
+          signInUpFeature?: SignInUpFeatureConfigInput & {
+              guessInternationPhoneNumberFromInputPhoneNumber?: (
+                  inputPhoneNumber: string,
+                  defaultCountryFromConfig?: CountryCode
+              ) => Promise<string | undefined> | string | undefined;
+          };
+      }
+) & {
     override?: {
         functions?: (originalImplementation: RecipeInterface) => RecipeInterface;
         components?: ComponentOverrideMap;
     };
+    linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type SignInUpProps = {
@@ -261,7 +283,7 @@ export type SignInUpProps = {
     error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    onSuccess?: () => void;
+    onSuccess?: (result: { createdUser: boolean; user: PasswordlessUser }) => void;
 };
 export type LoginAttemptInfo = {
     deviceId: string;
@@ -269,6 +291,7 @@ export type LoginAttemptInfo = {
     contactInfo: string;
     contactMethod: "EMAIL" | "PHONE";
     lastResend: number;
+    redirectToPath?: string;
     flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
 };
 
@@ -279,7 +302,14 @@ export type SignInUpEmailFormProps = {
     onSuccess?: () => void;
 };
 
-export type SignInUpMobileFormProps = {
+export type SignInUpPhoneFormProps = {
+    error?: string;
+    recipeImplementation: RecipeInterface;
+    config: NormalisedConfig;
+    onSuccess?: () => void;
+};
+
+export type SignInUpEmailOrPhoneFormProps = {
     error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
@@ -291,7 +321,7 @@ export type SignInUpUserInputCodeFormProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     loginAttemptInfo: LoginAttemptInfo;
-    onSuccess?: () => void;
+    onSuccess?: (result: { createdUser: boolean; user: PasswordlessUser }) => void;
 };
 
 export type LinkClickedScreenProps = {
@@ -303,10 +333,9 @@ export type LinkClickedScreenProps = {
 export type CloseTabScreenProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    onSuccess?: () => void;
 };
 
-export type LinkEmailSentThemeProps = {
+export type LinkSentThemeProps = {
     error?: string;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeInterface;
@@ -329,7 +358,7 @@ export type ComponentOverrideMap = {
     PasswordlessSignInUpHeader?: ComponentOverride<typeof SignInUpHeader>;
     PasswordlessSignInUpFooter?: ComponentOverride<typeof SignInUpFooter>;
     PasswordlessEmailForm?: ComponentOverride<typeof EmailForm>;
-    PasswordlessMobileForm?: ComponentOverride<typeof MobileForm>;
+    PasswordlessPhoneForm?: ComponentOverride<typeof PhoneForm>;
     PasswordlessUserInputCodeFormHeader?: ComponentOverride<typeof UserInputCodeFormHeader>;
     PasswordlessUserInputCodeFormFooter?: ComponentOverride<typeof UserInputCodeFormFooter>;
     PasswordlessUserInputCodeForm?: ComponentOverride<typeof UserInputCodeForm>;

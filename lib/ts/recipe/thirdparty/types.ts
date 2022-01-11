@@ -125,7 +125,13 @@ export type PreAPIHookContext =
           url: string;
       };
 
-export type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
+export type OnHandleEventContext =
+    | AuthRecipeModuleOnHandleEventContext
+    | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: { id: string; email: string };
+      };
 
 export type SignInAndUpThemeProps = {
     providers: {

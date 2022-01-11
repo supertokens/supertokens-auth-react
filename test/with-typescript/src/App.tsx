@@ -24,6 +24,7 @@ import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import DarkTheme from "./Themes/Dark";
 import { CSSObject } from "@emotion/react";
+import Passwordless from "../../../recipe/passwordless";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -486,3 +487,64 @@ function Auth(props: any) {
 
     return <EmailPassword.EmailPasswordAuth>{props.children}</EmailPassword.EmailPasswordAuth>;
 }
+
+Passwordless.init({
+    contactMethod: "EMAIL",
+    preAPIHook: async (context) => {
+        let url = context.url;
+
+        // is the fetch config object that contains the header, body etc..
+        let requestInit = context.requestInit;
+
+        let action = context.action;
+        if (action === "EMAIL_EXISTS") {
+        } else if (action === "PASSWORDLESS_CONSUME_CODE") {
+        } else if (action === "PASSWORDLESS_CREATE_CODE") {
+        } else if (action === "PASSWORDLESS_RESEND_CODE") {
+        } else if (action === "PHONE_NUMBER_EXISTS") {
+        }
+
+        // events such as sign out are in the
+        // session recipe pre API hook (See the info box below)
+        return {
+            requestInit,
+            url,
+        };
+    },
+    onHandleEvent: (context) => {
+        if (context.action === "PASSWORDLESS_CODE_SENT") {
+        } else if (context.action === "PASSWORDLESS_RESTART_FLOW") {
+        } else if (context.action === "SESSION_ALREADY_EXISTS") {
+            // called when a user visits the login / sign up page with a valid session
+            // in this case, they are usually redirected to the main app
+        } else if (context.action === "SUCCESS") {
+            let user = context.user;
+            if (context.isNewUser) {
+                // sign up success
+            } else {
+                // sign in success
+            }
+        }
+    },
+    getRedirectionURL: async (context) => {
+        if (context.action === "SIGN_IN_AND_UP") {
+            // called when the user is navigating to sign in / up page
+        } else if (context.action === "SUCCESS") {
+            // called on a successful sign in / up. Where should the user go next?
+            let redirectToPath = context.redirectToPath;
+            if (redirectToPath !== undefined) {
+                // we are navigating back to where the user was before they authenticated
+                return redirectToPath;
+            }
+            if (context.isNewUser) {
+                // user signed up
+                return "/onboarding";
+            } else {
+                // user signed in
+                return "/dashboard";
+            }
+        }
+        // return undefined to let the default behaviour play out
+        return undefined;
+    },
+});

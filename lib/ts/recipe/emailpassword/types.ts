@@ -284,6 +284,11 @@ export type FormFieldThemeProps = NormalisedFormFieldWithError & {
     showIsRequired?: boolean;
 
     /*
+     * Clears the field after calling the API.
+     */
+    clearOnSubmit?: boolean;
+
+    /*
      * Autocomplete
      */
     autoComplete?: string;
@@ -360,6 +365,11 @@ export type OnHandleEventContext =
            * On Handle Event actions
            */
           action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+      }
+    | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: { id: string; email: string };
       };
 
 export type ResetPasswordUsingTokenThemeProps = {
@@ -424,7 +434,7 @@ export type FormBaseProps<T> = {
 
     validateOnBlur?: boolean;
 
-    onSuccess?: () => void;
+    onSuccess?: (result: T & { status: "OK" }) => void;
 
     callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse<T>>;
 };

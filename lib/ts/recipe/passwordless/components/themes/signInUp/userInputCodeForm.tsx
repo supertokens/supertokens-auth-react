@@ -77,9 +77,7 @@ export const UserInputCodeForm = withOverride(
             <React.Fragment>
                 {props.header}
                 {clearResendNotifTimeout !== undefined && (
-                    <div
-                        data-supertokens="generalSuccess resendSuccess"
-                        css={[styles.generalSuccess, styles.resendSuccess]}>
+                    <div data-supertokens="generalSuccess" css={[styles.generalSuccess]}>
                         {resendTarget} resent
                     </div>
                 )}
@@ -93,13 +91,16 @@ export const UserInputCodeForm = withOverride(
                                     <Label value={"OTP"} data-supertokens="codeInputLabel" />
                                     <ResendButton
                                         loginAttemptInfo={props.loginAttemptInfo}
-                                        resendCodeTimeGapInSeconds={props.config.resendCodeTimeGapInSeconds}
+                                        resendCodeTimeGapInSeconds={
+                                            props.config.signInUpFeature.resendCodeTimeGapInSeconds
+                                        }
                                         target={resendTarget}
                                         onClick={resend}
                                     />
                                 </div>
                             ),
                             optional: false,
+                            clearOnSubmit: true,
                             placeholder: "A1223B",
                             validate: userInputCodeValidate,
                         },
@@ -122,45 +123,27 @@ export const UserInputCodeForm = withOverride(
                             config: props.config,
                         });
 
-                        if (response.status === "OK") {
+                        if (response.status === "OK" || response.status === "GENERAL_ERROR") {
                             return response;
                         }
 
                         if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
                             return {
-                                status: "FIELD_ERROR",
-                                formFields: [
-                                    {
-                                        id: "userInputCode",
-                                        error: `Invalid OTP. Attempts left: ${(
-                                            response.maximumCodeInputAttempts - response.failedCodeInputAttemptCount
-                                        )
-                                            .toString()
-                                            .padStart(2, "0")}`,
-                                    },
-                                ],
+                                status: "GENERAL_ERROR",
+                                message: "Invalid OTP.",
                             };
                         }
 
                         if (response.status === "EXPIRED_USER_INPUT_CODE_ERROR") {
                             return {
-                                status: "FIELD_ERROR",
-                                formFields: [
-                                    {
-                                        id: "userInputCode",
-                                        error: `Expired OTP. Attempts left: ${(
-                                            response.maximumCodeInputAttempts - response.failedCodeInputAttemptCount
-                                        )
-                                            .toString()
-                                            .padStart(2, "0")}`,
-                                    },
-                                ],
+                                status: "GENERAL_ERROR",
+                                message: "Expired OTP.",
                             };
                         }
 
                         return {
                             status: "GENERAL_ERROR",
-                            message: "Something went wrong, please try again.",
+                            message: SOMETHING_WENT_WRONG_ERROR,
                         };
                     }}
                     validateOnBlur={false}

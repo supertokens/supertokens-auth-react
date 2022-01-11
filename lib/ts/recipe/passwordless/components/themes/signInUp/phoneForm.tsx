@@ -15,15 +15,16 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { SignInUpMobileFormProps } from "../../../types";
+import { SignInUpPhoneFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
+import { defaultValidate } from "../../../../emailpassword/validators";
 
-export const MobileForm = withOverride(
-    "PasswordlessMobileForm",
-    function PasswordlessMobileForm(
-        props: SignInUpMobileFormProps & {
+export const PhoneForm = withOverride(
+    "PasswordlessPhoneForm",
+    function PasswordlessPhoneForm(
+        props: SignInUpPhoneFormProps & {
             header?: JSX.Element;
             footer?: JSX.Element;
         }
@@ -35,11 +36,11 @@ export const MobileForm = withOverride(
                         id: "phoneNumber",
                         label: "Your Phone Number",
                         inputComponent: phoneNumberInputWithInjectedProps({
-                            defaultCountry: props.config.mobileForm.defaultCountry,
+                            defaultCountry: props.config.signInUpFeature.defaultCountry,
                         }),
                         optional: false,
-                        placeholder: "+1 (389) 848-293-234",
-                        validate: props.config.validatePhoneNumber,
+                        placeholder: "Phone number",
+                        validate: defaultValidate,
                     },
                 ]}
                 buttonLabel={"CONTINUE"}
@@ -52,6 +53,13 @@ export const MobileForm = withOverride(
                             message: "Please set your phone number",
                         };
                     }
+                    const validationRes = await props.config.validatePhoneNumber(phoneNumber);
+                    if (validationRes !== undefined) {
+                        return {
+                            status: "GENERAL_ERROR",
+                            message: validationRes,
+                        };
+                    }
                     const response = await props.recipeImplementation.createCode({
                         phoneNumber,
                         config: props.config,
@@ -59,7 +67,7 @@ export const MobileForm = withOverride(
 
                     return response;
                 }}
-                validateOnBlur={true}
+                validateOnBlur={false}
                 showLabels={true}
                 header={props.header}
                 footer={props.footer}

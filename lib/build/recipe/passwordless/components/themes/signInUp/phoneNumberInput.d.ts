@@ -4,6 +4,7 @@ import { InputProps } from "../../../../emailpassword/components/library/input";
 import { CountryCode } from "libphonenumber-js";
 declare type PhoneNumberInputProps = {
     defaultCountry?: CountryCode;
+    initialValue?: string;
 };
 declare const PhoneNumberInputWithForwardRef: React.ForwardRefExoticComponent<
     InputProps & React.RefAttributes<InputRef>

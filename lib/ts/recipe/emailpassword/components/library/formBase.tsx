@@ -166,6 +166,10 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
         this.setState((oldState) => ({
             ...oldState,
             status: "LOADING",
+            formFields: oldState.formFields.map((fs) => ({
+                ...fs,
+                error: undefined,
+            })),
         }));
 
         // Get the fields values from form.
@@ -182,6 +186,14 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
             if (this.state.unmounting.signal.aborted) {
                 return;
             }
+
+            for (const field of this.state.formFields) {
+                const fieldInput = field.ref.current;
+                if (field.clearOnSubmit === true && fieldInput !== null) {
+                    fieldInput.value = "";
+                }
+            }
+
             // If successful
             if (result.status === "OK") {
                 // Set Success state.
@@ -192,7 +204,7 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                     }),
                     () => {
                         if (this.props.onSuccess !== undefined) {
-                            this.props.onSuccess();
+                            this.props.onSuccess(result);
                         }
                     }
                 );
@@ -281,8 +293,8 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                                             <Label value={field.label} showIsRequired={field.showIsRequired} />
                                         ))}
 
-                                    {field.inputComponent !== undefined ? (
-                                        <field.inputComponent
+                                    {propField.inputComponent !== undefined ? (
+                                        <propField.inputComponent
                                             type={type}
                                             name={field.id}
                                             validated={field.validated}

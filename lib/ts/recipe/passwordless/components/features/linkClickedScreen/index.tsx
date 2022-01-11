@@ -70,9 +70,15 @@ class LinkClickedScreen extends PureComponent<PropType, unknown> {
                 });
             }
             if (response.status === "OK") {
+                const loginAttemptInfo = await this.props.recipe.recipeImpl.getLoginAttemptInfo();
                 await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+                const pathFromUrl = getRedirectToPathFromURL();
                 return this.props.recipe.redirect(
-                    { action: "SUCCESS", isNewUser: response.createdUser, redirectToPath: getRedirectToPathFromURL() },
+                    {
+                        action: "SUCCESS",
+                        isNewUser: response.createdUser,
+                        redirectToPath: pathFromUrl !== undefined ? pathFromUrl : loginAttemptInfo?.redirectToPath,
+                    },
                     this.props.history
                 );
             }
@@ -86,7 +92,7 @@ class LinkClickedScreen extends PureComponent<PropType, unknown> {
     render = (): JSX.Element => {
         const componentOverrides = this.props.recipe.config.override.components;
 
-        const linkClickedScreen = this.props.recipe.config.linkClickedScreen;
+        const linkClickedScreen = this.props.recipe.config.linkClickedScreenFeature;
 
         const props = {
             recipeImplementation: this.props.recipe.recipeImpl,

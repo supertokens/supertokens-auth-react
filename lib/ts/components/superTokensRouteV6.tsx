@@ -18,9 +18,8 @@
  */
 
 import * as React from "react";
-import NormalisedURLPath from "../normalisedURLPath";
 import SuperTokens from "../superTokens";
-
+import { RoutingComponent } from "./routingComponent";
 /*
  * Component.
  */
@@ -39,27 +38,8 @@ export function getSuperTokensRoutesForReactRouterDomV6(supertokensInstance: Sup
             <Route
                 key={`st-${path}`}
                 path={path}
-                element={<SuperTokensRouteWithRecipeId supertokensInstance={supertokensInstance} path={path} />}
+                element={<RoutingComponent supertokensInstance={supertokensInstance} path={path} />}
             />
         );
     });
-}
-
-function SuperTokensRouteWithRecipeId({
-    supertokensInstance,
-    path,
-}: {
-    supertokensInstance: SuperTokens;
-    path: string;
-}): JSX.Element | null {
-    const history = supertokensInstance.getReactRouterDom()?.useHistoryCustom();
-    const normalisedPath = new NormalisedURLPath(path);
-
-    const featureComponentWithRecipeId = supertokensInstance.getMatchingComponentForRouteAndRecipeId(normalisedPath);
-
-    if (featureComponentWithRecipeId === undefined) {
-        return null;
-    }
-
-    return <featureComponentWithRecipeId.component history={history} />;
 }

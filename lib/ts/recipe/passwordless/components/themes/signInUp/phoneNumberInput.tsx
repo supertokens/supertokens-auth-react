@@ -29,11 +29,11 @@ import StyleContext from "../../../../../styles/styleContext";
 import { InputRef } from "../../../../emailpassword/types";
 import { InputProps } from "../../../../emailpassword/components/library/input";
 import ErrorIcon from "../../../../../components/assets/errorIcon";
-import CheckedIcon from "../../../../../components/assets/checkedIcon";
 import { CountryCode } from "libphonenumber-js";
 
 type PhoneNumberInputProps = {
     defaultCountry?: CountryCode;
+    initialValue?: string;
 };
 
 /*
@@ -44,15 +44,16 @@ function PhoneNumberInput(
         defaultCountry,
         autoComplete,
         name,
+        initialValue,
         onInputBlur,
         onInputFocus,
         hasError,
-        validated,
         placeholder,
     }: InputProps & PhoneNumberInputProps,
     ref: RefObject<InputRef>
 ): JSX.Element {
-    const [phoneNumber, setPhoneNumber] = useState<string>("");
+    const [phoneNumber, setPhoneNumber] = useState<string>(initialValue || "");
+
     const styles = useContext(StyleContext);
 
     function handleFocus() {
@@ -95,6 +96,7 @@ function PhoneNumberInput(
                     css={[styles.input, styles.phoneInputLibRoot]}
                     name={name + "_text"}
                     autoComplete={autoComplete}
+                    value={phoneNumber}
                     onChange={(newValue: string) => setPhoneNumber(newValue === undefined ? "" : newValue)}
                     countryCallingCodeEditable={true}
                     onFocus={handleFocus}
@@ -108,13 +110,6 @@ function PhoneNumberInput(
                         data-supertokens="inputAdornment inputAdornmentError"
                         css={[styles.inputAdornment, styles.inputAdornmentError]}>
                         <ErrorIcon color={styles.palette.colors.error} />
-                    </div>
-                )}
-                {validated === true && hasError === false && (
-                    <div
-                        data-supertokens="inputAdornment inputAdornmentSuccess"
-                        css={[styles.inputAdornment, styles.inputAdornmentSuccess]}>
-                        <CheckedIcon color={styles.palette.colors.primary} />
                     </div>
                 )}
             </div>

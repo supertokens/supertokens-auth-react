@@ -41,12 +41,6 @@ export type GetRedirectionURLContext =
           action: "SIGN_IN_AND_UP";
       };
 
-export type OnHandleEventContext =
-    | {
-          action: "SESSION_ALREADY_EXISTS";
-      }
-    | {
-          action: "SUCCESS";
-          isNewUser: boolean;
-          user: { id: string; email: string };
-      };
+export type OnHandleEventContext = {
+    action: "SESSION_ALREADY_EXISTS";
+};

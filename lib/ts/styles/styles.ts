@@ -122,6 +122,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             borderRadius: "8px",
             color: palette.colors.error,
             animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`,
+            overflowWrap: "break-word",
         },
 
         headerTitle: {

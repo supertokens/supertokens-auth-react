@@ -70,11 +70,23 @@ if (getQueryParams("mode")) {
 
 const emailVerificationMode = window.localStorage.getItem("mode") || "OFF";
 
-if (getQueryParams("passwordlessContactInfoType")) {
-    window.localStorage.setItem("passwordlessContactInfoType", getQueryParams("passwordlessContactInfoType"));
+if (getQueryParams("passwordlessContactMethodType")) {
+    window.localStorage.setItem("passwordlessContactMethodType", getQueryParams("passwordlessContactMethodType"));
 }
 
-const passwordlessContactInfoType = window.localStorage.getItem("passwordlessContactInfoType") || "EMAIL";
+const passwordlessContactMethodType = window.localStorage.getItem("passwordlessContactMethodType") || "EMAIL";
+
+if (getQueryParams("passwordlessDefaultCountry")) {
+    window.localStorage.setItem("passwordlessDefaultCountry", getQueryParams("passwordlessDefaultCountry"));
+}
+
+const passwordlessDefaultCountry = window.localStorage.getItem("passwordlessDefaultCountry") || undefined;
+
+if (getQueryParams("passwordlessDisablePhoneGuess")) {
+    window.localStorage.setItem("passwordlessDisablePhoneGuess", getQueryParams("passwordlessDisablePhoneGuess"));
+}
+
+const passwordlessDisablePhoneGuess = window.localStorage.getItem("passwordlessDisablePhoneGuess") || undefined;
 
 if (getQueryParams("authRecipe")) {
     window.localStorage.setItem("authRecipe", getQueryParams("authRecipe"));
@@ -576,27 +588,20 @@ function getPasswordlessConfigs({ disableDefaultImplementation }) {
             console.log(`ST_LOGS PASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
         },
         useShadowDom,
-        contactMethod: passwordlessContactInfoType,
-        resendCodeTimeGapInSeconds: 30,
-        emailForm: {
+        contactMethod: passwordlessContactMethodType,
+        signInUpFeature: {
+            defaultCountry: passwordlessDefaultCountry,
+            guessInternationPhoneNumberFromInputPhoneNumber: passwordlessDisablePhoneGuess
+                ? () => undefined
+                : undefined,
+            resendCodeTimeGapInSeconds: 2,
             disableDefaultImplementation,
             style: theme.style,
 
             privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
             termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
         },
-        mobileForm: {
-            disableDefaultImplementation,
-            style: theme.style,
-
-            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
-        },
-        userInputCodeForm: {
-            disableDefaultImplementation,
-            style: theme.style,
-        },
-        linkClickedScreen: {
+        linkClickedScreenFeature: {
             disableDefaultImplementation,
             style: theme.style,
         },
@@ -690,6 +695,10 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
                 {
                     id: "custom",
                     name: "Custom",
+                },
+                {
+                    id: "auth0",
+                    name: "Auth0",
                 },
             ],
         },
@@ -801,6 +810,10 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
                 {
                     id: "custom",
                     name: "Custom",
+                },
+                {
+                    id: "auth0",
+                    name: "Auth0",
                 },
             ],
         },

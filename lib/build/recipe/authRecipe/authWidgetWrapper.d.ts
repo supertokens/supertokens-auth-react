@@ -25,18 +25,7 @@ declare const AuthWidgetWrapper: <
           }
         | T,
         S,
-        | {
-              action: "SESSION_ALREADY_EXISTS";
-          }
-        | {
-              action: "SUCCESS";
-              isNewUser: boolean;
-              user: {
-                  id: string;
-                  email: string;
-              };
-          }
-        | R
+        OnHandleEventContext | R
     >
 >(
     props: Props<T, S, R, N> & {

@@ -141,6 +141,7 @@ export declare type FormFieldThemeProps = NormalisedFormFieldWithError & {
     labelComponent?: JSX.Element;
     inputComponent?: ForwardRefExoticComponent<InputProps & RefAttributes<InputRef>>;
     showIsRequired?: boolean;
+    clearOnSubmit?: boolean;
     autoComplete?: string;
 };
 export declare type FormFieldState = FormFieldThemeProps & {
@@ -175,6 +176,14 @@ export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
           action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+      }
+    | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: {
+              id: string;
+              email: string;
+          };
       };
 export declare type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailProps;
@@ -219,7 +228,11 @@ export declare type FormBaseProps<T> = {
     buttonLabel: string;
     error?: string;
     validateOnBlur?: boolean;
-    onSuccess?: () => void;
+    onSuccess?: (
+        result: T & {
+            status: "OK";
+        }
+    ) => void;
     callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse<T>>;
 };
 export declare type FormBaseAPIResponse<T> =

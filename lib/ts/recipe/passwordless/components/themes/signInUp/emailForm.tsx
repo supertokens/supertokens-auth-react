@@ -18,7 +18,7 @@ import { jsx } from "@emotion/react";
 import { SignInUpEmailFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
-import { defaultEmailValidator } from "../../../validators";
+import { defaultValidate } from "../../../../emailpassword/validators";
 
 export const EmailForm = withOverride(
     "PasswordlessEmailForm",
@@ -35,8 +35,9 @@ export const EmailForm = withOverride(
                         id: "email",
                         label: "Email",
                         optional: false,
-                        placeholder: "youremail@example.com",
-                        validate: props.config.validateEmailAddress || defaultEmailValidator,
+                        placeholder: "Email address",
+                        // We are using the default validator that allows any string
+                        validate: defaultValidate,
                     },
                 ]}
                 buttonLabel={"CONTINUE"}
@@ -49,6 +50,13 @@ export const EmailForm = withOverride(
                             message: "Please set your email",
                         };
                     }
+                    const validationRes = await props.config.validateEmailAddress(email);
+                    if (validationRes !== undefined) {
+                        return {
+                            status: "GENERAL_ERROR",
+                            message: validationRes,
+                        };
+                    }
                     const response = await props.recipeImplementation.createCode({
                         email,
                         config: props.config,
@@ -56,7 +64,7 @@ export const EmailForm = withOverride(
 
                     return response;
                 }}
-                validateOnBlur={true}
+                validateOnBlur={false}
                 showLabels={true}
                 header={props.header}
                 footer={props.footer}

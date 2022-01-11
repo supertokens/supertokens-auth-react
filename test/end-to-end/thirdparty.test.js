@@ -28,9 +28,7 @@ import {
     assertNoSTComponents,
     generateState,
     clickOnProviderButton,
-    loginWithGithub,
-    loginWithFacebook,
-    loginWithGoogle,
+    loginWithAuth0,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -85,20 +83,15 @@ describe("SuperTokens Third Party", function () {
     });
 
     describe("Third Party test", function () {
-        // In case OAuth configs are not set locally.
-        if (process.env.SKIP_OAUTH === "true") {
-            return;
-        }
-
-        it("Successful signin with github", async function () {
+        it("Successful signin with Auth0", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Github");
+            await clickOnProviderButton(page, "Auth0");
             await Promise.all([
-                loginWithGithub(page),
+                loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -113,7 +106,6 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS THIRD_PARTY_SIGN_IN_UP",
@@ -123,37 +115,35 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
             ]);
         });
 
-        it("Successful signin with github and redirectToPath", async function () {
+        it("Successful signin with auth0 and redirectToPath", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=/hello`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Github");
+            await clickOnProviderButton(page, "Auth0");
             await Promise.all([
-                loginWithGithub(page),
+                loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/hello");
         });
 
-        it("Successful signin with github and redirectToPath case sensitive", async function () {
+        it("Successful signin with auth0 and redirectToPath case sensitive", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2FCasE%2FCase-SensItive1-PAth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             await assertProviders(page);
-            await clickOnProviderButton(page, "Github");
+            await clickOnProviderButton(page, "Auth0");
             await Promise.all([
-                loginWithGithub(page),
+                loginWithAuth0(page),
                 page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -213,12 +203,9 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -245,12 +232,9 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -277,12 +261,9 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -333,12 +314,9 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);
@@ -365,12 +343,9 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
-                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
             const search = await page.evaluate(() => window.location.search);

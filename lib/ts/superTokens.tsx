@@ -26,6 +26,7 @@ import { getSuperTokensRoutesForReactRouterDomV6 } from "./components/superToken
 import { BaseFeatureComponentMap } from "./types";
 import { SSR_ERROR } from "./constants";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
+import { RoutingComponent } from "./components/routingComponent";
 
 /*
  * Class.
@@ -93,7 +94,7 @@ export default class SuperTokens {
         return SuperTokens.getInstanceOrThrow().canHandleRoute();
     }
 
-    static getRoutingComponent(): JSX.Element | undefined {
+    static getRoutingComponent(): JSX.Element | null {
         return SuperTokens.getInstanceOrThrow().getRoutingComponent();
     }
 
@@ -138,16 +139,13 @@ export default class SuperTokens {
      * Instance Methods.
      */
     canHandleRoute = (): boolean => {
-        return this.getRoutingComponent() !== undefined;
+        return this.getMatchingComponentForRouteAndRecipeId(getCurrentNormalisedUrlPath()) !== undefined;
     };
 
-    getRoutingComponent = (): JSX.Element | undefined => {
-        const normalisedPath = getCurrentNormalisedUrlPath();
-        const FeatureComponentWithRecipeId = this.getMatchingComponentForRouteAndRecipeId(normalisedPath);
-        if (FeatureComponentWithRecipeId === undefined) {
-            return undefined;
-        }
-        return <FeatureComponentWithRecipeId.component />;
+    getRoutingComponent = (): JSX.Element | null => {
+        return (
+            <RoutingComponent path={getCurrentNormalisedUrlPath().getAsStringDangerous()} supertokensInstance={this} />
+        );
     };
 
     getPathsToFeatureComponentWithRecipeIdMap = (): BaseFeatureComponentMap => {

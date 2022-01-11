@@ -24,13 +24,13 @@ import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import StyleContext from "../../../../../styles/styleContext";
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
 import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
-import { LinkEmailSentThemeProps } from "../../../types";
+import { LinkSentThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { ResendButton } from "./resendButton";
 import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
 
-type LinkEmailSentState = {
-    status: "READY" | "EMAIL_RESENT" | "ERROR";
+type LinkSentState = {
+    status: "READY" | "LINK_RESENT" | "ERROR";
     resendNotifTimeout?: any;
 };
 
@@ -38,10 +38,10 @@ type LinkEmailSentState = {
  * Component.
  */
 
-class PasswordlessLinkSent extends PureComponent<LinkEmailSentThemeProps, LinkEmailSentState> {
+class PasswordlessLinkSent extends PureComponent<LinkSentThemeProps, LinkSentState> {
     static contextType = StyleContext;
 
-    constructor(props: LinkEmailSentThemeProps) {
+    constructor(props: LinkSentThemeProps) {
         super(props);
 
         this.state = {
@@ -65,9 +65,9 @@ class PasswordlessLinkSent extends PureComponent<LinkEmailSentThemeProps, LinkEm
 
             if (response.status === "OK") {
                 this.setState(() => ({
-                    status: "EMAIL_RESENT",
+                    status: "LINK_RESENT",
                     resendNotifTimeout: setTimeout(() => {
-                        this.setState((os) => (os.status === "EMAIL_RESENT" ? { ...os, status: "READY" } : os));
+                        this.setState((os) => (os.status === "LINK_RESENT" ? { ...os, status: "READY" } : os));
                     }, 2000),
                 }));
             } else {
@@ -86,7 +86,7 @@ class PasswordlessLinkSent extends PureComponent<LinkEmailSentThemeProps, LinkEm
         const styles = this.context;
         const { status } = this.state;
 
-        const resendActive = status === "EMAIL_RESENT";
+        const resendActive = status === "LINK_RESENT";
 
         return (
             <div data-supertokens="container" css={styles.container}>
@@ -119,7 +119,7 @@ class PasswordlessLinkSent extends PureComponent<LinkEmailSentThemeProps, LinkEm
                     </div>
                     <ResendButton
                         loginAttemptInfo={this.props.loginAttemptInfo}
-                        resendCodeTimeGapInSeconds={this.props.config.resendCodeTimeGapInSeconds}
+                        resendCodeTimeGapInSeconds={this.props.config.signInUpFeature.resendCodeTimeGapInSeconds}
                         target={"link"}
                         onClick={this.resendEmail}
                     />
