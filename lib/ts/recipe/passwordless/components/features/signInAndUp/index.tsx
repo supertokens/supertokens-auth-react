@@ -91,6 +91,8 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                 }
                 const res = await this.props.recipe.recipeImpl.createCode(input);
                 if (res.status === "OK") {
+                    // This contactMethod refers to the one that was used to deliver the login info
+                    // This can be an important distinction in case both email and phone are allowed
                     const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
                     const loginAttemptInfo = {
                         ...res,
