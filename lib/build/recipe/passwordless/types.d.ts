@@ -18,6 +18,7 @@ import { UserInputCodeFormHeader } from "./components/themes/signInUp/userInputC
 import { UserInputCodeFormFooter } from "./components/themes/signInUp/userInputCodeFormFooter";
 import { LinkSent } from "./components/themes/signInUp/linkSent";
 import { CloseTabScreen } from "./components/themes/signInUp/closeTabScreen";
+import { EmailOrPhoneForm } from "./components/themes/signInUp/emailOrPhoneForm";
 export declare type PasswordlessUser = {
     id: string;
     email?: string;
@@ -305,6 +306,7 @@ export declare type ComponentOverrideMap = {
     PasswordlessSignInUpFooter?: ComponentOverride<typeof SignInUpFooter>;
     PasswordlessEmailForm?: ComponentOverride<typeof EmailForm>;
     PasswordlessPhoneForm?: ComponentOverride<typeof PhoneForm>;
+    PasswordlessEmailOrPhoneForm?: ComponentOverride<typeof EmailOrPhoneForm>;
     PasswordlessUserInputCodeFormHeader?: ComponentOverride<typeof UserInputCodeFormHeader>;
     PasswordlessUserInputCodeFormFooter?: ComponentOverride<typeof UserInputCodeFormFooter>;
     PasswordlessUserInputCodeForm?: ComponentOverride<typeof UserInputCodeForm>;
