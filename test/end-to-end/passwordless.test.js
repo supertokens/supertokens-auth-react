@@ -54,8 +54,12 @@ describe("SuperTokens Passwordless", function () {
     });
 
     describe("with PHONE_OR_EMAIL", () => {
-        getTestCases("EMAIL_OR_PHONE", "emailOrPhone", exampleEmail);
-        getTestCases("EMAIL_OR_PHONE", "emailOrPhone", examplePhoneNumber);
+        describe("using an email", () => {
+            getTestCases("EMAIL_OR_PHONE", "emailOrPhone", exampleEmail);
+        });
+        describe("using a phone number", () => {
+            getTestCases("EMAIL_OR_PHONE", "emailOrPhone", examplePhoneNumber);
+        });
 
         describe("switching input type", () => {
             const inputName = "emailOrPhone";
