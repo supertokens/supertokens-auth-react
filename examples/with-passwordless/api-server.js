@@ -27,9 +27,12 @@ supertokens.init({
     },
     recipeList: [
         Passwordless.init({
-            contactMethod: "EMAIL",
+            contactMethod: "EMAIL_OR_PHONE",
             flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
             createAndSendCustomEmail: async function (input) {
+                console.log(input);
+            },
+            createAndSendCustomTextMessage: async function (input) {
                 console.log(input);
             },
         }),
