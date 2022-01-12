@@ -99,7 +99,7 @@ function normalizeSignInUpFeatureConfig(
     const signInUpFeature = {
         ...signInUpInput,
         resendEmailOrSMSGapInSeconds:
-            signInUpInput?.resendEmailOrSMSGapInSeconds === undefined ? 60 : signInUpInput.resendEmailOrSMSGapInSeconds,
+            signInUpInput?.resendEmailOrSMSGapInSeconds === undefined ? 15 : signInUpInput.resendEmailOrSMSGapInSeconds,
 
         emailOrPhoneFormStyle:
             signInUpInput?.emailOrPhoneFormStyle !== undefined ? signInUpInput.emailOrPhoneFormStyle : {},
