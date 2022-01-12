@@ -20,7 +20,7 @@ import { jsx } from "@emotion/react";
 import { Fragment, PureComponent } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
-import { getQueryParams, getRedirectToPathFromURL, getURLHash } from "../../../../../utils";
+import { getQueryParams, getURLHash } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
@@ -72,12 +72,11 @@ class LinkClickedScreen extends PureComponent<PropType, unknown> {
             if (response.status === "OK") {
                 const loginAttemptInfo = await this.props.recipe.recipeImpl.getLoginAttemptInfo();
                 await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
-                const pathFromUrl = getRedirectToPathFromURL();
                 return this.props.recipe.redirect(
                     {
                         action: "SUCCESS",
                         isNewUser: response.createdUser,
-                        redirectToPath: pathFromUrl !== undefined ? pathFromUrl : loginAttemptInfo?.redirectToPath,
+                        redirectToPath: loginAttemptInfo?.redirectToPath,
                     },
                     this.props.history
                 );

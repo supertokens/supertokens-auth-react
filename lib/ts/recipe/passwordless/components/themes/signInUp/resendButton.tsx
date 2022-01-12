@@ -19,7 +19,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { LoginAttemptInfo } from "../../../types";
@@ -28,36 +28,41 @@ export const ResendButton = withOverride(
     "PasswordlessResendButton",
     function PasswordlessResendButton({
         loginAttemptInfo,
-        resendCodeTimeGapInSeconds,
+        resendEmailOrSMSGapInSeconds,
         target,
         onClick,
     }: {
         loginAttemptInfo: LoginAttemptInfo;
-        resendCodeTimeGapInSeconds: number;
+        resendEmailOrSMSGapInSeconds: number;
         target: string;
         onClick: () => void;
     }): JSX.Element | null {
         const styles = useContext(StyleContext);
 
-        const [secsUntilResend, setSecsUntilResend] = useState<number | undefined>();
+        const getTimeLeft = useCallback(() => {
+            const timeLeft = loginAttemptInfo.lastResend + resendEmailOrSMSGapInSeconds * 1000 - new Date().getTime();
+            return timeLeft < 0 ? undefined : Math.ceil(timeLeft / 1000);
+        }, [loginAttemptInfo, resendEmailOrSMSGapInSeconds]);
+
+        const [secsUntilResend, setSecsUntilResend] = useState<number | undefined>(getTimeLeft());
 
         useEffect(() => {
             // This runs every time the loginAttemptInfo, so after every resend
             const interval = setInterval(() => {
-                const timer = loginAttemptInfo.lastResend + resendCodeTimeGapInSeconds * 1000 - new Date().getTime();
-                if (timer <= 0) {
-                    setSecsUntilResend(undefined);
+                const timeLeft = getTimeLeft();
+
+                if (timeLeft === undefined) {
                     clearInterval(interval);
-                } else {
-                    setSecsUntilResend(Math.ceil(timer / 1000));
                 }
+
+                setSecsUntilResend(timeLeft);
             }, 500);
 
             return () => {
                 // This can safely run twice
                 clearInterval(interval);
             };
-        }, [loginAttemptInfo, resendCodeTimeGapInSeconds, setSecsUntilResend]);
+        }, [getTimeLeft, setSecsUntilResend]);
 
         return (
             <button

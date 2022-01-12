@@ -67,12 +67,8 @@ export const UserInputCodeForm = withOverride(
             }
         }
 
-        const resendTarget =
-            props.loginAttemptInfo.flowType === "USER_INPUT_CODE"
-                ? "OTP"
-                : props.loginAttemptInfo.contactMethod === "EMAIL"
-                ? "Email"
-                : "SMS";
+        const resendTarget = props.loginAttemptInfo.contactMethod === "EMAIL" ? "Email" : "SMS";
+
         return (
             <React.Fragment>
                 {props.header}
@@ -91,8 +87,8 @@ export const UserInputCodeForm = withOverride(
                                     <Label value={"OTP"} data-supertokens="codeInputLabel" />
                                     <ResendButton
                                         loginAttemptInfo={props.loginAttemptInfo}
-                                        resendCodeTimeGapInSeconds={
-                                            props.config.signInUpFeature.resendCodeTimeGapInSeconds
+                                        resendEmailOrSMSGapInSeconds={
+                                            props.config.signInUpFeature.resendEmailOrSMSGapInSeconds
                                         }
                                         target={resendTarget}
                                         onClick={resend}
@@ -130,7 +126,7 @@ export const UserInputCodeForm = withOverride(
                         if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: "Invalid OTP.",
+                                message: "Invalid OTP",
                             };
                         }
 

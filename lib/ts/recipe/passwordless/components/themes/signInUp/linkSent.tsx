@@ -111,7 +111,7 @@ class PasswordlessLinkSent extends PureComponent<LinkSentThemeProps, LinkSentSta
                     </div>
                     <div data-supertokens="primaryText sendCodeText" css={[styles.primaryText, styles.sendCodeText]}>
                         We sent a link to
-                        {this.props.loginAttemptInfo.contactMethod === "EMAIL" ? " " : " your mobile number "}
+                        {this.props.loginAttemptInfo.contactMethod === "EMAIL" ? " " : " your phone number "}
                         <strong>{this.props.loginAttemptInfo.contactInfo}</strong>
                         {this.props.loginAttemptInfo.contactMethod === "EMAIL"
                             ? " Click the link to login or sign up"
@@ -119,8 +119,8 @@ class PasswordlessLinkSent extends PureComponent<LinkSentThemeProps, LinkSentSta
                     </div>
                     <ResendButton
                         loginAttemptInfo={this.props.loginAttemptInfo}
-                        resendCodeTimeGapInSeconds={this.props.config.signInUpFeature.resendCodeTimeGapInSeconds}
-                        target={"link"}
+                        resendEmailOrSMSGapInSeconds={this.props.config.signInUpFeature.resendEmailOrSMSGapInSeconds}
+                        target={this.props.loginAttemptInfo.contactMethod === "EMAIL" ? "Email" : "SMS"}
                         onClick={this.resendEmail}
                     />
                     {

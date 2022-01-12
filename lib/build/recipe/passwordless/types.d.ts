@@ -18,6 +18,7 @@ import { UserInputCodeFormHeader } from "./components/themes/signInUp/userInputC
 import { UserInputCodeFormFooter } from "./components/themes/signInUp/userInputCodeFormFooter";
 import { LinkSent } from "./components/themes/signInUp/linkSent";
 import { CloseTabScreen } from "./components/themes/signInUp/closeTabScreen";
+import { EmailOrPhoneForm } from "./components/themes/signInUp/emailOrPhoneForm";
 export declare type PasswordlessUser = {
     id: string;
     email?: string;
@@ -165,7 +166,7 @@ export declare type NormalisedConfig = {
     validateEmailAddress: (email: string) => Promise<string | undefined> | string | undefined;
     validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
     signInUpFeature: {
-        resendCodeTimeGapInSeconds: number;
+        resendEmailOrSMSGapInSeconds: number;
         defaultCountry?: CountryCode;
         guessInternationPhoneNumberFromInputPhoneNumber: (
             inputPhoneNumber: string,
@@ -193,7 +194,7 @@ export declare type PasswordlessFeatureBaseConfig = {
 } & FeatureBaseConfig;
 export declare type SignInUpFeatureConfigInput = {
     disableDefaultImplementation?: boolean;
-    resendCodeTimeGapInSeconds?: number;
+    resendEmailOrSMSGapInSeconds?: number;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
     emailOrPhoneFormStyle?: Styles;
@@ -305,6 +306,7 @@ export declare type ComponentOverrideMap = {
     PasswordlessSignInUpFooter?: ComponentOverride<typeof SignInUpFooter>;
     PasswordlessEmailForm?: ComponentOverride<typeof EmailForm>;
     PasswordlessPhoneForm?: ComponentOverride<typeof PhoneForm>;
+    PasswordlessEmailOrPhoneForm?: ComponentOverride<typeof EmailOrPhoneForm>;
     PasswordlessUserInputCodeFormHeader?: ComponentOverride<typeof UserInputCodeFormHeader>;
     PasswordlessUserInputCodeFormFooter?: ComponentOverride<typeof UserInputCodeFormFooter>;
     PasswordlessUserInputCodeForm?: ComponentOverride<typeof UserInputCodeForm>;

@@ -36,7 +36,7 @@ export const EmailOrPhoneForm = withOverride(
                 formFields={[
                     {
                         id: "emailOrPhone",
-                        label: "Your Email address or Phone number",
+                        label: "Email or Phone number",
                         inputComponent: phoneNumberInitialValue
                             ? phoneNumberInputWithInjectedProps({
                                   defaultCountry: props.config.signInUpFeature.defaultCountry,
@@ -44,7 +44,7 @@ export const EmailOrPhoneForm = withOverride(
                               })
                             : undefined,
                         optional: false,
-                        placeholder: "Email address or Phone number",
+                        placeholder: "Email or Phone number",
                         validate: defaultValidate,
                     },
                 ]}
