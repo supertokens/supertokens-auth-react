@@ -87,6 +87,19 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
         });
     };
 
+    handleInputChange = async (): Promise<void> => {
+        this.setState((oldState) => {
+            if (oldState.status === "GENERAL_ERROR") {
+                return {
+                    ...oldState,
+                    status: "IN_PROGRESS",
+                    generalError: undefined,
+                };
+            }
+            return oldState;
+        });
+    };
+
     handleInputBlur = async (field: APIFormField): Promise<void> => {
         const formFields = this.state.formFields;
         let error: string | undefined = undefined;
@@ -127,7 +140,7 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
             };
         });
 
-        let status: FormBaseState["status"] = "READY";
+        let status: FormBaseState["status"] = oldState.status;
 
         for (const i in formFields) {
             const field = formFields[i];
@@ -148,10 +161,10 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
         }
 
         return {
-            unmounting: oldState.unmounting,
+            ...oldState,
             status,
             formFields,
-        };
+        } as FormBaseState; // We need this cast, because TS doesn't recognise that we only get GENERAL_ERROR state if oldState also had that
     }
 
     componentWillUnmount = () => {
@@ -304,6 +317,7 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                                             autofocus={field.autofocus}
                                             onInputFocus={this.handleInputFocus}
                                             onInputBlur={onInputBlur}
+                                            onChange={this.handleInputChange}
                                             hasError={field.error !== undefined}
                                         />
                                     ) : (
@@ -316,6 +330,7 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                                             autoComplete={field.autoComplete}
                                             onInputFocus={this.handleInputFocus}
                                             onInputBlur={onInputBlur}
+                                            onChange={this.handleInputChange}
                                             autofocus={field.autofocus}
                                             hasError={field.error !== undefined}
                                         />

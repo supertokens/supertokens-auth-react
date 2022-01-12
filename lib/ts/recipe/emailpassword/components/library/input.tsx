@@ -45,6 +45,7 @@ export type InputProps = {
     placeholder: string;
     onInputBlur?: (field: APIFormField) => void;
     onInputFocus?: (field: APIFormField) => void;
+    onChange?: (newValue: string) => void;
 };
 
 /*
@@ -52,7 +53,18 @@ export type InputProps = {
  */
 
 function Input(
-    { type, name, hasError, autoComplete, onInputFocus, onInputBlur, placeholder, validated, autofocus }: InputProps,
+    {
+        type,
+        name,
+        hasError,
+        autoComplete,
+        onInputFocus,
+        onInputBlur,
+        onChange,
+        placeholder,
+        validated,
+        autofocus,
+    }: InputProps,
     ref: RefObject<InputRef>
 ): JSX.Element {
     /*
@@ -94,6 +106,9 @@ function Input(
     function handleChange() {
         if (ref.current !== null && ref.current.value !== null) {
             setValue(ref.current.value);
+            if (onChange) {
+                onChange(ref.current.value);
+            }
         }
     }
 

@@ -12,6 +12,7 @@ export declare type InputProps = {
     placeholder: string;
     onInputBlur?: (field: APIFormField) => void;
     onInputFocus?: (field: APIFormField) => void;
+    onChange?: (newValue: string) => void;
 };
 declare const _default: import("react").ForwardRefExoticComponent<InputProps & import("react").RefAttributes<InputRef>>;
 export default _default;
