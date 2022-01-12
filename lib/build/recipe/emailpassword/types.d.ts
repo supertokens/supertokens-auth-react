@@ -142,6 +142,7 @@ export declare type FormFieldThemeProps = NormalisedFormFieldWithError & {
     inputComponent?: ForwardRefExoticComponent<InputProps & RefAttributes<InputRef>>;
     showIsRequired?: boolean;
     clearOnSubmit?: boolean;
+    autofocus?: boolean;
     autoComplete?: string;
 };
 export declare type FormFieldState = FormFieldThemeProps & {

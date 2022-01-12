@@ -38,6 +38,7 @@ import ErrorIcon from "../../../../components/assets/errorIcon";
 export type InputProps = {
     type: string;
     name: string;
+    autofocus?: boolean;
     autoComplete?: string;
     validated: boolean;
     hasError: boolean;
@@ -51,7 +52,7 @@ export type InputProps = {
  */
 
 function Input(
-    { type, name, hasError, autoComplete, onInputFocus, onInputBlur, placeholder, validated }: InputProps,
+    { type, name, hasError, autoComplete, onInputFocus, onInputBlur, placeholder, validated, autofocus }: InputProps,
     ref: RefObject<InputRef>
 ): JSX.Element {
     /*
@@ -114,6 +115,7 @@ function Input(
         <div data-supertokens="inputContainer" css={styles.inputContainer}>
             <div data-supertokens="inputWrapper inputError" css={[styles.inputWrapper, errorStyle]}>
                 <input
+                    autoFocus={autofocus}
                     autoComplete={autoComplete}
                     data-supertokens="input"
                     css={styles.input}

@@ -289,6 +289,11 @@ export type FormFieldThemeProps = NormalisedFormFieldWithError & {
     clearOnSubmit?: boolean;
 
     /*
+     * Moves focus to the input element when it mounts
+     */
+    autofocus?: boolean;
+
+    /*
      * Autocomplete
      */
     autoComplete?: string;

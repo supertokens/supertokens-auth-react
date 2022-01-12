@@ -301,6 +301,7 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                                             placeholder={field.placeholder}
                                             ref={field.ref}
                                             autoComplete={field.autoComplete}
+                                            autofocus={field.autofocus}
                                             onInputFocus={this.handleInputFocus}
                                             onInputBlur={onInputBlur}
                                             hasError={field.error !== undefined}
@@ -315,6 +316,7 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                                             autoComplete={field.autoComplete}
                                             onInputFocus={this.handleInputFocus}
                                             onInputBlur={onInputBlur}
+                                            autofocus={field.autofocus}
                                             hasError={field.error !== undefined}
                                         />
                                     )}

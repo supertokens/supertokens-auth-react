@@ -5,6 +5,7 @@ import { InputRef } from "../../types";
 export declare type InputProps = {
     type: string;
     name: string;
+    autofocus?: boolean;
     autoComplete?: string;
     validated: boolean;
     hasError: boolean;
