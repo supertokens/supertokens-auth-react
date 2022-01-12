@@ -98,7 +98,7 @@ export const UserInputCodeForm = withOverride(
                             autofocus: true,
                             optional: false,
                             clearOnSubmit: true,
-                            placeholder: "A1223B",
+                            placeholder: "",
                             validate: userInputCodeValidate,
                         },
                     ]}

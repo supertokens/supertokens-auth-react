@@ -40,7 +40,7 @@ export const PhoneForm = withOverride(
                         }),
                         optional: false,
                         autofocus: true,
-                        placeholder: "Phone number",
+                        placeholder: "",
                         validate: defaultValidate,
                     },
                 ]}

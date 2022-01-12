@@ -45,7 +45,7 @@ export const EmailOrPhoneForm = withOverride(
                             : undefined,
                         optional: false,
                         autofocus: true,
-                        placeholder: "Email or Phone number",
+                        placeholder: "",
                         validate: defaultValidate,
                     },
                 ]}
