@@ -67,12 +67,8 @@ export const UserInputCodeForm = withOverride(
             }
         }
 
-        const resendTarget =
-            props.loginAttemptInfo.flowType === "USER_INPUT_CODE"
-                ? "OTP"
-                : props.loginAttemptInfo.contactMethod === "EMAIL"
-                ? "Email"
-                : "SMS";
+        const resendTarget = props.loginAttemptInfo.contactMethod === "EMAIL" ? "Email" : "SMS";
+
         return (
             <React.Fragment>
                 {props.header}
