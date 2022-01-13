@@ -60,6 +60,11 @@ export const EmailOrPhoneForm = withOverride(
                         };
                     }
 
+                    // We check if it looks like an email by default. Even if this fails (e.g., the user mistyped the @ symbol),
+                    // the guessInternationPhoneNumberFromInputPhoneNumber can decide to not change to the phone UI.
+                    // By default it stays on the combined input in 2 cases:
+                    // - if the input contains the @ symbol
+                    // - if less than half of the input looks like a phone number
                     if ((await defaultEmailValidator(emailOrPhone)) === undefined) {
                         const emailValidationRes = await props.config.validateEmailAddress(emailOrPhone);
                         if (emailValidationRes === undefined) {
