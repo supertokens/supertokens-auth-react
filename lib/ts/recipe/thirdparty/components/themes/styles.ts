@@ -73,14 +73,14 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             justifyContent: "center",
         },
 
-        providerGoogle: getButtonStyle(providerColors.google, palette.colors.buttonText),
-        providerGithub: getButtonStyle(providerColors.github, palette.colors.buttonText, true),
-        providerTwitter: getButtonStyle(providerColors.twitter, palette.colors.buttonText),
-        providerFacebook: getButtonStyle(providerColors.facebook, palette.colors.buttonText),
-        providerApple: getButtonStyle(providerColors.apple, palette.colors.buttonText, true),
+        providerGoogle: getButtonStyle(providerColors.google, "white"),
+        providerGithub: getButtonStyle(providerColors.github, "white", true),
+        providerTwitter: getButtonStyle(providerColors.twitter, "white"),
+        providerFacebook: getButtonStyle(providerColors.facebook, "white"),
+        providerApple: getButtonStyle(providerColors.apple, "white", true),
 
         providerCustom: {
-            ...getButtonStyle(providerColors.custom, palette.colors.buttonText),
+            ...getButtonStyle(providerColors.custom, "white"),
             color: "#000",
             border: "1px solid #000",
             "&:active": {
