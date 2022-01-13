@@ -35,6 +35,7 @@ export const defaultPalette: NormalisedPalette = {
         textInput: "#222222",
         textPrimary: "#656565",
         textLink: "#0076ff",
+        buttonText: "white",
     },
     fonts: {
         size: ["14px", "16px", "19px", "24px"],
@@ -220,7 +221,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             color: palette.colors.error,
         },
 
-        button: getButtonStyle(palette.colors.primary),
+        button: getButtonStyle(palette.colors.primary, palette.colors.buttonText),
 
         linkButton: {
             backgroundColor: "transparent",
@@ -229,18 +230,18 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
     };
 }
 
-export function getButtonStyle(color: string, brighten?: boolean): CSSObject {
+export function getButtonStyle(bgColor: string, color: string, brighten?: boolean): CSSObject {
     const brightness = brighten === true ? 1.1 : 0.95;
 
     return {
         width: "100%",
         height: "34px",
-        backgroundColor: color,
-        color: "white",
+        backgroundColor: bgColor,
+        color: color,
         fontWeight: 700,
         borderWidth: "1px",
         borderStyle: "solid",
-        borderColor: `${chroma(color).darken(0.3).hex()}`,
+        borderColor: `${chroma(bgColor).darken(0.3).hex()}`,
         borderRadius: "6px",
         backgroundPosition: "center",
         transition: "all 0.4s",

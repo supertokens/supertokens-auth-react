@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 -   Extracts away AuthRecipe into one with email verification and one without email verification
+-   Updated the reset password form to match the single input forms of passwordless (showing label, removed placeholder and autofocus)
+-   Using the default label and no placeholder for the reset password email form instead of the ones configured for the signup form
+-   Removed ":" from labels
 
 ### Adds
 
@@ -22,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking changes
 
 -   `getRoutingComponent` now returns ` JSX.Element | null` instead of ` JSX.Element | undefined`
+-   Removed ":" from labels
 
 ## [0.17.9] - 2022-01-07
 

@@ -44,7 +44,6 @@ export default function Label({ value, showIsRequired }: LabelProps): JSX.Elemen
     return (
         <div data-supertokens="label" css={styles.label}>
             {value}
-            {":"}
             {showIsRequired && " *"}
         </div>
     );

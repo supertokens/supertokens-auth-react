@@ -117,10 +117,10 @@ describe("SuperTokens Reset password", function () {
             assert.deepStrictEqual(inputNames, ["email"]);
 
             const labelNames = await getLabelsText(page);
-            assert.deepStrictEqual(labelNames, []); // No labels.
+            assert.deepStrictEqual(labelNames, ["Email"]);
 
             const placeholders = await getPlaceholders(page);
-            assert.deepStrictEqual(placeholders, ["Your work email"]); // Email placeholder as defined in signUpForm.formFields.
+            assert.deepStrictEqual(placeholders, [""]);
 
             // Set incorrect email.
             await setInputValues(page, [{ name: "email", value: "john.doe.io" }]);
@@ -197,7 +197,7 @@ describe("SuperTokens Reset password", function () {
             assert.deepStrictEqual(inputNames, ["password", "confirm-password"]);
 
             const labelNames = await getLabelsText(page);
-            assert.deepStrictEqual(labelNames, ["New password:", "Confirm password:"]);
+            assert.deepStrictEqual(labelNames, ["New password", "Confirm password"]);
 
             const placeholders = await getPlaceholders(page);
             assert.deepStrictEqual(placeholders, ["New password", "Confirm your password"]); // Email placeholder as defined in signUpForm.formFields.

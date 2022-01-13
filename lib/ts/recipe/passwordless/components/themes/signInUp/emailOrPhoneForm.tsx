@@ -97,7 +97,7 @@ export const EmailOrPhoneForm = withOverride(
                             setPhoneNumberInitialValue(intPhoneNumber);
                             return {
                                 status: "GENERAL_ERROR",
-                                message: "Phone number must include the country code.",
+                                message: "Please enter a valid phone number with its country code.",
                             };
                         } else {
                             return {

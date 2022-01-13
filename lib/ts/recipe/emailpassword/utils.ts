@@ -250,7 +250,14 @@ export function normaliseResetPasswordUsingTokenFeature(
 
     const enterEmailForm: NormalisedEnterEmailForm = {
         style: enterEmailFormStyle,
-        formFields: [signUpEmailField],
+        formFields: [
+            {
+                ...getDefaultEmailFormField(),
+                validate: signUpEmailField.validate,
+                placeholder: "",
+                autofocus: true,
+            },
+        ],
     };
 
     return {
