@@ -6,7 +6,7 @@ export declare const defaultPalette: NormalisedPalette;
 export declare const slideTop: Keyframes;
 export declare const swingIn: Keyframes;
 export declare function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultStyles;
-export declare function getButtonStyle(color: string, brighten?: boolean): CSSObject;
+export declare function getButtonStyle(bgColor: string, color: string, brighten?: boolean): CSSObject;
 export declare function getMergedStyles(
     defaultStyles: NormalisedDefaultStyles,
     themeStyles: NormalisedDefaultStyles
