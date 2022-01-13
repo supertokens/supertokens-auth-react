@@ -118,7 +118,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
             assert.deepStrictEqual(inputNames, ["email", "password"]);
 
             const labelNames = await getLabelsText(page);
-            assert.deepStrictEqual(labelNames, ["Your Email:", "Password:"]);
+            assert.deepStrictEqual(labelNames, ["Your Email", "Password"]);
 
             const placeholders = await getPlaceholders(page);
             assert.deepStrictEqual(placeholders, ["Your work email", "Password"]);

@@ -193,6 +193,11 @@ export type NormalisedFormField = {
      * Autocomplete input.
      */
     autoComplete?: string;
+
+    /*
+     * Moves focus to the input element when it mounts
+     */
+    autofocus?: boolean;
 };
 
 export type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);

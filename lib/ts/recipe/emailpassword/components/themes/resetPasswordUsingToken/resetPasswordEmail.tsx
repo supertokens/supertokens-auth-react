@@ -92,7 +92,7 @@ class EmailPasswordResetPasswordEmail extends PureComponent<EnterEmailProps, Ent
                                 config: this.props.config,
                             })
                         }
-                        showLabels={false}
+                        showLabels={true}
                         validateOnBlur={true}
                         header={
                             <Fragment>

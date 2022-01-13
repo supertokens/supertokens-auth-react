@@ -123,11 +123,11 @@ describe("SuperTokens SignUp", function () {
 
             const labelNames = await getLabelsText(page);
             assert.deepStrictEqual(labelNames, [
-                "Your Email: *",
-                "Password: *",
-                "Full name: *",
-                "Your age: *",
-                "Your Country:",
+                "Your Email *",
+                "Password *",
+                "Full name *",
+                "Your age *",
+                "Your Country",
             ]);
 
             const placeholders = await getPlaceholders(page);
