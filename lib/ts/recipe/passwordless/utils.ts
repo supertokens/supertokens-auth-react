@@ -148,11 +148,12 @@ export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
             // The lib couldn't make sense of it, so we keep it unchanged
         }
     }
+    // This function "extracts" phone numbers from the string, e.g.: "asd2gmail.com" -> "2"
     const incomplete = parseIncompletePhoneNumber(value);
 
     // If the incomplete/extracted phonenumber is less than half the input we assume it's not a phone number.
-    // I.e.: if more than half of the input is numbers
-    if (incomplete.length < value.length / 2) {
+    // I.e.: if less than half of the input is numbers
+    if (value.includes("@") || incomplete.length < value.length / 2) {
         return undefined;
     }
     return value;
