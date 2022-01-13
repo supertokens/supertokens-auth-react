@@ -43,10 +43,12 @@ function PhoneNumberInput(
     {
         defaultCountry,
         autoComplete,
+        autofocus,
         name,
         initialValue,
         onInputBlur,
         onInputFocus,
+        onChange,
         hasError,
         placeholder,
     }: InputProps & PhoneNumberInputProps,
@@ -82,6 +84,13 @@ function PhoneNumberInput(
         });
     }
 
+    function handleChange(newValue: string) {
+        setPhoneNumber(newValue === undefined ? "" : newValue);
+        if (onChange !== undefined) {
+            onChange(newValue);
+        }
+    }
+
     const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
     /*
      * Render.
@@ -95,9 +104,10 @@ function PhoneNumberInput(
                     countrySelectComponent={CountrySelectWithIcon}
                     css={[styles.input, styles.phoneInputLibRoot]}
                     name={name + "_text"}
+                    autoFocus={autofocus}
                     autoComplete={autoComplete}
                     value={phoneNumber}
-                    onChange={(newValue: string) => setPhoneNumber(newValue === undefined ? "" : newValue)}
+                    onChange={handleChange}
                     countryCallingCodeEditable={true}
                     onFocus={handleFocus}
                     onBlur={handleBlur}

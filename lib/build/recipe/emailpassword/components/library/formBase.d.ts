@@ -10,6 +10,7 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
     constructor(props: FormBaseProps<T>);
     componentDidUpdate(prevProps: FormBaseProps<T>): void;
     handleInputFocus: (field: APIFormField) => Promise<void>;
+    handleInputChange: () => Promise<void>;
     handleInputBlur: (field: APIFormField) => Promise<void>;
     getNewState(
         oldState: FormBaseState,

@@ -39,7 +39,8 @@ export const PhoneForm = withOverride(
                             defaultCountry: props.config.signInUpFeature.defaultCountry,
                         }),
                         optional: false,
-                        placeholder: "Phone number",
+                        autofocus: true,
+                        placeholder: "",
                         validate: defaultValidate,
                     },
                 ]}
