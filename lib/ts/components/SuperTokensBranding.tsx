@@ -21,7 +21,11 @@ export function SuperTokensBranding(): JSX.Element {
     const styles = useContext(StyleContext);
 
     return (
-        <a data-supertokens="superTokensBranding" css={styles.superTokensBranding} href="https://supertokens.com">
+        <a
+            data-supertokens="superTokensBranding"
+            css={styles.superTokensBranding}
+            href="https://supertokens.com"
+            target="_blank">
             Powered by <strong>SuperTokens</strong>
         </a>
     );
