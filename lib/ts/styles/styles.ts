@@ -36,11 +36,11 @@ export const defaultPalette: NormalisedPalette = {
         textPrimary: "#656565",
         textLink: "#0076ff",
         buttonText: "white",
-        supertokensBrandingBackground: "#F2F5F6",
-        supertokensBrandingText: "#ADBDC4",
+        superTokensBrandingBackground: "#F2F5F6",
+        superTokensBrandingText: "#ADBDC4",
     },
     fonts: {
-        size: ["14px", "16px", "19px", "24px"],
+        size: ["12px", "14px", "16px", "19px", "24px"],
     },
 };
 
@@ -116,12 +116,15 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         superTokensBranding: {
             display: "block",
             margin: "0 auto",
-            background: palette.colors.supertokensBrandingBackground,
-            color: palette.colors.supertokensBrandingText,
+            background: palette.colors.superTokensBrandingBackground,
+            color: palette.colors.superTokensBrandingText,
             textDecoration: "none",
             width: "fit-content",
-            borderRadius: "8px 8px 0 0",
-            padding: "8px 10px",
+            borderRadius: "6px 6px 0 0",
+            padding: "4px 9px",
+            fontWeight: 300,
+            fontSize: palette.fonts.size[0],
+            letterSpacing: "0.4px",
         },
 
         generalError: {
@@ -132,7 +135,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             paddingLeft: "18px",
             paddingRight: "18px",
             letterSpacing: "0.2px",
-            fontSize: palette.fonts.size[0],
+            fontSize: palette.fonts.size[1],
             borderRadius: "8px",
             color: palette.colors.error,
             animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`,
@@ -140,7 +143,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         headerTitle: {
-            fontSize: palette.fonts.size[3],
+            fontSize: palette.fonts.size[4],
             lineHeight: "40px",
             letterSpacing: "0.58px",
             fontWeight: 800,
@@ -161,7 +164,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         primaryText: {
-            fontSize: palette.fonts.size[0],
+            fontSize: palette.fonts.size[1],
             fontWeight: 500,
             letterSpacing: "0.4px",
             lineHeight: "21px",
@@ -169,7 +172,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         },
 
         secondaryText: {
-            fontSize: palette.fonts.size[0],
+            fontSize: palette.fonts.size[1],
             fontWeight: 300,
             letterSpacing: "0.4px",
             color: palette.colors.textPrimary,
@@ -179,7 +182,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             paddingLeft: "3px",
             paddingRight: "3px",
             color: palette.colors.textLink,
-            fontSize: palette.fonts.size[0],
+            fontSize: palette.fonts.size[1],
             cursor: "pointer",
             letterSpacing: "0.16px",
             lineHeight: "26px",
@@ -195,7 +198,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
 
         headerTinyTitle: {
             marginTop: "13px",
-            fontSize: palette.fonts.size[2],
+            fontSize: palette.fonts.size[3],
             letterSpacing: "1.1px",
             fontWeight: 500,
             lineHeight: "28px",
@@ -214,7 +217,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
 
         generalSuccess: {
             color: palette.colors.success,
-            fontSize: palette.fonts.size[0],
+            fontSize: palette.fonts.size[1],
             backgroundColor: chroma(palette.colors.success).brighten(2).luminance(0.9).hex(),
             animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`,
             padding: "9px 15px 9px 15px",
