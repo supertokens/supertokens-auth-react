@@ -151,7 +151,6 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         ): Promise<ConsumeCodeApiResponse> {
             let bodyObj;
             if ("userInputCode" in input) {
-                // TODO: validate input code?
                 bodyObj = {
                     userInputCode: input.userInputCode,
                     deviceId: input.deviceId,

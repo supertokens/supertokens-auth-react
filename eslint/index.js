@@ -55,7 +55,12 @@ module.exports = {
                                 return;
                             }
 
-                            const dataSTValues = dataSTNode.value.value.split(" ");
+                            const dataSTValues = dataSTNode.value.value
+                                ? dataSTNode.value.value.split(" ")
+                                : [
+                                      ...dataSTNode.value.expression.quasis.map((q) => q.value.raw.trim()),
+                                      ...dataSTNode.value.expression.expressions.map((e) => e.name),
+                                  ];
 
                             if (css.value.expression.type === "MemberExpression") {
                                 if (dataSTValues.includes(css.value.expression.property.name) === false) {
