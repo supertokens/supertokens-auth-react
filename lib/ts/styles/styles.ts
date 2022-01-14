@@ -36,6 +36,8 @@ export const defaultPalette: NormalisedPalette = {
         textPrimary: "#656565",
         textLink: "#0076ff",
         buttonText: "white",
+        supertokensBrandingBackground: "#F2F5F6",
+        supertokensBrandingText: "#ADBDC4",
     },
     fonts: {
         size: ["14px", "16px", "19px", "24px"],
@@ -109,6 +111,17 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             width: "76%",
             paddingTop: "30px",
             paddingBottom: "10px",
+        },
+
+        superTokensBranding: {
+            display: "block",
+            margin: "0 auto",
+            background: palette.colors.supertokensBrandingBackground,
+            color: palette.colors.supertokensBrandingText,
+            textDecoration: "none",
+            width: "fit-content",
+            borderRadius: "8px 8px 0 0",
+            padding: "8px 10px",
         },
 
         generalError: {

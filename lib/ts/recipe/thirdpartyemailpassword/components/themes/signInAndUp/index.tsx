@@ -33,6 +33,7 @@ import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAn
 import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 import { getStyles } from "../styles";
 import { getQueryParams } from "../../../../../utils";
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 
 class SignInAndUpTheme extends React.PureComponent<
     ThirdPartyEmailPasswordSignInAndUpThemeProps,
@@ -111,6 +112,7 @@ class SignInAndUpTheme extends React.PureComponent<
                         </EmailPasswordSignInAndUp>
                     )}
                 </div>
+                <SuperTokensBranding />
             </div>
         );
     }

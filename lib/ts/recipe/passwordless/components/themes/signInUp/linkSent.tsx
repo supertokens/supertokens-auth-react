@@ -28,6 +28,7 @@ import { LinkSentThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { ResendButton } from "./resendButton";
 import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 
 type LinkSentState = {
     status: "READY" | "LINK_RESENT" | "ERROR";
@@ -133,6 +134,7 @@ class PasswordlessLinkSent extends PureComponent<LinkSentThemeProps, LinkSentSta
                         </div>
                     }
                 </div>
+                <SuperTokensBranding />
             </div>
         );
     }

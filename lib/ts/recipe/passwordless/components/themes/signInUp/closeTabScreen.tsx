@@ -22,6 +22,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { CloseTabScreenProps } from "../../../types";
 import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 /*
  * Component.
  */
@@ -51,6 +52,7 @@ class PasswordlessCloseTabScreen extends PureComponent<CloseTabScreenProps> {
                         <br /> Please close this tab
                     </div>
                 </div>
+                <SuperTokensBranding />
             </div>
         );
     };
