@@ -22,6 +22,7 @@ import { SignUpHeader } from "./signUpHeader";
 import StyleContext from "../../../../../styles/styleContext";
 import { SignUpForm } from "./signUpForm";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 
 export const SignUp = withOverride("EmailPasswordSignUp", function EmailPasswordSignUp(props: SignUpThemeProps) {
     const styles = useContext(StyleContext);
@@ -40,6 +41,7 @@ export const SignUp = withOverride("EmailPasswordSignUp", function EmailPassword
                     }
                 />
             </div>
+            <SuperTokensBranding />
         </div>
     );
 });

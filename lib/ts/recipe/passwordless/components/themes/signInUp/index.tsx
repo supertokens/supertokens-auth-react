@@ -33,6 +33,7 @@ import { SignInUpHeader } from "./signInUpHeader";
 import { UserInputCodeForm } from "./userInputCodeForm";
 import { getStyles } from "../styles";
 import { EmailOrPhoneForm } from "./emailOrPhoneForm";
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 
 enum SignInUpScreens {
     CloseTab,
@@ -121,6 +122,7 @@ function SignInUpTheme({ activeScreen, ...props }: SignInUpProps & { activeScree
                                 />
                             ) : undefined)}
                     </div>
+                    <SuperTokensBranding />
                 </div>
             )}
         </React.Fragment>
