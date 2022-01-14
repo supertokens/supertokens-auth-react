@@ -29,6 +29,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             boxSizing: "border-box",
             width: "100%",
             display: "flex",
+            alignItems: "center",
             backgroundColor: palette.colors.inputBackground,
             height: "34px",
             borderRadius: "6px",
@@ -74,8 +75,6 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
 
         inputAdornment: {
             justifyContent: "center",
-            position: "relative",
-            top: "7px",
             marginRight: "5px",
         },
 
@@ -162,6 +161,15 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
                 position: "relative",
                 left: "2px",
                 wordSpacing: "4px",
+            },
+        },
+
+        secondaryLinkWithLeftArrow: {
+            marginTop: "10px",
+            cursor: "pointer",
+            "&:hover svg": {
+                position: "relative",
+                left: "-4px",
             },
         },
 

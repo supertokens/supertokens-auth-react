@@ -35,7 +35,7 @@ import {
     defaultPasswordValidator,
     defaultValidate,
 } from "./validators";
-import { normaliseAuthRecipeModuleConfig } from "../authRecipeModule/utils";
+import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
 import { RecipeInterface } from "./types";
 
 export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
@@ -69,7 +69,7 @@ export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
     };
 
     return {
-        ...normaliseAuthRecipeModuleConfig(config),
+        ...normaliseAuthRecipeWithEmailVerificationConfig(config),
         signInAndUpFeature,
         resetPasswordUsingTokenFeature,
         override,
@@ -206,7 +206,7 @@ function getDefaultPasswordFormField(): NormalisedFormField {
 }
 
 export function normaliseResetPasswordUsingTokenFeature(
-    signUpPasswordFieldValidate: (value: any) => Promise<string | undefined>,
+    signUpPasswordFieldValidate: (value: any) => Promise<string | undefined> | string | undefined,
     signUpEmailField: NormalisedFormField,
     config?: ResetPasswordUsingTokenUserInput
 ): NormalisedResetPasswordUsingTokenFeatureConfig {
@@ -250,7 +250,14 @@ export function normaliseResetPasswordUsingTokenFeature(
 
     const enterEmailForm: NormalisedEnterEmailForm = {
         style: enterEmailFormStyle,
-        formFields: [signUpEmailField],
+        formFields: [
+            {
+                ...getDefaultEmailFormField(),
+                validate: signUpEmailField.validate,
+                placeholder: "",
+                autofocus: true,
+            },
+        ],
     };
 
     return {

@@ -44,10 +44,58 @@ export function mockWindowLocation(url) {
     }
 }
 
+export async function getFeatureFlags() {
+    const response = await fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/featureFlags`);
+    if (response.status === 200) {
+        const { available } = await response.json();
+        return available;
+    } else {
+        return [];
+    }
+}
+
+export async function waitFor(ms) {
+    return new Promise((res) => setTimeout(res, ms));
+}
+
 /*
  * Selectors and actions helpers.
  * Using Puppeteer within shadowDom https://github.com/puppeteer/puppeteer/issues/858#issuecomment-438540596
  */
+
+export async function waitForSTElement(page, selector, inverted = false) {
+    const res = await page.waitForFunction(
+        (elementSelector, rootSelector, inverted) => {
+            const elem = document.querySelector(rootSelector)?.shadowRoot.querySelector(elementSelector);
+            return inverted ? elem === null : elem;
+        },
+        { polling: 50 },
+        selector,
+        ST_ROOT_SELECTOR,
+        inverted
+    );
+    if (res) {
+        return res.asElement();
+    }
+    return res;
+}
+
+export async function waitForText(page, selector, text, timeout = 10000, pollDelay = 50) {
+    const start = new Date().getTime();
+
+    while (true) {
+        const header = await waitForSTElement(page, selector);
+        const headerText = await header.evaluate((e) => e.textContent);
+        if (headerText === text) {
+            break;
+        } else {
+            if (timeout < new Date().getTime() - start) {
+                assert.fail(`Timeout while waiting for "${selector}" to have text "${text}"`);
+            }
+            await waitFor(pollDelay);
+        }
+    }
+}
 
 export async function getSubmitFormButtonLabel(page) {
     return await page.evaluate(

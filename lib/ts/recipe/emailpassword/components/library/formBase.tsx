@@ -22,7 +22,7 @@ import { createRef, FormEvent, Fragment, PureComponent } from "react";
 import { Button, FormRow, Input, InputError, Label } from ".";
 
 import { APIFormField } from "../../../../types";
-import { FormBaseProps, FormBaseState, FormFieldState, InputRef } from "../../types";
+import { FormBaseProps, FormBaseState, InputRef } from "../../types";
 import { SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 import StyleContext from "../../../../styles/styleContext";
@@ -31,23 +31,50 @@ import StyleContext from "../../../../styles/styleContext";
  * Component.
  */
 
-export default class FormBase extends PureComponent<FormBaseProps, FormBaseState> {
+export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBaseState> {
     static contextType = StyleContext;
 
     /*
      * Constructor.
      */
-    constructor(props: FormBaseProps) {
+    constructor(props: FormBaseProps<T>) {
         super(props);
 
-        this.state = {
+        const baseState = {
             formFields: props.formFields.map((field) => ({
                 ...field,
                 validated: false,
                 ref: createRef<InputRef>(),
             })),
-            status: "IN_PROGRESS",
+            unmounting: new AbortController(),
         };
+
+        if (props.error === undefined) {
+            this.state = {
+                ...baseState,
+                status: "IN_PROGRESS",
+            };
+        } else {
+            this.state = {
+                ...baseState,
+                status: "GENERAL_ERROR",
+                generalError: props.error,
+            };
+        }
+    }
+
+    componentDidUpdate(prevProps: FormBaseProps<T>) {
+        if (this.props.error !== prevProps.error) {
+            this.setState((os) =>
+                os.status === "GENERAL_ERROR" && this.props.error === os.generalError
+                    ? os
+                    : {
+                          ...os,
+                          status: "GENERAL_ERROR",
+                          generalError: this.props.error,
+                      }
+            );
+        }
     }
 
     /*
@@ -56,7 +83,20 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
 
     handleInputFocus = async (field: APIFormField): Promise<void> => {
         this.setState((oldState) => {
-            return this.getNewState(oldState.formFields, field, "focus", undefined);
+            return this.getNewState(oldState, field, "focus", undefined);
+        });
+    };
+
+    handleInputChange = async (): Promise<void> => {
+        this.setState((oldState) => {
+            if (oldState.status === "GENERAL_ERROR") {
+                return {
+                    ...oldState,
+                    status: "IN_PROGRESS",
+                    generalError: undefined,
+                };
+            }
+            return oldState;
         });
     };
 
@@ -78,18 +118,18 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             if (oldState.status === "GENERAL_ERROR") {
                 return oldState;
             }
-            return this.getNewState(oldState.formFields, field, "blur", error);
+            return this.getNewState(oldState, field, "blur", error);
         });
     };
 
     getNewState(
-        formFields: FormFieldState[],
+        oldState: FormBaseState,
         field: APIFormField,
         event: "blur" | "focus",
         error: string | undefined
     ): FormBaseState {
         // Add error to formFields array for corresponding field.
-        formFields = formFields.map((formField) => {
+        const formFields = oldState.formFields.map((formField) => {
             if (formField.id !== field.id) {
                 return formField;
             }
@@ -100,7 +140,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
             };
         });
 
-        let status: FormBaseState["status"] = "READY";
+        let status: FormBaseState["status"] = oldState.status;
 
         for (const i in formFields) {
             const field = formFields[i];
@@ -121,10 +161,15 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         }
 
         return {
+            ...oldState,
             status,
             formFields,
-        };
+        } as FormBaseState; // We need this cast, because TS doesn't recognise that we only get GENERAL_ERROR state if oldState also had that
     }
+
+    componentWillUnmount = () => {
+        this.state.unmounting.abort();
+    };
 
     onFormSubmit = async (e: FormEvent): Promise<void> => {
         // Prevent default event propagation.
@@ -134,6 +179,10 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         this.setState((oldState) => ({
             ...oldState,
             status: "LOADING",
+            formFields: oldState.formFields.map((fs) => ({
+                ...fs,
+                error: undefined,
+            })),
         }));
 
         // Get the fields values from form.
@@ -147,6 +196,17 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
         // Call API.
         try {
             const result = await this.props.callAPI(fields);
+            if (this.state.unmounting.signal.aborted) {
+                return;
+            }
+
+            for (const field of this.state.formFields) {
+                const fieldInput = field.ref.current;
+                if (field.clearOnSubmit === true && fieldInput !== null) {
+                    fieldInput.value = "";
+                }
+            }
+
             // If successful
             if (result.status === "OK") {
                 // Set Success state.
@@ -157,7 +217,7 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                     }),
                     () => {
                         if (this.props.onSuccess !== undefined) {
-                            this.props.onSuccess();
+                            this.props.onSuccess(result);
                         }
                     }
                 );
@@ -230,22 +290,51 @@ export default class FormBase extends PureComponent<FormBaseProps, FormBaseState
                             type = "password";
                         }
 
+                        // We can use this to access things that can be updated on the field as a prop
+                        const propField = this.props.formFields.find((f) => f.id === field.id);
+                        if (!propField) {
+                            throw new Error("FormFieldDisappeared");
+                        }
+
                         return (
                             <FormRow key={field.id} hasError={field.error !== undefined}>
                                 <Fragment>
-                                    {showLabels && <Label value={field.label} showIsRequired={field.showIsRequired} />}
+                                    {showLabels &&
+                                        (propField.labelComponent !== undefined ? (
+                                            propField.labelComponent
+                                        ) : (
+                                            <Label value={field.label} showIsRequired={field.showIsRequired} />
+                                        ))}
 
-                                    <Input
-                                        type={type}
-                                        name={field.id}
-                                        validated={field.validated}
-                                        placeholder={field.placeholder}
-                                        ref={field.ref}
-                                        autoComplete={field.autoComplete}
-                                        onInputFocus={this.handleInputFocus}
-                                        onInputBlur={onInputBlur}
-                                        hasError={field.error !== undefined}
-                                    />
+                                    {propField.inputComponent !== undefined ? (
+                                        <propField.inputComponent
+                                            type={type}
+                                            name={field.id}
+                                            validated={field.validated}
+                                            placeholder={field.placeholder}
+                                            ref={field.ref}
+                                            autoComplete={field.autoComplete}
+                                            autofocus={field.autofocus}
+                                            onInputFocus={this.handleInputFocus}
+                                            onInputBlur={onInputBlur}
+                                            onChange={this.handleInputChange}
+                                            hasError={field.error !== undefined}
+                                        />
+                                    ) : (
+                                        <Input
+                                            type={type}
+                                            name={field.id}
+                                            validated={field.validated}
+                                            placeholder={field.placeholder}
+                                            ref={field.ref}
+                                            autoComplete={field.autoComplete}
+                                            onInputFocus={this.handleInputFocus}
+                                            onInputBlur={onInputBlur}
+                                            onChange={this.handleInputChange}
+                                            autofocus={field.autofocus}
+                                            hasError={field.error !== undefined}
+                                        />
+                                    )}
 
                                     {field.error && <InputError error={field.error} />}
                                 </Fragment>

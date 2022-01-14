@@ -7,7 +7,7 @@ import {
     NormalisedFormField,
     ThemeBaseProps,
 } from "../../types";
-import { RefObject } from "react";
+import { ForwardRefExoticComponent, RefAttributes, RefObject } from "react";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -17,7 +17,7 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
     UserInputOverride as AuthRecipeUserInputOverride,
-} from "../authRecipeModule/types";
+} from "../authRecipeWithEmailVerification/types";
 import OverrideableBuilder from "supertokens-js-override";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SignInHeader } from "./components/themes/signInAndUp/signInHeader";
@@ -30,6 +30,7 @@ import { SignUpForm } from "./components/themes/signInAndUp/signUpForm";
 import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
 import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
+import { InputProps } from "./components/library/input";
 export declare type ComponentOverrideMap = {
     EmailPasswordSignIn?: ComponentOverride<typeof SignIn>;
     EmailPasswordSignInFooter?: ComponentOverride<typeof SignInFooter>;
@@ -137,7 +138,11 @@ export declare type NormalisedFormFieldWithError = NormalisedFormField & {
     error?: string;
 };
 export declare type FormFieldThemeProps = NormalisedFormFieldWithError & {
+    labelComponent?: JSX.Element;
+    inputComponent?: ForwardRefExoticComponent<InputProps & RefAttributes<InputRef>>;
     showIsRequired?: boolean;
+    clearOnSubmit?: boolean;
+    autofocus?: boolean;
     autoComplete?: string;
 };
 export declare type FormFieldState = FormFieldThemeProps & {
@@ -172,6 +177,14 @@ export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
           action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+      }
+    | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: {
+              id: string;
+              email: string;
+          };
       };
 export declare type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailProps;
@@ -194,31 +207,39 @@ export declare type EnterEmailState = {
 export declare type SubmitNewPasswordState = {
     status: "READY" | "SUCCESS";
 };
-export declare type FormBaseState =
+export declare type FormBaseState = {
+    formFields: FormFieldState[];
+    unmounting: AbortController;
+} & (
     | {
           formFields: FormFieldState[];
           status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
+          unmounting: AbortController;
       }
     | {
-          formFields: FormFieldState[];
           status: "GENERAL_ERROR";
           generalError: string;
-      };
-export declare type FormBaseProps = {
+      }
+);
+export declare type FormBaseProps<T> = {
     header?: JSX.Element;
     footer?: JSX.Element;
     formFields: FormFieldThemeProps[];
     showLabels: boolean;
     buttonLabel: string;
+    error?: string;
     validateOnBlur?: boolean;
-    onSuccess?: () => void;
-    callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
+    onSuccess?: (
+        result: T & {
+            status: "OK";
+        }
+    ) => void;
+    callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse<T>>;
 };
-export declare type FormBaseAPIResponse =
-    | {
+export declare type FormBaseAPIResponse<T> =
+    | ({
           status: "OK";
-          user?: User;
-      }
+      } & T)
     | {
           status: "GENERAL_ERROR";
           message: string;

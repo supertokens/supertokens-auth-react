@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## [unreleased]
+## [unreleased] - 2021-12-08
+
+### Changes
+
+-   Extracts away AuthRecipe into one with email verification and one without email verification
+-   Updated the reset password form to match the single input forms of passwordless (showing label, removed placeholder and autofocus)
+-   Using the default label and no placeholder for the reset password email form instead of the ones configured for the signup form
+-   Removed ":" from labels
+-   Adds new CSS class for provider button (like `providerGoogle`, `providerApple` etc..) which super seeds `providerButton`.
+
+### Adds
+
+-   Passwordless recipe
 
 ### Fixes
 
@@ -14,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking changes
 
 -   `getRoutingComponent` now returns ` JSX.Element | null` instead of ` JSX.Element | undefined`
+-   Removed ":" from labels
+-   Adds new CSS class for provider button (like `providerGoogle`, `providerApple` etc..) which super seeds `providerButton`. So if you are using `providerButton` to change CSS, then you should add a `!important` to it.
 
 ## [0.17.9] - 2022-01-07
 

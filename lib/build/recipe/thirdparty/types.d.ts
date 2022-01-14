@@ -9,7 +9,7 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
     UserInputOverride as AuthRecipeUserInputOverride,
-} from "../authRecipeModule/types";
+} from "../authRecipeWithEmailVerification/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
@@ -71,7 +71,16 @@ export declare type PreAPIHookContext =
           requestInit: RequestInit;
           url: string;
       };
-export declare type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
+export declare type OnHandleEventContext =
+    | AuthRecipeModuleOnHandleEventContext
+    | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: {
+              id: string;
+              email: string;
+          };
+      };
 export declare type SignInAndUpThemeProps = {
     providers: {
         id: string;

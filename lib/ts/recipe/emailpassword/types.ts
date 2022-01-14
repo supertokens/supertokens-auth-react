@@ -22,7 +22,7 @@ import {
     NormalisedFormField,
     ThemeBaseProps,
 } from "../../types";
-import { RefObject } from "react";
+import { ForwardRefExoticComponent, RefAttributes, RefObject } from "react";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -32,7 +32,7 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
     UserInputOverride as AuthRecipeUserInputOverride,
-} from "../authRecipeModule/types";
+} from "../authRecipeWithEmailVerification/types";
 import OverrideableBuilder from "supertokens-js-override";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
@@ -46,6 +46,7 @@ import { SignUpForm } from "./components/themes/signInAndUp/signUpForm";
 import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
 import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
+import { InputProps } from "./components/library/input";
 
 export type ComponentOverrideMap = {
     EmailPasswordSignIn?: ComponentOverride<typeof SignIn>;
@@ -268,9 +269,29 @@ export type NormalisedFormFieldWithError = NormalisedFormField & {
 
 export type FormFieldThemeProps = NormalisedFormFieldWithError & {
     /*
+     * Custom component that replaces the label entirely
+     */
+    labelComponent?: JSX.Element;
+
+    /*
+     * Custom component that replaces the standard input component
+     */
+    inputComponent?: ForwardRefExoticComponent<InputProps & RefAttributes<InputRef>>;
+
+    /*
      * Show Is required (*) next to label
      */
     showIsRequired?: boolean;
+
+    /*
+     * Clears the field after calling the API.
+     */
+    clearOnSubmit?: boolean;
+
+    /*
+     * Moves focus to the input element when it mounts
+     */
+    autofocus?: boolean;
 
     /*
      * Autocomplete
@@ -349,6 +370,11 @@ export type OnHandleEventContext =
            * On Handle Event actions
            */
           action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+      }
+    | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: { id: string; email: string };
       };
 
 export type ResetPasswordUsingTokenThemeProps = {
@@ -383,18 +409,22 @@ export type SubmitNewPasswordState = {
     status: "READY" | "SUCCESS";
 };
 
-export type FormBaseState =
+export type FormBaseState = {
+    formFields: FormFieldState[];
+    unmounting: AbortController;
+} & (
     | {
           formFields: FormFieldState[];
           status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
+          unmounting: AbortController;
       }
     | {
-          formFields: FormFieldState[];
           status: "GENERAL_ERROR";
           generalError: string;
-      };
+      }
+);
 
-export type FormBaseProps = {
+export type FormBaseProps<T> = {
     header?: JSX.Element;
 
     footer?: JSX.Element;
@@ -405,25 +435,22 @@ export type FormBaseProps = {
 
     buttonLabel: string;
 
+    error?: string;
+
     validateOnBlur?: boolean;
 
-    onSuccess?: () => void;
+    onSuccess?: (result: T & { status: "OK" }) => void;
 
-    callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse>;
+    callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse<T>>;
 };
 
-export type FormBaseAPIResponse =
-    | {
+export type FormBaseAPIResponse<T> =
+    | ({
           /*
            * Success.
            */
           status: "OK";
-
-          /*
-           * User object.
-           */
-          user?: User;
-      }
+      } & T)
     | {
           /*
            * General Errors.

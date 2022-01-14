@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "noImplicitAny": true,
+        "allowSyntheticDefaultImports": true,
+        "strictNullChecks": true,
+        "noImplicitThis": true,
+        "module": "commonJS",
+        "outDir": "build",
+        "moduleResolution": "node",
+        "declaration": true,
+        "jsx": "react",
+        "esModuleInterop": true,
+        "sourceMap": false,
+        "skipLibCheck": true,
+        "strict": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "types": ["node", "react", "@emotion/react/types/css-prop"]
+    },
+    "compileOnSave": true
+}

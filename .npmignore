@@ -7,6 +7,7 @@ eslint/
 hooks/
 .circleci/
 lib/tsconfig.json
+lib/tsconfig_dev.json
 lib/babel.config.json
 .mocharc.yml
 .prettierrc.json

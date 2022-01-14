@@ -15,6 +15,7 @@
 
 /** @jsx jsx */
 import { CSSObject, keyframes } from "@emotion/react";
+import { Keyframes } from "@emotion/serialize";
 import chroma from "chroma-js";
 import { NormalisedPalette, NormalisedDefaultStyles, Styles } from "../types";
 
@@ -25,6 +26,7 @@ export const defaultPalette: NormalisedPalette = {
     colors: {
         background: "white",
         inputBackground: "#fafafa",
+        selectedBackground: "#eeeeee",
         primary: "#ff9b33",
         success: "#41a700",
         error: "#ff1717",
@@ -33,6 +35,7 @@ export const defaultPalette: NormalisedPalette = {
         textInput: "#222222",
         textPrimary: "#656565",
         textLink: "#0076ff",
+        buttonText: "white",
     },
     fonts: {
         size: ["14px", "16px", "19px", "24px"],
@@ -42,7 +45,7 @@ export const defaultPalette: NormalisedPalette = {
 /*
  * Default styles.
  */
-export const slideTop = keyframes`
+export const slideTop: Keyframes = keyframes`
     0% {
         transform: translateY(-5px);
     }
@@ -51,7 +54,7 @@ export const slideTop = keyframes`
     }
 `;
 
-export const swingIn = keyframes`
+export const swingIn: Keyframes = keyframes`
 0% {
     -webkit-transform: rotateX(-100deg);
             transform: rotateX(-100deg);
@@ -120,6 +123,7 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             borderRadius: "8px",
             color: palette.colors.error,
             animation: `${swingIn} 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both`,
+            overflowWrap: "break-word",
         },
 
         headerTitle: {
@@ -217,22 +221,27 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
             color: palette.colors.error,
         },
 
-        button: getButtonStyle(palette.colors.primary),
+        button: getButtonStyle(palette.colors.primary, palette.colors.buttonText),
+
+        linkButton: {
+            backgroundColor: "transparent",
+            border: 0,
+        },
     };
 }
 
-export function getButtonStyle(color: string, brighten?: boolean): CSSObject {
+export function getButtonStyle(bgColor: string, color: string, brighten?: boolean): CSSObject {
     const brightness = brighten === true ? 1.1 : 0.95;
 
     return {
         width: "100%",
         height: "34px",
-        backgroundColor: color,
-        color: "white",
+        backgroundColor: bgColor,
+        color: color,
         fontWeight: 700,
         borderWidth: "1px",
         borderStyle: "solid",
-        borderColor: `${chroma(color).darken(0.3).hex()}`,
+        borderColor: `${chroma(bgColor).darken(0.3).hex()}`,
         borderRadius: "6px",
         backgroundPosition: "center",
         transition: "all 0.4s",

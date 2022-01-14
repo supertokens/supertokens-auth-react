@@ -18,7 +18,7 @@
  */
 
 import React from "react";
-import AuthRecipeModule from "../authRecipeModule";
+import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     Config,
@@ -41,10 +41,10 @@ import RecipeImplementation from "./recipeImplementation";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import EmailVerification from "../emailverification/recipe";
-import AuthWidgetWrapper from "../authRecipeModule/authWidgetWrapper";
+import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import OverrideableBuilder from "supertokens-js-override";
 
-export default class ThirdPartyEmailPassword extends AuthRecipeModule<
+export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
@@ -169,7 +169,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
 
         return {
             ...features,
-            ...this.getAuthRecipeModuleFeatures(),
+            ...this.getAuthRecipeWithEmailVerificationFeatures(),
         };
     };
 
@@ -180,7 +180,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             }
             return this.emailPasswordRecipe.getDefaultRedirectionURL(context);
         } else {
-            return this.getAuthRecipeModuleDefaultRedirectionURL(context);
+            return this.getAuthRecipeWithEmailVerificationDefaultRedirectionURL(context);
         }
     };
 
@@ -202,7 +202,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeModule<
             }
             return this.emailPasswordRecipe.getFeatureComponent(componentName, props);
         } else {
-            return this.getAuthRecipeModuleFeatureComponent(componentName, props);
+            return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);
         }
     };
 

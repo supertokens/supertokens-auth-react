@@ -24,7 +24,7 @@ import {
     SignInAndUpFeatureUserInput,
 } from "./types";
 
-import { normaliseAuthRecipeModuleConfig } from "../authRecipeModule/utils";
+import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
 
 /*
  * Methods.
@@ -52,7 +52,7 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
     );
 
     return {
-        ...normaliseAuthRecipeModuleConfig(config),
+        ...normaliseAuthRecipeWithEmailVerificationConfig(config),
         signInAndUpFeature,
         oAuthCallbackScreen: config.oAuthCallbackScreen,
         resetPasswordUsingTokenFeature: config.resetPasswordUsingTokenFeature,

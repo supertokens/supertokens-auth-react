@@ -11,7 +11,7 @@ export default class Wrapper {
     ): import("../../types").CreateRecipeFunction<
         import("../emailpassword").GetRedirectionURLContext,
         PreAPIHookContext,
-        import("../emailpassword").OnHandleEventContext,
+        OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
     static signOut(): Promise<void>;
@@ -23,7 +23,7 @@ export default class Wrapper {
                   show?: "signin" | "signup";
                   redirectBack?: boolean;
               }
-    ): void;
+    ): Promise<void>;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;

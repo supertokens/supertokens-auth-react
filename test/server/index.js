@@ -14,6 +14,13 @@
  */
 require("dotenv").config();
 let SuperTokens = require("supertokens-node");
+let { default: SuperTokensRaw } = require("supertokens-node/lib/build/supertokens");
+const { default: EmailPasswordRaw } = require("supertokens-node/lib/build/recipe/emailpassword/recipe");
+const { default: ThirdPartyRaw } = require("supertokens-node/lib/build/recipe/thirdparty/recipe");
+const {
+    default: ThirdPartyEmailPasswordRaw,
+} = require("supertokens-node/lib/build/recipe/thirdpartyemailpassword/recipe");
+const { default: SessionRaw } = require("supertokens-node/lib/build/recipe/session/recipe");
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
@@ -25,7 +32,19 @@ let cookieParser = require("cookie-parser");
 let bodyParser = require("body-parser");
 let http = require("http");
 let cors = require("cors");
-let { startST, killAllST, setupST, cleanST, customAuth0Provider } = require("./utils");
+let { startST, killAllST, setupST, cleanST, setKeyValueInConfig, customAuth0Provider } = require("./utils");
+
+let passwordlessSupported;
+let PasswordlessRaw;
+let Passwordless;
+
+try {
+    PasswordlessRaw = require("supertokens-node/lib/build/recipe/passwordless/recipe").default;
+    Passwordless = require("supertokens-node/recipe/passwordless");
+    passwordlessSupported = true;
+} catch (ex) {
+    passwordlessSupported = false;
+}
 
 let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
 let jsonParser = bodyParser.json({ limit: "20mb" });
@@ -39,6 +58,18 @@ const WEB_PORT = process.env.WEB_PORT || 3031;
 const websiteDomain = `http://localhost:${WEB_PORT}`;
 let latestURLWithToken = "";
 
+let deviceStore = new Map();
+function saveCode({ email, phoneNumber, preAuthSessionId, urlWithLinkCode, userInputCode }) {
+    const device = deviceStore.get(preAuthSessionId) || {
+        preAuthSessionId,
+        codes: [],
+    };
+    device.codes.push({
+        urlWithLinkCode,
+        userInputCode,
+    });
+    deviceStore.set(preAuthSessionId, device);
+}
 const formFields = (process.env.MIN_FIELDS && []) || [
     {
         id: "name",
@@ -59,16 +90,154 @@ const formFields = (process.env.MIN_FIELDS && []) || [
         optional: true,
     },
 ];
-SuperTokens.init({
-    appInfo: {
-        appName: "SuperTokens",
-        apiDomain: "localhost:" + (process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT),
-        websiteDomain,
-    },
-    supertokens: {
-        connectionURI: "http://localhost:9000",
-    },
-    recipeList: [
+initST();
+
+app.use(
+    cors({
+        origin: websiteDomain,
+        allowedHeaders: ["content-type", ...SuperTokens.getAllCORSHeaders()],
+        methods: ["GET", "PUT", "POST", "DELETE"],
+        credentials: true,
+    })
+);
+
+app.use(middleware());
+
+app.get("/ping", async (req, res) => {
+    res.send("success");
+});
+
+app.post("/startst", async (req, res) => {
+    if (req.body && req.body.configUpdates) {
+        for (const update of req.body.configUpdates) {
+            await setKeyValueInConfig(update.key, update.value);
+        }
+    }
+    let pid = await startST();
+    res.send(pid + "");
+});
+
+app.post("/beforeeach", async (req, res) => {
+    deviceStore = new Map();
+
+    await killAllST();
+    await setupST();
+    res.send();
+});
+
+app.post("/after", async (req, res) => {
+    await killAllST();
+    await cleanST();
+    res.send();
+});
+
+app.post("/stopst", async (req, res) => {
+    await stopST(req.body.pid);
+    res.send("");
+});
+
+// custom API that requires session verification
+app.get("/sessioninfo", verifySession(), async (req, res) => {
+    let session = req.session;
+    if (session.getJWTPayload !== undefined) {
+        res.send({
+            sessionHandle: session.getHandle(),
+            userId: session.getUserId(),
+            accessTokenPayload: session.getJWTPayload(),
+            sessionData: await session.getSessionData(),
+        });
+    } else {
+        res.send({
+            sessionHandle: session.getHandle(),
+            userId: session.getUserId(),
+            accessTokenPayload: session.getAccessTokenPayload(),
+            sessionData: await session.getSessionData(),
+        });
+    }
+});
+
+app.get("/token", async (_, res) => {
+    res.send({
+        latestURLWithToken,
+    });
+});
+
+app.post("/test/setFlow", (req, res) => {
+    initST({
+        passwordlessConfig: {
+            contactMethod: req.body.contactMethod,
+            flowType: req.body.flowType,
+            createAndSendCustomTextMessage: saveCode,
+            createAndSendCustomEmail: saveCode,
+        },
+    });
+    res.sendStatus(200);
+});
+
+app.get("/test/getDevice", (req, res) => {
+    res.send(deviceStore.get(req.query.preAuthSessionId));
+});
+
+app.get("/test/featureFlags", (req, res) => {
+    const available = [];
+
+    if (passwordlessSupported) {
+        available.push("passwordless");
+    }
+
+    res.send({
+        available,
+    });
+});
+
+app.use(errorHandler());
+
+app.use(async (err, req, res, next) => {
+    try {
+        console.error(err);
+        res.status(500).send(err);
+    } catch (ignored) {}
+});
+
+let server = http.createServer(app);
+server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT, "0.0.0.0");
+
+/*
+ * Setup and start the core when running the test application when running with  the following command:
+ * START=true TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .
+ * or
+ * npm run server
+ */
+(async function (shouldSpinUp) {
+    if (shouldSpinUp) {
+        console.log(`Start supertokens for test app`);
+        try {
+            await killAllST();
+            await cleanST();
+        } catch (e) {}
+
+        await setupST();
+        const pid = await startST();
+        console.log(`Application started on http://localhost:${process.env.NODE_PORT | 8080}`);
+        console.log(`processId: ${pid}`);
+    }
+})(process.env.START === "true");
+
+function initST({ passwordlessConfig } = {}) {
+    if (process.env.TEST_MODE) {
+        if (passwordlessSupported) {
+            PasswordlessRaw.reset();
+        }
+
+        EmailPasswordRaw.reset();
+        ThirdPartyRaw.reset();
+        ThirdPartyEmailPasswordRaw.reset();
+        SessionRaw.reset();
+
+        SuperTokensRaw.reset();
+    }
+
+    const recipeList = [
         EmailPassword.init({
             signUpFeature: {
                 formFields,
@@ -126,100 +295,29 @@ SuperTokens.init({
             ],
         }),
         Session.init({}),
-    ],
-});
+    ];
 
-app.use(
-    cors({
-        origin: websiteDomain,
-        allowedHeaders: ["content-type", ...SuperTokens.getAllCORSHeaders()],
-        methods: ["GET", "PUT", "POST", "DELETE"],
-        credentials: true,
-    })
-);
-
-app.use(middleware());
-
-app.get("/ping", async (req, res) => {
-    res.send("success");
-});
-
-app.post("/startst", async (req, res) => {
-    let pid = await startST();
-    res.send(pid + "");
-});
-
-app.post("/beforeeach", async (req, res) => {
-    await killAllST();
-    await setupST();
-    res.send();
-});
-
-app.post("/after", async (req, res) => {
-    await killAllST();
-    await cleanST();
-    res.send();
-});
-
-app.post("/stopst", async (req, res) => {
-    await stopST(req.body.pid);
-    res.send("");
-});
-
-// custom API that requires session verification
-app.get("/sessioninfo", verifySession(), async (req, res) => {
-    let session = req.session;
-    if (session.getJWTPayload !== undefined) {
-        res.send({
-            sessionHandle: session.getHandle(),
-            userId: session.getUserId(),
-            accessTokenPayload: session.getJWTPayload(),
-            sessionData: await session.getSessionData(),
-        });
-    } else {
-        res.send({
-            sessionHandle: session.getHandle(),
-            userId: session.getUserId(),
-            accessTokenPayload: session.getAccessTokenPayload(),
-            sessionData: await session.getSessionData(),
-        });
+    if (passwordlessSupported) {
+        recipeList.push(
+            Passwordless.init(
+                passwordlessConfig || {
+                    contactMethod: "PHONE",
+                    flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+                    createAndSendCustomTextMessage: saveCode,
+                }
+            )
+        );
     }
-});
 
-app.get("/token", async (_, res) => {
-    res.send({
-        latestURLWithToken,
+    SuperTokens.init({
+        appInfo: {
+            appName: "SuperTokens",
+            apiDomain: "localhost:" + (process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT),
+            websiteDomain,
+        },
+        supertokens: {
+            connectionURI: "http://localhost:9000",
+        },
+        recipeList,
     });
-});
-
-app.use(errorHandler());
-
-app.use(async (err, req, res, next) => {
-    try {
-        res.sendStatus(500).send(err);
-    } catch (ignored) {}
-});
-
-let server = http.createServer(app);
-server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT, "0.0.0.0");
-
-/*
- * Setup and start the core when running the test application when running with  the following command:
- * START=true TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .
- * or
- * npm run server
- */
-(async function (shouldSpinUp) {
-    if (shouldSpinUp) {
-        console.log(`Start supertokens for test app`);
-        try {
-            await killAllST();
-            await cleanST();
-        } catch (e) {}
-
-        await setupST();
-        const pid = await startST();
-        console.log(`Application started on http://localhost:${process.env.NODE_PORT | 8080}`);
-        console.log(`processId: ${pid}`);
-    }
-})(process.env.START === "true");
+}

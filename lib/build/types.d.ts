@@ -53,9 +53,10 @@ export declare type NormalisedFormField = {
     id: string;
     label: string;
     placeholder: string;
-    validate: (value: any) => Promise<string | undefined>;
+    validate: (value: any) => Promise<string | undefined> | string | undefined;
     optional: boolean;
     autoComplete?: string;
+    autofocus?: boolean;
 };
 export declare type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);
 export declare type Styles = Record<string, CSSObject>;

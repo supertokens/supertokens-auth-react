@@ -1,0 +1,81 @@
+/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+ *
+ * This software is licensed under the Apache License, Version 2.0 (the
+ * "License") as published by the Apache Software Foundation.
+ *
+ * You may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+import { UserInput } from "./types";
+
+import Passwordless from "./recipe";
+import PasswordlessAuth from "./passwordlessAuth";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import SignInUpThemeWrapper from "./components/themes/signInUp";
+
+export default class Wrapper {
+    static init(config: UserInput) {
+        return Passwordless.init(config);
+    }
+
+    static async signOut(): Promise<void> {
+        return Passwordless.getInstanceOrThrow().signOut();
+    }
+
+    // have backwards compatibility to allow input as "signin" | "signup"
+    static redirectToAuth(
+        input?:
+            | ("signin" | "signup")
+            | {
+                  show?: "signin" | "signup";
+                  redirectBack?: boolean;
+              }
+    ): Promise<void> {
+        if (input === undefined || typeof input === "string") {
+            return Passwordless.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
+        } else {
+            if (input.redirectBack === false || input.redirectBack === undefined) {
+                return Passwordless.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
+            } else {
+                return Passwordless.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
+            }
+        }
+    }
+
+    static PasswordlessAuth = PasswordlessAuth;
+
+    static SignInUp = (prop?: any) => Passwordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
+    static SignInUpTheme = SignInUpThemeWrapper;
+
+    static LinkClicked = (prop?: any) =>
+        Passwordless.getInstanceOrThrow().getFeatureComponent("linkClickedScreen", prop);
+}
+
+const init = Wrapper.init;
+const signOut = Wrapper.signOut;
+const redirectToAuth = Wrapper.redirectToAuth;
+const SignInUp = Wrapper.SignInUp;
+const SignInUpTheme = Wrapper.SignInUpTheme;
+const LinkClicked = Wrapper.LinkClicked;
+
+export {
+    PasswordlessAuth,
+    SignInUp,
+    SignInUpTheme,
+    LinkClicked,
+    init,
+    signOut,
+    redirectToAuth,
+    GetRedirectionURLContext,
+    PreAPIHookContext,
+    OnHandleEventContext,
+    UserInput,
+    RecipeInterface,
+};

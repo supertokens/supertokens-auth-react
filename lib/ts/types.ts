@@ -182,7 +182,7 @@ export type NormalisedFormField = {
     /*
      * Validation function of the input field. Returns an error as a string, or undefined.
      */
-    validate: (value: any) => Promise<string | undefined>;
+    validate: (value: any) => Promise<string | undefined> | string | undefined;
 
     /*
      * Whether the field is optional or not.
@@ -193,6 +193,11 @@ export type NormalisedFormField = {
      * Autocomplete input.
      */
     autoComplete?: string;
+
+    /*
+     * Moves focus to the input element when it mounts
+     */
+    autofocus?: boolean;
 };
 
 export type ReactComponentClass = ComponentClass<any, any> | (<T>(props: T) => JSX.Element);

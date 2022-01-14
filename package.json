@@ -53,7 +53,10 @@
     "dependencies": {
         "@emotion/react": "^11.4.1",
         "chroma-js": "^2.1.2",
+        "libphonenumber-js": "^1.9.43",
         "prop-types": "*",
+        "react-phone-number-input": "^3.1.41",
+        "react-select": "^5.2.1",
         "react-shadow": "^19.0.2",
         "supertokens-js-override": "^0.0.4",
         "supertokens-website": "^10.0.4"
@@ -75,7 +78,7 @@
         "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit && cd ../test/with-typescript && npx tsc -p tsconfig.json",
         "tsc": "cd lib && npx tsc -p tsconfig.json",
         "build": "cd lib && rm -rf build && npx tsc -p tsconfig.json",
-        "watch": "cd lib && npx tsc -w -p tsconfig.json",
+        "watch": "cd lib && npx tsc -w -p tsconfig_dev.json",
         "pretty": "npx pretty-quick .",
         "build-pretty": "npm run build && npm run pretty",
         "lint": "cd lib && eslint ./ts --ext .ts,.tsx",
@@ -106,6 +109,10 @@
         {
             "path": "recipe/emailpassword/index.js",
             "limit": "100kb"
+        },
+        {
+            "path": "recipe/passwordless/index.js",
+            "limit": "200kb"
         }
     ],
     "repository": {

@@ -23,7 +23,7 @@ import {
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
     UserInputOverride as AuthRecipeUserInputOverride,
-} from "../authRecipeModule/types";
+} from "../authRecipeWithEmailVerification/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 
@@ -125,7 +125,13 @@ export type PreAPIHookContext =
           url: string;
       };
 
-export type OnHandleEventContext = AuthRecipeModuleOnHandleEventContext;
+export type OnHandleEventContext =
+    | AuthRecipeModuleOnHandleEventContext
+    | {
+          action: "SUCCESS";
+          isNewUser: boolean;
+          user: { id: string; email: string };
+      };
 
 export type SignInAndUpThemeProps = {
     providers: {
