@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Using the default label and no placeholder for the reset password email form instead of the ones configured for the signup form
 -   Removed ":" from labels
 -   Adds new CSS class for provider button (like `providerGoogle`, `providerApple` etc..) which super seeds `providerButton`.
+-   Added a branding element to sign-in/up
 
 ### Adds
 

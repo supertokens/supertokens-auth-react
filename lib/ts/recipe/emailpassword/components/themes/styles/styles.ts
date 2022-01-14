@@ -60,7 +60,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             color: palette.colors.textInput,
             backgroundColor: "transparent",
             borderRadius: "6px",
-            fontSize: palette.fonts.size[0],
+            fontSize: palette.fonts.size[1],
             border: "none",
             paddingRight: "25px",
             letterSpacing: "1.2px",
@@ -102,7 +102,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             color: palette.colors.error,
             lineHeight: "24px",
             fontWeight: 400,
-            fontSize: palette.fonts.size[0],
+            fontSize: palette.fonts.size[1],
             textAlign: "left",
             animation: `${slideTop} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`,
             maxWidth: "330px",
@@ -121,7 +121,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         label: {
             textAlign: "left",
             fontWeight: 600,
-            fontSize: palette.fonts.size[0],
+            fontSize: palette.fonts.size[1],
             lineHeight: "24px",
             color: palette.colors.textLabel,
         },
@@ -139,7 +139,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
 
         headerTinyTitle: {
             marginTop: "13px",
-            fontSize: palette.fonts.size[2],
+            fontSize: palette.fonts.size[3],
             letterSpacing: "1.1px",
             fontWeight: 500,
             lineHeight: "28px",
@@ -147,7 +147,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
 
         sendVerifyEmailText: {
             lineHeight: "21px",
-            fontSize: palette.fonts.size[0],
+            fontSize: palette.fonts.size[1],
             textAlign: "center",
             fontWeight: 300,
             letterSpacing: "0.8px",

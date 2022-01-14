@@ -27,6 +27,7 @@ import { SignInFooter } from "./signInFooter";
 import { SignInForm } from "./signInForm";
 import { SignInHeader } from "./signInHeader";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 
 export const SignIn = withOverride("EmailPasswordSignIn", function EmailPasswordSignIn(props: SignInThemeProps) {
     const styles = useContext(StyleContext);
@@ -40,6 +41,7 @@ export const SignIn = withOverride("EmailPasswordSignIn", function EmailPassword
                     footer={<SignInFooter onClick={props.forgotPasswordClick} />}
                 />
             </div>
+            <SuperTokensBranding />
         </div>
     );
 });

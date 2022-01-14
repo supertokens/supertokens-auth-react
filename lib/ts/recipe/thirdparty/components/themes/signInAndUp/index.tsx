@@ -24,6 +24,7 @@ import { SignUpFooter } from "./signUpFooter";
 import { SignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 import { ProvidersForm } from "./providersForm";
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 
 /*
  * Component.
@@ -47,6 +48,7 @@ function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
                         termsOfServiceLink={props.config.signInAndUpFeature.termsOfServiceLink}
                     />
                 </div>
+                <SuperTokensBranding />
             </div>
         </ThemeBase>
     );
