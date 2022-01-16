@@ -305,7 +305,11 @@ describe("SuperTokens SignIn with react router dom v5", function () {
 
             // Logout
             const logoutButton = await getLogoutButton(page);
-            await Promise.all([logoutButton.click(), hasMethodBeenCalled(page, SIGN_OUT_API, "POST")]);
+            const [_, logoutAPICalled] = await Promise.all([
+                logoutButton.click(),
+                hasMethodBeenCalled(page, SIGN_OUT_API, "POST"),
+            ]);
+            assert(logoutAPICalled);
             await new Promise((r) => setTimeout(r, 3500));
             let text2 = await getTextInDashboardNoAuth(page);
             assert.strictEqual(text2, "Not logged in");

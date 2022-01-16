@@ -296,11 +296,14 @@ describe("SuperTokens SignIn", function () {
 
             // Logout
             const logoutButton = await getLogoutButton(page);
-            await Promise.all([logoutButton.click(), hasMethodBeenCalled(page, SIGN_OUT_API, "POST")]);
+            const [_, logoutAPICalled] = await Promise.all([
+                logoutButton.click(),
+                hasMethodBeenCalled(page, SIGN_OUT_API, "POST"),
+            ]);
+            assert(logoutAPICalled);
             await new Promise((r) => setTimeout(r, 3500));
-            // TODO: the commented out below seems to cause issues in CICD.. not sure why. It throws "TypeError: Cannot read property 'innerText' of null"
-            // let text2 = await getTextInDashboardNoAuth(page);
-            // assert.strictEqual(text2, "Not logged in");
+            let text2 = await getTextInDashboardNoAuth(page);
+            assert.strictEqual(text2, "Not logged in");
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
