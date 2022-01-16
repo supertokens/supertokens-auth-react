@@ -24,6 +24,7 @@ export const TEST_APPLICATION_SERVER_BASE_URL =
     "http://localhost:" + (process.env.APP_SERVER === undefined ? "8082" : process.env.APP_SERVER);
 export const SIGN_IN_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/signin`;
 export const EMAIL_EXISTS_API = `${TEST_APPLICATION_SERVER_BASE_URL}/email/exists`;
+export const SIGN_OUT_API = `${TEST_APPLICATION_SERVER_BASE_URL}/signout`;
 export const SIGN_UP_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/signup`;
 export const RESET_PASSWORD_TOKEN_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/user/password/reset/token`;
 export const RESET_PASSWORD_API = `${TEST_APPLICATION_SERVER_BASE_URL}/auth/user/password/reset`;

@@ -55,7 +55,7 @@ import { SOMETHING_WENT_WRONG_ERROR } from "../../lib/build/constants";
 // Run the tests in a DOM environment.
 require("jsdom-global")();
 
-import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_OUT_API } from "../constants";
 
 /*
  * Tests.
@@ -303,7 +303,7 @@ describe("SuperTokens SignIn with react router dom v6", function () {
 
             // Logout
             const logoutButton = await getLogoutButton(page);
-            await Promise.all([logoutButton.click()]);
+            await Promise.all([logoutButton.click(), hasMethodBeenCalled(page, SIGN_OUT_API, "POST")]);
             await new Promise((r) => setTimeout(r, 3500));
             let text2 = await getTextInDashboardNoAuth(page);
             assert.strictEqual(text2, "Not logged in");
