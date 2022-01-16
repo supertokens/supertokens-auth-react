@@ -140,7 +140,7 @@ export async function submitForm(page) {
 }
 
 export async function getLogoutButton(page) {
-    return await page.evaluateHandle("document.querySelector('.logoutButton')");
+    return await page.waitForSelector(".logoutButton");
 }
 
 export async function getSignInOrSignUpSwitchLink(page) {
