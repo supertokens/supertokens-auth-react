@@ -348,7 +348,18 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
     let sessionContext = useSessionContext();
     return (
         <div className="dashboard">
-            <Button onClick={logout} label="LOGOUT" className="logoutButton" />
+            <div
+                onClick={logout}
+                className="logoutButton"
+                style={{
+                    height: "50px",
+                    width: "200px",
+                    background: "#000000",
+                    color: "#ffffff",
+                    cursor: "pointer",
+                }}>
+                logout
+            </div>
             <div className="axios">
                 <SessionInfoTable sessionInfo={sessionInfoUsingAxios} />
             </div>
