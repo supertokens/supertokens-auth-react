@@ -261,3 +261,20 @@ export function setLocalStorage(key: string, value: string): void {
 export function removeFromLocalStorage(key: string): void {
     getWindowOrThrow().localStorage.removeItem(key);
 }
+
+export class Deferred<T> {
+    promise: Promise<T>;
+    resolve!: (value: T) => void;
+    reject!: (reason?: any) => void;
+
+    constructor() {
+        this.promise = new Promise((res, rej) => {
+            this.resolve = res;
+            this.reject = rej;
+        });
+    }
+
+    attach(prom: Promise<T>) {
+        prom.then(this.resolve, this.reject);
+    }
+}
