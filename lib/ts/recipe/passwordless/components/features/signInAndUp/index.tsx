@@ -21,7 +21,7 @@ import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import { clearErrorQueryParam, Deferred, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
 import { RecipeInterface, LoginAttemptInfo, PasswordlessUser } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
@@ -35,12 +35,15 @@ import {
     SIGN_IN_UP_RESEND_RESTART_FLOW_ERROR,
 } from "../../../constants";
 
+type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
+
 type SignInUpState = {
     error: string | undefined;
     loaded: boolean;
     loginAttemptInfo: LoginAttemptInfo | undefined;
     checkSessionIntervalHandle: any;
     successInAnotherTab: boolean;
+    callingConsume: boolean;
 };
 
 type PropType = FeatureBaseProps & {
@@ -69,6 +72,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
             checkSessionIntervalHandle: undefined,
             error,
             successInAnotherTab: false,
+            callingConsume: false,
         };
     }
 
@@ -150,7 +154,21 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
             },
 
             consumeCode: async (input) => {
-                const res = await this.props.recipe.recipeImpl.consumeCode(input);
+                const deferred = new Deferred<Awaited<ReturnType<RecipeInterface["consumeCode"]>>>();
+                // We need to call consume code while callingConsume, so we don't detect
+                // the session creation too early and go to successInAnotherTab too early
+                this.setState(
+                    (os) => ({ ...os, callingConsume: true }),
+                    () => {
+                        deferred.attach(this.props.recipe.recipeImpl.consumeCode(input));
+                    }
+                );
+                const res = await deferred.promise;
+
+                if (res.status !== "OK") {
+                    this.setState((os) => ({ ...os, callingConsume: false }));
+                }
+
                 if (res.status === "RESTART_FLOW_ERROR") {
                     await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
 
@@ -184,9 +202,11 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
         // We could be using storage events for this, but we need to keep customization in mind.
         // Someone could be using something else other than localstorage.
         const checkSessionIntervalHandle = setInterval(async () => {
-            const hasSession = await Session.doesSessionExist();
-            if (hasSession) {
-                this.setState((os) => ({ ...os, successInAnotherTab: true }));
+            if (this.state.loginAttemptInfo && !this.state.successInAnotherTab && !this.state.callingConsume) {
+                const hasSession = await Session.doesSessionExist();
+                if (hasSession) {
+                    this.setState((os) => ({ ...os, successInAnotherTab: true }));
+                }
             }
         }, 2000);
 

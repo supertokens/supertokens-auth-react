@@ -66,7 +66,11 @@ export async function waitFor(ms) {
 export async function waitForSTElement(page, selector, inverted = false) {
     const res = await page.waitForFunction(
         (elementSelector, rootSelector, inverted) => {
-            const elem = document.querySelector(rootSelector)?.shadowRoot.querySelector(elementSelector);
+            const root = document.querySelector(rootSelector);
+            if (!root || !root.shadowRoot) {
+                return false;
+            }
+            const elem = root.shadowRoot.querySelector(elementSelector);
             return inverted ? elem === null : elem;
         },
         { polling: 50 },
@@ -140,7 +144,7 @@ export async function submitForm(page) {
 }
 
 export async function getLogoutButton(page) {
-    return await page.evaluateHandle("document.querySelector('.logoutButton')");
+    return await page.waitForSelector(".logoutButton");
 }
 
 export async function getSignInOrSignUpSwitchLink(page) {
@@ -367,6 +371,8 @@ export async function getVerificationEmailErrorTitle(page) {
 
 export async function setInputValues(page, fields) {
     for (const field of fields) {
+        await waitForSTElement(page, `input[name=${field.name}]`);
+
         // Reset input value.
         await page.evaluate(
             ({ field, ST_ROOT_SELECTOR }) => {
