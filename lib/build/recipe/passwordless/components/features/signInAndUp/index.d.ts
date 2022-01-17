@@ -8,6 +8,7 @@ declare type SignInUpState = {
     loginAttemptInfo: LoginAttemptInfo | undefined;
     checkSessionIntervalHandle: any;
     successInAnotherTab: boolean;
+    callingConsume: boolean;
 };
 declare type PropType = FeatureBaseProps & {
     recipe: Recipe;
