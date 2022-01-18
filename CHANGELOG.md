@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 -   Makes custom social provider button be a JSX element or a function
+-   Changes powered by link to point to `https://supertokens.com?campaign=poweredby`
 
 ## [0.18.0] - 2022-01-14
 
