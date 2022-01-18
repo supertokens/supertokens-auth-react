@@ -21,11 +21,10 @@ import { PureComponent } from "react";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
+
 /*
  * Component.
  */
-
 class ThirdPartySignInAndUpCallbackTheme extends PureComponent {
     static contextType = StyleContext;
 
@@ -43,7 +42,6 @@ class ThirdPartySignInAndUpCallbackTheme extends PureComponent {
                         <SpinnerIcon color={styles.palette.colors.primary} />
                     </div>
                 </div>
-                <SuperTokensBranding />
             </div>
         );
     };
