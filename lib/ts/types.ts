@@ -239,7 +239,7 @@ export type FeatureBaseProps = {
     /*
      * Children element
      */
-    children?: JSX.Element;
+    children?: React.ReactNode;
 
     /*
      * History provided by react-router

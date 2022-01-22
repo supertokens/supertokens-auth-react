@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { PureComponent } from "react";
+import { memo } from "react";
 
 import ThirdParty from "./recipe";
 import { FeatureBaseProps } from "../../types";
@@ -32,55 +32,49 @@ type Props = FeatureBaseProps & {
     onSessionExpired?: () => void;
 };
 
-class ThirdPartyAuth extends PureComponent<Props> {
-    /*
-     * Render.
-     */
-    render = (): JSX.Element | null => {
-        const emailVerification = (
-            <EmailVerificationAuth recipe={this.props.recipe.emailVerification} history={this.props.history}>
-                {this.props.children}
-            </EmailVerificationAuth>
-        );
+function ThirdPartyAuth(props: Props) {
+    const emailVerification = (
+        <EmailVerificationAuth recipe={props.recipe.emailVerification} history={props.history}>
+            {props.children}
+        </EmailVerificationAuth>
+    );
 
-        if (this.props.requireAuth === false) {
-            return <SessionAuth onSessionExpired={this.props.onSessionExpired}>{emailVerification}</SessionAuth>;
-        }
+    if (props.requireAuth === false) {
+        return <SessionAuth onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuth>;
+    }
 
-        return (
-            <SessionAuth
-                redirectToLogin={() => {
-                    void ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(
-                        undefined,
-                        this.props.history
-                    );
-                }}
-                requireAuth={this.props.requireAuth === undefined || this.props.requireAuth}
-                onSessionExpired={this.props.onSessionExpired}>
-                {emailVerification}
-            </SessionAuth>
-        );
-    };
+    return (
+        <SessionAuth
+            redirectToLogin={() => {
+                void ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history);
+            }}
+            requireAuth={props.requireAuth === undefined || props.requireAuth}
+            onSessionExpired={props.onSessionExpired}>
+            {emailVerification}
+        </SessionAuth>
+    );
 }
+
+const ThirdPartyAuthMemo = memo(ThirdPartyAuth);
 
 export default function ThirdPartyAuthWrapper({
     children,
     requireAuth,
     onSessionExpired,
 }: {
-    children: JSX.Element;
+    children: React.ReactNode;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
-}): JSX.Element {
+}) {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
     return (
-        <ThirdPartyAuth
+        <ThirdPartyAuthMemo
             history={history}
             onSessionExpired={onSessionExpired}
             requireAuth={requireAuth}
             recipe={ThirdParty.getInstanceOrThrow()}>
             {children}
-        </ThirdPartyAuth>
+        </ThirdPartyAuthMemo>
     );
 }

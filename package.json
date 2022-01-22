@@ -3,6 +3,10 @@
     "version": "0.18.3",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
+    "engines": {
+        "node": ">=16.0.0",
+        "npm": "^8"
+    },
     "devDependencies": {
         "@babel/core": "7.12.1",
         "@babel/plugin-transform-react-jsx": "^7.16.0",

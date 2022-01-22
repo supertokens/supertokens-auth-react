@@ -168,10 +168,8 @@ function App() {
                                 onSessionExpired={() => {
                                     updateShowSessionExpiredPopup(true);
                                 }}>
-                                <>
-                                    <Home />
-                                    {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                </>
+                                <Home />
+                                {showSessionExpiredPopup && <SessionExpiredPopup />}
                             </EmailPassword.EmailPasswordAuth>
                         </Route>
                     </Switch>
