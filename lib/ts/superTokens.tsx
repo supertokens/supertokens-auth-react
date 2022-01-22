@@ -38,7 +38,7 @@ export default class SuperTokens {
      */
     private static instance?: SuperTokens;
 
-    private static reactRouterDom?: any;
+    private static reactRouterDom?: { router: { Route: any }; useHistoryCustom: () => any };
     private static reactRouterDomIsV6: boolean | undefined = undefined;
 
     /*
@@ -127,11 +127,17 @@ export default class SuperTokens {
                 }, [to, navigateHook, setTo]);
                 return setTo;
             };
-            SuperTokens.reactRouterDom.useHistoryCustom = useNavigateHookForRRDV6;
+            SuperTokens.reactRouterDom = {
+                router: reactRouterDom,
+                useHistoryCustom: useNavigateHookForRRDV6,
+            };
 
             return getSuperTokensRoutesForReactRouterDomV6(SuperTokens.getInstanceOrThrow());
         }
-        SuperTokens.reactRouterDom.useHistoryCustom = reactRouterDom.useHistory;
+        SuperTokens.reactRouterDom = {
+            router: reactRouterDom,
+            useHistoryCustom: reactRouterDom.useHistory,
+        };
         return getSuperTokensRoutesForReactRouterDom(SuperTokens.getInstanceOrThrow());
     }
 
@@ -206,7 +212,7 @@ export default class SuperTokens {
         return recipe as RecipeModule<T, S, R, N>;
     }
 
-    getReactRouterDom = (): { Route: any; useHistoryCustom: () => any } | undefined => {
+    getReactRouterDomWithCustomHistory = (): { router: { Route: any }; useHistoryCustom: () => any } | undefined => {
         return SuperTokens.reactRouterDom;
     };
 

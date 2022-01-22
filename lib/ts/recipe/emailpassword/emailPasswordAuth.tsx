@@ -69,8 +69,8 @@ export default function EmailPasswordAuthWrapper({
     requireAuth?: boolean;
     onSessionExpired?: () => void;
 }): JSX.Element {
-    const reactRouterDom = SuperTokens.getInstanceOrThrow().getReactRouterDom();
-    const history = reactRouterDom === undefined ? undefined : reactRouterDom.useHistoryCustom();
+    const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
+    const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
 
     return (
         <EmailPasswordAuth

@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.18.2] - 2022-01-22
+
 ### Changes
 
-- fix sample code in docs which gives error "multiple children were provided"
+-   Fix sample code in docs which gives error "multiple children were provided"
+-   Does not modify react router dom object. Instead, we create a new object which contains react-router-dom + custom navigation function.
+
 ## [0.18.1] - 2022-01-18
 
 ### Changes

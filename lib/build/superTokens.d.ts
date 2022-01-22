@@ -25,9 +25,11 @@ export default class SuperTokens {
     getRecipeOrThrow<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>>(
         recipeId: string
     ): RecipeModule<T, S, R, N>;
-    getReactRouterDom: () =>
+    getReactRouterDomWithCustomHistory: () =>
         | {
-              Route: any;
+              router: {
+                  Route: any;
+              };
               useHistoryCustom: () => any;
           }
         | undefined;
