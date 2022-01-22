@@ -1,11 +1,13 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+### [0.18.3](https://github.com/supertokens/supertokens-auth-react/compare/v0.18.1...v0.18.3) (2022-01-22)
 
-## [unreleased]
+
+### Bug Fixes
+
+* multiple children were provided error ([#365](https://github.com/supertokens/supertokens-auth-react/issues/365)) ([0dcd3f1](https://github.com/supertokens/supertokens-auth-react/commit/0dcd3f1137fb6e2f5c658154d4343438a80d6c6f))
 
 ## [0.18.2] - 2022-01-22
 
