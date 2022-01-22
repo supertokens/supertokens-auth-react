@@ -12,6 +12,7 @@
         "@emotion/babel-plugin": "^11.1.0",
         "@emotion/eslint-plugin": "^11.1.0",
         "@size-limit/preset-small-lib": "^6.0.3",
+        "@testing-library/dom": "^8.11.1",
         "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^11.2.7",
         "@testing-library/user-event": "^13.2.1",
@@ -43,12 +44,12 @@
         "react-router-dom": "^6.2.1",
         "regenerator-runtime": "0.13.7",
         "size-limit": "^6.0.3",
+        "standard-version": "^9.3.2",
         "ts-jest": "^27.0.5",
         "ts-prune": "^0.8.9",
         "tslint": "6.1.3",
         "typedoc": "^0.22.5",
-        "typescript": "3.8.3",
-        "@testing-library/dom": "^8.11.1"
+        "typescript": "3.8.3"
     },
     "dependencies": {
         "@emotion/react": "^11.4.1",
@@ -87,7 +88,8 @@
         "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
         "build-docs": "rm -rf ./docs && npx typedoc --out ./docs --tsconfig ./lib/tsconfig.json ./lib/ts/index.ts ./lib/ts/**/index.ts ./lib/ts/**/*/index.ts",
         "size": "size-limit",
-        "check-circular-dependencies": "npx madge --circular --extensions js ./lib/build/"
+        "check-circular-dependencies": "npx madge --circular --extensions js ./lib/build/",
+        "release": "standard-version"
     },
     "size-limit": [
         {
