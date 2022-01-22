@@ -9,12 +9,14 @@ export default class SessionAPIWrapper {
         | ({
               requireAuth?: false | undefined;
           } & {
+              requiredGrants?: import("./types").Grant[] | undefined;
               onSessionExpired?: (() => void) | undefined;
           })
         | ({
               requireAuth: true;
               redirectToLogin: () => void;
           } & {
+              requiredGrants?: import("./types").Grant[] | undefined;
               onSessionExpired?: (() => void) | undefined;
           })
     >;
@@ -31,12 +33,14 @@ declare const SessionAuth: import("react").FC<
     | ({
           requireAuth?: false | undefined;
       } & {
+          requiredGrants?: import("./types").Grant[] | undefined;
           onSessionExpired?: (() => void) | undefined;
       })
     | ({
           requireAuth: true;
           redirectToLogin: () => void;
       } & {
+          requiredGrants?: import("./types").Grant[] | undefined;
           onSessionExpired?: (() => void) | undefined;
       })
 >;

@@ -1,6 +1,7 @@
 import { RecipeInterface, NormalisedConfig } from "./types";
 import { NormalisedAppInfo } from "../../types";
 import Querier from "../../querier";
+import Session from "../session/recipe";
 
 export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface {
     const querier = new Querier(recipeId, appInfo);
@@ -58,6 +59,11 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         },
 
         isEmailVerified: async function (input: { config: NormalisedConfig }): Promise<boolean> {
+            const accessTokenPayload = await Session.getInstanceOrThrow().getAccessTokenPayloadSecurely();
+            const tokenGrant = accessTokenPayload["st-grant-email-verified"];
+            if (tokenGrant) {
+                return tokenGrant.v;
+            }
             const response: IsEmailVerifiedAPIResponse = await querier.get(
                 "/user/email/verify",
                 {},

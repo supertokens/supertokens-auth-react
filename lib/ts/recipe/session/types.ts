@@ -54,3 +54,31 @@ export type SessionContextType = {
     userId: string;
     accessTokenPayload: any;
 };
+
+type Awaitable<T> = T | PromiseLike<T>;
+
+export class BooleanGrant implements Grant {
+    key: string;
+
+    constructor(
+        name: string,
+        public readonly checkAPI: (abortSignal: AbortSignal) => Awaitable<boolean>,
+        public readonly onFailedCheck: (context: { history: any }, abortSignal: AbortSignal) => Awaitable<any>
+    ) {
+        this.key = `st-grant-${name}`;
+    }
+
+    checkPayload(payload: any): boolean | undefined {
+        const o = payload[this.key];
+        if (o) {
+            return o.v;
+        }
+        return undefined;
+    }
+}
+
+export type Grant = {
+    checkAPI: (abortSignal: AbortSignal) => Awaitable<boolean>;
+    checkPayload: (payload: any, abortSignal: AbortSignal) => Awaitable<boolean | undefined>;
+    onFailedCheck: (context: { history: any }, abortSignal: AbortSignal) => Awaitable<any>;
+};

@@ -20,8 +20,13 @@ import { UserInput } from "./types";
 import EmailVerificationRecipe from "./recipe";
 import EmailVerificationTheme from "./components/themes/emailVerification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { BooleanGrant } from "../session/types";
 
 export default class Wrapper {
+    static emailVerifiedGrant = new BooleanGrant("email-verified", Wrapper.isEmailVerified, ({ history }) =>
+        EmailVerificationRecipe.getInstanceOrThrow().redirect({ action: "VERIFY_EMAIL" }, history)
+    );
+
     static EmailVerification = (prop?: any) =>
         EmailVerificationRecipe.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
@@ -38,6 +43,7 @@ export default class Wrapper {
 const init = Wrapper.init;
 const isEmailVerified = Wrapper.isEmailVerified;
 const EmailVerification = Wrapper.EmailVerification;
+export const emailVerifiedGrant = Wrapper.emailVerifiedGrant;
 
 export {
     init,

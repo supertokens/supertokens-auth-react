@@ -212,9 +212,7 @@ export declare type FormBaseState = {
     unmounting: AbortController;
 } & (
     | {
-          formFields: FormFieldState[];
           status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
-          unmounting: AbortController;
       }
     | {
           status: "GENERAL_ERROR";

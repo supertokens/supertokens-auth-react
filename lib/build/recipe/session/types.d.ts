@@ -40,3 +40,36 @@ export declare type SessionContextType = {
     userId: string;
     accessTokenPayload: any;
 };
+declare type Awaitable<T> = T | PromiseLike<T>;
+export declare class BooleanGrant implements Grant {
+    readonly checkAPI: (abortSignal: AbortSignal) => Awaitable<boolean>;
+    readonly onFailedCheck: (
+        context: {
+            history: any;
+        },
+        abortSignal: AbortSignal
+    ) => Awaitable<any>;
+    key: string;
+    constructor(
+        name: string,
+        checkAPI: (abortSignal: AbortSignal) => Awaitable<boolean>,
+        onFailedCheck: (
+            context: {
+                history: any;
+            },
+            abortSignal: AbortSignal
+        ) => Awaitable<any>
+    );
+    checkPayload(payload: any): boolean | undefined;
+}
+export declare type Grant = {
+    checkAPI: (abortSignal: AbortSignal) => Awaitable<boolean>;
+    checkPayload: (payload: any, abortSignal: AbortSignal) => Awaitable<boolean | undefined>;
+    onFailedCheck: (
+        context: {
+            history: any;
+        },
+        abortSignal: AbortSignal
+    ) => Awaitable<any>;
+};
+export {};

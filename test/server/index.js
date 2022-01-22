@@ -294,7 +294,10 @@ function initST({ passwordlessConfig } = {}) {
                 customAuth0Provider(),
             ],
         }),
-        Session.init({}),
+        Session.init({
+            // TODO: optional/set in tests
+            defaultRequiredGrants: [EmailPassword.emailVerifiedGrant],
+        }),
     ];
 
     if (passwordlessSupported) {

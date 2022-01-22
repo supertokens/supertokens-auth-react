@@ -19,7 +19,7 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
-import { RecipeEventWithSessionContext, SessionContextType } from "./types";
+import { Grant, RecipeEventWithSessionContext, SessionContextType } from "./types";
 
 // if it's not the default context, it means SessionAuth from top has
 // given us a sessionContext.
@@ -35,6 +35,7 @@ type PropsWithAuth = {
 };
 
 type Props = (PropsWithoutAuth | PropsWithAuth) & {
+    requiredGrants?: Grant[];
     onSessionExpired?: () => void;
 };
 
@@ -59,7 +60,36 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
     // on mount
     useEffect(() => {
-        let cancelUseEffect = false;
+        const cancelUseEffect = new AbortController();
+
+        const checkGrants = async (context: SessionContextType) => {
+            // We are checking all required grants even if one fails
+            // We may not want to redirect on the first failed one, e.g.:
+            // MFA fails, which would show a popup, but email verified also fails which redirects.
+            let retVal = true;
+            if (props.requiredGrants !== undefined) {
+                for (const grant of props.requiredGrants) {
+                    let passes = await grant.checkPayload(context.accessTokenPayload, cancelUseEffect.signal);
+                    if (cancelUseEffect.signal.aborted) {
+                        return false;
+                    }
+                    if (passes === undefined) {
+                        passes = await grant.checkAPI(cancelUseEffect.signal);
+                        if (cancelUseEffect.signal.aborted) {
+                            return false;
+                        }
+                    }
+                    if (passes !== true) {
+                        await grant.onFailedCheck({ history }, cancelUseEffect.signal);
+                        retVal = false;
+                        if (cancelUseEffect.signal.aborted) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return retVal;
+        };
 
         const buildContext = async (): Promise<SessionContextType> => {
             if (hasParentProvider(parentSessionContext)) {
@@ -88,13 +118,14 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
             // if this component is unmounting, or the context has already
             // been set, then we don't need to proceed...
-            if (cancelUseEffect) {
+            if (cancelUseEffect.signal.aborted) {
                 return;
             }
 
             if (!toSetContext.doesSessionExist && props.requireAuth === true) {
                 props.redirectToLogin();
             } else {
+                await checkGrants(toSetContext);
                 if (context === undefined) {
                     setContext(toSetContext);
                 }
@@ -102,15 +133,16 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
         }
         if (context === undefined) {
             void setInitialContextAndMaybeRedirect();
-            return () => {
-                cancelUseEffect = true;
-            };
         } else {
-            if (!context.doesSessionExist && props.requireAuth === true) {
+            if (context.doesSessionExist) {
+                void checkGrants(context);
+            } else if (props.requireAuth === true) {
                 props.redirectToLogin();
             }
-            return;
         }
+        return () => {
+            cancelUseEffect.abort();
+        };
     }, []);
 
     // subscribe to events on mount
