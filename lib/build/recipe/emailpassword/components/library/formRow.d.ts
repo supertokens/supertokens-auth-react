@@ -1,7 +1,9 @@
 /// <reference types="react" />
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 declare type FormRowProps = {
-    children: JSX.Element;
+    children: React.ReactNode;
     hasError?: boolean;
 };
-export default function FormRow({ children, hasError }: FormRowProps): JSX.Element;
+export default function FormRow({ children, hasError }: FormRowProps): jsx.JSX.Element;
 export {};

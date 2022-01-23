@@ -1,8 +1,8 @@
-/// <reference types="react" />
+import React from "react";
 export declare function ThemeBase({
     children,
     loadDefaultFont,
 }: {
-    children: JSX.Element;
+    children: React.ReactNode;
     loadDefaultFont: boolean;
 }): JSX.Element;
