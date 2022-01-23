@@ -51,6 +51,9 @@ export default class Querier {
         preAPIHook?: PreAPIHookFunction,
         postAPIHook?: PostAPIHookFunction
     ): Promise<T> => {
+        if (config.body === undefined) {
+            throw new Error("Post request must have a body");
+        }
         const result = await this.fetch(
             this.getFullUrl(path),
             {

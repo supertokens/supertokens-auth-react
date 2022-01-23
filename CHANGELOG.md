@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.18.3] - 2022-01-23
+
+### Fixes
+
+-   Sends an empty JSON body in email verification token generate API since the content type is application/json + enforces that at least an empty JSON body must be sent in all API calls to the backend.
+
 ## [0.18.2] - 2022-01-22
 
 ### Changes
