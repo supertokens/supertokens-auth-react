@@ -51,7 +51,7 @@ function ThirdPartyEmailPasswordAuth(props: Props) {
                     props.history
                 );
             }}
-            requireAuth
+            requireAuth={true}
             onSessionExpired={props.onSessionExpired}>
             {emailVerification}
         </SessionAuth>

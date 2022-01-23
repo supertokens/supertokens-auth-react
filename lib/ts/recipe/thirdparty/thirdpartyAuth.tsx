@@ -48,7 +48,7 @@ function ThirdPartyAuth(props: Props) {
             redirectToLogin={() => {
                 void ThirdParty.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history);
             }}
-            requireAuth={props.requireAuth === undefined || props.requireAuth}
+            requireAuth={true}
             onSessionExpired={props.onSessionExpired}>
             {emailVerification}
         </SessionAuth>

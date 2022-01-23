@@ -40,7 +40,7 @@ function PasswordlessAuth(props: Props) {
             redirectToLogin={() =>
                 Passwordless.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
-            requireAuth
+            requireAuth={true}
             onSessionExpired={props.onSessionExpired}>
             {props.children}
         </SessionAuth>

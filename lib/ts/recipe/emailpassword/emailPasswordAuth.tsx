@@ -48,7 +48,7 @@ function EmailPasswordAuth(props: Props) {
             redirectToLogin={() =>
                 EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
-            requireAuth
+            requireAuth={true}
             onSessionExpired={props.onSessionExpired}>
             {emailVerification}
         </SessionAuth>
