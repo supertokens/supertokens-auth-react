@@ -27,7 +27,7 @@ import StyleContext from "../../../../styles/styleContext";
  */
 
 export type ProviderButtonProps = {
-    children: JSX.Element;
+    children: React.ReactNode;
     providerName: string;
     logo?: JSX.Element;
 };
@@ -36,7 +36,7 @@ export type ProviderButtonProps = {
  * Component.
  */
 
-export default function ProviderButton({ children, logo, providerName }: ProviderButtonProps): JSX.Element {
+export default function ProviderButton({ children, logo, providerName }: ProviderButtonProps) {
     /*
      * Render.
      */

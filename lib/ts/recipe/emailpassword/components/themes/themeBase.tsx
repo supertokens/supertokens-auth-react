@@ -20,13 +20,7 @@ import { Fragment } from "react";
  * Component
  */
 
-export function ThemeBase({
-    children,
-    loadDefaultFont,
-}: {
-    children: JSX.Element;
-    loadDefaultFont: boolean;
-}): JSX.Element {
+export function ThemeBase({ children, loadDefaultFont }: { children: React.ReactNode; loadDefaultFont: boolean }) {
     return (
         <Fragment>
             {children}

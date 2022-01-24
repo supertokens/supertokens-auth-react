@@ -17,7 +17,7 @@
  * Imports.
  */
 import * as React from "react";
-import { PureComponent } from "react";
+import { memo } from "react";
 
 import EmailPassword from "./recipe";
 import { FeatureBaseProps } from "../../types";
@@ -32,53 +32,50 @@ type Props = FeatureBaseProps & {
     onSessionExpired?: () => void;
 };
 
-class EmailPasswordAuth extends PureComponent<Props> {
-    /*
-     * Render.
-     */
-    render = (): JSX.Element | null => {
-        const emailVerification = (
-            <EmailVerificationAuth recipe={this.props.recipe.emailVerification} history={this.props.history}>
-                {this.props.children}
-            </EmailVerificationAuth>
-        );
+function EmailPasswordAuth(props: Props) {
+    const emailVerification = (
+        <EmailVerificationAuth recipe={props.recipe.emailVerification} history={props.history}>
+            {props.children}
+        </EmailVerificationAuth>
+    );
 
-        if (this.props.requireAuth === false) {
-            return <SessionAuth onSessionExpired={this.props.onSessionExpired}>{emailVerification}</SessionAuth>;
-        }
+    if (props.requireAuth === false) {
+        return <SessionAuth onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuth>;
+    }
 
-        return (
-            <SessionAuth
-                redirectToLogin={() =>
-                    EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, this.props.history)
-                }
-                requireAuth={true}
-                onSessionExpired={this.props.onSessionExpired}>
-                {emailVerification}
-            </SessionAuth>
-        );
-    };
+    return (
+        <SessionAuth
+            redirectToLogin={() =>
+                EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
+            }
+            requireAuth={true}
+            onSessionExpired={props.onSessionExpired}>
+            {emailVerification}
+        </SessionAuth>
+    );
 }
+
+const EmailPasswordAuthMemo = memo(EmailPasswordAuth);
 
 export default function EmailPasswordAuthWrapper({
     children,
     requireAuth,
     onSessionExpired,
 }: {
-    children: JSX.Element;
+    children: React.ReactNode;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
-}): JSX.Element {
+}) {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
 
     return (
-        <EmailPasswordAuth
+        <EmailPasswordAuthMemo
             history={history}
             onSessionExpired={onSessionExpired}
             requireAuth={requireAuth}
             recipe={EmailPassword.getInstanceOrThrow()}>
             {children}
-        </EmailPasswordAuth>
+        </EmailPasswordAuthMemo>
     );
 }

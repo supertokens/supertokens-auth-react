@@ -77,7 +77,7 @@ export declare type ThemeBaseProps = {
     styleFromInit?: Styles;
 };
 export declare type FeatureBaseProps = {
-    children?: JSX.Element;
+    children?: React.ReactNode;
     history?: any;
     isEmbedded?: boolean;
 };

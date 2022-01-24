@@ -98,7 +98,14 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}
                         {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children && React.cloneElement(this.props.children, props)}
+                        {this.props.children &&
+                            React.Children.map(this.props.children, (child) => {
+                                if (React.isValidElement(child)) {
+                                    return React.cloneElement(child, props);
+                                }
+
+                                return child;
+                            })}
                     </Fragment>
                 </FeatureWrapper>
             </ComponentOverrideContext.Provider>
