@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.18.4] - 2022-01-24
+
 -   swapped out the PureComponent to functional + memo in the files i came across
--   removed the explicit JSX.Element return type, they can be inferred and would probably be better as-is imo
+-   removed the explicit JSX.Element return type, they can be inferred and would probably be better as-is.
 
 ## [0.18.3] - 2022-01-23
 
