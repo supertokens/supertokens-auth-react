@@ -13,7 +13,7 @@ export function RoutingComponent(props: { supertokensInstance: SuperTokens; path
         );
     }, [props]);
 
-    const history = props.supertokensInstance.getReactRouterDom()?.useHistoryCustom();
+    const history = props.supertokensInstance.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
 
     if (componentToRender === undefined) {
         return null;

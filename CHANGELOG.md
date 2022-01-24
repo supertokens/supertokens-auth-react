@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [unreleased]
+
+## [0.18.4] - 2022-01-24
+
+-   swapped out the PureComponent to functional + memo in the files i came across
+-   removed the explicit JSX.Element return type, they can be inferred and would probably be better as-is.
+
+## [0.18.3] - 2022-01-23
+
+### Fixes
+
+-   Sends an empty JSON body in email verification token generate API since the content type is application/json + enforces that at least an empty JSON body must be sent in all API calls to the backend.
+
+## [0.18.2] - 2022-01-22
+
+### Changes
+
+-   Fix sample code in docs which gives error "multiple children were provided"
+-   Does not modify react router dom object. Instead, we create a new object which contains react-router-dom + custom navigation function.
+
 ## [0.18.1] - 2022-01-18
 
 ### Changes

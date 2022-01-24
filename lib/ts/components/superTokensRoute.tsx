@@ -26,12 +26,12 @@ import { RoutingComponent } from "./routingComponent";
  */
 
 export function getSuperTokensRoutesForReactRouterDom(supertokensInstance: SuperTokens): JSX.Element[] {
-    const reactRouterDom = supertokensInstance.getReactRouterDom();
-    if (reactRouterDom === undefined) {
+    const routerInfo = supertokensInstance.getReactRouterDomWithCustomHistory();
+    if (routerInfo === undefined) {
         return [];
     }
 
-    const Route = reactRouterDom.Route;
+    const Route = routerInfo.router.Route;
     const pathsToFeatureComponentWithRecipeIdMap = supertokensInstance.getPathsToFeatureComponentWithRecipeIdMap();
     return Object.keys(pathsToFeatureComponentWithRecipeIdMap).map((path) => {
         path = path === "" ? "/" : path;

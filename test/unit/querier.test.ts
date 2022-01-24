@@ -121,7 +121,7 @@ describe("Querier", () => {
 
         test(`.post() should call .callPreAPIHook()`, async () => {
             // when
-            await querier.post("/path", {}, mockPreAPIHook);
+            await querier.post("/path", { body: JSON.stringify({}) }, mockPreAPIHook);
 
             // then
             expect(callPreApiHookSpy).toHaveBeenCalledWith({
