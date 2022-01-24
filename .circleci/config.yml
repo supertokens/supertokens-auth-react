@@ -23,6 +23,7 @@ jobs:
             - checkout
             - run: apt-get install lsof
             - run: npm run init
+            - run: npm run build-check
             - run: (cd .circleci/ && ./doTests.sh)
             - run: npm run size
             - run: npm run check-circular-dependencies
