@@ -117,6 +117,10 @@
         {
             "path": "recipe/passwordless/index.js",
             "limit": "200kb"
+        },
+        {
+            "path": "recipe/thirdpartypasswordless/index.js",
+            "limit": "200kb"
         }
     ],
     "repository": {
