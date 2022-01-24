@@ -62,6 +62,7 @@ export type ComponentOverrideMap = Omit<PasswordlessOverrideMap, "PasswordlessSi
         ThirdPartyPasswordlessHeader?: ComponentOverride<typeof Header>;
     };
 
+// TODO: move the definition here if necessary
 export type SignInUpFeatureConfigInput = WithRenamedProp<
     PWLessSignInUpFeatureConfigInput,
     "emailOrPhoneFormStyle",
@@ -97,6 +98,7 @@ export type UserInput = (
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 
           signInUpFeature?: SignInUpFeatureConfigInput & {
+              defaultCountry?: CountryCode;
               guessInternationPhoneNumberFromInputPhoneNumber?: (
                   inputPhoneNumber: string,
                   defaultCountryFromConfig?: CountryCode

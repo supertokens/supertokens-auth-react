@@ -263,6 +263,7 @@ export type UserInput = (
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
 
           signInUpFeature?: SignInUpFeatureConfigInput & {
+              defaultCountry?: CountryCode;
               guessInternationPhoneNumberFromInputPhoneNumber?: (
                   inputPhoneNumber: string,
                   defaultCountryFromConfig?: CountryCode
