@@ -11,9 +11,9 @@
             "env": {
                 "NODE_ENV": "production",
                 "REACT_APP_API_PORT": "10001",
-                "REACT_APP_API_URL": "https://api-thirdparty.demo.supertokens.io",
+                "REACT_APP_API_URL": "https://api-thirdparty.demo.supertokens.com",
                 "REACT_APP_WEBSITE_PORT": "10000",
-                "REACT_APP_WEBSITE_URL": "https://thirdparty.demo.supertokens.io"
+                "REACT_APP_WEBSITE_URL": "https://thirdparty.demo.supertokens.com"
             }
         },
         {
@@ -27,9 +27,9 @@
             "env": {
                 "NODE_ENV": "production",
                 "REACT_APP_API_PORT": "10001",
-                "REACT_APP_API_URL": "https://api-thirdparty.demo.supertokens.io",
+                "REACT_APP_API_URL": "https://api-thirdparty.demo.supertokens.com",
                 "REACT_APP_WEBSITE_PORT": "10000",
-                "REACT_APP_WEBSITE_URL": "https://thirdparty.demo.supertokens.io"
+                "REACT_APP_WEBSITE_URL": "https://thirdparty.demo.supertokens.com"
             }
         }
     ]

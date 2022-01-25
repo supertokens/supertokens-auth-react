@@ -117,7 +117,7 @@ async function signInUpPOST(input) {
 
 module.exports = { signInUpPOST };
 
-const DEV_OAUTH_REDIRECT_URL = "https://supertokens.io/dev/oauth/redirect-to-app";
+const DEV_OAUTH_REDIRECT_URL = "https://supertokens.com/dev/oauth/redirect-to-app";
 
 const DEV_OAUTH_CLIENT_IDS = [
     "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com", // google

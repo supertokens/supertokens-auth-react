@@ -17,7 +17,7 @@ export default function Footer() {
             <span role="img" aria-labelledby="love">
                 ❤️
             </span>{" "}
-            using SuperTokens.io
+            using supertokens.com
         </div>
     );
 }

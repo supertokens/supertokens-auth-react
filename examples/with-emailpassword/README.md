@@ -48,7 +48,7 @@ npm run build && npm run start
 
 ## Author
 
-Created with :heart: by the folks at SuperTokens.io.
+Created with :heart: by the folks at supertokens.com.
 
 ## License
 

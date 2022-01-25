@@ -13,10 +13,10 @@ This demo app demonstrates the following use cases:
 
 ## Required changes:
 
--   For social login and email password sign ups, we disable creation of a new session. We do this by using the [API override feature](https://supertokens.io/docs/thirdpartyemailpassword/advanced-customizations/apis-override/usage). You can find the source code of these APIs in api-server/customSignInUpPOST.js (for social login) and api-server/customSignUpPOST.js (for email password login).
+-   For social login and email password sign ups, we disable creation of a new session. We do this by using the [API override feature](https://supertokens.com/docs/thirdpartyemailpassword/advanced-customizations/apis-override/usage). You can find the source code of these APIs in api-server/customSignInUpPOST.js (for social login) and api-server/customSignUpPOST.js (for email password login).
 -   On the frontend, we want to show a message to the user to login again post a successful sign up. We do this by:
     -   When a sign up even is triggered (see implementation of `onHandleEvent` in src/App.js), we set localstorage to show the sign in again message.
-    -   We use the [react component override feature](https://supertokens.io/docs/thirdpartyemailpassword/advanced-customizations/react-component-override/usage), to show a custom message if that flag is set in localstorage. We override the `ThirdPartyEmailPasswordHeader` component to show the custom message, and the react component for that can be found in src/App.js > `function SignInMessage() {...}`
+    -   We use the [react component override feature](https://supertokens.com/docs/thirdpartyemailpassword/advanced-customizations/react-component-override/usage), to show a custom message if that flag is set in localstorage. We override the `ThirdPartyEmailPasswordHeader` component to show the custom message, and the react component for that can be found in src/App.js > `function SignInMessage() {...}`
 
 ## Project setup
 
@@ -56,7 +56,7 @@ npm run build && npm run start
 
 ## Author
 
-Created with :heart: by the folks at SuperTokens.io.
+Created with :heart: by the folks at supertokens.com.
 
 ## License
 
