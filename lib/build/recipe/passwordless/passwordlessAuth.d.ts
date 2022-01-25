@@ -1,10 +1,10 @@
-/// <reference types="react" />
+import * as React from "react";
 export default function PasswordlessAuthWrapper({
     children,
     requireAuth,
     onSessionExpired,
 }: {
-    children: JSX.Element;
+    children: React.ReactNode;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
 }): JSX.Element;
