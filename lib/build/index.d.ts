@@ -1,10 +1,13 @@
 /// <reference types="react" />
 import SuperTokens from "./superTokens";
+import { TranslationStore } from "./translationHelpers";
 import { SuperTokensConfig } from "./types";
 export default class SuperTokensAPIWrapper {
     static init(config: SuperTokensConfig): void;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
+    static changeLanguage(language: string): void;
+    static loadTranslation(store: TranslationStore): void;
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[];
 }
 export declare const canHandleRoute: typeof SuperTokensAPIWrapper.canHandleRoute;

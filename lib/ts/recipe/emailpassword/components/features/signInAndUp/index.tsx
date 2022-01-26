@@ -24,11 +24,12 @@ import { PureComponent, Fragment } from "react";
 import { FormFieldThemeProps } from "../../../types";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
-import { getRedirectToPathFromURL } from "../../../../../utils";
+import { getRedirectToPathFromURL, mergeObjects } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { SignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { defaultTranslationsEmailPassword } from "../../../translations";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -140,7 +141,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                     }
 
                     if (typeof value !== "string") {
-                        return "Email must be of type string";
+                        return "EMAIL_PASSWORD_EMAIL_NON_STRING";
                     }
                     try {
                         const emailExists = await this.props.recipe.recipeImpl.doesEmailExist({
@@ -148,7 +149,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                             config: this.props.recipe.config,
                         });
                         if (emailExists) {
-                            return "This email already exists. Please sign in instead";
+                            return "EMAIL_PASSWORD_EMAIL_ALREADY_EXISTS";
                         }
                     } catch (_) {}
                     return undefined;
@@ -221,7 +222,13 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
 
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                <FeatureWrapper
+                    useShadowDom={this.props.recipe.config.useShadowDom}
+                    isEmbedded={this.getIsEmbedded()}
+                    defaultStore={mergeObjects(
+                        defaultTranslationsEmailPassword,
+                        this.props.recipe.config.translations
+                    )}>
                     <Fragment>
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <SignInAndUpTheme {...props} />}

@@ -72,6 +72,7 @@ export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
         ...normaliseAuthRecipeWithEmailVerificationConfig(config),
         signInAndUpFeature,
         resetPasswordUsingTokenFeature,
+        translations: config.translations || {},
         override,
     };
 }

@@ -19,6 +19,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { UserInputCodeFormFooterProps } from "../../../types";
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
+import { useTranslation } from "../../../../../components/translationContext";
 
 export const UserInputCodeFormFooter = withOverride(
     "PasswordlessUserInputCodeFormFooter",
@@ -26,6 +27,7 @@ export const UserInputCodeFormFooter = withOverride(
         loginAttemptInfo,
         recipeImplementation,
     }: UserInputCodeFormFooterProps): JSX.Element {
+        const t = useTranslation();
         const styles = useContext(StyleContext);
 
         return (
@@ -34,8 +36,8 @@ export const UserInputCodeFormFooter = withOverride(
                     data-supertokens="secondaryText secondaryLinkWithLeftArrow"
                     css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
                     onClick={() => recipeImplementation.clearLoginAttemptInfo()}>
-                    <ArrowLeftIcon color={styles.palette.colors.textPrimary} /> Change{" "}
-                    {loginAttemptInfo.contactMethod === "EMAIL" ? "email" : "phone number"}
+                    <ArrowLeftIcon color={styles.palette.colors.textPrimary} />
+                    {t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_" + loginAttemptInfo.contactMethod)}
                 </div>
             </Fragment>
         );

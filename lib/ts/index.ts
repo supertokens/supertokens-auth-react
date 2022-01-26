@@ -17,6 +17,7 @@
  * Imports.
  */
 import SuperTokens from "./superTokens";
+import { TranslationStore } from "./translationHelpers";
 import { SuperTokensConfig } from "./types";
 
 /*
@@ -34,6 +35,14 @@ export default class SuperTokensAPIWrapper {
 
     static getRoutingComponent(): JSX.Element | null {
         return SuperTokens.getRoutingComponent();
+    }
+
+    static changeLanguage(language: string): void {
+        return SuperTokens.getInstanceOrThrow().changeLanguage(language);
+    }
+
+    static loadTranslation(store: TranslationStore): void {
+        return SuperTokens.getInstanceOrThrow().loadTranslation(store);
     }
 
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[] {

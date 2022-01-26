@@ -23,6 +23,9 @@ import { ST_ROOT_ID } from "../constants";
 import ErrorBoundary from "./errorBoundary";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
+import SuperTokens from "../superTokens";
+import { TranslationContextProvider } from "./translationContext";
+import { TranslationStore } from "../translationHelpers";
 
 const superTokensEmotionCache = createCache({
     key: "supertokens",
@@ -36,13 +39,19 @@ type FeatureWrapperProps = {
     children: JSX.Element;
     useShadowDom?: boolean;
     isEmbedded?: boolean;
+    defaultStore: TranslationStore;
 };
 
 /*
  * Component.
  */
 
-export default function FeatureWrapper({ isEmbedded, children, useShadowDom }: FeatureWrapperProps): JSX.Element {
+export default function FeatureWrapper({
+    isEmbedded,
+    children,
+    useShadowDom,
+    defaultStore,
+}: FeatureWrapperProps): JSX.Element {
     /*
      * Render.
      */
@@ -53,14 +62,26 @@ export default function FeatureWrapper({ isEmbedded, children, useShadowDom }: F
     if (isEmbedded) {
         return children;
     }
+    const st = SuperTokens.getInstanceOrThrow();
     return (
         <ErrorBoundary>
-            <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
+            <TranslationContextProvider
+                defaultLanguage={st.defaultLanguage}
+                defaultStore={defaultStore}
+                translationControlEventSource={st.translationEventSource}>
+                <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
+            </TranslationContextProvider>
         </ErrorBoundary>
     );
 }
 
-function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps): JSX.Element {
+type WithOrWithoutShadowDomProps = {
+    children: JSX.Element;
+    useShadowDom?: boolean;
+    isEmbedded?: boolean;
+};
+
+function WithOrWithoutShadowDom({ children, useShadowDom }: WithOrWithoutShadowDomProps): JSX.Element {
     // If explicitely specified to not use shadow dom.
     if (useShadowDom === false) {
         return (

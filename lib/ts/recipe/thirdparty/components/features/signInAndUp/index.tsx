@@ -24,12 +24,13 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { FeatureBaseProps } from "../../../../../types";
-import { getQueryParams } from "../../../../../utils";
+import { getQueryParams, mergeObjects } from "../../../../../utils";
 import { getStyles } from "../../../components/themes/styles";
 import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
 import { getRedirectToPathFromURL } from "../../../../../utils";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { defaultTranslationsThirdParty } from "../../../translations";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
@@ -40,13 +41,13 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         const errorQueryParam = getQueryParams("error");
         if (errorQueryParam !== null) {
             if (errorQueryParam === "signin") {
-                error = "Something went wrong. Please try again";
+                error = "SOMETHING_WENT_WRONG_ERROR";
             } else if (errorQueryParam === "no_email_present") {
-                error = "Could not retrieve email. Please try a different method.";
+                error = "THIRD_PARTY_ERROR_NO_EMAIL";
             } else {
                 const customError = getQueryParams("message");
                 if (customError === null) {
-                    error = "Something went wrong. Please try again";
+                    error = "SOMETHING_WENT_WRONG_ERROR";
                 } else {
                     error = customError;
                 }
@@ -99,7 +100,10 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
 
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                <FeatureWrapper
+                    useShadowDom={this.props.recipe.config.useShadowDom}
+                    isEmbedded={this.getIsEmbedded()}
+                    defaultStore={mergeObjects(defaultTranslationsThirdParty, this.props.recipe.config.translations)}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}

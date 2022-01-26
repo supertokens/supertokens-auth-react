@@ -9,6 +9,7 @@ export declare type UserInputForAuthRecipeModule = {
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
+    translations?: Record<string, Record<string, string>>;
 };
 export declare type ComponentOverrideMap = {
     EmailVerificationSendVerifyEmail?: ComponentOverride<typeof SendVerifyEmail>;

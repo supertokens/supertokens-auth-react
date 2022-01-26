@@ -17,43 +17,35 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { PureComponent } from "react";
+import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { CloseTabScreenProps } from "../../../types";
 import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
-/*
- * Component.
- */
+import { useTranslation } from "../../../../../components/translationContext";
 
-class PasswordlessCloseTabScreen extends PureComponent<CloseTabScreenProps> {
-    static contextType = StyleContext;
+const PasswordlessCloseTabScreen: React.FC<CloseTabScreenProps> = () => {
+    const styles = useContext(StyleContext);
+    const t = useTranslation();
 
-    /*
-     * Methods.
-     */
-
-    render = (): JSX.Element => {
-        const styles = this.context;
-
-        return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
-                    <CheckedRoundIcon color={styles.palette.colors.success} />
-                    <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                        Success!
-                    </div>
-                    <div data-supertokens="divider" css={styles.divider} />
-                    <div
-                        data-supertokens="headerSubtitle secondaryText"
-                        css={[styles.headerSubtitle, styles.secondaryText]}>
-                        You have been successfully signed in.
-                        <br /> Please close this tab
-                    </div>
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
+                <CheckedRoundIcon color={styles.palette.colors.success} />
+                <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                    {t("PWLESS_CLOSE_TAB_TITLE")}
+                </div>
+                <div data-supertokens="divider" css={styles.divider} />
+                <div
+                    data-supertokens="headerSubtitle secondaryText"
+                    css={[styles.headerSubtitle, styles.secondaryText]}>
+                    {t("PWLESS_CLOSE_TAB_SUBTITLE_LINE1")}
+                    <br />
+                    {t("PWLESS_CLOSE_TAB_SUBTITLE_LINE2")}
                 </div>
             </div>
-        );
-    };
-}
+        </div>
+    );
+};
 
 export const CloseTabScreen = withOverride("PasswordlessCloseTabScreen", PasswordlessCloseTabScreen);

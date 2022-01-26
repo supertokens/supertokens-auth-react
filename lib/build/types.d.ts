@@ -7,6 +7,8 @@ import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recip
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction<any, any, any, any>[];
+    defaultLanguage?: string;
+    currentLanguageCookieScope?: string;
 };
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
     appInfo: NormalisedAppInfo
