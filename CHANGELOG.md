@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   add workflow to verify if pr title follows conventional commits
+
 ## [0.18.4] - 2022-01-24
 
 -   swapped out the PureComponent to functional + memo in the files i came across
