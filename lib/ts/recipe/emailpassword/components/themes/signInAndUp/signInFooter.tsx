@@ -17,18 +17,20 @@ import { jsx } from "@emotion/react";
 import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../components/translationContext";
 
 export const SignInFooter = withOverride(
     "EmailPasswordSignInFooter",
     function EmailPasswordSignInFooter({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
         const styles = useContext(StyleContext);
+        const t = useTranslation();
 
         return (
             <div
                 data-supertokens="link secondaryText forgotPasswordLink"
                 css={[styles.link, styles.secondaryText, styles.forgotPasswordLink]}
                 onClick={onClick}>
-                Forgot password?
+                {t("EMAIL_PASSWORD_SIGN_IN_FOOTER_FORGOT_PW_LINK")}
             </div>
         );
     }

@@ -17,16 +17,18 @@ import { jsx } from "@emotion/react";
 import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../components/translationContext";
 
 export const SignInUpHeader = withOverride(
     "PasswordlessSignInUpHeader",
     function PasswordlessSignInUpHeader(): JSX.Element {
         const styles = useContext(StyleContext);
+        const t = useTranslation();
 
         return (
             <Fragment>
                 <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                    Sign Up or Log In
+                    {t("PWLESS_SIGN_IN_UP_HEADER_TITLE")}
                 </div>
                 <div data-supertokens="divider" css={styles.divider}></div>
             </Fragment>

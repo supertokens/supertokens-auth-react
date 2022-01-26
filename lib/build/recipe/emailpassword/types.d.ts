@@ -46,6 +46,7 @@ export declare type ComponentOverrideMap = {
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
+    translations?: Record<string, Record<string, string>>;
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
@@ -201,12 +202,8 @@ export declare type SubmitNewPasswordProps = FormThemeBaseProps & {
     onSignInClicked: () => void;
     token: string;
 };
-export declare type EnterEmailState = {
-    status: "READY" | "SENT";
-};
-export declare type SubmitNewPasswordState = {
-    status: "READY" | "SUCCESS";
-};
+export declare type EnterEmailStatus = "READY" | "SENT";
+export declare type SubmitNewPasswordStatus = "READY" | "SUCCESS";
 export declare type FormBaseState = {
     formFields: FormFieldState[];
     unmounting: AbortController;

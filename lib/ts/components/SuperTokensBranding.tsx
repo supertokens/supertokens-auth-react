@@ -16,9 +16,11 @@
 import { jsx } from "@emotion/react";
 import { useContext } from "react";
 import StyleContext from "../styles/styleContext";
+import { useTranslation } from "./translationContext";
 
 export function SuperTokensBranding(): JSX.Element {
     const styles = useContext(StyleContext);
+    const t = useTranslation();
 
     return (
         <a
@@ -26,7 +28,7 @@ export function SuperTokensBranding(): JSX.Element {
             css={styles.superTokensBranding}
             href="https://supertokens.com?campaign=poweredby"
             target="_blank">
-            Powered by <strong>SuperTokens</strong>
+            {t("BRANDING_POWERED_BY")} <strong>SuperTokens</strong>
         </a>
     );
 }

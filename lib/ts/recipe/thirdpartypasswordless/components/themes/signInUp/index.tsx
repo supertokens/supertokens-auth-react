@@ -29,9 +29,11 @@ import { SignInAndUpThemeProps as ThirdPartySignInAndUpThemeProps } from "../../
 import { SignInUpProps as PasswordlessSignInUpThemeProps } from "../../../../passwordless/types";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { ThirdPartyOnlySignInUp } from "./thirdPartyOnlySignInUp";
+import { useTranslation } from "../../../../../components/translationContext";
 
 export const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemeProps> = (props) => {
     const styles = React.useContext(StyleContext);
+    const t = useTranslation();
 
     if (!props.passwordlessRecipe) {
         if (!props.thirdPartyRecipe) {
@@ -66,7 +68,7 @@ export const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemeProps
                                 <div
                                     data-supertokens="thirdPartyPasswordlessDividerText"
                                     css={styles.thirdPartyPasswordlessDividerText}>
-                                    or
+                                    {t("THIRD_PARTY_PASSWORDLESS_SIGN_IN_AND_UP_DIVIDER_OR")}
                                 </div>
                                 <div data-supertokens="divider" css={styles.divider}></div>
                             </div>

@@ -20,7 +20,7 @@ import { jsx } from "@emotion/react";
 import { Fragment, PureComponent } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
-import { getQueryParams, getURLHash } from "../../../../../utils";
+import { getQueryParams, getURLHash, mergeObjects } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
@@ -29,6 +29,7 @@ import {} from "../../../types";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { defaultTranslationsPasswordless } from "../../../translations";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -100,7 +101,10 @@ class LinkClickedScreen extends PureComponent<PropType, unknown> {
 
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                <FeatureWrapper
+                    useShadowDom={this.props.recipe.config.useShadowDom}
+                    isEmbedded={this.getIsEmbedded()}
+                    defaultStore={mergeObjects(defaultTranslationsPasswordless, this.props.recipe.config.translations)}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}

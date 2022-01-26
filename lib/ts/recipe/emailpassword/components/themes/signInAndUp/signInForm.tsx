@@ -23,6 +23,7 @@ import { SignInThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../components/translationContext";
 
 /*
  * Component.
@@ -36,10 +37,12 @@ export const SignInForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
+        const t = useTranslation();
+
         return (
             <FormBase
                 formFields={props.formFields}
-                buttonLabel={"SIGN IN"}
+                buttonLabel={t("EMAIL_PASSWORD_SIGN_IN_SUBMIT_BTN")}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {
                     const response = await props.recipeImplementation.signIn({
@@ -49,7 +52,7 @@ export const SignInForm = withOverride(
                     if (response.status === "WRONG_CREDENTIALS_ERROR") {
                         return {
                             status: "GENERAL_ERROR",
-                            message: "Incorrect email and password combination",
+                            message: "EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR",
                         };
                     } else {
                         return response;

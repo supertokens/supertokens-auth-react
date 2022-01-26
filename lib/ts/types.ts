@@ -33,6 +33,17 @@ export type SuperTokensConfig = {
      * List of recipes for authentication and session management.
      */
     recipeList: CreateRecipeFunction<any, any, any, any>[];
+
+    /*
+     * Default (and fallback) language
+     */
+    defaultLanguage?: string;
+
+    /*
+     * The scope of the cookie storing the current language.
+     * This is used to save the language choice between refreshes
+     */
+    currentLanguageCookieScope?: string;
 };
 
 export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (

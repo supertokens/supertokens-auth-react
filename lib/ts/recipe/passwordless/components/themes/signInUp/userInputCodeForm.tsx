@@ -22,8 +22,8 @@ import { userInputCodeValidate } from "../../../validators";
 import { Label } from "../../../../emailpassword/components/library";
 import React, { useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
-import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import { ResendButton } from "./resendButton";
+import { useTranslation } from "../../../../../components/translationContext";
 
 export const UserInputCodeForm = withOverride(
     "PasswordlessUserInputCodeForm",
@@ -34,6 +34,7 @@ export const UserInputCodeForm = withOverride(
         }
     ): JSX.Element {
         const styles = useContext(StyleContext);
+        const t = useTranslation();
 
         const [clearResendNotifTimeout, setClearResendNotifTimeout] = useState<any | undefined>();
         const [error, setError] = useState<string | undefined>();
@@ -63,18 +64,16 @@ export const UserInputCodeForm = withOverride(
                     setError(response.message);
                 }
             } catch (e) {
-                setError(SOMETHING_WENT_WRONG_ERROR);
+                setError("SOMETHING_WENT_WRONG_ERROR");
             }
         }
-
-        const resendTarget = props.loginAttemptInfo.contactMethod === "EMAIL" ? "Email" : "SMS";
 
         return (
             <React.Fragment>
                 {props.header}
                 {clearResendNotifTimeout !== undefined && (
                     <div data-supertokens="generalSuccess" css={[styles.generalSuccess]}>
-                        {resendTarget} resent
+                        {t("PWLESS_RESEND_SUCCESS_" + props.loginAttemptInfo.contactMethod)}
                     </div>
                 )}
                 <FormBase
@@ -84,13 +83,15 @@ export const UserInputCodeForm = withOverride(
                             label: "",
                             labelComponent: (
                                 <div css={styles.codeInputLabelWrapper} data-supertokens="codeInputLabelWrapper">
-                                    <Label value={"OTP"} data-supertokens="codeInputLabel" />
+                                    <Label
+                                        value={t("PWLESS_USER_INPUT_CODE_INPUT_LABEL")}
+                                        data-supertokens="codeInputLabel"
+                                    />
                                     <ResendButton
                                         loginAttemptInfo={props.loginAttemptInfo}
                                         resendEmailOrSMSGapInSeconds={
                                             props.config.signInUpFeature.resendEmailOrSMSGapInSeconds
                                         }
-                                        target={resendTarget}
                                         onClick={resend}
                                     />
                                 </div>
@@ -103,14 +104,14 @@ export const UserInputCodeForm = withOverride(
                         },
                     ]}
                     onSuccess={props.onSuccess}
-                    buttonLabel={"CONTINUE"}
+                    buttonLabel={t("PWLESS_SIGN_IN_UP_CONTINUE_BUTTON")}
                     error={error || props.error}
                     callAPI={async (formFields) => {
                         const userInputCode = formFields.find((field) => field.id === "userInputCode")?.value;
                         if (userInputCode === undefined || userInputCode.length === 0) {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: "Please fill your OTP",
+                                message: t("GENERAL_ERROR_OTP_UNDEFINED"),
                             };
                         }
                         const response = await props.recipeImplementation.consumeCode({
@@ -127,20 +128,20 @@ export const UserInputCodeForm = withOverride(
                         if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: "Invalid OTP",
+                                message: t("GENERAL_ERROR_OTP_INVALID"),
                             };
                         }
 
                         if (response.status === "EXPIRED_USER_INPUT_CODE_ERROR") {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: "Expired OTP.",
+                                message: t("GENERAL_ERROR_OTP_EXPIRED"),
                             };
                         }
 
                         return {
                             status: "GENERAL_ERROR",
-                            message: SOMETHING_WENT_WRONG_ERROR,
+                            message: t("SOMETHING_WENT_WRONG_ERROR"),
                         };
                     }}
                     validateOnBlur={false}

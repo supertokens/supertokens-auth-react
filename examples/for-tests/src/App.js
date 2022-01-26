@@ -746,6 +746,14 @@ function getPasswordlessConfigs({ disableDefaultImplementation }) {
             disableDefaultImplementation,
             style: theme.style,
         },
+        translations: {
+            en: {
+                PWLESS_SIGN_IN_UP_FOOTER_TOS: "TOS",
+            },
+            hu: {
+                PWLESS_SIGN_IN_UP_FOOTER_TOS: "ÁSZF",
+            },
+        },
     });
 }
 
@@ -965,3 +973,5 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
         },
     });
 }
+
+window.SuperTokens = SuperTokens;

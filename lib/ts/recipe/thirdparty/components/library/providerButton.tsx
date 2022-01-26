@@ -21,14 +21,15 @@
 import { jsx } from "@emotion/react";
 
 import { useContext } from "react";
+import { useTranslation } from "../../../../components/translationContext";
 import StyleContext from "../../../../styles/styleContext";
 /*
  * Props.
  */
 
 export type ProviderButtonProps = {
-    children: React.ReactNode;
     providerName: string;
+    displayName: string;
     logo?: JSX.Element;
 };
 
@@ -36,11 +37,12 @@ export type ProviderButtonProps = {
  * Component.
  */
 
-export default function ProviderButton({ children, logo, providerName }: ProviderButtonProps) {
+export default function ProviderButton({ logo, providerName, displayName }: ProviderButtonProps) {
     /*
      * Render.
      */
     const styles = useContext(StyleContext);
+    const t = useTranslation();
     const providerStyleName = `provider${providerName}`;
 
     return (
@@ -57,7 +59,9 @@ export default function ProviderButton({ children, logo, providerName }: Provide
                 </div>
             )}
             <div css={styles.providerButtonText} data-supertokens="providerButtonText">
-                {children}
+                {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_START")}
+                {displayName}
+                {t("THIRD_PARTY_PROVIDER_DEFAULT_BTN_END")}
             </div>
         </button>
     );

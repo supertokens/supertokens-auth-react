@@ -21,19 +21,20 @@ import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { clearErrorQueryParam, Deferred, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import {
+    clearErrorQueryParam,
+    Deferred,
+    getQueryParams,
+    getRedirectToPathFromURL,
+    mergeObjects,
+} from "../../../../../utils";
 import Recipe from "../../../recipe";
 import { RecipeInterface, LoginAttemptInfo, PasswordlessUser } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { FeatureBaseProps } from "../../../../../types";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
 import Session from "../../../../session";
-import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
-import {
-    SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR,
-    SIGN_IN_UP_LINK_ERROR,
-    SIGN_IN_UP_RESEND_RESTART_FLOW_ERROR,
-} from "../../../constants";
+import { defaultTranslationsPasswordless } from "../../../translations";
 
 type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
 
@@ -59,9 +60,9 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
         const messageQueryParam = getQueryParams("message");
         if (errorQueryParam !== null) {
             if (errorQueryParam === "signin") {
-                error = SOMETHING_WENT_WRONG_ERROR;
+                error = "SOMETHING_WENT_WRONG_ERROR";
             } else if (errorQueryParam === "restart_link") {
-                error = SIGN_IN_UP_LINK_ERROR;
+                error = "SIGN_IN_UP_LINK_ERROR";
             } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
                 error = messageQueryParam;
             }
@@ -141,7 +142,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
 
                     this.setState((os) => ({
                         ...os,
-                        error: SIGN_IN_UP_RESEND_RESTART_FLOW_ERROR,
+                        error: "SIGN_IN_UP_RESEND_RESTART_FLOW_ERROR",
                         loginAttemptInfo: undefined,
                     }));
                 } else if (res.status === "GENERAL_ERROR") {
@@ -174,7 +175,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
 
                     this.setState((os) => ({
                         ...os,
-                        error: SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR,
+                        error: "SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR",
                         loginAttemptInfo: undefined,
                     }));
                 } else if (res.status === "OK") {
@@ -246,7 +247,10 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
 
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                <FeatureWrapper
+                    useShadowDom={this.props.recipe.config.useShadowDom}
+                    isEmbedded={this.getIsEmbedded()}
+                    defaultStore={mergeObjects(defaultTranslationsPasswordless, this.props.recipe.config.translations)}>
                     <Fragment>
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <SignInUpThemeWrapper {...props} />}

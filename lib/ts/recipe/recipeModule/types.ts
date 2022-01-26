@@ -6,6 +6,7 @@ export type UserInput<GetRedirectionURLContextType, PreAPIHookContextType, OnHan
     onHandleEvent?: (context: OnHandleEventContextType) => void;
     useShadowDom?: boolean;
     palette?: Record<string, string>;
+    translations?: Record<string, Record<string, string>>;
     style?: Styles;
 };
 
@@ -23,4 +24,5 @@ export type NormalisedConfig<GetRedirectionURLContextType, PreAPIHookContextType
     useShadowDom: boolean;
     palette: Record<string, string>;
     rootStyle: Styles;
+    translations: Record<string, Record<string, string>>;
 };
