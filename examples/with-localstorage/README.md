@@ -18,7 +18,7 @@ Storing tokens in localstorage comes with a few drawbacks:
 -   No session info during server side rendering
 -   You can't share sessions across subdomains
 
-For a detailed comparison please see [our blog](https://supertokens.io/blog/cookies-vs-localstorage-for-sessions-everything-you-need-to-know)
+For a detailed comparison please see [our blog](https://supertokens.com/blog/cookies-vs-localstorage-for-sessions-everything-you-need-to-know)
 
 ## How the modification works
 
@@ -87,7 +87,7 @@ npm run prod
 
 ## Author
 
-Created with :heart: by the folks at SuperTokens.io.
+Created with :heart: by the folks at supertokens.com.
 
 ## License
 

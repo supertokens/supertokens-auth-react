@@ -537,8 +537,8 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
             },
             signUpForm: {
                 style: theme.style,
-                privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+                privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
+                termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
                 formFields,
             },
         },
@@ -739,8 +739,8 @@ function getPasswordlessConfigs({ disableDefaultImplementation }) {
             disableDefaultImplementation,
             style: theme.style,
 
-            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+            privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
+            termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
         },
         linkClickedScreenFeature: {
             disableDefaultImplementation,
@@ -826,8 +826,8 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
         signInAndUpFeature: {
             disableDefaultImplementation,
             style: theme.style,
-            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+            privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
+            termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             providers: [
                 ThirdParty.Github.init(),
                 ThirdParty.Google.init(),
@@ -939,8 +939,8 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
             signInForm: {},
             signUpForm: {
                 formFields,
-                privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+                privacyPolicyLink: "https://supertokens.com/legal/privacy-policy",
+                termsOfServiceLink: "https://supertokens.com/legal/terms-and-conditions",
             },
             style: theme.style,
             providers: [
