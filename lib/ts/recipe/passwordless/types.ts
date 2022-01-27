@@ -266,7 +266,7 @@ export type UserInput = (
               /*
                * Must be a two-letter ISO country code (e.g.: "US")
                */
-              defaultCountryFromConfig?: CountryCode;
+              defaultCountry?: CountryCode;
 
               guessInternationPhoneNumberFromInputPhoneNumber?: (
                   inputPhoneNumber: string,
