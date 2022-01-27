@@ -40,7 +40,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         getOAuthAuthorisationURL: async function (input: { thirdPartyId: string; config: TPConfig }) {
             return thirdPartyImpl.getOAuthAuthorisationURL.bind(DerivedTP(this))(input);
         },
-        signInAndUp: async function (input) {
+        thirdPartySignInAndUp: async function (input) {
             return thirdPartyImpl.signInAndUp.bind(DerivedTP(this))(input);
         },
         getOAuthState: function () {

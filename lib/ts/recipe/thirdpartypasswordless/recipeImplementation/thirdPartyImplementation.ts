@@ -7,6 +7,6 @@ export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
         getOAuthState: oI.getOAuthState.bind(oI),
         redirectToThirdPartyLogin: oI.redirectToThirdPartyLogin.bind(oI),
         setOAuthState: oI.setOAuthState.bind(oI),
-        signInAndUp: oI.signInAndUp.bind(oI),
+        signInAndUp: oI.thirdPartySignInAndUp.bind(oI),
     };
 }

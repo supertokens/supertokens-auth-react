@@ -268,7 +268,7 @@ export type TPPWlessRecipeInterface = {
 
     getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig }) => Promise<string>;
 
-    signInAndUp: (input: { thirdPartyId: string; config: TPConfig }) => Promise<
+    thirdPartySignInAndUp: (input: { thirdPartyId: string; config: TPConfig }) => Promise<
         | {
               status: "OK";
               user: User;
