@@ -498,7 +498,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
-                await page.waitForNavigation();
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
 
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/redirect-here");
@@ -638,7 +638,7 @@ describe("SuperTokens Passwordless", function () {
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
                 const device = await getDevice(loginAttemptInfo);
-                await waitFor(2500);
+                await waitFor(5500);
                 for (let i = 3; i > 0; i--) {
                     await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                     await submitForm(page);
@@ -1333,7 +1333,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
-                await page.waitForNavigation();
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/redirect-here");
 
@@ -1379,7 +1379,6 @@ describe("SuperTokens Passwordless", function () {
                 await waitForSTElement(anotherTab, "[data-supertokens~=input][name=userInputCode]");
                 await setInputValues(anotherTab, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(anotherTab);
-                await anotherTab.waitForNavigation();
 
                 await waitForText(page, "[data-supertokens~=headerTitle]", "Success!");
 
@@ -1798,7 +1797,7 @@ async function initBrowser(contactMethod, consoleLogs, { defaultCountry, disable
         headers: [["content-type", "application/json"]],
         body: JSON.stringify({
             configUpdates: [
-                { key: "passwordless_code_lifetime", value: 2000 },
+                { key: "passwordless_code_lifetime", value: 4000 },
                 { key: "passwordless_max_code_input_attempts", value: 3 },
             ],
         }),
