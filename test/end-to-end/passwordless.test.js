@@ -498,7 +498,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
-                await page.waitForNavigation();
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
 
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/redirect-here");
@@ -1333,7 +1333,7 @@ describe("SuperTokens Passwordless", function () {
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
-                await page.waitForNavigation();
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/redirect-here");
 
@@ -1379,7 +1379,7 @@ describe("SuperTokens Passwordless", function () {
                 await waitForSTElement(anotherTab, "[data-supertokens~=input][name=userInputCode]");
                 await setInputValues(anotherTab, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(anotherTab);
-                await anotherTab.waitForNavigation();
+                await anotherTab.waitForNavigation({ waitUntil: "networkidle0" });
 
                 await waitForText(page, "[data-supertokens~=headerTitle]", "Success!");
 
