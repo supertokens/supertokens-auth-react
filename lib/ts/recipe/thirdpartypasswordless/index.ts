@@ -70,6 +70,9 @@ export default class Wrapper {
     static EmailVerification = (prop?: any) =>
         ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
+
+    static LinkClicked = (prop?: any) =>
+        ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("linkClickedScreen", prop);
 }
 
 const init = Wrapper.init;
@@ -78,6 +81,7 @@ const isEmailVerified = Wrapper.isEmailVerified;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const EmailVerification = Wrapper.EmailVerification;
+const LinkClicked = Wrapper.LinkClicked;
 
 export {
     ThirdPartyPasswordlessAuth,
@@ -93,6 +97,7 @@ export {
     redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
+    LinkClicked,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

@@ -39,6 +39,7 @@ export default class Wrapper {
     static SignInAndUpTheme: import("react").FC<import("./types").ThirdPartyPasswordlessSignInAndUpThemeProps>;
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
+    static LinkClicked: (prop?: any) => JSX.Element;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
@@ -46,6 +47,7 @@ declare const isEmailVerified: typeof Wrapper.isEmailVerified;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
+declare const LinkClicked: (prop?: any) => JSX.Element;
 export {
     ThirdPartyPasswordlessAuth,
     init,
@@ -60,6 +62,7 @@ export {
     redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
+    LinkClicked,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,
