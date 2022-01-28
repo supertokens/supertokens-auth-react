@@ -557,13 +557,13 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
                 const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE`);
 
                 return {
-                    doesEmailExist(...args) {
-                        log(`DOES_EMAIL_EXIST`);
-                        return implementation.doesEmailExist(...args);
+                    doesPasswordlessUserEmailExist(...args) {
+                        log(`DOES_PASSWORDLESS_USER_EMAIL_EXIST`);
+                        return implementation.doesPasswordlessUserEmailExist(...args);
                     },
-                    doesPhoneNumberExist(...args) {
-                        log(`DOES_PHONE_NUMBER_EXIST`);
-                        return implementation.doesPhoneNumberExist(...args);
+                    doesPasswordlessUserPhoneNumberExist(...args) {
+                        log(`DOES_PASSWORDLESS_USER_PHONE_NUMBER_EXIST`);
+                        return implementation.doesPasswordlessUserPhoneNumberExist(...args);
                     },
                     createCode(...args) {
                         log(`CREATE_CODE`);

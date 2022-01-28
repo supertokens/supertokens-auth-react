@@ -18,10 +18,10 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         createCode(input) {
             return passwordlessImpl.createCode.bind(DerivedPWLess(this))(input);
         },
-        doesPhoneNumberExist(input) {
+        doesPasswordlessUserPhoneNumberExist(input) {
             return passwordlessImpl.doesPhoneNumberExist.bind(DerivedPWLess(this))(input);
         },
-        doesEmailExist: async function (input: { email: string; config: EPConfig }) {
+        doesPasswordlessUserEmailExist: async function (input: { email: string; config: EPConfig }) {
             return passwordlessImpl.doesEmailExist.bind(DerivedPWLess(this))(input);
         },
         resendCode(input) {
