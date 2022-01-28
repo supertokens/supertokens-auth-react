@@ -642,3 +642,26 @@ export async function getUserIdFromSessionContext(page) {
 export async function getTextInDashboardNoAuth(page) {
     return await page.evaluate(() => document.querySelector("#root > div > div.fill > div.not-logged-in").innerText);
 }
+
+export async function getPasswordlessDevice(loginAttemptInfo) {
+    const deviceResp = await fetch(
+        `${TEST_APPLICATION_SERVER_BASE_URL}/test/getDevice?preAuthSessionId=${encodeURIComponent(
+            loginAttemptInfo.preAuthSessionId
+        )}`,
+        {
+            method: "GET",
+        }
+    );
+    return await deviceResp.json();
+}
+
+export function setPasswordlessFlowType(contactMethod, flowType) {
+    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setFlow`, {
+        method: "POST",
+        headers: [["content-type", "application/json"]],
+        body: JSON.stringify({
+            contactMethod,
+            flowType,
+        }),
+    });
+}
