@@ -605,9 +605,9 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
                         log(`SET_OAUTH_STATE`);
                         return implementation.setOAuthState(...args);
                     },
-                    signInAndUp(...args) {
-                        log(`SIGN_IN_AND_UP`);
-                        return implementation.signInAndUp(...args);
+                    thirdPartySignInAndUp(...args) {
+                        log(`THIRD_PARTY_SIGN_IN_AND_UP`);
+                        return implementation.thirdPartySignInAndUp(...args);
                     },
                 };
             },
