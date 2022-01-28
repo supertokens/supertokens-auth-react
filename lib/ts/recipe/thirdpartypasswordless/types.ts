@@ -229,8 +229,11 @@ export type TPPWlessRecipeInterface = {
         | { status: "RESTART_FLOW_ERROR" }
     >;
 
-    doesEmailExist: (input: { email: string; config: PasswordlessConfig }) => Promise<boolean>;
-    doesPhoneNumberExist: (input: { phoneNumber: string; config: PasswordlessConfig }) => Promise<boolean>;
+    doesPasswordlessUserEmailExist: (input: { email: string; config: PasswordlessConfig }) => Promise<boolean>;
+    doesPasswordlessUserPhoneNumberExist: (input: {
+        phoneNumber: string;
+        config: PasswordlessConfig;
+    }) => Promise<boolean>;
 
     getLoginAttemptInfo: () =>
         | Promise<
