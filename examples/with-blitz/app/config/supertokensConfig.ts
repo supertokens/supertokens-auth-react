@@ -33,7 +33,7 @@ export let frontendConfig = () => {
 export let backendConfig = () => {
   return {
     supertokens: {
-      connectionURI: "https://try.supertokens.io",
+      connectionURI: "https://try.supertokens.com",
     },
     appInfo,
     recipeList: [

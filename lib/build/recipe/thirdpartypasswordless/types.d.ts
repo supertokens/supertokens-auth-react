@@ -240,7 +240,7 @@ export declare type TPPWlessRecipeInterface = {
     }) => Promise<void> | void;
     clearLoginAttemptInfo: () => Promise<void> | void;
     getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig }) => Promise<string>;
-    signInAndUp: (input: { thirdPartyId: string; config: TPConfig }) => Promise<
+    thirdPartySignInAndUp: (input: { thirdPartyId: string; config: TPConfig }) => Promise<
         | {
               status: "OK";
               user: User;

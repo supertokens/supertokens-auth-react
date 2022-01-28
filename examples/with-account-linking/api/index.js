@@ -18,7 +18,7 @@ const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${w
 supertokens.init({
     framework: "express",
     supertokens: {
-        connectionURI: "https://try.supertokens.io",
+        connectionURI: "https://try.supertokens.com",
     },
     appInfo: {
         appName: "SuperTokens Demo App",

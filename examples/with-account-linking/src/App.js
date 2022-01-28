@@ -37,7 +37,7 @@ SuperTokens.init({
                     Github.init(),
                     Google.init(),
 
-                    // we have commented the below because our app domain (thirdpartyemailpassword.demo.supertokens.io) is not approved by Facebook since it's only a demo app.
+                    // we have commented the below because our app domain (thirdpartyemailpassword.demo.supertokens.com) is not approved by Facebook since it's only a demo app.
                     // Facebook.init()
                 ],
             },

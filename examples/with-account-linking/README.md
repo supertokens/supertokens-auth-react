@@ -12,13 +12,13 @@ This example app uses the `thirdpartyemailpassword` recipe and adds the feature 
 
 ## How the modification works
 
--   The frontend code (inside the `src` folder) is straightforward and no modified. It follows the [quick setup guide](https://supertokens.io/docs/thirdpartyemailpassword/quick-setup/frontend).
+-   The frontend code (inside the `src` folder) is straightforward and no modified. It follows the [quick setup guide](https://supertokens.com/docs/thirdpartyemailpassword/quick-setup/frontend).
 
--   In the API (`api` folder), we use the [function `override` feature](https://supertokens.io/docs/thirdpartyemailpassword/advanced-customizations/backend-functions-override/about) to customize how the recipe behaves. This can be seen in `api/index.js`, in the `ThirdPartyEmailPassword.init` function call.
+-   In the API (`api` folder), we use the [function `override` feature](https://supertokens.com/docs/thirdpartyemailpassword/advanced-customizations/backend-functions-override/about) to customize how the recipe behaves. This can be seen in `api/index.js`, in the `ThirdPartyEmailPassword.init` function call.
 
 -   All the customization logic can be found in the `api/override.js` file. We need to maintain two data structures to enable account linking:
 
-    -   A map from email ID to the [`User` object](https://supertokens.io/docs/nodejs/thirdpartyemailpassword/override/functions#supporting-types). Whenever we need to return a `User` object from any of the functions, we will use this map. The variable for this map in `override.js` is called `emailToUserMap`.
+    -   A map from email ID to the [`User` object](https://supertokens.com/docs/nodejs/thirdpartyemailpassword/override/functions#supporting-types). Whenever we need to return a `User` object from any of the functions, we will use this map. The variable for this map in `override.js` is called `emailToUserMap`.
     -   A map from SuperTokens userId to your custom userId. Several SuperTokens userIds can map to the same custom userId. The custom userId is assigned in the `User` object in the `emailToUserMap` map. The variable for this in `override.js` is called `supertokensUserIdToCustomUserIdMap`.
 
 -   Read the comments in the `override.js` file to understand the code.

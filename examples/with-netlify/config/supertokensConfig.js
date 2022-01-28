@@ -5,7 +5,7 @@ function getBackendConfig() {
     return {
         framework: "awsLambda",
         supertokens: {
-            connectionURI: "https://try.supertokens.io",
+            connectionURI: "https://try.supertokens.com",
         },
         appInfo: {
             appName: "SuperTokens Demo",

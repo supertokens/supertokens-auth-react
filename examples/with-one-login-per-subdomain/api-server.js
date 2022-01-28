@@ -21,7 +21,7 @@ let getUserDomain = (email) => {
 supertokens.init({
     framework: "express",
     supertokens: {
-        connectionURI: "https://try.supertokens.io",
+        connectionURI: "https://try.supertokens.com",
     },
     appInfo: {
         appName: "SuperTokens Demo App",
