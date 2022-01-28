@@ -28,18 +28,16 @@ import PasswordlessSignInAndUpForm from "./passwordlessForm";
 import { SignInAndUpThemeProps as ThirdPartySignInAndUpThemeProps } from "../../../../thirdparty/types";
 import { SignInUpProps as PasswordlessSignInUpThemeProps } from "../../../../passwordless/types";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
-import { ThirdPartyOnlySignInUp } from "./thirdPartyOnlySignInUp";
+import { ThirdPartyOnlySignInUpWrapper } from "./thirdPartyOnlySignInUp";
 
 export const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemeProps> = (props) => {
-    const styles = React.useContext(StyleContext);
-
     if (!props.passwordlessRecipe) {
         if (!props.thirdPartyRecipe) {
             // This should never happen
             throw new Error("No recipes to show");
         }
 
-        return <ThirdPartyOnlySignInUp {...props} thirdPartyRecipe={props.thirdPartyRecipe} styles={styles} />;
+        return <ThirdPartyOnlySignInUpWrapper {...props} thirdPartyRecipe={props.thirdPartyRecipe} />;
     }
 
     return (
@@ -47,33 +45,40 @@ export const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemeProps
             <PasswordlessSignInAndUpForm
                 // Seed props. Real props will be given by parent feature.
                 {...({} as PasswordlessSignInUpThemeProps)}
-                header={
-                    props.thirdPartyRecipe === undefined ? (
-                        <Header />
-                    ) : (
-                        <React.Fragment>
-                            <Header />
-                            <ThirdPartySignInAndUp recipe={props.thirdPartyRecipe} history={history} isEmbedded={true}>
-                                <ProvidersForm
-                                    // Seed props. Real props will be given by parent feature.
-                                    {...({} as ThirdPartySignInAndUpThemeProps)}
-                                />
-                            </ThirdPartySignInAndUp>
-                            <div
-                                data-supertokens="thirdPartyPasswordlessDivider"
-                                css={styles.thirdPartyPasswordlessDivider}>
-                                <div data-supertokens="divider" css={styles.divider}></div>
-                                <div
-                                    data-supertokens="thirdPartyPasswordlessDividerText"
-                                    css={styles.thirdPartyPasswordlessDividerText}>
-                                    or
-                                </div>
-                                <div data-supertokens="divider" css={styles.divider}></div>
-                            </div>
-                        </React.Fragment>
-                    )
-                }
+                header={props.thirdPartyRecipe === undefined ? <Header /> : <HeaderWithProviderList {...props} />}
             />
         </PasswordlessSignInAndUp>
+    );
+};
+
+const HeaderWithProviderList: React.FC<ThirdPartyPasswordlessSignInAndUpThemeProps> = (
+    props: React.PropsWithChildren<ThirdPartyPasswordlessSignInAndUpThemeProps>
+) => {
+    const styles = React.useContext(StyleContext);
+
+    if (props.thirdPartyRecipe === undefined) {
+        throw new Error("HeaderWithProviderList loaded without thirdPartyRecipe");
+    }
+
+    return (
+        <React.Fragment>
+            <Header />
+            <ThirdPartySignInAndUp recipe={props.thirdPartyRecipe} history={history} isEmbedded={true}>
+                <ProvidersForm
+                    // Seed props. Real props will be given by parent feature.
+                    {...({} as ThirdPartySignInAndUpThemeProps)}
+                />
+            </ThirdPartySignInAndUp>
+
+            <div data-supertokens="thirdPartyPasswordlessDivider" css={styles.thirdPartyPasswordlessDivider}>
+                <div data-supertokens="divider" css={styles.divider}></div>
+                <div
+                    data-supertokens="thirdPartyPasswordlessDividerText"
+                    css={styles.thirdPartyPasswordlessDividerText}>
+                    or
+                </div>
+                <div data-supertokens="divider" css={styles.divider}></div>
+            </div>
+        </React.Fragment>
     );
 };

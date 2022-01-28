@@ -18,7 +18,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import * as React from "react";
-import { StyleProvider } from "../../../../../styles/styleContext";
+import StyleContext, { StyleProvider } from "../../../../../styles/styleContext";
 import { NormalisedConfig } from "../../../types";
 import { ThemeBase } from "../themeBase";
 import { Header } from "./header";
@@ -27,15 +27,37 @@ import { SignInAndUpThemeProps as ThirdPartySignInAndUpThemeProps } from "../../
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 import { getStyles } from "../styles";
-import { Styles } from "../../../../../types";
 import ThirdParty from "../../../../thirdparty/recipe";
 
-export const ThirdPartyOnlySignInUp: React.FC<{
+type ThirdPartyOnlySignInUpProps = {
     thirdPartyRecipe: ThirdParty;
     config: NormalisedConfig;
     history?: any;
-    styles: Styles;
-}> = ({ thirdPartyRecipe, styles, config }) => {
+};
+
+const ThirdPartyOnlySignInUp: React.FC<ThirdPartyOnlySignInUpProps> = ({ thirdPartyRecipe, history }) => {
+    const styles = React.useContext(StyleContext);
+
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                <Header />
+                <ThirdPartySignInAndUp recipe={thirdPartyRecipe} history={history} isEmbedded={true}>
+                    <ProvidersForm
+                        // Seed props. Real props will be given by parent feature.
+                        {...({} as ThirdPartySignInAndUpThemeProps)}
+                    />
+                </ThirdPartySignInAndUp>
+            </div>
+        </div>
+    );
+};
+
+export const ThirdPartyOnlySignInUpWrapper: React.FC<ThirdPartyOnlySignInUpProps> = ({
+    thirdPartyRecipe,
+    history,
+    config,
+}) => {
     const hasFont = hasFontDefined(config.rootStyle);
 
     // We can just use the providerAndEmailOrPhoneFormStyle because in this case we won't ever change screens
@@ -47,17 +69,7 @@ export const ThirdPartyOnlySignInUp: React.FC<{
                 styleFromInit={config.signInUpFeature.providerAndEmailOrPhoneFormStyle}
                 rootStyleFromInit={config.rootStyle}
                 getDefaultStyles={getStyles}>
-                <div data-supertokens="container" css={styles.container}>
-                    <div data-supertokens="row" css={styles.row}>
-                        <Header />
-                        <ThirdPartySignInAndUp recipe={thirdPartyRecipe} history={history} isEmbedded={true}>
-                            <ProvidersForm
-                                // Seed props. Real props will be given by parent feature.
-                                {...({} as ThirdPartySignInAndUpThemeProps)}
-                            />
-                        </ThirdPartySignInAndUp>
-                    </div>
-                </div>
+                <ThirdPartyOnlySignInUp history={history} config={config} thirdPartyRecipe={thirdPartyRecipe} />
             </StyleProvider>
         </ThemeBase>
     );

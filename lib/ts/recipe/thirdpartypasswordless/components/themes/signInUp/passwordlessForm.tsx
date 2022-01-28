@@ -31,7 +31,7 @@ import { SignInUpFooter } from "../../../../passwordless/components/themes/signI
 import { SignInUpHeader } from "../../../../passwordless/components/themes/signInUp/signInUpHeader";
 import { UserInputCodeForm } from "../../../../passwordless/components/themes/signInUp/userInputCodeForm";
 import { EmailOrPhoneForm } from "../../../../passwordless/components/themes/signInUp/emailOrPhoneForm";
-import { getStyles } from "../../../../passwordless/components/themes/styles";
+import { getStyles } from "../styles";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 
 enum SignInUpScreens {

@@ -1,10 +1,10 @@
 import * as React from "react";
 import { NormalisedConfig } from "../../../types";
-import { Styles } from "../../../../../types";
 import ThirdParty from "../../../../thirdparty/recipe";
-export declare const ThirdPartyOnlySignInUp: React.FC<{
+declare type ThirdPartyOnlySignInUpProps = {
     thirdPartyRecipe: ThirdParty;
     config: NormalisedConfig;
     history?: any;
-    styles: Styles;
-}>;
+};
+export declare const ThirdPartyOnlySignInUpWrapper: React.FC<ThirdPartyOnlySignInUpProps>;
+export {};
