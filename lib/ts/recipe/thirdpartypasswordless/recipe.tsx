@@ -188,7 +188,9 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
             );
         } else if (componentName === "linkClickedScreen") {
             if (this.passwordlessRecipe === undefined) {
-                throw new Error("Should not come here...");
+                throw new Error(
+                    "Embedding this component requires the passwordless recipe to be enabled. Please check the value of disablePasswordless in the configuration."
+                );
             }
             return this.passwordlessRecipe.getFeatureComponent(componentName, props);
         } else {
@@ -226,7 +228,7 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
         if (ThirdPartyPasswordless.instance === undefined) {
             let error =
                 "No instance of ThirdPartyPasswordless found. Make sure to call the ThirdPartyPasswordless.init method." +
-                "See https://supertokens.io/docs/thirdpartyemailpassword/quick-setup/frontend";
+                "See https://supertokens.io/docs/thirdpartypasswordless/quick-setup/frontend";
 
             // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
             if (typeof window === "undefined") {
