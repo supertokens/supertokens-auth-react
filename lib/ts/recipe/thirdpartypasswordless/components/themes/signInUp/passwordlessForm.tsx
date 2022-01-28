@@ -28,7 +28,6 @@ import { PhoneForm } from "../../../../passwordless/components/themes/signInUp/p
 import { UserInputCodeFormFooter } from "../../../../passwordless/components/themes/signInUp/userInputCodeFormFooter";
 import { UserInputCodeFormHeader } from "../../../../passwordless/components/themes/signInUp/userInputCodeFormHeader";
 import { SignInUpFooter } from "../../../../passwordless/components/themes/signInUp/signInUpFooter";
-import { SignInUpHeader } from "../../../../passwordless/components/themes/signInUp/signInUpHeader";
 import { UserInputCodeForm } from "../../../../passwordless/components/themes/signInUp/userInputCodeForm";
 import { EmailOrPhoneForm } from "../../../../passwordless/components/themes/signInUp/emailOrPhoneForm";
 import { getStyles } from "../styles";
@@ -67,13 +66,12 @@ function SignInUpTheme({
             ) : (
                 <div data-supertokens="container" css={styles.container}>
                     <div data-supertokens="row" css={styles.row}>
-                        {props.loaded && header}
                         {props.loaded &&
                             (activeScreen === SignInUpScreens.EmailForm ? (
                                 <EmailForm
                                     {...recipeAndConfig}
                                     error={props.error}
-                                    header={<SignInUpHeader />}
+                                    header={header}
                                     footer={
                                         <SignInUpFooter
                                             privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
@@ -85,7 +83,7 @@ function SignInUpTheme({
                                 <PhoneForm
                                     {...recipeAndConfig}
                                     error={props.error}
-                                    header={<SignInUpHeader />}
+                                    header={header}
                                     footer={
                                         <SignInUpFooter
                                             privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
@@ -97,7 +95,7 @@ function SignInUpTheme({
                                 <EmailOrPhoneForm
                                     {...recipeAndConfig}
                                     error={props.error}
-                                    header={<SignInUpHeader />}
+                                    header={header}
                                     footer={
                                         <SignInUpFooter
                                             privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
