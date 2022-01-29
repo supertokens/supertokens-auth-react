@@ -57,6 +57,7 @@ function SignInUpTheme({
         config: props.config,
     };
 
+    // TODO: pwless specific errors show up as generic something went wrong
     return (
         <React.Fragment>
             {activeScreen === SignInUpScreens.CloseTab ? (
@@ -70,7 +71,6 @@ function SignInUpTheme({
                             (activeScreen === SignInUpScreens.EmailForm ? (
                                 <EmailForm
                                     {...recipeAndConfig}
-                                    error={props.error}
                                     header={header}
                                     footer={
                                         <SignInUpFooter
@@ -82,7 +82,6 @@ function SignInUpTheme({
                             ) : activeScreen === SignInUpScreens.PhoneForm ? (
                                 <PhoneForm
                                     {...recipeAndConfig}
-                                    error={props.error}
                                     header={header}
                                     footer={
                                         <SignInUpFooter
@@ -94,7 +93,6 @@ function SignInUpTheme({
                             ) : activeScreen === SignInUpScreens.EmailOrPhoneForm ? (
                                 <EmailOrPhoneForm
                                     {...recipeAndConfig}
-                                    error={props.error}
                                     header={header}
                                     footer={
                                         <SignInUpFooter
