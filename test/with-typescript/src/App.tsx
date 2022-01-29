@@ -548,3 +548,12 @@ Passwordless.init({
         return undefined;
     },
 });
+
+function SomeComponent(props: any) {
+    return (
+        <ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>
+            <div></div>
+            <div></div>
+        </ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>
+    );
+}

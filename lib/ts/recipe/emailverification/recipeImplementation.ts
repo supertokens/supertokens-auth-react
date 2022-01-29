@@ -40,7 +40,9 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         }): Promise<{ status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK" }> {
             const response: SendVerifyEmailAPIResponse = await querier.post(
                 "/user/email/verify/token",
-                {},
+                {
+                    body: JSON.stringify({}),
+                },
                 async (context) => {
                     return input.config.preAPIHook({
                         ...context,

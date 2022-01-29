@@ -27,7 +27,7 @@ import StyleContext from "../../../../styles/styleContext";
  */
 
 type FormRowProps = {
-    children: JSX.Element;
+    children: React.ReactNode;
     hasError?: boolean;
 };
 
@@ -35,7 +35,7 @@ type FormRowProps = {
  * Component.
  */
 
-export default function FormRow({ children, hasError }: FormRowProps): JSX.Element {
+export default function FormRow({ children, hasError }: FormRowProps) {
     /*
      * Render.
      */
