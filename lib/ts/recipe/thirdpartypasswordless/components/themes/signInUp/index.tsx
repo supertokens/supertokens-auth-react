@@ -19,16 +19,13 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import * as React from "react";
-import StyleContext from "../../../../../styles/styleContext";
 import { ThirdPartyPasswordlessSignInAndUpThemeProps } from "../../../types";
 import { Header } from "./header";
-import { default as ThirdPartySignInAndUp } from "../../../../thirdparty/components/features/signInAndUp";
 import { default as PasswordlessSignInAndUp } from "../../../../passwordless/components/features/signInAndUp";
 import PasswordlessSignInAndUpForm from "./passwordlessForm";
-import { SignInAndUpThemeProps as ThirdPartySignInAndUpThemeProps } from "../../../../thirdparty/types";
 import { SignInUpProps as PasswordlessSignInUpThemeProps } from "../../../../passwordless/types";
-import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { ThirdPartyOnlySignInUpWrapper } from "./thirdPartyOnlySignInUp";
+import { HeaderWithProviderList } from "./headerWithProviderList";
 
 export const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemeProps> = (props) => {
     if (!props.passwordlessRecipe) {
@@ -48,37 +45,5 @@ export const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemeProps
                 header={props.thirdPartyRecipe === undefined ? <Header /> : <HeaderWithProviderList {...props} />}
             />
         </PasswordlessSignInAndUp>
-    );
-};
-
-const HeaderWithProviderList: React.FC<ThirdPartyPasswordlessSignInAndUpThemeProps> = (
-    props: React.PropsWithChildren<ThirdPartyPasswordlessSignInAndUpThemeProps>
-) => {
-    const styles = React.useContext(StyleContext);
-
-    if (props.thirdPartyRecipe === undefined) {
-        throw new Error("HeaderWithProviderList loaded without thirdPartyRecipe");
-    }
-
-    return (
-        <React.Fragment>
-            <Header />
-            <ThirdPartySignInAndUp recipe={props.thirdPartyRecipe} history={history} isEmbedded={true}>
-                <ProvidersForm
-                    // Seed props. Real props will be given by parent feature.
-                    {...({} as ThirdPartySignInAndUpThemeProps)}
-                />
-            </ThirdPartySignInAndUp>
-
-            <div data-supertokens="thirdPartyPasswordlessDivider" css={styles.thirdPartyPasswordlessDivider}>
-                <div data-supertokens="divider" css={styles.divider}></div>
-                <div
-                    data-supertokens="thirdPartyPasswordlessDividerText"
-                    css={styles.thirdPartyPasswordlessDividerText}>
-                    or
-                </div>
-                <div data-supertokens="divider" css={styles.divider}></div>
-            </div>
-        </React.Fragment>
     );
 };
