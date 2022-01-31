@@ -315,9 +315,10 @@ function initST({ passwordlessConfig } = {}) {
     ];
 
     passwordlessConfig = {
-        contactMethod: "PHONE",
+        contactMethod: "EMAIL_OR_PHONE",
         flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
         createAndSendCustomTextMessage: saveCode,
+        createAndSendCustomEmail: saveCode,
         ...passwordlessConfig,
     };
     if (passwordlessSupported) {

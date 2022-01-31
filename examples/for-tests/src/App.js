@@ -76,7 +76,7 @@ if (getQueryParams("passwordlessContactMethodType")) {
     window.localStorage.setItem("passwordlessContactMethodType", getQueryParams("passwordlessContactMethodType"));
 }
 
-const passwordlessContactMethodType = window.localStorage.getItem("passwordlessContactMethodType") || "EMAIL";
+const passwordlessContactMethodType = window.localStorage.getItem("passwordlessContactMethodType") || "EMAIL_OR_PHONE";
 
 if (getQueryParams("passwordlessDefaultCountry")) {
     window.localStorage.setItem("passwordlessDefaultCountry", getQueryParams("passwordlessDefaultCountry"));
