@@ -552,6 +552,16 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
                 // fontFamily: "cursive",
             },
         },
+        emailVerificationFeature: {
+            disableDefaultImplementation,
+            sendVerifyEmailScreen: {
+                style: theme.style,
+            },
+            verifyEmailLinkClickedScreen: {
+                style: theme.style,
+            },
+            mode: "REQUIRED",
+        },
         override: {
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE`);
