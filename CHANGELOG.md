@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
--   Added missing `defaultCountry` prop to the passwordless recipe config for the email+phone case
+-   add workflow to verify if pr title follows conventional commits
 
 ## [0.18.4] - 2022-01-24
 
