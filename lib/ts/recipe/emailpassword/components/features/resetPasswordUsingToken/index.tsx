@@ -23,7 +23,7 @@ import { PureComponent, Fragment } from "react";
 import ResetPasswordUsingTokenTheme from "../../themes/resetPasswordUsingToken";
 import { FeatureBaseProps } from "../../../../../types";
 
-import { getQueryParams, mergeObjects } from "../../../../../utils";
+import { getQueryParams } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
@@ -97,10 +97,7 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
                 <FeatureWrapper
                     isEmbedded={this.getIsEmbedded()}
                     useShadowDom={this.props.recipe.config.useShadowDom}
-                    defaultStore={mergeObjects(
-                        defaultTranslationsEmailPassword,
-                        this.props.recipe.config.translations
-                    )}>
+                    defaultStore={defaultTranslationsEmailPassword}>
                     <Fragment>
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}

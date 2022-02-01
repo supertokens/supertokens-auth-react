@@ -29,7 +29,6 @@ export type UserInputForAuthRecipeModule = {
     disableDefaultImplementation?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
-    translations?: Record<string, Record<string, string>>;
 };
 
 export type ComponentOverrideMap = {

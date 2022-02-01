@@ -64,7 +64,6 @@ export type ComponentOverrideMap = {
 export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
-    translations?: Record<string, Record<string, string>>;
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,

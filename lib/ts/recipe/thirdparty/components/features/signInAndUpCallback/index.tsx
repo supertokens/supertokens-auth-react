@@ -20,7 +20,7 @@ import { jsx } from "@emotion/react";
 import { Fragment, PureComponent } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
-import { getCurrentNormalisedUrlPath, mergeObjects } from "../../../../../utils";
+import { getCurrentNormalisedUrlPath } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
@@ -110,7 +110,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
                     isEmbedded={this.getIsEmbedded()}
-                    defaultStore={mergeObjects(defaultTranslationsThirdParty, this.props.recipe.config.translations)}>
+                    defaultStore={defaultTranslationsThirdParty}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}

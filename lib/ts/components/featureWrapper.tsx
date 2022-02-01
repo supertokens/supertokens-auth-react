@@ -26,6 +26,7 @@ import createCache from "@emotion/cache";
 import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "./translationContext";
 import { TranslationStore } from "../translationHelpers";
+import { mergeObjects } from "../utils";
 
 const superTokensEmotionCache = createCache({
     key: "supertokens",
@@ -66,9 +67,10 @@ export default function FeatureWrapper({
     return (
         <ErrorBoundary>
             <TranslationContextProvider
-                defaultLanguage={st.defaultLanguage}
-                defaultStore={defaultStore}
-                translationControlEventSource={st.translationEventSource}>
+                defaultLanguage={st.languageTranslations.defaultLanguage}
+                defaultStore={mergeObjects(defaultStore, st.languageTranslations.userTranslationStore)}
+                translationControlEventSource={st.languageTranslations.translationEventSource}
+                userTranslationFunc={st.languageTranslations.userTranslationFunc}>
                 <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
             </TranslationContextProvider>
         </ErrorBoundary>

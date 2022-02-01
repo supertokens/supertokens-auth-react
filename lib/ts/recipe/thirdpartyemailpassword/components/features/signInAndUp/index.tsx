@@ -25,7 +25,6 @@ import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { defaultTranslationsThirdPartyEmailPassword } from "../../../translations";
-import { mergeObjects } from "../../../../../utils";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -53,10 +52,7 @@ class SignInAndUp extends PureComponent<PropType, { status: "LOADING" | "READY" 
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
-                    defaultStore={mergeObjects(
-                        defaultTranslationsThirdPartyEmailPassword,
-                        this.props.recipe.config.translations
-                    )}>
+                    defaultStore={defaultTranslationsThirdPartyEmailPassword}>
                     <Fragment>
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <SignInAndUpTheme {...props} />}

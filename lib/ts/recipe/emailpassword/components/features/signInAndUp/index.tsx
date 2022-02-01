@@ -24,7 +24,7 @@ import { PureComponent, Fragment } from "react";
 import { FormFieldThemeProps } from "../../../types";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
-import { getRedirectToPathFromURL, mergeObjects } from "../../../../../utils";
+import { getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { SignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
@@ -225,10 +225,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
                     isEmbedded={this.getIsEmbedded()}
-                    defaultStore={mergeObjects(
-                        defaultTranslationsEmailPassword,
-                        this.props.recipe.config.translations
-                    )}>
+                    defaultStore={defaultTranslationsEmailPassword}>
                     <Fragment>
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <SignInAndUpTheme {...props} />}

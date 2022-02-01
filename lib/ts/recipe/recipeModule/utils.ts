@@ -23,7 +23,6 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
 
     const palette = config.palette === undefined ? {} : config.palette;
     const rootStyle = config.style === undefined ? {} : config.style;
-    const translations = config.translations === undefined ? {} : config.translations;
 
     return {
         preAPIHook,
@@ -32,7 +31,6 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
         useShadowDom,
         palette,
         rootStyle,
-        translations,
         recipeId: config.recipeId,
         appInfo: config.appInfo,
     };

@@ -24,7 +24,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { FeatureBaseProps } from "../../../../../types";
-import { getQueryParams, mergeObjects } from "../../../../../utils";
+import { getQueryParams } from "../../../../../utils";
 import { getStyles } from "../../../components/themes/styles";
 import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
@@ -103,7 +103,7 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
                     isEmbedded={this.getIsEmbedded()}
-                    defaultStore={mergeObjects(defaultTranslationsThirdParty, this.props.recipe.config.translations)}>
+                    defaultStore={defaultTranslationsThirdParty}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}

@@ -24,17 +24,17 @@ export const TranslationContextProvider: React.FC<{
     children: ReactNode;
     defaultLanguage: string;
     defaultStore: TranslationStore;
-    userTranslateFunc?: TranslationFunc;
+    userTranslationFunc?: TranslationFunc;
     translationControlEventSource: TranslationControlEventSource;
-}> = ({ children, defaultLanguage, userTranslateFunc, defaultStore, translationControlEventSource }) => {
+}> = ({ children, defaultLanguage, userTranslationFunc, defaultStore, translationControlEventSource }) => {
     const [translationStore, setTranslationStore] = useState<TranslationStore>(defaultStore);
     const cookieLang = getCurrentLanguageFromCookie();
     const [currentLanguage, setCurrentLanguage] = useState(cookieLang === null ? defaultLanguage : cookieLang);
 
     const translateFunc = useCallback<TranslationFunc>(
-        (key: string, params: Record<string, string> = {}) => {
-            if (userTranslateFunc !== undefined) {
-                return userTranslateFunc(key, params);
+        (key: string) => {
+            if (userTranslationFunc !== undefined) {
+                return userTranslationFunc(key);
             }
             const res = translationStore[currentLanguage] && translationStore[currentLanguage][key];
             const fallback = translationStore[defaultLanguage] && translationStore[defaultLanguage][key];
@@ -50,7 +50,7 @@ export const TranslationContextProvider: React.FC<{
 
             return res;
         },
-        [translationStore, currentLanguage, defaultLanguage, userTranslateFunc]
+        [translationStore, currentLanguage, defaultLanguage, userTranslationFunc]
     );
 
     useEffect(() => {

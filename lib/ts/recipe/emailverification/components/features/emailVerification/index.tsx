@@ -21,7 +21,7 @@ import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import { RecipeInterface } from "../../../types";
-import { getQueryParams, mergeObjects } from "../../../../../utils";
+import { getQueryParams } from "../../../../../utils";
 import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
@@ -139,10 +139,7 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
-                    defaultStore={mergeObjects(
-                        defaultTranslationsEmailVerification,
-                        this.props.recipe.config.translations
-                    )}>
+                    defaultStore={defaultTranslationsEmailVerification}>
                     <Fragment>
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <EmailVerificationTheme {...props} />}

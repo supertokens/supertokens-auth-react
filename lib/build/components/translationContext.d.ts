@@ -11,6 +11,6 @@ export declare const TranslationContextProvider: React.FC<{
     children: ReactNode;
     defaultLanguage: string;
     defaultStore: TranslationStore;
-    userTranslateFunc?: TranslationFunc;
+    userTranslationFunc?: TranslationFunc;
     translationControlEventSource: TranslationControlEventSource;
 }>;

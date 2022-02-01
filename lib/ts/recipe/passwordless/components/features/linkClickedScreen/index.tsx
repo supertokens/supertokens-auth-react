@@ -20,7 +20,7 @@ import { jsx } from "@emotion/react";
 import { Fragment, PureComponent } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
-import { getQueryParams, getURLHash, mergeObjects } from "../../../../../utils";
+import { getQueryParams, getURLHash } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
@@ -104,7 +104,7 @@ class LinkClickedScreen extends PureComponent<PropType, unknown> {
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
                     isEmbedded={this.getIsEmbedded()}
-                    defaultStore={mergeObjects(defaultTranslationsPasswordless, this.props.recipe.config.translations)}>
+                    defaultStore={defaultTranslationsPasswordless}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}

@@ -33,7 +33,7 @@ import { BaseFeatureComponentMap } from "./types";
 import { SSR_ERROR } from "./constants";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { RoutingComponent } from "./components/routingComponent";
-import { saveCurrentLanguage, TranslationController, TranslationStore } from "./translationHelpers";
+import { saveCurrentLanguage, TranslationController, TranslationFunc, TranslationStore } from "./translationHelpers";
 
 /*
  * Class.
@@ -52,9 +52,13 @@ export default class SuperTokens {
      * Instance Attributes.
      */
     appInfo: NormalisedAppInfo;
-    defaultLanguage: string;
-    currentLanguageCookieScope: string;
-    translationEventSource: TranslationController = new TranslationController();
+    languageTranslations: {
+        defaultLanguage: string;
+        userTranslationStore: TranslationStore;
+        currentLanguageCookieScope: string;
+        translationEventSource: TranslationController;
+        userTranslationFunc?: TranslationFunc;
+    };
     recipeList: RecipeModule<any, any, any, any>[] = [];
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
 
@@ -70,11 +74,17 @@ export default class SuperTokens {
             );
         }
 
-        this.defaultLanguage = config.defaultLanguage === undefined ? "en" : config.defaultLanguage;
-        this.currentLanguageCookieScope =
-            config.currentLanguageCookieScope !== undefined
-                ? normaliseCookieScopeOrThrowError(config.currentLanguageCookieScope)
-                : getDefaultCookieScope();
+        const translationConfig = config.languageTranslations === undefined ? {} : config.languageTranslations;
+        this.languageTranslations = {
+            defaultLanguage: translationConfig.defaultLanguage === undefined ? "en" : translationConfig.defaultLanguage,
+            currentLanguageCookieScope:
+                translationConfig.currentLanguageCookieScope !== undefined
+                    ? normaliseCookieScopeOrThrowError(translationConfig.currentLanguageCookieScope)
+                    : getDefaultCookieScope(),
+            userTranslationStore: translationConfig.translations !== undefined ? translationConfig.translations : {},
+            translationEventSource: new TranslationController(),
+            userTranslationFunc: translationConfig.translationFunc,
+        };
 
         this.recipeList = config.recipeList.map((recipe) => {
             return recipe(this.appInfo);
@@ -233,12 +243,12 @@ export default class SuperTokens {
     };
 
     changeLanguage(lang: string): void {
-        saveCurrentLanguage(lang, this.currentLanguageCookieScope);
-        this.translationEventSource.emit("LanguageChange", lang);
+        saveCurrentLanguage(lang, this.languageTranslations.currentLanguageCookieScope);
+        this.languageTranslations.translationEventSource.emit("LanguageChange", lang);
     }
 
     loadTranslation(store: TranslationStore): void {
-        this.translationEventSource.emit("TranslationLoaded", store);
+        this.languageTranslations.translationEventSource.emit("TranslationLoaded", store);
     }
 
     /*

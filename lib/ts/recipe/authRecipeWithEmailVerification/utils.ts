@@ -21,6 +21,6 @@ export function normaliseAuthRecipeWithEmailVerificationConfig<T, S, R>(
 ): NormalisedConfig<T, S, R> {
     return {
         ...normaliseAuthRecipe(config),
-        emailVerificationFeature: { ...config.emailVerificationFeature, translations: config.translations },
+        emailVerificationFeature: config.emailVerificationFeature,
     };
 }

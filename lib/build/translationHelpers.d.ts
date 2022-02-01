@@ -1,5 +1,5 @@
 export declare type TranslationStore = Record<string, Record<string, string>>;
-export declare type TranslationFunc = (key: string, params?: Record<string, string>) => string;
+export declare type TranslationFunc = (key: string) => string;
 export declare type TranslationContextType = {
     translate: TranslationFunc;
 };

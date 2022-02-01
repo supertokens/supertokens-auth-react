@@ -21,13 +21,7 @@ import * as React from "react";
 import { PureComponent, Fragment } from "react";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import {
-    clearErrorQueryParam,
-    Deferred,
-    getQueryParams,
-    getRedirectToPathFromURL,
-    mergeObjects,
-} from "../../../../../utils";
+import { clearErrorQueryParam, Deferred, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
 import { RecipeInterface, LoginAttemptInfo, PasswordlessUser } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
@@ -250,7 +244,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
                     isEmbedded={this.getIsEmbedded()}
-                    defaultStore={mergeObjects(defaultTranslationsPasswordless, this.props.recipe.config.translations)}>
+                    defaultStore={defaultTranslationsPasswordless}>
                     <Fragment>
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <SignInUpThemeWrapper {...props} />}
