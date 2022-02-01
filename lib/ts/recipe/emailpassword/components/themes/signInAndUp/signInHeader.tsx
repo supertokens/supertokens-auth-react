@@ -34,7 +34,7 @@ export const SignInHeader = withOverride(
                     <div data-supertokens="secondaryText" css={styles.secondaryText}>
                         {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_START")}
                         <span data-supertokens="link" onClick={onClick} css={styles.link}>
-                            {t("EMAIL_PASSWORD_SIGN_IN_FOOTER_SUBTITLE_SIGN_UP_LINK")}
+                            {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_SIGN_UP_LINK")}
                         </span>
                         {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_END")}
                     </div>

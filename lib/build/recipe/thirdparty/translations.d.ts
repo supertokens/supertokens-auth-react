@@ -6,6 +6,8 @@ export declare const defaultTranslationsThirdParty: {
         THIRD_PARTY_SIGN_IN_UP_FOOTER_AND: string;
         THIRD_PARTY_SIGN_IN_UP_FOOTER_PP: string;
         THIRD_PARTY_SIGN_IN_UP_FOOTER_END: string;
+        THIRD_PARTY_PROVIDER_DEFAULT_BTN_START: string;
+        THIRD_PARTY_PROVIDER_DEFAULT_BTN_END: string;
         EMAIL_VERIFICATION_RESEND_SUCCESS: string;
         EMAIL_VERIFICATION_SEND_TITLE: string;
         EMAIL_VERIFICATION_SEND_DESC_START: string;

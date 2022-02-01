@@ -18,7 +18,7 @@ export const defaultTranslationsPasswordless = {
 
         GENERAL_ERROR_OTP_UNDEFINED: "Please fill your OTP",
         GENERAL_ERROR_OTP_INVALID: "Invalid OTP",
-        GENERAL_ERROR_OTP_EXPIRED: "Expired OTP",
+        GENERAL_ERROR_OTP_EXPIRED: "Expired OTP.",
         GENERAL_ERROR_OTP_NON_STRING: "OTP must be of type string",
         GENERAL_ERROR_OTP_EMPTY: "OTP cannot be empty",
 
@@ -34,7 +34,7 @@ export const defaultTranslationsPasswordless = {
 
         PWLESS_SIGN_IN_UP_FOOTER_START: "By continuing, you agree to our",
         PWLESS_SIGN_IN_UP_FOOTER_TOS: "Terms of Service",
-        PWLESS_SIGN_IN_UP_FOOTER_AND: "and",
+        PWLESS_SIGN_IN_UP_FOOTER_AND: " and ",
         PWLESS_SIGN_IN_UP_FOOTER_PP: "Privacy Policy",
         PWLESS_SIGN_IN_UP_FOOTER_END: "",
 
