@@ -6,10 +6,21 @@ export default function CallAPIView() {
     async function callAPIClicked() {
         let hasuraJWT = (await Session.getAccessTokenPayloadSecurely())["jwt"];
 
-        // this will also automatically refresh the session if needed
-        let response = await axios.get("https://informed-glowworm-75.hasura.app/api/rest/userinfo", {
+        // We can also use apollo client here instead.
+        let response = await axios({
+            method: "post",
+            url: "https://informed-glowworm-75.hasura.app/v1/graphql",
             headers: {
                 Authorization: `Bearer ${hasuraJWT}`,
+                "content-type": "application/json",
+            },
+            data: {
+                query: `query MyQuery {
+                    user_info {
+                        email,
+                        name
+                    }
+                }`,
             },
         });
         window.alert("User Information:\n" + JSON.stringify(response.data, null, 2));

@@ -11,6 +11,8 @@ This demo app demonstrates the following use cases:
 -   Session management & Calling APIs
 -   Querying Hasura with the issued JWT
 
+You can learn more about the setup [in our docs](https://supertokens.com/docs/thirdpartyemailpassword/hasura-integration/with-jwt).
+
 ## Project setup
 
 Use `npm` to install the project dependencies:
