@@ -50,7 +50,7 @@ import {
     getTextInDashboardNoAuth,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
-import { SOMETHING_WENT_WRONG_ERROR } from "../../lib/build/constants";
+import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
