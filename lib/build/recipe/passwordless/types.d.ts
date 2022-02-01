@@ -220,7 +220,7 @@ export declare type UserInput = (
           validateEmailAddress?: (email: string) => Promise<string | undefined> | string | undefined;
           validatePhoneNumber?: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
           signInUpFeature?: SignInUpFeatureConfigInput & {
-              defaultCountryFromConfig?: CountryCode;
+              defaultCountry?: CountryCode;
               guessInternationPhoneNumberFromInputPhoneNumber?: (
                   inputPhoneNumber: string,
                   defaultCountryFromConfig?: CountryCode
