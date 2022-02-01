@@ -4,7 +4,6 @@ const helmet = require("helmet");
 require("dotenv").config();
 let supertokens = require("supertokens-node");
 let Session = require("supertokens-node/recipe/session");
-let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 
@@ -16,14 +15,12 @@ const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${w
 supertokens.init({
     framework: "express",
     supertokens: {
-        // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
         connectionURI: "https://try.supertokens.com",
-        apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
-        appName: "SuperTokens Demo App", // TODO: Your app name
-        apiDomain, // TODO: Change to your app's API domain
-        websiteDomain, // TODO: Change to your app's website domain
+        appName: "SuperTokens Hasura Demo App",
+        apiDomain,
+        websiteDomain,
     },
     recipeList: [
         ThirdPartyEmailPassword.init({
@@ -52,7 +49,7 @@ supertokens.init({
         Session.init({
             jwt: {
                 enable: true,
-                issuer: "https://c58f-2405-201-b-c89b-6843-ef4f-cf56-55cd.ngrok.io/auth",
+                issuer: process.env.JWT_ISSUER_URL,
             },
             override: {
                 functions: (oI) => {

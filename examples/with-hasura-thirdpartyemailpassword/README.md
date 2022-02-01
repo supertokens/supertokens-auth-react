@@ -23,7 +23,23 @@ npm install
 
 ## Run the demo app
 
-This compiles and serves the React app and starts the backend API server on port 3001.
+1. Run `ngrok` to list on port 3001. This will expose the API server to the internet which Hasura can query
+
+```
+ngrok http 3001
+```
+
+2. Set the resulting `ngrok` URL on Hasura dashboard as the `env` variable:
+
+```
+{
+    "jwk_url": "https://....ngrok.io/auth/jwt/jwks.json"
+}
+```
+
+3. Set `https://....ngrok.io/auth` in the `.env` file as the value for `JWT_ISSUER_URL` key.
+
+4. Start the app
 
 ```bash
 npm run dev
