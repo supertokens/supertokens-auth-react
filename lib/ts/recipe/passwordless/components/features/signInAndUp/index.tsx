@@ -78,121 +78,119 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
         return false;
     };
 
-    getModifiedRecipeImplementation = (): RecipeInterface => {
-        return {
-            ...this.props.recipe.recipeImpl,
-            createCode: async (input) => {
-                let contactInfo;
-                if ("email" in input) {
-                    contactInfo = input.email;
-                } else {
-                    contactInfo = formatPhoneNumberIntl(input.phoneNumber);
-                }
-                const res = await this.props.recipe.recipeImpl.createCode(input);
-                if (res.status === "OK") {
-                    // This contactMethod refers to the one that was used to deliver the login info
-                    // This can be an important distinction in case both email and phone are allowed
-                    const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
-                    const loginAttemptInfo = {
-                        ...res,
-                        lastResend: new Date().getTime(),
-                        contactMethod,
-                        contactInfo,
-                        redirectToPath: getRedirectToPathFromURL(),
-                    };
-                    await this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
-                    this.setState((os) => ({
-                        ...os,
-                        error: undefined,
-                        loginAttemptInfo,
-                    }));
-                } else if (res.status === "GENERAL_ERROR") {
-                    this.setState((os) => ({
-                        ...os,
-                        error: res.message,
-                    }));
-                }
-                return res;
-            },
-            resendCode: async (input) => {
-                if (!this.state.loginAttemptInfo) {
-                    // This should never happen, but it makes TS happy
-                    throw new Error("Resend without loginAttemptInfo");
-                }
-                const res = await this.props.recipe.recipeImpl.resendCode(input);
-                if (res.status === "OK") {
-                    const loginAttemptInfo = {
-                        ...this.state.loginAttemptInfo,
-                        lastResend: new Date().getTime(),
-                    };
-                    await this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
-                    this.setState((os) => ({
-                        ...os,
-                        error: undefined,
-                        loginAttemptInfo,
-                    }));
-                } else if (res.status === "RESTART_FLOW_ERROR") {
-                    await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
-
-                    this.setState((os) => ({
-                        ...os,
-                        error: "SIGN_IN_UP_RESEND_RESTART_FLOW_ERROR",
-                        loginAttemptInfo: undefined,
-                    }));
-                } else if (res.status === "GENERAL_ERROR") {
-                    this.setState((os) => ({
-                        ...os,
-                        error: res.message,
-                    }));
-                }
-                return res;
-            },
-
-            consumeCode: async (input) => {
-                const deferred = new Deferred<Awaited<ReturnType<RecipeInterface["consumeCode"]>>>();
-                // We need to call consume code while callingConsume, so we don't detect
-                // the session creation too early and go to successInAnotherTab too early
-                this.setState(
-                    (os) => ({ ...os, callingConsume: true }),
-                    () => {
-                        deferred.attach(this.props.recipe.recipeImpl.consumeCode(input));
-                    }
-                );
-                const res = await deferred.promise;
-
-                if (res.status !== "OK") {
-                    this.setState((os) => ({ ...os, callingConsume: false }));
-                }
-
-                if (res.status === "RESTART_FLOW_ERROR") {
-                    await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
-
-                    this.setState((os) => ({
-                        ...os,
-                        error: "SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR",
-                        loginAttemptInfo: undefined,
-                    }));
-                } else if (res.status === "OK") {
-                    await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
-                }
-
-                return res;
-            },
-
-            clearLoginAttemptInfo: async () => {
-                await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
-                clearErrorQueryParam();
+    modifiedRecipeImplementation: RecipeInterface = {
+        ...this.props.recipe.recipeImpl,
+        createCode: async (input) => {
+            let contactInfo;
+            if ("email" in input) {
+                contactInfo = input.email;
+            } else {
+                contactInfo = formatPhoneNumberIntl(input.phoneNumber);
+            }
+            const res = await this.props.recipe.recipeImpl.createCode(input);
+            if (res.status === "OK") {
+                // This contactMethod refers to the one that was used to deliver the login info
+                // This can be an important distinction in case both email and phone are allowed
+                const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
+                const loginAttemptInfo = {
+                    ...res,
+                    lastResend: new Date().getTime(),
+                    contactMethod,
+                    contactInfo,
+                    redirectToPath: getRedirectToPathFromURL(),
+                };
+                await this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
                 this.setState((os) => ({
                     ...os,
-                    loginAttemptInfo: undefined,
                     error: undefined,
+                    loginAttemptInfo,
                 }));
-            },
-        };
+            } else if (res.status === "GENERAL_ERROR") {
+                this.setState((os) => ({
+                    ...os,
+                    error: res.message,
+                }));
+            }
+            return res;
+        },
+        resendCode: async (input) => {
+            if (!this.state.loginAttemptInfo) {
+                // This should never happen, but it makes TS happy
+                throw new Error("Resend without loginAttemptInfo");
+            }
+            const res = await this.props.recipe.recipeImpl.resendCode(input);
+            if (res.status === "OK") {
+                const loginAttemptInfo = {
+                    ...this.state.loginAttemptInfo,
+                    lastResend: new Date().getTime(),
+                };
+                await this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
+                this.setState((os) => ({
+                    ...os,
+                    error: undefined,
+                    loginAttemptInfo,
+                }));
+            } else if (res.status === "RESTART_FLOW_ERROR") {
+                await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+
+                this.setState((os) => ({
+                    ...os,
+                    error: "SIGN_IN_UP_RESEND_RESTART_FLOW_ERROR",
+                    loginAttemptInfo: undefined,
+                }));
+            } else if (res.status === "GENERAL_ERROR") {
+                this.setState((os) => ({
+                    ...os,
+                    error: res.message,
+                }));
+            }
+            return res;
+        },
+
+        consumeCode: async (input) => {
+            const deferred = new Deferred<Awaited<ReturnType<RecipeInterface["consumeCode"]>>>();
+            // We need to call consume code while callingConsume, so we don't detect
+            // the session creation too early and go to successInAnotherTab too early
+            this.setState(
+                (os) => ({ ...os, callingConsume: true }),
+                () => {
+                    deferred.attach(this.props.recipe.recipeImpl.consumeCode(input));
+                }
+            );
+            const res = await deferred.promise;
+
+            if (res.status !== "OK") {
+                this.setState((os) => ({ ...os, callingConsume: false }));
+            }
+
+            if (res.status === "RESTART_FLOW_ERROR") {
+                await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+
+                this.setState((os) => ({
+                    ...os,
+                    error: "SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR",
+                    loginAttemptInfo: undefined,
+                }));
+            } else if (res.status === "OK") {
+                await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+            }
+
+            return res;
+        },
+
+        clearLoginAttemptInfo: async () => {
+            await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+            clearErrorQueryParam();
+            this.setState((os) => ({
+                ...os,
+                loginAttemptInfo: undefined,
+                error: undefined,
+            }));
+        },
     };
 
     componentDidMount = async (): Promise<void> => {
-        const loginAttemptInfo = await this.getModifiedRecipeImplementation().getLoginAttemptInfo();
+        const loginAttemptInfo = await this.modifiedRecipeImplementation.getLoginAttemptInfo();
 
         // We could be using storage events for this, but we need to keep customization in mind.
         // Someone could be using something else other than localstorage.
@@ -235,7 +233,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
             loginAttemptInfo: this.state.loginAttemptInfo,
             successInAnotherTab: this.state.successInAnotherTab,
             error: this.state.error,
-            recipeImplementation: this.getModifiedRecipeImplementation(),
+            recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
         };
 

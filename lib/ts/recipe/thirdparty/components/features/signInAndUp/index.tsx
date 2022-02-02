@@ -65,20 +65,18 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         return false;
     };
 
-    getModifiedRecipeImplementation = (): RecipeInterface => {
-        return {
-            ...this.props.recipe.recipeImpl,
-            redirectToThirdPartyLogin: (input) => {
-                input = {
-                    ...input,
-                    state: {
-                        ...input.state,
-                        redirectToPath: getRedirectToPathFromURL(),
-                    },
-                };
-                return this.props.recipe.recipeImpl.redirectToThirdPartyLogin(input);
-            },
-        };
+    modifiedRecipeImplementation: RecipeInterface = {
+        ...this.props.recipe.recipeImpl,
+        redirectToThirdPartyLogin: (input) => {
+            input = {
+                ...input,
+                state: {
+                    ...input.state,
+                    redirectToPath: getRedirectToPathFromURL(),
+                },
+            };
+            return this.props.recipe.recipeImpl.redirectToThirdPartyLogin(input);
+        },
     };
 
     render = (): JSX.Element => {
@@ -94,7 +92,7 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         const props = {
             error: this.state.error,
             providers: providers,
-            recipeImplementation: this.getModifiedRecipeImplementation(),
+            recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
         };
 

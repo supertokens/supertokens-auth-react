@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [unreleased]
+
+### Added
+
+-   Translateable components
+
+### Refactors
+
+-   Refactored some more pure components into functional
+-   feature components now provide a stable modified recipe implementation as a prop instead of getter
+
 ## [0.18.5] - 2022-01-27
 
 ### Fixes
@@ -12,10 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Added `defaultCountry` to passwordless config input in the `EMAIL_OR_PHONE` case
 
 -   add workflow to verify if pr title follows conventional commits
-
-### Added
-
--   Translateable components
 
 ## [0.18.4] - 2022-01-24
 

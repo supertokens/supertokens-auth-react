@@ -59,17 +59,19 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
         } catch (e) {}
     };
 
-    getModifiedRecipeInterface = (): RecipeInterface => {
-        return {
-            ...this.props.recipe.recipeImpl,
-            sendVerificationEmail: async (input) => {
-                const response = await this.props.recipe.recipeImpl.sendVerificationEmail(input);
-                this.setState(() => ({
-                    token: undefined,
-                }));
-                return response;
-            },
-        };
+    onTokenInvalidRedirect = () => this.props.recipe.config.redirectToSignIn(this.props.history);
+    onEmailAlreadyVerified = () => this.props.recipe.config.postVerificationRedirect(this.props.history);
+    onContinueClicked = () => this.props.recipe.config.postVerificationRedirect(this.props.history);
+
+    modifiedRecipeImplementation: RecipeInterface = {
+        ...this.props.recipe.recipeImpl,
+        sendVerificationEmail: async (input) => {
+            const response = await this.props.recipe.recipeImpl.sendVerificationEmail(input);
+            this.setState(() => ({
+                token: undefined,
+            }));
+            return response;
+        },
     };
 
     async componentDidMount(): Promise<void> {
@@ -108,10 +110,10 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
 
         const sendVerifyEmailScreen = {
             styleFromInit: sendVerifyEmailScreenFeature.style,
-            recipeImplementation: this.getModifiedRecipeInterface(),
+            recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
             signOut: this.signOut,
-            onEmailAlreadyVerified: () => this.props.recipe.config.postVerificationRedirect(this.props.history),
+            onEmailAlreadyVerified: this.onEmailAlreadyVerified,
         };
 
         const verifyEmailLinkClickedScreenFeature = this.props.recipe.config.verifyEmailLinkClickedScreen;
@@ -121,9 +123,9 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
                 ? undefined
                 : {
                       styleFromInit: verifyEmailLinkClickedScreenFeature.style,
-                      onTokenInvalidRedirect: () => this.props.recipe.config.redirectToSignIn(this.props.history),
-                      onContinueClicked: () => this.props.recipe.config.postVerificationRedirect(this.props.history),
-                      recipeImplementation: this.getModifiedRecipeInterface(),
+                      onTokenInvalidRedirect: this.onTokenInvalidRedirect,
+                      onContinueClicked: this.onContinueClicked,
+                      recipeImplementation: this.modifiedRecipeImplementation,
                       config: this.props.recipe.config,
                       token: this.state.token,
                   };

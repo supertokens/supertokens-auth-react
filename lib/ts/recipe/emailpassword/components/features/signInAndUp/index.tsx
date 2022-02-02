@@ -158,36 +158,34 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         }));
     }
 
-    getModifiedRecipeImplementation = (): RecipeInterface => {
-        return {
-            ...this.props.recipe.recipeImpl,
-            signIn: async (input) => {
-                const response = await this.props.recipe.recipeImpl.signIn(input);
+    modifiedRecipeImplementation: RecipeInterface = {
+        ...this.props.recipe.recipeImpl,
+        signIn: async (input) => {
+            const response = await this.props.recipe.recipeImpl.signIn(input);
 
-                this.setState((oldState) => {
-                    return response.status !== "OK"
-                        ? oldState
-                        : {
-                              user: response.user,
-                          };
-                });
+            this.setState((oldState) => {
+                return response.status !== "OK"
+                    ? oldState
+                    : {
+                          user: response.user,
+                      };
+            });
 
-                return response;
-            },
-            signUp: async (input) => {
-                const response = await this.props.recipe.recipeImpl.signUp(input);
+            return response;
+        },
+        signUp: async (input) => {
+            const response = await this.props.recipe.recipeImpl.signUp(input);
 
-                this.setState((oldState) => {
-                    return response.status !== "OK"
-                        ? oldState
-                        : {
-                              user: response.user,
-                          };
-                });
+            this.setState((oldState) => {
+                return response.status !== "OK"
+                    ? oldState
+                    : {
+                          user: response.user,
+                      };
+            });
 
-                return response;
-            },
-        };
+            return response;
+        },
     };
 
     render = (): JSX.Element => {
@@ -198,7 +196,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         const signInFeature = signInAndUpFeature.signInForm;
 
         const signInForm = {
-            recipeImplementation: this.getModifiedRecipeImplementation(),
+            recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
             styleFromInit: signInFeature.style,
             formFields: signInFeature.formFields,
@@ -207,7 +205,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         };
 
         const signUpForm = {
-            recipeImplementation: this.getModifiedRecipeImplementation(),
+            recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
             styleFromInit: signUpFeature.style,
             formFields: this.getThemeSignUpFeatureFormFields(signUpFeature.formFields),
