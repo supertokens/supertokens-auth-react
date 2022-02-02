@@ -342,8 +342,12 @@ export function normaliseCookieScopeOrThrowError(cookieScope: string): string {
     return noDotNormalised;
 }
 
-export function getDefaultCookieScope(): string {
-    return normaliseCookieScopeOrThrowError(getWindowOrThrow().location.hostname);
+export function getDefaultCookieScope(): string | undefined {
+    try {
+        return normaliseCookieScopeOrThrowError(getWindowOrThrow().location.hostname);
+    } catch {
+        return undefined;
+    }
 }
 
 export function getCookieValue(name: string): string | null {
@@ -363,14 +367,14 @@ export function getCookieValue(name: string): string | null {
 }
 
 // undefined value will remove the cookie
-export function setFrontendCookie(name: string, value: string | undefined, scope: string): void {
+export function setFrontendCookie(name: string, value: string | undefined, scope: string | undefined): void {
     let expires: string | undefined = "Thu, 01 Jan 1970 00:00:01 GMT";
     let cookieVal = "";
     if (value !== undefined) {
         cookieVal = value;
         expires = undefined; // set cookie without expiry
     }
-    if (scope === "localhost" || scope === getWindowOrThrow().location.hostname) {
+    if (scope === "localhost" || scope === getWindowOrThrow().location.hostname || scope === undefined) {
         // since some browsers ignore cookies with domain set to localhost
         // see https://github.com/supertokens/supertokens-website/issues/25
         if (expires !== undefined) {

@@ -34,6 +34,6 @@ export declare class Deferred<T> {
 }
 export declare function mergeObjects<T>(obj1: T, obj2: T): T;
 export declare function normaliseCookieScopeOrThrowError(cookieScope: string): string;
-export declare function getDefaultCookieScope(): string;
+export declare function getDefaultCookieScope(): string | undefined;
 export declare function getCookieValue(name: string): string | null;
-export declare function setFrontendCookie(name: string, value: string | undefined, scope: string): void;
+export declare function setFrontendCookie(name: string, value: string | undefined, scope: string | undefined): void;

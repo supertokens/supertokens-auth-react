@@ -55,7 +55,7 @@ export default class SuperTokens {
     languageTranslations: {
         defaultLanguage: string;
         userTranslationStore: TranslationStore;
-        currentLanguageCookieScope: string;
+        currentLanguageCookieScope: string | undefined;
         translationEventSource: TranslationController;
         userTranslationFunc?: TranslationFunc;
     };

@@ -1,5 +1,3 @@
-// type TranslationContext = Record<string, Record<Record<string, string>>>;
-
 import { getCookieValue, setFrontendCookie } from "./utils";
 
 // language -> key -> copy
@@ -54,9 +52,16 @@ export class TranslationController implements TranslationControlEventSource {
 
 const CURRENT_LANGUAGE_COOKIE_NAME = "sCurrLanguage";
 
-export function saveCurrentLanguage(language: string, cookieDomain: string): void {
+export function saveCurrentLanguage(language: string, cookieDomain: string | undefined): void {
     setFrontendCookie(CURRENT_LANGUAGE_COOKIE_NAME, language, cookieDomain);
 }
+
 export function getCurrentLanguageFromCookie(): string | null {
-    return getCookieValue(CURRENT_LANGUAGE_COOKIE_NAME);
+    try {
+        return getCookieValue(CURRENT_LANGUAGE_COOKIE_NAME);
+    } catch {
+        // This can throw if we are in a serverless environment
+        // We can safely ignore this.
+        return null;
+    }
 }
