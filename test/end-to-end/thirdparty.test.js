@@ -29,11 +29,19 @@ import {
     generateState,
     clickOnProviderButton,
     loginWithAuth0,
+    getGeneralError,
+    waitFor,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
+import {
+    TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
+    SIGN_IN_UP_API,
+    SOMETHING_WENT_WRONG_ERROR,
+    SIGN_IN_API,
+} from "../constants";
 
 /*
  * Tests.
@@ -191,6 +199,79 @@ describe("SuperTokens Third Party", function () {
         //         "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
         //     ]);
         // });
+
+        it("field error on sign in up with translation key", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+
+            await page.setRequestInterception(true);
+            const requestHandler = (request) => {
+                if (request.method() === "POST" && request.url() === SIGN_IN_UP_API) {
+                    request.respond({
+                        status: 200,
+                        contentType: "application/json",
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "FIELD_ERROR",
+                            error: "THIRD_PARTY_SIGN_IN_UP_FOOTER_TOS",
+                        }),
+                    });
+                    page.off("request", requestHandler);
+                    page.setRequestInterception(false);
+                } else {
+                    request.continue();
+                }
+            };
+            page.on("request", requestHandler);
+            await clickOnProviderButton(page, "Auth0");
+            await loginWithAuth0(page);
+            const error = await getGeneralError(page);
+            assert.deepStrictEqual(error, "Terms of Service");
+        });
+
+        it("field error on sign in up with non-translation key", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+
+            await page.setRequestInterception(true);
+            const requestHandler = (request) => {
+                console.log(request.url());
+                if (request.method() === "POST" && request.url() === SIGN_IN_UP_API) {
+                    request.respond({
+                        status: 200,
+                        contentType: "application/json",
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "FIELD_ERROR",
+                            error: "Test message!!!!",
+                        }),
+                    });
+                    page.off("request", requestHandler);
+                    page.setRequestInterception(false);
+                } else {
+                    request.continue();
+                }
+            };
+            page.on("request", requestHandler);
+
+            await clickOnProviderButton(page, "Auth0");
+            await loginWithAuth0(page);
+
+            const error = await getGeneralError(page);
+            assert.deepStrictEqual(error, "Test message!!!!");
+        });
     });
 
     describe("Third Party callback error tests", function () {

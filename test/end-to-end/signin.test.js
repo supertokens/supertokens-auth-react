@@ -660,6 +660,160 @@ describe("SuperTokens SignIn => Server Error", function () {
             "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
         ]);
     });
+
+    it("shows translated general error", async function () {
+        await setInputValues(page, [
+            { name: "email", value: "john.doe@supertokens.io" },
+            { name: "password", value: "Str0ngP@ssw0rd" },
+        ]);
+
+        await page.setRequestInterception(true);
+        const requestHandler = (request) => {
+            if (request.method() === "POST" && request.url() === SIGN_IN_API) {
+                request.respond({
+                    status: 200,
+                    contentType: "application/json",
+                    headers: {
+                        "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                        "access-control-allow-credentials": "true",
+                    },
+                    body: JSON.stringify({
+                        status: "GENERAL_ERROR",
+                        message: "EMAIL_PASSWORD_SIGN_UP_FOOTER_TOS",
+                    }),
+                });
+                page.off("request", requestHandler);
+                page.setRequestInterception(false);
+            } else {
+                request.continue();
+            }
+        };
+        page.on("request", requestHandler);
+
+        await submitForm(page);
+
+        // Assert server Error
+        const generalError = await getGeneralError(page);
+        assert.strictEqual(generalError, "Terms of Service");
+    });
+
+    it("shows raw message for non-translation key general error", async function () {
+        await setInputValues(page, [
+            { name: "email", value: "john.doe@supertokens.io" },
+            { name: "password", value: "Str0ngP@ssw0rd" },
+        ]);
+
+        await page.setRequestInterception(true);
+        const requestHandler = (request) => {
+            if (request.method() === "POST" && request.url() === SIGN_IN_API) {
+                request.respond({
+                    status: 200,
+                    contentType: "application/json",
+                    headers: {
+                        "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                        "access-control-allow-credentials": "true",
+                    },
+                    body: JSON.stringify({
+                        status: "GENERAL_ERROR",
+                        message: "Test message!!!!",
+                    }),
+                });
+                page.off("request", requestHandler);
+                page.setRequestInterception(false);
+            } else {
+                request.continue();
+            }
+        };
+        page.on("request", requestHandler);
+
+        await submitForm(page);
+
+        // Assert server Error
+        const generalError = await getGeneralError(page);
+        assert.strictEqual(generalError, "Test message!!!!");
+    });
+
+    it("shows translated field error", async function () {
+        await setInputValues(page, [
+            { name: "email", value: "john.doe@supertokens.io" },
+            { name: "password", value: "Str0ngP@ssw0rd" },
+        ]);
+
+        await page.setRequestInterception(true);
+        const requestHandler = (request) => {
+            if (request.method() === "POST" && request.url() === SIGN_IN_API) {
+                request.respond({
+                    status: 200,
+                    contentType: "application/json",
+                    headers: {
+                        "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                        "access-control-allow-credentials": "true",
+                    },
+                    body: JSON.stringify({
+                        status: "FIELD_ERROR",
+                        formFields: [
+                            {
+                                id: "email",
+                                error: "EMAIL_PASSWORD_SIGN_UP_FOOTER_TOS",
+                            },
+                        ],
+                    }),
+                });
+                page.off("request", requestHandler);
+                page.setRequestInterception(false);
+            } else {
+                request.continue();
+            }
+        };
+        page.on("request", requestHandler);
+
+        await submitForm(page);
+
+        // Assert server Error
+        let formFieldsErrors = await getFieldErrors(page);
+        assert.deepStrictEqual(formFieldsErrors, ["Terms of Service"]);
+    });
+
+    it("shows raw message for non-translation key field error", async function () {
+        await setInputValues(page, [
+            { name: "email", value: "john.doe@supertokens.io" },
+            { name: "password", value: "Str0ngP@ssw0rd" },
+        ]);
+
+        await page.setRequestInterception(true);
+        const requestHandler = (request) => {
+            if (request.method() === "POST" && request.url() === SIGN_IN_API) {
+                request.respond({
+                    status: 200,
+                    contentType: "application/json",
+                    headers: {
+                        "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                        "access-control-allow-credentials": "true",
+                    },
+                    body: JSON.stringify({
+                        status: "FIELD_ERROR",
+                        formFields: [
+                            {
+                                id: "email",
+                                error: "Test message!!!!",
+                            },
+                        ],
+                    }),
+                });
+                page.off("request", requestHandler);
+                page.setRequestInterception(false);
+            } else {
+                request.continue();
+            }
+        };
+        page.on("request", requestHandler);
+
+        await submitForm(page);
+
+        // Assert server Error
+        let formFieldsErrors = await getFieldErrors(page);
+        assert.deepStrictEqual(formFieldsErrors, ["Test message!!!!"]);
+    });
 });
 
 async function assertSignInRedirectTo(page, startUrl, finalUrl) {
