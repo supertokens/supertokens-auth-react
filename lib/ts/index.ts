@@ -16,6 +16,7 @@
 /*
  * Imports.
  */
+import { useTranslation } from "./components/translationContext";
 import SuperTokens from "./superTokens";
 import { TranslationStore } from "./translationHelpers";
 import { SuperTokensConfig } from "./types";
@@ -48,9 +49,13 @@ export default class SuperTokensAPIWrapper {
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[] {
         return SuperTokens.getSuperTokensRoutesForReactRouterDom(reactRouterDom);
     }
+
+    static useTranslation = useTranslation;
 }
 
 export const canHandleRoute = SuperTokensAPIWrapper.canHandleRoute;
 export const init = SuperTokensAPIWrapper.init;
 export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
 export const getSuperTokensRoutesForReactRouterDom = SuperTokens.getSuperTokensRoutesForReactRouterDom;
+
+export { useTranslation } from "./components/translationContext";
