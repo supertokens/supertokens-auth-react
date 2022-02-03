@@ -18,11 +18,11 @@ import { useContext } from "react";
 import { useTranslation } from "../../../../components/translationContext";
 import StyleContext from "../../../../styles/styleContext";
 
-type InputErrorProps = {
+type GeneralErrorProps = {
     error: string;
 };
 
-export default function GeneralError({ error }: InputErrorProps): JSX.Element {
+export default function GeneralError({ error }: GeneralErrorProps): JSX.Element {
     const styles = useContext(StyleContext);
     const t = useTranslation();
 
