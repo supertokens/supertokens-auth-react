@@ -100,7 +100,7 @@ export const EmailOrPhoneForm = withOverride(
                             setPhoneNumberInitialValue(intPhoneNumber);
                             return {
                                 status: "GENERAL_ERROR",
-                                message: t("PWLESS_EMAIL_OR_PHONE_INVALID_PHONE_FIRST_ERR"),
+                                message: t("PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR"),
                             };
                         } else {
                             return {

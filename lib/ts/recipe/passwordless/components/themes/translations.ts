@@ -39,12 +39,10 @@ export const defaultTranslationsPasswordless = {
         PWLESS_SIGN_IN_UP_FOOTER_END: "",
 
         PWLESS_SIGN_IN_UP_EMAIL_LABEL: "Email or Phone number",
-        // TODO: Consistency?
         PWLESS_SIGN_IN_UP_PHONE_LABEL: "Your Phone Number",
         PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL: "Email or Phone number",
         PWLESS_SIGN_IN_UP_CONTINUE_BUTTON: "CONTINUE",
-        // TODO: better name
-        PWLESS_EMAIL_OR_PHONE_INVALID_PHONE_FIRST_ERR: "Please enter a valid phone number with its country code.",
+        PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR: "Please enter a valid phone number with its country code.",
 
         PWLESS_LINK_SENT_RESEND_SUCCESS: "Link resent",
         PWLESS_LINK_SENT_RESEND_TITLE: "Link sent!",
@@ -59,7 +57,6 @@ export const defaultTranslationsPasswordless = {
         PWLESS_RESEND_SUCCESS_EMAIL: "Email resent",
         PWLESS_RESEND_SUCCESS_PHONE: "SMS resent",
 
-        // TODO: Formatting of time left?
         PWLESS_RESEND_BTN_DISABLED_START: "Resend in ",
         PWLESS_RESEND_BTN_DISABLED_END: "",
         PWLESS_RESEND_BTN_EMAIL: "Resend Email",

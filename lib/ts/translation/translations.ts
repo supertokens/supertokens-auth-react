@@ -1,7 +1,7 @@
 export const defaultTranslationsCommon = {
     en: {
-        // TODO: I'm not sure if we want this translated
-        BRANDING_POWERED_BY: "Powered by",
+        BRANDING_POWERED_BY_START: "Powered by ",
+        BRANDING_POWERED_BY_END: "",
         SOMETHING_WENT_WRONG_ERROR: "Something went wrong. Please try again",
     },
 };

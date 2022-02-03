@@ -30,7 +30,7 @@ export declare const defaultTranslationsPasswordless: {
         PWLESS_SIGN_IN_UP_PHONE_LABEL: string;
         PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL: string;
         PWLESS_SIGN_IN_UP_CONTINUE_BUTTON: string;
-        PWLESS_EMAIL_OR_PHONE_INVALID_PHONE_FIRST_ERR: string;
+        PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR: string;
         PWLESS_LINK_SENT_RESEND_SUCCESS: string;
         PWLESS_LINK_SENT_RESEND_TITLE: string;
         PWLESS_LINK_SENT_RESEND_DESC_START_EMAIL: string;
@@ -49,7 +49,8 @@ export declare const defaultTranslationsPasswordless: {
         PWLESS_USER_INPUT_CODE_HEADER_SUBTITLE: string;
         PWLESS_USER_INPUT_CODE_HEADER_SUBTITLE_LINK: string;
         PWLESS_USER_INPUT_CODE_INPUT_LABEL: string;
-        BRANDING_POWERED_BY: string;
+        BRANDING_POWERED_BY_START: string;
+        BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;
     };
 };

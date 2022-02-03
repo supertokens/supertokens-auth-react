@@ -294,7 +294,6 @@ export function mergeObjects<T>(obj1: T, obj2: T): T {
     return res;
 }
 
-// TODO: Reuse from website repo?
 export function normaliseCookieScopeOrThrowError(cookieScope: string): string {
     function helper(sessionScope: string): string {
         sessionScope = sessionScope.trim().toLowerCase();

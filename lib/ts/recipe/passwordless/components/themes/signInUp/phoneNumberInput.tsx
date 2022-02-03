@@ -151,7 +151,7 @@ function CountrySelectWithIcon({
                 aria-selected={isSelected}>
                 <Icon country={data.value} label={data.label} />
                 <span data-supertokens="phoneInputCountryOptionLabel" css={style.phoneInputCountryOptionLabel}>
-                    {/* TODO: translation? */ data.label}
+                    {data.label}
                 </span>
                 {data.value && (
                     <span

@@ -46,7 +46,8 @@ export declare const defaultTranslationsThirdPartyEmailPassword: {
         EMAIL_VERIFICATION_EXPIRED: string;
         EMAIL_VERIFICATION_ERROR_TITLE: string;
         EMAIL_VERIFICATION_ERROR_DESC: string;
-        BRANDING_POWERED_BY: string;
+        BRANDING_POWERED_BY_START: string;
+        BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;
         THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE: string;
         THIRD_PARTY_SIGN_IN_UP_FOOTER_START: string;
