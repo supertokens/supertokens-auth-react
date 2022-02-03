@@ -53,15 +53,20 @@ export class TranslationController implements TranslationControlEventSource {
 const CURRENT_LANGUAGE_COOKIE_NAME = "sCurrLanguage";
 
 export function saveCurrentLanguage(language: string, cookieDomain: string | undefined): void {
-    setFrontendCookie(CURRENT_LANGUAGE_COOKIE_NAME, language, cookieDomain);
+    try {
+        setFrontendCookie(CURRENT_LANGUAGE_COOKIE_NAME, language, cookieDomain);
+    } catch {
+        // This can throw if we are not in a browser
+        // Since this is just saving a preference we can safely ignore the exception
+    }
 }
 
 export function getCurrentLanguageFromCookie(): string | null {
     try {
         return getCookieValue(CURRENT_LANGUAGE_COOKIE_NAME);
     } catch {
-        // This can throw if we are in a serverless environment
-        // We can safely ignore this.
+        // This can throw if we are not in a browser
+        // Since this is just loading a preference we can safely ignore the exception
         return null;
     }
 }
