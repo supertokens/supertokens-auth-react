@@ -40,11 +40,9 @@ export const TranslationContextProvider: React.FC<{
             const fallback = translationStore[defaultLanguage] && translationStore[defaultLanguage][key];
 
             if (res === undefined) {
-                console.warn(`Missing translation ${key} from ${currentLanguage}`);
                 if (fallback !== undefined) {
                     return fallback;
                 }
-                console.warn(`Missing translation ${key} from ${defaultLanguage}`);
                 return key;
             }
 
