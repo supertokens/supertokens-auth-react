@@ -10,11 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 -   Translateable components
+-   Adds example app with Hasura
 
 ### Refactors
 
 -   Refactored some more pure components into functional
--   feature components now provide a stable modified recipe implementation as a prop instead of getter
+-   Feature components now provide a stable modified recipe implementation as a prop instead of getter
 
 ## [0.18.5] - 2022-01-27
 
