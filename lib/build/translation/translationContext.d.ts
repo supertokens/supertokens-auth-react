@@ -4,7 +4,7 @@ import {
     TranslationControlEventSource,
     TranslationFunc,
     TranslationStore,
-} from "../translationHelpers";
+} from "./translationHelpers";
 export declare const TranslationContext: React.Context<TranslationContextType>;
 export declare const useTranslation: () => TranslationFunc;
 export declare const TranslationContextProvider: React.FC<{

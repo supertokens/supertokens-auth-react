@@ -24,8 +24,8 @@ import ErrorBoundary from "./errorBoundary";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import SuperTokens from "../superTokens";
-import { TranslationContextProvider } from "./translationContext";
-import { TranslationStore } from "../translationHelpers";
+import { TranslationContextProvider } from "../translation/translationContext";
+import { TranslationStore } from "../translation/translationHelpers";
 import { mergeObjects } from "../utils";
 
 const superTokensEmotionCache = createCache({

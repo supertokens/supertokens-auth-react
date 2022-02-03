@@ -20,7 +20,7 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultValidate } from "../../../../emailpassword/validators";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",

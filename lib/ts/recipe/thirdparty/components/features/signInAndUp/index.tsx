@@ -30,7 +30,7 @@ import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
 import { getRedirectToPathFromURL } from "../../../../../utils";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { defaultTranslationsThirdParty } from "../../../translations";
+import { defaultTranslationsThirdParty } from "../../themes/translations";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {

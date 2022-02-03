@@ -29,7 +29,7 @@ import { Button } from "../../../../emailpassword/components/library";
 
 import { VerifyEmailLinkClickedThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 /*
  * Component.

@@ -16,7 +16,7 @@
 import { jsx } from "@emotion/react";
 import { useContext } from "react";
 import StyleContext from "../styles/styleContext";
-import { useTranslation } from "./translationContext";
+import { useTranslation } from "../translation/translationContext";
 
 export function SuperTokensBranding(): JSX.Element {
     const styles = useContext(StyleContext);

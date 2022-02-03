@@ -34,7 +34,7 @@ import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 import { getStyles } from "../styles";
 import { getQueryParams } from "../../../../../utils";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
     const show = getQueryParams("show");

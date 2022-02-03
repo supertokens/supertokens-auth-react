@@ -23,7 +23,7 @@ import { Label } from "../../../../emailpassword/components/library";
 import React, { useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { ResendButton } from "./resendButton";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 export const UserInputCodeForm = withOverride(
     "PasswordlessUserInputCodeForm",

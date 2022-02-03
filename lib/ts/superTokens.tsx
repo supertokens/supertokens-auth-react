@@ -33,7 +33,12 @@ import { BaseFeatureComponentMap } from "./types";
 import { SSR_ERROR } from "./constants";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { RoutingComponent } from "./components/routingComponent";
-import { saveCurrentLanguage, TranslationController, TranslationFunc, TranslationStore } from "./translationHelpers";
+import {
+    saveCurrentLanguage,
+    TranslationController,
+    TranslationFunc,
+    TranslationStore,
+} from "./translation/translationHelpers";
 
 /*
  * Class.

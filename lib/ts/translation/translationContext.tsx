@@ -6,7 +6,7 @@ import {
     TranslationEventHandler,
     TranslationFunc,
     TranslationStore,
-} from "../translationHelpers";
+} from "./translationHelpers";
 import { mergeObjects } from "../utils";
 
 const errCB = () => {

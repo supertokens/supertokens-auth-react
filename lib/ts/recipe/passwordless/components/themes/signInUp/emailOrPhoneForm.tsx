@@ -21,7 +21,7 @@ import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultEmailValidator, defaultValidate } from "../../../../emailpassword/validators";
 import { useState } from "react";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 export const EmailOrPhoneForm = withOverride(
     "PasswordlessEmailOrPhoneForm",

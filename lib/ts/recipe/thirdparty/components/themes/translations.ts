@@ -1,5 +1,5 @@
-import { defaultTranslationsCommon } from "../../components/translations";
-import { defaultTranslationsEmailVerification } from "../emailverification/translations";
+import { defaultTranslationsCommon } from "../../../../translation/translations";
+import { defaultTranslationsEmailVerification } from "../../../emailverification/components/themes/translations";
 
 export const defaultTranslationsThirdParty = {
     en: {

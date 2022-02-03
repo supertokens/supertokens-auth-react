@@ -22,7 +22,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { CloseTabScreenProps } from "../../../types";
 import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 const PasswordlessCloseTabScreen: React.FC<CloseTabScreenProps> = () => {
     const styles = useContext(StyleContext);

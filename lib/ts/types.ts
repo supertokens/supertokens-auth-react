@@ -18,7 +18,7 @@ import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
-import { TranslationFunc, TranslationStore } from "./translationHelpers";
+import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 
 /*
  * Recipe Module Manager Config Types.

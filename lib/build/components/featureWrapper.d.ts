@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { TranslationStore } from "../translationHelpers";
+import { TranslationStore } from "../translation/translationHelpers";
 declare type FeatureWrapperProps = {
     children: JSX.Element;
     useShadowDom?: boolean;

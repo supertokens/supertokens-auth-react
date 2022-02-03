@@ -25,7 +25,7 @@ import { SubmitNewPasswordProps, SubmitNewPasswordStatus } from "../../../types"
 import { FormRow, Button } from "../../library";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props) => {
     const styles = useContext(StyleContext);

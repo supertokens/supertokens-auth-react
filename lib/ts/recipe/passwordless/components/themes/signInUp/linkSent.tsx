@@ -27,7 +27,7 @@ import { LinkSentThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { ResendButton } from "./resendButton";
 import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 
 const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {

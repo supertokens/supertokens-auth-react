@@ -29,7 +29,7 @@ import {} from "../../../types";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { defaultTranslationsPasswordless } from "../../../translations";
+import { defaultTranslationsPasswordless } from "../../themes/translations";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 

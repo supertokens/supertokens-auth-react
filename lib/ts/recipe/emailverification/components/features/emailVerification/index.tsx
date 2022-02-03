@@ -28,7 +28,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { SessionContextType, SessionContext } from "../../../../session";
-import { defaultTranslationsEmailVerification } from "../../../translations";
+import { defaultTranslationsEmailVerification } from "../../themes/translations";
 
 type Prop = FeatureBaseProps & { recipe: Recipe };
 

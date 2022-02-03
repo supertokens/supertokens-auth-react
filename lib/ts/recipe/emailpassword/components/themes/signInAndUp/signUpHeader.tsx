@@ -21,7 +21,7 @@ import { jsx } from "@emotion/react";
 import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 export const SignUpHeader = withOverride(
     "EmailPasswordSignUpHeader",

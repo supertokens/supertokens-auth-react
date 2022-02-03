@@ -21,7 +21,7 @@
 import { jsx } from "@emotion/react";
 
 import { useContext } from "react";
-import { useTranslation } from "../../../../components/translationContext";
+import { useTranslation } from "../../../../translation/translationContext";
 import StyleContext from "../../../../styles/styleContext";
 /*
  * Props.

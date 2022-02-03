@@ -19,7 +19,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { UserInputCodeFormFooterProps } from "../../../types";
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 export const UserInputCodeFormFooter = withOverride(
     "PasswordlessUserInputCodeFormFooter",

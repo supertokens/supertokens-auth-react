@@ -27,7 +27,7 @@ import { getQueryParams } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { defaultTranslationsEmailPassword } from "../../../translations";
+import { defaultTranslationsEmailPassword } from "../../themes/translations";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;

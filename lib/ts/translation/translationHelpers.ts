@@ -1,4 +1,4 @@
-import { getCookieValue, setFrontendCookie } from "./utils";
+import { getCookieValue, setFrontendCookie } from "../utils";
 
 // language -> key -> copy
 export type TranslationStore = Record<string, Record<string, string>>;

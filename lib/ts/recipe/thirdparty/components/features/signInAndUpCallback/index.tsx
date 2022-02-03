@@ -29,7 +29,7 @@ import {} from "../../../types";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { defaultTranslationsThirdParty } from "../../../translations";
+import { defaultTranslationsThirdParty } from "../../themes/translations";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 

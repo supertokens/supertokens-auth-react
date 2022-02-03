@@ -4,7 +4,7 @@ import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
-import { TranslationFunc, TranslationStore } from "./translationHelpers";
+import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction<any, any, any, any>[];

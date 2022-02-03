@@ -24,7 +24,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import SignInAndUpTheme from "../../themes/signInAndUp";
-import { defaultTranslationsThirdPartyEmailPassword } from "../../../translations";
+import { defaultTranslationsThirdPartyEmailPassword } from "../../themes/translations";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;

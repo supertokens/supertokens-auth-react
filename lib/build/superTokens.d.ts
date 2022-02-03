@@ -3,7 +3,7 @@ import RecipeModule from "./recipe/recipeModule";
 import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensConfig } from "./types";
 import NormalisedURLPath from "./normalisedURLPath";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
-import { TranslationController, TranslationFunc, TranslationStore } from "./translationHelpers";
+import { TranslationController, TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 export default class SuperTokens {
     private static instance?;
     private static reactRouterDom?;

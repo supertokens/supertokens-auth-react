@@ -28,7 +28,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { FeatureBaseProps } from "../../../../../types";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
 import Session from "../../../../session";
-import { defaultTranslationsPasswordless } from "../../../translations";
+import { defaultTranslationsPasswordless } from "../../themes/translations";
 
 type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
 

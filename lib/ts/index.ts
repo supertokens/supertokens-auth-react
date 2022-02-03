@@ -16,9 +16,9 @@
 /*
  * Imports.
  */
-import { useTranslation } from "./components/translationContext";
+import { useTranslation } from "./translation/translationContext";
 import SuperTokens from "./superTokens";
-import { TranslationStore } from "./translationHelpers";
+import { TranslationStore } from "./translation/translationHelpers";
 import { SuperTokensConfig } from "./types";
 
 /*
@@ -58,4 +58,4 @@ export const init = SuperTokensAPIWrapper.init;
 export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
 export const getSuperTokensRoutesForReactRouterDom = SuperTokens.getSuperTokensRoutesForReactRouterDom;
 
-export { useTranslation } from "./components/translationContext";
+export { useTranslation } from "./translation/translationContext";

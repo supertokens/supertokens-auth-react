@@ -19,7 +19,7 @@ import { SignInUpEmailFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultValidate } from "../../../../emailpassword/validators";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 export const EmailForm = withOverride(
     "PasswordlessEmailForm",

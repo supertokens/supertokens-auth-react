@@ -25,7 +25,7 @@ import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
 import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
 import { SendVerifyEmailThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 
 export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProps> = (props) => {

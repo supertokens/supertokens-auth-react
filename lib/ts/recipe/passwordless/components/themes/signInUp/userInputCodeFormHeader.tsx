@@ -18,7 +18,7 @@ import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { UserInputCodeFormHeaderProps } from "../../../types";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 export const UserInputCodeFormHeader = withOverride(
     "PasswordlessUserInputCodeFormHeader",

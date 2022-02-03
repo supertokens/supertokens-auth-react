@@ -24,7 +24,7 @@ import { EnterEmailProps, EnterEmailStatus } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { useTranslation } from "../../../../../components/translationContext";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     const styles = useContext(StyleContext);
