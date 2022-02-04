@@ -14,6 +14,7 @@ import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 import React from "react";
 import SetPassword from "./SetPassword";
+import CustomSignUp from "./CustomSignUp";
 
 /* unique password which will act as a place holder password 
 for this user until they have actually set a password. This will also indicate to the 
@@ -48,28 +49,20 @@ SuperTokens.init({
                     // this is called after sign up / in and after email is verified
                     let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
                     if (accessTokenPayload.isUsingFakePassword) {
-                        return "/set-password"; // we ask the user to set their password now
+                        return "/set-password?show=signup"; // we ask the user to set their password now
                     }
                 }
             },
             override: {
                 components: {
-                    EmailPasswordSignUpForm: ({ DefaultComponent, ...props }) => {
-                        React.useEffect(() => {
-                            // here we hide the password field..
-                            document
-                                .querySelector("#supertokens-root")
-                                .shadowRoot.querySelector("form > div:nth-child(2)").style.display = "none";
-
-                            // we set the fake password in the password field so that the UI will
-                            // call the sign up API
-                            document
-                                .querySelector("#supertokens-root")
-                                .shadowRoot.querySelector("form > div:nth-child(2) > div > div > input").value =
-                                FAKE_PASSWORD;
-                        }, []);
-                        return <DefaultComponent {...props} />;
+                    ThirdPartySignInAndUpProvidersForm: ({ DefaultComponent, ...props }) => {
+                        if (window.location.pathname === "/set-password") {
+                            return null;
+                        } else {
+                            return <DefaultComponent {...props} />;
+                        }
                     },
+                    EmailPasswordSignUpForm: CustomSignUp,
                 },
             },
             emailVerificationFeature: {

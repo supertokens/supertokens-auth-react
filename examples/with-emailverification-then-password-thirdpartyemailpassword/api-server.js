@@ -58,42 +58,71 @@ supertokens.init({
                             return oI.emailPasswordSignInPOST(input);
                         },
                         emailPasswordSignUpPOST: async function (input) {
-                            // copied from https://github.com/supertokens/supertokens-node/blob/master/lib/ts/recipe/emailpassword/api/implementation.ts#L137
-                            let email = input.formFields.filter((f) => f.id === "email")[0].value;
-                            let password = input.formFields.filter((f) => f.id === "password")[0].value;
+                            let session = await Session.getSession(input.options.req, input.options.res, {
+                                sessionRequired: false,
+                            });
+                            if (session === undefined) {
+                                // copied from https://github.com/supertokens/supertokens-node/blob/master/lib/ts/recipe/emailpassword/api/implementation.ts#L137
+                                let email = input.formFields.filter((f) => f.id === "email")[0].value;
+                                let password = input.formFields.filter((f) => f.id === "password")[0].value;
 
-                            let response = await input.options.recipeImplementation.signUp({ email, password });
-                            if (response.status === "EMAIL_ALREADY_EXISTS_ERROR") {
-                                // if the input password is the fake password, and that's
-                                // what's in the db too, then we shall treat this as a success,
-                                // but unverify their email.
-                                let signInResponse = await ThirdPartyEmailPassword.signIn(email, FAKE_PASSWORD);
-                                if (signInResponse.status === "WRONG_CREDENTIALS_ERROR") {
-                                    return response;
-                                } else {
-                                    await ThirdPartyEmailPassword.unverifyEmail(signInResponse.user.id);
-                                    response = {
-                                        status: "OK",
-                                        user: signInResponse.user,
-                                    };
+                                let response = await input.options.recipeImplementation.signUp({ email, password });
+                                if (response.status === "EMAIL_ALREADY_EXISTS_ERROR") {
+                                    // if the input password is the fake password, and that's
+                                    // what's in the db too, then we shall treat this as a success,
+                                    // but unverify their email.
+                                    let signInResponse = await ThirdPartyEmailPassword.signIn(email, FAKE_PASSWORD);
+                                    if (signInResponse.status === "WRONG_CREDENTIALS_ERROR") {
+                                        return response;
+                                    } else {
+                                        await ThirdPartyEmailPassword.unverifyEmail(signInResponse.user.id);
+                                        response = {
+                                            status: "OK",
+                                            user: signInResponse.user,
+                                        };
+                                    }
                                 }
-                            }
-                            let user = response.user;
+                                let user = response.user;
 
-                            // we have just created a user with the fake password.
-                            // so we mark their session as unusable by the APIs
-                            await Session.createNewSession(
-                                input.options.res,
-                                user.id,
-                                {
-                                    isUsingFakePassword: true,
-                                },
-                                {}
-                            );
-                            return {
-                                status: "OK",
-                                user,
-                            };
+                                // we have just created a user with the fake password.
+                                // so we mark their session as unusable by the APIs
+                                await Session.createNewSession(
+                                    input.options.res,
+                                    user.id,
+                                    {
+                                        isUsingFakePassword: true,
+                                    },
+                                    {}
+                                );
+                                return {
+                                    status: "OK",
+                                    user,
+                                };
+                            } else {
+                                // session exists.. so the user is trying to change their password now
+                                let userId = session.getUserId();
+                                let password = input.formFields.filter((f) => f.id === "password")[0].value;
+
+                                if (password === FAKE_PASSWORD) {
+                                    throw new Error("User should not use this password");
+                                }
+
+                                // now we modify the user's password to the new password + change the session to set isUsingFakePassword to false
+                                await ThirdPartyEmailPassword.updateEmailOrPassword({
+                                    userId,
+                                    password,
+                                });
+
+                                await session.updateAccessTokenPayload({
+                                    isUsingFakePassword: false,
+                                });
+
+                                let user = await ThirdPartyEmailPassword.getUserById(userId);
+                                return {
+                                    status: "OK",
+                                    user,
+                                };
+                            }
                         },
                     };
                 },
@@ -152,6 +181,8 @@ app.get(
             // this means that the user has not changed their password after signing up yet.
             // so we don't allow them access to the API
             return res.send(401);
+        } else {
+            next();
         }
     },
     async (req, res) => {
