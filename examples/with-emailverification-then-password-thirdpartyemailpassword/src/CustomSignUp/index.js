@@ -1,4 +1,3 @@
-import Session from "supertokens-auth-react/recipe/session";
 import React from "react";
 import { FAKE_PASSWORD } from "../App";
 
@@ -22,6 +21,10 @@ export default function CustomSignUp({ DefaultComponent, ...props }) {
 
             // we hide everything except the password input component,
             // and we set the email to some random email.
+
+            /* This is not the recommended way to build the set password form.
+            But I did it here just to show what's possible. Instead, you should build your
+            own form. */
             document.querySelector("#supertokens-root").shadowRoot.querySelector("form > div").style.display = "none";
 
             // we hide all the unnecessary UI components
@@ -47,15 +50,6 @@ export default function CustomSignUp({ DefaultComponent, ...props }) {
             document
                 .querySelector("#supertokens-root")
                 .shadowRoot.querySelector("form > div > div:nth-child(2) > div > input").value = "a@b.com";
-        }
-    }, []);
-    React.useEffect(() => {
-        if (window.location.pathname === "/set-password") {
-            Session.getAccessTokenPayloadSecurely().catch((err) => {
-                if (err.message === "No session exists") {
-                    window.location.href = "/auth";
-                }
-            });
         }
     }, []);
     return <DefaultComponent {...props} />;

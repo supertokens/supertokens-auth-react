@@ -1,6 +1,6 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-# SuperTokens ThirdPartyEmailPassword Demo app
+# SuperTokens ThirdPartyEmailPassword Demo app with password setting post email verification
 
 This demo app demonstrates the following use cases:
 
@@ -9,6 +9,15 @@ This demo app demonstrates the following use cases:
 -   Forgot password flow
 -   Logout
 -   Session management & Calling APIs
+-   During email / password sign up, we first verify the email and then we ask the user to set their password
+
+## Required customizations
+
+### The overall approach:
+
+-   On first sign up via email, we set a fake, random password against the user's info. This is some unguessable string but is common for all users.
+-   The above step allows us to create a new session for the user and go through the email verification flow as usual.
+-   Post email verification, we show a UI for the user to set their own password and then call an API which updates their fake password with the new one.
 
 ## Project setup
 
