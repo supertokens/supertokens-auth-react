@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 -   Adds example app with Hasura
+-   Adds example app with thirdpartyemailpassword showcasing setting password after email verification
 
 ## [0.18.5] - 2022-01-27
 
