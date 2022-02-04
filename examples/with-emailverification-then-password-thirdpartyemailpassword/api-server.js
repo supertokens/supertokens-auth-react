@@ -157,7 +157,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: websiteDomain, // TODO: Change to your app's website domain
+        origin: websiteDomain,
         allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
         methods: ["GET", "PUT", "POST", "DELETE"],
         credentials: true,
