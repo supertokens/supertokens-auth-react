@@ -13,20 +13,91 @@ const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
 
+/* unique password which will act as a place holder password 
+for this user until they have actually set a password. This will also indicate to the 
+other backend APIs that the user hasn't fully signed up yet. */
+const FAKE_PASSWORD = "fakeUniqueSuperTokensRandomPass-sdfa452sadf342-24352";
+
 supertokens.init({
     framework: "express",
     supertokens: {
-        // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
         connectionURI: "https://try.supertokens.com",
-        apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
-        appName: "SuperTokens Demo App", // TODO: Your app name
-        apiDomain, // TODO: Change to your app's API domain
-        websiteDomain, // TODO: Change to your app's website domain
+        appName: "SuperTokens Demo App",
+        apiDomain,
+        websiteDomain,
     },
     recipeList: [
         ThirdPartyEmailPassword.init({
+            override: {
+                apis: (oI) => {
+                    return {
+                        ...oI,
+                        emailExistsGET: async function (input) {
+                            let email = input.email;
+                            let signInResponse = await ThirdPartyEmailPassword.signIn(email, FAKE_PASSWORD);
+                            if (signInResponse.status === "OK") {
+                                // this means that the user had signed up, but not set their password.
+                                // so we the email doesn't yet exist for sign in purposes
+                                return {
+                                    status: "OK",
+                                    exists: false,
+                                };
+                            } else {
+                                return oI.emailExistsGET(input);
+                            }
+                        },
+                        emailPasswordSignInPOST: async function (input) {
+                            let password = input.formFields.filter((i) => i.id === "password")[0].value;
+                            if (password === FAKE_PASSWORD) {
+                                return {
+                                    status: "WRONG_CREDENTIALS_ERROR",
+                                };
+                            }
+                            return oI.emailPasswordSignInPOST(input);
+                        },
+                        emailPasswordSignUpPOST: async function (input) {
+                            // copied from https://github.com/supertokens/supertokens-node/blob/master/lib/ts/recipe/emailpassword/api/implementation.ts#L137
+                            let email = input.formFields.filter((f) => f.id === "email")[0].value;
+                            let password = input.formFields.filter((f) => f.id === "password")[0].value;
+
+                            let response = await input.options.recipeImplementation.signUp({ email, password });
+                            if (response.status === "EMAIL_ALREADY_EXISTS_ERROR") {
+                                // if the input password is the fake password, and that's
+                                // what's in the db too, then we shall treat this as a success,
+                                // but unverify their email.
+                                let signInResponse = await ThirdPartyEmailPassword.signIn(email, FAKE_PASSWORD);
+                                if (signInResponse.status === "WRONG_CREDENTIALS_ERROR") {
+                                    return response;
+                                } else {
+                                    await ThirdPartyEmailPassword.unverifyEmail(signInResponse.user.id);
+                                    response = {
+                                        status: "OK",
+                                        user: signInResponse.user,
+                                    };
+                                }
+                            }
+                            let user = response.user;
+
+                            // we have just created a user with the fake password.
+                            // so we mark their session as unusable by the APIs
+                            await Session.createNewSession(
+                                input.options.res,
+                                user.id,
+                                {
+                                    isUsingFakePassword: true,
+                                },
+                                {}
+                            );
+                            return {
+                                status: "OK",
+                                user,
+                            };
+                        },
+                    };
+                },
+            },
             providers: [
                 // We have provided you with development keys which you can use for testing.
                 // IMPORTANT: Please replace them with your own OAuth keys for production use.
@@ -72,14 +143,26 @@ app.use(
 app.use(middleware());
 
 // custom API that requires session verification
-app.get("/sessioninfo", verifySession(), async (req, res) => {
-    let session = req.session;
-    res.send({
-        sessionHandle: session.getHandle(),
-        userId: session.getUserId(),
-        accessTokenPayload: session.getAccessTokenPayload(),
-    });
-});
+app.get(
+    "/sessioninfo",
+    verifySession(),
+    async (req, res, next) => {
+        let accessTokenPayload = req.session.getAccessTokenPayload();
+        if (accessTokenPayload.isUsingFakePassword) {
+            // this means that the user has not changed their password after signing up yet.
+            // so we don't allow them access to the API
+            return res.send(401);
+        }
+    },
+    async (req, res) => {
+        let session = req.session;
+        res.send({
+            sessionHandle: session.getHandle(),
+            userId: session.getUserId(),
+            accessTokenPayload: session.getAccessTokenPayload(),
+        });
+    }
+);
 
 app.use(errorHandler());
 
