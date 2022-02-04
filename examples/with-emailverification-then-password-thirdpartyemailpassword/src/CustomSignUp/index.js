@@ -1,8 +1,11 @@
+import Session from "supertokens-auth-react/recipe/session";
 import React from "react";
 import { FAKE_PASSWORD } from "../App";
 
 export default function CustomSignUp({ DefaultComponent, ...props }) {
-    React.useEffect(() => {
+    // we use useLayoutEffect instead of useEffect because that prevent the UI glitch that
+    // happens cause of the JS manipulation
+    React.useLayoutEffect(() => {
         if (window.location.pathname === "/auth") {
             // here we hide the password field..
             document
@@ -44,6 +47,15 @@ export default function CustomSignUp({ DefaultComponent, ...props }) {
             document
                 .querySelector("#supertokens-root")
                 .shadowRoot.querySelector("form > div > div:nth-child(2) > div > input").value = "a@b.com";
+        }
+    }, []);
+    React.useEffect(() => {
+        if (window.location.pathname === "/set-password") {
+            Session.getAccessTokenPayloadSecurely().catch((err) => {
+                if (err.message === "No session exists") {
+                    window.location.href = "/auth";
+                }
+            });
         }
     }, []);
     return <DefaultComponent {...props} />;
