@@ -55,6 +55,8 @@ export default class SuperTokensAPIWrapper {
 
 export const canHandleRoute = SuperTokensAPIWrapper.canHandleRoute;
 export const init = SuperTokensAPIWrapper.init;
+export const changeLanguage = SuperTokensAPIWrapper.changeLanguage;
+export const loadTranslation = SuperTokensAPIWrapper.loadTranslation;
 export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
 export const getSuperTokensRoutesForReactRouterDom = SuperTokens.getSuperTokensRoutesForReactRouterDom;
 

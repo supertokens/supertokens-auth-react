@@ -13,6 +13,8 @@ export default class SuperTokensAPIWrapper {
 }
 export declare const canHandleRoute: typeof SuperTokensAPIWrapper.canHandleRoute;
 export declare const init: typeof SuperTokensAPIWrapper.init;
+export declare const changeLanguage: typeof SuperTokensAPIWrapper.changeLanguage;
+export declare const loadTranslation: typeof SuperTokensAPIWrapper.loadTranslation;
 export declare const getRoutingComponent: typeof SuperTokensAPIWrapper.getRoutingComponent;
 export declare const getSuperTokensRoutesForReactRouterDom: typeof SuperTokens.getSuperTokensRoutesForReactRouterDom;
 export { useTranslation } from "./translation/translationContext";
