@@ -39,6 +39,7 @@ import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import OverrideableBuilder from "supertokens-js-override";
+import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -55,7 +56,13 @@ export default class EmailVerification extends RecipeModule<
         super(normaliseEmailVerificationFeature(config));
 
         {
-            const builder = new OverrideableBuilder(RecipeImplementation(this.config));
+            const webJsImplementation = new WebJSEmailVerification({
+                appInfo: config.appInfo,
+                recipeId: config.recipeId,
+                preAPIHook: config.preAPIHook,
+            });
+
+            const builder = new OverrideableBuilder(RecipeImplementation(webJsImplementation));
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
     }
@@ -129,9 +136,8 @@ export default class EmailVerification extends RecipeModule<
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "VERIFY_EMAIL") {
             const verifyEmailPath = new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(verifyEmailPath).getAsStringDangerous()}?rid=${
-                this.config.recipeId
-            }`;
+            return `${this.config.appInfo.websiteBasePath.appendPath(verifyEmailPath).getAsStringDangerous()}?rid=${this.config.recipeId
+                }`;
         } else {
             return "/";
         }

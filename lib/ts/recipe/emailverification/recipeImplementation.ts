@@ -1,12 +1,7 @@
 import { RecipeInterface, NormalisedConfig } from "./types";
 import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
 
-export default function getRecipeImplementation(config: NormalisedConfig): RecipeInterface {
-    const webJsImplementation = new WebJSEmailVerification({
-        appInfo: config.appInfo,
-        recipeId: config.recipeId,
-        preAPIHook: config.preAPIHook,
-    });
+export default function getRecipeImplementation(webJsImplementation: WebJSEmailVerification): RecipeInterface {
     return {
         verifyEmail: async function (input: { token: string; config: NormalisedConfig; userContext: any }): Promise<{
             status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
