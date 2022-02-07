@@ -17,7 +17,14 @@ export default class Wrapper {
         import("./types").NormalisedConfig
     >;
     static signOut(): Promise<void>;
-    static isEmailVerified(userContext?: any): Promise<boolean>;
+    static isEmailVerified(userContext?: any): Promise<{
+        status: "OK";
+        isVerified: boolean;
+        networkResponse: {
+            jsonBody: any;
+            fetchResponse: Response;
+        };
+    }>;
     static redirectToAuth(
         input?:
             | ("signin" | "signup")

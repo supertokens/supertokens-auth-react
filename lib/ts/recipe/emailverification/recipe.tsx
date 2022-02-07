@@ -112,7 +112,14 @@ export default class EmailVerification extends RecipeModule<
         );
     };
 
-    async isEmailVerified(userContext: any): Promise<boolean> {
+    async isEmailVerified(userContext: any): Promise<{
+        status: "OK";
+        isVerified: boolean;
+        networkResponse: {
+            jsonBody: any;
+            fetchResponse: Response;
+        };
+    }> {
         return await this.recipeImpl.isEmailVerified({
             config: this.config,
             userContext,

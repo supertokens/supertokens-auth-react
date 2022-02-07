@@ -41,7 +41,14 @@ export default class Wrapper {
         return ThirdParty.getInstanceOrThrow().signOut();
     }
 
-    static async isEmailVerified(userContext?: any): Promise<boolean> {
+    static async isEmailVerified(userContext?: any): Promise<{
+        status: "OK";
+        isVerified: boolean;
+        networkResponse: {
+            jsonBody: any;
+            fetchResponse: Response;
+        };
+    }> {
         userContext = userContext === undefined ? {} : userContext;
         return ThirdParty.getInstanceOrThrow().emailVerification.isEmailVerified(userContext);
     }

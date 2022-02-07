@@ -59,7 +59,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
             let isEmailVerified = true;
             try {
                 // TODO NEMI: handle user context for pre built UI
-                isEmailVerified = await this.props.recipe.emailVerification.isEmailVerified({});
+                isEmailVerified = (await this.props.recipe.emailVerification.isEmailVerified({})).isVerified;
             } catch (ignored) {}
             if (!isEmailVerified) {
                 await this.props.recipe.savePostEmailVerificationSuccessRedirectState({

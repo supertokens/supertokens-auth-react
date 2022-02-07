@@ -76,9 +76,24 @@ export declare type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
 export declare type RecipeInterface = {
     verifyEmail: (input: { token: string; config: NormalisedConfig; userContext: any }) => Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+        networkResponse: {
+            jsonBody: any;
+            fetchResponse: Response;
+        };
     }>;
     sendVerificationEmail: (input: { config: NormalisedConfig; userContext: any }) => Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+        networkResponse: {
+            jsonBody: any;
+            fetchResponse: Response;
+        };
     }>;
-    isEmailVerified: (input: { config: NormalisedConfig; userContext: any }) => Promise<boolean>;
+    isEmailVerified: (input: { config: NormalisedConfig; userContext: any }) => Promise<{
+        status: "OK";
+        isVerified: boolean;
+        networkResponse: {
+            jsonBody: any;
+            fetchResponse: Response;
+        };
+    }>;
 };

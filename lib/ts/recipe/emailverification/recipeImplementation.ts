@@ -8,11 +8,13 @@ export default function getRecipeImplementation(config: NormalisedConfig): Recip
         preAPIHook: config.preAPIHook,
     });
     return {
-        verifyEmail: async function (input: {
-            token: string;
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<{ status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK" }> {
+        verifyEmail: async function (input: { token: string; config: NormalisedConfig; userContext: any }): Promise<{
+            status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+            networkResponse: {
+                jsonBody: any;
+                fetchResponse: Response;
+            };
+        }> {
             const response = await webJsImplementation.recipeImplementation.verifyEmail({
                 token: input.token,
                 config: webJsImplementation.config,
@@ -28,10 +30,13 @@ export default function getRecipeImplementation(config: NormalisedConfig): Recip
             return response;
         },
 
-        sendVerificationEmail: async function (input: {
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<{ status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK" }> {
+        sendVerificationEmail: async function (input: { config: NormalisedConfig; userContext: any }): Promise<{
+            status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+            networkResponse: {
+                jsonBody: any;
+                fetchResponse: Response;
+            };
+        }> {
             const response = await webJsImplementation.recipeImplementation.sendVerificationEmail({
                 config: webJsImplementation.config,
                 userContext: input.userContext,
@@ -46,13 +51,20 @@ export default function getRecipeImplementation(config: NormalisedConfig): Recip
             return response;
         },
 
-        isEmailVerified: async function (input: { config: NormalisedConfig; userContext: any }): Promise<boolean> {
+        isEmailVerified: async function (input: { config: NormalisedConfig; userContext: any }): Promise<{
+            status: "OK";
+            isVerified: boolean;
+            networkResponse: {
+                jsonBody: any;
+                fetchResponse: Response;
+            };
+        }> {
             const response = await webJsImplementation.recipeImplementation.isEmailVerified({
                 config: webJsImplementation.config,
                 userContext: input.userContext,
             });
 
-            return response.isVerified;
+            return response;
         },
     };
 }
