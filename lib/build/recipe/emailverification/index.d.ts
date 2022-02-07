@@ -13,7 +13,7 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static isEmailVerified(): Promise<boolean>;
+    static isEmailVerified(userContext?: any): Promise<boolean>;
 }
 declare const init: typeof Wrapper.init;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;

@@ -40,7 +40,8 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
             if (doesSessionExist && emailVerificationMode === "REQUIRED") {
                 let isEmailVerified;
                 try {
-                    isEmailVerified = await propsRef.current.recipe.isEmailVerified();
+                    // TODO NEMI: handle user context for pre built UI
+                    isEmailVerified = await propsRef.current.recipe.isEmailVerified({});
                 } catch (_) {
                     /* if there is an error, we assume that the email is verified
                      * so that the user can see the content on the page...

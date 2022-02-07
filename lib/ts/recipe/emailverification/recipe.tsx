@@ -30,7 +30,7 @@ import {
     RecipeInterface,
 } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
-import NormalisedURLPath from "../../normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
 import { matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailVerificationFeature } from "./utils";
@@ -55,7 +55,7 @@ export default class EmailVerification extends RecipeModule<
         super(normaliseEmailVerificationFeature(config));
 
         {
-            const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
+            const builder = new OverrideableBuilder(RecipeImplementation(this.config));
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
     }
@@ -112,9 +112,10 @@ export default class EmailVerification extends RecipeModule<
         );
     };
 
-    async isEmailVerified(): Promise<boolean> {
+    async isEmailVerified(userContext: any): Promise<boolean> {
         return await this.recipeImpl.isEmailVerified({
             config: this.config,
+            userContext,
         });
     }
 

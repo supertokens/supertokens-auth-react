@@ -108,11 +108,13 @@ export type RecipeInterface = {
     verifyEmail: (input: {
         token: string;
         config: NormalisedConfig;
+        userContext: any;
     }) => Promise<{ status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK" }>;
 
     sendVerificationEmail: (input: {
         config: NormalisedConfig;
+        userContext: any;
     }) => Promise<{ status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK" }>;
 
-    isEmailVerified: (input: { config: NormalisedConfig }) => Promise<boolean>;
+    isEmailVerified: (input: { config: NormalisedConfig; userContext: any }) => Promise<boolean>;
 };

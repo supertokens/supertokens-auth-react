@@ -30,8 +30,10 @@ export default class Wrapper {
         return EmailVerificationRecipe.init(config);
     }
 
-    static async isEmailVerified(): Promise<boolean> {
-        return EmailVerificationRecipe.getInstanceOrThrow().isEmailVerified();
+    static async isEmailVerified(userContext?: any): Promise<boolean> {
+        userContext = userContext === undefined ? {} : userContext;
+
+        return EmailVerificationRecipe.getInstanceOrThrow().isEmailVerified(userContext);
     }
 }
 

@@ -30,8 +30,9 @@ export default class Wrapper {
         return ThirdPartyEmailPassword.getInstanceOrThrow().signOut();
     }
 
-    static async isEmailVerified(): Promise<boolean> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified();
+    static async isEmailVerified(userContext?: any): Promise<boolean> {
+        userContext = userContext === undefined ? {} : userContext;
+        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified(userContext);
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"

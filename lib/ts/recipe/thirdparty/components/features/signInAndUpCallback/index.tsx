@@ -71,7 +71,8 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
                     let isEmailVerified = true;
                     try {
-                        isEmailVerified = await this.props.recipe.emailVerification.isEmailVerified();
+                        // TODO NEMI: handle user context for pre built UI
+                        isEmailVerified = await this.props.recipe.emailVerification.isEmailVerified({});
                     } catch (ignored) {}
                     if (!isEmailVerified) {
                         await this.props.recipe.savePostEmailVerificationSuccessRedirectState({

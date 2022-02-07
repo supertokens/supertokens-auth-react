@@ -1,6 +1,6 @@
 import RecipeModule from "./recipe/recipeModule";
-import NormalisedURLPath from "./normalisedURLPath";
-import NormalisedURLDomain from "./normalisedURLDomain";
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+import NormalisedURLDomain from "supertokens-web-js/lib/build/normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";

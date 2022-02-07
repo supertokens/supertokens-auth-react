@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import { supported_fdi } from "./version";
 import { NormalisedAppInfo, PostAPIHookFunction, PreAPIHookFunction } from "./types";
 

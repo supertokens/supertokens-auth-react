@@ -1,3 +1,2 @@
-import { RecipeInterface } from "./types";
-import { NormalisedAppInfo } from "../../types";
-export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface;
+import { RecipeInterface, NormalisedConfig } from "./types";
+export default function getRecipeImplementation(config: NormalisedConfig): RecipeInterface;

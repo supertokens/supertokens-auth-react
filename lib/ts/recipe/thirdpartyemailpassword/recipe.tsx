@@ -31,7 +31,7 @@ import {
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
-import NormalisedURLPath from "../../normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";

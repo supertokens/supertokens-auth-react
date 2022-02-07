@@ -26,6 +26,6 @@ export default class EmailVerification extends RecipeModule<
     static getInstanceOrThrow(): EmailVerification;
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
     getFeatureComponent: (_: "emailverification", props: any) => JSX.Element;
-    isEmailVerified(): Promise<boolean>;
+    isEmailVerified(userContext: any): Promise<boolean>;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
 }
