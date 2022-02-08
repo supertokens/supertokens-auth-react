@@ -10,6 +10,7 @@ let Passwordless = require("supertokens-node/recipe/passwordless");
 // let Twilio = require("twilio");
 let axios = require("axios").default;
 let { mailTransporter, getEmailBody } = require("./mailer");
+require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
