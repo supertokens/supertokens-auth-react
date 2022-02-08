@@ -6,10 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## [unreleased]
-
-### Added
-
 -   passwordless demo app
+-   Adds example app with Hasura
+-   Adds example app with thirdpartyemailpassword showcasing setting password after email verification
+
+## [0.18.5] - 2022-01-27
+
+### Fixes
+
+-   Added `defaultCountry` to passwordless config input in the `EMAIL_OR_PHONE` case
+
+-   add workflow to verify if pr title follows conventional commits
 
 ## [0.18.4] - 2022-01-24
 
