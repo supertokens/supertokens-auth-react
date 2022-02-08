@@ -1,2 +1,3 @@
-import { RecipeInterface, NormalisedConfig } from "./types";
-export default function getRecipeImplementation(config: NormalisedConfig): RecipeInterface;
+import { RecipeInterface } from "./types";
+import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
+export default function getRecipeImplementation(webJsImplementation: WebJSEmailVerification): RecipeInterface;

@@ -13,9 +13,23 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static isEmailVerified(userContext?: any): Promise<{
+    static isEmailVerified(input?: { userContext?: any }): Promise<{
         status: "OK";
         isVerified: boolean;
+        networkResponse: {
+            jsonBody: any;
+            fetchResponse: Response;
+        };
+    }>;
+    static verifyEmail(input: { token: string; userContext?: any }): Promise<{
+        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+        networkResponse: {
+            jsonBody: any;
+            fetchResponse: Response;
+        };
+    }>;
+    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         networkResponse: {
             jsonBody: any;
             fetchResponse: Response;

@@ -30,7 +30,7 @@ export default class Wrapper {
         return EmailVerificationRecipe.init(config);
     }
 
-    static async isEmailVerified(userContext?: any): Promise<{
+    static async isEmailVerified(input?: { userContext?: any }): Promise<{
         status: "OK";
         isVerified: boolean;
         networkResponse: {
@@ -38,9 +38,48 @@ export default class Wrapper {
             fetchResponse: Response;
         };
     }> {
-        userContext = userContext === undefined ? {} : userContext;
+        let userContext = {};
+        if (input !== undefined && input.userContext !== undefined) {
+            userContext = input.userContext;
+        }
 
         return EmailVerificationRecipe.getInstanceOrThrow().isEmailVerified(userContext);
+    }
+
+    static async verifyEmail(input: { token: string; userContext?: any }): Promise<{
+        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+        networkResponse: {
+            jsonBody: any;
+            fetchResponse: Response;
+        };
+    }> {
+        let recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
+
+        return recipeInstance.recipeImpl.verifyEmail({
+            token: input.token,
+            config: recipeInstance.config,
+            userContext: input.userContext === undefined ? {} : input.userContext,
+        });
+    }
+
+    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+        networkResponse: {
+            jsonBody: any;
+            fetchResponse: Response;
+        };
+    }> {
+        let userContext = {};
+        if (input !== undefined && input.userContext !== undefined) {
+            userContext = input.userContext;
+        }
+
+        let recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
+
+        return recipeInstance.recipeImpl.sendVerificationEmail({
+            config: recipeInstance.config,
+            userContext,
+        });
     }
 }
 

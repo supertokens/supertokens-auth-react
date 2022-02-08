@@ -136,8 +136,9 @@ export default class EmailVerification extends RecipeModule<
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "VERIFY_EMAIL") {
             const verifyEmailPath = new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH);
-            return `${this.config.appInfo.websiteBasePath.appendPath(verifyEmailPath).getAsStringDangerous()}?rid=${this.config.recipeId
-                }`;
+            return `${this.config.appInfo.websiteBasePath.appendPath(verifyEmailPath).getAsStringDangerous()}?rid=${
+                this.config.recipeId
+            }`;
         } else {
             return "/";
         }
