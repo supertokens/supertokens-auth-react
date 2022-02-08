@@ -1,10 +1,10 @@
 docker run -d \
     --restart=always \
-    --name demo-app \
+    --name demo-app-passwordless \
     --label name=demo-app \
     --label type=app \
     --label mode=production \
     --volume /home/ubuntu/supertokens-auth-react/examples/with-passwordless:/usr/src/app \
-    --publish 10000:10000 \
-    --publish 10001:10001 \
+    --publish 10006:10000 \
+    --publish 10007:10001 \
     supertokens/demo
