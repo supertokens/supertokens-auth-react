@@ -14,9 +14,9 @@ export declare const defaultTranslationsPasswordless: {
         GENERAL_ERROR_OTP_EXPIRED: string;
         GENERAL_ERROR_OTP_NON_STRING: string;
         GENERAL_ERROR_OTP_EMPTY: string;
-        SIGN_IN_UP_LINK_ERROR: string;
-        SIGN_IN_UP_RESEND_RESTART_FLOW_ERROR: string;
-        SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR: string;
+        ERROR_SIGN_IN_UP_LINK: string;
+        ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW: string;
+        ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW: string;
         PWLESS_CLOSE_TAB_TITLE: string;
         PWLESS_CLOSE_TAB_SUBTITLE_LINE1: string;
         PWLESS_CLOSE_TAB_SUBTITLE_LINE2: string;

@@ -63,7 +63,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
             <div data-supertokens="row" css={styles.row}>
                 <FormBase
                     formFields={formFields}
-                    buttonLabel={t("EMAIL_PASSWORD_RESET_SEND_BTN")}
+                    buttonLabel={"EMAIL_PASSWORD_RESET_SEND_BTN"}
                     onSuccess={onSuccess}
                     callAPI={async (formFields) =>
                         await props.recipeImplementation.sendPasswordResetEmail({

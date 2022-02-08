@@ -57,7 +57,7 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
                                 isLoading={false}
                                 type="button"
                                 onClick={onSignInClicked}
-                                label={t("EMAIL_PASSWORD_RESET_SUBMIT_PW_SUCCESS_SIGN_IN_BTN")}
+                                label={"EMAIL_PASSWORD_RESET_SUBMIT_PW_SUCCESS_SIGN_IN_BTN"}
                             />
                         </Fragment>
                     </FormRow>
@@ -71,7 +71,7 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
             <div data-supertokens="row" css={styles.row}>
                 <FormBase
                     formFields={formFields}
-                    buttonLabel={t("EMAIL_PASSWORD_RESET_SUBMIT_PW_CHANGE_PW_BTN")}
+                    buttonLabel={"EMAIL_PASSWORD_RESET_SUBMIT_PW_CHANGE_PW_BTN"}
                     onSuccess={onSuccess}
                     validateOnBlur={true}
                     callAPI={async (fields) => {

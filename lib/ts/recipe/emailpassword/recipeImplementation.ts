@@ -35,7 +35,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     formFields: [
                         {
                             id: input.formFields[1].id,
-                            error: "Confirmation password doesn't match",
+                            error: "ERROR_CONFIRM_PASSWORD_NO_MATCH",
                         },
                     ],
                 };

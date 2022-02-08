@@ -19,7 +19,6 @@ import { SignInUpEmailFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultValidate } from "../../../../emailpassword/validators";
-import { useTranslation } from "../../../../../translation/translationContext";
 
 export const EmailForm = withOverride(
     "PasswordlessEmailForm",
@@ -29,14 +28,12 @@ export const EmailForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
-        const t = useTranslation();
-
         return (
             <FormBase
                 formFields={[
                     {
                         id: "email",
-                        label: t("PWLESS_SIGN_IN_UP_EMAIL_LABEL"),
+                        label: "PWLESS_SIGN_IN_UP_EMAIL_LABEL",
                         optional: false,
                         autofocus: true,
                         placeholder: "",
@@ -44,21 +41,21 @@ export const EmailForm = withOverride(
                         validate: defaultValidate,
                     },
                 ]}
-                buttonLabel={t("PWLESS_SIGN_IN_UP_CONTINUE_BUTTON")}
+                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {
                     const email = formFields.find((field) => field.id === "email")?.value;
                     if (email === undefined) {
                         return {
                             status: "GENERAL_ERROR",
-                            message: t("GENERAL_ERROR_EMAIL_UNDEFINED"),
+                            message: "GENERAL_ERROR_EMAIL_UNDEFINED",
                         };
                     }
                     const validationRes = await props.config.validateEmailAddress(email);
                     if (validationRes !== undefined) {
                         return {
                             status: "GENERAL_ERROR",
-                            message: t(validationRes),
+                            message: validationRes,
                         };
                     }
                     const response = await props.recipeImplementation.createCode({

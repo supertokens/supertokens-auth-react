@@ -22,9 +22,9 @@ export const defaultTranslationsPasswordless = {
         GENERAL_ERROR_OTP_NON_STRING: "OTP must be of type string",
         GENERAL_ERROR_OTP_EMPTY: "OTP cannot be empty",
 
-        SIGN_IN_UP_LINK_ERROR: "Invalid magic link. Please try again.",
-        SIGN_IN_UP_RESEND_RESTART_FLOW_ERROR: "Login timed out. Please try again.",
-        SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR: "Login unsuccessful. Please try again.",
+        ERROR_SIGN_IN_UP_LINK: "Invalid magic link. Please try again.",
+        ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW: "Login timed out. Please try again.",
+        ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW: "Login unsuccessful. Please try again.",
 
         PWLESS_CLOSE_TAB_TITLE: "Success!",
         PWLESS_CLOSE_TAB_SUBTITLE_LINE1: "You have been successfully signed in.",

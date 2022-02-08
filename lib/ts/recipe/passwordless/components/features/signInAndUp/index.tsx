@@ -56,7 +56,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
             if (errorQueryParam === "signin") {
                 error = "SOMETHING_WENT_WRONG_ERROR";
             } else if (errorQueryParam === "restart_link") {
-                error = "SIGN_IN_UP_LINK_ERROR";
+                error = "ERROR_SIGN_IN_UP_LINK";
             } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
                 error = messageQueryParam;
             }
@@ -135,7 +135,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
 
                 this.setState((os) => ({
                     ...os,
-                    error: "SIGN_IN_UP_RESEND_RESTART_FLOW_ERROR",
+                    error: "ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW",
                     loginAttemptInfo: undefined,
                 }));
             } else if (res.status === "GENERAL_ERROR") {
@@ -168,7 +168,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
 
                 this.setState((os) => ({
                     ...os,
-                    error: "SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW_ERROR",
+                    error: "ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW",
                     loginAttemptInfo: undefined,
                 }));
             } else if (res.status === "OK") {

@@ -96,7 +96,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
                             isLoading={false}
                             onClick={onContinueClicked}
                             type="button"
-                            label={t("EMAIL_VERIFICATION_CONTINUE_BTN")}
+                            label={"EMAIL_VERIFICATION_CONTINUE_BTN"}
                         />
                     </div>
                 </div>

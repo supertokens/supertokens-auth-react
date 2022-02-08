@@ -141,7 +141,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                     }
 
                     if (typeof value !== "string") {
-                        return "EMAIL_PASSWORD_EMAIL_NON_STRING";
+                        return "GENERAL_ERROR_EMAIL_NON_STRING";
                     }
                     try {
                         const emailExists = await this.props.recipe.recipeImpl.doesEmailExist({

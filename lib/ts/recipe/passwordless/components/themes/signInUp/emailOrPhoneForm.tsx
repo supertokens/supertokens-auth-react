@@ -21,7 +21,6 @@ import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultEmailValidator, defaultValidate } from "../../../../emailpassword/validators";
 import { useState } from "react";
-import { useTranslation } from "../../../../../translation/translationContext";
 
 export const EmailOrPhoneForm = withOverride(
     "PasswordlessEmailOrPhoneForm",
@@ -31,15 +30,13 @@ export const EmailOrPhoneForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
-        const t = useTranslation();
-
         const [phoneNumberInitialValue, setPhoneNumberInitialValue] = useState<string | undefined>();
         return (
             <FormBase
                 formFields={[
                     {
                         id: "emailOrPhone",
-                        label: t("PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL"),
+                        label: "PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL",
                         inputComponent: phoneNumberInitialValue
                             ? phoneNumberInputWithInjectedProps({
                                   defaultCountry: props.config.signInUpFeature.defaultCountry,
@@ -52,14 +49,14 @@ export const EmailOrPhoneForm = withOverride(
                         validate: defaultValidate,
                     },
                 ]}
-                buttonLabel={t("PWLESS_SIGN_IN_UP_CONTINUE_BUTTON")}
+                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {
                     const emailOrPhone = formFields.find((field) => field.id === "emailOrPhone")?.value;
                     if (emailOrPhone === undefined) {
                         return {
                             status: "GENERAL_ERROR",
-                            message: t("GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED"),
+                            message: "GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED",
                         };
                     }
 
@@ -78,7 +75,7 @@ export const EmailOrPhoneForm = withOverride(
                         } else {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: t(emailValidationRes),
+                                message: emailValidationRes,
                             };
                         }
                     } else {
@@ -100,12 +97,12 @@ export const EmailOrPhoneForm = withOverride(
                             setPhoneNumberInitialValue(intPhoneNumber);
                             return {
                                 status: "GENERAL_ERROR",
-                                message: t("PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR"),
+                                message: "PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR",
                             };
                         } else {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: t(phoneValidationRes),
+                                message: phoneValidationRes,
                             };
                         }
                     }

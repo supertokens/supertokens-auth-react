@@ -37,7 +37,7 @@ export const SignUpForm = withOverride(
         return (
             <FormBase
                 formFields={props.formFields}
-                buttonLabel={"SIGN UP"}
+                buttonLabel={"EMAIL_PASSWORD_SIGN_UP_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
                 callAPI={(formFields) =>
                     props.recipeImplementation.signUp({

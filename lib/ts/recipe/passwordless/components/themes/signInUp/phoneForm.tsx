@@ -20,7 +20,6 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultValidate } from "../../../../emailpassword/validators";
-import { useTranslation } from "../../../../../translation/translationContext";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",
@@ -30,14 +29,12 @@ export const PhoneForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
-        const t = useTranslation();
-
         return (
             <FormBase
                 formFields={[
                     {
                         id: "phoneNumber",
-                        label: t("PWLESS_SIGN_IN_UP_PHONE_LABEL"),
+                        label: "PWLESS_SIGN_IN_UP_PHONE_LABEL",
                         inputComponent: phoneNumberInputWithInjectedProps({
                             defaultCountry: props.config.signInUpFeature.defaultCountry,
                         }),
@@ -47,21 +44,21 @@ export const PhoneForm = withOverride(
                         validate: defaultValidate,
                     },
                 ]}
-                buttonLabel={t("PWLESS_SIGN_IN_UP_CONTINUE_BUTTON")}
+                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {
                     const phoneNumber = formFields.find((field) => field.id === "phoneNumber")?.value;
                     if (phoneNumber === undefined) {
                         return {
                             status: "GENERAL_ERROR",
-                            message: t("GENERAL_ERROR_PHONE_UNDEFINED"),
+                            message: "GENERAL_ERROR_PHONE_UNDEFINED",
                         };
                     }
                     const validationRes = await props.config.validatePhoneNumber(phoneNumber);
                     if (validationRes !== undefined) {
                         return {
                             status: "GENERAL_ERROR",
-                            message: t(validationRes),
+                            message: validationRes,
                         };
                     }
                     const response = await props.recipeImplementation.createCode({

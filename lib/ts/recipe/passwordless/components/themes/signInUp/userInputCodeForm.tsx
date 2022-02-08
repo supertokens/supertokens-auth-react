@@ -84,7 +84,7 @@ export const UserInputCodeForm = withOverride(
                             labelComponent: (
                                 <div css={styles.codeInputLabelWrapper} data-supertokens="codeInputLabelWrapper">
                                     <Label
-                                        value={t("PWLESS_USER_INPUT_CODE_INPUT_LABEL")}
+                                        value={"PWLESS_USER_INPUT_CODE_INPUT_LABEL"}
                                         data-supertokens="codeInputLabel"
                                     />
                                     <ResendButton
@@ -104,14 +104,14 @@ export const UserInputCodeForm = withOverride(
                         },
                     ]}
                     onSuccess={props.onSuccess}
-                    buttonLabel={t("PWLESS_SIGN_IN_UP_CONTINUE_BUTTON")}
+                    buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                     error={error || props.error}
                     callAPI={async (formFields) => {
                         const userInputCode = formFields.find((field) => field.id === "userInputCode")?.value;
                         if (userInputCode === undefined || userInputCode.length === 0) {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: t("GENERAL_ERROR_OTP_UNDEFINED"),
+                                message: "GENERAL_ERROR_OTP_UNDEFINED",
                             };
                         }
                         const response = await props.recipeImplementation.consumeCode({
@@ -128,20 +128,20 @@ export const UserInputCodeForm = withOverride(
                         if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: t("GENERAL_ERROR_OTP_INVALID"),
+                                message: "GENERAL_ERROR_OTP_INVALID",
                             };
                         }
 
                         if (response.status === "EXPIRED_USER_INPUT_CODE_ERROR") {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: t("GENERAL_ERROR_OTP_EXPIRED"),
+                                message: "GENERAL_ERROR_OTP_EXPIRED",
                             };
                         }
 
                         return {
                             status: "GENERAL_ERROR",
-                            message: t("SOMETHING_WENT_WRONG_ERROR"),
+                            message: "SOMETHING_WENT_WRONG_ERROR",
                         };
                     }}
                     validateOnBlur={false}

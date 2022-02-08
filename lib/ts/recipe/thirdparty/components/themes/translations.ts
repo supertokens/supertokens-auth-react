@@ -15,5 +15,7 @@ export const defaultTranslationsThirdParty = {
         THIRD_PARTY_SIGN_IN_UP_FOOTER_END: "",
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_START: "Continue with ",
         THIRD_PARTY_PROVIDER_DEFAULT_BTN_END: "",
+
+        THIRD_PARTY_ERROR_NO_EMAIL: "Could not retrieve email. Please try a different method.",
     },
 };
