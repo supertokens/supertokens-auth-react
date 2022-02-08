@@ -1,11 +1,10 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-# SuperTokens Passwordless (email) Demo app
+# SuperTokens Passwordless (email or phone number) Demo app
 
 This demo app demonstrates the following use cases:
 
--   Login
--   Sign up
+-   Login / sign up using OTP or magic link
 -   Logout
 -   Session management & Calling APIs
 
