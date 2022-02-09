@@ -9,8 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Translateable components
+-   passwordless demo app
 -   Adds example app with Hasura
+-   Adds example app with thirdpartyemailpassword showcasing setting password after email verification
+-   Translateable components
 
 ### Refactors
 
