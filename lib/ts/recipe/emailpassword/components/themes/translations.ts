@@ -64,5 +64,18 @@ export const defaultTranslationsEmailPassword = {
         ERROR_CONFIRM_PASSWORD_NO_MATCH: "Confirmation password doesn't match",
 
         ERROR_NON_OPTIONAL: "Field is not optional",
+
+        /*
+         * The following are error messages from our backend SDK.
+         * These are returned as full messages to preserver compatibilty, but they work just like the keys above.
+         * They are shown as is by default (setting the value to undefined will display the raw translation key)
+         */
+        "This email already exists. Please sign in instead.": undefined,
+        "Field is not optional": undefined,
+        "Password must contain at least 8 characters, including a number": undefined,
+        "Password's length must be lesser than 100 characters": undefined,
+        "Password must contain at least one alphabet": undefined,
+        "Password must contain at least one number": undefined,
+        "Email is invalid": undefined,
     },
 };

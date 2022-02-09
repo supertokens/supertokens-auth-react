@@ -49,6 +49,9 @@ export declare const defaultTranslationsPasswordless: {
         PWLESS_USER_INPUT_CODE_HEADER_SUBTITLE: string;
         PWLESS_USER_INPUT_CODE_HEADER_SUBTITLE_LINK: string;
         PWLESS_USER_INPUT_CODE_INPUT_LABEL: string;
+        "Failed to generate a one time code. Please try again": undefined;
+        "Phone number is invalid": undefined;
+        "Email is invalid": undefined;
         BRANDING_POWERED_BY_START: string;
         BRANDING_POWERED_BY_END: string;
         SOMETHING_WENT_WRONG_ERROR: string;

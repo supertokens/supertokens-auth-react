@@ -47,6 +47,13 @@ export declare const defaultTranslationsEmailPassword: {
         ERROR_PASSWORD_NO_NUM: string;
         ERROR_CONFIRM_PASSWORD_NO_MATCH: string;
         ERROR_NON_OPTIONAL: string;
+        "This email already exists. Please sign in instead.": undefined;
+        "Field is not optional": undefined;
+        "Password must contain at least 8 characters, including a number": undefined;
+        "Password's length must be lesser than 100 characters": undefined;
+        "Password must contain at least one alphabet": undefined;
+        "Password must contain at least one number": undefined;
+        "Email is invalid": undefined;
         EMAIL_VERIFICATION_RESEND_SUCCESS: string;
         EMAIL_VERIFICATION_SEND_TITLE: string;
         EMAIL_VERIFICATION_SEND_DESC_START: string;

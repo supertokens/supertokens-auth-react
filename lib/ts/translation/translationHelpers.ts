@@ -1,7 +1,7 @@
 import { getCookieValue, setFrontendCookie } from "../utils";
 
 // language -> key -> copy
-export type TranslationStore = Record<string, Record<string, string>>;
+export type TranslationStore = Record<string, Record<string, string | undefined>>;
 export type TranslationFunc = (key: string) => string;
 
 export type TranslationContextType = {
