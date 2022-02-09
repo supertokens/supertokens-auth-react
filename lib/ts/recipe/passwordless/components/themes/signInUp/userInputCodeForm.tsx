@@ -73,7 +73,9 @@ export const UserInputCodeForm = withOverride(
                 {props.header}
                 {clearResendNotifTimeout !== undefined && (
                     <div data-supertokens="generalSuccess" css={[styles.generalSuccess]}>
-                        {t("PWLESS_RESEND_SUCCESS_" + props.loginAttemptInfo.contactMethod)}
+                        {props.loginAttemptInfo.contactMethod === "EMAIL"
+                            ? t("PWLESS_RESEND_SUCCESS_EMAIL")
+                            : t("PWLESS_RESEND_SUCCESS_PHONE")}
                     </div>
                 )}
                 <FormBase

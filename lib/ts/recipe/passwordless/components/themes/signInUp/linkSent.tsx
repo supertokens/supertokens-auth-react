@@ -79,7 +79,7 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                 )}
                 {resendActive && (
                     <div data-supertokens="generalSuccess" css={styles.generalSuccess}>
-                        {t("PWLESS_RESEND_SUCCESS_LINK")}
+                        {t("PWLESS_LINK_SENT_RESEND_SUCCESS")}
                     </div>
                 )}
                 <div data-supertokens="sendCodeIcon" css={styles.sendCodeIcon}>
@@ -89,9 +89,13 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                     {t("PWLESS_LINK_SENT_RESEND_TITLE")}
                 </div>
                 <div data-supertokens="primaryText sendCodeText" css={[styles.primaryText, styles.sendCodeText]}>
-                    {t("PWLESS_LINK_SENT_RESEND_DESC_START_" + props.loginAttemptInfo.contactMethod)}
+                    {props.loginAttemptInfo.contactMethod === "EMAIL"
+                        ? t("PWLESS_LINK_SENT_RESEND_DESC_START_EMAIL")
+                        : t("PWLESS_LINK_SENT_RESEND_DESC_START_PHONE")}
                     <strong>{props.loginAttemptInfo.contactInfo}</strong>
-                    {t("PWLESS_LINK_SENT_RESEND_DESC_END_" + props.loginAttemptInfo.contactMethod)}
+                    {props.loginAttemptInfo.contactMethod === "EMAIL"
+                        ? t("PWLESS_LINK_SENT_RESEND_DESC_END_EMAIL")
+                        : t("PWLESS_LINK_SENT_RESEND_DESC_END_PHONE")}
                 </div>
                 <ResendButton
                     loginAttemptInfo={props.loginAttemptInfo}
@@ -104,7 +108,9 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                         css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
                         onClick={() => props.recipeImplementation.clearLoginAttemptInfo()}>
                         <ArrowLeftIcon color={styles.palette.colors.textPrimary} />
-                        {t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_" + props.loginAttemptInfo.contactMethod)}
+                        {props.loginAttemptInfo.contactMethod === "EMAIL"
+                            ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
+                            : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
                     </div>
                 }
             </div>

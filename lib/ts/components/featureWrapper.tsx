@@ -104,6 +104,7 @@ function WithOrWithoutShadowDom({ children, useShadowDom }: WithOrWithoutShadowD
 }
 
 function DisableAutoFillInput(): JSX.Element {
+    /* eslint-disable react/jsx-no-literals */
     return (
         <style type="text/css">
             {
@@ -111,4 +112,5 @@ function DisableAutoFillInput(): JSX.Element {
             }
         </style>
     );
+    /* eslint-enable react/jsx-no-literals */
 }

@@ -82,8 +82,10 @@ export const ResendButton = withOverride(
                         </strong>
                         {t("PWLESS_RESEND_BTN_DISABLED_END")}
                     </React.Fragment>
+                ) : loginAttemptInfo.contactMethod === "EMAIL" ? (
+                    t("PWLESS_RESEND_BTN_EMAIL")
                 ) : (
-                    t("PWLESS_RESEND_BTN")
+                    t("PWLESS_RESEND_BTN_PHONE")
                 )}
             </button>
         );
