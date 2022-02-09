@@ -100,7 +100,7 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
                             </div>
                             <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
                                 <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                                    {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_TITLE")}
+                                    {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_SUBTITLE")}
                                 </div>
                             </div>
                         </Fragment>

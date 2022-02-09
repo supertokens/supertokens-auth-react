@@ -50,7 +50,7 @@ export const defaultTranslationsEmailPassword = {
 
         EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_TITLE: "Change your password",
         EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_SUBTITLE: "Enter a new password below to change your password",
-        EMAIL_PASSWORD_RESET_SUBMIT_PW_CHANGE_PW_BTN: "Change password",
+        EMAIL_PASSWORD_RESET_SUBMIT_PW_CHANGE_PW_BTN: "CHANGE PASSWORD",
         EMAIL_PASSWORD_RESET_PASSWORD_INVALID_TOKEN_ERROR: "Invalid password reset token",
 
         ERROR_EMAIL_NON_STRING: "Email must be of type string",
