@@ -10,7 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Adds example app with Hasura
 -   Adds example app with thirdpartyemailpassword showcasing setting password after email verification
 -   Exposes more recipe functions
--   (Breaking) Updates function return types to allow for custom API response handling
+
+### Breaking changes
+
+-   Updates function return types to allow for custom API response handling
+-   Updates signatures for functions exported from recipe/index to accept objects instead of params directly
 
 ## [0.18.5] - 2022-01-27
 
