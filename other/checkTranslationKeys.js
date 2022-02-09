@@ -37,7 +37,7 @@ async function checkTranslationKeys() {
                 }
             }
             let call;
-            const callRegex = /\st\("(\w+)"\)\s/g;
+            const callRegex = /\Wt\("(\w+)"\)/g;
             while ((call = callRegex.exec(contents)) !== null) {
                 if (!translationKeys.has(call[1])) {
                     missingKeys.push(call[1]);
