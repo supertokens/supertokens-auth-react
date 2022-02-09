@@ -60,6 +60,7 @@ export default class EmailVerification extends RecipeModule<
                 appInfo: config.appInfo,
                 recipeId: config.recipeId,
                 preAPIHook: config.preAPIHook,
+                postAPIHook: config.postAPIHook,
             });
 
             const builder = new OverrideableBuilder(RecipeImplementation(webJsImplementation));

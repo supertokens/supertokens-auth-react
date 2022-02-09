@@ -278,3 +278,7 @@ export class Deferred<T> {
         prom.then(this.resolve, this.reject);
     }
 }
+
+export function getNormalisedUserContext(userContext?: any): any {
+    return userContext === undefined ? {} : userContext;
+}

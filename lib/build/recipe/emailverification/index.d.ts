@@ -38,10 +38,14 @@ export default class Wrapper {
 }
 declare const init: typeof Wrapper.init;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
+declare const verifyEmail: typeof Wrapper.verifyEmail;
+declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 export {
     init,
     isEmailVerified,
+    verifyEmail,
+    sendVerificationEmail,
     EmailVerification,
     EmailVerificationTheme,
     GetRedirectionURLContext,

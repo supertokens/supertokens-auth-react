@@ -141,7 +141,9 @@ export default class Querier {
             : await postAPIHook({
                   requestInit,
                   url: modifiedUrl,
-                  response: result,
+                  fetchResponse: result,
+                  // This is temoporary while web-js is being integrated, once that is done this Querier will not be required
+                  userContext: {},
               });
     };
 

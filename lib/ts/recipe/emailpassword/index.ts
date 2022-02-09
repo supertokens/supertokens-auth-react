@@ -21,6 +21,7 @@ import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { getNormalisedUserContext } from "../../utils";
 
 export default class Wrapper {
     static init(config?: UserInput) {
@@ -31,7 +32,7 @@ export default class Wrapper {
         return EmailPassword.getInstanceOrThrow().signOut();
     }
 
-    static async isEmailVerified(userContext?: any): Promise<{
+    static async isEmailVerified(input?: { userContext?: any }): Promise<{
         status: "OK";
         isVerified: boolean;
         networkResponse: {
@@ -39,8 +40,9 @@ export default class Wrapper {
             fetchResponse: Response;
         };
     }> {
-        userContext = userContext === undefined ? {} : userContext;
-        return EmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified(userContext);
+        return EmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified(
+            getNormalisedUserContext(input?.userContext)
+        );
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"

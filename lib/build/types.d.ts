@@ -88,5 +88,6 @@ export declare type PreAPIHookFunction = (context: { requestInit: RequestInit; u
 export declare type PostAPIHookFunction = (context: {
     requestInit: RequestInit;
     url: string;
-    response: Response;
+    fetchResponse: Response;
+    userContext: any;
 }) => Promise<Response>;

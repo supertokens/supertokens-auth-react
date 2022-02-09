@@ -20,6 +20,7 @@ import { UserInput } from "./types";
 import EmailVerificationRecipe from "./recipe";
 import EmailVerificationTheme from "./components/themes/emailVerification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { getNormalisedUserContext } from "../../utils";
 
 export default class Wrapper {
     static EmailVerification = (prop?: any) =>
@@ -38,12 +39,9 @@ export default class Wrapper {
             fetchResponse: Response;
         };
     }> {
-        let userContext = {};
-        if (input !== undefined && input.userContext !== undefined) {
-            userContext = input.userContext;
-        }
-
-        return EmailVerificationRecipe.getInstanceOrThrow().isEmailVerified(userContext);
+        return EmailVerificationRecipe.getInstanceOrThrow().isEmailVerified(
+            getNormalisedUserContext(input?.userContext)
+        );
     }
 
     static async verifyEmail(input: { token: string; userContext?: any }): Promise<{
@@ -58,7 +56,7 @@ export default class Wrapper {
         return recipeInstance.recipeImpl.verifyEmail({
             token: input.token,
             config: recipeInstance.config,
-            userContext: input.userContext === undefined ? {} : input.userContext,
+            userContext: getNormalisedUserContext(input.userContext),
         });
     }
 
@@ -69,27 +67,26 @@ export default class Wrapper {
             fetchResponse: Response;
         };
     }> {
-        let userContext = {};
-        if (input !== undefined && input.userContext !== undefined) {
-            userContext = input.userContext;
-        }
-
         let recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
 
         return recipeInstance.recipeImpl.sendVerificationEmail({
             config: recipeInstance.config,
-            userContext,
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 }
 
 const init = Wrapper.init;
 const isEmailVerified = Wrapper.isEmailVerified;
+const verifyEmail = Wrapper.verifyEmail;
+const sendVerificationEmail = Wrapper.sendVerificationEmail;
 const EmailVerification = Wrapper.EmailVerification;
 
 export {
     init,
     isEmailVerified,
+    verifyEmail,
+    sendVerificationEmail,
     EmailVerification,
     EmailVerificationTheme,
     GetRedirectionURLContext,

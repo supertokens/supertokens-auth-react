@@ -32,3 +32,4 @@ export declare class Deferred<T> {
     constructor();
     attach(prom: Promise<T>): void;
 }
+export declare function getNormalisedUserContext(userContext?: any): any;

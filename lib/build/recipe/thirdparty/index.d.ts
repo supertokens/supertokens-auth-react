@@ -17,7 +17,7 @@ export default class Wrapper {
         import("./types").NormalisedConfig
     >;
     static signOut(): Promise<void>;
-    static isEmailVerified(userContext?: any): Promise<{
+    static isEmailVerified(input?: { userContext?: any }): Promise<{
         status: "OK";
         isVerified: boolean;
         networkResponse: {

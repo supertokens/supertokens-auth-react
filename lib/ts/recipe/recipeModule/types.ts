@@ -1,8 +1,9 @@
-import { NormalisedAppInfo, Styles } from "../../types";
+import { NormalisedAppInfo, PostAPIHookFunction, Styles } from "../../types";
 
 export type UserInput<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
     getRedirectionURL?: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
     preAPIHook?: (context: PreAPIHookContextType) => Promise<{ url: string; requestInit: RequestInit }>;
+    postAPIHook?: PostAPIHookFunction;
     onHandleEvent?: (context: OnHandleEventContextType) => void;
     useShadowDom?: boolean;
     palette?: Record<string, string>;
@@ -19,6 +20,7 @@ export type NormalisedConfig<GetRedirectionURLContextType, PreAPIHookContextType
     appInfo: NormalisedAppInfo;
     getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
     preAPIHook: (context: PreAPIHookContextType) => Promise<{ url: string; requestInit: RequestInit }>;
+    postAPIHook: PostAPIHookFunction;
     onHandleEvent: (context: OnHandleEventContextType) => void;
     useShadowDom: boolean;
     palette: Record<string, string>;

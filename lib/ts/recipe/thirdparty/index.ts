@@ -27,6 +27,7 @@ import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
+import { getNormalisedUserContext } from "../../utils";
 
 export default class Wrapper {
     /*
@@ -41,7 +42,7 @@ export default class Wrapper {
         return ThirdParty.getInstanceOrThrow().signOut();
     }
 
-    static async isEmailVerified(userContext?: any): Promise<{
+    static async isEmailVerified(input?: { userContext?: any }): Promise<{
         status: "OK";
         isVerified: boolean;
         networkResponse: {
@@ -49,8 +50,9 @@ export default class Wrapper {
             fetchResponse: Response;
         };
     }> {
-        userContext = userContext === undefined ? {} : userContext;
-        return ThirdParty.getInstanceOrThrow().emailVerification.isEmailVerified(userContext);
+        return ThirdParty.getInstanceOrThrow().emailVerification.isEmailVerified(
+            getNormalisedUserContext(input?.userContext)
+        );
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"
