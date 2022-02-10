@@ -27,7 +27,7 @@ export declare type UserInput = UserInputForAuthRecipeModule & {
     };
 };
 export declare type Config = UserInput &
-    RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+    RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     mode: "OFF" | "REQUIRED";
     disableDefaultImplementation: boolean;
@@ -43,14 +43,16 @@ export declare type NormalisedConfig = {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type GetRedirectionURLContext = {
     action: "VERIFY_EMAIL";
 };
+export declare type PreAndPostAPIHookAction = "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED";
 export declare type PreAPIHookContext = {
-    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED";
+    action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
+    userContext: any;
 };
 export declare type OnHandleEventContext = {
     action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";

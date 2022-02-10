@@ -9,7 +9,7 @@ export default class Wrapper {
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
         GetRedirectionURLContext,
-        PreAPIHookContext,
+        import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
@@ -40,7 +40,7 @@ export {
     EmailVerification,
     EmailVerificationTheme,
     GetRedirectionURLContext,
-    PreAPIHookContext,
+    PreAPIHookContext as PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
     RecipeInterface,

@@ -61,9 +61,11 @@ export const PhoneForm = withOverride(
                             message: validationRes,
                         };
                     }
+                    // TODO NEMI: handle user context for pre built UI
                     const response = await props.recipeImplementation.createCode({
                         phoneNumber,
                         config: props.config,
+                        userContext: {},
                     });
 
                     return response;

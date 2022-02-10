@@ -3,7 +3,7 @@ import { CreateRecipeFunction } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
-    PreAPIHookContext,
+    PreAndPostAPIHookAction,
     Config,
     NormalisedConfig,
     UserInput,
@@ -12,7 +12,7 @@ import {
 import AuthRecipe from "../authRecipe";
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
-    PreAPIHookContext,
+    PreAndPostAPIHookAction,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -25,7 +25,7 @@ export default class Passwordless extends AuthRecipe<
     getFeatureComponent: (componentName: "signInUp" | "linkClickedScreen", props: any) => JSX.Element;
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>;
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): Passwordless;
     static reset(): void;
 }

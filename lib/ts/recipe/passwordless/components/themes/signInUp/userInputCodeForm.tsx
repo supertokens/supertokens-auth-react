@@ -47,10 +47,12 @@ export const UserInputCodeForm = withOverride(
 
         async function resend() {
             try {
+                // TODO NEMI: handle user context for pre built UI
                 const response = await props.recipeImplementation.resendCode({
                     deviceId: props.loginAttemptInfo.deviceId,
                     preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                     config: props.config,
+                    userContext: {},
                 });
 
                 if (response.status === "OK") {
@@ -113,11 +115,13 @@ export const UserInputCodeForm = withOverride(
                                 message: "Please fill your OTP",
                             };
                         }
+                        // TODO NEMI: handle user context for pre built UI
                         const response = await props.recipeImplementation.consumeCode({
                             deviceId: props.loginAttemptInfo.deviceId,
                             preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                             userInputCode,
                             config: props.config,
+                            userContext: {},
                         });
 
                         if (response.status === "OK" || response.status === "GENERAL_ERROR") {

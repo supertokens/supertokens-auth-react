@@ -50,7 +50,8 @@ export type UserInput = UserInputForAuthRecipeModule & {
 };
 
 // Config is what does in the constructor of the recipe.
-export type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+export type Config = UserInput &
+    RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
     mode: "OFF" | "REQUIRED";
@@ -67,16 +68,19 @@ export type NormalisedConfig = {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type GetRedirectionURLContext = {
     action: "VERIFY_EMAIL";
 };
 
+export type PreAndPostAPIHookAction = "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED";
+
 export type PreAPIHookContext = {
-    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED";
+    action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
+    userContext: any;
 };
 
 export type OnHandleEventContext = {

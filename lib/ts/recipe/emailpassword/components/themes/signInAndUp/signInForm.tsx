@@ -41,10 +41,12 @@ export const SignInForm = withOverride(
                 formFields={props.formFields}
                 buttonLabel={"SIGN IN"}
                 onSuccess={props.onSuccess}
+                // TODO NEMI: handle user context for pre built UI
                 callAPI={async (formFields) => {
                     const response = await props.recipeImplementation.signIn({
                         formFields,
                         config: props.config,
+                        userContext: {},
                     });
                     if (response.status === "WRONG_CREDENTIALS_ERROR") {
                         return {

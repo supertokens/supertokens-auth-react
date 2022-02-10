@@ -86,10 +86,12 @@ class EmailPasswordResetPasswordEmail extends PureComponent<EnterEmailProps, Ent
                         formFields={formFields}
                         buttonLabel={"Email me"}
                         onSuccess={this.onSuccess}
+                        // TODO NEMI: handle user context for pre built UI
                         callAPI={async (formFields) =>
                             await this.props.recipeImplementation.sendPasswordResetEmail({
                                 formFields,
                                 config: this.props.config,
+                                userContext: {},
                             })
                         }
                         showLabels={true}

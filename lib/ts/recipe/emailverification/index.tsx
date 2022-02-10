@@ -81,7 +81,7 @@ export {
     EmailVerification,
     EmailVerificationTheme,
     GetRedirectionURLContext,
-    PreAPIHookContext,
+    PreAPIHookContext as PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
     RecipeInterface,

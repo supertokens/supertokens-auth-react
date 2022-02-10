@@ -9,13 +9,18 @@ import {
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
     NormalisedConfig as EPConfig,
+    PreAndPostAPIHookAction as EmailPasswordPreAndPostAPIHookAction,
 } from "../emailpassword/types";
 import {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
-import { NormalisedConfig as TPConfig, StateObject } from "../thirdparty/types";
+import {
+    NormalisedConfig as TPConfig,
+    StateObject,
+    PreAndPostAPIHookContext as ThirdPartyPreAndPostAPIHookAction,
+} from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
@@ -50,9 +55,9 @@ export declare type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
@@ -65,7 +70,7 @@ export declare type NormalisedConfig = {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     disableDefaultImplementation?: boolean;
     defaultToSignUp?: boolean;
@@ -83,6 +88,7 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
 export declare type GetRedirectionURLContext =
     | EmailPasswordGetRedirectionURLContext
     | ThirdPartyGetRedirectionURLContext;
+export declare type PreAndPostAPIHookAction = EmailPasswordPreAndPostAPIHookAction | ThirdPartyPreAndPostAPIHookAction;
 export declare type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
 export declare type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
@@ -100,11 +106,13 @@ export declare type SignInAndUpInput =
               value: string;
           }[];
           config: EPConfig;
+          userContext: any;
       }
     | {
           type: "thirdparty";
           thirdPartyId: string;
           config: TPConfig;
+          userContext: any;
       };
 export declare type SignInAndUpOutput =
     | {
@@ -142,6 +150,7 @@ export declare type RecipeInterface = {
         }[];
         token: string;
         config: EPConfig;
+        userContext: any;
     }) => Promise<
         | {
               status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
@@ -160,6 +169,7 @@ export declare type RecipeInterface = {
             value: string;
         }[];
         config: EPConfig;
+        userContext: any;
     }) => Promise<
         | {
               status: "OK";
@@ -172,12 +182,17 @@ export declare type RecipeInterface = {
               }[];
           }
     >;
-    doesEmailExist: (input: { email: string; config: EPConfig }) => Promise<boolean>;
-    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig }) => Promise<string>;
+    doesEmailExist: (input: { email: string; config: EPConfig; userContext: any }) => Promise<boolean>;
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig; userContext: any }) => Promise<string>;
     signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
     getOAuthState(): StateObject | undefined;
     setOAuthState(state: StateObject): void;
-    redirectToThirdPartyLogin: (input: { thirdPartyId: string; config: TPConfig; state?: StateObject }) => Promise<{
+    redirectToThirdPartyLogin: (input: {
+        thirdPartyId: string;
+        config: TPConfig;
+        state?: StateObject;
+        userContext: any;
+    }) => Promise<{
         status: "OK" | "ERROR";
     }>;
 };

@@ -144,9 +144,11 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                         return "Email must be of type string";
                     }
                     try {
+                        // TODO NEMI: handle user context for pre built UI
                         const emailExists = await this.props.recipe.recipeImpl.doesEmailExist({
                             email: value,
                             config: this.props.recipe.config,
+                            userContext: {},
                         });
                         if (emailExists) {
                             return "This email already exists. Please sign in instead";

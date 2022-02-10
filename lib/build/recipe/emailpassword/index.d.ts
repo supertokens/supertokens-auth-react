@@ -10,7 +10,7 @@ export default class Wrapper {
         config?: UserInput
     ): import("../../types").CreateRecipeFunction<
         GetRedirectionURLContext,
-        PreAPIHookContext,
+        import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;

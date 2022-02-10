@@ -47,6 +47,7 @@ export type RecipeInterface = {
     createCode: (
         input: ({ email: string } | { phoneNumber: string }) & {
             config: NormalisedConfig;
+            userContext: any;
         }
     ) => Promise<
         | {
@@ -60,6 +61,7 @@ export type RecipeInterface = {
     resendCode: (
         input: { deviceId: string; preAuthSessionId: string } & {
             config: NormalisedConfig;
+            userContext: any;
         }
     ) => Promise<
         | {
@@ -81,6 +83,7 @@ export type RecipeInterface = {
               }
         ) & {
             config: NormalisedConfig;
+            userContext: any;
         }
     ) => Promise<
         | {
@@ -97,8 +100,12 @@ export type RecipeInterface = {
         | { status: "RESTART_FLOW_ERROR" }
     >;
 
-    doesEmailExist: (input: { email: string; config: NormalisedConfig }) => Promise<boolean>;
-    doesPhoneNumberExist: (input: { phoneNumber: string; config: NormalisedConfig }) => Promise<boolean>;
+    doesEmailExist: (input: { email: string; config: NormalisedConfig; userContext: any }) => Promise<boolean>;
+    doesPhoneNumberExist: (input: {
+        phoneNumber: string;
+        config: NormalisedConfig;
+        userContext: any;
+    }) => Promise<boolean>;
 
     getLoginAttemptInfo: () =>
         | Promise<
@@ -135,16 +142,18 @@ export type RecipeInterface = {
     clearLoginAttemptInfo: () => Promise<void> | void;
 };
 
+export type PreAndPostAPIHookAction =
+    | "PASSWORDLESS_CREATE_CODE"
+    | "PASSWORDLESS_CONSUME_CODE"
+    | "PASSWORDLESS_RESEND_CODE"
+    | "EMAIL_EXISTS"
+    | "PHONE_NUMBER_EXISTS";
+
 export type PreAPIHookContext = {
     /*
      * Pre API Hook action.
      */
-    action:
-        | "PASSWORDLESS_CREATE_CODE"
-        | "PASSWORDLESS_CONSUME_CODE"
-        | "PASSWORDLESS_RESEND_CODE"
-        | "EMAIL_EXISTS"
-        | "PHONE_NUMBER_EXISTS";
+    action: PreAndPostAPIHookAction;
 
     /*
      * Request object containing query params, body, headers.
@@ -208,10 +217,10 @@ export type NormalisedConfig = {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type PasswordlessFeatureBaseConfig = {
     disableDefaultImplementation?: boolean;
@@ -280,7 +289,7 @@ export type UserInput = (
         components?: ComponentOverrideMap;
     };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type SignInUpProps = {
     loginAttemptInfo?: LoginAttemptInfo;

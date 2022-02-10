@@ -26,7 +26,7 @@ import { ForwardRefExoticComponent, RefAttributes, RefObject } from "react";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
-    PreAPIHookContext as AuthRecipeModulePreAPIHookContext,
+    PreAndPostAPIHookAction as AuthRecipeModulePreAPIHookAction,
     User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -71,10 +71,10 @@ export type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
@@ -86,7 +86,7 @@ export type NormalisedConfig = {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = {
     /*
@@ -330,29 +330,31 @@ export type FormFieldError = {
     error: string;
 };
 
-export type PreAPIHookContext =
-    | AuthRecipeModulePreAPIHookContext
-    | {
-          /*
-           * Pre API Hook action.
-           */
-          action:
-              | "EMAIL_PASSWORD_SIGN_UP"
-              | "EMAIL_PASSWORD_SIGN_IN"
-              | "SEND_RESET_PASSWORD_EMAIL"
-              | "SUBMIT_NEW_PASSWORD"
-              | "EMAIL_EXISTS";
+export type PreAndPostAPIHookAction =
+    | AuthRecipeModulePreAPIHookAction
+    | "EMAIL_PASSWORD_SIGN_UP"
+    | "EMAIL_PASSWORD_SIGN_IN"
+    | "SEND_RESET_PASSWORD_EMAIL"
+    | "SUBMIT_NEW_PASSWORD"
+    | "EMAIL_EXISTS";
 
-          /*
-           * Request object containing query params, body, headers.
-           */
-          requestInit: RequestInit;
+export type PreAPIHookContext = {
+    /*
+     * Pre API Hook action.
+     */
+    action: PreAndPostAPIHookAction;
 
-          /*
-           * URL
-           */
-          url: string;
-      };
+    /*
+     * Request object containing query params, body, headers.
+     */
+    requestInit: RequestInit;
+
+    /*
+     * URL
+     */
+    url: string;
+    userContext: any;
+};
 
 export type GetRedirectionURLContext =
     | AuthRecipeModuleGetRedirectionURLContext
@@ -495,6 +497,7 @@ export type RecipeInterface = {
         }[];
         token: string;
         config: NormalisedConfig;
+        userContext: any;
     }) => Promise<
         | {
               status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
@@ -514,6 +517,7 @@ export type RecipeInterface = {
             value: string;
         }[];
         config: NormalisedConfig;
+        userContext: any;
     }) => Promise<
         | {
               status: "OK";
@@ -533,6 +537,7 @@ export type RecipeInterface = {
             value: string;
         }[];
         config: NormalisedConfig;
+        userContext: any;
     }) => Promise<
         | {
               status: "OK";
@@ -553,6 +558,7 @@ export type RecipeInterface = {
             value: string;
         }[];
         config: NormalisedConfig;
+        userContext: any;
     }) => Promise<
         | {
               status: "OK";
@@ -570,5 +576,5 @@ export type RecipeInterface = {
           }
     >;
 
-    doesEmailExist: (input: { email: string; config: NormalisedConfig }) => Promise<boolean>;
+    doesEmailExist: (input: { email: string; config: NormalisedConfig; userContext: any }) => Promise<boolean>;
 };

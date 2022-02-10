@@ -24,10 +24,10 @@ import {
     Config,
     GetRedirectionURLContext,
     NormalisedConfig,
-    PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
+    PreAndPostAPIHookAction,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
@@ -46,7 +46,6 @@ import OverrideableBuilder from "supertokens-js-override";
 
 export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
-    PreAPIHookContext,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -190,7 +189,12 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
+                <AuthWidgetWrapper<
+                    GetRedirectionURLContext,
+                    PreAndPostAPIHookAction,
+                    OnHandleEventContext,
+                    NormalisedConfig
+                >
                     authRecipe={this}
                     history={props.history}>
                     <SignInAndUp recipe={this} {...props} />
@@ -212,10 +216,10 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
+        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
             ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword(
                 {
                     ...config,

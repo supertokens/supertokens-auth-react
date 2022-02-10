@@ -3,7 +3,7 @@ import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
-    PreAPIHookContext as AuthRecipeModulePreAPIHookContext,
+    PreAndPostAPIHookAction as AuthRecipePreAndPostAPIHookAction,
     User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -32,9 +32,9 @@ export declare type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
 export declare type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     oAuthCallbackScreen: FeatureBaseConfig;
@@ -45,7 +45,7 @@ export declare type NormalisedConfig = {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     disableDefaultImplementation?: boolean;
     privacyPolicyLink?: string;
@@ -59,18 +59,16 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
     providers: Provider[];
 };
 export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
-export declare type PreAPIHookContext =
-    | AuthRecipeModulePreAPIHookContext
-    | {
-          action: "GET_AUTHORISATION_URL";
-          requestInit: RequestInit;
-          url: string;
-      }
-    | {
-          action: "THIRD_PARTY_SIGN_IN_UP";
-          requestInit: RequestInit;
-          url: string;
-      };
+export declare type PreAndPostAPIHookContext =
+    | AuthRecipePreAndPostAPIHookAction
+    | "GET_AUTHORISATION_URL"
+    | "THIRD_PARTY_SIGN_IN_UP";
+export declare type PreAPIHookContext = {
+    action: PreAndPostAPIHookContext;
+    requestInit: RequestInit;
+    url: string;
+    userContext: any;
+};
 export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
@@ -106,11 +104,16 @@ export declare type RecipeInterface = {
         thirdPartyId: string;
         config: NormalisedConfig;
         state?: StateObject;
+        userContext: any;
     }) => Promise<{
         status: "OK" | "ERROR";
     }>;
-    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<string>;
-    signInAndUp: (input: { thirdPartyId: string; config: NormalisedConfig }) => Promise<
+    getOAuthAuthorisationURL: (input: {
+        thirdPartyId: string;
+        config: NormalisedConfig;
+        userContext: any;
+    }) => Promise<string>;
+    signInAndUp: (input: { thirdPartyId: string; config: NormalisedConfig; userContext: any }) => Promise<
         | {
               status: "OK";
               user: User;

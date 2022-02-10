@@ -24,7 +24,6 @@ import {
     Config,
     NormalisedConfig,
     GetRedirectionURLContext,
-    PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
@@ -40,10 +39,11 @@ import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import OverrideableBuilder from "supertokens-js-override";
 import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
+import { PreAndPostAPIHookAction } from "supertokens-web-js/lib/build/recipe/emailverification/types";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
-    PreAPIHookContext,
+    PreAndPostAPIHookAction,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -70,10 +70,10 @@ export default class EmailVerification extends RecipeModule<
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
+        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
             EmailVerification.instance = new EmailVerification({
                 ...config,
                 appInfo,

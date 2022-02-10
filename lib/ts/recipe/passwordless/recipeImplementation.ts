@@ -53,6 +53,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         createCode: async function (
             input: ({ email: string } | { phoneNumber: string } | { deviceId: string; preAuthSessionId: string }) & {
                 config: NormalisedConfig;
+                userContext: any;
             }
         ): Promise<CreateCodeApiResponse> {
             let bodyObj;
@@ -88,6 +89,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "PASSWORDLESS_CREATE_CODE",
+                        userContext: input.userContext,
                     });
                 }
             );
@@ -104,6 +106,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         resendCode: async function (
             input: { deviceId: string; preAuthSessionId: string } & {
                 config: NormalisedConfig;
+                userContext: any;
             }
         ): Promise<ResendCodeApiResponse> {
             const bodyObj = {
@@ -118,6 +121,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "PASSWORDLESS_RESEND_CODE",
+                        userContext: input.userContext,
                     });
                 }
             );
@@ -147,6 +151,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                   }
             ) & {
                 config: NormalisedConfig;
+                userContext: any;
             }
         ): Promise<ConsumeCodeApiResponse> {
             let bodyObj;
@@ -171,6 +176,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "PASSWORDLESS_CONSUME_CODE",
+                        userContext: input.userContext,
                     });
                 }
             );
@@ -188,7 +194,11 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             }
             return response;
         },
-        doesEmailExist: async function (input: { email: string; config: NormalisedConfig }): Promise<boolean> {
+        doesEmailExist: async function (input: {
+            email: string;
+            config: NormalisedConfig;
+            userContext: any;
+        }): Promise<boolean> {
             const response: ExistsAPIResponse = await querier.get(
                 "/signup/email/exists",
                 {},
@@ -197,6 +207,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "EMAIL_EXISTS",
+                        userContext: input.userContext,
                     });
                 }
             );
@@ -207,6 +218,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         doesPhoneNumberExist: async function (input: {
             phoneNumber: string;
             config: NormalisedConfig;
+            userContext: any;
         }): Promise<boolean> {
             const response: ExistsAPIResponse = await querier.get(
                 "/signup/phoneNumber/exists",
@@ -216,6 +228,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "PHONE_NUMBER_EXISTS",
+                        userContext: input.userContext,
                     });
                 }
             );
