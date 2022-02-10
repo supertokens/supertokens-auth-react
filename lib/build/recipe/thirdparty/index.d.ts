@@ -22,6 +22,14 @@ export default class Wrapper {
         isVerified: boolean;
         fetchResponse: Response;
     }>;
+    static verifyEmail(input: { token: string; userContext?: any }): Promise<{
+        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+        fetchResponse: Response;
+    }>;
+    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+        fetchResponse: Response;
+    }>;
     static redirectToAuth(
         input?:
             | ("signin" | "signup")
@@ -43,6 +51,8 @@ export default class Wrapper {
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
+declare const verifyEmail: typeof Wrapper.verifyEmail;
+declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
@@ -54,6 +64,8 @@ export {
     Facebook,
     Github,
     isEmailVerified,
+    verifyEmail,
+    sendVerificationEmail,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,

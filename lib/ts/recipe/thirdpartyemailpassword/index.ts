@@ -41,6 +41,31 @@ export default class Wrapper {
         );
     }
 
+    static async verifyEmail(input: { token: string; userContext?: any }): Promise<{
+        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+        fetchResponse: Response;
+    }> {
+        let recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
+
+        return recipeInstance.emailVerification.recipeImpl.verifyEmail({
+            token: input.token,
+            config: recipeInstance.emailVerification.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+        fetchResponse: Response;
+    }> {
+        let recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
+
+        return recipeInstance.emailVerification.recipeImpl.sendVerificationEmail({
+            config: recipeInstance.emailVerification.config,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
     // have backwards compatibility to allow input as "signin" | "signup"
     static redirectToAuth(
         input?:
@@ -80,6 +105,8 @@ export default class Wrapper {
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
+const verifyEmail = Wrapper.verifyEmail;
+const sendVerificationEmail = Wrapper.sendVerificationEmail;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const EmailVerification = Wrapper.EmailVerification;
@@ -93,6 +120,8 @@ export {
     Facebook,
     Github,
     isEmailVerified,
+    verifyEmail,
+    sendVerificationEmail,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
