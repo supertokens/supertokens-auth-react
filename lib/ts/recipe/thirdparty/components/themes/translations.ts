@@ -8,7 +8,7 @@ export const defaultTranslationsThirdParty = {
 
         THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE: "Sign Up / Sign In",
 
-        THIRD_PARTY_SIGN_IN_UP_FOOTER_START: "By continuing, you agree to our",
+        THIRD_PARTY_SIGN_IN_UP_FOOTER_START: "By continuing, you agree to our ",
         THIRD_PARTY_SIGN_IN_UP_FOOTER_TOS: "Terms of Service",
         THIRD_PARTY_SIGN_IN_UP_FOOTER_AND: " and ",
         THIRD_PARTY_SIGN_IN_UP_FOOTER_PP: "Privacy Policy",

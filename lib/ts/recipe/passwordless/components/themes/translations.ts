@@ -32,7 +32,7 @@ export const defaultTranslationsPasswordless = {
 
         PWLESS_SIGN_IN_UP_HEADER_TITLE: "Sign Up or Log In",
 
-        PWLESS_SIGN_IN_UP_FOOTER_START: "By continuing, you agree to our",
+        PWLESS_SIGN_IN_UP_FOOTER_START: "By continuing, you agree to our ",
         PWLESS_SIGN_IN_UP_FOOTER_TOS: "Terms of Service",
         PWLESS_SIGN_IN_UP_FOOTER_AND: " and ",
         PWLESS_SIGN_IN_UP_FOOTER_PP: "Privacy Policy",

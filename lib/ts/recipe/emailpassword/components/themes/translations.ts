@@ -24,7 +24,7 @@ export const defaultTranslationsEmailPassword = {
         EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_START: "Already have an account?",
         EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_SIGN_IN_LINK: "Sign In",
         EMAIL_PASSWORD_SIGN_UP_HEADER_SUBTITLE_END: "",
-        EMAIL_PASSWORD_SIGN_UP_FOOTER_START: "By continuing, you agree to our",
+        EMAIL_PASSWORD_SIGN_UP_FOOTER_START: "By continuing, you agree to our ",
         EMAIL_PASSWORD_SIGN_UP_FOOTER_TOS: "Terms of Service",
         EMAIL_PASSWORD_SIGN_UP_FOOTER_AND: " and ",
         EMAIL_PASSWORD_SIGN_UP_FOOTER_PP: "Privacy Policy",
