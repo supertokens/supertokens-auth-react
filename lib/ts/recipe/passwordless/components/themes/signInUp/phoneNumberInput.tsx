@@ -21,73 +21,60 @@
 import { CSSObject, jsx } from "@emotion/react";
 import Select, { components } from "react-select";
 
-import React, { forwardRef, ForwardRefRenderFunction, RefObject, useContext, useState } from "react";
+import React, { useContext } from "react";
 
 import PhoneInputWithCountrySelect, { getCountryCallingCode } from "react-phone-number-input/min";
 
 import StyleContext from "../../../../../styles/styleContext";
-import { InputRef } from "../../../../emailpassword/types";
 import { InputProps } from "../../../../emailpassword/components/library/input";
 import ErrorIcon from "../../../../../components/assets/errorIcon";
 import { CountryCode } from "libphonenumber-js";
 
 type PhoneNumberInputProps = {
     defaultCountry?: CountryCode;
-    initialValue?: string;
 };
 
 /*
  * Component.
  */
-function PhoneNumberInput(
-    {
-        defaultCountry,
-        autoComplete,
-        autofocus,
-        name,
-        initialValue,
-        onInputBlur,
-        onInputFocus,
-        onChange,
-        hasError,
-        placeholder,
-    }: InputProps & PhoneNumberInputProps,
-    ref: RefObject<InputRef>
-): JSX.Element {
-    const [phoneNumber, setPhoneNumber] = useState<string>(initialValue || "");
-
+function PhoneNumberInput({
+    defaultCountry,
+    autoComplete,
+    autofocus,
+    name,
+    onInputBlur,
+    onInputFocus,
+    onChange,
+    hasError,
+    placeholder,
+    value,
+}: InputProps & PhoneNumberInputProps): JSX.Element {
     const styles = useContext(StyleContext);
 
     function handleFocus() {
-        if (ref.current === null) {
-            return;
-        }
-
-        ref.current.isFocused = true;
         if (onInputFocus !== undefined) {
             onInputFocus({
-                id: ref.current.name,
-                value: ref.current.value,
+                id: name,
+                value: value,
             });
         }
     }
 
     function handleBlur() {
-        if (onInputBlur === undefined || ref.current === null) {
-            return;
+        if (onInputBlur !== undefined) {
+            onInputBlur({
+                id: name,
+                value: value,
+            });
         }
-
-        ref.current.isFocused = false;
-        onInputBlur({
-            id: ref.current.name,
-            value: ref.current.value,
-        });
     }
 
     function handleChange(newValue: string) {
-        setPhoneNumber(newValue === undefined ? "" : newValue);
         if (onChange !== undefined) {
-            onChange(newValue);
+            onChange({
+                id: name,
+                value: newValue,
+            });
         }
     }
 
@@ -98,7 +85,6 @@ function PhoneNumberInput(
     return (
         <div data-supertokens="inputContainer" css={styles.inputContainer}>
             <div data-supertokens="inputWrapper inputError" css={[styles.inputWrapper, errorStyle]}>
-                <input type="hidden" ref={ref} value={phoneNumber} name={name} />
                 <PhoneInputWithCountrySelect
                     data-supertokens="input phoneInputLibRoot"
                     countrySelectComponent={CountrySelectWithIcon}
@@ -106,7 +92,7 @@ function PhoneNumberInput(
                     name={name + "_text"}
                     autoFocus={autofocus}
                     autoComplete={autoComplete}
-                    value={phoneNumber}
+                    value={value}
                     onChange={handleChange}
                     countryCallingCodeEditable={true}
                     onFocus={handleFocus}
@@ -202,16 +188,9 @@ function CountrySelectWithIcon({
     );
 }
 
-const PhoneNumberInputWithForwardRef = forwardRef(PhoneNumberInput as ForwardRefRenderFunction<InputRef, InputProps>);
-export default PhoneNumberInputWithForwardRef;
+export default PhoneNumberInput;
 
-// TODO: ForwardRefExoticComponent<P & T>
-function forwardRefWithInjectedProps<P, T>(Component: any, injectedProps: P) {
-    return forwardRef<InputRef, T>(((props: T, ref) => {
-        return <Component {...injectedProps} {...props} ref={ref} />;
-    }) as ForwardRefRenderFunction<InputRef, T>);
-}
-
-export const phoneNumberInputWithInjectedProps = function (props: PhoneNumberInputProps) {
-    return forwardRefWithInjectedProps<PhoneNumberInputProps, InputProps>(PhoneNumberInputWithForwardRef, props);
+// TODO: type props
+export const phoneNumberInputWithInjectedProps = function (injectedProps: Partial<PhoneNumberInputProps>) {
+    return (props: any) => <PhoneNumberInput {...injectedProps} {...props} />;
 };

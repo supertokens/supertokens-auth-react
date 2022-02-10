@@ -18,335 +18,218 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { createRef, FormEvent, Fragment, PureComponent } from "react";
+import { FormEvent, Fragment, useState } from "react";
 import { Button, FormRow, Input, InputError, Label } from ".";
 
 import { APIFormField } from "../../../../types";
-import { FormBaseProps, FormBaseState, InputRef } from "../../types";
+import { FormBaseProps } from "../../types";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
-import GeneralError from "./generalError";
+import { useCallback } from "react";
+import { useRef } from "react";
+import { useEffect } from "react";
 
-/*
- * Component.
- */
+type FieldState = {
+    id: string;
+    validated?: boolean;
+    error?: string;
+    value: string;
+};
 
-export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBaseState> {
-    /*
-     * Constructor.
-     */
-    constructor(props: FormBaseProps<T>) {
-        super(props);
+export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
+    const { footer, buttonLabel, showLabels, validateOnBlur, formFields } = props;
 
-        const baseState = {
-            formFields: props.formFields.map((field) => ({
-                ...field,
-                validated: false,
-                ref: createRef<InputRef>(),
-            })),
-            unmounting: new AbortController(),
+    const unmounting = useRef(new AbortController());
+    useEffect(() => {
+        return () => {
+            unmounting.current.abort();
         };
+    }, [unmounting]);
 
-        if (props.error === undefined) {
-            this.state = {
-                ...baseState,
-                status: "IN_PROGRESS",
-            };
-        } else {
-            this.state = {
-                ...baseState,
-                status: "GENERAL_ERROR",
-                generalError: props.error,
-            };
-        }
-    }
+    const [fieldStates, setFieldStates] = useState<FieldState[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
-    componentDidUpdate(prevProps: FormBaseProps<T>) {
-        if (this.props.error !== prevProps.error) {
-            this.setState((os) =>
-                os.status === "GENERAL_ERROR" && this.props.error === os.generalError
-                    ? os
-                    : {
-                          ...os,
-                          status: "GENERAL_ERROR",
-                          generalError: this.props.error,
-                      }
-            );
-        }
-    }
-
-    /*
-     * Methods.
-     */
-
-    handleInputFocus = async (field: APIFormField): Promise<void> => {
-        this.setState((oldState) => {
-            return this.getNewState(oldState, field, "focus", undefined);
-        });
-    };
-
-    handleInputChange = async (): Promise<void> => {
-        this.setState((oldState) => {
-            if (oldState.status === "GENERAL_ERROR") {
-                return {
-                    ...oldState,
-                    status: "IN_PROGRESS",
-                    generalError: undefined,
-                };
-            }
-            return oldState;
-        });
-    };
-
-    handleInputBlur = async (field: APIFormField): Promise<void> => {
-        const formFields = this.state.formFields;
-        let error: string | undefined = undefined;
-        for (let i = 0; i < formFields.length; i++) {
-            if (field.id === formFields[i].id) {
-                // Validate.
-                if (field.value !== "") {
-                    error = await formFields[i].validate(field.value);
+    const updateFieldState = useCallback(
+        (id: string, update: (os: FieldState) => FieldState) => {
+            setFieldStates((os) => {
+                const field = os.find((f) => f.id === id);
+                if (field === undefined) {
+                    return [...os, update({ id, value: "" })];
                 }
-                break;
-            }
-        }
 
-        this.setState((oldState) => {
-            // Do not update status asynchronously on blur if backend error already came in.
-            if (oldState.status === "GENERAL_ERROR") {
-                return oldState;
-            }
-            return this.getNewState(oldState, field, "blur", error);
-        });
-    };
+                return os.filter((f) => f !== field).concat(update(field));
+            });
+        },
+        [setFieldStates]
+    );
 
-    getNewState(
-        oldState: FormBaseState,
-        field: APIFormField,
-        event: "blur" | "focus",
-        error: string | undefined
-    ): FormBaseState {
-        // Add error to formFields array for corresponding field.
-        const formFields = oldState.formFields.map((formField) => {
-            if (formField.id !== field.id) {
-                return formField;
+    const onInputFocus = useCallback(
+        (field: APIFormField) => {
+            updateFieldState(field.id, (os) => ({ ...os, validated: false }));
+        },
+        [updateFieldState]
+    );
+
+    const onInputBlur = useCallback(
+        async (field: APIFormField) => {
+            if (!validateOnBlur) {
+                return;
             }
-            return {
-                ...formField,
-                validated: event === "blur" && error === undefined && field.value.length !== 0,
+            // This should never be undefined, but even if it is, we can
+            const fieldConfig = props.formFields.find((f) => f.id === field.id);
+            const error = fieldConfig && field.value !== "" ? await fieldConfig.validate(field.value) : undefined;
+
+            updateFieldState(field.id, (os) => ({
+                ...os,
                 error,
-            };
-        });
-
-        let status: FormBaseState["status"] = oldState.status;
-
-        for (const i in formFields) {
-            const field = formFields[i];
-            if (field.error !== undefined) {
-                status = "FIELD_ERRORS";
-                break;
-            }
-            if (field.optional === false) {
-                const value = field.ref.current !== null ? field.ref.current.value : "";
-
-                if (value.length === 0) {
-                    const isFocused = field.ref.current !== null ? field.ref.current.isFocused : false;
-                    if (isFocused !== true) {
-                        status = "IN_PROGRESS";
-                    }
-                }
-            }
-        }
-
-        return {
-            ...oldState,
-            status,
-            formFields,
-        } as FormBaseState; // We need this cast, because TS doesn't recognise that we only get GENERAL_ERROR state if oldState also had that
-    }
-
-    componentWillUnmount = () => {
-        this.state.unmounting.abort();
-    };
-
-    onFormSubmit = async (e: FormEvent): Promise<void> => {
-        // Prevent default event propagation.
-        e.preventDefault();
-
-        // Set loading state.
-        this.setState((oldState) => ({
-            ...oldState,
-            status: "LOADING",
-            formFields: oldState.formFields.map((fs) => ({
-                ...fs,
-                error: undefined,
-            })),
-        }));
-
-        // Get the fields values from form.
-        const fields = this.state.formFields.map((field) => {
-            return {
-                id: field.id,
-                value: field.ref.current !== null ? field.ref.current.value : "",
-            };
-        });
-
-        // Call API.
-        try {
-            const result = await this.props.callAPI(fields);
-            if (this.state.unmounting.signal.aborted) {
-                return;
-            }
-
-            for (const field of this.state.formFields) {
-                const fieldInput = field.ref.current;
-                if (field.clearOnSubmit === true && fieldInput !== null) {
-                    fieldInput.value = "";
-                }
-            }
-
-            // If successful
-            if (result.status === "OK") {
-                // Set Success state.
-                this.setState(
-                    (oldState) => ({
-                        ...oldState,
-                        status: "SUCCESS",
-                    }),
-                    () => {
-                        if (this.props.onSuccess !== undefined) {
-                            this.props.onSuccess(result);
-                        }
-                    }
-                );
-                return;
-            }
-
-            // If field error.
-            if (result.status === "FIELD_ERROR") {
-                const errorFields = result.formFields;
-
-                // Update formFields state with errors.
-                const formFields = this.state.formFields.map((field) => {
-                    for (let i = 0; i < errorFields.length; i++) {
-                        if (field.id === errorFields[i].id) {
-                            field.error = errorFields[i].error;
-                        }
-                    }
-                    return field;
-                });
-                this.setState(() => ({
-                    status: "FIELD_ERRORS",
-                    formFields: formFields,
-                }));
-                return;
-            }
-
-            // Otherwise if message, set generalError
-            if (result.status === "GENERAL_ERROR") {
-                this.setState((oldState) => ({
-                    ...oldState,
-                    status: "GENERAL_ERROR",
-                    generalError: result.message,
-                }));
-            }
-        } catch (e) {
-            this.setState((oldState) => ({
-                ...oldState,
-                status: "GENERAL_ERROR",
-                generalError: "SOMETHING_WENT_WRONG_ERROR",
+                validated: error === undefined && field.value.length !== 0,
             }));
-        }
-    };
+        },
+        [validateOnBlur, updateFieldState, props.formFields]
+    );
 
-    /*
-     * Render.
-     */
-    render(): JSX.Element {
-        const { header, footer, buttonLabel, showLabels, validateOnBlur } = this.props;
-        const { formFields } = this.state;
-        const onInputBlur = validateOnBlur === true ? this.handleInputBlur : undefined;
+    const onInputChange = useCallback(
+        (field: APIFormField) => {
+            updateFieldState(field.id, (os) => ({ ...os, value: field.value }));
+            props.clearError();
+        },
+        [updateFieldState]
+    );
 
-        return (
-            <Fragment>
-                {header}
-                {this.state.status === "GENERAL_ERROR" && <GeneralError error={this.state.generalError} />}
+    const onFormSubmit = useCallback(
+        async (e: FormEvent): Promise<void> => {
+            // Prevent default event propagation.
+            e.preventDefault();
 
-                <form autoComplete="on" noValidate onSubmit={this.onFormSubmit}>
-                    {formFields.map((field) => {
-                        let type = "text";
-                        // If email or password, replace field type.
-                        if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
-                            type = field.id;
-                        }
-                        if (field.id === "confirm-password") {
-                            type = "password";
-                        }
+            // Set loading state.
+            setIsLoading(true);
 
-                        // We can use this to access things that can be updated on the field as a prop
-                        const propField = this.props.formFields.find((f) => f.id === field.id);
-                        if (!propField) {
-                            throw new Error("FormFieldDisappeared");
-                        }
+            setFieldStates((os) => os.map((fs) => ({ ...fs, error: undefined })));
 
-                        return (
-                            <FormRow key={field.id} hasError={field.error !== undefined}>
-                                <Fragment>
-                                    {showLabels &&
-                                        (propField.labelComponent !== undefined ? (
-                                            propField.labelComponent
-                                        ) : (
-                                            <Label value={field.label} showIsRequired={field.showIsRequired} />
-                                        ))}
+            // Get the fields values from form.
+            const apiFields = formFields.map((field) => {
+                const fieldState = fieldStates.find((fs) => fs.id === field.id);
+                return {
+                    id: field.id,
+                    value: fieldState === undefined ? "" : fieldState.value,
+                };
+            });
 
-                                    {propField.inputComponent !== undefined ? (
-                                        <propField.inputComponent
-                                            type={type}
-                                            name={field.id}
-                                            validated={field.validated}
-                                            placeholder={field.placeholder}
-                                            ref={field.ref}
-                                            autoComplete={field.autoComplete}
-                                            autofocus={field.autofocus}
-                                            onInputFocus={this.handleInputFocus}
-                                            onInputBlur={onInputBlur}
-                                            onChange={this.handleInputChange}
-                                            hasError={field.error !== undefined}
-                                        />
-                                    ) : (
-                                        <Input
-                                            type={type}
-                                            name={field.id}
-                                            validated={field.validated}
-                                            placeholder={field.placeholder}
-                                            ref={field.ref}
-                                            autoComplete={field.autoComplete}
-                                            onInputFocus={this.handleInputFocus}
-                                            onInputBlur={onInputBlur}
-                                            onChange={this.handleInputChange}
-                                            autofocus={field.autofocus}
-                                            hasError={field.error !== undefined}
-                                        />
-                                    )}
+            // Call API.
+            try {
+                const result = await props.callAPI(apiFields);
+                if (unmounting.current.signal.aborted) {
+                    return;
+                }
 
-                                    {field.error && <InputError error={field.error} />}
-                                </Fragment>
-                            </FormRow>
-                        );
-                    })}
+                for (const field of formFields) {
+                    if (field.clearOnSubmit === true) {
+                        // We can do these one by one, it's never more than one field
+                        updateFieldState(field.id, (os) => ({ ...os, value: "" }));
+                    }
+                }
 
-                    <FormRow key="form-button">
+                // If successful
+                if (result.status === "OK") {
+                    setIsLoading(false);
+                    props.clearError();
+                    if (props.onSuccess !== undefined) {
+                        props.onSuccess(result);
+                    }
+                }
+
+                // If field error.
+                if (result.status === "FIELD_ERROR") {
+                    const errorFields = result.formFields;
+
+                    setFieldStates((os) =>
+                        os.map((fs) => ({ ...fs, error: errorFields.find((ef: any) => ef.id === fs.id)?.error }))
+                    );
+                }
+
+                // Otherwise if message, set generalError
+                if (result.status === "GENERAL_ERROR") {
+                    props.onError(result.message);
+                }
+                setIsLoading(false);
+            } catch (e) {
+                props.onError("SOMETHING_WENT_WRONG_ERROR");
+            }
+        },
+        [setIsLoading, setFieldStates, props, formFields, fieldStates]
+    );
+
+    return (
+        <form autoComplete="on" noValidate onSubmit={onFormSubmit}>
+            {formFields.map((field) => {
+                let type = "text";
+                // If email or password, replace field type.
+                if (MANDATORY_FORM_FIELDS_ID_ARRAY.includes(field.id)) {
+                    type = field.id;
+                }
+                if (field.id === "confirm-password") {
+                    type = "password";
+                }
+                const fstate: FieldState = fieldStates.find((s) => s.id === field.id) || {
+                    id: field.id,
+                    validated: false,
+                    error: undefined,
+                    value: "",
+                };
+
+                return (
+                    <FormRow key={field.id} hasError={fstate.error !== undefined}>
                         <Fragment>
-                            <Button
-                                disabled={this.state.status === "LOADING"}
-                                isLoading={this.state.status === "LOADING"}
-                                type="submit"
-                                label={buttonLabel}
-                            />
-                            {footer}
+                            {showLabels &&
+                                (field.labelComponent !== undefined ? (
+                                    field.labelComponent
+                                ) : (
+                                    <Label value={field.label} showIsRequired={field.showIsRequired} />
+                                ))}
+
+                            {field.inputComponent !== undefined ? (
+                                <field.inputComponent
+                                    type={type}
+                                    name={field.id}
+                                    validated={fstate.validated === true}
+                                    placeholder={field.placeholder}
+                                    value={fstate.value}
+                                    autoComplete={field.autoComplete}
+                                    autofocus={field.autofocus}
+                                    onInputFocus={onInputFocus}
+                                    onInputBlur={onInputBlur}
+                                    onChange={onInputChange}
+                                    hasError={fstate.error !== undefined}
+                                />
+                            ) : (
+                                <Input
+                                    type={type}
+                                    name={field.id}
+                                    validated={fstate.validated === true}
+                                    placeholder={field.placeholder}
+                                    value={fstate.value}
+                                    autoComplete={field.autoComplete}
+                                    onInputFocus={onInputFocus}
+                                    onInputBlur={onInputBlur}
+                                    onChange={onInputChange}
+                                    autofocus={field.autofocus}
+                                    hasError={fstate.error !== undefined}
+                                />
+                            )}
+
+                            {fstate.error && <InputError error={fstate.error} />}
                         </Fragment>
                     </FormRow>
-                </form>
-            </Fragment>
-        );
-    }
-}
+                );
+            })}
+
+            <FormRow key="form-button">
+                <Fragment>
+                    <Button disabled={isLoading} isLoading={isLoading} type="submit" label={buttonLabel} />
+                    {footer}
+                </Fragment>
+            </FormRow>
+        </form>
+    );
+};
+
+export default FormBase;

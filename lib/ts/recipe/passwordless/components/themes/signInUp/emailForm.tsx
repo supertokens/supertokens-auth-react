@@ -19,6 +19,8 @@ import { SignInUpEmailFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultValidate } from "../../../../emailpassword/validators";
+import React from "react";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 
 export const EmailForm = withOverride(
     "PasswordlessEmailForm",
@@ -29,48 +31,52 @@ export const EmailForm = withOverride(
         }
     ): JSX.Element {
         return (
-            <FormBase
-                formFields={[
-                    {
-                        id: "email",
-                        label: "PWLESS_SIGN_IN_UP_EMAIL_LABEL",
-                        optional: false,
-                        autofocus: true,
-                        placeholder: "",
-                        // We are using the default validator that allows any string
-                        validate: defaultValidate,
-                    },
-                ]}
-                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
-                onSuccess={props.onSuccess}
-                callAPI={async (formFields) => {
-                    const email = formFields.find((field) => field.id === "email")?.value;
-                    if (email === undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "GENERAL_ERROR_EMAIL_UNDEFINED",
-                        };
-                    }
-                    const validationRes = await props.config.validateEmailAddress(email);
-                    if (validationRes !== undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: validationRes,
-                        };
-                    }
-                    const response = await props.recipeImplementation.createCode({
-                        email,
-                        config: props.config,
-                    });
+            <React.Fragment>
+                {props.header}
+                {props.error !== undefined && <GeneralError error={props.error} />}
+                <FormBase
+                    clearError={props.clearError}
+                    onError={props.onError}
+                    formFields={[
+                        {
+                            id: "email",
+                            label: "PWLESS_SIGN_IN_UP_EMAIL_LABEL",
+                            optional: false,
+                            autofocus: true,
+                            placeholder: "",
+                            // We are using the default validator that allows any string
+                            validate: defaultValidate,
+                        },
+                    ]}
+                    buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
+                    onSuccess={props.onSuccess}
+                    callAPI={async (formFields) => {
+                        const email = formFields.find((field) => field.id === "email")?.value;
+                        if (email === undefined) {
+                            return {
+                                status: "GENERAL_ERROR",
+                                message: "GENERAL_ERROR_EMAIL_UNDEFINED",
+                            };
+                        }
+                        const validationRes = await props.config.validateEmailAddress(email);
+                        if (validationRes !== undefined) {
+                            return {
+                                status: "GENERAL_ERROR",
+                                message: validationRes,
+                            };
+                        }
+                        const response = await props.recipeImplementation.createCode({
+                            email,
+                            config: props.config,
+                        });
 
-                    return response;
-                }}
-                validateOnBlur={false}
-                showLabels={true}
-                header={props.header}
-                footer={props.footer}
-                error={props.error}
-            />
+                        return response;
+                    }}
+                    validateOnBlur={false}
+                    showLabels={true}
+                    footer={props.footer}
+                />
+            </React.Fragment>
         );
     }
 );

@@ -26,6 +26,7 @@ import { ThemeBase } from "../themeBase";
 import { ProvidersForm } from "./providersForm";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { useTranslation } from "../../../../..";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 
 /*
  * Component.
@@ -44,6 +45,7 @@ function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
                         {t("THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE")}
                     </div>
                     <div data-supertokens="divider" css={styles.divider}></div>
+                    {props.featureState.error && <GeneralError error={props.featureState.error} />}
                     <ProvidersForm {...props} />
                     <SignUpFooter
                         privacyPolicyLink={props.config.signInAndUpFeature.privacyPolicyLink}

@@ -22,7 +22,7 @@ import {
     NormalisedFormField,
     ThemeBaseProps,
 } from "../../types";
-import { ForwardRefExoticComponent, RefAttributes, RefObject } from "react";
+import React, { Dispatch } from "react";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
@@ -47,6 +47,7 @@ import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
 import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 import { InputProps } from "./components/library/input";
+import { EmailPasswordSignInAndUpAction } from "./components/features/signInAndUp";
 
 export type ComponentOverrideMap = {
     EmailPasswordSignIn?: ComponentOverride<typeof SignIn>;
@@ -237,9 +238,13 @@ type FormThemeBaseProps = ThemeBaseProps & {
      * Form fields to use in the signin form.
      */
     formFields: FormFieldThemeProps[];
+
+    error: string | undefined;
 };
 
 export type SignInThemeProps = FormThemeBaseProps & {
+    clearError: () => void;
+    onError: (error: string) => void;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signUpClicked?: () => void;
@@ -248,6 +253,8 @@ export type SignInThemeProps = FormThemeBaseProps & {
 };
 
 export type SignUpThemeProps = FormThemeBaseProps & {
+    clearError: () => void;
+    onError: (error: string) => void;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signInClicked?: () => void;
@@ -257,17 +264,14 @@ export type SignUpThemeProps = FormThemeBaseProps & {
 export type SignInAndUpThemeProps = {
     signInForm: SignInThemeProps;
     signUpForm: SignUpThemeProps;
+    featureState: {
+        isSignUp: boolean;
+    };
+    dispatch: Dispatch<EmailPasswordSignInAndUpAction>;
     config: NormalisedConfig;
 };
 
-export type NormalisedFormFieldWithError = NormalisedFormField & {
-    /*
-     * Error message to display to users.
-     */
-    error?: string;
-};
-
-export type FormFieldThemeProps = NormalisedFormFieldWithError & {
+export type FormFieldThemeProps = NormalisedFormField & {
     /*
      * Custom component that replaces the label entirely
      */
@@ -276,7 +280,7 @@ export type FormFieldThemeProps = NormalisedFormFieldWithError & {
     /*
      * Custom component that replaces the standard input component
      */
-    inputComponent?: ForwardRefExoticComponent<InputProps & RefAttributes<InputRef>>;
+    inputComponent?: React.FC<InputProps>;
 
     /*
      * Show Is required (*) next to label
@@ -287,35 +291,6 @@ export type FormFieldThemeProps = NormalisedFormFieldWithError & {
      * Clears the field after calling the API.
      */
     clearOnSubmit?: boolean;
-
-    /*
-     * Moves focus to the input element when it mounts
-     */
-    autofocus?: boolean;
-
-    /*
-     * Autocomplete
-     */
-    autoComplete?: string;
-};
-
-export type FormFieldState = FormFieldThemeProps & {
-    /*
-     * Has the value already been submitted to its validator.
-     */
-    validated: boolean;
-
-    /*
-     * Input
-     */
-    ref: RefObject<InputRef>;
-};
-
-export type InputRef = HTMLInputElement & {
-    /*
-     * Is the current input HTML Element focused.
-     */
-    isFocused?: boolean;
 };
 
 export type FormFieldError = {
@@ -384,11 +359,17 @@ export type ResetPasswordUsingTokenThemeProps = {
 };
 
 export type EnterEmailProps = FormThemeBaseProps & {
+    error: string | undefined;
+    clearError: () => void;
+    onError: (error: string) => void;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
 };
 
 export type SubmitNewPasswordProps = FormThemeBaseProps & {
+    error: string | undefined;
+    clearError: () => void;
+    onError: (error: string) => void;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSignInClicked: () => void;
@@ -398,21 +379,6 @@ export type SubmitNewPasswordProps = FormThemeBaseProps & {
 export type EnterEmailStatus = "READY" | "SENT";
 
 export type SubmitNewPasswordStatus = "READY" | "SUCCESS";
-
-export type FormBaseState = {
-    formFields: FormFieldState[];
-    unmounting: AbortController;
-} & (
-    | {
-          formFields: FormFieldState[];
-          status: "IN_PROGRESS" | "READY" | "LOADING" | "FIELD_ERRORS" | "SUCCESS";
-          unmounting: AbortController;
-      }
-    | {
-          status: "GENERAL_ERROR";
-          generalError: string;
-      }
-);
 
 export type FormBaseProps<T> = {
     header?: JSX.Element;
@@ -425,10 +391,10 @@ export type FormBaseProps<T> = {
 
     buttonLabel: string;
 
-    error?: string;
-
     validateOnBlur?: boolean;
 
+    clearError: () => void;
+    onError: (error: string) => void;
     onSuccess?: (result: T & { status: "OK" }) => void;
 
     callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse<T>>;
@@ -474,7 +440,9 @@ declare global {
 }
 
 export type SignInAndUpState = {
-    user?: User;
+    user: User | undefined;
+    error: string | undefined;
+    isSignUp: boolean;
 };
 
 export type RecipeInterface = {

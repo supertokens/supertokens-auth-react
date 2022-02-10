@@ -12,12 +12,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/*
- * Imports.
- */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { Fragment, useState, useContext } from "react";
+import { Fragment, useContext, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
 import { EnterEmailProps, EnterEmailStatus } from "../../../types";
@@ -25,6 +22,7 @@ import { EnterEmailProps, EnterEmailStatus } from "../../../types";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import GeneralError from "../../library/generalError";
 
 const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -61,7 +59,10 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
+                {props.error !== undefined && <GeneralError error={props.error} />}
                 <FormBase
+                    clearError={props.clearError}
+                    onError={props.onError}
                     formFields={formFields}
                     buttonLabel={"EMAIL_PASSWORD_RESET_SEND_BTN"}
                     onSuccess={onSuccess}

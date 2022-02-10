@@ -20,7 +20,8 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultEmailValidator, defaultValidate } from "../../../../emailpassword/validators";
-import { useState } from "react";
+import React, { useState } from "react";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 
 export const EmailOrPhoneForm = withOverride(
     "PasswordlessEmailOrPhoneForm",
@@ -31,88 +32,92 @@ export const EmailOrPhoneForm = withOverride(
         }
     ): JSX.Element {
         const [phoneNumberInitialValue, setPhoneNumberInitialValue] = useState<string | undefined>();
+
         return (
-            <FormBase
-                formFields={[
-                    {
-                        id: "emailOrPhone",
-                        label: "PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL",
-                        inputComponent: phoneNumberInitialValue
-                            ? phoneNumberInputWithInjectedProps({
-                                  defaultCountry: props.config.signInUpFeature.defaultCountry,
-                                  initialValue: phoneNumberInitialValue,
-                              })
-                            : undefined,
-                        optional: false,
-                        autofocus: true,
-                        placeholder: "",
-                        validate: defaultValidate,
-                    },
-                ]}
-                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
-                onSuccess={props.onSuccess}
-                callAPI={async (formFields) => {
-                    const emailOrPhone = formFields.find((field) => field.id === "emailOrPhone")?.value;
-                    if (emailOrPhone === undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED",
-                        };
-                    }
+            <React.Fragment>
+                {props.header}
+                {props.error !== undefined && <GeneralError error={props.error} />}
+                <FormBase
+                    clearError={props.clearError}
+                    onError={props.onError}
+                    formFields={[
+                        {
+                            id: "emailOrPhone",
+                            label: "PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL",
+                            inputComponent: phoneNumberInitialValue
+                                ? phoneNumberInputWithInjectedProps({
+                                      defaultCountry: props.config.signInUpFeature.defaultCountry,
+                                  })
+                                : undefined,
+                            optional: false,
+                            autofocus: true,
+                            placeholder: "",
+                            validate: defaultValidate,
+                        },
+                    ]}
+                    buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
+                    onSuccess={props.onSuccess}
+                    callAPI={async (formFields) => {
+                        const emailOrPhone = formFields.find((field) => field.id === "emailOrPhone")?.value;
+                        if (emailOrPhone === undefined) {
+                            return {
+                                status: "GENERAL_ERROR",
+                                message: "GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED",
+                            };
+                        }
 
-                    // We check if it looks like an email by default. Even if this fails (e.g., the user mistyped the @ symbol),
-                    // the guessInternationPhoneNumberFromInputPhoneNumber can decide to not change to the phone UI.
-                    // By default it stays on the combined input in 2 cases:
-                    // - if the input contains the @ symbol
-                    // - if less than half of the input looks like a phone number
-                    if ((await defaultEmailValidator(emailOrPhone)) === undefined) {
-                        const emailValidationRes = await props.config.validateEmailAddress(emailOrPhone);
-                        if (emailValidationRes === undefined) {
-                            return await props.recipeImplementation.createCode({
-                                email: emailOrPhone,
-                                config: props.config,
-                            });
+                        // We check if it looks like an email by default. Even if this fails (e.g., the user mistyped the @ symbol),
+                        // the guessInternationPhoneNumberFromInputPhoneNumber can decide to not change to the phone UI.
+                        // By default it stays on the combined input in 2 cases:
+                        // - if the input contains the @ symbol
+                        // - if less than half of the input looks like a phone number
+                        if ((await defaultEmailValidator(emailOrPhone)) === undefined) {
+                            const emailValidationRes = await props.config.validateEmailAddress(emailOrPhone);
+                            if (emailValidationRes === undefined) {
+                                return await props.recipeImplementation.createCode({
+                                    email: emailOrPhone,
+                                    config: props.config,
+                                });
+                            } else {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: emailValidationRes,
+                                };
+                            }
                         } else {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: emailValidationRes,
-                            };
-                        }
-                    } else {
-                        const phoneValidationRes = await props.config.validatePhoneNumber(emailOrPhone);
-                        if (phoneValidationRes === undefined) {
-                            return await props.recipeImplementation.createCode({
-                                phoneNumber: emailOrPhone,
-                                config: props.config,
-                            });
-                        }
+                            const phoneValidationRes = await props.config.validatePhoneNumber(emailOrPhone);
+                            if (phoneValidationRes === undefined) {
+                                return await props.recipeImplementation.createCode({
+                                    phoneNumber: emailOrPhone,
+                                    config: props.config,
+                                });
+                            }
 
-                        const intPhoneNumber =
-                            await props.config.signInUpFeature.guessInternationPhoneNumberFromInputPhoneNumber(
-                                emailOrPhone,
-                                props.config.signInUpFeature.defaultCountry
-                            );
+                            const intPhoneNumber =
+                                await props.config.signInUpFeature.guessInternationPhoneNumberFromInputPhoneNumber(
+                                    emailOrPhone,
+                                    props.config.signInUpFeature.defaultCountry
+                                );
 
-                        if (intPhoneNumber && phoneNumberInitialValue === undefined) {
-                            setPhoneNumberInitialValue(intPhoneNumber);
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: "PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR",
-                            };
-                        } else {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: phoneValidationRes,
-                            };
+                            if (intPhoneNumber && phoneNumberInitialValue === undefined) {
+                                setPhoneNumberInitialValue(intPhoneNumber);
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR",
+                                };
+                            } else {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: phoneValidationRes,
+                                };
+                            }
                         }
-                    }
-                }}
-                validateOnBlur={false}
-                showLabels={true}
-                header={props.header}
-                footer={props.footer}
-                error={props.error}
-            />
+                    }}
+                    validateOnBlur={false}
+                    showLabels={true}
+                    footer={props.footer}
+                />
+            </React.Fragment>
         );
     }
 );

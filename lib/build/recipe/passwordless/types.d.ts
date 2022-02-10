@@ -1,3 +1,4 @@
+import { Dispatch } from "react";
 import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
@@ -241,6 +242,7 @@ export declare type SignInUpProps = {
     error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
+    dispatch: Dispatch<PasswordlessSignInUpAction>;
     onSuccess?: (result: { createdUser: boolean; user: PasswordlessUser }) => void;
 };
 export declare type LoginAttemptInfo = {
@@ -253,18 +255,24 @@ export declare type LoginAttemptInfo = {
     flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
 };
 export declare type SignInUpEmailFormProps = {
+    clearError: () => void;
+    onError: (error: string) => void;
     error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
 export declare type SignInUpPhoneFormProps = {
+    clearError: () => void;
+    onError: (error: string) => void;
     error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
 export declare type SignInUpEmailOrPhoneFormProps = {
+    clearError: () => void;
+    onError: (error: string) => void;
     error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
@@ -275,6 +283,8 @@ export declare type SignInUpUserInputCodeFormProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     loginAttemptInfo: LoginAttemptInfo;
+    clearError: () => void;
+    onError: (error: string) => void;
     onSuccess?: (result: { createdUser: boolean; user: PasswordlessUser }) => void;
 };
 export declare type LinkClickedScreenProps = {
@@ -285,6 +295,37 @@ export declare type LinkClickedScreenProps = {
 export declare type CloseTabScreenProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
+};
+export declare type PasswordlessSignInUpAction =
+    | {
+          type: "load";
+          loginAttemptInfo: LoginAttemptInfo | undefined;
+          error: string | undefined;
+      }
+    | {
+          type: "startLogin";
+          loginAttemptInfo: LoginAttemptInfo;
+      }
+    | {
+          type: "resendCode";
+          timestamp: number;
+      }
+    | {
+          type: "restartFlow";
+          error: string | undefined;
+      }
+    | {
+          type: "setError";
+          error: string | undefined;
+      }
+    | {
+          type: "successInAnotherTab";
+      };
+export declare type SignInUpState = {
+    error: string | undefined;
+    loaded: boolean;
+    loginAttemptInfo: LoginAttemptInfo | undefined;
+    successInAnotherTab: boolean;
 };
 export declare type LinkSentThemeProps = {
     error?: string;

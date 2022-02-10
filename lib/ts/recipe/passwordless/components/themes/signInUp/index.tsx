@@ -50,9 +50,12 @@ enum SignInUpScreens {
 function SignInUpTheme({ activeScreen, ...props }: SignInUpProps & { activeScreen: SignInUpScreens }): JSX.Element {
     const styles = useContext(StyleContext);
 
-    const recipeAndConfig = {
+    const commonProps = {
         recipeImplementation: props.recipeImplementation,
         config: props.config,
+        clearError: () => props.dispatch({ type: "setError", error: undefined }),
+        onError: (error: string) => props.dispatch({ type: "setError", error }),
+        error: props.error,
     };
 
     return (
@@ -67,8 +70,7 @@ function SignInUpTheme({ activeScreen, ...props }: SignInUpProps & { activeScree
                         {props.loaded &&
                             (activeScreen === SignInUpScreens.EmailForm ? (
                                 <EmailForm
-                                    {...recipeAndConfig}
-                                    error={props.error}
+                                    {...commonProps}
                                     header={<SignInUpHeader />}
                                     footer={
                                         <SignInUpFooter
@@ -79,8 +81,7 @@ function SignInUpTheme({ activeScreen, ...props }: SignInUpProps & { activeScree
                                 />
                             ) : activeScreen === SignInUpScreens.PhoneForm ? (
                                 <PhoneForm
-                                    {...recipeAndConfig}
-                                    error={props.error}
+                                    {...commonProps}
                                     header={<SignInUpHeader />}
                                     footer={
                                         <SignInUpFooter
@@ -91,8 +92,7 @@ function SignInUpTheme({ activeScreen, ...props }: SignInUpProps & { activeScree
                                 />
                             ) : activeScreen === SignInUpScreens.EmailOrPhoneForm ? (
                                 <EmailOrPhoneForm
-                                    {...recipeAndConfig}
-                                    error={props.error}
+                                    {...commonProps}
                                     header={<SignInUpHeader />}
                                     footer={
                                         <SignInUpFooter
@@ -103,19 +103,18 @@ function SignInUpTheme({ activeScreen, ...props }: SignInUpProps & { activeScree
                                 />
                             ) : activeScreen === SignInUpScreens.UserInputCodeForm ? (
                                 <UserInputCodeForm
-                                    {...recipeAndConfig}
+                                    {...commonProps}
                                     loginAttemptInfo={props.loginAttemptInfo!}
                                     onSuccess={props.onSuccess}
-                                    error={props.error}
                                     header={
                                         <UserInputCodeFormHeader
-                                            {...recipeAndConfig}
+                                            {...commonProps}
                                             loginAttemptInfo={props.loginAttemptInfo!}
                                         />
                                     }
                                     footer={
                                         <UserInputCodeFormFooter
-                                            {...recipeAndConfig}
+                                            {...commonProps}
                                             loginAttemptInfo={props.loginAttemptInfo!}
                                         />
                                     }
@@ -134,6 +133,7 @@ function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
 
     let activeScreen: SignInUpScreens | undefined;
     let activeStyle;
+
     if (props.successInAnotherTab) {
         activeScreen = SignInUpScreens.CloseTab;
         activeStyle = props.config.signInUpFeature.closeTabScreenStyle;

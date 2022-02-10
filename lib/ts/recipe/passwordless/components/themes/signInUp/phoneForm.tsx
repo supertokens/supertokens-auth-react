@@ -20,6 +20,9 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultValidate } from "../../../../emailpassword/validators";
+import { Fragment } from "react";
+import { useContext } from "react";
+import StyleContext from "../../../../../styles/styleContext";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",
@@ -29,51 +32,61 @@ export const PhoneForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
-        return (
-            <FormBase
-                formFields={[
-                    {
-                        id: "phoneNumber",
-                        label: "PWLESS_SIGN_IN_UP_PHONE_LABEL",
-                        inputComponent: phoneNumberInputWithInjectedProps({
-                            defaultCountry: props.config.signInUpFeature.defaultCountry,
-                        }),
-                        optional: false,
-                        autofocus: true,
-                        placeholder: "",
-                        validate: defaultValidate,
-                    },
-                ]}
-                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
-                onSuccess={props.onSuccess}
-                callAPI={async (formFields) => {
-                    const phoneNumber = formFields.find((field) => field.id === "phoneNumber")?.value;
-                    if (phoneNumber === undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "GENERAL_ERROR_PHONE_UNDEFINED",
-                        };
-                    }
-                    const validationRes = await props.config.validatePhoneNumber(phoneNumber);
-                    if (validationRes !== undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: validationRes,
-                        };
-                    }
-                    const response = await props.recipeImplementation.createCode({
-                        phoneNumber,
-                        config: props.config,
-                    });
+        const styles = useContext(StyleContext);
 
-                    return response;
-                }}
-                validateOnBlur={false}
-                showLabels={true}
-                header={props.header}
-                footer={props.footer}
-                error={props.error}
-            />
+        return (
+            <Fragment>
+                {props.header}
+                {props.error && (
+                    <div data-supertokens="generalError" css={styles.generalError}>
+                        {props.error}
+                    </div>
+                )}
+                <FormBase
+                    clearError={props.clearError}
+                    onError={props.onError}
+                    formFields={[
+                        {
+                            id: "phoneNumber",
+                            label: "PWLESS_SIGN_IN_UP_PHONE_LABEL",
+                            inputComponent: phoneNumberInputWithInjectedProps({
+                                defaultCountry: props.config.signInUpFeature.defaultCountry,
+                            }),
+                            optional: false,
+                            autofocus: true,
+                            placeholder: "",
+                            validate: defaultValidate,
+                        },
+                    ]}
+                    buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
+                    onSuccess={props.onSuccess}
+                    callAPI={async (formFields) => {
+                        const phoneNumber = formFields.find((field) => field.id === "phoneNumber")?.value;
+                        if (phoneNumber === undefined) {
+                            return {
+                                status: "GENERAL_ERROR",
+                                message: "GENERAL_ERROR_PHONE_UNDEFINED",
+                            };
+                        }
+                        const validationRes = await props.config.validatePhoneNumber(phoneNumber);
+                        if (validationRes !== undefined) {
+                            return {
+                                status: "GENERAL_ERROR",
+                                message: validationRes,
+                            };
+                        }
+                        const response = await props.recipeImplementation.createCode({
+                            phoneNumber,
+                            config: props.config,
+                        });
+
+                        return response;
+                    }}
+                    validateOnBlur={false}
+                    showLabels={true}
+                    footer={props.footer}
+                />
+            </Fragment>
         );
     }
 );

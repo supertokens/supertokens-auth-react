@@ -27,18 +27,15 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 /*
  * Component.
  */
+// We could actually remove this component
 export const SignInAndUpForm = withOverride(
     "ThirdPartyEmailPasswordSignInAndUpForm",
-    function ThirdPartyEmailPasswordSignInAndUpForm(
-        props: EmailPasswordSignInAndUpThemeProps & {
-            isSignUp: boolean;
-        }
-    ): JSX.Element {
+    function ThirdPartyEmailPasswordSignInAndUpForm(props: EmailPasswordSignInAndUpThemeProps): JSX.Element {
         /*
          * Render.
          */
 
-        if (props.isSignUp === true) {
+        if (props.featureState.isSignUp === true) {
             return (
                 <SignUpForm
                     {...props.signUpForm}

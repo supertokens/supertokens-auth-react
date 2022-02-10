@@ -1,7 +1,6 @@
-/// <reference types="react" />
-/// <reference types="@emotion/react/types/css-prop" />
 import { SignInUpEmailFormProps } from "../../../types";
-export declare const EmailForm: import("react").ComponentType<
+import React from "react";
+export declare const EmailForm: React.ComponentType<
     SignInUpEmailFormProps & {
         header?: JSX.Element | undefined;
         footer?: JSX.Element | undefined;

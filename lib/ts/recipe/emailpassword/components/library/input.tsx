@@ -12,29 +12,18 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
-/*
- * Imports.
- */
-
 /** @jsx jsx */
 import { jsx, CSSObject } from "@emotion/react";
 
-import { ForwardRefRenderFunction, useContext } from "react";
+import { ChangeEvent, useContext } from "react";
 
-import { forwardRef, RefObject } from "react";
 import { APIFormField } from "../../../../types";
-import { InputRef } from "../../types";
 import { useState } from "react";
 import StyleContext from "../../../../styles/styleContext";
 import ShowPasswordIcon from "../../../../components/assets/showPasswordIcon";
 import CheckedIcon from "../../../../components/assets/checkedIcon";
 import ErrorIcon from "../../../../components/assets/errorIcon";
 import { useTranslation } from "../../../..";
-
-/*
- * Props.
- */
 
 export type InputProps = {
     type: string;
@@ -44,79 +33,59 @@ export type InputProps = {
     validated: boolean;
     hasError: boolean;
     placeholder: string;
+    value: string;
     onInputBlur?: (field: APIFormField) => void;
     onInputFocus?: (field: APIFormField) => void;
-    onChange?: (newValue: string) => void;
+    onChange?: (field: APIFormField) => void;
 };
 
-/*
- * Component.
- */
-
-function Input(
-    {
-        type,
-        name,
-        hasError,
-        autoComplete,
-        onInputFocus,
-        onInputBlur,
-        onChange,
-        placeholder,
-        validated,
-        autofocus,
-    }: InputProps,
-    ref: RefObject<InputRef>
-): JSX.Element {
+const Input: React.FC<InputProps> = ({
+    type,
+    name,
+    hasError,
+    autoComplete,
+    onInputFocus,
+    onInputBlur,
+    onChange,
+    value,
+    placeholder,
+    validated,
+    autofocus,
+}) => {
     const t = useTranslation();
-    /*
-     * State.
-     */
     const [showPassword, setShowPassword] = useState(false);
-    const [value, setValue] = useState("");
 
     /*
      * Method.
      */
 
     function handleFocus() {
-        if (ref.current === null) {
-            return;
-        }
-
-        ref.current.isFocused = true;
         if (onInputFocus !== undefined) {
             onInputFocus({
-                id: ref.current.name,
-                value: ref.current.value,
+                id: name,
+                value: value,
             });
         }
     }
 
     function handleBlur() {
-        if (onInputBlur === undefined || ref.current === null) {
-            return;
-        }
-
-        ref.current.isFocused = false;
-        onInputBlur({
-            id: ref.current.name,
-            value: ref.current.value,
-        });
-    }
-
-    function handleChange() {
-        if (ref.current !== null && ref.current.value !== null) {
-            setValue(ref.current.value);
-            if (onChange) {
-                onChange(ref.current.value);
-            }
+        if (onInputBlur !== undefined) {
+            onInputBlur({
+                id: name,
+                value,
+            });
         }
     }
 
-    /*
-     * Render.
-     */
+    function handleChange(event: ChangeEvent<HTMLInputElement>) {
+        if (onChange) {
+            onChange({
+                id: name,
+                value: event.target.value,
+            });
+        }
+    }
+
     const styles = useContext(StyleContext);
     const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
     if (autoComplete === undefined) {
@@ -142,7 +111,6 @@ function Input(
                     type={inputType}
                     name={name}
                     placeholder={t(placeholder)}
-                    ref={ref}
                     onChange={handleChange}
                 />
                 {hasError === true && (
@@ -174,6 +142,6 @@ function Input(
             </div>
         </div>
     );
-}
+};
 
-export default forwardRef(Input as ForwardRefRenderFunction<InputRef, InputProps>);
+export default Input;

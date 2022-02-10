@@ -1,15 +1,24 @@
-import React from "react";
-import { InputRef } from "../../../../emailpassword/types";
+/// <reference types="react" />
+/** @jsx jsx */
+import { jsx } from "@emotion/react";
 import { InputProps } from "../../../../emailpassword/components/library/input";
 import { CountryCode } from "libphonenumber-js";
 declare type PhoneNumberInputProps = {
     defaultCountry?: CountryCode;
-    initialValue?: string;
 };
-declare const PhoneNumberInputWithForwardRef: React.ForwardRefExoticComponent<
-    InputProps & React.RefAttributes<InputRef>
->;
-export default PhoneNumberInputWithForwardRef;
+declare function PhoneNumberInput({
+    defaultCountry,
+    autoComplete,
+    autofocus,
+    name,
+    onInputBlur,
+    onInputFocus,
+    onChange,
+    hasError,
+    placeholder,
+    value,
+}: InputProps & PhoneNumberInputProps): JSX.Element;
+export default PhoneNumberInput;
 export declare const phoneNumberInputWithInjectedProps: (
-    props: PhoneNumberInputProps
-) => React.ForwardRefExoticComponent<InputProps & React.RefAttributes<InputRef>>;
+    injectedProps: Partial<PhoneNumberInputProps>
+) => (props: any) => jsx.JSX.Element;

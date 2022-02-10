@@ -9,13 +9,14 @@ import {
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
     NormalisedConfig as EPConfig,
+    SignInAndUpState as EmailPasswordSignInAndUpState,
 } from "../emailpassword/types";
 import {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
-import { NormalisedConfig as TPConfig, StateObject } from "../thirdparty/types";
+import { NormalisedConfig as TPConfig, StateObject, ThirdPartySignInAndUpState } from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
@@ -33,6 +34,15 @@ import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpasswo
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
 import { Header } from "./components/themes/signInAndUp/header";
 import { SignInAndUpForm } from "./components/themes/signInAndUp/signInAndUpForm";
+import { Dispatch } from "react";
+import {
+    ChildProps as EmailPasswordChildProps,
+    EmailPasswordSignInAndUpAction,
+} from "../emailpassword/components/features/signInAndUp";
+import {
+    ChildProps as ThirdPartyChildProps,
+    ThirdPartySignInUpActions,
+} from "../thirdparty/components/features/signInAndUp";
 export declare type ComponentOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap & {
         ThirdPartyEmailPasswordHeader?: ComponentOverride<typeof Header>;
@@ -88,6 +98,12 @@ export declare type OnHandleEventContext = ThirdPartyOnHandleEventContext | Emai
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     history?: any;
     emailPasswordRecipe?: EPRecipe;
+    epState: EmailPasswordSignInAndUpState;
+    epDispatch: Dispatch<EmailPasswordSignInAndUpAction>;
+    epChildProps: EmailPasswordChildProps;
+    tpState: ThirdPartySignInAndUpState;
+    tpDispatch: Dispatch<ThirdPartySignInUpActions>;
+    tpChildProps: ThirdPartyChildProps;
     thirdPartyRecipe?: TPRecipe;
     config: NormalisedConfig;
 };

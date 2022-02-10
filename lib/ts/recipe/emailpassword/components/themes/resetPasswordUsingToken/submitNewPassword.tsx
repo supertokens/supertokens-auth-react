@@ -26,6 +26,7 @@ import { FormRow, Button } from "../../library";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import GeneralError from "../../library/generalError";
 
 const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -69,8 +70,11 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
+                {props.error !== undefined && <GeneralError error={props.error} />}
                 <FormBase
                     formFields={formFields}
+                    clearError={props.clearError}
+                    onError={props.onError}
                     buttonLabel={"EMAIL_PASSWORD_RESET_SUBMIT_PW_CHANGE_PW_BTN"}
                     onSuccess={onSuccess}
                     validateOnBlur={true}
