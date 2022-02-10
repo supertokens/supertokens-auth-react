@@ -9,7 +9,7 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
     }
 
     if (postAPIHook === undefined) {
-        postAPIHook = async (context) => context.fetchResponse;
+        postAPIHook = async () => {};
     }
 
     if (onHandleEvent === undefined) {

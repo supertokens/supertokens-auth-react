@@ -18,10 +18,7 @@ export default class Wrapper {
     static isEmailVerified(input?: { userContext?: any }): Promise<{
         status: "OK";
         isVerified: boolean;
-        networkResponse: {
-            jsonBody: any;
-            fetchResponse: Response;
-        };
+        fetchResponse: Response;
     }>;
     static redirectToAuth(
         input?:

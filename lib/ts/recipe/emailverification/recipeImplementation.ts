@@ -5,10 +5,7 @@ export default function getRecipeImplementation(webJsImplementation: WebJSEmailV
     return {
         verifyEmail: async function (input: { token: string; config: NormalisedConfig; userContext: any }): Promise<{
             status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
-            networkResponse: {
-                jsonBody: any;
-                fetchResponse: Response;
-            };
+            fetchResponse: Response;
         }> {
             const response = await webJsImplementation.recipeImplementation.verifyEmail({
                 token: input.token,
@@ -27,10 +24,7 @@ export default function getRecipeImplementation(webJsImplementation: WebJSEmailV
 
         sendVerificationEmail: async function (input: { config: NormalisedConfig; userContext: any }): Promise<{
             status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-            networkResponse: {
-                jsonBody: any;
-                fetchResponse: Response;
-            };
+            fetchResponse: Response;
         }> {
             const response = await webJsImplementation.recipeImplementation.sendVerificationEmail({
                 config: webJsImplementation.config,
@@ -49,10 +43,7 @@ export default function getRecipeImplementation(webJsImplementation: WebJSEmailV
         isEmailVerified: async function (input: { config: NormalisedConfig; userContext: any }): Promise<{
             status: "OK";
             isVerified: boolean;
-            networkResponse: {
-                jsonBody: any;
-                fetchResponse: Response;
-            };
+            fetchResponse: Response;
         }> {
             const response = await webJsImplementation.recipeImplementation.isEmailVerified({
                 config: webJsImplementation.config,

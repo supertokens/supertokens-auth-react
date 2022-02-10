@@ -263,4 +263,4 @@ export type PostAPIHookFunction = (context: {
     url: string;
     fetchResponse: Response;
     userContext: any;
-}) => Promise<Response>;
+}) => Promise<void>;

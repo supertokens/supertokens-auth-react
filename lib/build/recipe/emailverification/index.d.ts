@@ -16,24 +16,15 @@ export default class Wrapper {
     static isEmailVerified(input?: { userContext?: any }): Promise<{
         status: "OK";
         isVerified: boolean;
-        networkResponse: {
-            jsonBody: any;
-            fetchResponse: Response;
-        };
+        fetchResponse: Response;
     }>;
     static verifyEmail(input: { token: string; userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
-        networkResponse: {
-            jsonBody: any;
-            fetchResponse: Response;
-        };
+        fetchResponse: Response;
     }>;
     static sendVerificationEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-        networkResponse: {
-            jsonBody: any;
-            fetchResponse: Response;
-        };
+        fetchResponse: Response;
     }>;
 }
 declare const init: typeof Wrapper.init;

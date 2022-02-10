@@ -136,15 +136,17 @@ export default class Querier {
             throw result;
         }
 
-        return postAPIHook === undefined
-            ? result
-            : await postAPIHook({
-                  requestInit,
-                  url: modifiedUrl,
-                  fetchResponse: result,
-                  // This is temoporary while web-js is being integrated, once that is done this Querier will not be required
-                  userContext: {},
-              });
+        if (postAPIHook !== undefined) {
+            await postAPIHook({
+                requestInit,
+                url: modifiedUrl,
+                fetchResponse: result,
+                // This is temoporary while web-js is being integrated, once that is done this Querier will not be required
+                userContext: {},
+            });
+        }
+
+        return result;
     };
 
     /*

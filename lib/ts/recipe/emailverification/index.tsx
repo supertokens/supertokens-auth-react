@@ -34,10 +34,7 @@ export default class Wrapper {
     static async isEmailVerified(input?: { userContext?: any }): Promise<{
         status: "OK";
         isVerified: boolean;
-        networkResponse: {
-            jsonBody: any;
-            fetchResponse: Response;
-        };
+        fetchResponse: Response;
     }> {
         return EmailVerificationRecipe.getInstanceOrThrow().isEmailVerified(
             getNormalisedUserContext(input?.userContext)
@@ -46,10 +43,7 @@ export default class Wrapper {
 
     static async verifyEmail(input: { token: string; userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
-        networkResponse: {
-            jsonBody: any;
-            fetchResponse: Response;
-        };
+        fetchResponse: Response;
     }> {
         let recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
 
@@ -62,10 +56,7 @@ export default class Wrapper {
 
     static sendVerificationEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-        networkResponse: {
-            jsonBody: any;
-            fetchResponse: Response;
-        };
+        fetchResponse: Response;
     }> {
         let recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
 

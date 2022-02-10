@@ -29,10 +29,7 @@ export default class EmailVerification extends RecipeModule<
     isEmailVerified(userContext: any): Promise<{
         status: "OK";
         isVerified: boolean;
-        networkResponse: {
-            jsonBody: any;
-            fetchResponse: Response;
-        };
+        fetchResponse: Response;
     }>;
     getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
 }
