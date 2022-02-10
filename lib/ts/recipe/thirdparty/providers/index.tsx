@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import React, { Fragment } from "react";
+import React from "react";
 import NormalisedURLPath from "../../../normalisedURLPath";
 import SuperTokens from "../../../superTokens";
 import ProviderButton from "../components/library/providerButton";
@@ -50,11 +50,7 @@ export default abstract class Provider {
 
     getDefaultButton(name?: string): JSX.Element {
         const providerName = name !== undefined ? name : this.name;
-        return (
-            <ProviderButton logo={this.getLogo()} providerName={providerName}>
-                <Fragment>Continue with {this.name}</Fragment>
-            </ProviderButton>
-        );
+        return <ProviderButton logo={this.getLogo()} providerName={providerName} displayName={this.name} />;
     }
 
     getRedirectURL(): string {

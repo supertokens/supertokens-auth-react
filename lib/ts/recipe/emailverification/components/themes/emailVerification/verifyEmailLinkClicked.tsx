@@ -19,7 +19,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 
-import { PureComponent } from "react";
+import { useContext, useEffect, useState } from "react";
 import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
 import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
 import ErrorLargeIcon from "../../../../../components/assets/errorLargeIcon";
@@ -29,118 +29,116 @@ import { Button } from "../../../../emailpassword/components/library";
 
 import { VerifyEmailLinkClickedThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 /*
  * Component.
  */
 
-class EmailVerificationVerifyEmailLinkClicked extends PureComponent<
-    VerifyEmailLinkClickedThemeProps,
-    { status: "LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL" }
-> {
-    static contextType = StyleContext;
+export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkClickedThemeProps> = (props) => {
+    const styles = useContext(StyleContext);
+    const t = useTranslation();
+    const [status, setStatus] = useState<"LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL">("LOADING");
 
-    constructor(props: VerifyEmailLinkClickedThemeProps) {
-        super(props);
-        this.state = {
-            status: "LOADING",
-        };
-    }
+    useEffect(() => {
+        const abortController = new AbortController();
+        void (async () => {
+            try {
+                const response = await props.recipeImplementation.verifyEmail({
+                    config: props.config,
+                    token: props.token,
+                });
+                if (abortController.signal.aborted) {
+                    return;
+                }
 
-    async componentDidMount() {
-        try {
-            const response = await this.props.recipeImplementation.verifyEmail({
-                config: this.props.config,
-                token: this.props.token,
-            });
-
-            if (response.status === "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR") {
-                this.setState(() => ({
-                    status: "INVALID",
-                }));
-            } else {
-                this.setState(() => ({
-                    status: "SUCCESSFUL",
-                }));
+                if (response.status === "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR") {
+                    setStatus("INVALID");
+                } else {
+                    setStatus("SUCCESSFUL");
+                }
+            } catch (e) {
+                setStatus("GENERAL_ERROR");
             }
-        } catch (e) {
-            this.setState(() => ({
-                status: "GENERAL_ERROR",
-            }));
-        }
-    }
+        })();
 
-    render() {
-        const styles = this.context;
-        const { status } = this.state;
-        const { onTokenInvalidRedirect, onContinueClicked } = this.props;
+        return () => {
+            abortController.abort();
+        };
+    }, [props.recipeImplementation, props.config, props.token]);
 
-        if (status === "LOADING") {
-            return (
-                <div data-supertokens="container" css={styles.container}>
-                    <div data-supertokens="row" css={styles.row}>
-                        <div data-supertokens="spinner" css={styles.spinner}>
-                            <SpinnerIcon color={styles.palette.colors.primary} />
-                        </div>
-                    </div>
-                </div>
-            );
-        }
+    const { onTokenInvalidRedirect, onContinueClicked } = props;
 
-        if (status === "SUCCESSFUL") {
-            return (
-                <div data-supertokens="container" css={styles.container}>
-                    <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
-                        <CheckedRoundIcon color={styles.palette.colors.success} />
-                        <div
-                            data-supertokens="headerTitle headerTinyTitle"
-                            css={[styles.headerTitle, styles.headerTinyTitle]}>
-                            Email verification successful!
-                        </div>
-                        <div
-                            data-supertokens="emailVerificationButtonWrapper"
-                            css={styles.emailVerificationButtonWrapper}>
-                            <Button isLoading={false} onClick={onContinueClicked} type="button" label={"CONTINUE"} />
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        if (status === "INVALID") {
-            return (
-                <div data-supertokens="container" css={styles.container}>
-                    <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
-                        <div
-                            data-supertokens="headerTitle headerTinyTitle"
-                            css={[styles.headerTitle, styles.headerTinyTitle]}>
-                            The email verification link has expired
-                        </div>
-                        <div
-                            onClick={onTokenInvalidRedirect}
-                            data-supertokens="secondaryText secondaryLinkWithArrow"
-                            css={[styles.secondaryText, styles.secondaryLinkWithArrow]}>
-                            Continue <ArrowRightIcon color={styles.palette.colors.textPrimary} />
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
+    if (status === "LOADING") {
         return (
             <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
-                    <div data-supertokens="headerTitle error" css={[styles.headerTitle, styles.error]}>
-                        <ErrorLargeIcon color={styles.palette.colors.error} /> Something went wrong
-                    </div>
-                    <div data-supertokens="primaryText" css={styles.primaryText}>
-                        We encountered an unexpected error. Please contact support for assistance
+                <div data-supertokens="row" css={styles.row}>
+                    <div data-supertokens="spinner" css={styles.spinner}>
+                        <SpinnerIcon color={styles.palette.colors.primary} />
                     </div>
                 </div>
             </div>
         );
     }
-}
+
+    if (status === "SUCCESSFUL") {
+        return (
+            <div data-supertokens="container" css={styles.container}>
+                <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
+                    <CheckedRoundIcon color={styles.palette.colors.success} />
+                    <div
+                        data-supertokens="headerTitle headerTinyTitle"
+                        css={[styles.headerTitle, styles.headerTinyTitle]}>
+                        {t("EMAIL_VERIFICATION_SUCCESS")}
+                    </div>
+                    <div data-supertokens="emailVerificationButtonWrapper" css={styles.emailVerificationButtonWrapper}>
+                        <Button
+                            isLoading={false}
+                            onClick={onContinueClicked}
+                            type="button"
+                            label={"EMAIL_VERIFICATION_CONTINUE_BTN"}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (status === "INVALID") {
+        return (
+            <div data-supertokens="container" css={styles.container}>
+                <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
+                    <div
+                        data-supertokens="headerTitle headerTinyTitle"
+                        css={[styles.headerTitle, styles.headerTinyTitle]}>
+                        {t("EMAIL_VERIFICATION_EXPIRED")}
+                    </div>
+                    <div
+                        onClick={onTokenInvalidRedirect}
+                        data-supertokens="secondaryText secondaryLinkWithArrow"
+                        css={[styles.secondaryText, styles.secondaryLinkWithArrow]}>
+                        {t("EMAIL_VERIFICATION_CONTINUE_LINK")}
+                        <ArrowRightIcon color={styles.palette.colors.textPrimary} />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
+                <div data-supertokens="headerTitle error" css={[styles.headerTitle, styles.error]}>
+                    <ErrorLargeIcon color={styles.palette.colors.error} />
+                    {t("EMAIL_VERIFICATION_ERROR_TITLE")}
+                </div>
+                <div data-supertokens="primaryText" css={styles.primaryText}>
+                    {t("EMAIL_VERIFICATION_ERROR_DESC")}
+                </div>
+            </div>
+        </div>
+    );
+};
 
 export const VerifyEmailLinkClicked = withOverride(
     "EmailVerificationVerifyEmailLinkClicked",

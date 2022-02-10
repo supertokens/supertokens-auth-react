@@ -347,7 +347,7 @@ describe("SuperTokens Email Verification server errors", function () {
             await page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 500);
             await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
             const verificationEmailErrorTitle = await getVerificationEmailErrorTitle(page);
-            assert.deepStrictEqual(verificationEmailErrorTitle, "!\n Something went wrong");
+            assert.deepStrictEqual(verificationEmailErrorTitle, "!\nSomething went wrong");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",

@@ -30,6 +30,7 @@ import StyleContext from "../../../../styles/styleContext";
 import ShowPasswordIcon from "../../../../components/assets/showPasswordIcon";
 import CheckedIcon from "../../../../components/assets/checkedIcon";
 import ErrorIcon from "../../../../components/assets/errorIcon";
+import { useTranslation } from "../../../..";
 
 /*
  * Props.
@@ -67,6 +68,7 @@ function Input(
     }: InputProps,
     ref: RefObject<InputRef>
 ): JSX.Element {
+    const t = useTranslation();
     /*
      * State.
      */
@@ -139,7 +141,7 @@ function Input(
                     onBlur={handleBlur}
                     type={inputType}
                     name={name}
-                    placeholder={placeholder}
+                    placeholder={t(placeholder)}
                     ref={ref}
                     onChange={handleChange}
                 />

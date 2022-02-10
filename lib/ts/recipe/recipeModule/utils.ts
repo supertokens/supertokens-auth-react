@@ -30,7 +30,7 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
         onHandleEvent,
         useShadowDom,
         palette,
-        rootStyle: rootStyle,
+        rootStyle,
         recipeId: config.recipeId,
         appInfo: config.appInfo,
     };

@@ -29,6 +29,7 @@ import {} from "../../../types";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { defaultTranslationsPasswordless } from "../../themes/translations";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -100,7 +101,10 @@ class LinkClickedScreen extends PureComponent<PropType, unknown> {
 
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                <FeatureWrapper
+                    useShadowDom={this.props.recipe.config.useShadowDom}
+                    isEmbedded={this.getIsEmbedded()}
+                    defaultStore={defaultTranslationsPasswordless}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}

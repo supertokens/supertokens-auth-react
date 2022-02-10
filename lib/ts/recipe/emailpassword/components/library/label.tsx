@@ -21,6 +21,7 @@
 import { jsx } from "@emotion/react";
 
 import { useContext } from "react";
+import { useTranslation } from "../../../..";
 import StyleContext from "../../../../styles/styleContext";
 
 /*
@@ -32,18 +33,13 @@ type LabelProps = {
     showIsRequired?: boolean;
 };
 
-/*
- * Component.
- */
-
 export default function Label({ value, showIsRequired }: LabelProps): JSX.Element {
-    /*
-     * Render.
-     */
+    const t = useTranslation();
     const styles = useContext(StyleContext);
+
     return (
         <div data-supertokens="label" css={styles.label}>
-            {value}
+            {t(value)}
             {showIsRequired && " *"}
         </div>
     );

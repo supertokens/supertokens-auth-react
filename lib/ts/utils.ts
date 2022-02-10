@@ -274,7 +274,118 @@ export class Deferred<T> {
         });
     }
 
-    attach(prom: Promise<T>) {
+    attach(prom: Promise<T>): void {
         prom.then(this.resolve, this.reject);
+    }
+}
+
+export function mergeObjects<T>(obj1: T, obj2: T): T {
+    const res = {
+        ...obj1,
+    };
+    for (const key in obj2) {
+        if (typeof res[key] === "object" && typeof obj2[key] === "object") {
+            res[key] = mergeObjects(res[key], obj2[key]);
+        } else {
+            res[key] = obj2[key];
+        }
+    }
+
+    return res;
+}
+
+export function normaliseCookieScopeOrThrowError(cookieScope: string): string {
+    function helper(sessionScope: string): string {
+        sessionScope = sessionScope.trim().toLowerCase();
+
+        // first we convert it to a URL so that we can use the URL class
+        if (sessionScope.startsWith(".")) {
+            sessionScope = sessionScope.substr(1);
+        }
+
+        if (!sessionScope.startsWith("http://") && !sessionScope.startsWith("https://")) {
+            sessionScope = "http://" + sessionScope;
+        }
+
+        try {
+            const urlObj = new URL(sessionScope);
+            sessionScope = urlObj.hostname;
+
+            // remove leading dot
+            if (sessionScope.startsWith(".")) {
+                sessionScope = sessionScope.substr(1);
+            }
+
+            return sessionScope;
+        } catch (err) {
+            throw new Error("Please provide a valid cookie scope");
+        }
+    }
+
+    function isAnIpAddress(ipaddress: string) {
+        return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+            ipaddress
+        );
+    }
+
+    const noDotNormalised = helper(cookieScope);
+
+    if (noDotNormalised === "localhost" || isAnIpAddress(noDotNormalised)) {
+        return noDotNormalised;
+    }
+
+    if (cookieScope.startsWith(".")) {
+        return "." + noDotNormalised;
+    }
+
+    return noDotNormalised;
+}
+
+export function getDefaultCookieScope(): string | undefined {
+    try {
+        return normaliseCookieScopeOrThrowError(getWindowOrThrow().location.hostname);
+    } catch {
+        return undefined;
+    }
+}
+
+export function getCookieValue(name: string): string | null {
+    const value = "; " + getWindowOrThrow().document.cookie;
+    const parts = value.split("; " + name + "=");
+    if (parts.length >= 2) {
+        const last = parts.pop();
+        if (last !== undefined) {
+            const temp = last.split(";").shift();
+            if (temp === undefined) {
+                return null;
+            }
+            return temp;
+        }
+    }
+    return null;
+}
+
+// undefined value will remove the cookie
+export function setFrontendCookie(name: string, value: string | undefined, scope: string | undefined): void {
+    let expires: string | undefined = "Thu, 01 Jan 1970 00:00:01 GMT";
+    let cookieVal = "";
+    if (value !== undefined) {
+        cookieVal = value;
+        expires = undefined; // set cookie without expiry
+    }
+    if (scope === "localhost" || scope === getWindowOrThrow().location.hostname || scope === undefined) {
+        // since some browsers ignore cookies with domain set to localhost
+        // see https://github.com/supertokens/supertokens-website/issues/25
+        if (expires !== undefined) {
+            getWindowOrThrow().document.cookie = `${name}=${cookieVal};expires=${expires};path=/;samesite=lax`;
+        } else {
+            getWindowOrThrow().document.cookie = `${name}=${cookieVal};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`;
+        }
+    } else {
+        if (expires !== undefined) {
+            getWindowOrThrow().document.cookie = `${name}=${cookieVal};expires=${expires};domain=${scope};path=/;samesite=lax`;
+        } else {
+            getWindowOrThrow().document.cookie = `${name}=${cookieVal};domain=${scope};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`;
+        }
     }
 }

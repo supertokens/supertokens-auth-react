@@ -22,6 +22,7 @@ import { jsx } from "@emotion/react";
 import { useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 export const SignInUpFooter = withOverride(
     "PasswordlessSignInUpFooter",
@@ -33,6 +34,7 @@ export const SignInUpFooter = withOverride(
         termsOfServiceLink?: string;
     }): JSX.Element | null {
         const styles = useContext(StyleContext);
+        const t = useTranslation();
 
         if (termsOfServiceLink === undefined && privacyPolicyLink === undefined) {
             return null;
@@ -42,7 +44,7 @@ export const SignInUpFooter = withOverride(
             <div
                 data-supertokens="secondaryText privacyPolicyAndTermsAndConditions"
                 css={[styles.secondaryText, styles.privacyPolicyAndTermsAndConditions]}>
-                By continuing, you agree to our
+                {t("PWLESS_SIGN_IN_UP_FOOTER_START")}
                 {termsOfServiceLink !== undefined && (
                     <a
                         data-supertokens="link"
@@ -50,10 +52,12 @@ export const SignInUpFooter = withOverride(
                         href={termsOfServiceLink}
                         target="_blank"
                         rel="noopener noreferer">
-                        Terms of Service
+                        {t("PWLESS_SIGN_IN_UP_FOOTER_TOS")}
                     </a>
                 )}
-                {termsOfServiceLink !== undefined && privacyPolicyLink !== undefined && "and"}
+                {termsOfServiceLink !== undefined &&
+                    privacyPolicyLink !== undefined &&
+                    t("PWLESS_SIGN_IN_UP_FOOTER_AND")}
                 {privacyPolicyLink !== undefined && (
                     <a
                         data-supertokens="link"
@@ -61,9 +65,10 @@ export const SignInUpFooter = withOverride(
                         href={privacyPolicyLink}
                         target="_blank"
                         rel="noopener noreferer">
-                        Privacy Policy
+                        {t("PWLESS_SIGN_IN_UP_FOOTER_PP")}
                     </a>
                 )}
+                {t("PWLESS_SIGN_IN_UP_FOOTER_END")}
             </div>
         );
     }

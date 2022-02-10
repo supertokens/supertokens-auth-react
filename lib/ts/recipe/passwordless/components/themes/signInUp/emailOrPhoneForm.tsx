@@ -36,7 +36,7 @@ export const EmailOrPhoneForm = withOverride(
                 formFields={[
                     {
                         id: "emailOrPhone",
-                        label: "Email or Phone number",
+                        label: "PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL",
                         inputComponent: phoneNumberInitialValue
                             ? phoneNumberInputWithInjectedProps({
                                   defaultCountry: props.config.signInUpFeature.defaultCountry,
@@ -49,14 +49,14 @@ export const EmailOrPhoneForm = withOverride(
                         validate: defaultValidate,
                     },
                 ]}
-                buttonLabel={"CONTINUE"}
+                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {
                     const emailOrPhone = formFields.find((field) => field.id === "emailOrPhone")?.value;
                     if (emailOrPhone === undefined) {
                         return {
                             status: "GENERAL_ERROR",
-                            message: "Please add an email or phone number above.",
+                            message: "GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED",
                         };
                     }
 
@@ -97,7 +97,7 @@ export const EmailOrPhoneForm = withOverride(
                             setPhoneNumberInitialValue(intPhoneNumber);
                             return {
                                 status: "GENERAL_ERROR",
-                                message: "Please enter a valid phone number with its country code.",
+                                message: "PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR",
                             };
                         } else {
                             return {

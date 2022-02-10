@@ -5,10 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## [unreleased]
+## [0.18.6] - 2022-02-03
+
+### Added
+
 -   passwordless demo app
 -   Adds example app with Hasura
 -   Adds example app with thirdpartyemailpassword showcasing setting password after email verification
+-   Translateable components
+
+### Refactors
+
+-   Refactored some more pure components into functional
+-   Feature components now provide a stable modified recipe implementation as a prop instead of getter
 
 ## [0.18.5] - 2022-01-27
 
