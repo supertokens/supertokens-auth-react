@@ -320,7 +320,6 @@ export async function clickLinkWithRightArrow(page) {
 }
 
 export async function getFieldErrors(page) {
-    await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             Array.from(
