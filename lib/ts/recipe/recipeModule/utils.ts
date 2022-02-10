@@ -9,6 +9,7 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
     }
 
     if (postAPIHook === undefined) {
+        // eslint-disable-next-line
         postAPIHook = async () => {};
     }
 

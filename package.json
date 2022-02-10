@@ -109,7 +109,7 @@
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "100kb"
+            "limit": "101kb"
         },
         {
             "path": "recipe/emailpassword/index.js",

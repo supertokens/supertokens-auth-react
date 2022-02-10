@@ -45,7 +45,7 @@ export default class Wrapper {
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        let recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
+        const recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
 
         return recipeInstance.recipeImpl.verifyEmail({
             token: input.token,
@@ -58,7 +58,7 @@ export default class Wrapper {
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        let recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
+        const recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
 
         return recipeInstance.recipeImpl.sendVerificationEmail({
             config: recipeInstance.config,
