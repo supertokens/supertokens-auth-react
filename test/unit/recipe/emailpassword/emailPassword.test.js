@@ -512,7 +512,7 @@ describe("EmailPassword", function () {
         );
         assert.deepStrictEqual(inputErrors, [
             {
-                error: "Email is invalid",
+                error: "ERROR_EMAIL_INVALID",
                 id: "email",
             },
         ]);
@@ -555,7 +555,7 @@ describe("EmailPassword", function () {
 
         assert.deepStrictEqual(inputErrors, [
             {
-                error: "Field is not optional",
+                error: "ERROR_NON_OPTIONAL",
                 id: "company",
             },
         ]);
