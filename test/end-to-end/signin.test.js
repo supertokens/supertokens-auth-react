@@ -770,6 +770,7 @@ describe("SuperTokens SignIn => Server Error", function () {
 
         await submitForm(page);
 
+        await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
         // Assert server Error
         let formFieldsErrors = await getFieldErrors(page);
         assert.deepStrictEqual(formFieldsErrors, ["Terms of Service"]);
