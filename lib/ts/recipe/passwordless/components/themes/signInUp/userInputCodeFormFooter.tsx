@@ -37,7 +37,9 @@ export const UserInputCodeFormFooter = withOverride(
                     css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
                     onClick={() => recipeImplementation.clearLoginAttemptInfo()}>
                     <ArrowLeftIcon color={styles.palette.colors.textPrimary} />
-                    {t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_" + loginAttemptInfo.contactMethod)}
+                    {loginAttemptInfo.contactMethod === "EMAIL"
+                        ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
+                        : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
                 </div>
             </Fragment>
         );
