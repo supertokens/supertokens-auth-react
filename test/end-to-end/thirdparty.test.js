@@ -244,7 +244,6 @@ describe("SuperTokens Third Party", function () {
 
             await page.setRequestInterception(true);
             const requestHandler = (request) => {
-                console.log(request.url());
                 if (request.method() === "POST" && request.url() === SIGN_IN_UP_API) {
                     request.respond({
                         status: 200,
