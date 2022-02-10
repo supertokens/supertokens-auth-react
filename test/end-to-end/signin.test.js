@@ -48,6 +48,7 @@ import {
     defaultSignUp,
     getUserIdFromSessionContext,
     getTextInDashboardNoAuth,
+    waitForSTElement,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -811,6 +812,7 @@ describe("SuperTokens SignIn => Server Error", function () {
         await submitForm(page);
 
         // Assert server Error
+        await waitForSTElement(page, "[data-supertokens~='inputErrorMessage']");
         let formFieldsErrors = await getFieldErrors(page);
         assert.deepStrictEqual(formFieldsErrors, ["Test message!!!!"]);
     });
