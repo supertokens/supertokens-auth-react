@@ -58,9 +58,11 @@ export const EmailForm = withOverride(
                             message: validationRes,
                         };
                     }
+                    // TODO NEMI: handle user context for pre built UI
                     const response = await props.recipeImplementation.createCode({
                         email,
                         config: props.config,
+                        userContext: {},
                     });
 
                     return response;

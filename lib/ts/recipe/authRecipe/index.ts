@@ -24,10 +24,10 @@ import { getCurrentNormalisedUrlPath } from "../../utils";
 
 export default abstract class AuthRecipe<
     T,
-    S,
+    Action,
     R,
-    N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>
-> extends RecipeModule<T | GetRedirectionURLContext, S, R | OnHandleEventContext, N> {
+    N extends NormalisedConfig<T | GetRedirectionURLContext, Action, R | OnHandleEventContext>
+> extends RecipeModule<T | GetRedirectionURLContext, Action, R | OnHandleEventContext, N> {
     constructor(config: N) {
         super(config);
     }

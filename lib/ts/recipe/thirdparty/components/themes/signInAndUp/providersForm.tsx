@@ -44,9 +44,11 @@ class ThirdPartySignInAndUpProvidersForm extends PureComponent<SignInAndUpThemeP
 
     signInClick = async (providerId: string): Promise<void> => {
         try {
+            // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipeImplementation.redirectToThirdPartyLogin({
                 thirdPartyId: providerId,
                 config: this.props.config,
+                userContext: {},
             });
             if (response.status === "ERROR") {
                 this.setState(() => ({

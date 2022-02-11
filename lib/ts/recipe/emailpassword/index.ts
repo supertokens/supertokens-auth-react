@@ -21,6 +21,7 @@ import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { getNormalisedUserContext } from "../../utils";
 
 export default class Wrapper {
     static init(config?: UserInput) {
@@ -31,8 +32,39 @@ export default class Wrapper {
         return EmailPassword.getInstanceOrThrow().signOut();
     }
 
-    static async isEmailVerified(): Promise<boolean> {
-        return EmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified();
+    static async isEmailVerified(input?: { userContext?: any }): Promise<{
+        status: "OK";
+        isVerified: boolean;
+        fetchResponse: Response;
+    }> {
+        return EmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified(
+            getNormalisedUserContext(input?.userContext)
+        );
+    }
+
+    static async verifyEmail(input: { token: string; userContext?: any }): Promise<{
+        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+        fetchResponse: Response;
+    }> {
+        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
+
+        return recipeInstance.emailVerification.recipeImpl.verifyEmail({
+            token: input.token,
+            config: recipeInstance.emailVerification.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+        fetchResponse: Response;
+    }> {
+        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
+
+        return recipeInstance.emailVerification.recipeImpl.sendVerificationEmail({
+            config: recipeInstance.emailVerification.config,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"
@@ -69,6 +101,8 @@ export default class Wrapper {
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
+const verifyEmail = Wrapper.verifyEmail;
+const sendVerificationEmail = Wrapper.sendVerificationEmail;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
@@ -78,6 +112,8 @@ export {
     EmailPasswordAuth,
     init,
     isEmailVerified,
+    verifyEmail,
+    sendVerificationEmail,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,

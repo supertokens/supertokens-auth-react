@@ -9,22 +9,38 @@ export default class Wrapper {
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
         GetRedirectionURLContext,
-        PreAPIHookContext,
+        import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static isEmailVerified(): Promise<boolean>;
+    static isEmailVerified(input?: { userContext?: any }): Promise<{
+        status: "OK";
+        isVerified: boolean;
+        fetchResponse: Response;
+    }>;
+    static verifyEmail(input: { token: string; userContext?: any }): Promise<{
+        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+        fetchResponse: Response;
+    }>;
+    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+        fetchResponse: Response;
+    }>;
 }
 declare const init: typeof Wrapper.init;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
+declare const verifyEmail: typeof Wrapper.verifyEmail;
+declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 export {
     init,
     isEmailVerified,
+    verifyEmail,
+    sendVerificationEmail,
     EmailVerification,
     EmailVerificationTheme,
     GetRedirectionURLContext,
-    PreAPIHookContext,
+    PreAPIHookContext as PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
     RecipeInterface,

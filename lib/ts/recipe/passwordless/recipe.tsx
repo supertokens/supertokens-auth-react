@@ -22,7 +22,7 @@ import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } fr
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
-    PreAPIHookContext,
+    PreAndPostAPIHookAction,
     Config,
     NormalisedConfig,
     UserInput,
@@ -38,14 +38,14 @@ import { SSR_ERROR } from "../../constants";
 import SignInUp from "./components/features/signInAndUp";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
-import NormalisedURLPath from "../../normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 
 /*
  * Class.
  */
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
-    PreAPIHookContext,
+    PreAndPostAPIHookAction,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -88,7 +88,12 @@ export default class Passwordless extends AuthRecipe<
     getFeatureComponent = (componentName: "signInUp" | "linkClickedScreen", props: any | undefined): JSX.Element => {
         if (componentName === "signInUp") {
             return (
-                <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
+                <AuthWidgetWrapper<
+                    GetRedirectionURLContext,
+                    PreAndPostAPIHookAction,
+                    OnHandleEventContext,
+                    NormalisedConfig
+                >
                     authRecipe={this}
                     history={props.history}>
                     <SignInUp recipe={this} {...props} />
@@ -103,10 +108,10 @@ export default class Passwordless extends AuthRecipe<
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
+        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
             Passwordless.instance = new Passwordless({
                 ...config,
                 appInfo,

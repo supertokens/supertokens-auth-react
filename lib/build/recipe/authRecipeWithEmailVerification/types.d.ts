@@ -3,6 +3,7 @@ import {
     GetRedirectionURLContext as EmailVerificationGetRedirectionURLContext,
     OnHandleEventContext as EmailVerificationOnHandleEventContext,
     PreAPIHookContext as EmailVerificationPreAPIHookContext,
+    PreAndPostAPIHookAction as EmailVerificationPreAndPostAPIHookAction,
     ComponentOverrideMap as EmailVerificationComponentOverrideMap,
     RecipeInterface,
 } from "../emailverification/types";
@@ -14,11 +15,12 @@ export declare type UserInputOverride = {
         components?: EmailVerificationComponentOverrideMap;
     };
 };
-export declare type UserInput<T, S, R> = {
+export declare type UserInput<T, PreAndPostAPIHookAction, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
-} & AuthRecipeType.UserInput<T, S, R>;
-export declare type Config<T, S, R> = UserInput<T, S, R> & AuthRecipeType.Config<T, S, R>;
-export declare type NormalisedConfig<T, S, R> = {
+} & AuthRecipeType.UserInput<T, PreAndPostAPIHookAction, R>;
+export declare type Config<T, PreAndPostAPIHookAction, R> = UserInput<T, PreAndPostAPIHookAction, R> &
+    AuthRecipeType.Config<T, PreAndPostAPIHookAction, R>;
+export declare type NormalisedConfig<T, PreAndPostAPIHookAction, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
     override?: {
         emailVerification?: {
@@ -26,9 +28,10 @@ export declare type NormalisedConfig<T, S, R> = {
             components?: EmailVerificationComponentOverrideMap;
         };
     };
-} & AuthRecipeType.NormalisedConfig<T, S, R>;
+} & AuthRecipeType.NormalisedConfig<T, PreAndPostAPIHookAction, R>;
 export declare type GetRedirectionURLContext =
     | AuthRecipeType.GetRedirectionURLContext
     | EmailVerificationGetRedirectionURLContext;
+export declare type PreAndPostAPIHookAction = EmailVerificationPreAndPostAPIHookAction;
 export declare type PreAPIHookContext = EmailVerificationPreAPIHookContext;
 export declare type OnHandleEventContext = AuthRecipeType.OnHandleEventContext | EmailVerificationOnHandleEventContext;

@@ -90,11 +90,13 @@ class EmailPasswordSubmitNewPassword extends PureComponent<SubmitNewPasswordProp
                         buttonLabel={"Change password"}
                         onSuccess={this.onSuccess}
                         validateOnBlur={true}
+                        // TODO NEMI: handle user context for pre built UI
                         callAPI={async (fields) => {
                             const response = await this.props.recipeImplementation.submitNewPassword({
                                 formFields: fields,
                                 token: this.props.token,
                                 config: this.props.config,
+                                userContext: {},
                             });
                             if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
                                 return {

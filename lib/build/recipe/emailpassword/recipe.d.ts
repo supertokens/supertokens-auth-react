@@ -4,7 +4,7 @@ import { CreateRecipeFunction } from "../../types";
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
-    PreAPIHookContext,
+    PreAndPostAPIHookAction,
     Config,
     NormalisedConfig,
     UserInput,
@@ -13,7 +13,6 @@ import {
 import EmailVerification from "../emailverification/recipe";
 export default class EmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
-    PreAPIHookContext,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -31,7 +30,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
     getFeatureComponent: (componentName: "emailverification" | "signinup" | "resetpassword", props: any) => JSX.Element;
     static init(
         config?: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>;
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): EmailPassword;
     static reset(): void;
 }

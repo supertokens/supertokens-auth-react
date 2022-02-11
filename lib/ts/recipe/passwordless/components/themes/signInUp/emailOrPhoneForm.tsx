@@ -68,9 +68,11 @@ export const EmailOrPhoneForm = withOverride(
                     if ((await defaultEmailValidator(emailOrPhone)) === undefined) {
                         const emailValidationRes = await props.config.validateEmailAddress(emailOrPhone);
                         if (emailValidationRes === undefined) {
+                            // TODO NEMI: handle user context for pre built UI
                             return await props.recipeImplementation.createCode({
                                 email: emailOrPhone,
                                 config: props.config,
+                                userContext: {},
                             });
                         } else {
                             return {
@@ -81,9 +83,11 @@ export const EmailOrPhoneForm = withOverride(
                     } else {
                         const phoneValidationRes = await props.config.validatePhoneNumber(emailOrPhone);
                         if (phoneValidationRes === undefined) {
+                            // TODO NEMI: handle user context for pre built UI
                             return await props.recipeImplementation.createCode({
                                 phoneNumber: emailOrPhone,
                                 config: props.config,
+                                userContext: {},
                             });
                         }
 

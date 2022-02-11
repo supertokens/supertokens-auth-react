@@ -46,8 +46,10 @@ class EmailVerificationSendVerifyEmail extends PureComponent<
 
     resendEmail = async (): Promise<void> => {
         try {
+            // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipeImplementation.sendVerificationEmail({
                 config: this.props.config,
+                userContext: {},
             });
 
             if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
@@ -66,8 +68,10 @@ class EmailVerificationSendVerifyEmail extends PureComponent<
 
     async componentDidMount() {
         // we send an email on load...
+        // TODO NEMI: handle user context for pre built UI
         const response = await this.props.recipeImplementation.sendVerificationEmail({
             config: this.props.config,
+            userContext: {},
         });
 
         if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {

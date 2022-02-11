@@ -58,7 +58,8 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
             let isEmailVerified = true;
             try {
-                isEmailVerified = await this.props.recipe.emailVerification.isEmailVerified();
+                // TODO NEMI: handle user context for pre built UI
+                isEmailVerified = (await this.props.recipe.emailVerification.isEmailVerified({})).isVerified;
             } catch (ignored) {}
             if (!isEmailVerified) {
                 await this.props.recipe.savePostEmailVerificationSuccessRedirectState({
@@ -143,9 +144,11 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                         return "Email must be of type string";
                     }
                     try {
+                        // TODO NEMI: handle user context for pre built UI
                         const emailExists = await this.props.recipe.recipeImpl.doesEmailExist({
                             email: value,
                             config: this.props.recipe.config,
+                            userContext: {},
                         });
                         if (emailExists) {
                             return "This email already exists. Please sign in instead";

@@ -51,10 +51,12 @@ class LinkClickedScreen extends PureComponent<PropType, unknown> {
                 });
             }
 
+            // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipe.recipeImpl.consumeCode({
                 preAuthSessionId,
                 linkCode,
                 config: this.props.recipe.config,
+                userContext: {},
             });
 
             if (response.status === "GENERAL_ERROR") {

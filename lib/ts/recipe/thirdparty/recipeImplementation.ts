@@ -16,6 +16,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         getOAuthAuthorisationURL: async function (input: {
             thirdPartyId: string;
             config: NormalisedConfig;
+            userContext: any;
         }): Promise<string> {
             const response: AuthorisationURLAPIResponse = await querier.get(
                 "/authorisationurl",
@@ -25,6 +26,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "GET_AUTHORISATION_URL",
+                        userContext: input.userContext,
                     });
                 }
             );
@@ -32,7 +34,11 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             return response.url;
         },
 
-        signInAndUp: async function (input: { thirdPartyId: string; config: NormalisedConfig }): Promise<
+        signInAndUp: async function (input: {
+            thirdPartyId: string;
+            config: NormalisedConfig;
+            userContext: any;
+        }): Promise<
             | {
                   status: "OK";
                   user: User;
@@ -81,6 +87,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "THIRD_PARTY_SIGN_IN_UP",
+                        userContext: input.userContext,
                     });
                 }
             );
@@ -128,6 +135,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             thirdPartyId: string;
             config: NormalisedConfig;
             state?: StateObject;
+            userContext: any;
         }): Promise<{ status: "OK" | "ERROR" }> {
             const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
             if (provider === undefined) {
@@ -158,6 +166,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             const url = await this.getOAuthAuthorisationURL({
                 thirdPartyId: provider.id,
                 config: input.config,
+                userContext: input.userContext,
             });
 
             // for some third party providers, the redirect_uri is set on the backend itself (for example in the case of apple). In these cases, we don't set them here...

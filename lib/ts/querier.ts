@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import { supported_fdi } from "./version";
 import { NormalisedAppInfo, PostAPIHookFunction, PreAPIHookFunction } from "./types";
 
@@ -136,13 +136,17 @@ export default class Querier {
             throw result;
         }
 
-        return postAPIHook === undefined
-            ? result
-            : await postAPIHook({
-                  requestInit,
-                  url: modifiedUrl,
-                  response: result,
-              });
+        if (postAPIHook !== undefined) {
+            await postAPIHook({
+                requestInit,
+                url: modifiedUrl,
+                fetchResponse: result,
+                // This is temoporary while web-js is being integrated, once that is done this Querier will not be required
+                userContext: {},
+            });
+        }
+
+        return result;
     };
 
     /*

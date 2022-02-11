@@ -27,13 +27,18 @@ import {
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
     NormalisedConfig as EPConfig,
+    PreAndPostAPIHookAction as EmailPasswordPreAndPostAPIHookAction,
 } from "../emailpassword/types";
 import {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
-import { NormalisedConfig as TPConfig, StateObject } from "../thirdparty/types";
+import {
+    NormalisedConfig as TPConfig,
+    StateObject,
+    PreAndPostAPIHookContext as ThirdPartyPreAndPostAPIHookAction,
+} from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
@@ -71,10 +76,10 @@ export type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
@@ -88,7 +93,7 @@ export type NormalisedConfig = {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     disableDefaultImplementation?: boolean;
@@ -107,6 +112,8 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
 };
 
 export type GetRedirectionURLContext = EmailPasswordGetRedirectionURLContext | ThirdPartyGetRedirectionURLContext;
+
+export type PreAndPostAPIHookAction = EmailPasswordPreAndPostAPIHookAction | ThirdPartyPreAndPostAPIHookAction;
 
 export type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
 
@@ -128,11 +135,13 @@ export type SignInAndUpInput =
               value: string;
           }[];
           config: EPConfig;
+          userContext: any;
       }
     | {
           type: "thirdparty";
           thirdPartyId: string;
           config: TPConfig;
+          userContext: any;
       };
 
 export type SignInAndUpOutput =
@@ -172,6 +181,7 @@ export type RecipeInterface = {
         }[];
         token: string;
         config: EPConfig;
+        userContext: any;
     }) => Promise<
         | {
               status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
@@ -191,6 +201,7 @@ export type RecipeInterface = {
             value: string;
         }[];
         config: EPConfig;
+        userContext: any;
     }) => Promise<
         | {
               status: "OK";
@@ -204,9 +215,9 @@ export type RecipeInterface = {
           }
     >;
 
-    doesEmailExist: (input: { email: string; config: EPConfig }) => Promise<boolean>;
+    doesEmailExist: (input: { email: string; config: EPConfig; userContext: any }) => Promise<boolean>;
 
-    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig }) => Promise<string>;
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig; userContext: any }) => Promise<string>;
 
     signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
 
@@ -218,5 +229,6 @@ export type RecipeInterface = {
         thirdPartyId: string;
         config: TPConfig;
         state?: StateObject;
+        userContext: any;
     }) => Promise<{ status: "OK" | "ERROR" }>;
 };

@@ -5,7 +5,7 @@ import {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
-    PreAPIHookContext,
+    PreAndPostAPIHookContext,
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
@@ -13,7 +13,6 @@ import {
 import EmailVerification from "../emailverification/recipe";
 export default class ThirdParty extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
-    PreAPIHookContext,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -36,7 +35,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
     ) => Promise<string>;
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>;
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): ThirdParty;
     static reset(): void;
 }

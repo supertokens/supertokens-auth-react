@@ -49,9 +49,11 @@ class EmailVerificationVerifyEmailLinkClicked extends PureComponent<
 
     async componentDidMount() {
         try {
+            // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipeImplementation.verifyEmail({
                 config: this.props.config,
                 token: this.props.token,
+                userContext: {},
             });
 
             if (response.status === "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR") {

@@ -19,8 +19,8 @@ import {
     RECIPE_ID_QUERY_PARAM,
     WINDOW_UNDEFINED_ERROR,
 } from "./constants";
-import NormalisedURLDomain from "./normalisedURLDomain";
-import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLDomain from "supertokens-web-js/lib/build/normalisedURLDomain";
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 
@@ -277,4 +277,8 @@ export class Deferred<T> {
     attach(prom: Promise<T>) {
         prom.then(this.resolve, this.reject);
     }
+}
+
+export function getNormalisedUserContext(userContext?: any): any {
+    return userContext === undefined ? {} : userContext;
 }

@@ -23,7 +23,7 @@ import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } fr
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
-    PreAPIHookContext,
+    PreAndPostAPIHookAction,
     Config,
     NormalisedConfig,
     UserInput,
@@ -31,7 +31,7 @@ import {
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
-import NormalisedURLPath from "../../normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
@@ -47,7 +47,6 @@ import OverrideableBuilder from "supertokens-js-override";
  */
 export default class EmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
-    PreAPIHookContext,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -115,7 +114,12 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
+                <AuthWidgetWrapper<
+                    GetRedirectionURLContext,
+                    PreAndPostAPIHookAction,
+                    OnHandleEventContext,
+                    NormalisedConfig
+                >
                     authRecipe={this}
                     history={props.history}>
                     <SignInAndUp recipe={this} {...props} />
@@ -130,10 +134,10 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
 
     static init(
         config?: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
+        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
             EmailPassword.instance = new EmailPassword(
                 {
                     ...config,

@@ -57,10 +57,12 @@ class PasswordlessLinkSent extends PureComponent<LinkSentThemeProps, LinkSentSta
 
     resendEmail = async (): Promise<void> => {
         try {
+            // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipeImplementation.resendCode({
                 deviceId: this.props.loginAttemptInfo.deviceId,
                 preAuthSessionId: this.props.loginAttemptInfo.preAuthSessionId,
                 config: this.props.config,
+                userContext: {},
             });
 
             if (response.status === "OK") {

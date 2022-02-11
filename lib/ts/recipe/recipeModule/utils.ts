@@ -2,10 +2,15 @@ import { Config, NormalisedConfig } from "./types";
 import { isIE } from "../../utils";
 
 export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): NormalisedConfig<T, S, R> {
-    let { preAPIHook, onHandleEvent, getRedirectionURL } = config;
+    let { preAPIHook, postAPIHook, onHandleEvent, getRedirectionURL } = config;
     if (preAPIHook === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         preAPIHook = async (context: any) => context;
+    }
+
+    if (postAPIHook === undefined) {
+        // eslint-disable-next-line
+        postAPIHook = async () => {};
     }
 
     if (onHandleEvent === undefined) {
@@ -26,6 +31,7 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
 
     return {
         preAPIHook,
+        postAPIHook,
         getRedirectionURL,
         onHandleEvent,
         useShadowDom,

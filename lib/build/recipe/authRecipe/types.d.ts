@@ -8,9 +8,9 @@ export declare type User = {
     email: string;
     timeJoined: number;
 };
-export declare type UserInput<T, S, R> = UserInputRecipeModule<T, S, R>;
+export declare type UserInput<T, Action, R> = UserInputRecipeModule<T, Action, R>;
 export declare type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
-export declare type NormalisedConfig<T, S, R> = NormalisedRecipeModuleConfig<T, S, R>;
+export declare type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Action, R>;
 export declare type GetRedirectionURLContext =
     | {
           action: "SUCCESS";

@@ -1,29 +1,17 @@
 import { RecipeInterface, NormalisedConfig } from "./types";
-import { NormalisedAppInfo } from "../../types";
-import Querier from "../../querier";
+import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
 
-export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface {
-    const querier = new Querier(recipeId, appInfo);
+export default function getRecipeImplementation(webJsImplementation: WebJSEmailVerification): RecipeInterface {
     return {
-        verifyEmail: async function (input: {
-            token: string;
-            config: NormalisedConfig;
-        }): Promise<{ status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK" }> {
-            const response: VerifyEmailAPIResponse = await querier.post(
-                "/user/email/verify",
-                {
-                    body: JSON.stringify({
-                        method: "token",
-                        token: input.token,
-                    }),
-                },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "VERIFY_EMAIL",
-                    });
-                }
-            );
+        verifyEmail: async function (input: { token: string; config: NormalisedConfig; userContext: any }): Promise<{
+            status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+            fetchResponse: Response;
+        }> {
+            const response = await webJsImplementation.recipeImplementation.verifyEmail({
+                token: input.token,
+                config: webJsImplementation.config,
+                userContext: input.userContext,
+            });
 
             if (response.status === "OK") {
                 input.config.onHandleEvent({
@@ -34,21 +22,14 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             return response;
         },
 
-        sendVerificationEmail: async function (input: {
-            config: NormalisedConfig;
-        }): Promise<{ status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK" }> {
-            const response: SendVerifyEmailAPIResponse = await querier.post(
-                "/user/email/verify/token",
-                {
-                    body: JSON.stringify({}),
-                },
-                async (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "SEND_VERIFY_EMAIL",
-                    });
-                }
-            );
+        sendVerificationEmail: async function (input: { config: NormalisedConfig; userContext: any }): Promise<{
+            status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+            fetchResponse: Response;
+        }> {
+            const response = await webJsImplementation.recipeImplementation.sendVerificationEmail({
+                config: webJsImplementation.config,
+                userContext: input.userContext,
+            });
 
             if (response.status === "OK") {
                 input.config.onHandleEvent({
@@ -59,32 +40,17 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             return response;
         },
 
-        isEmailVerified: async function (input: { config: NormalisedConfig }): Promise<boolean> {
-            const response: IsEmailVerifiedAPIResponse = await querier.get(
-                "/user/email/verify",
-                {},
-                undefined,
-                async (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "IS_EMAIL_VERIFIED",
-                    });
-                }
-            );
-            return response.isVerified;
+        isEmailVerified: async function (input: { config: NormalisedConfig; userContext: any }): Promise<{
+            status: "OK";
+            isVerified: boolean;
+            fetchResponse: Response;
+        }> {
+            const response = await webJsImplementation.recipeImplementation.isEmailVerified({
+                config: webJsImplementation.config,
+                userContext: input.userContext,
+            });
+
+            return response;
         },
     };
 }
-
-type VerifyEmailAPIResponse = {
-    status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-};
-
-type SendVerifyEmailAPIResponse = {
-    status: "OK" | "EMAIL_ALREADY_VERIFIED_ERROR";
-};
-
-type IsEmailVerifiedAPIResponse = {
-    status: "OK";
-    isVerified: boolean;
-};

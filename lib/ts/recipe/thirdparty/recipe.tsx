@@ -24,14 +24,14 @@ import {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
-    PreAPIHookContext,
+    PreAndPostAPIHookContext,
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
-import NormalisedURLPath from "../../normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
@@ -46,7 +46,6 @@ import OverrideableBuilder from "supertokens-js-override";
  */
 export default class ThirdParty extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
-    PreAPIHookContext,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -108,7 +107,12 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
+                <AuthWidgetWrapper<
+                    GetRedirectionURLContext,
+                    PreAndPostAPIHookContext,
+                    OnHandleEventContext,
+                    NormalisedConfig
+                >
                     authRecipe={this}
                     history={props.history}>
                     <SignInAndUp recipe={this} {...props} />
@@ -127,10 +131,15 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
+    ): CreateRecipeFunction<
+        GetRedirectionURLContext,
+        PreAndPostAPIHookContext,
+        OnHandleEventContext,
+        NormalisedConfig
+    > {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
+        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
             ThirdParty.instance = new ThirdParty(
                 {
                     ...config,

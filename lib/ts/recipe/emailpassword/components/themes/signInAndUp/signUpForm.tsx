@@ -39,10 +39,12 @@ export const SignUpForm = withOverride(
                 formFields={props.formFields}
                 buttonLabel={"SIGN UP"}
                 onSuccess={props.onSuccess}
+                // TODO NEMI: handle user context for pre built UI
                 callAPI={(formFields) =>
                     props.recipeImplementation.signUp({
                         formFields,
                         config: props.config,
+                        userContext: {},
                     })
                 }
                 validateOnBlur={true}

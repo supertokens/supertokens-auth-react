@@ -44,9 +44,11 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
         try {
             const pathName = getCurrentNormalisedUrlPath().getAsStringDangerous();
             const providerId = pathName.split("/")[pathName.split("/").length - 1];
+            // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipe.recipeImpl.signInAndUp({
                 thirdPartyId: providerId,
                 config: this.props.recipe.config,
+                userContext: {},
             });
             if (response.status === "GENERAL_ERROR") {
                 return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
@@ -71,7 +73,8 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
                     let isEmailVerified = true;
                     try {
-                        isEmailVerified = await this.props.recipe.emailVerification.isEmailVerified();
+                        // TODO NEMI: handle user context for pre built UI
+                        isEmailVerified = (await this.props.recipe.emailVerification.isEmailVerified({})).isVerified;
                     } catch (ignored) {}
                     if (!isEmailVerified) {
                         await this.props.recipe.savePostEmailVerificationSuccessRedirectState({

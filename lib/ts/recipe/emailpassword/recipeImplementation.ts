@@ -14,6 +14,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             }[];
             token: string;
             config: NormalisedConfig;
+            userContext: any;
         }): Promise<SubmitNewPasswordAPIResponse> {
             // first we validate on the frontend
             const validationErrors = await validateForm(
@@ -49,6 +50,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "SUBMIT_NEW_PASSWORD",
+                        userContext: input.userContext,
                     });
                 }
             );
@@ -68,6 +70,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                 value: string;
             }[];
             config: NormalisedConfig;
+            userContext: any;
         }): Promise<SendPasswordResetEmailAPIResponse> {
             // first we validate on the frontend
             const validationErrors = await validateForm(
@@ -90,6 +93,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "SEND_RESET_PASSWORD_EMAIL",
+                        userContext: input.userContext,
                     });
                 }
             );
@@ -108,6 +112,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                 value: string;
             }[];
             config: NormalisedConfig;
+            userContext: any;
         }): Promise<SignUpAPIResponse> {
             // first we validate on the frontend
             const validationErrors = await validateForm(
@@ -130,6 +135,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "EMAIL_PASSWORD_SIGN_UP",
+                        userContext: input.userContext,
                     });
                 }
             );
@@ -150,6 +156,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                 value: string;
             }[];
             config: NormalisedConfig;
+            userContext: any;
         }): Promise<SignInAPIResponse> {
             // first we validate on the frontend
             const validationErrors = await validateForm(
@@ -172,6 +179,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "EMAIL_PASSWORD_SIGN_IN",
+                        userContext: input.userContext,
                     });
                 }
             );
@@ -185,7 +193,11 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             }
             return response;
         },
-        doesEmailExist: async function (input: { email: string; config: NormalisedConfig }): Promise<boolean> {
+        doesEmailExist: async function (input: {
+            email: string;
+            config: NormalisedConfig;
+            userContext: any;
+        }): Promise<boolean> {
             const response: EmailExistsAPIResponse = await querier.get(
                 "/signup/email/exists",
                 {},
@@ -194,6 +206,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                     return input.config.preAPIHook({
                         ...context,
                         action: "EMAIL_EXISTS",
+                        userContext: input.userContext,
                     });
                 }
             );

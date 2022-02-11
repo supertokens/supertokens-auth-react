@@ -19,6 +19,7 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             }[];
             token: string;
             config: EPConfig;
+            userContext: any;
         }) {
             return emailpasswordImpl.submitNewPassword.bind(DerivedEP(this))(input);
         },
@@ -28,13 +29,14 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                 value: string;
             }[];
             config: EPConfig;
+            userContext: any;
         }) {
             return emailpasswordImpl.sendPasswordResetEmail.bind(DerivedEP(this))(input);
         },
-        doesEmailExist: async function (input: { email: string; config: EPConfig }) {
+        doesEmailExist: async function (input: { email: string; config: EPConfig; userContext: any }) {
             return emailpasswordImpl.doesEmailExist.bind(DerivedEP(this))(input);
         },
-        getOAuthAuthorisationURL: async function (input: { thirdPartyId: string; config: TPConfig }) {
+        getOAuthAuthorisationURL: async function (input: { thirdPartyId: string; config: TPConfig; userContext: any }) {
             return thirdPartyImpl.getOAuthAuthorisationURL.bind(DerivedTP(this))(input);
         },
         signInAndUp: async function (input: SignInAndUpInput): Promise<SignInAndUpOutput> {
@@ -82,7 +84,12 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         setOAuthState: function (input: StateObject) {
             return thirdPartyImpl.setOAuthState.bind(DerivedTP(this))(input);
         },
-        redirectToThirdPartyLogin: function (input: { thirdPartyId: string; config: TPConfig; state?: StateObject }) {
+        redirectToThirdPartyLogin: function (input: {
+            thirdPartyId: string;
+            config: TPConfig;
+            state?: StateObject;
+            userContext: any;
+        }) {
             return thirdPartyImpl.redirectToThirdPartyLogin.bind(DerivedTP(this))(input);
         },
     };
