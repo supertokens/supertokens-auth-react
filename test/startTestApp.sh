@@ -58,7 +58,7 @@ trap "killServers" EXIT # Trap to execute on script shutdown
 killServers
 
 # Run node server in background.
-(cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . &)  
+(cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . > /dev/null 2>&1 &)
 
 # Start front end test app and run tests.
 startEndToEnd &

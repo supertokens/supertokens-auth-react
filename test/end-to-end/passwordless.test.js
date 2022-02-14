@@ -408,7 +408,6 @@ describe("SuperTokens Passwordless", function () {
 
     before(async function () {
         const features = await getFeatureFlags();
-
         if (!features.includes("passwordless")) {
             this.skip();
         }
