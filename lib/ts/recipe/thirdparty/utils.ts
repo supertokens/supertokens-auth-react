@@ -25,8 +25,8 @@ import {
     Config,
     RecipeInterface,
 } from "./types";
-import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 import Recipe from "./recipe";
+import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
 
 /*
  * Methods.
@@ -44,9 +44,8 @@ export function normaliseThirdPartyConfig(config: Config): NormalisedConfig {
         components: {},
         ...config.override,
     };
-
     return {
-        ...normaliseRecipeModuleConfig(config),
+        ...normaliseAuthRecipeWithEmailVerificationConfig(config),
         signInAndUpFeature,
         oAuthCallbackScreen,
         override,
