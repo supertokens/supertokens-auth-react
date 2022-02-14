@@ -397,7 +397,7 @@ export type FormBaseProps<T> = {
     onError: (error: string) => void;
     onSuccess?: (result: T & { status: "OK" }) => void;
 
-    callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse<T>>;
+    callAPI: (fields: APIFormField[], setValue: (id: string, value: string) => void) => Promise<FormBaseAPIResponse<T>>;
 };
 
 export type FormBaseAPIResponse<T> =

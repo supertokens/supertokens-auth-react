@@ -221,7 +221,7 @@ export declare type FormBaseProps<T> = {
             status: "OK";
         }
     ) => void;
-    callAPI: (fields: APIFormField[]) => Promise<FormBaseAPIResponse<T>>;
+    callAPI: (fields: APIFormField[], setValue: (id: string, value: string) => void) => Promise<FormBaseAPIResponse<T>>;
 };
 export declare type FormBaseAPIResponse<T> =
     | ({

@@ -66,7 +66,7 @@ export const useSuccessInAnotherTabChecker = (
     return callingConsumeCodeRef;
 };
 
-export const usePasswordlessSignInAndUpFeatureReducer = (
+export const useFeatureReducer = (
     recipeImpl: RecipeInterface | undefined
 ): [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>] => {
     const [state, dispatch] = React.useReducer(
@@ -168,7 +168,7 @@ export const usePasswordlessSignInAndUpFeatureReducer = (
     return [state, dispatch];
 };
 
-export function usePasswordlessSignInAndUpChildProps(
+export function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
@@ -292,15 +292,9 @@ function getModifiedRecipeImplementation(
 
 const SignInUpFeature: React.FC<PropType> = (props) => {
     const componentOverrides = props.recipe.config.override.components;
-    const [state, dispatch] = usePasswordlessSignInAndUpFeatureReducer(props.recipe.recipeImpl);
+    const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl);
     const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch);
-    const childProps = usePasswordlessSignInAndUpChildProps(
-        props.recipe,
-        dispatch,
-        state,
-        callingConsumeCodeRef,
-        props.history
-    )!;
+    const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, props.history)!;
 
     return (
         <ComponentOverrideContext.Provider value={componentOverrides}>

@@ -34,6 +34,7 @@ import { UserInputCodeForm } from "./userInputCodeForm";
 import { getStyles } from "../styles";
 import { EmailOrPhoneForm } from "./emailOrPhoneForm";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 
 enum SignInUpScreens {
     CloseTab,
@@ -47,7 +48,7 @@ enum SignInUpScreens {
 /*
  * Component.
  */
-function SignInUpTheme({ activeScreen, ...props }: SignInUpProps & { activeScreen: SignInUpScreens }): JSX.Element {
+const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }> = ({ activeScreen, ...props }) => {
     const styles = useContext(StyleContext);
 
     const commonProps = {
@@ -58,99 +59,89 @@ function SignInUpTheme({ activeScreen, ...props }: SignInUpProps & { activeScree
         error: props.error,
     };
 
-    return (
-        <React.Fragment>
-            {activeScreen === SignInUpScreens.CloseTab ? (
-                <CloseTabScreen {...props} />
-            ) : activeScreen === SignInUpScreens.LinkSent ? (
-                <LinkSent {...props} loginAttemptInfo={props.loginAttemptInfo!} />
-            ) : (
-                <div data-supertokens="container" css={styles.container}>
-                    <div data-supertokens="row" css={styles.row}>
-                        {props.loaded &&
-                            (activeScreen === SignInUpScreens.EmailForm ? (
-                                <EmailForm
-                                    {...commonProps}
-                                    header={<SignInUpHeader />}
-                                    footer={
-                                        <SignInUpFooter
-                                            privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                                            termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                                        />
-                                    }
-                                />
-                            ) : activeScreen === SignInUpScreens.PhoneForm ? (
-                                <PhoneForm
-                                    {...commonProps}
-                                    header={<SignInUpHeader />}
-                                    footer={
-                                        <SignInUpFooter
-                                            privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                                            termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                                        />
-                                    }
-                                />
-                            ) : activeScreen === SignInUpScreens.EmailOrPhoneForm ? (
-                                <EmailOrPhoneForm
-                                    {...commonProps}
-                                    header={<SignInUpHeader />}
-                                    footer={
-                                        <SignInUpFooter
-                                            privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                                            termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                                        />
-                                    }
-                                />
-                            ) : activeScreen === SignInUpScreens.UserInputCodeForm ? (
-                                <UserInputCodeForm
-                                    {...commonProps}
-                                    loginAttemptInfo={props.loginAttemptInfo!}
-                                    onSuccess={props.onSuccess}
-                                    header={
-                                        <UserInputCodeFormHeader
-                                            {...commonProps}
-                                            loginAttemptInfo={props.loginAttemptInfo!}
-                                        />
-                                    }
-                                    footer={
-                                        <UserInputCodeFormFooter
-                                            {...commonProps}
-                                            loginAttemptInfo={props.loginAttemptInfo!}
-                                        />
-                                    }
-                                />
-                            ) : undefined)}
-                    </div>
-                    <SuperTokensBranding />
-                </div>
-            )}
-        </React.Fragment>
+    return activeScreen === SignInUpScreens.CloseTab ? (
+        <CloseTabScreen {...props} />
+    ) : activeScreen === SignInUpScreens.LinkSent ? (
+        <LinkSent {...props} loginAttemptInfo={props.loginAttemptInfo!} />
+    ) : (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                {props.loaded && (
+                    <React.Fragment>
+                        {activeScreen === SignInUpScreens.UserInputCodeForm ? (
+                            <UserInputCodeFormHeader {...commonProps} loginAttemptInfo={props.loginAttemptInfo!} />
+                        ) : (
+                            <SignInUpHeader />
+                        )}
+                        {props.error !== undefined && <GeneralError error={props.error} />}
+                        {activeScreen === SignInUpScreens.EmailForm ? (
+                            <EmailForm
+                                {...commonProps}
+                                footer={
+                                    <SignInUpFooter
+                                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
+                                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
+                                    />
+                                }
+                            />
+                        ) : activeScreen === SignInUpScreens.PhoneForm ? (
+                            <PhoneForm
+                                {...commonProps}
+                                footer={
+                                    <SignInUpFooter
+                                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
+                                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
+                                    />
+                                }
+                            />
+                        ) : activeScreen === SignInUpScreens.EmailOrPhoneForm ? (
+                            <EmailOrPhoneForm
+                                {...commonProps}
+                                footer={
+                                    <SignInUpFooter
+                                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
+                                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
+                                    />
+                                }
+                            />
+                        ) : activeScreen === SignInUpScreens.UserInputCodeForm ? (
+                            <UserInputCodeForm
+                                {...commonProps}
+                                loginAttemptInfo={props.loginAttemptInfo!}
+                                onSuccess={props.onSuccess}
+                                footer={
+                                    <UserInputCodeFormFooter
+                                        {...commonProps}
+                                        loginAttemptInfo={props.loginAttemptInfo!}
+                                    />
+                                }
+                            />
+                        ) : null}
+                    </React.Fragment>
+                )}
+            </div>
+            <SuperTokensBranding />
+        </div>
     );
-}
+};
 
 function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
-    let activeScreen: SignInUpScreens | undefined;
-    let activeStyle;
+    const activeScreen = getActiveScreen(props);
 
-    if (props.successInAnotherTab) {
-        activeScreen = SignInUpScreens.CloseTab;
+    let activeStyle;
+    if (activeScreen === SignInUpScreens.CloseTab) {
         activeStyle = props.config.signInUpFeature.closeTabScreenStyle;
-    } else if (props.loginAttemptInfo && props.loginAttemptInfo.flowType === "MAGIC_LINK") {
-        activeScreen = SignInUpScreens.LinkSent;
+    } else if (activeScreen === SignInUpScreens.LinkSent) {
         activeStyle = props.config.signInUpFeature.linkSentScreenStyle;
-    } else if (props.loginAttemptInfo) {
-        activeScreen = SignInUpScreens.UserInputCodeForm;
+    } else if (activeScreen === SignInUpScreens.UserInputCodeForm) {
         activeStyle = props.config.signInUpFeature.userInputCodeFormStyle;
-    } else if (props.config.contactMethod === "EMAIL") {
-        activeScreen = SignInUpScreens.EmailForm;
+    } else if (activeScreen === SignInUpScreens.EmailForm) {
         activeStyle = props.config.signInUpFeature.emailOrPhoneFormStyle;
-    } else if (props.config.contactMethod === "PHONE") {
-        activeScreen = SignInUpScreens.PhoneForm;
+    } else if (activeScreen === SignInUpScreens.PhoneForm) {
         activeStyle = props.config.signInUpFeature.emailOrPhoneFormStyle;
-    } else if (props.config.contactMethod === "EMAIL_OR_PHONE") {
-        activeScreen = SignInUpScreens.EmailOrPhoneForm;
+    } else if (activeScreen === SignInUpScreens.EmailOrPhoneForm) {
         activeStyle = props.config.signInUpFeature.emailOrPhoneFormStyle;
     }
 
@@ -169,3 +160,20 @@ function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
 }
 
 export default SignInUpThemeWrapper;
+
+function getActiveScreen(props: SignInUpProps) {
+    if (props.successInAnotherTab) {
+        return SignInUpScreens.CloseTab;
+    } else if (props.loginAttemptInfo && props.loginAttemptInfo.flowType === "MAGIC_LINK") {
+        return SignInUpScreens.LinkSent;
+    } else if (props.loginAttemptInfo) {
+        return SignInUpScreens.UserInputCodeForm;
+    } else if (props.config.contactMethod === "EMAIL") {
+        return SignInUpScreens.EmailForm;
+    } else if (props.config.contactMethod === "PHONE") {
+        return SignInUpScreens.PhoneForm;
+    } else if (props.config.contactMethod === "EMAIL_OR_PHONE") {
+        return SignInUpScreens.EmailOrPhoneForm;
+    }
+    throw new Error("Couldn't choose active screen; Should never happen");
+}

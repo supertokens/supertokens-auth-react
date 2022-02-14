@@ -45,7 +45,9 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
         };
     }, [unmounting]);
 
-    const [fieldStates, setFieldStates] = useState<FieldState[]>([]);
+    const [fieldStates, setFieldStates] = useState<FieldState[]>(
+        props.formFields.map((f) => ({ id: f.id, value: "" }))
+    );
     const [isLoading, setIsLoading] = useState(false);
 
     const updateFieldState = useCallback(
@@ -89,7 +91,7 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
 
     const onInputChange = useCallback(
         (field: APIFormField) => {
-            updateFieldState(field.id, (os) => ({ ...os, value: field.value }));
+            updateFieldState(field.id, (os) => ({ ...os, value: field.value, error: undefined }));
             props.clearError();
         },
         [updateFieldState]
@@ -116,15 +118,16 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
 
             // Call API.
             try {
-                const result = await props.callAPI(apiFields);
+                const fieldUpdates: FieldState[] = [];
+                const result = await props.callAPI(apiFields, (id, value) => fieldUpdates.push({ id, value }));
                 if (unmounting.current.signal.aborted) {
                     return;
                 }
-
                 for (const field of formFields) {
-                    if (field.clearOnSubmit === true) {
-                        // We can do these one by one, it's never more than one field
-                        updateFieldState(field.id, (os) => ({ ...os, value: "" }));
+                    const update = fieldUpdates.find((f) => f.id === field.id);
+                    if (update || field.clearOnSubmit === true) {
+                        // We can do these one by one, it's almost never more than one field
+                        updateFieldState(field.id, (os) => ({ ...os, value: update ? update.value : "" }));
                     }
                 }
 
@@ -150,9 +153,10 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                 if (result.status === "GENERAL_ERROR") {
                     props.onError(result.message);
                 }
-                setIsLoading(false);
             } catch (e) {
                 props.onError("SOMETHING_WENT_WRONG_ERROR");
+            } finally {
+                setIsLoading(false);
             }
         },
         [setIsLoading, setFieldStates, props, formFields, fieldStates]

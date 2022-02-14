@@ -9,10 +9,10 @@ export declare const useSuccessInAnotherTabChecker: (
     state: SignInUpState,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>
 ) => React.MutableRefObject<boolean>;
-export declare const usePasswordlessSignInAndUpFeatureReducer: (
+export declare const useFeatureReducer: (
     recipeImpl: RecipeInterface | undefined
 ) => [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>];
-export declare function usePasswordlessSignInAndUpChildProps(
+export declare function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,

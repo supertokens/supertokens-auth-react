@@ -70,17 +70,11 @@ export const UserInputCodeForm = withOverride(
 
         return (
             <React.Fragment>
-                {props.header}
                 {clearResendNotifTimeout !== undefined && (
                     <div data-supertokens="generalSuccess" css={[styles.generalSuccess]}>
                         {props.loginAttemptInfo.contactMethod === "EMAIL"
                             ? t("PWLESS_RESEND_SUCCESS_EMAIL")
                             : t("PWLESS_RESEND_SUCCESS_PHONE")}
-                    </div>
-                )}
-                {props.error && (
-                    <div data-supertokens="generalError" css={styles.generalError}>
-                        {props.error}
                     </div>
                 )}
 
