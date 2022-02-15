@@ -1,3 +1,3 @@
 import { RecipeInterface } from "./types";
-import { NormalisedAppInfo } from "../../types";
-export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface;
+import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
+export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword): RecipeInterface;

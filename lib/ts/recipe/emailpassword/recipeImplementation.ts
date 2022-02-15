@@ -1,11 +1,8 @@
 import { RecipeInterface, NormalisedConfig } from "./types";
 import { User } from "../authRecipeWithEmailVerification/types";
-import { NormalisedAppInfo } from "../../types";
-import Querier from "../../querier";
-import { validateForm } from "../../utils";
+import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
 
-export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface {
-    const querier = new Querier(recipeId, appInfo);
+export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword): RecipeInterface {
     return {
         submitNewPassword: async function (input: {
             formFields: {
@@ -15,45 +12,26 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             token: string;
             config: NormalisedConfig;
             userContext: any;
-        }): Promise<SubmitNewPasswordAPIResponse> {
-            // first we validate on the frontend
-            const validationErrors = await validateForm(
-                input.formFields,
-                input.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
-            );
-
-            if (validationErrors.length > 0) {
-                return {
-                    status: "FIELD_ERROR",
-                    formFields: validationErrors,
-                };
-            }
-
-            // Verify that both passwords match.
-            if (input.formFields[0].value !== input.formFields[1].value) {
-                return {
-                    status: "FIELD_ERROR",
-                    formFields: [
-                        {
-                            id: input.formFields[1].id,
-                            error: "Confirmation password doesn't match",
-                        },
-                    ],
-                };
-            }
-
-            // then we call API
-            const response: SubmitNewPasswordAPIResponse = await querier.post(
-                "/user/password/reset",
-                { body: JSON.stringify({ formFields: [input.formFields[0]], token: input.token, method: "token" }) },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "SUBMIT_NEW_PASSWORD",
-                        userContext: input.userContext,
-                    });
-                }
-            );
+        }): Promise<
+            | {
+                  status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+                  fetchResponse: Response;
+              }
+            | {
+                  status: "FIELD_ERROR";
+                  formFields: {
+                      id: string;
+                      error: string;
+                  }[];
+                  fetchResponse: Response;
+              }
+        > {
+            const response = await webJsRecipe.recipeImplementation.submitNewPassword({
+                config: webJsRecipe.config,
+                formFields: input.formFields,
+                token: input.token,
+                userContext: input.userContext,
+            });
 
             if (response.status === "OK") {
                 input.config.onHandleEvent({
@@ -71,32 +49,25 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             }[];
             config: NormalisedConfig;
             userContext: any;
-        }): Promise<SendPasswordResetEmailAPIResponse> {
-            // first we validate on the frontend
-            const validationErrors = await validateForm(
-                input.formFields,
-                input.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
-            );
-
-            if (validationErrors.length > 0) {
-                return {
-                    status: "FIELD_ERROR",
-                    formFields: validationErrors,
-                };
-            }
-
-            // then we call API
-            const response: SendPasswordResetEmailAPIResponse = await querier.post(
-                "/user/password/reset/token",
-                { body: JSON.stringify({ formFields: input.formFields }) },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "SEND_RESET_PASSWORD_EMAIL",
-                        userContext: input.userContext,
-                    });
-                }
-            );
+        }): Promise<
+            | {
+                  status: "OK";
+                  fetchResponse: Response;
+              }
+            | {
+                  status: "FIELD_ERROR";
+                  formFields: {
+                      id: string;
+                      error: string;
+                  }[];
+                  fetchResponse: Response;
+              }
+        > {
+            const response = await webJsRecipe.recipeImplementation.sendPasswordResetEmail({
+                config: webJsRecipe.config,
+                formFields: input.formFields,
+                userContext: input.userContext,
+            });
 
             if (response.status === "OK") {
                 input.config.onHandleEvent({
@@ -113,32 +84,26 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             }[];
             config: NormalisedConfig;
             userContext: any;
-        }): Promise<SignUpAPIResponse> {
-            // first we validate on the frontend
-            const validationErrors = await validateForm(
-                input.formFields,
-                input.config.signInAndUpFeature.signUpForm.formFields
-            );
-
-            if (validationErrors.length > 0) {
-                return {
-                    status: "FIELD_ERROR",
-                    formFields: validationErrors,
-                };
-            }
-
-            // then we call API
-            const response: SignUpAPIResponse = await querier.post(
-                "/signup",
-                { body: JSON.stringify({ formFields: input.formFields }) },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "EMAIL_PASSWORD_SIGN_UP",
-                        userContext: input.userContext,
-                    });
-                }
-            );
+        }): Promise<
+            | {
+                  status: "OK";
+                  user: User;
+                  fetchResponse: Response;
+              }
+            | {
+                  status: "FIELD_ERROR";
+                  formFields: {
+                      id: string;
+                      error: string;
+                  }[];
+                  fetchResponse: Response;
+              }
+        > {
+            const response = await webJsRecipe.recipeImplementation.signUp({
+                config: webJsRecipe.config,
+                formFields: input.formFields,
+                userContext: input.userContext,
+            });
 
             if (response.status === "OK") {
                 input.config.onHandleEvent({
@@ -157,32 +122,30 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             }[];
             config: NormalisedConfig;
             userContext: any;
-        }): Promise<SignInAPIResponse> {
-            // first we validate on the frontend
-            const validationErrors = await validateForm(
-                input.formFields,
-                input.config.signInAndUpFeature.signInForm.formFields
-            );
-
-            if (validationErrors.length > 0) {
-                return {
-                    status: "FIELD_ERROR",
-                    formFields: validationErrors,
-                };
-            }
-
-            // then we call API
-            const response: SignInAPIResponse = await querier.post(
-                "/signin",
-                { body: JSON.stringify({ formFields: input.formFields }) },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "EMAIL_PASSWORD_SIGN_IN",
-                        userContext: input.userContext,
-                    });
-                }
-            );
+        }): Promise<
+            | {
+                  status: "OK";
+                  user: User;
+                  fetchResponse: Response;
+              }
+            | {
+                  status: "FIELD_ERROR";
+                  formFields: {
+                      id: string;
+                      error: string;
+                  }[];
+                  fetchResponse: Response;
+              }
+            | {
+                  status: "WRONG_CREDENTIALS_ERROR";
+                  fetchResponse: Response;
+              }
+        > {
+            const response = await webJsRecipe.recipeImplementation.signIn({
+                config: webJsRecipe.config,
+                formFields: input.formFields,
+                userContext: input.userContext,
+            });
 
             if (response.status === "OK") {
                 input.config.onHandleEvent({
@@ -193,83 +156,16 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             }
             return response;
         },
-        doesEmailExist: async function (input: {
-            email: string;
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<boolean> {
-            const response: EmailExistsAPIResponse = await querier.get(
-                "/signup/email/exists",
-                {},
-                { email: input.email },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "EMAIL_EXISTS",
-                        userContext: input.userContext,
-                    });
-                }
-            );
-
-            return response.exists;
+        doesEmailExist: async function (input: { email: string; config: NormalisedConfig; userContext: any }): Promise<{
+            status: "OK";
+            doesExist: boolean;
+            fetchResponse: Response;
+        }> {
+            return await webJsRecipe.recipeImplementation.doesEmailExist({
+                config: webJsRecipe.config,
+                email: input.email,
+                userContext: input.userContext,
+            });
         },
     };
 }
-
-type SubmitNewPasswordAPIResponse =
-    | {
-          status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
-      }
-    | {
-          status: "FIELD_ERROR";
-          formFields: {
-              id: string;
-              error: string;
-          }[];
-      };
-
-type SendPasswordResetEmailAPIResponse =
-    | {
-          status: "OK";
-      }
-    | {
-          status: "FIELD_ERROR";
-          formFields: {
-              id: string;
-              error: string;
-          }[];
-      };
-
-type SignUpAPIResponse =
-    | {
-          status: "OK";
-          user: User;
-      }
-    | {
-          status: "FIELD_ERROR";
-          formFields: {
-              id: string;
-              error: string;
-          }[];
-      };
-
-type SignInAPIResponse =
-    | {
-          status: "OK";
-          user: User;
-      }
-    | {
-          status: "FIELD_ERROR";
-          formFields: {
-              id: string;
-              error: string;
-          }[];
-      }
-    | {
-          status: "WRONG_CREDENTIALS_ERROR";
-      };
-
-type EmailExistsAPIResponse = {
-    status: "OK";
-    exists: boolean;
-};

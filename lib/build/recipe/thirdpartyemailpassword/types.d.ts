@@ -120,6 +120,7 @@ export declare type SignInAndUpOutput =
           status: "OK";
           user: User;
           createdNewUser: boolean;
+          fetchResponse: Response;
       }
     | {
           type: "emailpassword";
@@ -128,19 +129,23 @@ export declare type SignInAndUpOutput =
               id: string;
               error: string;
           }[];
+          fetchResponse: Response;
       }
     | {
           type: "emailpassword";
           status: "WRONG_CREDENTIALS_ERROR";
+          fetchResponse: Response;
       }
     | {
           type: "thirdparty";
           status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
+          fetchResponse: Response;
       }
     | {
           type: "thirdparty";
           status: "FIELD_ERROR";
           error: string;
+          fetchResponse: Response;
       };
 export declare type RecipeInterface = {
     submitNewPassword: (input: {
@@ -154,6 +159,7 @@ export declare type RecipeInterface = {
     }) => Promise<
         | {
               status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+              fetchResponse: Response;
           }
         | {
               status: "FIELD_ERROR";
@@ -161,6 +167,7 @@ export declare type RecipeInterface = {
                   id: string;
                   error: string;
               }[];
+              fetchResponse: Response;
           }
     >;
     sendPasswordResetEmail: (input: {
@@ -173,6 +180,7 @@ export declare type RecipeInterface = {
     }) => Promise<
         | {
               status: "OK";
+              fetchResponse: Response;
           }
         | {
               status: "FIELD_ERROR";
@@ -180,9 +188,14 @@ export declare type RecipeInterface = {
                   id: string;
                   error: string;
               }[];
+              fetchResponse: Response;
           }
     >;
-    doesEmailExist: (input: { email: string; config: EPConfig; userContext: any }) => Promise<boolean>;
+    doesEmailExist: (input: { email: string; config: EPConfig; userContext: any }) => Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }>;
     getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig; userContext: any }) => Promise<string>;
     signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
     getOAuthState(): StateObject | undefined;

@@ -51,19 +51,20 @@ export default class EmailVerification extends RecipeModule<
     static RECIPE_ID = "emailverification";
 
     recipeImpl: RecipeInterface;
+    webJsRecipe: WebJSEmailVerification;
 
     constructor(config: Config) {
         super(normaliseEmailVerificationFeature(config));
 
         {
-            const webJsImplementation = new WebJSEmailVerification({
+            this.webJsRecipe = new WebJSEmailVerification({
                 appInfo: config.appInfo,
                 recipeId: config.recipeId,
                 preAPIHook: config.preAPIHook,
                 postAPIHook: config.postAPIHook,
             });
 
-            const builder = new OverrideableBuilder(RecipeImplementation(webJsImplementation));
+            const builder = new OverrideableBuilder(RecipeImplementation(this.webJsRecipe));
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
     }

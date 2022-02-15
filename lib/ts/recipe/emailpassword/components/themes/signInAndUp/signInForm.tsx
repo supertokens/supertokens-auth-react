@@ -23,6 +23,7 @@ import { SignInThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { validateForm } from "../../../../../utils";
 
 /*
  * Component.
@@ -43,6 +44,18 @@ export const SignInForm = withOverride(
                 onSuccess={props.onSuccess}
                 // TODO NEMI: handle user context for pre built UI
                 callAPI={async (formFields) => {
+                    const validationErrors = await validateForm(
+                        formFields,
+                        props.config.signInAndUpFeature.signInForm.formFields
+                    );
+
+                    if (validationErrors.length > 0) {
+                        return {
+                            status: "FIELD_ERROR",
+                            formFields: validationErrors,
+                        };
+                    }
+
                     const response = await props.recipeImplementation.signIn({
                         formFields,
                         config: props.config,

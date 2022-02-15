@@ -22,6 +22,7 @@ import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsing
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
 import { getNormalisedUserContext } from "../../utils";
+import { User } from "../authRecipeWithEmailVerification/types";
 
 export default class Wrapper {
     static init(config?: UserInput) {
@@ -87,6 +88,143 @@ export default class Wrapper {
         }
     }
 
+    static submitNewPassword(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        token: string;
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
+
+        return recipeInstance.recipeImpl.submitNewPassword({
+            ...input,
+            config: recipeInstance.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static sendPasswordResetEmail(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
+
+        return recipeInstance.recipeImpl.sendPasswordResetEmail({
+            ...input,
+            config: recipeInstance.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static signUp(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext: any;
+    }): Promise<
+        | {
+              status: "OK";
+              user: User;
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
+
+        return recipeInstance.recipeImpl.signUp({
+            ...input,
+            config: recipeInstance.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static signIn(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext: any;
+    }): Promise<
+        | {
+              status: "OK";
+              user: User;
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+        | {
+              status: "WRONG_CREDENTIALS_ERROR";
+              fetchResponse: Response;
+          }
+    > {
+        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
+
+        return recipeInstance.recipeImpl.signIn({
+            ...input,
+            config: recipeInstance.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static doesEmailExist(input: { email: string; userContext: any }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }> {
+        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
+
+        return recipeInstance.recipeImpl.doesEmailExist({
+            ...input,
+            config: recipeInstance.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
     static EmailPasswordAuth = EmailPasswordAuth;
     static SignInAndUp = (prop?: any) => EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
@@ -104,6 +242,11 @@ const isEmailVerified = Wrapper.isEmailVerified;
 const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
 const redirectToAuth = Wrapper.redirectToAuth;
+const submitNewPassword = Wrapper.submitNewPassword;
+const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
+const signUp = Wrapper.signUp;
+const signIn = Wrapper.signIn;
+const doesEmailExist = Wrapper.doesEmailExist;
 const SignInAndUp = Wrapper.SignInAndUp;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 const EmailVerification = Wrapper.EmailVerification;
@@ -118,6 +261,11 @@ export {
     SignInAndUpTheme,
     signOut,
     redirectToAuth,
+    submitNewPassword,
+    sendPasswordResetEmail,
+    signUp,
+    signIn,
+    doesEmailExist,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
     EmailVerification,

@@ -25,6 +25,7 @@ import { SubmitNewPasswordProps, SubmitNewPasswordState } from "../../../types";
 import { FormRow, Button } from "../../library";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { validateForm } from "../../../../../utils";
 
 class EmailPasswordSubmitNewPassword extends PureComponent<SubmitNewPasswordProps, SubmitNewPasswordState> {
     static contextType = StyleContext;
@@ -85,25 +86,52 @@ class EmailPasswordSubmitNewPassword extends PureComponent<SubmitNewPasswordProp
         return (
             <div data-supertokens="container" css={styles.container}>
                 <div data-supertokens="row" css={styles.row}>
-                    <FormBase
+                    <FormBase<any>
                         formFields={formFields}
                         buttonLabel={"Change password"}
                         onSuccess={this.onSuccess}
                         validateOnBlur={true}
                         // TODO NEMI: handle user context for pre built UI
                         callAPI={async (fields) => {
+                            const validationErrors = await validateForm(
+                                fields,
+                                this.props.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+                            );
+
+                            if (validationErrors.length > 0) {
+                                return {
+                                    status: "FIELD_ERROR",
+                                    formFields: validationErrors,
+                                };
+                            }
+
+                            // Verify that both passwords match.
+                            if (fields[0].value !== fields[1].value) {
+                                return {
+                                    status: "FIELD_ERROR",
+                                    formFields: [
+                                        {
+                                            id: fields[1].id,
+                                            error: "Confirmation password doesn't match",
+                                        },
+                                    ],
+                                };
+                            }
+
                             const response = await this.props.recipeImplementation.submitNewPassword({
                                 formFields: fields,
                                 token: this.props.token,
                                 config: this.props.config,
                                 userContext: {},
                             });
+
                             if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
                                 return {
                                     status: "GENERAL_ERROR",
                                     message: "Invalid password reset token",
                                 };
                             }
+
                             return response.status === "FIELD_ERROR"
                                 ? response
                                 : {

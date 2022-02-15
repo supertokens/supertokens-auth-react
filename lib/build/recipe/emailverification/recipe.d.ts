@@ -9,6 +9,7 @@ import {
     RecipeInterface,
 } from "./types";
 import { CreateRecipeFunction } from "../../types";
+import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
 import { PreAndPostAPIHookAction } from "supertokens-web-js/lib/build/recipe/emailverification/types";
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -19,6 +20,7 @@ export default class EmailVerification extends RecipeModule<
     static instance?: EmailVerification;
     static RECIPE_ID: string;
     recipeImpl: RecipeInterface;
+    webJsRecipe: WebJSEmailVerification;
     constructor(config: Config);
     static init(
         config: UserInput

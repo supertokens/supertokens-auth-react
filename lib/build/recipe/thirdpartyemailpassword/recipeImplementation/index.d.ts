@@ -1,3 +1,6 @@
-import { RecipeInterface } from "../types";
-import { NormalisedAppInfo } from "../../../types";
-export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface;
+import { NormalisedConfig, RecipeInterface } from "../types";
+import EmailVerification from "../../emailverification/recipe";
+export default function getRecipeImplementation(
+    config: NormalisedConfig,
+    emailVerificationInstance: EmailVerification | undefined
+): RecipeInterface;

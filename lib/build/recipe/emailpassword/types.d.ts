@@ -269,6 +269,7 @@ export declare type RecipeInterface = {
     }) => Promise<
         | {
               status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+              fetchResponse: Response;
           }
         | {
               status: "FIELD_ERROR";
@@ -276,6 +277,7 @@ export declare type RecipeInterface = {
                   id: string;
                   error: string;
               }[];
+              fetchResponse: Response;
           }
     >;
     sendPasswordResetEmail: (input: {
@@ -288,6 +290,7 @@ export declare type RecipeInterface = {
     }) => Promise<
         | {
               status: "OK";
+              fetchResponse: Response;
           }
         | {
               status: "FIELD_ERROR";
@@ -295,6 +298,7 @@ export declare type RecipeInterface = {
                   id: string;
                   error: string;
               }[];
+              fetchResponse: Response;
           }
     >;
     signUp: (input: {
@@ -308,6 +312,7 @@ export declare type RecipeInterface = {
         | {
               status: "OK";
               user: User;
+              fetchResponse: Response;
           }
         | {
               status: "FIELD_ERROR";
@@ -315,6 +320,7 @@ export declare type RecipeInterface = {
                   id: string;
                   error: string;
               }[];
+              fetchResponse: Response;
           }
     >;
     signIn: (input: {
@@ -328,6 +334,7 @@ export declare type RecipeInterface = {
         | {
               status: "OK";
               user: User;
+              fetchResponse: Response;
           }
         | {
               status: "FIELD_ERROR";
@@ -335,11 +342,17 @@ export declare type RecipeInterface = {
                   id: string;
                   error: string;
               }[];
+              fetchResponse: Response;
           }
         | {
               status: "WRONG_CREDENTIALS_ERROR";
+              fetchResponse: Response;
           }
     >;
-    doesEmailExist: (input: { email: string; config: NormalisedConfig; userContext: any }) => Promise<boolean>;
+    doesEmailExist: (input: { email: string; config: NormalisedConfig; userContext: any }) => Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }>;
 };
 export {};

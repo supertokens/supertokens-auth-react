@@ -71,7 +71,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
         });
 
         {
-            const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
+            const builder = new OverrideableBuilder(
+                RecipeImplementation(this.config, recipes.emailVerificationInstance)
+            );
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
 

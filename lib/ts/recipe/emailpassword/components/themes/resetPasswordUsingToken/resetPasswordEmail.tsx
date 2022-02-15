@@ -24,6 +24,7 @@ import { EnterEmailProps, EnterEmailState } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { validateForm } from "../../../../../utils";
 
 class EmailPasswordResetPasswordEmail extends PureComponent<EnterEmailProps, EnterEmailState> {
     static contextType = StyleContext;
@@ -87,13 +88,25 @@ class EmailPasswordResetPasswordEmail extends PureComponent<EnterEmailProps, Ent
                         buttonLabel={"Email me"}
                         onSuccess={this.onSuccess}
                         // TODO NEMI: handle user context for pre built UI
-                        callAPI={async (formFields) =>
-                            await this.props.recipeImplementation.sendPasswordResetEmail({
+                        callAPI={async (formFields) => {
+                            const validationErrors = await validateForm(
+                                formFields,
+                                this.props.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
+                            );
+
+                            if (validationErrors.length > 0) {
+                                return {
+                                    status: "FIELD_ERROR",
+                                    formFields: validationErrors,
+                                };
+                            }
+
+                            return await this.props.recipeImplementation.sendPasswordResetEmail({
                                 formFields,
                                 config: this.props.config,
                                 userContext: {},
-                            })
-                        }
+                            });
+                        }}
                         showLabels={true}
                         validateOnBlur={true}
                         header={
