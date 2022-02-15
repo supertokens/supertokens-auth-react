@@ -29,7 +29,7 @@ import {
     RecipeInterface,
 } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
 import { matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailVerificationFeature } from "./utils";

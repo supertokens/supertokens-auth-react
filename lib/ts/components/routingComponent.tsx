@@ -1,7 +1,7 @@
 import React from "react";
 import SuperTokens from "../superTokens";
 import { ComponentWithRecipeAndMatchingMethod } from "../types";
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 export function RoutingComponent(props: { supertokensInstance: SuperTokens; path: string }): JSX.Element | null {
     const [componentToRender, setComponentToRender] = React.useState<ComponentWithRecipeAndMatchingMethod | undefined>(
