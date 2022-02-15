@@ -83,7 +83,7 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
 
             // we check if the email is already verified, and if it is, then we redirect the user
             // TODO NEMI: handle user context for pre built UI
-            const isVerified = (
+            const isVerified: boolean = (
                 await this.props.recipe.recipeImpl.isEmailVerified({
                     config: this.props.recipe.config,
                     userContext: {},
