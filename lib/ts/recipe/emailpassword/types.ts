@@ -397,19 +397,9 @@ export type SubmitNewPasswordProps = FormThemeBaseProps & {
     token: string;
 };
 
-export type EnterEmailState = {
-    /*
-     * Enter Email Status
-     */
-    status: "READY" | "SENT";
-};
+export type EnterEmailStatus = "READY" | "SENT";
 
-export type SubmitNewPasswordState = {
-    /*
-     * Submit New Password Theme Status
-     */
-    status: "READY" | "SUCCESS";
-};
+export type SubmitNewPasswordStatus = "READY" | "SUCCESS";
 
 export type FormBaseState = {
     formFields: FormFieldState[];

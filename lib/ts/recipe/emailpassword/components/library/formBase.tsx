@@ -23,17 +23,14 @@ import { Button, FormRow, Input, InputError, Label } from ".";
 
 import { APIFormField } from "../../../../types";
 import { FormBaseProps, FormBaseState, InputRef } from "../../types";
-import { SOMETHING_WENT_WRONG_ERROR } from "../../../../constants";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
-import StyleContext from "../../../../styles/styleContext";
+import GeneralError from "./generalError";
 
 /*
  * Component.
  */
 
 export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBaseState> {
-    static contextType = StyleContext;
-
     /*
      * Constructor.
      */
@@ -256,7 +253,7 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
             this.setState((oldState) => ({
                 ...oldState,
                 status: "GENERAL_ERROR",
-                generalError: SOMETHING_WENT_WRONG_ERROR,
+                generalError: "SOMETHING_WENT_WRONG_ERROR",
             }));
         }
     };
@@ -265,7 +262,6 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
      * Render.
      */
     render(): JSX.Element {
-        const styles = this.context;
         const { header, footer, buttonLabel, showLabels, validateOnBlur } = this.props;
         const { formFields } = this.state;
         const onInputBlur = validateOnBlur === true ? this.handleInputBlur : undefined;
@@ -273,11 +269,7 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
         return (
             <Fragment>
                 {header}
-                {this.state.status === "GENERAL_ERROR" && (
-                    <div data-supertokens="generalError" css={styles.generalError}>
-                        {this.state.generalError}
-                    </div>
-                )}
+                {this.state.status === "GENERAL_ERROR" && <GeneralError error={this.state.generalError} />}
 
                 <form autoComplete="on" noValidate onSubmit={this.onFormSubmit}>
                     {formFields.map((field) => {

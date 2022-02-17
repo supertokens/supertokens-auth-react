@@ -335,6 +335,7 @@ export async function getFieldErrors(page) {
 }
 
 export async function getGeneralError(page) {
+    await waitForSTElement(page, "[data-supertokens~='generalError']");
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='generalError']")

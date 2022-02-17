@@ -30,6 +30,7 @@ import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
 import { getRedirectToPathFromURL } from "../../../../../utils";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { defaultTranslationsThirdParty } from "../../themes/translations";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
@@ -40,13 +41,13 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         const errorQueryParam = getQueryParams("error");
         if (errorQueryParam !== null) {
             if (errorQueryParam === "signin") {
-                error = "Something went wrong. Please try again";
+                error = "SOMETHING_WENT_WRONG_ERROR";
             } else if (errorQueryParam === "no_email_present") {
-                error = "Could not retrieve email. Please try a different method.";
+                error = "THIRD_PARTY_ERROR_NO_EMAIL";
             } else {
                 const customError = getQueryParams("message");
                 if (customError === null) {
-                    error = "Something went wrong. Please try again";
+                    error = "SOMETHING_WENT_WRONG_ERROR";
                 } else {
                     error = customError;
                 }
@@ -64,20 +65,18 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         return false;
     };
 
-    getModifiedRecipeImplementation = (): RecipeInterface => {
-        return {
-            ...this.props.recipe.recipeImpl,
-            redirectToThirdPartyLogin: (input) => {
-                input = {
-                    ...input,
-                    state: {
-                        ...input.state,
-                        redirectToPath: getRedirectToPathFromURL(),
-                    },
-                };
-                return this.props.recipe.recipeImpl.redirectToThirdPartyLogin(input);
-            },
-        };
+    modifiedRecipeImplementation: RecipeInterface = {
+        ...this.props.recipe.recipeImpl,
+        redirectToThirdPartyLogin: (input) => {
+            input = {
+                ...input,
+                state: {
+                    ...input.state,
+                    redirectToPath: getRedirectToPathFromURL(),
+                },
+            };
+            return this.props.recipe.recipeImpl.redirectToThirdPartyLogin(input);
+        },
     };
 
     render = (): JSX.Element => {
@@ -93,13 +92,16 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         const props = {
             error: this.state.error,
             providers: providers,
-            recipeImplementation: this.getModifiedRecipeImplementation(),
+            recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
         };
 
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                <FeatureWrapper
+                    useShadowDom={this.props.recipe.config.useShadowDom}
+                    isEmbedded={this.getIsEmbedded()}
+                    defaultStore={defaultTranslationsThirdParty}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}

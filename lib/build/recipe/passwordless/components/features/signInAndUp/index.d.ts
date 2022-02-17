@@ -16,7 +16,7 @@ declare type PropType = FeatureBaseProps & {
 declare class SignInUp extends PureComponent<PropType, SignInUpState> {
     constructor(props: PropType);
     getIsEmbedded: () => boolean;
-    getModifiedRecipeImplementation: () => RecipeInterface;
+    modifiedRecipeImplementation: RecipeInterface;
     componentDidMount: () => Promise<void>;
     componentWillUnmount: () => void;
     render: () => JSX.Element;

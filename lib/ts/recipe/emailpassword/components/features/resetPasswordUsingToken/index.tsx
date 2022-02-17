@@ -27,6 +27,7 @@ import { getQueryParams } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { defaultTranslationsEmailPassword } from "../../themes/translations";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -93,7 +94,10 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
 
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper isEmbedded={this.getIsEmbedded()} useShadowDom={this.props.recipe.config.useShadowDom}>
+                <FeatureWrapper
+                    isEmbedded={this.getIsEmbedded()}
+                    useShadowDom={this.props.recipe.config.useShadowDom}
+                    defaultStore={defaultTranslationsEmailPassword}>
                     <Fragment>
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}

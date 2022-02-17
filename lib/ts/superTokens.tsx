@@ -19,7 +19,13 @@
 import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
 import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensConfig } from "./types";
-import { getCurrentNormalisedUrlPath, isTest, normaliseInputAppInfoOrThrowError } from "./utils";
+import {
+    getCurrentNormalisedUrlPath,
+    getDefaultCookieScope,
+    isTest,
+    normaliseCookieScopeOrThrowError,
+    normaliseInputAppInfoOrThrowError,
+} from "./utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { getSuperTokensRoutesForReactRouterDom } from "./components/superTokensRoute";
 import { getSuperTokensRoutesForReactRouterDomV6 } from "./components/superTokensRouteV6";
@@ -27,6 +33,12 @@ import { BaseFeatureComponentMap } from "./types";
 import { SSR_ERROR } from "./constants";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { RoutingComponent } from "./components/routingComponent";
+import {
+    saveCurrentLanguage,
+    TranslationController,
+    TranslationFunc,
+    TranslationStore,
+} from "./translation/translationHelpers";
 
 /*
  * Class.
@@ -45,6 +57,13 @@ export default class SuperTokens {
      * Instance Attributes.
      */
     appInfo: NormalisedAppInfo;
+    languageTranslations: {
+        defaultLanguage: string;
+        userTranslationStore: TranslationStore;
+        currentLanguageCookieScope: string | undefined;
+        translationEventSource: TranslationController;
+        userTranslationFunc?: TranslationFunc;
+    };
     recipeList: RecipeModule<any, any, any, any>[] = [];
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
 
@@ -59,6 +78,18 @@ export default class SuperTokens {
                 "Please provide at least one recipe to the supertokens.init function call. See https://supertokens.io/docs/emailpassword/quick-setup/frontend"
             );
         }
+
+        const translationConfig = config.languageTranslations === undefined ? {} : config.languageTranslations;
+        this.languageTranslations = {
+            defaultLanguage: translationConfig.defaultLanguage === undefined ? "en" : translationConfig.defaultLanguage,
+            currentLanguageCookieScope:
+                translationConfig.currentLanguageCookieScope !== undefined
+                    ? normaliseCookieScopeOrThrowError(translationConfig.currentLanguageCookieScope)
+                    : getDefaultCookieScope(),
+            userTranslationStore: translationConfig.translations !== undefined ? translationConfig.translations : {},
+            translationEventSource: new TranslationController(),
+            userTranslationFunc: translationConfig.translationFunc,
+        };
 
         this.recipeList = config.recipeList.map((recipe) => {
             return recipe(this.appInfo);
@@ -215,6 +246,15 @@ export default class SuperTokens {
     getReactRouterDomWithCustomHistory = (): { router: { Route: any }; useHistoryCustom: () => any } | undefined => {
         return SuperTokens.reactRouterDom;
     };
+
+    changeLanguage(lang: string): void {
+        saveCurrentLanguage(lang, this.languageTranslations.currentLanguageCookieScope);
+        this.languageTranslations.translationEventSource.emit("LanguageChange", lang);
+    }
+
+    loadTranslation(store: TranslationStore): void {
+        this.languageTranslations.translationEventSource.emit("TranslationLoaded", store);
+    }
 
     /*
      * Tests methods.

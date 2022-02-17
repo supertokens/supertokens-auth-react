@@ -38,7 +38,7 @@ export const SignUpForm = withOverride(
         return (
             <FormBase
                 formFields={props.formFields}
-                buttonLabel={"SIGN UP"}
+                buttonLabel={"EMAIL_PASSWORD_SIGN_UP_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
                 // TODO NEMI: handle user context for pre built UI
                 callAPI={async (formFields) => {

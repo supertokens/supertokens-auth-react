@@ -17,7 +17,10 @@ declare class EmailVerification extends PureComponent<
     static contextType: React.Context<SessionContextType>;
     constructor(props: Prop);
     signOut: () => Promise<void>;
-    getModifiedRecipeInterface: () => RecipeInterface;
+    onTokenInvalidRedirect: () => Promise<void>;
+    onEmailAlreadyVerified: () => Promise<void>;
+    onContinueClicked: () => Promise<void>;
+    modifiedRecipeImplementation: RecipeInterface;
     componentDidMount(): Promise<void>;
     render: () => JSX.Element;
 }

@@ -18,144 +18,123 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { PureComponent, Fragment } from "react";
+import { Fragment, useContext, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
-import { SubmitNewPasswordProps, SubmitNewPasswordState } from "../../../types";
+import { SubmitNewPasswordProps, SubmitNewPasswordStatus } from "../../../types";
 import { FormRow, Button } from "../../library";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 import { validateForm } from "../../../../../utils";
 
-class EmailPasswordSubmitNewPassword extends PureComponent<SubmitNewPasswordProps, SubmitNewPasswordState> {
-    static contextType = StyleContext;
+const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props) => {
+    const styles = useContext(StyleContext);
+    const t = useTranslation();
+    const [status, setStatus] = useState<SubmitNewPasswordStatus>("READY");
 
-    /*
-     * Constructor.
-     */
-    constructor(props: SubmitNewPasswordProps) {
-        super(props);
-        this.state = {
-            status: "READY",
-        };
-    }
-
-    onSuccess = (): void => {
-        this.setState(() => ({
-            status: "SUCCESS",
-        }));
+    const onSuccess = (): void => {
+        setStatus("SUCCESS");
     };
 
-    /*
-     * Render.
-     */
+    const { formFields, onSignInClicked } = props;
 
-    render(): JSX.Element {
-        const styles = this.context;
-        const { formFields, onSignInClicked } = this.props;
-        const { status } = this.state;
-
-        if (status === "SUCCESS") {
-            return (
-                <div data-supertokens="container" css={styles.container}>
-                    <div data-supertokens="row" css={styles.row}>
-                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                            Success!
-                        </div>
-                        <FormRow key="form-button">
-                            <Fragment>
-                                <div
-                                    data-supertokens="primaryText submitNewPasswordSuccessMessage"
-                                    css={[styles.primaryText, styles.submitNewPasswordSuccessMessage]}>
-                                    Your password has been updated successfully
-                                </div>
-                                <Button
-                                    disabled={false}
-                                    isLoading={false}
-                                    type="button"
-                                    onClick={onSignInClicked}
-                                    label={"SIGN IN"}
-                                />
-                            </Fragment>
-                        </FormRow>
-                    </div>
-                </div>
-            );
-        }
-
+    if (status === "SUCCESS") {
         return (
             <div data-supertokens="container" css={styles.container}>
                 <div data-supertokens="row" css={styles.row}>
-                    <FormBase<any>
-                        formFields={formFields}
-                        buttonLabel={"Change password"}
-                        onSuccess={this.onSuccess}
-                        validateOnBlur={true}
-                        // TODO NEMI: handle user context for pre built UI
-                        callAPI={async (fields) => {
-                            const validationErrors = await validateForm(
-                                fields,
-                                this.props.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
-                            );
-
-                            if (validationErrors.length > 0) {
-                                return {
-                                    status: "FIELD_ERROR",
-                                    formFields: validationErrors,
-                                };
-                            }
-
-                            // Verify that both passwords match.
-                            if (fields[0].value !== fields[1].value) {
-                                return {
-                                    status: "FIELD_ERROR",
-                                    formFields: [
-                                        {
-                                            id: fields[1].id,
-                                            error: "Confirmation password doesn't match",
-                                        },
-                                    ],
-                                };
-                            }
-
-                            const response = await this.props.recipeImplementation.submitNewPassword({
-                                formFields: fields,
-                                token: this.props.token,
-                                config: this.props.config,
-                                userContext: {},
-                            });
-
-                            if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
-                                return {
-                                    status: "GENERAL_ERROR",
-                                    message: "Invalid password reset token",
-                                };
-                            }
-
-                            return response.status === "FIELD_ERROR"
-                                ? response
-                                : {
-                                      status: "OK",
-                                  };
-                        }}
-                        showLabels={true}
-                        header={
-                            <Fragment>
-                                <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                                    Change your password
-                                </div>
-                                <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                                    <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                                        Enter a new password below to change your password
-                                    </div>
-                                </div>
-                            </Fragment>
-                        }
-                    />
+                    <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                        {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_SUCCESS_HEADER_TITLE")}
+                    </div>
+                    <FormRow key="form-button">
+                        <Fragment>
+                            <div
+                                data-supertokens="primaryText submitNewPasswordSuccessMessage"
+                                css={[styles.primaryText, styles.submitNewPasswordSuccessMessage]}>
+                                {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_SUCCESS_DESC")}
+                            </div>
+                            <Button
+                                disabled={false}
+                                isLoading={false}
+                                type="button"
+                                onClick={onSignInClicked}
+                                label={"EMAIL_PASSWORD_RESET_SUBMIT_PW_SUCCESS_SIGN_IN_BTN"}
+                            />
+                        </Fragment>
+                    </FormRow>
                 </div>
             </div>
         );
     }
-}
+
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                <FormBase<any>
+                    formFields={formFields}
+                    buttonLabel={"EMAIL_PASSWORD_RESET_SUBMIT_PW_CHANGE_PW_BTN"}
+                    onSuccess={onSuccess}
+                    validateOnBlur={true}
+                    callAPI={async (fields) => {
+                        const validationErrors = await validateForm(
+                            fields,
+                            props.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+                        );
+
+                        if (validationErrors.length > 0) {
+                            return {
+                                status: "FIELD_ERROR",
+                                formFields: validationErrors,
+                            };
+                        }
+
+                        // Verify that both passwords match.
+                        if (fields[0].value !== fields[1].value) {
+                            return {
+                                status: "FIELD_ERROR",
+                                formFields: [
+                                    {
+                                        id: fields[1].id,
+                                        error: "ERROR_CONFIRM_PASSWORD_NO_MATCH",
+                                    },
+                                ],
+                            };
+                        }
+
+                        const response = await props.recipeImplementation.submitNewPassword({
+                            formFields: fields,
+                            token: props.token,
+                            config: props.config,
+                            userContext: {},
+                        });
+                        if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
+                            throw new STGeneralError("EMAIL_PASSWORD_RESET_PASSWORD_INVALID_TOKEN_ERROR");
+                        }
+
+                        return response.status === "FIELD_ERROR"
+                            ? response
+                            : {
+                                  status: "OK",
+                              };
+                    }}
+                    showLabels={true}
+                    header={
+                        <Fragment>
+                            <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                                {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_TITLE")}
+                            </div>
+                            <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                                <div data-supertokens="secondaryText" css={styles.secondaryText}>
+                                    {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_SUBTITLE")}
+                                </div>
+                            </div>
+                        </Fragment>
+                    }
+                />
+            </div>
+        </div>
+    );
+};
 
 export const SubmitNewPassword = withOverride("EmailPasswordSubmitNewPassword", EmailPasswordSubmitNewPassword);

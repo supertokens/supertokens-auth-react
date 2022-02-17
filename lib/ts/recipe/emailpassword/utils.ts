@@ -186,8 +186,8 @@ export function getDefaultFormFields(): NormalisedFormField[] {
 function getDefaultEmailFormField(): NormalisedFormField {
     return {
         id: "email",
-        label: "Email",
-        placeholder: "Email address",
+        label: "EMAIL_PASSWORD_EMAIL_LABEL",
+        placeholder: "EMAIL_PASSWORD_EMAIL_PLACEHOLDER",
         validate: defaultEmailValidator,
         optional: false,
         autoComplete: "email",
@@ -197,8 +197,8 @@ function getDefaultEmailFormField(): NormalisedFormField {
 function getDefaultPasswordFormField(): NormalisedFormField {
     return {
         id: "password",
-        label: "Password",
-        placeholder: "Password",
+        label: "EMAIL_PASSWORD_PASSWORD_LABEL",
+        placeholder: "EMAIL_PASSWORD_PASSWORD_PLACEHOLDER",
         validate: defaultPasswordValidator,
         optional: false,
         autoComplete: "new-password",
@@ -226,16 +226,16 @@ export function normaliseResetPasswordUsingTokenFeature(
         formFields: [
             {
                 id: "password",
-                label: "New password",
-                placeholder: "New password",
+                label: "EMAIL_PASSWORD_NEW_PASSWORD_LABEL",
+                placeholder: "EMAIL_PASSWORD_NEW_PASSWORD_PLACEHOLDER",
                 validate: signUpPasswordFieldValidate,
                 optional: false,
                 autoComplete: "new-password",
             },
             {
                 id: "confirm-password",
-                label: "Confirm password",
-                placeholder: "Confirm your password",
+                label: "EMAIL_PASSWORD_CONFIRM_PASSWORD_LABEL",
+                placeholder: "EMAIL_PASSWORD_CONFIRM_PASSWORD_PLACEHOLDER",
                 validate: signUpPasswordFieldValidate,
                 optional: false,
                 autoComplete: "new-password",
@@ -333,7 +333,7 @@ export function getFormattedFormField(field: NormalisedFormField): NormalisedFor
         validate: async (value: any): Promise<string | undefined> => {
             // Absent or not optional empty field
             if (value === "" && field.optional === false) {
-                return "Field is not optional";
+                return "ERROR_NON_OPTIONAL";
             }
 
             return await field.validate(value);

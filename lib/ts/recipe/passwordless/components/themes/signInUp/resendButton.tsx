@@ -23,20 +23,20 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { LoginAttemptInfo } from "../../../types";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 export const ResendButton = withOverride(
     "PasswordlessResendButton",
     function PasswordlessResendButton({
         loginAttemptInfo,
         resendEmailOrSMSGapInSeconds,
-        target,
         onClick,
     }: {
         loginAttemptInfo: LoginAttemptInfo;
         resendEmailOrSMSGapInSeconds: number;
-        target: string;
         onClick: () => void;
     }): JSX.Element | null {
+        const t = useTranslation();
         const styles = useContext(StyleContext);
 
         const getTimeLeft = useCallback(() => {
@@ -47,7 +47,7 @@ export const ResendButton = withOverride(
         const [secsUntilResend, setSecsUntilResend] = useState<number | undefined>(getTimeLeft());
 
         useEffect(() => {
-            // This runs every time the loginAttemptInfo, so after every resend
+            // This runs every time the loginAttemptInfo updates, so after every resend
             const interval = setInterval(() => {
                 const timeLeft = getTimeLeft();
 
@@ -73,16 +73,19 @@ export const ResendButton = withOverride(
                 data-supertokens="link linkButton resendCodeBtn">
                 {secsUntilResend !== undefined ? (
                     <React.Fragment>
-                        Resend in{" "}
+                        {t("PWLESS_RESEND_BTN_DISABLED_START")}
                         <strong>
                             {Math.floor(secsUntilResend / 60)
                                 .toString()
                                 .padStart(2, "0")}
                             :{(secsUntilResend % 60).toString().padStart(2, "0")}
                         </strong>
+                        {t("PWLESS_RESEND_BTN_DISABLED_END")}
                     </React.Fragment>
+                ) : loginAttemptInfo.contactMethod === "EMAIL" ? (
+                    t("PWLESS_RESEND_BTN_EMAIL")
                 ) : (
-                    `Resend ${target}`
+                    t("PWLESS_RESEND_BTN_PHONE")
                 )}
             </button>
         );
