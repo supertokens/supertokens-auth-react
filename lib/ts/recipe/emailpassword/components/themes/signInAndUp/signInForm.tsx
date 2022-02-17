@@ -24,6 +24,7 @@ import { SignInThemeProps } from "../../../types";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { validateForm } from "../../../../../utils";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 export const SignInForm = withOverride(
     "EmailPasswordSignInForm",
@@ -58,10 +59,7 @@ export const SignInForm = withOverride(
                         userContext: {},
                     });
                     if (response.status === "WRONG_CREDENTIALS_ERROR") {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR",
-                        };
+                        throw new STGeneralError("EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR");
                     } else {
                         return response;
                     }

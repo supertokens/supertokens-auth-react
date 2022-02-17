@@ -24,6 +24,7 @@ import React, { useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { ResendButton } from "./resendButton";
 import { useTranslation } from "../../../../../translation/translationContext";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 export const UserInputCodeForm = withOverride(
     "PasswordlessUserInputCodeForm",
@@ -113,10 +114,7 @@ export const UserInputCodeForm = withOverride(
                     callAPI={async (formFields) => {
                         const userInputCode = formFields.find((field) => field.id === "userInputCode")?.value;
                         if (userInputCode === undefined || userInputCode.length === 0) {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: "GENERAL_ERROR_OTP_UNDEFINED",
-                            };
+                            throw new STGeneralError("GENERAL_ERROR_OTP_UNDEFINED");
                         }
                         // TODO NEMI: handle user context for pre built UI
                         const response = await props.recipeImplementation.consumeCode({
@@ -127,28 +125,23 @@ export const UserInputCodeForm = withOverride(
                             userContext: {},
                         });
 
-                        if (response.status === "OK" || response.status === "GENERAL_ERROR") {
+                        if (response.status === "OK") {
                             return response;
                         }
 
+                        if (response.status === "GENERAL_ERROR") {
+                            throw new STGeneralError(response.message);
+                        }
+
                         if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: "GENERAL_ERROR_OTP_INVALID",
-                            };
+                            throw new STGeneralError("GENERAL_ERROR_OTP_INVALID");
                         }
 
                         if (response.status === "EXPIRED_USER_INPUT_CODE_ERROR") {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: "GENERAL_ERROR_OTP_EXPIRED",
-                            };
+                            throw new STGeneralError("GENERAL_ERROR_OTP_EXPIRED");
                         }
 
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "SOMETHING_WENT_WRONG_ERROR",
-                        };
+                        throw new STGeneralError("SOMETHING_WENT_WRONG_ERROR");
                     }}
                     validateOnBlur={false}
                     showLabels={true}

@@ -20,6 +20,7 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultValidate } from "../../../../emailpassword/validators";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",
@@ -49,24 +50,24 @@ export const PhoneForm = withOverride(
                 callAPI={async (formFields) => {
                     const phoneNumber = formFields.find((field) => field.id === "phoneNumber")?.value;
                     if (phoneNumber === undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "GENERAL_ERROR_PHONE_UNDEFINED",
-                        };
+                        throw new STGeneralError("GENERAL_ERROR_PHONE_UNDEFINED");
                     }
+
                     const validationRes = await props.config.validatePhoneNumber(phoneNumber);
                     if (validationRes !== undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: validationRes,
-                        };
+                        throw new STGeneralError(validationRes);
                     }
+
                     // TODO NEMI: handle user context for pre built UI
                     const response = await props.recipeImplementation.createCode({
                         phoneNumber,
                         config: props.config,
                         userContext: {},
                     });
+
+                    if (response.status === "GENERAL_ERROR") {
+                        throw new STGeneralError(response.message);
+                    }
 
                     return response;
                 }}

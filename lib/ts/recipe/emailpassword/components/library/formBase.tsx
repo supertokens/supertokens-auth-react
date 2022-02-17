@@ -240,16 +240,16 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                 }));
                 return;
             }
-
-            // Otherwise if message, set generalError
-            if (result.status === "GENERAL_ERROR") {
+        } catch (e) {
+            if ((e as any).isSuperTokensGeneralError) {
                 this.setState((oldState) => ({
                     ...oldState,
                     status: "GENERAL_ERROR",
-                    generalError: result.message,
+                    generalError: (e as any).message,
                 }));
+                return;
             }
-        } catch (e) {
+
             this.setState((oldState) => ({
                 ...oldState,
                 status: "GENERAL_ERROR",

@@ -445,17 +445,6 @@ export type FormBaseAPIResponse<T> =
       } & T)
     | {
           /*
-           * General Errors.
-           */
-          status: "GENERAL_ERROR";
-
-          /*
-           * Error message.
-           */
-          message: string;
-      }
-    | {
-          /*
            * Field validation errors.
            */
           status: "FIELD_ERROR";

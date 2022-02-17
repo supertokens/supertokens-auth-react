@@ -19,6 +19,7 @@ import { SignInUpEmailFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultValidate } from "../../../../emailpassword/validators";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 export const EmailForm = withOverride(
     "PasswordlessEmailForm",
@@ -46,17 +47,11 @@ export const EmailForm = withOverride(
                 callAPI={async (formFields) => {
                     const email = formFields.find((field) => field.id === "email")?.value;
                     if (email === undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "GENERAL_ERROR_EMAIL_UNDEFINED",
-                        };
+                        throw new STGeneralError("GENERAL_ERROR_EMAIL_UNDEFINED");
                     }
                     const validationRes = await props.config.validateEmailAddress(email);
                     if (validationRes !== undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: validationRes,
-                        };
+                        throw new STGeneralError(validationRes);
                     }
                     // TODO NEMI: handle user context for pre built UI
                     const response = await props.recipeImplementation.createCode({
@@ -64,6 +59,10 @@ export const EmailForm = withOverride(
                         config: props.config,
                         userContext: {},
                     });
+
+                    if (response.status === "GENERAL_ERROR") {
+                        throw new STGeneralError(response.message);
+                    }
 
                     return response;
                 }}

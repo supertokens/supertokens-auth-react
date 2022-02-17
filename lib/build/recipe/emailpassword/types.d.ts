@@ -238,10 +238,6 @@ export declare type FormBaseAPIResponse<T> =
           status: "OK";
       } & T)
     | {
-          status: "GENERAL_ERROR";
-          message: string;
-      }
-    | {
           status: "FIELD_ERROR";
           formFields: FormFieldError[];
       };
