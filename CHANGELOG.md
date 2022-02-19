@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Exposes more recipe functions
+-   Exports more recipe functions
 
 ### Breaking changes
 
