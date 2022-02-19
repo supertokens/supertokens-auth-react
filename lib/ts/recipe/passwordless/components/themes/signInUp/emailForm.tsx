@@ -33,7 +33,7 @@ export const EmailForm = withOverride(
                 formFields={[
                     {
                         id: "email",
-                        label: "Email",
+                        label: "PWLESS_SIGN_IN_UP_EMAIL_LABEL",
                         optional: false,
                         autofocus: true,
                         placeholder: "",
@@ -41,14 +41,14 @@ export const EmailForm = withOverride(
                         validate: defaultValidate,
                     },
                 ]}
-                buttonLabel={"CONTINUE"}
+                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {
                     const email = formFields.find((field) => field.id === "email")?.value;
                     if (email === undefined) {
                         return {
                             status: "GENERAL_ERROR",
-                            message: "Please set your email",
+                            message: "GENERAL_ERROR_EMAIL_UNDEFINED",
                         };
                     }
                     const validationRes = await props.config.validateEmailAddress(email);

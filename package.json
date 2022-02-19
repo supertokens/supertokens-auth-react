@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.18.5",
+    "version": "0.18.7",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -30,6 +30,7 @@
         "babel-plugin-inline-react-svg": "2.0.1",
         "babel-plugin-transform-class-properties": "6.24.1",
         "eslint": "^6.8.0",
+        "eslint-plugin-react": "^7.28.0",
         "eslint-plugin-react-hooks": "4.2.0",
         "eslint-plugin-supertokens-auth-react": "file:eslint",
         "isomorphic-fetch": "^3.0.0",
@@ -86,7 +87,7 @@
         "watch": "cd lib && npx tsc -w -p tsconfig_dev.json",
         "pretty": "npx pretty-quick .",
         "build-pretty": "npm run build && npm run pretty",
-        "lint": "cd lib && eslint ./ts --ext .ts,.tsx",
+        "lint": "node other/checkTranslationKeys.js && cd lib && eslint ./ts --ext .ts,.tsx",
         "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$' && exit 1 || exit 0",
         "pretty-check": "npx pretty-quick --check .",
         "set-up-hooks": "cp hooks/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
@@ -97,7 +98,7 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "5kb"
+            "limit": "7kb"
         },
         {
             "path": "recipe/session/index.js",
@@ -105,15 +106,15 @@
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
-            "limit": "112kb"
+            "limit": "115kb"
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "101kb"
+            "limit": "105kb"
         },
         {
             "path": "recipe/emailpassword/index.js",
-            "limit": "102kb"
+            "limit": "105kb"
         },
         {
             "path": "recipe/passwordless/index.js",

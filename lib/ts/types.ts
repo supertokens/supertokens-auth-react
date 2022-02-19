@@ -18,6 +18,7 @@ import NormalisedURLDomain from "supertokens-web-js/lib/build/normalisedURLDomai
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
+import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 
 /*
  * Recipe Module Manager Config Types.
@@ -33,6 +34,36 @@ export type SuperTokensConfig = {
      * List of recipes for authentication and session management.
      */
     recipeList: CreateRecipeFunction<any, any, any, any>[];
+
+    languageTranslations?: {
+        /*
+         * Default (and fallback) language
+         */
+        defaultLanguage?: string;
+
+        /*
+         * The scope of the cookie storing the current language.
+         * This is used to save the language choice between refreshes
+         */
+        currentLanguageCookieScope?: string;
+
+        /*
+         * Language -> translation key -> copy string mapping object.
+         *
+         * e.g.:
+         * {
+         *     en: {
+         *         PWLESS_SIGN_IN_UP_FOOTER_TOS: "TOS",
+         *     }
+         * }
+         */
+        translations?: TranslationStore;
+
+        /*
+         * By providing this you can take direct control of the entire translation process.
+         */
+        translationFunc?: TranslationFunc;
+    };
 };
 
 export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (

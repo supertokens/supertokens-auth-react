@@ -8,7 +8,7 @@ declare type PropType = FeatureBaseProps & {
 declare class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
     constructor(props: PropType);
     getIsEmbedded: () => boolean;
-    getModifiedRecipeImplementation: () => RecipeInterface;
+    modifiedRecipeImplementation: RecipeInterface;
     render: () => JSX.Element;
 }
 export default SignInAndUp;

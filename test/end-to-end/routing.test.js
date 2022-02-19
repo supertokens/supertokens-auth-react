@@ -114,7 +114,7 @@ describe("SuperTokens Routing in Test App", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
-                assert.strictEqual(resetPasswordButtonLabel, "Change password");
+                assert.strictEqual(resetPasswordButtonLabel, "CHANGE PASSWORD");
             });
 
             it("/auth/unknown-path should not render any ST component", async function () {
@@ -303,7 +303,7 @@ describe("SuperTokens Routing in Test App", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
-                assert.strictEqual(resetPasswordButtonLabel, "Change password");
+                assert.strictEqual(resetPasswordButtonLabel, "CHANGE PASSWORD");
             });
 
             it("/auth/reset-password?token=TOKEN&rid=emailpassword should load reset-password SuperTokens component with Change Password", async function () {
@@ -314,7 +314,7 @@ describe("SuperTokens Routing in Test App", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
-                assert.strictEqual(resetPasswordButtonLabel, "Change password");
+                assert.strictEqual(resetPasswordButtonLabel, "CHANGE PASSWORD");
             });
 
             it("/auth/reset-password?token=TOKEN&rid=thirdparty should load reset-password SuperTokens component with Change Password", async function () {
@@ -325,7 +325,7 @@ describe("SuperTokens Routing in Test App", function () {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
                 const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
-                assert.strictEqual(resetPasswordButtonLabel, "Change password");
+                assert.strictEqual(resetPasswordButtonLabel, "CHANGE PASSWORD");
             });
 
             it("/auth/unknown-path should not render any ST component", async function () {
@@ -466,7 +466,7 @@ describe("SuperTokens Routing in Test App", function () {
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
             ]);
             const resetPasswordButtonLabel = await getSubmitFormButtonLabel(page);
-            assert.strictEqual(resetPasswordButtonLabel, "Change password");
+            assert.strictEqual(resetPasswordButtonLabel, "CHANGE PASSWORD");
         });
 
         it("/auth?rid=emailpassword should load SignInAndUp components", async function () {

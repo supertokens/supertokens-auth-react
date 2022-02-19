@@ -25,12 +25,14 @@ import { SignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 import { ProvidersForm } from "./providersForm";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
+import { useTranslation } from "../../../../..";
 
 /*
  * Component.
  */
 
 function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
+    const t = useTranslation();
     const styles = useContext(StyleContext);
     const hasFont = hasFontDefined(props.config.rootStyle);
 
@@ -39,7 +41,7 @@ function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
             <div data-supertokens="container" css={styles.container}>
                 <div data-supertokens="row" css={styles.row}>
                     <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                        Sign Up / Sign In
+                        {t("THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE")}
                     </div>
                     <div data-supertokens="divider" css={styles.divider}></div>
                     <ProvidersForm {...props} />

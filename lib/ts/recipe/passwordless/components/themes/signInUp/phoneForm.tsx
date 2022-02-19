@@ -34,7 +34,7 @@ export const PhoneForm = withOverride(
                 formFields={[
                     {
                         id: "phoneNumber",
-                        label: "Your Phone Number",
+                        label: "PWLESS_SIGN_IN_UP_PHONE_LABEL",
                         inputComponent: phoneNumberInputWithInjectedProps({
                             defaultCountry: props.config.signInUpFeature.defaultCountry,
                         }),
@@ -44,14 +44,14 @@ export const PhoneForm = withOverride(
                         validate: defaultValidate,
                     },
                 ]}
-                buttonLabel={"CONTINUE"}
+                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {
                     const phoneNumber = formFields.find((field) => field.id === "phoneNumber")?.value;
                     if (phoneNumber === undefined) {
                         return {
                             status: "GENERAL_ERROR",
-                            message: "Please set your phone number",
+                            message: "GENERAL_ERROR_PHONE_UNDEFINED",
                         };
                     }
                     const validationRes = await props.config.validatePhoneNumber(phoneNumber);

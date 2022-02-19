@@ -29,6 +29,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { SignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { defaultTranslationsEmailPassword } from "../../themes/translations";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -141,7 +142,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                     }
 
                     if (typeof value !== "string") {
-                        return "Email must be of type string";
+                        return "GENERAL_ERROR_EMAIL_NON_STRING";
                     }
                     try {
                         // TODO NEMI: handle user context for pre built UI
@@ -151,7 +152,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                             userContext: {},
                         });
                         if (emailExists) {
-                            return "This email already exists. Please sign in instead";
+                            return "EMAIL_PASSWORD_EMAIL_ALREADY_EXISTS";
                         }
                     } catch (_) {}
                     return undefined;
@@ -160,36 +161,34 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         }));
     }
 
-    getModifiedRecipeImplementation = (): RecipeInterface => {
-        return {
-            ...this.props.recipe.recipeImpl,
-            signIn: async (input) => {
-                const response = await this.props.recipe.recipeImpl.signIn(input);
+    modifiedRecipeImplementation: RecipeInterface = {
+        ...this.props.recipe.recipeImpl,
+        signIn: async (input) => {
+            const response = await this.props.recipe.recipeImpl.signIn(input);
 
-                this.setState((oldState) => {
-                    return response.status !== "OK"
-                        ? oldState
-                        : {
-                              user: response.user,
-                          };
-                });
+            this.setState((oldState) => {
+                return response.status !== "OK"
+                    ? oldState
+                    : {
+                          user: response.user,
+                      };
+            });
 
-                return response;
-            },
-            signUp: async (input) => {
-                const response = await this.props.recipe.recipeImpl.signUp(input);
+            return response;
+        },
+        signUp: async (input) => {
+            const response = await this.props.recipe.recipeImpl.signUp(input);
 
-                this.setState((oldState) => {
-                    return response.status !== "OK"
-                        ? oldState
-                        : {
-                              user: response.user,
-                          };
-                });
+            this.setState((oldState) => {
+                return response.status !== "OK"
+                    ? oldState
+                    : {
+                          user: response.user,
+                      };
+            });
 
-                return response;
-            },
-        };
+            return response;
+        },
     };
 
     render = (): JSX.Element => {
@@ -200,7 +199,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         const signInFeature = signInAndUpFeature.signInForm;
 
         const signInForm = {
-            recipeImplementation: this.getModifiedRecipeImplementation(),
+            recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
             styleFromInit: signInFeature.style,
             formFields: signInFeature.formFields,
@@ -209,7 +208,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         };
 
         const signUpForm = {
-            recipeImplementation: this.getModifiedRecipeImplementation(),
+            recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
             styleFromInit: signUpFeature.style,
             formFields: this.getThemeSignUpFeatureFormFields(signUpFeature.formFields),
@@ -224,7 +223,10 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
 
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
+                <FeatureWrapper
+                    useShadowDom={this.props.recipe.config.useShadowDom}
+                    isEmbedded={this.getIsEmbedded()}
+                    defaultStore={defaultTranslationsEmailPassword}>
                     <Fragment>
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <SignInAndUpTheme {...props} />}

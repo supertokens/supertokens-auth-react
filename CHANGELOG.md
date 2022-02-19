@@ -5,16 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## [unreleased]
+## unreleased
 
--   Adds example app with Hasura
--   Adds example app with thirdpartyemailpassword showcasing setting password after email verification
+### Added
+
 -   Exposes more recipe functions
 
 ### Breaking changes
 
 -   Updates function return types to allow for custom API response handling
 -   Updates signatures for functions exported from recipe/index to accept objects instead of params directly
+
+## [0.18.7] - 2022-02-11
+
+### Optimised
+
+-   Uses React.useMemo instead of useEffect in routing component to make first render non null
+
+### Added
+
+-   Adds test for third party with email verification
+
+### Bug fix:
+
+-   Fixes normalisation of thirdparty config to also normalise email verification config.
+
+## [0.18.6] - 2022-02-03
+
+### Added
+
+-   passwordless demo app
+-   Adds example app with Hasura
+-   Adds example app with thirdpartyemailpassword showcasing setting password after email verification
+-   Translateable components
+
+### Refactors
+
+-   Refactored some more pure components into functional
+-   Feature components now provide a stable modified recipe implementation as a prop instead of getter
 
 ## [0.18.5] - 2022-01-27
 

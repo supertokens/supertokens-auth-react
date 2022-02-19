@@ -16,7 +16,9 @@
 /*
  * Imports.
  */
+import { useTranslation } from "./translation/translationContext";
 import SuperTokens from "./superTokens";
+import { TranslationStore } from "./translation/translationHelpers";
 import { SuperTokensConfig } from "./types";
 
 /*
@@ -36,12 +38,26 @@ export default class SuperTokensAPIWrapper {
         return SuperTokens.getRoutingComponent();
     }
 
+    static changeLanguage(language: string): void {
+        return SuperTokens.getInstanceOrThrow().changeLanguage(language);
+    }
+
+    static loadTranslation(store: TranslationStore): void {
+        return SuperTokens.getInstanceOrThrow().loadTranslation(store);
+    }
+
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[] {
         return SuperTokens.getSuperTokensRoutesForReactRouterDom(reactRouterDom);
     }
+
+    static useTranslation = useTranslation;
 }
 
 export const canHandleRoute = SuperTokensAPIWrapper.canHandleRoute;
 export const init = SuperTokensAPIWrapper.init;
+export const changeLanguage = SuperTokensAPIWrapper.changeLanguage;
+export const loadTranslation = SuperTokensAPIWrapper.loadTranslation;
 export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
 export const getSuperTokensRoutesForReactRouterDom = SuperTokens.getSuperTokensRoutesForReactRouterDom;
+
+export { useTranslation } from "./translation/translationContext";

@@ -29,11 +29,19 @@ import {
     generateState,
     clickOnProviderButton,
     loginWithAuth0,
+    getGeneralError,
+    waitFor,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
+import {
+    TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
+    SIGN_IN_UP_API,
+    SOMETHING_WENT_WRONG_ERROR,
+    SIGN_IN_API,
+} from "../constants";
 
 /*
  * Tests.
@@ -106,6 +114,7 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE", // we add this twice because useMemo in getRoutingComponent is called twice during development
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY PRE_API_HOOKS THIRD_PARTY_SIGN_IN_UP",
@@ -117,6 +126,48 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+            ]);
+        });
+
+        it("Successful signin with Auth0 and email verification", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+            await clickOnProviderButton(page, "Auth0");
+            await Promise.all([
+                loginWithAuth0(page),
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+            ]);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE REDIRECT_TO_THIRD_PARTY_LOGIN",
+                "ST_LOGS THIRD_PARTY OVERRIDE SET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_AUTHORISATION_URL",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS GET_AUTHORISATION_URL",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS THIRD_PARTY_SIGN_IN_UP",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS THIRD_PARTY ON_HANDLE_EVENT SUCCESS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE EMAIL_VERIFICATION IS_EMAIL_VERIFIED",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS IS_EMAIL_VERIFIED",
+                "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS THIRD_PARTY OVERRIDE EMAIL_VERIFICATION IS_EMAIL_VERIFIED",
+                "ST_LOGS THIRD_PARTY PRE_API_HOOKS IS_EMAIL_VERIFIED",
             ]);
         });
 
@@ -191,6 +242,78 @@ describe("SuperTokens Third Party", function () {
         //         "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SUCCESS",
         //     ]);
         // });
+
+        it("field error on sign in up with translation key", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+
+            await page.setRequestInterception(true);
+            const requestHandler = (request) => {
+                if (request.method() === "POST" && request.url() === SIGN_IN_UP_API) {
+                    request.respond({
+                        status: 200,
+                        contentType: "application/json",
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "FIELD_ERROR",
+                            error: "THIRD_PARTY_SIGN_IN_UP_FOOTER_TOS",
+                        }),
+                    });
+                    page.off("request", requestHandler);
+                    page.setRequestInterception(false);
+                } else {
+                    request.continue();
+                }
+            };
+            page.on("request", requestHandler);
+            await clickOnProviderButton(page, "Auth0");
+            await loginWithAuth0(page);
+            const error = await getGeneralError(page);
+            assert.deepStrictEqual(error, "Terms of Service");
+        });
+
+        it("field error on sign in up with non-translation key", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+
+            await page.setRequestInterception(true);
+            const requestHandler = (request) => {
+                if (request.method() === "POST" && request.url() === SIGN_IN_UP_API) {
+                    request.respond({
+                        status: 200,
+                        contentType: "application/json",
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "FIELD_ERROR",
+                            error: "Test message!!!!",
+                        }),
+                    });
+                    page.off("request", requestHandler);
+                    page.setRequestInterception(false);
+                } else {
+                    request.continue();
+                }
+            };
+            page.on("request", requestHandler);
+
+            await clickOnProviderButton(page, "Auth0");
+            await loginWithAuth0(page);
+
+            const error = await getGeneralError(page);
+            assert.deepStrictEqual(error, "Test message!!!!");
+        });
     });
 
     describe("Third Party callback error tests", function () {
@@ -202,6 +325,7 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
@@ -232,6 +356,7 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
@@ -260,6 +385,7 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
@@ -314,6 +440,7 @@ describe("SuperTokens Third Party", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY GET_REDIRECTION_URL SIGN_IN_AND_UP",
@@ -342,6 +469,7 @@ describe("SuperTokens Third Party", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRD_PARTY OVERRIDE SIGN_IN_AND_UP",
                 "ST_LOGS THIRD_PARTY OVERRIDE GET_OAUTH_STATE",

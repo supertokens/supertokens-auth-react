@@ -54,7 +54,16 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             },
         },
         secondaryLinkWithLeftArrow: {
+            marginTop: "10px",
             marginBottom: "40px",
+            cursor: "pointer",
+            "& svg": {
+                marginRight: "0.3em",
+            },
+            "&:hover svg": {
+                position: "relative",
+                left: "-4px",
+            },
         },
         resendCodeBtn: {
             width: "auto",

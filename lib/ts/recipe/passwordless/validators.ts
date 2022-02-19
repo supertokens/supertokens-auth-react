@@ -17,7 +17,7 @@ import { isValidPhoneNumber } from "react-phone-number-input/min";
 
 export function defaultEmailValidator(value: any): string | undefined {
     if (typeof value !== "string") {
-        return "Email must be of type string";
+        return "GENERAL_ERROR_EMAIL_NON_STRING";
     }
 
     const defaultEmailValidatorRegexp =
@@ -28,7 +28,7 @@ export function defaultEmailValidator(value: any): string | undefined {
     // Regex from https://stackoverflow.com/a/46181/3867175
 
     if (value.match(defaultEmailValidatorRegexp) === null) {
-        return "Email is invalid";
+        return "GENERAL_ERROR_EMAIL_INVALID";
     }
 
     return undefined;
@@ -36,17 +36,17 @@ export function defaultEmailValidator(value: any): string | undefined {
 
 export function defaultPhoneNumberValidator(value: string) {
     if (typeof value !== "string") {
-        return "Phone number must be of type string";
+        return "GENERAL_ERROR_PHONE_NON_STRING";
     }
     if (!isValidPhoneNumber(value)) {
-        return "Phone number is invalid";
+        return "GENERAL_ERROR_PHONE_INVALID";
     }
     return undefined;
 }
 
 export function defaultEmailValidatorForCombinedInput(value: any): string | undefined {
     if (typeof value !== "string") {
-        return "Email or Phone number must be of type string";
+        return "GENERAL_ERROR_EMAIL_OR_PHONE_NON_STRING";
     }
 
     const defaultEmailValidatorRegexp =
@@ -57,7 +57,7 @@ export function defaultEmailValidatorForCombinedInput(value: any): string | unde
     // Regex from https://stackoverflow.com/a/46181/3867175
 
     if (value.match(defaultEmailValidatorRegexp) === null) {
-        return "Email or Phone number is invalid";
+        return "GENERAL_ERROR_EMAIL_OR_PHONE_INVALID";
     }
 
     return undefined;
@@ -65,21 +65,21 @@ export function defaultEmailValidatorForCombinedInput(value: any): string | unde
 
 export function defaultPhoneNumberValidatorForCombinedInput(value: string) {
     if (typeof value !== "string") {
-        return "Email or Phone number must be of type string";
+        return "GENERAL_ERROR_EMAIL_OR_PHONE_NON_STRING";
     }
     if (!isValidPhoneNumber(value)) {
-        return "Email or Phone number is invalid";
+        return "GENERAL_ERROR_EMAIL_OR_PHONE_INVALID";
     }
     return undefined;
 }
 
 export async function userInputCodeValidate(value: any): Promise<string | undefined> {
     if (typeof value !== "string") {
-        return "OTP must be of type string";
+        return "GENERAL_ERROR_OTP_NON_STRING";
     }
 
     if (value.length === 0) {
-        return "OTP cannot be empty";
+        return "GENERAL_ERROR_OTP_EMPTY";
     }
 
     return undefined;

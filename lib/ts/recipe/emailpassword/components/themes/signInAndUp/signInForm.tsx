@@ -24,10 +24,6 @@ import { SignInThemeProps } from "../../../types";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-/*
- * Component.
- */
-
 export const SignInForm = withOverride(
     "EmailPasswordSignInForm",
     function EmailPasswordSignInForm(
@@ -39,7 +35,7 @@ export const SignInForm = withOverride(
         return (
             <FormBase
                 formFields={props.formFields}
-                buttonLabel={"SIGN IN"}
+                buttonLabel={"EMAIL_PASSWORD_SIGN_IN_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
                 // TODO NEMI: handle user context for pre built UI
                 callAPI={async (formFields) => {
@@ -51,7 +47,7 @@ export const SignInForm = withOverride(
                     if (response.status === "WRONG_CREDENTIALS_ERROR") {
                         return {
                             status: "GENERAL_ERROR",
-                            message: "Incorrect email and password combination",
+                            message: "EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR",
                         };
                     } else {
                         return response;

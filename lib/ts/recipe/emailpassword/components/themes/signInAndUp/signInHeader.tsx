@@ -17,23 +17,26 @@ import { jsx } from "@emotion/react";
 import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
 
 export const SignInHeader = withOverride(
     "EmailPasswordSignInHeader",
     function EmailPasswordSignInHeader({ onClick }: { onClick: (() => void) | undefined }): JSX.Element {
         const styles = useContext(StyleContext);
+        const t = useTranslation();
 
         return (
             <Fragment>
                 <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                    Sign In
+                    {t("EMAIL_PASSWORD_SIGN_IN_HEADER_TITLE")}
                 </div>
                 <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
                     <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                        Not registered yet?
+                        {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_START")}
                         <span data-supertokens="link" onClick={onClick} css={styles.link}>
-                            Sign Up
+                            {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_SIGN_UP_LINK")}
                         </span>
+                        {t("EMAIL_PASSWORD_SIGN_IN_HEADER_SUBTITLE_END")}
                     </div>
                 </div>
                 <div data-supertokens="divider" css={styles.divider}></div>

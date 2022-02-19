@@ -17,102 +17,80 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { PureComponent, Fragment } from "react";
+import { Fragment, useState, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
-import { EnterEmailProps, EnterEmailState } from "../../../types";
+import { EnterEmailProps, EnterEmailStatus } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
 
-class EmailPasswordResetPasswordEmail extends PureComponent<EnterEmailProps, EnterEmailState> {
-    static contextType = StyleContext;
-    /*
-     * Constructor.
-     */
-    constructor(props: EnterEmailProps) {
-        super(props);
-        this.state = {
-            status: "READY",
-        };
-    }
+const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
+    const styles = useContext(StyleContext);
+    const t = useTranslation();
+    const [status, setStatus] = useState<EnterEmailStatus>("READY");
 
-    /*
-     * Methods.
-     */
-
-    onSuccess = (): void => {
-        this.setState(() => ({
-            status: "SENT",
-        }));
+    const onSuccess = (): void => {
+        setStatus("SENT");
     };
 
-    resend = (): void => {
-        this.setState(() => ({
-            status: "READY",
-        }));
+    const resend = (): void => {
+        setStatus("READY");
     };
+    const { formFields } = props;
 
-    /*
-     * Render.
-     */
-    render(): JSX.Element {
-        const styles = this.context;
-        const { formFields } = this.props;
-        const { status } = this.state;
-
-        if (status === "SENT") {
-            return (
-                <div data-supertokens="container" css={styles.container}>
-                    <div data-supertokens="row" css={styles.row}>
-                        <div
-                            data-supertokens="primaryText enterEmailSuccessMessage"
-                            css={[styles.primaryText, styles.enterEmailSuccessMessage]}>
-                            Please check your email for the password recovery link.{" "}
-                            <span data-supertokens="link" css={styles.link} onClick={this.resend}>
-                                Resend
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        // Otherwise, return Form.
+    if (status === "SENT") {
         return (
             <div data-supertokens="container" css={styles.container}>
                 <div data-supertokens="row" css={styles.row}>
-                    <FormBase
-                        formFields={formFields}
-                        buttonLabel={"Email me"}
-                        onSuccess={this.onSuccess}
-                        // TODO NEMI: handle user context for pre built UI
-                        callAPI={async (formFields) =>
-                            await this.props.recipeImplementation.sendPasswordResetEmail({
-                                formFields,
-                                config: this.props.config,
-                                userContext: {},
-                            })
-                        }
-                        showLabels={true}
-                        validateOnBlur={true}
-                        header={
-                            <Fragment>
-                                <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                                    Reset your password
-                                </div>
-                                <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                                    <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                                        We will send you an email to reset your password
-                                    </div>
-                                </div>
-                            </Fragment>
-                        }
-                    />
+                    <div
+                        data-supertokens="primaryText enterEmailSuccessMessage"
+                        css={[styles.primaryText, styles.enterEmailSuccessMessage]}>
+                        {t("EMAIL_PASSWORD_RESET_SEND_SUCCESS")}
+                        <span data-supertokens="link" css={styles.link} onClick={resend}>
+                            {t("EMAIL_PASSWORD_RESET_RESEND_LINK")}
+                        </span>
+                    </div>
                 </div>
             </div>
         );
     }
-}
+
+    // Otherwise, return Form.
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                <FormBase
+                    formFields={formFields}
+                    buttonLabel={"EMAIL_PASSWORD_RESET_SEND_BTN"}
+                    onSuccess={onSuccess}
+                    // TODO NEMI: handle user context for pre built UI
+                    callAPI={async (formFields) =>
+                        await props.recipeImplementation.sendPasswordResetEmail({
+                            formFields,
+                            config: props.config,
+                            userContext: {},
+                        })
+                    }
+                    showLabels={true}
+                    validateOnBlur={true}
+                    header={
+                        <Fragment>
+                            <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                                {t("EMAIL_PASSWORD_RESET_HEADER_TITLE")}
+                            </div>
+                            <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                                <div data-supertokens="secondaryText" css={styles.secondaryText}>
+                                    {t("EMAIL_PASSWORD_RESET_HEADER_SUBTITLE")}
+                                </div>
+                            </div>
+                        </Fragment>
+                    }
+                />
+            </div>
+        </div>
+    );
+};
 
 export const ResetPasswordEmail = withOverride("EmailPasswordResetPasswordEmail", EmailPasswordResetPasswordEmail);
