@@ -35,6 +35,7 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
 
     const resendEmail = async (): Promise<void> => {
         try {
+            // TODO NEMI: handle user context for pre built UI
             const response = await props.recipeImplementation.sendVerificationEmail({
                 config: props.config,
                 userContext: {},
@@ -54,6 +55,7 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
         const abort = new AbortController();
         void (async function () {
             // we send an email on load...
+            // TODO NEMI: handle user context for pre built UI
             const response = await props.recipeImplementation.sendVerificationEmail({
                 config: props.config,
                 userContext: {},

@@ -44,7 +44,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
         const abortController = new AbortController();
         void (async () => {
             try {
-                // TODO NEMI: Handle user context in UI components
+                // TODO NEMI: handle user context for pre built UI
                 const response = await props.recipeImplementation.verifyEmail({
                     config: props.config,
                     token: props.token,

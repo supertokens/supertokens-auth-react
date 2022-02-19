@@ -27,6 +27,7 @@ import {
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
+    PreAndPostAPIHookAction,
 } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
@@ -39,7 +40,6 @@ import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import OverrideableBuilder from "supertokens-js-override";
 import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
-import { PreAndPostAPIHookAction } from "supertokens-web-js/lib/build/recipe/emailverification/types";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,

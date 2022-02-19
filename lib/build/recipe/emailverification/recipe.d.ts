@@ -7,10 +7,10 @@ import {
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
+    PreAndPostAPIHookAction,
 } from "./types";
 import { CreateRecipeFunction } from "../../types";
 import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
-import { PreAndPostAPIHookAction } from "supertokens-web-js/lib/build/recipe/emailverification/types";
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
