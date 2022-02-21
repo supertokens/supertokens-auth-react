@@ -9,12 +9,127 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Exports more recipe functions
+-   All recipe functions now accept an additional parameter `userContext`
+-   Exports more recipe functions for emailverification recipe to allow them to be called without using the pre-built UI. Newly exported functions: `verifyEmail`, `sendVerificationEmail`
+-   Exports all emailverification recipe functions from emailpassword, thirdparty and thirdpartyemailpassword recipes.
+-   Exports more recipe functions for emailpassword recipe to allow them to be called without using the pre-built UI. Newly exported functions: `submitNewPassword`, `sendPasswordResetEmail`, `signUp`, `signIn`, `doesEmailExist`.
 
 ### Breaking changes
 
--   Updates function return types to allow for custom API response handling
--   Updates signatures for functions exported from recipe/index to accept objects instead of params directly
+1.  Updates function return types for all recipes to allow for custom API response handling when calling recipe functions manually
+2.  All recipe functions now return an object which contains a `status` field along with other properties (instead of returning a boolean directly for example), to make function return types more consistent across recipes
+3.  Updates signatures for functions exported from recipe/index to accept objects instead of params directly, to make function signatures consistent across all recipes
+
+### Migration
+
+1. Function return types now include a `fetchResponse` field for any function that makes a network request. If you override functions and return a custom object you will need to update your code to include a `fetchResponse` field that should be a clone of the original response object ([Refer to this page](https://developer.mozilla.org/en-US/docs/Web/API/Response/clone))
+
+For example if your override looks like this:
+
+```ts
+import SuperTokens from "supertokens-auth-react";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "..."
+    },
+    recipeList: [
+        EmailPassword.init({
+            override: {
+                functions: (originalImplementation) => {
+                    return {
+                        ...originalImplementation,
+                        signIn: async function (input) {
+                            let response = makeNetworkRequest();
+                            // TODO: some custom logic
+
+                            return {
+                                status: "OK",
+                                user: {...},
+                            };
+                        },
+                    }
+                },
+            }
+        })
+    ]
+});
+```
+
+You will need to modify the function like this:
+
+```ts
+...
+signIn: async function (input) {
+    let response = makeNetworkRequest();
+    // TODO: some custom logic
+
+    return {
+        status: "OK",
+        user: {...},
+        fetchResponse: response.clone()
+    };
+},
+...
+```
+
+NOTE: If you use the originalImplementation in your overrides, you can access `fetchResponse` from the returned object
+
+```ts
+import SuperTokens from "supertokens-auth-react";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "..."
+    },
+    recipeList: [
+        EmailPassword.init({
+            override: {
+                functions: (originalImplementation) => {
+                    return {
+                        ...originalImplementation,
+                        signIn: async function (input) {
+                            let response = await originalImplementation.signIn(input);
+                            // TODO: some custom logic
+
+                            return {
+                                status: "OK",
+                                user: {...},
+                                fetchResponse: response.fetchResponse;
+                            };
+
+                            // OR return the default implementation
+                            // return await originalImplementation.signIn(input)
+                        },
+                    }
+                },
+            }
+        })
+    ]
+});
+```
+
+2. All recipe functions now return an object instead of returning properties directly. For example:
+
+```ts
+async function isEmailVerified(input): Promise<boolean> {...}
+```
+
+Now returns
+
+```ts
+async function isEmailVerified(input): Promise<{
+    status: "OK",
+    isVerified: boolean,
+    fetchResponse: Response, // Refer to point above
+}> {...}
+```
 
 ## [0.18.7] - 2022-02-11
 
