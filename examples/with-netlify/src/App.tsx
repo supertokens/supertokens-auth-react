@@ -3,7 +3,7 @@ import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-
 import EmailPassword, { EmailPasswordAuth } from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
-import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Footer from "./Footer";
 
 export function getDomain() {
@@ -27,23 +27,29 @@ SuperTokens.init({
 
 function App() {
     return (
-        <Router>
-            <div className="App">
+        <div className="App">
+            <Router>
                 <div className="fill">
-                    <Switch>
+                    <Routes>
+                        {/* This shows the login UI on "/auth" route */}
                         {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-                        <Route path="/">
-                            <EmailPasswordAuth>
-                                <Home />
-                            </EmailPasswordAuth>
-                        </Route>
-                    </Switch>
+
+                        <Route
+                            path="/"
+                            element={
+                                /* This protects the "/" route so that it shows 
+                                <Home /> only if the user is logged in.
+                                Else it redirects the user to "/auth" */
+                                <EmailPasswordAuth>
+                                    <Home />
+                                </EmailPasswordAuth>
+                            }
+                        />
+                    </Routes>
                 </div>
-                <div className="footer">
-                    <Footer />
-                </div>
-            </div>
-        </Router>
+                <Footer />
+            </Router>
+        </div>
     );
 }
 

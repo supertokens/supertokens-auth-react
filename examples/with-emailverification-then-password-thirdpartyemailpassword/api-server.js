@@ -34,9 +34,12 @@ supertokens.init({
                 apis: (oI) => {
                     return {
                         ...oI,
-                        emailExistsGET: async function (input) {
+                        emailPasswordEmailExistsGET: async function (input) {
                             let email = input.email;
-                            let signInResponse = await ThirdPartyEmailPassword.signIn(email, FAKE_PASSWORD);
+                            let signInResponse = await ThirdPartyEmailPassword.emailPasswordSignIn(
+                                email,
+                                FAKE_PASSWORD
+                            );
                             if (signInResponse.status === "OK") {
                                 // this means that the user had signed up, but not set their password.
                                 // so we the email doesn't yet exist for sign in purposes
@@ -45,7 +48,7 @@ supertokens.init({
                                     exists: false,
                                 };
                             } else {
-                                return oI.emailExistsGET(input);
+                                return oI.emailPasswordEmailExistsGET(input);
                             }
                         },
                         emailPasswordSignInPOST: async function (input) {
@@ -71,7 +74,10 @@ supertokens.init({
                                     // if the input password is the fake password, and that's
                                     // what's in the db too, then we shall treat this as a success,
                                     // but unverify their email.
-                                    let signInResponse = await ThirdPartyEmailPassword.signIn(email, FAKE_PASSWORD);
+                                    let signInResponse = await ThirdPartyEmailPassword.emailPasswordSignIn(
+                                        email,
+                                        FAKE_PASSWORD
+                                    );
                                     if (signInResponse.status === "WRONG_CREDENTIALS_ERROR") {
                                         return response;
                                     } else {
