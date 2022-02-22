@@ -11,6 +11,7 @@ import {
     RecipeInterface,
 } from "./types";
 import EmailVerification from "../emailverification/recipe";
+import WebJSThirdPartyRecipe from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
 export default class ThirdParty extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -19,6 +20,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
     static instance?: ThirdParty;
     static RECIPE_ID: string;
     recipeImpl: RecipeInterface;
+    webJsRecipe: WebJSThirdPartyRecipe;
     constructor(
         config: Config,
         recipes: {

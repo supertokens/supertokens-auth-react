@@ -100,12 +100,15 @@ export function normaliseSignInAndUpFeature(
     };
 }
 
-export function matchRecipeIdUsingState(recipe: Recipe): boolean {
-    const state = recipe.recipeImpl.getOAuthState();
-    if (state === undefined) {
+export function matchRecipeIdUsingState(recipe: Recipe, userContext: any): boolean {
+    const stateResponse = recipe.recipeImpl.getOAuthState({
+        config: recipe.config,
+        userContext,
+    });
+    if (stateResponse.state === undefined) {
         return false;
     }
-    if (state.rid === recipe.config.recipeId) {
+    if (stateResponse.state.rid === recipe.config.recipeId) {
         return true;
     }
     return false;

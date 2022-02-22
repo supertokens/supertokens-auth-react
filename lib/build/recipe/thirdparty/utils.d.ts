@@ -4,4 +4,4 @@ export declare function normaliseThirdPartyConfig(config: Config): NormalisedCon
 export declare function normaliseSignInAndUpFeature(
     config: SignInAndUpFeatureUserInput | undefined
 ): NormalisedSignInAndUpFeatureConfig;
-export declare function matchRecipeIdUsingState(recipe: Recipe): boolean;
+export declare function matchRecipeIdUsingState(recipe: Recipe, userContext: any): boolean;

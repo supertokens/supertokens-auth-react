@@ -40,6 +40,7 @@ import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import OverrideableBuilder from "supertokens-js-override";
+import WebJSThirdPartyRecipe from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
 
 /*
  * Class.
@@ -53,6 +54,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
     static RECIPE_ID = "thirdparty";
 
     recipeImpl: RecipeInterface;
+    webJsRecipe: WebJSThirdPartyRecipe;
 
     constructor(
         config: Config,
@@ -64,8 +66,20 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
+        this.webJsRecipe = new WebJSThirdPartyRecipe(
+            {
+                recipeId: config.recipeId,
+                appInfo: config.appInfo,
+                preAPIHook: config.preAPIHook,
+                postAPIHook: config.postAPIHook,
+            },
+            {
+                emailVerification: recipes.emailVerificationInstance?.webJsRecipe,
+            }
+        );
+
         {
-            const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
+            const builder = new OverrideableBuilder(RecipeImplementation(this.webJsRecipe));
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
     }
@@ -90,7 +104,8 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: () => matchRecipeIdUsingState(this),
+                // TODO NEMI: Is passing nothing as userContext ok in this case?
+                matches: () => matchRecipeIdUsingState(this, {}),
                 component: (prop: any) => this.getFeatureComponent("signinupcallback", prop),
             };
         });

@@ -1,3 +1,3 @@
 import { RecipeInterface } from "./types";
-import { NormalisedAppInfo } from "../../types";
-export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface;
+import WebJSThirdPartyRecipe from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
+export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyRecipe): RecipeInterface;

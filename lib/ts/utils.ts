@@ -234,14 +234,6 @@ export function isIE(): boolean {
     return getWindowOrThrow().document.documentMode !== undefined;
 }
 
-export function setSessionStorage(key: string, value: string): void {
-    getWindowOrThrow().sessionStorage.setItem(key, value);
-}
-
-export function getSessionStorage(key: string): string {
-    return getWindowOrThrow().sessionStorage.getItem(key);
-}
-
 export function getOriginOfPage(): NormalisedURLDomain {
     return new NormalisedURLDomain(getWindowOrThrow().location.origin);
 }

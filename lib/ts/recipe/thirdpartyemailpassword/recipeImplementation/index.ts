@@ -7,6 +7,7 @@ import DerivedEP from "./emailPasswordImplementation";
 import DerivedTP from "./thirdPartyImplementation";
 import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
 import EmailVerification from "../../emailverification/recipe";
+import WebJSThirdParty from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
 
 export default function getRecipeImplementation(
     config: NormalisedConfig,
@@ -25,8 +26,21 @@ export default function getRecipeImplementation(
         }
     );
 
+    // TODO NEMI: This is temporary to fix types for third party, will be refactored when tpep is implemented
+    const thirdPartyEmailPassword = new WebJSThirdParty(
+        {
+            appInfo: config.appInfo,
+            recipeId: config.recipeId,
+            preAPIHook: config.preAPIHook,
+            postAPIHook: config.postAPIHook,
+        },
+        {
+            emailVerification: emailVerificationInstance?.webJsRecipe,
+        }
+    );
+
     const emailpasswordImpl = EmailPasswordRecipeImplementation(webJsEmailPassword);
-    const thirdPartyImpl = ThirdPartyRecipeImplementation(config.recipeId, config.appInfo);
+    const thirdPartyImpl = ThirdPartyRecipeImplementation(thirdPartyEmailPassword);
 
     return {
         submitNewPassword: async function (input: {
@@ -97,10 +111,10 @@ export default function getRecipeImplementation(
                 };
             }
         },
-        getOAuthState: function () {
-            return thirdPartyImpl.getOAuthState.bind(DerivedTP(this))();
+        getOAuthState: function (input) {
+            return thirdPartyImpl.getOAuthState.bind(DerivedTP(this))(input);
         },
-        setOAuthState: function (input: StateObject) {
+        setOAuthState: function (input) {
             return thirdPartyImpl.setOAuthState.bind(DerivedTP(this))(input);
         },
         redirectToThirdPartyLogin: function (input: {

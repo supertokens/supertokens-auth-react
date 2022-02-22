@@ -30,6 +30,7 @@ import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -51,11 +52,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 config: this.props.recipe.config,
                 userContext: {},
             });
-            if (response.status === "GENERAL_ERROR") {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "signin",
-                });
-            }
+
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
                 return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                     error: "no_email_present",
@@ -68,8 +65,13 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 });
             }
             if (response.status === "OK") {
-                const state = this.props.recipe.recipeImpl.getOAuthState();
-                const redirectToPath = state === undefined ? undefined : state.redirectToPath;
+                // TODO NEMI: handle user context for pre built UI
+                const stateResponse = this.props.recipe.recipeImpl.getOAuthState({
+                    config: this.props.recipe.config,
+                    userContext: {},
+                });
+                const redirectToPath =
+                    stateResponse.state === undefined ? undefined : stateResponse.state.redirectToPath;
 
                 if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
                     let isEmailVerified = true;
@@ -97,6 +99,12 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 );
             }
         } catch (err) {
+            if (STGeneralError.isThisError(err)) {
+                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                    error: "signin",
+                });
+            }
+
             return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                 error: "signin",
             });

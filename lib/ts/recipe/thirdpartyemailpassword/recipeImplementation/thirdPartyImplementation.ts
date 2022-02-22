@@ -18,15 +18,18 @@ export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
                         status: "OK",
                         createdNewUser: response.createdNewUser,
                         user: response.user,
+                        fetchResponse: response.fetchResponse,
                     };
                 } else if (response.status === "FIELD_ERROR") {
                     return {
                         status: "FIELD_ERROR",
                         error: response.error,
+                        fetchResponse: response.fetchResponse,
                     };
                 } else {
                     return {
                         status: response.status,
+                        fetchResponse: response.fetchResponse,
                     };
                 }
             } else {

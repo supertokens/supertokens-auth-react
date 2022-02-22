@@ -98,8 +98,13 @@ export declare type StateObject = {
     redirectToPath?: string;
 };
 export declare type RecipeInterface = {
-    getOAuthState(): StateObject | undefined;
-    setOAuthState(state: StateObject): void;
+    getOAuthState: (input: { userContext: any; config: NormalisedConfig }) => {
+        status: "OK";
+        state: StateObject | undefined;
+    };
+    setOAuthState: (input: { state: StateObject; config: NormalisedConfig; userContext: any }) => {
+        status: "OK";
+    };
     redirectToThirdPartyLogin: (input: {
         thirdPartyId: string;
         config: NormalisedConfig;
@@ -108,23 +113,26 @@ export declare type RecipeInterface = {
     }) => Promise<{
         status: "OK" | "ERROR";
     }>;
-    getOAuthAuthorisationURL: (input: {
-        thirdPartyId: string;
-        config: NormalisedConfig;
-        userContext: any;
-    }) => Promise<string>;
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: NormalisedConfig; userContext: any }) => Promise<{
+        status: "OK";
+        url: string;
+        fetchResponse: Response;
+    }>;
     signInAndUp: (input: { thirdPartyId: string; config: NormalisedConfig; userContext: any }) => Promise<
         | {
               status: "OK";
               user: User;
               createdNewUser: boolean;
+              fetchResponse: Response;
           }
         | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
           }
         | {
               status: "FIELD_ERROR";
               error: string;
+              fetchResponse: Response;
           }
     >;
 };

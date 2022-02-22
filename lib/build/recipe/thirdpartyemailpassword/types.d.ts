@@ -138,7 +138,7 @@ export declare type SignInAndUpOutput =
       }
     | {
           type: "thirdparty";
-          status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
+          status: "NO_EMAIL_GIVEN_BY_PROVIDER";
           fetchResponse: Response;
       }
     | {
@@ -196,10 +196,19 @@ export declare type RecipeInterface = {
         doesExist: boolean;
         fetchResponse: Response;
     }>;
-    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig; userContext: any }) => Promise<string>;
+    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig; userContext: any }) => Promise<{
+        status: "OK";
+        url: string;
+        fetchResponse: Response;
+    }>;
     signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
-    getOAuthState(): StateObject | undefined;
-    setOAuthState(state: StateObject): void;
+    getOAuthState(input: { userContext: any; config: TPConfig }): {
+        status: "OK";
+        state: StateObject | undefined;
+    };
+    setOAuthState(input: { state: StateObject; config: TPConfig; userContext: any }): {
+        status: "OK";
+    };
     redirectToThirdPartyLogin: (input: {
         thirdPartyId: string;
         config: TPConfig;
