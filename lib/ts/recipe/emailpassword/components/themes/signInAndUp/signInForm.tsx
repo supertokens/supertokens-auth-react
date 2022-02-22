@@ -23,6 +23,8 @@ import { SignInThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { validateForm } from "../../../../../utils";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 export const SignInForm = withOverride(
     "EmailPasswordSignInForm",
@@ -39,16 +41,25 @@ export const SignInForm = withOverride(
                 onSuccess={props.onSuccess}
                 // TODO NEMI: handle user context for pre built UI
                 callAPI={async (formFields) => {
+                    const validationErrors = await validateForm(
+                        formFields,
+                        props.config.signInAndUpFeature.signInForm.formFields
+                    );
+
+                    if (validationErrors.length > 0) {
+                        return {
+                            status: "FIELD_ERROR",
+                            formFields: validationErrors,
+                        };
+                    }
+
                     const response = await props.recipeImplementation.signIn({
                         formFields,
                         config: props.config,
                         userContext: {},
                     });
                     if (response.status === "WRONG_CREDENTIALS_ERROR") {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR",
-                        };
+                        throw new STGeneralError("EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR");
                     } else {
                         return response;
                     }

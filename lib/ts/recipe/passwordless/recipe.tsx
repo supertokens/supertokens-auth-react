@@ -38,7 +38,7 @@ import { SSR_ERROR } from "../../constants";
 import SignInUp from "./components/features/signInAndUp";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 
 /*
  * Class.

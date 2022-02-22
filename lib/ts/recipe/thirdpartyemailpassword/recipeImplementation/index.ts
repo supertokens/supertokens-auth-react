@@ -1,15 +1,32 @@
-import { RecipeInterface, SignInAndUpInput, SignInAndUpOutput } from "../types";
-import { NormalisedAppInfo } from "../../../types";
+import { NormalisedConfig, RecipeInterface, SignInAndUpInput, SignInAndUpOutput } from "../types";
 import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImplementation";
 import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
 import { NormalisedConfig as EPConfig } from "../../emailpassword/types";
 import { NormalisedConfig as TPConfig, StateObject } from "../../thirdparty/types";
 import DerivedEP from "./emailPasswordImplementation";
 import DerivedTP from "./thirdPartyImplementation";
+import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
+import EmailVerification from "../../emailverification/recipe";
 
-export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface {
-    const emailpasswordImpl = EmailPasswordRecipeImplementation(recipeId, appInfo);
-    const thirdPartyImpl = ThirdPartyRecipeImplementation(recipeId, appInfo);
+export default function getRecipeImplementation(
+    config: NormalisedConfig,
+    emailVerificationInstance: EmailVerification | undefined
+): RecipeInterface {
+    // TODO NEMI: This is temporary to fix types for email password, will be refactored when tpep is implemented
+    const webJsEmailPassword = new WebJSEmailPassword(
+        {
+            appInfo: config.appInfo,
+            recipeId: config.recipeId,
+            preAPIHook: config.preAPIHook,
+            postAPIHook: config.postAPIHook,
+        },
+        {
+            emailVerification: emailVerificationInstance?.webJsRecipe,
+        }
+    );
+
+    const emailpasswordImpl = EmailPasswordRecipeImplementation(webJsEmailPassword);
+    const thirdPartyImpl = ThirdPartyRecipeImplementation(config.recipeId, config.appInfo);
 
     return {
         submitNewPassword: async function (input: {
@@ -75,6 +92,8 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
                 return {
                     ...response,
                     type: "thirdparty",
+                    // TODO NEMI: This is temporary and will be fied when TPEP is implemented
+                    fetchResponse: {} as any,
                 };
             }
         },

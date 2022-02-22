@@ -1,5 +1,5 @@
-import NormalisedURLDomain from "supertokens-web-js/lib/build/normalisedURLDomain";
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;

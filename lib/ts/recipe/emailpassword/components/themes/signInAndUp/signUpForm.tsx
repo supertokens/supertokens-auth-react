@@ -21,6 +21,7 @@ import { SignUpThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { validateForm } from "../../../../../utils";
 
 /*
  * Component.
@@ -40,13 +41,25 @@ export const SignUpForm = withOverride(
                 buttonLabel={"EMAIL_PASSWORD_SIGN_UP_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
                 // TODO NEMI: handle user context for pre built UI
-                callAPI={(formFields) =>
-                    props.recipeImplementation.signUp({
+                callAPI={async (formFields) => {
+                    const validationErrors = await validateForm(
+                        formFields,
+                        props.config.signInAndUpFeature.signUpForm.formFields
+                    );
+
+                    if (validationErrors.length > 0) {
+                        return {
+                            status: "FIELD_ERROR",
+                            formFields: validationErrors,
+                        };
+                    }
+
+                    return props.recipeImplementation.signUp({
                         formFields,
                         config: props.config,
                         userContext: {},
-                    })
-                }
+                    });
+                }}
                 validateOnBlur={true}
                 showLabels={true}
                 header={props.header}

@@ -11,6 +11,7 @@ import {
     RecipeInterface,
 } from "./types";
 import EmailVerification from "../emailverification/recipe";
+import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
 export default class EmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -19,6 +20,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
     static instance?: EmailPassword;
     static RECIPE_ID: string;
     recipeImpl: RecipeInterface;
+    webJsRecipe: WebJSEmailPassword;
     constructor(
         config: Config,
         recipes: {

@@ -27,9 +27,10 @@ import {
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
+    PreAndPostAPIHookAction,
 } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
 import { matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailVerificationFeature } from "./utils";
@@ -39,7 +40,6 @@ import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import OverrideableBuilder from "supertokens-js-override";
 import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
-import { PreAndPostAPIHookAction } from "supertokens-web-js/lib/build/recipe/emailverification/types";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -51,19 +51,20 @@ export default class EmailVerification extends RecipeModule<
     static RECIPE_ID = "emailverification";
 
     recipeImpl: RecipeInterface;
+    webJsRecipe: WebJSEmailVerification;
 
     constructor(config: Config) {
         super(normaliseEmailVerificationFeature(config));
 
         {
-            const webJsImplementation = new WebJSEmailVerification({
+            this.webJsRecipe = new WebJSEmailVerification({
                 appInfo: config.appInfo,
                 recipeId: config.recipeId,
                 preAPIHook: config.preAPIHook,
                 postAPIHook: config.postAPIHook,
             });
 
-            const builder = new OverrideableBuilder(RecipeImplementation(webJsImplementation));
+            const builder = new OverrideableBuilder(RecipeImplementation(this.webJsRecipe));
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
     }

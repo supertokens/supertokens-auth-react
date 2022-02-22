@@ -25,6 +25,7 @@ import { EnterEmailProps, EnterEmailStatus } from "../../../types";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import { validateForm } from "../../../../../utils";
 
 const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -65,14 +66,26 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                     formFields={formFields}
                     buttonLabel={"EMAIL_PASSWORD_RESET_SEND_BTN"}
                     onSuccess={onSuccess}
-                    // TODO NEMI: handle user context for pre built UI
-                    callAPI={async (formFields) =>
-                        await props.recipeImplementation.sendPasswordResetEmail({
+                    callAPI={async (formFields) => {
+                        const validationErrors = await validateForm(
+                            formFields,
+                            props.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
+                        );
+
+                        if (validationErrors.length > 0) {
+                            return {
+                                status: "FIELD_ERROR",
+                                formFields: validationErrors,
+                            };
+                        }
+
+                        // TODO NEMI: Handle user context in UI components
+                        return await props.recipeImplementation.sendPasswordResetEmail({
                             formFields,
                             config: props.config,
                             userContext: {},
-                        })
-                    }
+                        });
+                    }}
                     showLabels={true}
                     validateOnBlur={true}
                     header={

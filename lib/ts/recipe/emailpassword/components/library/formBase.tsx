@@ -25,6 +25,7 @@ import { APIFormField } from "../../../../types";
 import { FormBaseProps, FormBaseState, InputRef } from "../../types";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 import GeneralError from "./generalError";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 /*
  * Component.
@@ -240,16 +241,17 @@ export default class FormBase<T> extends PureComponent<FormBaseProps<T>, FormBas
                 }));
                 return;
             }
-
-            // Otherwise if message, set generalError
-            if (result.status === "GENERAL_ERROR") {
+        } catch (e) {
+            if (STGeneralError.isThisError(e)) {
+                const message = e.message;
                 this.setState((oldState) => ({
                     ...oldState,
                     status: "GENERAL_ERROR",
-                    generalError: result.message,
+                    generalError: message,
                 }));
+                return;
             }
-        } catch (e) {
+
             this.setState((oldState) => ({
                 ...oldState,
                 status: "GENERAL_ERROR",

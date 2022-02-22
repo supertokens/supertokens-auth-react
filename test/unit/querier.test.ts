@@ -1,6 +1,6 @@
 import { default as Querier } from "../../lib/ts/querier";
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
-import NormalisedURLDomain from "supertokens-web-js/lib/build/normalisedURLDomain";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 
 describe("Querier", () => {
     let querier: Querier;

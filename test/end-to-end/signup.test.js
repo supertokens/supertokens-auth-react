@@ -181,10 +181,12 @@ describe("SuperTokens SignUp", function () {
             // // Assert.
             formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, ["Email is invalid", "You must be over 18 to register"]);
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
-                "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
-            ]);
+            /**
+             * This is because form validations now occur on the frontend side of things and not
+             * in the recipe implementation. Which means that when you get a field error the recipe
+             * implementation function does not actually get called
+             */
+            assert.deepStrictEqual(consoleLogs, []);
         });
 
         it("Successful signup", async function () {

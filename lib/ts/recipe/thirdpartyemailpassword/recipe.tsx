@@ -31,7 +31,7 @@ import {
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
@@ -71,7 +71,9 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
         });
 
         {
-            const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
+            const builder = new OverrideableBuilder(
+                RecipeImplementation(this.config, recipes.emailVerificationInstance)
+            );
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
 

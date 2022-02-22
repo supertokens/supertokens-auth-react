@@ -26,6 +26,8 @@ import { FormRow, Button } from "../../library";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import STGeneralError from "supertokens-web-js/lib/build/error";
+import { validateForm } from "../../../../../utils";
 
 const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -69,13 +71,37 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
-                <FormBase
+                <FormBase<any>
                     formFields={formFields}
                     buttonLabel={"EMAIL_PASSWORD_RESET_SUBMIT_PW_CHANGE_PW_BTN"}
                     onSuccess={onSuccess}
                     validateOnBlur={true}
                     callAPI={async (fields) => {
-                        // TODO NEMI: handle user context for pre built UI
+                        const validationErrors = await validateForm(
+                            fields,
+                            props.config.resetPasswordUsingTokenFeature.submitNewPasswordForm.formFields
+                        );
+
+                        if (validationErrors.length > 0) {
+                            return {
+                                status: "FIELD_ERROR",
+                                formFields: validationErrors,
+                            };
+                        }
+
+                        // Verify that both passwords match.
+                        if (fields[0].value !== fields[1].value) {
+                            return {
+                                status: "FIELD_ERROR",
+                                formFields: [
+                                    {
+                                        id: fields[1].id,
+                                        error: "ERROR_CONFIRM_PASSWORD_NO_MATCH",
+                                    },
+                                ],
+                            };
+                        }
+
                         const response = await props.recipeImplementation.submitNewPassword({
                             formFields: fields,
                             token: props.token,
@@ -83,11 +109,9 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
                             userContext: {},
                         });
                         if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: "EMAIL_PASSWORD_RESET_PASSWORD_INVALID_TOKEN_ERROR",
-                            };
+                            throw new STGeneralError("EMAIL_PASSWORD_RESET_PASSWORD_INVALID_TOKEN_ERROR");
                         }
+
                         return response.status === "FIELD_ERROR"
                             ? response
                             : {

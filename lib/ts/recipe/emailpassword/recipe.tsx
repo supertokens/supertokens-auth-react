@@ -31,7 +31,7 @@ import {
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
-import NormalisedURLPath from "supertokens-web-js/lib/build/normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { DEFAULT_RESET_PASSWORD_PATH } from "./constants";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
@@ -41,6 +41,7 @@ import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import OverrideableBuilder from "supertokens-js-override";
+import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
 
 /*
  * Class.
@@ -54,6 +55,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
     static RECIPE_ID = "emailpassword";
 
     recipeImpl: RecipeInterface;
+    webJsRecipe: WebJSEmailPassword;
 
     constructor(
         config: Config,
@@ -66,7 +68,22 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
         });
 
         {
-            const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
+            this.webJsRecipe = new WebJSEmailPassword(
+                {
+                    appInfo: config.appInfo,
+                    recipeId: config.recipeId,
+                    preAPIHook: config.preAPIHook,
+                    postAPIHook: config.postAPIHook,
+                },
+                {
+                    emailVerification:
+                        recipes.emailVerificationInstance === undefined
+                            ? undefined
+                            : recipes.emailVerificationInstance.webJsRecipe,
+                }
+            );
+
+            const builder = new OverrideableBuilder(RecipeImplementation(this.webJsRecipe));
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
     }
