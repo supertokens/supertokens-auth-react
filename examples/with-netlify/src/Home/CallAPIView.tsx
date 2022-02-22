@@ -1,6 +1,5 @@
 import axios from "axios";
 import Session from "supertokens-auth-react/recipe/session";
-import Emailpassword from "supertokens-auth-react/recipe/emailpassword";
 import { getDomain } from "../App";
 Session.addAxiosInterceptors(axios);
 

@@ -40,7 +40,7 @@
     "react-error-boundary": "3.1.0",
     "react-final-form": "6.5.2",
     "supertokens-auth-react": "^0.18.0",
-    "supertokens-node": "^8.0.0",
+    "supertokens-node": "github:supertokens/supertokens-node#9.0",
     "typescript": "4.1.3",
     "zod": "1.11.11"
   },
