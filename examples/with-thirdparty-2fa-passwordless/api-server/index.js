@@ -9,7 +9,6 @@ let { verifySession } = require("supertokens-node/recipe/session/framework/expre
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
 let Passwordless = require("supertokens-node/recipe/passwordless");
-let signInUpPOST = require("./customSIgnInUpPOST").signInUpPOST;
 let consumeCodePOST = require("./customConsumeCodePOST").consumeCodePOST;
 let { mapping } = require("./thirdPartyUserIdToPhoneNumberMapping");
 
@@ -44,10 +43,42 @@ supertokens.init({
                 ],
             },
             override: {
+                functions: (oI) => {
+                    return {
+                        ...oI,
+                        signInUp: async function (input) {
+                            if (input.userContext.isFromAPI) {
+                                // if this is being called from the API, we want to disable
+                                // sign up. So we add the below condition.
+                                if (
+                                    (await ThirdParty.getUserByThirdPartyInfo(
+                                        input.thirdPartyId,
+                                        input.thirdPartyUserId
+                                    )) === undefined
+                                ) {
+                                    // this third party user doesn't exist in the db. Therefore we reject the request
+                                    return {
+                                        status: "FIELD_ERROR",
+                                        error: "Signing up is disabled. Please ask support to create an account for you instead",
+                                    };
+                                }
+                            }
+                            return oI.signInUp(input);
+                        },
+                    };
+                },
                 apis: (oI) => {
                     return {
                         ...oI,
-                        signInUpPOST,
+                        signInUpPOST: async function (input) {
+                            // we provide a custom user context here to indicate to the
+                            // recipe's signInUp function that it is called from an API, so that
+                            // we can disable sign up.
+                            return oI.signInUpPOST({
+                                ...input,
+                                userContext: { isFromAPI: true },
+                            });
+                        },
                     };
                 },
             },

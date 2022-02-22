@@ -3,10 +3,10 @@ const override = (ogImpl) => {
         ...ogImpl,
 
         // this will be called for sign in or sign up for OAuth login providers
-        signInUp: async function (input) {
+        thirdPartySignInUp: async function (input) {
             // first we let the user sign in / up via the default implementation.
             // If signing up, this will create a new user object in SuperTokens with a new userId.
-            let result = await ogImpl.signInUp(input);
+            let result = await ogImpl.thirdPartySignInUp(input);
 
             // if there was some error, we return that as is.
             if (result.status !== "OK") {
@@ -27,8 +27,8 @@ const override = (ogImpl) => {
         },
 
         // this will be called for sign up via email & password
-        signUp: async function (input) {
-            let result = await ogImpl.signUp(input);
+        emailPasswordSignUp: async function (input) {
+            let result = await ogImpl.emailPasswordSignUp(input);
             if (result.status !== "OK") {
                 return result;
             }
@@ -47,8 +47,8 @@ const override = (ogImpl) => {
         },
 
         // this will be called for sign in via email / password
-        signIn: async function (input) {
-            let result = await ogImpl.signIn(input);
+        emailPasswordSignIn: async function (input) {
+            let result = await ogImpl.emailPasswordSignIn(input);
             if (result.status !== "OK") {
                 return result;
             }
