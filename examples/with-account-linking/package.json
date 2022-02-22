@@ -15,7 +15,7 @@
         "npm-run-all": "^4.1.5",
         "react-router-dom": "^5.2.0",
         "supertokens-auth-react": "^0.18.0",
-        "supertokens-node": "github:supertokens/supertokens-node#9.0"
+        "supertokens-node": "^9.0.0"
     },
     "devDependencies": {
         "nodemon": "^2.0.6",

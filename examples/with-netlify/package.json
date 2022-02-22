@@ -19,7 +19,7 @@
         "@middy/core": "^2.5.1",
         "@middy/http-cors": "^2.5.1",
         "supertokens-auth-react": "^0.18.0",
-        "supertokens-node": "github:supertokens/supertokens-node#9.0",
+        "supertokens-node": "^9.0.0",
         "typescript": "^4.0.3",
         "web-vitals": "^0.2.4"
     },
