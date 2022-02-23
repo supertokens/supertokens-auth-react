@@ -67,8 +67,12 @@ export default function getRecipeImplementation(
         doesEmailExist: async function (input: { email: string; config: EPConfig; userContext: any }) {
             return emailpasswordImpl.doesEmailExist.bind(DerivedEP(this))(input);
         },
-        getOAuthAuthorisationURL: async function (input: { thirdPartyId: string; config: TPConfig; userContext: any }) {
-            return thirdPartyImpl.getOAuthAuthorisationURL.bind(DerivedTP(this))(input);
+        getOAuthAuthorisationURLFromBackend: async function (input: {
+            thirdPartyId: string;
+            config: TPConfig;
+            userContext: any;
+        }) {
+            return thirdPartyImpl.getOAuthAuthorisationURLFromBackend.bind(DerivedTP(this))(input);
         },
         signInAndUp: async function (input: SignInAndUpInput): Promise<SignInAndUpOutput> {
             if (input.type === "emailpassword") {
@@ -111,11 +115,11 @@ export default function getRecipeImplementation(
                 };
             }
         },
-        getOAuthState: function (input) {
-            return thirdPartyImpl.getOAuthState.bind(DerivedTP(this))(input);
+        getStateAndOtherInfoFromStorage: function (input) {
+            return thirdPartyImpl.getStateAndOtherInfoFromStorage.bind(DerivedTP(this))(input);
         },
-        setOAuthState: function (input) {
-            return thirdPartyImpl.setOAuthState.bind(DerivedTP(this))(input);
+        setStateAndOtherInfoToStorage: function (input) {
+            return thirdPartyImpl.setStateAndOtherInfoToStorage.bind(DerivedTP(this))(input);
         },
         redirectToThirdPartyLogin: function (input: {
             thirdPartyId: string;
@@ -124,6 +128,12 @@ export default function getRecipeImplementation(
             userContext: any;
         }) {
             return thirdPartyImpl.redirectToThirdPartyLogin.bind(DerivedTP(this))(input);
+        },
+        generateStateToSendToOAuthProvider: function (input) {
+            return thirdPartyImpl.generateStateToSendToOAuthProvider.bind(DerivedTP(this))(input);
+        },
+        verifyStateFromOAuthProvider: function (input) {
+            return thirdPartyImpl.verifyStateFromOAuthProvider.bind(DerivedTP(this))(input);
         },
     };
 }

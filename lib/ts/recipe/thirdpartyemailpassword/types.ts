@@ -140,6 +140,7 @@ export type SignInAndUpInput =
     | {
           type: "thirdparty";
           thirdPartyId: string;
+          authCode?: string;
           config: TPConfig;
           userContext: any;
       };
@@ -169,12 +170,6 @@ export type SignInAndUpOutput =
     | {
           type: "thirdparty";
           status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-          fetchResponse: Response;
-      }
-    | {
-          type: "thirdparty";
-          status: "FIELD_ERROR";
-          error: string;
           fetchResponse: Response;
       };
 
@@ -230,7 +225,11 @@ export type RecipeInterface = {
         fetchResponse: Response;
     }>;
 
-    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig; userContext: any }) => Promise<{
+    getOAuthAuthorisationURLFromBackend: (input: {
+        thirdPartyId: string;
+        config: TPConfig;
+        userContext: any;
+    }) => Promise<{
         status: "OK";
         url: string;
         fetchResponse: Response;
@@ -238,14 +237,16 @@ export type RecipeInterface = {
 
     signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
 
-    getOAuthState(input: { userContext: any; config: TPConfig }): {
-        status: "OK";
-        state: StateObject | undefined;
-    };
+    getStateAndOtherInfoFromStorage: <CustomStateProperties>(input: {
+        userContext: any;
+        config: TPConfig;
+    }) => (StateObject & CustomStateProperties) | undefined;
 
-    setOAuthState(input: { state: StateObject; config: TPConfig; userContext: any }): {
-        status: "OK";
-    };
+    setStateAndOtherInfoToStorage: <CustomStateProperties>(input: {
+        state: StateObject & CustomStateProperties;
+        config: TPConfig;
+        userContext: any;
+    }) => void;
 
     redirectToThirdPartyLogin: (input: {
         thirdPartyId: string;
@@ -253,4 +254,14 @@ export type RecipeInterface = {
         state?: StateObject;
         userContext: any;
     }) => Promise<{ status: "OK" | "ERROR" }>;
+
+    generateStateToSendToOAuthProvider: (input: { userContext: any; config: TPConfig }) => string;
+
+    verifyStateFromOAuthProvider: (input: {
+        stateFromProvider: string | undefined;
+        stateFromStorage: StateObject | undefined;
+        providerId: string;
+        config: TPConfig;
+        userContext: any;
+    }) => boolean;
 };

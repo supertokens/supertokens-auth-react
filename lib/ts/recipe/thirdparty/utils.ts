@@ -101,14 +101,14 @@ export function normaliseSignInAndUpFeature(
 }
 
 export function matchRecipeIdUsingState(recipe: Recipe, userContext: any): boolean {
-    const stateResponse = recipe.recipeImpl.getOAuthState({
+    const stateResponse = recipe.recipeImpl.getStateAndOtherInfoFromStorage({
         config: recipe.config,
         userContext,
     });
-    if (stateResponse.state === undefined) {
+    if (stateResponse === undefined) {
         return false;
     }
-    if (stateResponse.state.rid === recipe.config.recipeId) {
+    if (stateResponse.rid === recipe.config.recipeId) {
         return true;
     }
     return false;

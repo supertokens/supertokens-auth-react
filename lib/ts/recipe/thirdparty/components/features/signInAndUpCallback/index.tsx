@@ -58,20 +58,14 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                     error: "no_email_present",
                 });
             }
-            if (response.status === "FIELD_ERROR") {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "custom",
-                    message: response.error,
-                });
-            }
+
             if (response.status === "OK") {
                 // TODO NEMI: handle user context for pre built UI
-                const stateResponse = this.props.recipe.recipeImpl.getOAuthState({
+                const stateResponse = this.props.recipe.recipeImpl.getStateAndOtherInfoFromStorage({
                     config: this.props.recipe.config,
                     userContext: {},
                 });
-                const redirectToPath =
-                    stateResponse.state === undefined ? undefined : stateResponse.state.redirectToPath;
+                const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
                 if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
                     let isEmailVerified = true;
@@ -101,7 +95,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
         } catch (err) {
             if (STGeneralError.isThisError(err)) {
                 return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "signin",
+                    error: err.message,
                 });
             }
 

@@ -3,10 +3,12 @@ import { RecipeInterface as TPEPRecipeInterface } from "..";
 
 export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
     return {
-        getOAuthAuthorisationURL: oI.getOAuthAuthorisationURL.bind(oI),
-        getOAuthState: oI.getOAuthState.bind(oI),
+        getOAuthAuthorisationURLFromBackend: oI.getOAuthAuthorisationURLFromBackend.bind(oI),
+        getStateAndOtherInfoFromStorage: oI.getStateAndOtherInfoFromStorage.bind(oI),
         redirectToThirdPartyLogin: oI.redirectToThirdPartyLogin.bind(oI),
-        setOAuthState: oI.setOAuthState.bind(oI),
+        setStateAndOtherInfoToStorage: oI.setStateAndOtherInfoToStorage.bind(oI),
+        generateStateToSendToOAuthProvider: oI.generateStateToSendToOAuthProvider.bind(oI),
+        verifyStateFromOAuthProvider: oI.verifyStateFromOAuthProvider.bind(oI),
         signInAndUp: async function (input) {
             const response = await oI.signInAndUp({
                 type: "thirdparty",
@@ -18,12 +20,6 @@ export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
                         status: "OK",
                         createdNewUser: response.createdNewUser,
                         user: response.user,
-                        fetchResponse: response.fetchResponse,
-                    };
-                } else if (response.status === "FIELD_ERROR") {
-                    return {
-                        status: "FIELD_ERROR",
-                        error: response.error,
                         fetchResponse: response.fetchResponse,
                     };
                 } else {

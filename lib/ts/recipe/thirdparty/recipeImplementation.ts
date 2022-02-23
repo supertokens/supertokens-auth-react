@@ -6,7 +6,7 @@ import STGeneralError from "supertokens-web-js/lib/build/error";
 
 export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyRecipe): RecipeInterface {
     return {
-        getOAuthAuthorisationURL: async function (input: {
+        getOAuthAuthorisationURLFromBackend: async function (input: {
             thirdPartyId: string;
             config: NormalisedConfig;
             userContext: any;
@@ -15,8 +15,8 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
             url: string;
             fetchResponse: Response;
         }> {
-            const response = await webJsRecipe.recipeImplementation.getOAuthAuthorisationURL({
-                thirdPartyProviderId: input.thirdPartyId,
+            const response = await webJsRecipe.recipeImplementation.getOAuthAuthorisationURLFromBackend({
+                providerId: input.thirdPartyId,
                 config: webJsRecipe.config,
                 userContext: input.userContext,
             });
@@ -28,6 +28,7 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
             thirdPartyId: string;
             config: NormalisedConfig;
             userContext: any;
+            authCode?: string;
         }): Promise<
             | {
                   status: "OK";
@@ -39,11 +40,6 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
                   status: "NO_EMAIL_GIVEN_BY_PROVIDER";
                   fetchResponse: Response;
               }
-            | {
-                  status: "FIELD_ERROR";
-                  error: string;
-                  fetchResponse: Response;
-              }
         > {
             const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
 
@@ -53,10 +49,11 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
 
             const response = await webJsRecipe.recipeImplementation.signInAndUp({
                 config: webJsRecipe.config,
-                thirdPartyProviderId: input.thirdPartyId,
-                thirdPartyProviderClientId: provider.clientId,
-                thirdPartyRedirectionURL: provider.getRedirectURL(),
+                providerId: input.thirdPartyId,
+                providerClientId: provider.clientId,
+                redirectionURL: provider.getRedirectURL(),
                 userContext: input.userContext,
+                authCode: input.authCode,
             });
 
             if (response.status === "OK") {
@@ -69,22 +66,32 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
 
             return response;
         },
-        getOAuthState: function (input: { userContext: any; config: NormalisedConfig }): {
-            status: "OK";
-            state: StateObject | undefined;
-        } {
-            return webJsRecipe.recipeImplementation.getOAuthState({
+        getStateAndOtherInfoFromStorage: function <CustomStateProperties>(input: {
+            userContext: any;
+            config: NormalisedConfig;
+        }): (StateObject & CustomStateProperties) | undefined {
+            return webJsRecipe.recipeImplementation.getStateAndOtherInfoFromStorage<CustomStateProperties>({
                 config: webJsRecipe.config,
                 userContext: input.userContext,
             });
         },
 
-        setOAuthState: function (input: { state: StateObject; config: NormalisedConfig; userContext: any }): {
-            status: "OK";
-        } {
-            return webJsRecipe.recipeImplementation.setOAuthState({
+        setStateAndOtherInfoToStorage: function (input: {
+            state: StateObject;
+            config: NormalisedConfig;
+            userContext: any;
+        }): void {
+            return webJsRecipe.recipeImplementation.setStateAndOtherInfoToStorage<{
+                rid?: string;
+                redirectToPath?: string;
+            }>({
                 config: webJsRecipe.config,
-                state: input.state,
+                state: {
+                    stateForAuthProvider: input.state.state,
+                    thirdPartyId: input.state.thirdPartyId,
+                    rid: input.state.rid,
+                    redirectToPath: input.state.redirectToPath,
+                },
                 userContext: input.userContext,
             });
         },
@@ -100,18 +107,29 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
                 return { status: "ERROR" };
             }
 
-            const response = await webJsRecipe.recipeImplementation.getThirdPartyLoginRedirectURLWithQueryParams({
+            const response = await webJsRecipe.recipeImplementation.getLoginRedirectURLWithQueryParamsAndSetState({
                 config: webJsRecipe.config,
-                thirdPartyProviderId: input.thirdPartyId,
-                thirdPartyRedirectionURL: provider.getRedirectURL(),
+                providerId: input.thirdPartyId,
+                redirectionURL: provider.getRedirectURL(),
                 userContext: input.userContext,
-                state: input.state,
             });
 
             // 4. Redirect to provider authorisation URL.
-            redirectWithFullPageReload(response.url);
+            redirectWithFullPageReload(response);
 
             return { status: "OK" };
+        },
+        generateStateToSendToOAuthProvider: function (input) {
+            return webJsRecipe.recipeImplementation.generateStateToSendToOAuthProvider({
+                ...input,
+                config: webJsRecipe.config,
+            });
+        },
+        verifyStateFromOAuthProvider: function (input) {
+            return webJsRecipe.recipeImplementation.verifyStateFromOAuthProvider({
+                ...input,
+                config: webJsRecipe.config,
+            });
         },
     };
 }

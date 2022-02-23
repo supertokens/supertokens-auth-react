@@ -98,13 +98,15 @@ export declare type StateObject = {
     redirectToPath?: string;
 };
 export declare type RecipeInterface = {
-    getOAuthState: (input: { userContext: any; config: NormalisedConfig }) => {
-        status: "OK";
-        state: StateObject | undefined;
-    };
-    setOAuthState: (input: { state: StateObject; config: NormalisedConfig; userContext: any }) => {
-        status: "OK";
-    };
+    getStateAndOtherInfoFromStorage: <CustomStateProperties>(input: {
+        userContext: any;
+        config: NormalisedConfig;
+    }) => (StateObject & CustomStateProperties) | undefined;
+    setStateAndOtherInfoToStorage: <CustomStateProperties>(input: {
+        state: StateObject & CustomStateProperties;
+        config: NormalisedConfig;
+        userContext: any;
+    }) => void;
     redirectToThirdPartyLogin: (input: {
         thirdPartyId: string;
         config: NormalisedConfig;
@@ -113,12 +115,21 @@ export declare type RecipeInterface = {
     }) => Promise<{
         status: "OK" | "ERROR";
     }>;
-    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: NormalisedConfig; userContext: any }) => Promise<{
+    getOAuthAuthorisationURLFromBackend: (input: {
+        thirdPartyId: string;
+        config: NormalisedConfig;
+        userContext: any;
+    }) => Promise<{
         status: "OK";
         url: string;
         fetchResponse: Response;
     }>;
-    signInAndUp: (input: { thirdPartyId: string; config: NormalisedConfig; userContext: any }) => Promise<
+    signInAndUp: (input: {
+        thirdPartyId: string;
+        config: NormalisedConfig;
+        userContext: any;
+        authCode?: string;
+    }) => Promise<
         | {
               status: "OK";
               user: User;
@@ -129,10 +140,13 @@ export declare type RecipeInterface = {
               status: "NO_EMAIL_GIVEN_BY_PROVIDER";
               fetchResponse: Response;
           }
-        | {
-              status: "FIELD_ERROR";
-              error: string;
-              fetchResponse: Response;
-          }
     >;
+    generateStateToSendToOAuthProvider: (input: { userContext: any; config: NormalisedConfig }) => string;
+    verifyStateFromOAuthProvider: (input: {
+        stateFromProvider: string | undefined;
+        stateFromStorage: StateObject | undefined;
+        providerId: string;
+        config: NormalisedConfig;
+        userContext: any;
+    }) => boolean;
 };
