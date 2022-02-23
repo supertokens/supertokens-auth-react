@@ -2,7 +2,6 @@ import { RecipeInterface, NormalisedConfig, StateObject } from "./types";
 import { User } from "../authRecipeWithEmailVerification/types";
 import { redirectWithFullPageReload } from "../../utils";
 import WebJSThirdPartyRecipe from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
-import STGeneralError from "supertokens-web-js/lib/build/error";
 
 export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyRecipe): RecipeInterface {
     return {
@@ -44,7 +43,7 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
             const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
 
             if (provider === undefined) {
-                throw new STGeneralError("");
+                throw new Error(`No provider initialised for id: ${input.thirdPartyId}`);
             }
 
             const response = await webJsRecipe.recipeImplementation.signInAndUp({
@@ -81,16 +80,16 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
             config: NormalisedConfig;
             userContext: any;
         }): void {
+            const stateExpiry = Date.now() + 1000 * 60 * 10; // 10 minutes expiry.
+
             return webJsRecipe.recipeImplementation.setStateAndOtherInfoToStorage<{
                 rid?: string;
                 redirectToPath?: string;
             }>({
                 config: webJsRecipe.config,
                 state: {
-                    stateForAuthProvider: input.state.state,
-                    thirdPartyId: input.state.thirdPartyId,
-                    rid: input.state.rid,
-                    redirectToPath: input.state.redirectToPath,
+                    ...input.state,
+                    expiresAt: stateExpiry,
                 },
                 userContext: input.userContext,
             });
@@ -111,7 +110,11 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
                 config: webJsRecipe.config,
                 providerId: input.thirdPartyId,
                 redirectionURL: provider.getRedirectURL(),
-                userContext: input.userContext,
+                userContext: {
+                    ...input.userContext,
+                    rid: input.config.recipeId,
+                    thirdPartyId: input.thirdPartyId,
+                },
             });
 
             // 4. Redirect to provider authorisation URL.

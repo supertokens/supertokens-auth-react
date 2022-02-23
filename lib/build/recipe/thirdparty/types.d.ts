@@ -92,7 +92,7 @@ export declare type ThirdPartySignInAndUpState = {
     error?: string;
 };
 export declare type StateObject = {
-    state?: string;
+    stateForAuthProvider?: string;
     rid?: string;
     thirdPartyId?: string;
     redirectToPath?: string;
@@ -144,8 +144,7 @@ export declare type RecipeInterface = {
     generateStateToSendToOAuthProvider: (input: { userContext: any; config: NormalisedConfig }) => string;
     verifyStateFromOAuthProvider: (input: {
         stateFromProvider: string | undefined;
-        stateFromStorage: StateObject | undefined;
-        providerId: string;
+        stateFromStorage: string | undefined;
         config: NormalisedConfig;
         userContext: any;
     }) => boolean;

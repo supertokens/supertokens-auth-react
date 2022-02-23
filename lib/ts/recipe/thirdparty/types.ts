@@ -147,7 +147,7 @@ export type ThirdPartySignInAndUpState = {
 };
 
 export type StateObject = {
-    state?: string;
+    stateForAuthProvider?: string;
     rid?: string;
     thirdPartyId?: string;
     redirectToPath?: string;
@@ -204,8 +204,7 @@ export type RecipeInterface = {
 
     verifyStateFromOAuthProvider: (input: {
         stateFromProvider: string | undefined;
-        stateFromStorage: StateObject | undefined;
-        providerId: string;
+        stateFromStorage: string | undefined;
         config: NormalisedConfig;
         userContext: any;
     }) => boolean;

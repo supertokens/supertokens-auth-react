@@ -29,7 +29,7 @@ import {
     UserInput,
     RecipeInterface,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { getRedirectToPathFromURL, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
@@ -66,12 +66,33 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
+        const recipeId = this.config.recipeId;
         this.webJsRecipe = new WebJSThirdPartyRecipe(
             {
                 recipeId: config.recipeId,
                 appInfo: config.appInfo,
                 preAPIHook: config.preAPIHook,
                 postAPIHook: config.postAPIHook,
+                override: {
+                    functions: function (originalImplementation) {
+                        return {
+                            ...originalImplementation,
+                            setStateAndOtherInfoToStorage: function (input) {
+                                return originalImplementation.setStateAndOtherInfoToStorage<{
+                                    rid?: string;
+                                    redirectToPath?: string;
+                                }>({
+                                    ...input,
+                                    state: {
+                                        ...input.state,
+                                        rid: recipeId,
+                                        redirectToPath: getRedirectToPathFromURL(),
+                                    },
+                                });
+                            },
+                        };
+                    },
+                },
             },
             {
                 emailVerification: recipes.emailVerificationInstance?.webJsRecipe,

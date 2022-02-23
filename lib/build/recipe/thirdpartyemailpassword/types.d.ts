@@ -221,8 +221,7 @@ export declare type RecipeInterface = {
     generateStateToSendToOAuthProvider: (input: { userContext: any; config: TPConfig }) => string;
     verifyStateFromOAuthProvider: (input: {
         stateFromProvider: string | undefined;
-        stateFromStorage: StateObject | undefined;
-        providerId: string;
+        stateFromStorage: string | undefined;
         config: TPConfig;
         userContext: any;
     }) => boolean;
