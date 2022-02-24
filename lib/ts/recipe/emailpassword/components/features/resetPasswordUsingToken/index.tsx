@@ -54,13 +54,6 @@ class ResetPasswordUsingToken extends PureComponent<
         }
     }
 
-    getIsEmbedded = (): boolean => {
-        if (this.props.isEmbedded !== undefined) {
-            return this.props.isEmbedded;
-        }
-        return false;
-    };
-
     render = (): JSX.Element => {
         const enterEmailFormFeature = this.props.recipe.config.resetPasswordUsingTokenFeature.enterEmailForm;
 
@@ -105,7 +98,6 @@ class ResetPasswordUsingToken extends PureComponent<
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper
-                    isEmbedded={this.getIsEmbedded()}
                     useShadowDom={this.props.recipe.config.useShadowDom}
                     defaultStore={defaultTranslationsEmailPassword}>
                     <Fragment>

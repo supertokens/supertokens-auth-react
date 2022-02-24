@@ -18,7 +18,9 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import { useContext } from "react";
-import StyleContext from "../../../../../styles/styleContext";
+import StyleContext, { StyleProvider } from "../../../../../styles/styleContext";
+import { defaultPalette } from "../../../../../styles/styles";
+import { getStyles } from "../../../components/themes/styles";
 import { hasFontDefined } from "../../../../../styles/styles";
 import { SignUpFooter } from "./signUpFooter";
 import { SignInAndUpThemeProps } from "../../../types";
@@ -28,34 +30,48 @@ import { SuperTokensBranding } from "../../../../../components/SuperTokensBrandi
 import { useTranslation } from "../../../../..";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 
-/*
- * Component.
- */
-
-function SignInAndUpTheme(props: SignInAndUpThemeProps): JSX.Element {
+const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
     const t = useTranslation();
     const styles = useContext(StyleContext);
+
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                    {t("THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE")}
+                </div>
+
+                <div data-supertokens="divider" css={styles.divider}></div>
+
+                {props.featureState.error && <GeneralError error={props.featureState.error} />}
+
+                <ProvidersForm {...props} />
+
+                <SignUpFooter
+                    privacyPolicyLink={props.config.signInAndUpFeature.privacyPolicyLink}
+                    termsOfServiceLink={props.config.signInAndUpFeature.termsOfServiceLink}
+                />
+            </div>
+            <SuperTokensBranding />
+        </div>
+    );
+};
+
+const SignInAndUpThemeWrapper: React.FC<SignInAndUpThemeProps> = (props) => {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     return (
         <ThemeBase loadDefaultFont={!hasFont}>
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row" css={styles.row}>
-                    <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                        {t("THIRD_PARTY_SIGN_IN_AND_UP_HEADER_TITLE")}
-                    </div>
-                    <div data-supertokens="divider" css={styles.divider}></div>
-                    {props.featureState.error && <GeneralError error={props.featureState.error} />}
-                    <ProvidersForm {...props} />
-                    <SignUpFooter
-                        privacyPolicyLink={props.config.signInAndUpFeature.privacyPolicyLink}
-                        termsOfServiceLink={props.config.signInAndUpFeature.termsOfServiceLink}
-                    />
-                </div>
-                <SuperTokensBranding />
-            </div>
+            <StyleProvider
+                rawPalette={props.config.palette}
+                defaultPalette={defaultPalette}
+                styleFromInit={props.config.signInAndUpFeature.style}
+                rootStyleFromInit={props.config.rootStyle}
+                getDefaultStyles={getStyles}>
+                <SignInAndUpTheme {...props} />
+            </StyleProvider>
         </ThemeBase>
     );
-}
+};
 
-export default SignInAndUpTheme;
+export default SignInAndUpThemeWrapper;

@@ -1,22 +1,10 @@
 import * as React from "react";
 import { FeatureBaseProps } from "../../../../../types";
-import { ThirdPartySignInAndUpState, RecipeInterface, NormalisedConfig } from "../../../types";
+import { ThirdPartySignInAndUpState, ThirdPartySignInUpActions, ThirdPartySignInUpChildProps } from "../../../types";
 import Recipe from "../../../recipe";
-export declare type ThirdPartySignInUpActions = {
-    type: "setError";
-    error: string | undefined;
-};
-export declare const getModifiedThirdPartyRecipeImplementation: (origImpl: RecipeInterface) => RecipeInterface;
 export declare const useFeatureReducer: () => [ThirdPartySignInAndUpState, React.Dispatch<ThirdPartySignInUpActions>];
-export declare type ChildProps = {
-    providers: {
-        id: string;
-        buttonComponent: JSX.Element;
-    }[];
-    recipeImplementation: RecipeInterface;
-    config: NormalisedConfig;
-};
-export declare function useChildProps(recipe: Recipe | undefined): ChildProps | undefined;
+export declare function useChildProps(recipe: Recipe): ThirdPartySignInUpChildProps;
+export declare function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined;
 declare type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };

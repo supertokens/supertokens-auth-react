@@ -23,7 +23,13 @@ import SignInUpThemeWrapper from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
-import { RecipeInterface, PasswordlessSignInUpAction, SignInUpState, PasswordlessUser } from "../../../types";
+import {
+    RecipeInterface,
+    PasswordlessSignInUpAction,
+    SignInUpState,
+    PasswordlessUser,
+    SignInUpProps,
+} from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
 import Session from "../../../../session";
@@ -32,10 +38,6 @@ import { useMemo } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
 import { FeatureBaseProps } from "../../../../../types";
-
-type PropType = FeatureBaseProps & {
-    recipe: Recipe;
-};
 
 export const useSuccessInAnotherTabChecker = (
     state: SignInUpState,
@@ -168,13 +170,31 @@ export const useFeatureReducer = (
     return [state, dispatch];
 };
 
+export type ChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
+
+// We are overloading to explicitly state that if recipe is defined then the return value is defined as well.
+export function useChildProps(
+    recipe: Recipe,
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    state: SignInUpState,
+    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    history: any
+): ChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     callingConsumeCodeRef: React.MutableRefObject<boolean>,
     history: any
-) {
+): ChildProps | undefined;
+
+export function useChildProps(
+    recipe: Recipe | undefined,
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    state: SignInUpState,
+    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    history: any
+): ChildProps | undefined {
     const recipeImplementation = React.useMemo(
         () => recipe && getModifiedRecipeImplementation(recipe.recipeImpl, dispatch, callingConsumeCodeRef),
         [recipe]
@@ -198,15 +218,49 @@ export function useChildProps(
                     history
                 );
             },
-            loaded: state.loaded,
-            loginAttemptInfo: state.loginAttemptInfo,
-            successInAnotherTab: state.successInAnotherTab,
-            error: state.error,
             recipeImplementation: recipeImplementation,
             config: recipe.config,
         };
     }, [state, recipeImplementation]);
 }
+
+export const SignInUpFeature: React.FC<
+    FeatureBaseProps & {
+        recipe: Recipe;
+    }
+> = (props) => {
+    const componentOverrides = props.recipe.config.override.components;
+    const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl);
+    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch);
+    const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, props.history)!;
+
+    return (
+        <ComponentOverrideContext.Provider value={componentOverrides}>
+            <FeatureWrapper
+                useShadowDom={props.recipe.config.useShadowDom}
+                defaultStore={defaultTranslationsPasswordless}>
+                <Fragment>
+                    {/* No custom theme, use default. */}
+                    {props.children === undefined && (
+                        <SignInUpThemeWrapper {...childProps} featureState={state} dispatch={dispatch} />
+                    )}
+
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {props.children &&
+                        React.Children.map(props.children, (child) => {
+                            if (React.isValidElement(child)) {
+                                return React.cloneElement(child, childProps);
+                            }
+
+                            return child;
+                        })}
+                </Fragment>
+            </FeatureWrapper>
+        </ComponentOverrideContext.Provider>
+    );
+};
+
+export default SignInUpFeature;
 
 function getModifiedRecipeImplementation(
     originalImpl: RecipeInterface,
@@ -289,36 +343,3 @@ function getModifiedRecipeImplementation(
         },
     };
 }
-
-const SignInUpFeature: React.FC<PropType> = (props) => {
-    const componentOverrides = props.recipe.config.override.components;
-    const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl);
-    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch);
-    const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, props.history)!;
-
-    return (
-        <ComponentOverrideContext.Provider value={componentOverrides}>
-            <FeatureWrapper
-                useShadowDom={props.recipe.config.useShadowDom}
-                isEmbedded={props.isEmbedded}
-                defaultStore={defaultTranslationsPasswordless}>
-                <Fragment>
-                    {/* No custom theme, use default. */}
-                    {props.children === undefined && <SignInUpThemeWrapper {...childProps} dispatch={dispatch} />}
-
-                    {/* Otherwise, custom theme is provided, propagate props. */}
-                    {props.children &&
-                        React.Children.map(props.children, (child) => {
-                            if (React.isValidElement(child)) {
-                                return React.cloneElement(child, childProps);
-                            }
-
-                            return child;
-                        })}
-                </Fragment>
-            </FeatureWrapper>
-        </ComponentOverrideContext.Provider>
-    );
-};
-
-export default SignInUpFeature;

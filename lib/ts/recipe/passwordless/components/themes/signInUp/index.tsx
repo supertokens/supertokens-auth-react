@@ -48,7 +48,11 @@ enum SignInUpScreens {
 /*
  * Component.
  */
-const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }> = ({ activeScreen, ...props }) => {
+const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }> = ({
+    activeScreen,
+    featureState,
+    ...props
+}) => {
     const styles = useContext(StyleContext);
 
     const commonProps = {
@@ -56,24 +60,27 @@ const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }>
         config: props.config,
         clearError: () => props.dispatch({ type: "setError", error: undefined }),
         onError: (error: string) => props.dispatch({ type: "setError", error }),
-        error: props.error,
+        error: featureState.error,
     };
 
     return activeScreen === SignInUpScreens.CloseTab ? (
-        <CloseTabScreen {...props} />
+        <CloseTabScreen {...commonProps} />
     ) : activeScreen === SignInUpScreens.LinkSent ? (
-        <LinkSent {...props} loginAttemptInfo={props.loginAttemptInfo!} />
+        <LinkSent {...commonProps} loginAttemptInfo={featureState.loginAttemptInfo!} />
     ) : (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
-                {props.loaded && (
+                {featureState.loaded && (
                     <React.Fragment>
                         {activeScreen === SignInUpScreens.UserInputCodeForm ? (
-                            <UserInputCodeFormHeader {...commonProps} loginAttemptInfo={props.loginAttemptInfo!} />
+                            <UserInputCodeFormHeader
+                                {...commonProps}
+                                loginAttemptInfo={featureState.loginAttemptInfo!}
+                            />
                         ) : (
                             <SignInUpHeader />
                         )}
-                        {props.error !== undefined && <GeneralError error={props.error} />}
+                        {featureState.error !== undefined && <GeneralError error={featureState.error} />}
                         {activeScreen === SignInUpScreens.EmailForm ? (
                             <EmailForm
                                 {...commonProps}
@@ -107,12 +114,12 @@ const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }>
                         ) : activeScreen === SignInUpScreens.UserInputCodeForm ? (
                             <UserInputCodeForm
                                 {...commonProps}
-                                loginAttemptInfo={props.loginAttemptInfo!}
+                                loginAttemptInfo={featureState.loginAttemptInfo!}
                                 onSuccess={props.onSuccess}
                                 footer={
                                     <UserInputCodeFormFooter
                                         {...commonProps}
-                                        loginAttemptInfo={props.loginAttemptInfo!}
+                                        loginAttemptInfo={featureState.loginAttemptInfo!}
                                     />
                                 }
                             />
@@ -162,11 +169,11 @@ function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
 export default SignInUpThemeWrapper;
 
 function getActiveScreen(props: SignInUpProps) {
-    if (props.successInAnotherTab) {
+    if (props.featureState.successInAnotherTab) {
         return SignInUpScreens.CloseTab;
-    } else if (props.loginAttemptInfo && props.loginAttemptInfo.flowType === "MAGIC_LINK") {
+    } else if (props.featureState.loginAttemptInfo && props.featureState.loginAttemptInfo.flowType === "MAGIC_LINK") {
         return SignInUpScreens.LinkSent;
-    } else if (props.loginAttemptInfo) {
+    } else if (props.featureState.loginAttemptInfo) {
         return SignInUpScreens.UserInputCodeForm;
     } else if (props.config.contactMethod === "EMAIL") {
         return SignInUpScreens.EmailForm;

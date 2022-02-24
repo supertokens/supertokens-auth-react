@@ -25,7 +25,6 @@ import { SignInAndUpCallbackTheme } from "../../lib/ts/recipe/thirdparty/compone
 import { SendVerifyEmail } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/verifyEmailLinkClicked";
 import { Header as ThirdPartyEmailPasswordHeader } from "../../lib/ts/recipe/thirdpartyemailpassword/components/themes/signInAndUp/header";
-import { SignInAndUpForm } from "../../lib/ts/recipe/thirdpartyemailpassword/components/themes/signInAndUp/signInAndUpForm";
 import { CloseTabScreen } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/closeTabScreen";
 import { ComponentOverride } from "../../lib/ts/components/componentOverride/componentOverride";
 import { LinkClickedScreen } from "../../lib/ts/recipe/passwordless/components/themes/linkClickedScreen";
@@ -71,7 +70,6 @@ describe("Theme component overrides", () => {
         EmailVerificationSendVerifyEmail: SendVerifyEmail,
         EmailVerificationVerifyEmailLinkClicked: VerifyEmailLinkClicked,
         ThirdPartyEmailPasswordHeader: ThirdPartyEmailPasswordHeader,
-        ThirdPartyEmailPasswordSignInAndUpForm: SignInAndUpForm,
         PasswordlessEmailForm: EmailForm,
         PasswordlessPhoneForm: PhoneForm,
         PasswordlessEmailOrPhoneForm: EmailOrPhoneForm,

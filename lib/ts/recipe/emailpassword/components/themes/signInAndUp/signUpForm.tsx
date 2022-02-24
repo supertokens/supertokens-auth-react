@@ -21,8 +21,6 @@ import { SignUpThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { Fragment } from "react";
-import GeneralError from "../../library/generalError";
 
 /*
  * Component.
@@ -37,26 +35,22 @@ export const SignUpForm = withOverride(
         }
     ): JSX.Element {
         return (
-            <Fragment>
-                {props.header}
-                {props.error !== undefined && <GeneralError error={props.error} />}
-                <FormBase
-                    formFields={props.formFields}
-                    clearError={props.clearError}
-                    onError={props.onError}
-                    buttonLabel={"EMAIL_PASSWORD_SIGN_UP_SUBMIT_BTN"}
-                    onSuccess={props.onSuccess}
-                    callAPI={(formFields) =>
-                        props.recipeImplementation.signUp({
-                            formFields,
-                            config: props.config,
-                        })
-                    }
-                    validateOnBlur={true}
-                    showLabels={true}
-                    footer={props.footer}
-                />
-            </Fragment>
+            <FormBase
+                formFields={props.formFields}
+                clearError={props.clearError}
+                onError={props.onError}
+                buttonLabel={"EMAIL_PASSWORD_SIGN_UP_SUBMIT_BTN"}
+                onSuccess={props.onSuccess}
+                callAPI={(formFields) =>
+                    props.recipeImplementation.signUp({
+                        formFields,
+                        config: props.config,
+                    })
+                }
+                validateOnBlur={true}
+                showLabels={true}
+                footer={props.footer}
+            />
         );
     }
 );

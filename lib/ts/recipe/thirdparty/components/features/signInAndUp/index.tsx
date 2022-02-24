@@ -21,38 +21,19 @@ import * as React from "react";
 import { Fragment } from "react";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { StyleProvider } from "../../../../../styles/styleContext";
-import { defaultPalette } from "../../../../../styles/styles";
 import { FeatureBaseProps } from "../../../../../types";
 import { getQueryParams } from "../../../../../utils";
-import { getStyles } from "../../../components/themes/styles";
-import { ThirdPartySignInAndUpState, RecipeInterface, NormalisedConfig } from "../../../types";
+import {
+    ThirdPartySignInAndUpState,
+    RecipeInterface,
+    ThirdPartySignInUpActions,
+    ThirdPartySignInUpChildProps,
+} from "../../../types";
 import Recipe from "../../../recipe";
 import { getRedirectToPathFromURL } from "../../../../../utils";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 import { useMemo } from "react";
-
-export type ThirdPartySignInUpActions = {
-    type: "setError";
-    error: string | undefined;
-};
-
-export const getModifiedThirdPartyRecipeImplementation = (origImpl: RecipeInterface): RecipeInterface => {
-    return {
-        ...origImpl,
-        redirectToThirdPartyLogin: (input) => {
-            input = {
-                ...input,
-                state: {
-                    ...input.state,
-                    redirectToPath: getRedirectToPathFromURL(),
-                },
-            };
-            return origImpl.redirectToThirdPartyLogin(input);
-        },
-    };
-};
 
 export const useFeatureReducer = () => {
     return React.useReducer(
@@ -92,20 +73,11 @@ export const useFeatureReducer = () => {
     );
 };
 
-export type ChildProps = {
-    providers: {
-        id: string;
-        buttonComponent: JSX.Element;
-    }[];
-    recipeImplementation: RecipeInterface;
-    config: NormalisedConfig;
-};
-
-export function useChildProps(recipe: Recipe | undefined): ChildProps | undefined {
-    const recipeImplementation = useMemo(
-        () => recipe && getModifiedThirdPartyRecipeImplementation(recipe.recipeImpl),
-        [recipe]
-    );
+// We are overloading to explicitly state that if recipe is defined then the return value is defined as well.
+export function useChildProps(recipe: Recipe): ThirdPartySignInUpChildProps;
+export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined;
+export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChildProps | undefined {
+    const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.recipeImpl), [recipe]);
 
     return useMemo(() => {
         if (!recipe || !recipeImplementation) {
@@ -128,41 +100,49 @@ type PropType = FeatureBaseProps & { recipe: Recipe };
 
 export const SignInAndUpFeature: React.FC<PropType> = (props) => {
     const [state, dispatch] = useFeatureReducer();
-    const childProps = useChildProps(props.recipe)!;
+    const childProps = useChildProps(props.recipe);
 
     const componentOverrides = props.recipe.config.override.components;
     return (
         <ComponentOverrideContext.Provider value={componentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
-                defaultStore={defaultTranslationsThirdParty}
-                isEmbedded={props.isEmbedded === true}>
-                <StyleProvider
-                    rawPalette={props.recipe.config.palette}
-                    defaultPalette={defaultPalette}
-                    styleFromInit={props.recipe.config.signInAndUpFeature.style}
-                    rootStyleFromInit={props.recipe.config.rootStyle}
-                    getDefaultStyles={getStyles}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {props.children === undefined && (
-                            <SignInAndUpTheme {...childProps} featureState={state} dispatch={dispatch} />
-                        )}
+                defaultStore={defaultTranslationsThirdParty}>
+                <Fragment>
+                    {/* No custom theme, use default. */}
+                    {props.children === undefined && (
+                        <SignInAndUpTheme {...childProps} featureState={state} dispatch={dispatch} />
+                    )}
 
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {props.children &&
-                            React.Children.map(props.children, (child) => {
-                                if (React.isValidElement(child)) {
-                                    return React.cloneElement(child, { ...childProps, featureState: state, dispatch });
-                                }
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {props.children &&
+                        React.Children.map(props.children, (child) => {
+                            if (React.isValidElement(child)) {
+                                return React.cloneElement(child, { ...childProps, featureState: state, dispatch });
+                            }
 
-                                return child;
-                            })}
-                    </Fragment>
-                </StyleProvider>
+                            return child;
+                        })}
+                </Fragment>
             </FeatureWrapper>
         </ComponentOverrideContext.Provider>
     );
 };
 
 export default SignInAndUpFeature;
+
+const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInterface => {
+    return {
+        ...origImpl,
+        redirectToThirdPartyLogin: (input) => {
+            input = {
+                ...input,
+                state: {
+                    ...input.state,
+                    redirectToPath: getRedirectToPathFromURL(),
+                },
+            };
+            return origImpl.redirectToThirdPartyLogin(input);
+        },
+    };
+};

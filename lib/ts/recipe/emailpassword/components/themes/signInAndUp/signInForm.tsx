@@ -23,8 +23,6 @@ import { SignInThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import { Fragment } from "react";
-import GeneralError from "../../library/generalError";
 
 export const SignInForm = withOverride(
     "EmailPasswordSignInForm",
@@ -35,34 +33,30 @@ export const SignInForm = withOverride(
         }
     ): JSX.Element {
         return (
-            <Fragment>
-                {props.header}
-                {props.error !== undefined && <GeneralError error={props.error} />}
-                <FormBase
-                    formFields={props.formFields}
-                    clearError={props.clearError}
-                    onError={props.onError}
-                    buttonLabel={"EMAIL_PASSWORD_SIGN_IN_SUBMIT_BTN"}
-                    onSuccess={props.onSuccess}
-                    callAPI={async (formFields) => {
-                        const response = await props.recipeImplementation.signIn({
-                            formFields,
-                            config: props.config,
-                        });
-                        if (response.status === "WRONG_CREDENTIALS_ERROR") {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: "EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR",
-                            };
-                        } else {
-                            return response;
-                        }
-                    }}
-                    validateOnBlur={false}
-                    showLabels={true}
-                    footer={props.footer}
-                />
-            </Fragment>
+            <FormBase
+                formFields={props.formFields}
+                clearError={props.clearError}
+                onError={props.onError}
+                buttonLabel={"EMAIL_PASSWORD_SIGN_IN_SUBMIT_BTN"}
+                onSuccess={props.onSuccess}
+                callAPI={async (formFields) => {
+                    const response = await props.recipeImplementation.signIn({
+                        formFields,
+                        config: props.config,
+                    });
+                    if (response.status === "WRONG_CREDENTIALS_ERROR") {
+                        return {
+                            status: "GENERAL_ERROR",
+                            message: "EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR",
+                        };
+                    } else {
+                        return response;
+                    }
+                }}
+                validateOnBlur={false}
+                showLabels={true}
+                footer={props.footer}
+            />
         );
     }
 );

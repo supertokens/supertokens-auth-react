@@ -34,19 +34,51 @@ import {
     useFeatureReducer as useEmailPasswordFeatureReducer,
 } from "../../../../emailpassword/components/features/signInAndUp";
 
+import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
+import { EmailPasswordSignInAndUpAction } from "../../../../emailpassword/types";
+
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };
 
 const SignInAndUp: React.FC<PropType> = (props) => {
     const [tpState, tpDispatch] = useThirdPartyFeatureReducer();
+    const [epState, epDispatch] = useEmailPasswordFeatureReducer(props.recipe.emailPasswordRecipe);
+    const [combinedState, dispatch] = React.useReducer(
+        (state: { error: string | undefined }, action: ThirdPartySignInUpActions | EmailPasswordSignInAndUpAction) => {
+            switch (action.type) {
+                case "setError":
+                    return {
+                        ...state,
+                        error: action.error,
+                    };
+                default:
+                    return state;
+            }
+        },
+        { error: tpState.error || epState.error }
+    );
+
+    const combinedTPDispatch = React.useCallback<typeof tpDispatch>(
+        (action) => {
+            dispatch(action);
+            tpDispatch(action);
+        },
+        [tpDispatch, dispatch]
+    );
     const tpChildProps = useThirdPartyChildProps(props.recipe.thirdPartyRecipe)!;
 
-    const [epState, epDispatch] = useEmailPasswordFeatureReducer(props.recipe.emailPasswordRecipe);
+    const combinedEPDispatch = React.useCallback<typeof epDispatch>(
+        (action) => {
+            dispatch(action);
+            epDispatch(action);
+        },
+        [epDispatch, dispatch]
+    );
     const epChildProps = useEmailPasswordChildProps(
         props.recipe.emailPasswordRecipe,
         epState,
-        epDispatch,
+        combinedEPDispatch,
         props.history
     )!;
 
@@ -56,11 +88,12 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         thirdPartyRecipe: props.recipe.thirdPartyRecipe,
         config: props.recipe.config,
         history: props.history,
+        commonState: combinedState,
         tpState,
-        tpDispatch,
+        tpDispatch: combinedTPDispatch,
         tpChildProps,
         epState,
-        epDispatch,
+        epDispatch: combinedEPDispatch,
         epChildProps,
     };
 
@@ -68,8 +101,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         <ComponentOverrideContext.Provider value={componentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
-                defaultStore={defaultTranslationsThirdPartyEmailPassword}
-                isEmbedded={props.isEmbedded}>
+                defaultStore={defaultTranslationsThirdPartyEmailPassword}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {props.children === undefined && <SignInAndUpTheme {...childProps} />}

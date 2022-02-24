@@ -47,7 +47,6 @@ import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
 import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 import { InputProps } from "./components/library/input";
-import { EmailPasswordSignInAndUpAction } from "./components/features/signInAndUp";
 
 export type ComponentOverrideMap = {
     EmailPasswordSignIn?: ComponentOverride<typeof SignIn>;
@@ -444,6 +443,20 @@ export type SignInAndUpState = {
     error: string | undefined;
     isSignUp: boolean;
 };
+
+export type EmailPasswordSignInAndUpAction =
+    | {
+          type: "setError";
+          error: string | undefined;
+      }
+    | {
+          type: "setSignUp";
+      }
+    | {
+          type: "setSignIn";
+      };
+
+export type EmailPasswordSignInAndUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
 
 export type RecipeInterface = {
     submitNewPassword: (input: {

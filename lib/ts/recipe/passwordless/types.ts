@@ -284,14 +284,16 @@ export type UserInput = (
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type SignInUpProps = {
-    loginAttemptInfo?: LoginAttemptInfo;
-    loaded: boolean;
-    successInAnotherTab: boolean;
-    error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    dispatch: Dispatch<PasswordlessSignInUpAction>;
     onSuccess?: (result: { createdUser: boolean; user: PasswordlessUser }) => void;
+    dispatch: Dispatch<PasswordlessSignInUpAction>;
+    featureState: {
+        loginAttemptInfo?: LoginAttemptInfo;
+        loaded: boolean;
+        successInAnotherTab: boolean;
+        error: string | undefined;
+    };
 };
 export type LoginAttemptInfo = {
     deviceId: string;
@@ -306,7 +308,7 @@ export type LoginAttemptInfo = {
 export type SignInUpEmailFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
-    error?: string;
+    error: string | undefined;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess?: () => void;
@@ -315,7 +317,7 @@ export type SignInUpEmailFormProps = {
 export type SignInUpPhoneFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
-    error?: string;
+    error: string | undefined;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess?: () => void;
@@ -324,19 +326,19 @@ export type SignInUpPhoneFormProps = {
 export type SignInUpEmailOrPhoneFormProps = {
     clearError: () => void;
     onError: (error: string) => void;
-    error?: string;
+    error: string | undefined;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
 
 export type SignInUpUserInputCodeFormProps = {
-    error?: string;
+    clearError: () => void;
+    onError: (error: string) => void;
+    error: string | undefined;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     loginAttemptInfo: LoginAttemptInfo;
-    clearError: () => void;
-    onError: (error: string) => void;
     onSuccess?: (result: { createdUser: boolean; user: PasswordlessUser }) => void;
 };
 
@@ -385,7 +387,9 @@ export type SignInUpState = {
 };
 
 export type LinkSentThemeProps = {
-    error?: string;
+    clearError: () => void;
+    onError: (error: string) => void;
+    error: string | undefined;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;

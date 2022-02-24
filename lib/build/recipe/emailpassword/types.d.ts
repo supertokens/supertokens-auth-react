@@ -31,7 +31,6 @@ import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
 import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 import { InputProps } from "./components/library/input";
-import { EmailPasswordSignInAndUpAction } from "./components/features/signInAndUp";
 export declare type ComponentOverrideMap = {
     EmailPasswordSignIn?: ComponentOverride<typeof SignIn>;
     EmailPasswordSignInFooter?: ComponentOverride<typeof SignInFooter>;
@@ -245,6 +244,18 @@ export declare type SignInAndUpState = {
     error: string | undefined;
     isSignUp: boolean;
 };
+export declare type EmailPasswordSignInAndUpAction =
+    | {
+          type: "setError";
+          error: string | undefined;
+      }
+    | {
+          type: "setSignUp";
+      }
+    | {
+          type: "setSignIn";
+      };
+export declare type EmailPasswordSignInAndUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
 export declare type RecipeInterface = {
     submitNewPassword: (input: {
         formFields: {

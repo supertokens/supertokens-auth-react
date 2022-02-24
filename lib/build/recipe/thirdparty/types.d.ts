@@ -17,7 +17,6 @@ import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
 import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import OverrideableBuilder from "supertokens-js-override";
-import { ThirdPartySignInUpActions } from "./components/features/signInAndUp";
 export declare type ComponentOverrideMap = {
     ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
     ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
@@ -93,6 +92,11 @@ export declare type SignInAndUpThemeProps = {
     }[];
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
+};
+export declare type ThirdPartySignInUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
+export declare type ThirdPartySignInUpActions = {
+    type: "setError";
+    error: string | undefined;
 };
 export declare type ThirdPartySignInAndUpState = {
     error: string | undefined;

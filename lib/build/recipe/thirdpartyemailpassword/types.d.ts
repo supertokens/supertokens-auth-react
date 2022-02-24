@@ -10,13 +10,21 @@ import {
     SignUpFormFeatureUserInput,
     NormalisedConfig as EPConfig,
     SignInAndUpState as EmailPasswordSignInAndUpState,
+    EmailPasswordSignInAndUpAction,
+    EmailPasswordSignInAndUpChildProps,
 } from "../emailpassword/types";
 import {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
-import { NormalisedConfig as TPConfig, StateObject, ThirdPartySignInAndUpState } from "../thirdparty/types";
+import {
+    NormalisedConfig as TPConfig,
+    StateObject,
+    ThirdPartySignInAndUpState,
+    ThirdPartySignInUpActions,
+    ThirdPartySignInUpChildProps,
+} from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
@@ -33,20 +41,10 @@ import { ComponentOverride } from "../../components/componentOverride/componentO
 import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpassword/types";
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
 import { Header } from "./components/themes/signInAndUp/header";
-import { SignInAndUpForm } from "./components/themes/signInAndUp/signInAndUpForm";
 import { Dispatch } from "react";
-import {
-    ChildProps as EmailPasswordChildProps,
-    EmailPasswordSignInAndUpAction,
-} from "../emailpassword/components/features/signInAndUp";
-import {
-    ChildProps as ThirdPartyChildProps,
-    ThirdPartySignInUpActions,
-} from "../thirdparty/components/features/signInAndUp";
 export declare type ComponentOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap & {
         ThirdPartyEmailPasswordHeader?: ComponentOverride<typeof Header>;
-        ThirdPartyEmailPasswordSignInAndUpForm?: ComponentOverride<typeof SignInAndUpForm>;
     };
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
@@ -96,16 +94,19 @@ export declare type GetRedirectionURLContext =
 export declare type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
 export declare type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
+    config: NormalisedConfig;
     history?: any;
+    commonState: {
+        error: string | undefined;
+    };
     emailPasswordRecipe?: EPRecipe;
     epState: EmailPasswordSignInAndUpState;
     epDispatch: Dispatch<EmailPasswordSignInAndUpAction>;
-    epChildProps: EmailPasswordChildProps;
+    epChildProps?: EmailPasswordSignInAndUpChildProps;
+    thirdPartyRecipe?: TPRecipe;
     tpState: ThirdPartySignInAndUpState;
     tpDispatch: Dispatch<ThirdPartySignInUpActions>;
-    tpChildProps: ThirdPartyChildProps;
-    thirdPartyRecipe?: TPRecipe;
-    config: NormalisedConfig;
+    tpChildProps?: ThirdPartySignInUpChildProps;
 };
 export declare type SignInAndUpInput =
     | {

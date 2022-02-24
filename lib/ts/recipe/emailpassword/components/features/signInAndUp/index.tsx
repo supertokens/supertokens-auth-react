@@ -21,9 +21,13 @@ import { jsx } from "@emotion/react";
 import * as React from "react";
 import { Fragment } from "react";
 
-import { FormFieldThemeProps, NormalisedConfig } from "../../../types";
+import {
+    EmailPasswordSignInAndUpAction,
+    EmailPasswordSignInAndUpChildProps,
+    FormFieldThemeProps,
+} from "../../../types";
 import SignInAndUpTheme from "../../themes/signInAndUp";
-import { FeatureBaseProps, NormalisedFormField, Styles } from "../../../../../types";
+import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { SignInAndUpState, RecipeInterface } from "../../../types";
@@ -33,24 +37,6 @@ import { defaultTranslationsEmailPassword } from "../../themes/translations";
 import { useMemo } from "react";
 import { useCallback } from "react";
 import { Dispatch } from "react";
-
-export type EmailPasswordSignInAndUpAction =
-    | {
-          type: "setError";
-          error: string | undefined;
-      }
-    | {
-          type: "setSignUp";
-      }
-    | {
-          type: "setSignIn";
-      };
-
-const getModifiedEmailPasswordRecipeImplementation = (origImpl: RecipeInterface): RecipeInterface => {
-    return {
-        ...origImpl,
-    };
-};
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(
@@ -96,41 +82,27 @@ export const useFeatureReducer = (recipe: Recipe | undefined) => {
     );
 };
 
-export type ChildProps = {
-    config: NormalisedConfig;
-    signInForm: {
-        recipeImplementation: RecipeInterface;
-        config: NormalisedConfig;
-        styleFromInit: Styles;
-        formFields: NormalisedFormField[];
-        error: string | undefined;
-        clearError: () => void;
-        onError: (error: string) => void;
-        onSuccess: () => Promise<void>;
-        forgotPasswordClick: () => Promise<void>;
-    };
-    signUpForm: {
-        recipeImplementation: RecipeInterface;
-        config: NormalisedConfig;
-        styleFromInit: Styles;
-        formFields: FormFieldThemeProps[];
-        error: string | undefined;
-        clearError: () => void;
-        onError: (error: string) => void;
-        onSuccess: () => Promise<void>;
-    };
-};
+// We are overloading to explicitly state that if recipe is defined then the return value is defined as well.
+export function useChildProps(
+    recipe: Recipe,
+    state: SignInAndUpState,
+    dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
+    history: any
+): EmailPasswordSignInAndUpChildProps;
+export function useChildProps(
+    recipe: Recipe | undefined,
+    state: SignInAndUpState,
+    dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
+    history: any
+): EmailPasswordSignInAndUpChildProps | undefined;
 
 export function useChildProps(
     recipe: Recipe | undefined,
     state: SignInAndUpState,
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
     history: any
-): ChildProps | undefined {
-    const recipeImplementation = useMemo(
-        () => recipe && getModifiedEmailPasswordRecipeImplementation(recipe.recipeImpl),
-        [recipe]
-    );
+): EmailPasswordSignInAndUpChildProps | undefined {
+    const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.recipeImpl), [recipe]);
 
     const onSignInSuccess = useCallback(async (): Promise<void> => {
         if (!recipe) {
@@ -233,19 +205,18 @@ export function useChildProps(
     }, [recipe, state, dispatch]);
 }
 
-type PropType = FeatureBaseProps & {
-    recipe: Recipe;
-};
-
-export const SignInAndUpFeature: React.FC<PropType> = (props) => {
+export const SignInAndUpFeature: React.FC<
+    FeatureBaseProps & {
+        recipe: Recipe;
+    }
+> = (props) => {
     const [state, dispatch] = useFeatureReducer(props.recipe);
-    const childProps = useChildProps(props.recipe, state, dispatch, props.history)!;
+    const childProps = useChildProps(props.recipe, state, dispatch, props.history);
 
     return (
         <ComponentOverrideContext.Provider value={props.recipe.config.override.components}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
-                isEmbedded={props.isEmbedded === true}
                 defaultStore={defaultTranslationsEmailPassword}>
                 <Fragment>
                     {/* No custom theme, use default. */}
@@ -272,6 +243,12 @@ export const SignInAndUpFeature: React.FC<PropType> = (props) => {
 };
 
 export default SignInAndUpFeature;
+
+const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInterface => {
+    return {
+        ...origImpl,
+    };
+};
 
 function getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[], recipe: Recipe): FormFieldThemeProps[] {
     const emailPasswordOnly = formFields.length === 2;
