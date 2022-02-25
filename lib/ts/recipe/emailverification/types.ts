@@ -40,6 +40,7 @@ export type UserInput = UserInputForAuthRecipeModule & {
     signOut(): Promise<void>;
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
+    // TODO NEMI: Allow overriding of web-js functions that read from query
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
@@ -109,7 +110,7 @@ export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
 };
 
 export type RecipeInterface = {
-    verifyEmail: (input: { token: string; config: NormalisedConfig; userContext: any }) => Promise<{
+    verifyEmail: (input: { config: NormalisedConfig; userContext: any }) => Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }>;
@@ -124,4 +125,6 @@ export type RecipeInterface = {
         isVerified: boolean;
         fetchResponse: Response;
     }>;
+
+    getEmailVerificationTokenFromURL: (input: { config: NormalisedConfig; userContext: any }) => string;
 };

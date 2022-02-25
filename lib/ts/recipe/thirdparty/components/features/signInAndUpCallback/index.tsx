@@ -20,7 +20,6 @@ import { jsx } from "@emotion/react";
 import { Fragment, PureComponent } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
-import { getCurrentNormalisedUrlPath } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
@@ -44,11 +43,8 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
 
     componentDidMount = async (): Promise<void> => {
         try {
-            const pathName = getCurrentNormalisedUrlPath().getAsStringDangerous();
-            const providerId = pathName.split("/")[pathName.split("/").length - 1];
             // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipe.recipeImpl.signInAndUp({
-                thirdPartyId: providerId,
                 config: this.props.recipe.config,
                 userContext: {},
             });
@@ -65,7 +61,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                     config: this.props.recipe.config,
                     userContext: {},
                 });
-                const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
+                const redirectToPath = stateResponse === undefined ? undefined : stateResponse.authorisationURL;
 
                 if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
                     let isEmailVerified = true;

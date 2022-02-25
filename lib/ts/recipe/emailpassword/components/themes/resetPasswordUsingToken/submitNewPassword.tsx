@@ -104,7 +104,6 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
 
                         const response = await props.recipeImplementation.submitNewPassword({
                             formFields: fields,
-                            token: props.token,
                             config: props.config,
                             userContext: {},
                         });

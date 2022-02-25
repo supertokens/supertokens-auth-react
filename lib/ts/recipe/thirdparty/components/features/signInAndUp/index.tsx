@@ -28,7 +28,6 @@ import { getQueryParams } from "../../../../../utils";
 import { getStyles } from "../../../components/themes/styles";
 import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
 import Recipe from "../../../recipe";
-import { getRedirectToPathFromURL } from "../../../../../utils";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 
@@ -68,13 +67,6 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
     modifiedRecipeImplementation: RecipeInterface = {
         ...this.props.recipe.recipeImpl,
         redirectToThirdPartyLogin: (input) => {
-            input = {
-                ...input,
-                state: {
-                    ...input.state,
-                    redirectToPath: getRedirectToPathFromURL(),
-                },
-            };
             return this.props.recipe.recipeImpl.redirectToThirdPartyLogin(input);
         },
     };

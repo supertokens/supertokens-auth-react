@@ -2,12 +2,13 @@ import { NormalisedConfig, RecipeInterface, SignInAndUpInput, SignInAndUpOutput 
 import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImplementation";
 import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
 import { NormalisedConfig as EPConfig } from "../../emailpassword/types";
-import { NormalisedConfig as TPConfig, StateObject } from "../../thirdparty/types";
+import { NormalisedConfig as TPConfig } from "../../thirdparty/types";
 import DerivedEP from "./emailPasswordImplementation";
 import DerivedTP from "./thirdPartyImplementation";
 import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
 import EmailVerification from "../../emailverification/recipe";
 import WebJSThirdParty from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
+import { StateObject } from "supertokens-web-js/recipe/thirdparty";
 
 export default function getRecipeImplementation(
     config: NormalisedConfig,
@@ -40,7 +41,7 @@ export default function getRecipeImplementation(
     );
 
     const emailpasswordImpl = EmailPasswordRecipeImplementation(webJsEmailPassword);
-    const thirdPartyImpl = ThirdPartyRecipeImplementation(thirdPartyEmailPassword);
+    const thirdPartyImpl = ThirdPartyRecipeImplementation(thirdPartyEmailPassword, config.recipeId);
 
     return {
         submitNewPassword: async function (input: {
@@ -48,7 +49,6 @@ export default function getRecipeImplementation(
                 id: string;
                 value: string;
             }[];
-            token: string;
             config: EPConfig;
             userContext: any;
         }) {
@@ -67,12 +67,15 @@ export default function getRecipeImplementation(
         doesEmailExist: async function (input: { email: string; config: EPConfig; userContext: any }) {
             return emailpasswordImpl.doesEmailExist.bind(DerivedEP(this))(input);
         },
-        getOAuthAuthorisationURLFromBackend: async function (input: {
+        getSubmitPasswordTokenFromURL: function (input) {
+            return emailpasswordImpl.getSubmitPasswordTokenFromURL.bind(DerivedEP(this))(input);
+        },
+        getAuthorisationURLFromBackend: async function (input: {
             thirdPartyId: string;
             config: TPConfig;
             userContext: any;
         }) {
-            return thirdPartyImpl.getOAuthAuthorisationURLFromBackend.bind(DerivedTP(this))(input);
+            return thirdPartyImpl.getAuthorisationURLFromBackend.bind(DerivedTP(this))(input);
         },
         signInAndUp: async function (input: SignInAndUpInput): Promise<SignInAndUpOutput> {
             if (input.type === "emailpassword") {
@@ -132,8 +135,14 @@ export default function getRecipeImplementation(
         generateStateToSendToOAuthProvider: function (input) {
             return thirdPartyImpl.generateStateToSendToOAuthProvider.bind(DerivedTP(this))(input);
         },
-        verifyStateFromOAuthProvider: function (input) {
-            return thirdPartyImpl.verifyStateFromOAuthProvider.bind(DerivedTP(this))(input);
+        verifyAndGetStateOrThrowError: function (input) {
+            return thirdPartyImpl.verifyAndGetStateOrThrowError.bind(DerivedTP(this))(input);
+        },
+        getAuthCodeFromURL: function (input) {
+            return thirdPartyImpl.getAuthCodeFromURL.bind(DerivedTP(this))(input);
+        },
+        getAuthErrorFromURL: function (input) {
+            return thirdPartyImpl.getAuthErrorFromURL.bind(DerivedTP(this))(input);
         },
     };
 }

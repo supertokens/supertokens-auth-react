@@ -3,12 +3,11 @@ import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailver
 
 export default function getRecipeImplementation(webJsImplementation: WebJSEmailVerification): RecipeInterface {
     return {
-        verifyEmail: async function (input: { token: string; config: NormalisedConfig; userContext: any }): Promise<{
+        verifyEmail: async function (input: { config: NormalisedConfig; userContext: any }): Promise<{
             status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
             fetchResponse: Response;
         }> {
             const response = await webJsImplementation.recipeImplementation.verifyEmail({
-                token: input.token,
                 config: webJsImplementation.config,
                 userContext: input.userContext,
             });
@@ -51,6 +50,13 @@ export default function getRecipeImplementation(webJsImplementation: WebJSEmailV
             });
 
             return response;
+        },
+
+        getEmailVerificationTokenFromURL: function (input) {
+            return webJsImplementation.recipeImplementation.getEmailVerificationTokenFromURL({
+                config: webJsImplementation.config,
+                userContext: input.userContext,
+            });
         },
     };
 }

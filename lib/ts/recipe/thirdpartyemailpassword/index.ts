@@ -41,14 +41,13 @@ export default class Wrapper {
         );
     }
 
-    static async verifyEmail(input: { token: string; userContext?: any }): Promise<{
+    static async verifyEmail(input: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }> {
         const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
 
         return recipeInstance.emailVerification.recipeImpl.verifyEmail({
-            token: input.token,
             config: recipeInstance.emailVerification.config,
             userContext: getNormalisedUserContext(input.userContext),
         });

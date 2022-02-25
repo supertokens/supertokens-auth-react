@@ -64,6 +64,7 @@ export type ComponentOverrideMap = {
 export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
+    // TODO NEMI: Allow overriding of web-js functions that read from query
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
@@ -474,7 +475,6 @@ export type RecipeInterface = {
             id: string;
             value: string;
         }[];
-        token: string;
         config: NormalisedConfig;
         userContext: any;
     }) => Promise<
@@ -569,4 +569,6 @@ export type RecipeInterface = {
         doesExist: boolean;
         fetchResponse: Response;
     }>;
+
+    getSubmitPasswordTokenFromURL: (input: { config: NormalisedConfig; userContext: any }) => string;
 };

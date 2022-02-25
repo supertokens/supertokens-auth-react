@@ -17,6 +17,7 @@ import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
 import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import OverrideableBuilder from "supertokens-js-override";
+import { StateObject as WebJsStateObject } from "supertokens-web-js/recipe/thirdparty";
 export declare type ComponentOverrideMap = {
     ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
     ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
@@ -91,31 +92,20 @@ export declare type SignInAndUpThemeProps = {
 export declare type ThirdPartySignInAndUpState = {
     error?: string;
 };
-export declare type StateObject = {
-    stateForAuthProvider?: string;
+export declare type StateObject = WebJsStateObject & {
     rid?: string;
-    thirdPartyId?: string;
-    redirectToPath?: string;
 };
 export declare type RecipeInterface = {
-    getStateAndOtherInfoFromStorage: <CustomStateProperties>(input: {
-        userContext: any;
-        config: NormalisedConfig;
-    }) => (StateObject & CustomStateProperties) | undefined;
-    setStateAndOtherInfoToStorage: <CustomStateProperties>(input: {
-        state: StateObject & CustomStateProperties;
-        config: NormalisedConfig;
-        userContext: any;
-    }) => void;
+    getStateAndOtherInfoFromStorage: (input: { userContext: any; config: NormalisedConfig }) => StateObject | undefined;
+    setStateAndOtherInfoToStorage: (input: { state: StateObject; config: NormalisedConfig; userContext: any }) => void;
     redirectToThirdPartyLogin: (input: {
         thirdPartyId: string;
         config: NormalisedConfig;
-        state?: StateObject;
         userContext: any;
     }) => Promise<{
         status: "OK" | "ERROR";
     }>;
-    getOAuthAuthorisationURLFromBackend: (input: {
+    getAuthorisationURLFromBackend: (input: {
         thirdPartyId: string;
         config: NormalisedConfig;
         userContext: any;
@@ -124,12 +114,7 @@ export declare type RecipeInterface = {
         url: string;
         fetchResponse: Response;
     }>;
-    signInAndUp: (input: {
-        thirdPartyId: string;
-        config: NormalisedConfig;
-        userContext: any;
-        authCode?: string;
-    }) => Promise<
+    signInAndUp: (input: { config: NormalisedConfig; userContext: any }) => Promise<
         | {
               status: "OK";
               user: User;
@@ -142,10 +127,12 @@ export declare type RecipeInterface = {
           }
     >;
     generateStateToSendToOAuthProvider: (input: { userContext: any; config: NormalisedConfig }) => string;
-    verifyStateFromOAuthProvider: (input: {
-        stateFromProvider: string | undefined;
-        stateFromStorage: string | undefined;
+    verifyAndGetStateOrThrowError: (input: {
+        stateFromAuthProvider: string | undefined;
+        stateObjectFromStorage: StateObject | undefined;
         config: NormalisedConfig;
         userContext: any;
-    }) => boolean;
+    }) => Promise<StateObject>;
+    getAuthCodeFromURL: (input: { config: NormalisedConfig; userContext: any }) => string;
+    getAuthErrorFromURL: (input: { config: NormalisedConfig; userContext: any }) => string | undefined;
 };

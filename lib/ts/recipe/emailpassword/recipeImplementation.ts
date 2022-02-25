@@ -9,7 +9,6 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
                 id: string;
                 value: string;
             }[];
-            token: string;
             config: NormalisedConfig;
             userContext: any;
         }): Promise<
@@ -29,7 +28,6 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
             const response = await webJsRecipe.recipeImplementation.submitNewPassword({
                 config: webJsRecipe.config,
                 formFields: [input.formFields[0]],
-                token: input.token,
                 userContext: input.userContext,
             });
 
@@ -164,6 +162,13 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
             return await webJsRecipe.recipeImplementation.doesEmailExist({
                 config: webJsRecipe.config,
                 email: input.email,
+                userContext: input.userContext,
+            });
+        },
+
+        getSubmitPasswordTokenFromURL: function (input): string {
+            return webJsRecipe.recipeImplementation.getResetPasswordTokenFromURL({
+                config: webJsRecipe.config,
                 userContext: input.userContext,
             });
         },

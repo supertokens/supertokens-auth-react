@@ -3,12 +3,14 @@ import { RecipeInterface as TPEPRecipeInterface } from "..";
 
 export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
     return {
-        getOAuthAuthorisationURLFromBackend: oI.getOAuthAuthorisationURLFromBackend.bind(oI),
+        getAuthorisationURLFromBackend: oI.getAuthorisationURLFromBackend.bind(oI),
         getStateAndOtherInfoFromStorage: oI.getStateAndOtherInfoFromStorage.bind(oI),
         redirectToThirdPartyLogin: oI.redirectToThirdPartyLogin.bind(oI),
         setStateAndOtherInfoToStorage: oI.setStateAndOtherInfoToStorage.bind(oI),
         generateStateToSendToOAuthProvider: oI.generateStateToSendToOAuthProvider.bind(oI),
-        verifyStateFromOAuthProvider: oI.verifyStateFromOAuthProvider.bind(oI),
+        verifyAndGetStateOrThrowError: oI.verifyAndGetStateOrThrowError.bind(oI),
+        getAuthCodeFromURL: oI.getAuthCodeFromURL.bind(oI),
+        getAuthErrorFromURL: oI.getAuthErrorFromURL.bind(oI),
         signInAndUp: async function (input) {
             const response = await oI.signInAndUp({
                 type: "thirdparty",

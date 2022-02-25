@@ -18,8 +18,8 @@ import {
 } from "../thirdparty";
 import {
     NormalisedConfig as TPConfig,
-    StateObject,
     PreAndPostAPIHookContext as ThirdPartyPreAndPostAPIHookAction,
+    StateObject,
 } from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
@@ -110,8 +110,6 @@ export declare type SignInAndUpInput =
       }
     | {
           type: "thirdparty";
-          thirdPartyId: string;
-          authCode?: string;
           config: TPConfig;
           userContext: any;
       };
@@ -148,7 +146,6 @@ export declare type RecipeInterface = {
             id: string;
             value: string;
         }[];
-        token: string;
         config: EPConfig;
         userContext: any;
     }) => Promise<
@@ -191,38 +188,25 @@ export declare type RecipeInterface = {
         doesExist: boolean;
         fetchResponse: Response;
     }>;
-    getOAuthAuthorisationURLFromBackend: (input: {
-        thirdPartyId: string;
-        config: TPConfig;
-        userContext: any;
-    }) => Promise<{
+    getSubmitPasswordTokenFromURL: (input: { config: EPConfig; userContext: any }) => string;
+    getAuthorisationURLFromBackend: (input: { thirdPartyId: string; config: TPConfig; userContext: any }) => Promise<{
         status: "OK";
         url: string;
         fetchResponse: Response;
     }>;
     signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
-    getStateAndOtherInfoFromStorage: <CustomStateProperties>(input: {
-        userContext: any;
-        config: TPConfig;
-    }) => (StateObject & CustomStateProperties) | undefined;
-    setStateAndOtherInfoToStorage: <CustomStateProperties>(input: {
-        state: StateObject & CustomStateProperties;
-        config: TPConfig;
-        userContext: any;
-    }) => void;
-    redirectToThirdPartyLogin: (input: {
-        thirdPartyId: string;
-        config: TPConfig;
-        state?: StateObject;
-        userContext: any;
-    }) => Promise<{
+    getStateAndOtherInfoFromStorage: (input: { userContext: any; config: TPConfig }) => StateObject | undefined;
+    setStateAndOtherInfoToStorage: (input: { state: StateObject; config: TPConfig; userContext: any }) => void;
+    redirectToThirdPartyLogin: (input: { thirdPartyId: string; config: TPConfig; userContext: any }) => Promise<{
         status: "OK" | "ERROR";
     }>;
     generateStateToSendToOAuthProvider: (input: { userContext: any; config: TPConfig }) => string;
-    verifyStateFromOAuthProvider: (input: {
-        stateFromProvider: string | undefined;
-        stateFromStorage: string | undefined;
+    verifyAndGetStateOrThrowError: (input: {
+        stateFromAuthProvider: string | undefined;
+        stateObjectFromStorage: StateObject | undefined;
         config: TPConfig;
         userContext: any;
-    }) => boolean;
+    }) => Promise<StateObject>;
+    getAuthCodeFromURL: (input: { config: TPConfig; userContext: any }) => string;
+    getAuthErrorFromURL: (input: { config: TPConfig; userContext: any }) => string | undefined;
 };

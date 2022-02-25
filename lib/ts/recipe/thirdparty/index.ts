@@ -28,6 +28,7 @@ import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import { getNormalisedUserContext } from "../../utils";
+import { User } from "../authRecipeWithEmailVerification/types";
 
 export default class Wrapper {
     /*
@@ -52,14 +53,13 @@ export default class Wrapper {
         );
     }
 
-    static async verifyEmail(input: { token: string; userContext?: any }): Promise<{
+    static async verifyEmail(input: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }> {
         const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
 
         return recipeInstance.emailVerification.recipeImpl.verifyEmail({
-            token: input.token,
             config: recipeInstance.emailVerification.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
@@ -97,6 +97,39 @@ export default class Wrapper {
         }
     }
 
+    static redirectToThirdPartyLogin(input: {
+        thirdPartyId: string;
+        userContext?: any;
+    }): Promise<{ status: "OK" | "ERROR" }> {
+        const recipeInstance = ThirdParty.getInstanceOrThrow();
+
+        return recipeInstance.recipeImpl.redirectToThirdPartyLogin({
+            thirdPartyId: input.thirdPartyId,
+            config: recipeInstance.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static signInAndUp(input?: { userContext?: any }): Promise<
+        | {
+              status: "OK";
+              user: User;
+              createdNewUser: boolean;
+              fetchResponse: Response;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
+          }
+    > {
+        const recipeInstance = ThirdParty.getInstanceOrThrow();
+
+        return recipeInstance.recipeImpl.signInAndUp({
+            config: recipeInstance.config,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
     /*
      * Providers
      */
@@ -117,6 +150,8 @@ const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
 const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
+const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
+const signInAndUp = Wrapper.signInAndUp;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const EmailVerification = Wrapper.EmailVerification;
@@ -131,12 +166,15 @@ export {
     isEmailVerified,
     verifyEmail,
     sendVerificationEmail,
+    signInAndUp,
+    redirectToThirdPartyLogin,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
     redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
+    User,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

@@ -328,6 +328,9 @@ function getEmailPasswordConfigs() {
                         verifyEmail: (input) => {
                             return oI.verifyEmail(input);
                         },
+                        getEmailVerificationTokenFromURL: (input) => {
+                            return oI.getEmailVerificationTokenFromURL(input);
+                        },
                     };
                 },
                 components: {

@@ -47,7 +47,6 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
                 // TODO NEMI: handle user context for pre built UI
                 const response = await props.recipeImplementation.verifyEmail({
                     config: props.config,
-                    token: props.token,
                     userContext: {},
                 });
                 if (abortController.signal.aborted) {

@@ -5,6 +5,7 @@ export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
     return {
         doesEmailExist: oI.doesEmailExist.bind(oI),
         sendPasswordResetEmail: oI.sendPasswordResetEmail.bind(oI),
+        getSubmitPasswordTokenFromURL: oI.getSubmitPasswordTokenFromURL.bind(oI),
         signIn: async function (input) {
             const response = await oI.signInAndUp({
                 type: "emailpassword",

@@ -48,7 +48,6 @@ export default class Wrapper {
         const recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
 
         return recipeInstance.recipeImpl.verifyEmail({
-            token: input.token,
             config: recipeInstance.config,
             userContext: getNormalisedUserContext(input.userContext),
         });

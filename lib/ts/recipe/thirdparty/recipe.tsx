@@ -100,7 +100,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
         );
 
         {
-            const builder = new OverrideableBuilder(RecipeImplementation(this.webJsRecipe));
+            const builder = new OverrideableBuilder(RecipeImplementation(this.webJsRecipe, this.config.recipeId));
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
     }

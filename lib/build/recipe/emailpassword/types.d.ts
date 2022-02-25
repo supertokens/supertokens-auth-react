@@ -255,7 +255,6 @@ export declare type RecipeInterface = {
             id: string;
             value: string;
         }[];
-        token: string;
         config: NormalisedConfig;
         userContext: any;
     }) => Promise<
@@ -346,5 +345,6 @@ export declare type RecipeInterface = {
         doesExist: boolean;
         fetchResponse: Response;
     }>;
+    getSubmitPasswordTokenFromURL: (input: { config: NormalisedConfig; userContext: any }) => string;
 };
 export {};
