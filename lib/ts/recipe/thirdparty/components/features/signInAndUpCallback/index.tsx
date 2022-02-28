@@ -61,7 +61,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                     config: this.props.recipe.config,
                     userContext: {},
                 });
-                const redirectToPath = stateResponse === undefined ? undefined : stateResponse.authorisationURL;
+                const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
                 if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
                     let isEmailVerified = true;
