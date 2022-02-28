@@ -60,7 +60,7 @@ export default class Wrapper {
         const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
 
         return recipeInstance.emailVerification.recipeImpl.verifyEmail({
-            config: recipeInstance.emailVerification.config,
+            config: recipeInstance.emailVerification.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -72,7 +72,7 @@ export default class Wrapper {
         const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
 
         return recipeInstance.emailVerification.recipeImpl.sendVerificationEmail({
-            config: recipeInstance.emailVerification.config,
+            config: recipeInstance.emailVerification.webJsRecipe.config,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }

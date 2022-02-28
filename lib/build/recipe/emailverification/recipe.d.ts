@@ -6,11 +6,11 @@ import {
     GetRedirectionURLContext,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
     PreAndPostAPIHookAction,
 } from "./types";
 import { CreateRecipeFunction } from "../../types";
 import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,

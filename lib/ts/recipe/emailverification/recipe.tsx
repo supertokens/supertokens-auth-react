@@ -26,7 +26,6 @@ import {
     GetRedirectionURLContext,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
     PreAndPostAPIHookAction,
 } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
@@ -38,8 +37,8 @@ import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
-import OverrideableBuilder from "supertokens-js-override";
 import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -62,10 +61,19 @@ export default class EmailVerification extends RecipeModule<
                 recipeId: config.recipeId,
                 preAPIHook: config.preAPIHook,
                 postAPIHook: config.postAPIHook,
+                override: {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    functions: (_, builder) => {
+                        builder = builder.override((oI) => RecipeImplementation(oI, this.config));
+                        if (this.config.override.functions !== undefined) {
+                            builder = builder.override(this.config.override.functions);
+                        }
+                        return builder.build();
+                    },
+                },
             });
 
-            const builder = new OverrideableBuilder(RecipeImplementation(this.webJsRecipe));
-            this.recipeImpl = builder.override(this.config.override.functions).build();
+            this.recipeImpl = this.webJsRecipe.recipeImplementation;
         }
     }
 
@@ -127,7 +135,7 @@ export default class EmailVerification extends RecipeModule<
         fetchResponse: Response;
     }> {
         return await this.recipeImpl.isEmailVerified({
-            config: this.config,
+            config: this.webJsRecipe.config,
             userContext,
         });
     }

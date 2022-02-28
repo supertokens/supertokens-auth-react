@@ -20,7 +20,6 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import { RecipeInterface } from "../../../types";
 import { getQueryParams } from "../../../../../utils";
 import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
@@ -29,6 +28,7 @@ import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { SessionContextType, SessionContext } from "../../../../session";
 import { defaultTranslationsEmailVerification } from "../../themes/translations";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 type Prop = FeatureBaseProps & { recipe: Recipe };
 
@@ -88,7 +88,7 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
             // TODO NEMI: handle user context for pre built UI
             const isVerified: boolean = (
                 await this.props.recipe.recipeImpl.isEmailVerified({
-                    config: this.props.recipe.config,
+                    config: this.props.recipe.webJsRecipe.config,
                     userContext: {},
                 })
             ).isVerified;
@@ -115,6 +115,7 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
         const sendVerifyEmailScreenFeature = this.props.recipe.config.sendVerifyEmailScreen;
 
         const sendVerifyEmailScreen = {
+            recipe: this.props.recipe,
             styleFromInit: sendVerifyEmailScreenFeature.style,
             recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
@@ -134,9 +135,11 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
                       recipeImplementation: this.modifiedRecipeImplementation,
                       config: this.props.recipe.config,
                       token: this.state.token,
+                      recipe: this.props.recipe,
                   };
 
         const props = {
+            recipe: this.props.recipe,
             config: this.props.recipe.config,
             sendVerifyEmailScreen: sendVerifyEmailScreen,
             verifyEmailLinkClickedScreen,

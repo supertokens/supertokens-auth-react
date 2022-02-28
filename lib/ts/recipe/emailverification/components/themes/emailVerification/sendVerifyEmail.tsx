@@ -37,7 +37,7 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
         try {
             // TODO NEMI: handle user context for pre built UI
             const response = await props.recipeImplementation.sendVerificationEmail({
-                config: props.config,
+                config: props.recipe.webJsRecipe.config,
                 userContext: {},
             });
 
@@ -57,7 +57,7 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
             // we send an email on load...
             // TODO NEMI: handle user context for pre built UI
             const response = await props.recipeImplementation.sendVerificationEmail({
-                config: props.config,
+                config: props.recipe.webJsRecipe.config,
                 userContext: {},
             });
             if (abort.signal.aborted) {

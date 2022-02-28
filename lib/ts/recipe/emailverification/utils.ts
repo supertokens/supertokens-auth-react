@@ -14,7 +14,7 @@
  */
 
 import { NormalisedBaseConfig } from "../../types";
-import { Config, NormalisedConfig, RecipeInterface } from "./types";
+import { Config, NormalisedConfig } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
 export function normaliseEmailVerificationFeature(config: Config): NormalisedConfig {
@@ -40,7 +40,6 @@ export function normaliseEmailVerificationFeature(config: Config): NormalisedCon
     };
 
     const override: any = {
-        functions: (originalImplementation: RecipeInterface) => originalImplementation,
         components: {},
         ...config.override,
     };

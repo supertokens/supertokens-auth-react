@@ -19,8 +19,9 @@
 import { UserInput } from "./types";
 import EmailVerificationRecipe from "./recipe";
 import EmailVerificationTheme from "./components/themes/emailVerification";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { getNormalisedUserContext } from "../../utils";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export default class Wrapper {
     static EmailVerification = (prop?: any) =>
@@ -48,7 +49,7 @@ export default class Wrapper {
         const recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
 
         return recipeInstance.recipeImpl.verifyEmail({
-            config: recipeInstance.config,
+            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -60,7 +61,7 @@ export default class Wrapper {
         const recipeInstance: EmailVerificationRecipe = EmailVerificationRecipe.getInstanceOrThrow();
 
         return recipeInstance.recipeImpl.sendVerificationEmail({
-            config: recipeInstance.config,
+            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }

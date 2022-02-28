@@ -1,7 +1,8 @@
 /// <reference types="react" />
 import { UserInput } from "./types";
 import EmailVerificationTheme from "./components/themes/emailVerification";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 export default class Wrapper {
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
@@ -9,7 +10,7 @@ export default class Wrapper {
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
         GetRedirectionURLContext,
-        import("./types").PreAndPostAPIHookAction,
+        import("supertokens-web-js/lib/build/recipe/emailverification/types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
