@@ -1,6 +1,6 @@
 import { RecipeInterface, NormalisedConfig, StateObject } from "./types";
 import { User } from "../authRecipeWithEmailVerification/types";
-import { redirectWithFullPageReload } from "../../utils";
+import { getRedirectToPathFromURL, redirectWithFullPageReload } from "../../utils";
 import WebJSThirdPartyRecipe from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
 
 export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyRecipe, recipeId: string): RecipeInterface {
@@ -56,6 +56,7 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
         }): StateObject | undefined {
             return webJsRecipe.recipeImplementation.getStateAndOtherInfoFromStorage<{
                 rid?: string;
+                redirectToPath?: string;
             }>({
                 config: webJsRecipe.config,
                 userContext: input.userContext,
@@ -69,11 +70,13 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
         }): void {
             return webJsRecipe.recipeImplementation.setStateAndOtherInfoToStorage<{
                 rid?: string;
+                redirectToPath?: string;
             }>({
                 config: webJsRecipe.config,
                 state: {
                     ...input.state,
                     rid: recipeId,
+                    redirectToPath: getRedirectToPathFromURL(),
                 },
                 userContext: input.userContext,
             });

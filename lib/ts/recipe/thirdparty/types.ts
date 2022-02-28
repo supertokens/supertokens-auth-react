@@ -150,6 +150,7 @@ export type ThirdPartySignInAndUpState = {
 
 export type StateObject = WebJsStateObject & {
     rid?: string;
+    redirectToPath?: string;
 };
 
 export type RecipeInterface = {

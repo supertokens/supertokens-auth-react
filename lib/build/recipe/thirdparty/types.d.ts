@@ -94,6 +94,7 @@ export declare type ThirdPartySignInAndUpState = {
 };
 export declare type StateObject = WebJsStateObject & {
     rid?: string;
+    redirectToPath?: string;
 };
 export declare type RecipeInterface = {
     getStateAndOtherInfoFromStorage: (input: { userContext: any; config: NormalisedConfig }) => StateObject | undefined;

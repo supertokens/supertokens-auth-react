@@ -674,21 +674,21 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
                 const log = logWithPrefix(`ST_LOGS THIRD_PARTY OVERRIDE`);
 
                 return {
-                    getOAuthAuthorisationURL(...args) {
+                    getAuthorisationURLFromBackend(...args) {
                         log(`GET_OAUTH_AUTHORISATION_URL`);
-                        return implementation.getOAuthAuthorisationURL(...args);
+                        return implementation.getAuthorisationURLFromBackend(...args);
                     },
-                    getOAuthState(...args) {
+                    getStateAndOtherInfoFromStorage(...args) {
                         log(`GET_OAUTH_STATE`);
-                        return implementation.getOAuthState(...args);
+                        return implementation.getStateAndOtherInfoFromStorage(...args);
                     },
                     redirectToThirdPartyLogin(...args) {
                         log(`REDIRECT_TO_THIRD_PARTY_LOGIN`);
                         return implementation.redirectToThirdPartyLogin(...args);
                     },
-                    setOAuthState(...args) {
+                    setStateAndOtherInfoToStorage(...args) {
                         log(`SET_OAUTH_STATE`);
-                        return implementation.setOAuthState(...args);
+                        return implementation.setStateAndOtherInfoToStorage(...args);
                     },
                     signInAndUp(...args) {
                         log(`SIGN_IN_AND_UP`);
@@ -774,21 +774,21 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
                         log(`SIGN_IN_AND_UP`);
                         return implementation.signInAndUp(...args);
                     },
-                    setOAuthState(...args) {
+                    setStateAndOtherInfoToStorage(...args) {
                         log(`SET_OAUTH_STATE`);
-                        return implementation.setOAuthState(...args);
+                        return implementation.setStateAndOtherInfoToStorage(...args);
                     },
                     redirectToThirdPartyLogin(...args) {
                         log(`REDIRECT_TO_THIRD_PARTY_LOGIN`);
                         return implementation.redirectToThirdPartyLogin(...args);
                     },
-                    getOAuthState(...args) {
+                    getStateAndOtherInfoFromStorage(...args) {
                         log(`GET_OAUTH_STATE`);
-                        return implementation.getOAuthState(...args);
+                        return implementation.getStateAndOtherInfoFromStorage(...args);
                     },
-                    getOAuthAuthorisationURL(...args) {
+                    getAuthorisationURLFromBackend(...args) {
                         log(`GET_OAUTH_AUTHORISATION_URL`);
-                        return implementation.getOAuthAuthorisationURL(...args);
+                        return implementation.getAuthorisationURLFromBackend(...args);
                     },
                     submitNewPassword(...args) {
                         log(`SUBMIT_NEW_PASSWORD`);
