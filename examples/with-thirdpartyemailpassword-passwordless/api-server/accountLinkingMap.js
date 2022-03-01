@@ -30,6 +30,15 @@ function updateAndGetPrimaryUserFromSuperTokensUser(user) {
     let id = user.id;
     let timeJoined = user.timeJoined;
 
+    if (email === undefined) {
+        // this is a passwordless user who used phone number to sign up
+        // so we just return their info as is.
+        return {
+            id,
+            timeJoined,
+        };
+    }
+
     if (emailToPrimaryUserMap[email] === undefined) {
         // this means this is a new supertokens user
         let primaryUserID = getNewPrimaryUserId();
@@ -52,6 +61,9 @@ function getSuperTokensIdFromPrimaryId(primaryId) {
             return stId;
         }
     }
+
+    // the execution can come here if the user used phone number sign up via passwordless
+    return primaryId;
 }
 
 // this generates new userIds.
