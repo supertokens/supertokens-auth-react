@@ -1,17 +1,14 @@
 let {
-    getPrimaryUserUsingEmail,
-    updateAndGetPrimaryUserFromSuperTokensUser,
     getSuperTokensIdFromPrimaryId,
+    createPrimaryUserFromSuperTokensUser,
+    getPrimaryUserFromSuperTokensId,
 } = require("./accountLinkingMap");
 
 const tpepOverride = (ogImpl) => {
     return {
         ...ogImpl,
 
-        // this will be called for sign in or sign up for OAuth login providers
         thirdPartySignInUp: async function (input) {
-            // first we let the user sign in / up via the default implementation.
-            // If signing up, this will create a new user object in SuperTokens with a new userId.
             let result = await ogImpl.thirdPartySignInUp(input);
 
             // if there was some error, we return that as is.
@@ -19,35 +16,31 @@ const tpepOverride = (ogImpl) => {
                 return result;
             }
 
-            const email = result.user.email;
+            let createdNewUser = createPrimaryUserFromSuperTokensUser(result.user);
 
-            // If this is sign up, and if the emailToPrimaryUserMap map already contains the email, it means that this user had previously signed up with another method so we will return the user object associated with the previous sign up. Hence createdNewUser would be false.
             return {
                 ...result,
-                createdNewUser: getPrimaryUserUsingEmail(email) === undefined,
+                createdNewUser,
                 user: {
                     ...result.user,
-                    ...updateAndGetPrimaryUserFromSuperTokensUser(result.user),
+                    ...getPrimaryUserFromSuperTokensId(result.user.id),
                 },
             };
         },
 
-        // this will be called for sign up via email & password
         emailPasswordSignUp: async function (input) {
             let result = await ogImpl.emailPasswordSignUp(input);
             if (result.status !== "OK") {
                 return result;
             }
 
-            // we modify the returned user object to have the same user
-            // associated with the email from previous sign ups. If this
-            // is the first time this email is being used, then we return this
-            // user object and store it in the map for future sign ups / ins.
+            createPrimaryUserFromSuperTokensUser(result.user);
+
             return {
                 ...result,
                 user: {
                     ...result.user,
-                    ...updateAndGetPrimaryUserFromSuperTokensUser(result.user),
+                    ...getPrimaryUserFromSuperTokensId(result.user.id),
                 },
             };
         },
@@ -59,15 +52,13 @@ const tpepOverride = (ogImpl) => {
                 return result;
             }
 
-            // we modify the returned user object to have the same user
-            // associated with the email from previous sign ups. Note that
-            // this user object could have been created from email password sign up
-            // or from OAuth provider sign up.
+            createPrimaryUserFromSuperTokensUser(result.user);
+
             return {
                 ...result,
                 user: {
                     ...result.user,
-                    ...updateAndGetPrimaryUserFromSuperTokensUser(result.user),
+                    ...getPrimaryUserFromSuperTokensId(result.user.id),
                 },
             };
         },
@@ -85,10 +76,10 @@ const tpepOverride = (ogImpl) => {
             }
 
             // once we have the supertokens' user object from the function call above,
-            // we need to fetch the associated mapped (primary) user object.
+            // we need to fetch the associated primary user object.
             return {
                 ...user,
-                ...updateAndGetPrimaryUserFromSuperTokensUser(user),
+                ...getPrimaryUserFromSuperTokensId(user.id),
             };
         },
         getUserByThirdPartyInfo: async function (input) {
@@ -97,11 +88,9 @@ const tpepOverride = (ogImpl) => {
                 return undefined;
             }
 
-            // once we have the supertokens' user object from the function call above,
-            // we need to fetch the associated mapped (primary) user object.
             return {
                 ...user,
-                ...updateAndGetPrimaryUserFromSuperTokensUser(user),
+                ...getPrimaryUserFromSuperTokensId(user.id),
             };
         },
         getUserByEmail: async function (input) {
@@ -110,11 +99,9 @@ const tpepOverride = (ogImpl) => {
                 return undefined;
             }
 
-            // once we have the supertokens' user object from the function call above,
-            // we need to fetch the associated mapped (primary) user object.
             return {
                 ...user,
-                ...updateAndGetPrimaryUserFromSuperTokensUser(user),
+                ...getPrimaryUserFromSuperTokensId(user.id),
             };
         },
         updateEmailOrPassword: async function (input) {

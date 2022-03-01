@@ -2,68 +2,75 @@
  * email ID => {primary user ID, time joined}
  * primary key (email ID)
  *
- * This will map an email ID to a userID. That userID will then be used
+ * This will map an email ID to a primary user. That primary user will then be used
  * for all users that have the same email, regardless of which login method they used.
  */
 let emailToPrimaryUserMap = {};
 
 /**
- * supertokens user ID => primary user ID
- * primary key (supertokens user ID, primary user ID)
- *
- * Several supertokens user ID can map to the same primary user ID.
+ * supertokens user ID => {primary user ID, time joined}
+ * primary key (supertokens user ID)
  */
 
-let superTokensUserIdToPrimaryUserId = {};
-
-function getPrimaryUserUsingEmail(email) {
-    return emailToPrimaryUserMap[email];
-}
+let superTokensUserIdToPrimaryUserMap = {};
 
 /**
  * This function takes a supertokens thirdpartyemailpassword or passwordless user
- * and returns the associated primary user from the maps above. If the primary user
- * doesn't exist for the email, if will create a new primary user.
+ * and creates a new primary user if it doesn't already exist for the given user ID.
+ *
+ * If the email of the supertokens user was already used before,
+ * then we do not create a new primary user, but just associate the old primary
+ * user with this new supertokens user.
+ *
  */
-function updateAndGetPrimaryUserFromSuperTokensUser(user) {
+function createPrimaryUserFromSuperTokensUser(user) {
+    let primaryUser = getPrimaryUserFromSuperTokensId(user.id);
+    if (primaryUser !== undefined) {
+        return false;
+    }
+
+    let primaryUserID = undefined;
     let email = user.email;
     let id = user.id;
     let timeJoined = user.timeJoined;
+    let createdNewUser = false;
 
-    if (email === undefined) {
-        // this is a passwordless user who used phone number to sign up
-        // so we just return their info as is.
-        return {
-            id,
-            timeJoined,
-        };
+    if (email !== undefined) {
+        if (emailToPrimaryUserMap[email] === undefined) {
+            // this email has never been seen before, so we create a
+            // new primary user that will be associated with this email.
+            primaryUserID = getNewPrimaryUserId();
+            createdNewUser = true;
+            // this is a new email ID
+            emailToPrimaryUserMap[email] = {
+                id: primaryUserID,
+                timeJoined,
+            };
+        } else {
+            // this email was already used to sign up from another method,
+            // so we do not create a new primary user.
+            primaryUserID = emailToPrimaryUserMap[email].id;
+            timeJoined = emailToPrimaryUserMap[email].timeJoined;
+        }
+    } else {
+        // this is passwordless sign in via phone number
+        primaryUserID = getNewPrimaryUserId();
+        createdNewUser = true;
     }
-
-    if (emailToPrimaryUserMap[email] === undefined) {
-        // this means this is a new supertokens user
-        let primaryUserID = getNewPrimaryUserId();
-        emailToPrimaryUserMap[email] = {
-            id: primaryUserID,
-            timeJoined,
-        };
-        superTokensUserIdToPrimaryUserId[id] = primaryUserID;
-    }
-    return emailToPrimaryUserMap[email];
+    superTokensUserIdToPrimaryUserMap[id] = { id: primaryUserID, timeJoined };
+    return createdNewUser;
 }
 
 function getSuperTokensIdFromPrimaryId(primaryId) {
-    /**
-     * Since many supertokens ID can map to a single primary ID, we must get the first one always
-     */
-
-    for (const stId in superTokensUserIdToPrimaryUserId) {
-        if (superTokensUserIdToPrimaryUserId[stId] === primaryId) {
+    for (const stId in superTokensUserIdToPrimaryUserMap) {
+        if (superTokensUserIdToPrimaryUserMap[stId].id === primaryId) {
             return stId;
         }
     }
+}
 
-    // the execution can come here if the user used phone number sign up via passwordless
-    return primaryId;
+function getPrimaryUserFromSuperTokensId(stId) {
+    return superTokensUserIdToPrimaryUserMap[stId];
 }
 
 // this generates new userIds.
@@ -79,6 +86,6 @@ let userCount = 0;
 
 module.exports = {
     getSuperTokensIdFromPrimaryId,
-    updateAndGetPrimaryUserFromSuperTokensUser,
-    getPrimaryUserUsingEmail,
+    createPrimaryUserFromSuperTokensUser,
+    getPrimaryUserFromSuperTokensId,
 };

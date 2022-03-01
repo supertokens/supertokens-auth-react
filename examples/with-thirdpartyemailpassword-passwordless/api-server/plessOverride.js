@@ -1,7 +1,7 @@
 let {
-    getPrimaryUserUsingEmail,
-    updateAndGetPrimaryUserFromSuperTokensUser,
+    createPrimaryUserFromSuperTokensUser,
     getSuperTokensIdFromPrimaryId,
+    getPrimaryUserFromSuperTokensId,
 } = require("./accountLinkingMap");
 
 const plessOverride = (ogImpl) => {
@@ -14,18 +14,14 @@ const plessOverride = (ogImpl) => {
                 return result;
             }
 
-            const email = result.user.email;
-            if (email === undefined) {
-                // the user used phone number to sign in / up
-            }
+            let createdNewUser = createPrimaryUserFromSuperTokensUser(result.user);
 
-            // If this is sign up, and if the emailToPrimaryUserMap map already contains the email, it means that this user had previously signed up with another method so we will return the user object associated with the previous sign up. Hence createdNewUser would be false.
             return {
                 ...result,
-                createdNewUser: getPrimaryUserUsingEmail(email) === undefined,
+                createdNewUser,
                 user: {
                     ...result.user,
-                    ...updateAndGetPrimaryUserFromSuperTokensUser(result.user),
+                    ...getPrimaryUserFromSuperTokensId(result.user.id),
                 },
             };
         },
@@ -43,10 +39,10 @@ const plessOverride = (ogImpl) => {
             }
 
             // once we have the supertokens' user object from the function call above,
-            // we need to fetch the associated mapped (primary) user object.
+            // we need to fetch the associated primary user object.
             return {
                 ...user,
-                ...updateAndGetPrimaryUserFromSuperTokensUser(user),
+                ...getPrimaryUserFromSuperTokensId(user.id),
             };
         },
         getUserByEmail: async function (input) {
@@ -55,11 +51,9 @@ const plessOverride = (ogImpl) => {
                 return undefined;
             }
 
-            // once we have the supertokens' user object from the function call above,
-            // we need to fetch the associated mapped (primary) user object.
             return {
                 ...user,
-                ...updateAndGetPrimaryUserFromSuperTokensUser(user),
+                ...getPrimaryUserFromSuperTokensId(user.id),
             };
         },
         getUserByPhoneNumber: async function (input) {
@@ -68,11 +62,9 @@ const plessOverride = (ogImpl) => {
                 return undefined;
             }
 
-            // once we have the supertokens' user object from the function call above,
-            // we need to fetch the associated mapped (primary) user object.
             return {
                 ...user,
-                ...updateAndGetPrimaryUserFromSuperTokensUser(user),
+                ...getPrimaryUserFromSuperTokensId(user.id),
             };
         },
 
