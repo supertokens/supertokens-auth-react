@@ -17,7 +17,7 @@
             }
         },
         {
-            "script": "api-server.js",
+            "script": "api-server/index.js",
             "name": "api-server",
             "exec_mode": "cluster",
             "instances": 1,
