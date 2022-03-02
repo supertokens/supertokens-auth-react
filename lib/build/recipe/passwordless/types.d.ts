@@ -348,15 +348,15 @@ export declare type UserInputCodeFormHeaderProps = {
     config: NormalisedConfig;
 };
 export declare type ComponentOverrideMap = {
-    PasswordlessSignInUpHeader?: ComponentOverride<typeof SignInUpHeader>;
-    PasswordlessSignInUpFooter?: ComponentOverride<typeof SignInUpFooter>;
-    PasswordlessEmailForm?: ComponentOverride<typeof EmailForm>;
-    PasswordlessPhoneForm?: ComponentOverride<typeof PhoneForm>;
-    PasswordlessEmailOrPhoneForm?: ComponentOverride<typeof EmailOrPhoneForm>;
-    PasswordlessUserInputCodeFormHeader?: ComponentOverride<typeof UserInputCodeFormHeader>;
-    PasswordlessUserInputCodeFormFooter?: ComponentOverride<typeof UserInputCodeFormFooter>;
-    PasswordlessUserInputCodeForm?: ComponentOverride<typeof UserInputCodeForm>;
-    PasswordlessLinkSent?: ComponentOverride<typeof LinkSent>;
-    PasswordlessLinkClickedScreen?: ComponentOverride<typeof LinkClickedScreen>;
-    PasswordlessCloseTabScreen?: ComponentOverride<typeof CloseTabScreen>;
+    PasswordlessSignInUpHeader_Override?: ComponentOverride<typeof SignInUpHeader>;
+    PasswordlessSignInUpFooter_Override?: ComponentOverride<typeof SignInUpFooter>;
+    PasswordlessEmailForm_Override?: ComponentOverride<typeof EmailForm>;
+    PasswordlessPhoneForm_Override?: ComponentOverride<typeof PhoneForm>;
+    PasswordlessEmailOrPhoneForm_Override?: ComponentOverride<typeof EmailOrPhoneForm>;
+    PasswordlessUserInputCodeFormHeader_Override?: ComponentOverride<typeof UserInputCodeFormHeader>;
+    PasswordlessUserInputCodeFormFooter_Override?: ComponentOverride<typeof UserInputCodeFormFooter>;
+    PasswordlessUserInputCodeForm_Override?: ComponentOverride<typeof UserInputCodeForm>;
+    PasswordlessLinkSent_Override?: ComponentOverride<typeof LinkSent>;
+    PasswordlessLinkClickedScreen_Override?: ComponentOverride<typeof LinkClickedScreen>;
+    PasswordlessCloseTabScreen_Override?: ComponentOverride<typeof CloseTabScreen>;
 };

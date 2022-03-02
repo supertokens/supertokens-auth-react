@@ -34,9 +34,9 @@ import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallbac
 import OverrideableBuilder from "supertokens-js-override";
 
 export type ComponentOverrideMap = {
-    ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
-    ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
-    ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
+    ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
+    ThirdPartySignInAndUpProvidersForm_Override?: ComponentOverride<typeof ProvidersForm>;
+    ThirdPartySignInAndUpCallbackTheme_Override?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
 };
 
 export type UserInput = {

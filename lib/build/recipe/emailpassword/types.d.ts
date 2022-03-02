@@ -32,16 +32,16 @@ import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 import { InputProps } from "./components/library/input";
 export declare type ComponentOverrideMap = {
-    EmailPasswordSignIn?: ComponentOverride<typeof SignIn>;
-    EmailPasswordSignInFooter?: ComponentOverride<typeof SignInFooter>;
-    EmailPasswordSignInForm?: ComponentOverride<typeof SignInForm>;
-    EmailPasswordSignInHeader?: ComponentOverride<typeof SignInHeader>;
-    EmailPasswordSignUp?: ComponentOverride<typeof SignUp>;
-    EmailPasswordSignUpFooter?: ComponentOverride<typeof SignUpFooter>;
-    EmailPasswordSignUpForm?: ComponentOverride<typeof SignUpForm>;
-    EmailPasswordSignUpHeader?: ComponentOverride<typeof SignUpHeader>;
-    EmailPasswordResetPasswordEmail?: ComponentOverride<typeof ResetPasswordEmail>;
-    EmailPasswordSubmitNewPassword?: ComponentOverride<typeof SubmitNewPassword>;
+    EmailPasswordSignIn_Override?: ComponentOverride<typeof SignIn>;
+    EmailPasswordSignInFooter_Override?: ComponentOverride<typeof SignInFooter>;
+    EmailPasswordSignInForm_Override?: ComponentOverride<typeof SignInForm>;
+    EmailPasswordSignInHeader_Override?: ComponentOverride<typeof SignInHeader>;
+    EmailPasswordSignUp_Override?: ComponentOverride<typeof SignUp>;
+    EmailPasswordSignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
+    EmailPasswordSignUpForm_Override?: ComponentOverride<typeof SignUpForm>;
+    EmailPasswordSignUpHeader_Override?: ComponentOverride<typeof SignUpHeader>;
+    EmailPasswordResetPasswordEmail_Override?: ComponentOverride<typeof ResetPasswordEmail>;
+    EmailPasswordSubmitNewPassword_Override?: ComponentOverride<typeof SubmitNewPassword>;
 };
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;

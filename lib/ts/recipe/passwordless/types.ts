@@ -408,18 +408,18 @@ export type UserInputCodeFormHeaderProps = {
 };
 
 export type ComponentOverrideMap = {
-    PasswordlessSignInUpHeader?: ComponentOverride<typeof SignInUpHeader>;
-    PasswordlessSignInUpFooter?: ComponentOverride<typeof SignInUpFooter>;
-    PasswordlessEmailForm?: ComponentOverride<typeof EmailForm>;
-    PasswordlessPhoneForm?: ComponentOverride<typeof PhoneForm>;
-    PasswordlessEmailOrPhoneForm?: ComponentOverride<typeof EmailOrPhoneForm>;
+    PasswordlessSignInUpHeader_Override?: ComponentOverride<typeof SignInUpHeader>;
+    PasswordlessSignInUpFooter_Override?: ComponentOverride<typeof SignInUpFooter>;
+    PasswordlessEmailForm_Override?: ComponentOverride<typeof EmailForm>;
+    PasswordlessPhoneForm_Override?: ComponentOverride<typeof PhoneForm>;
+    PasswordlessEmailOrPhoneForm_Override?: ComponentOverride<typeof EmailOrPhoneForm>;
 
-    PasswordlessUserInputCodeFormHeader?: ComponentOverride<typeof UserInputCodeFormHeader>;
-    PasswordlessUserInputCodeFormFooter?: ComponentOverride<typeof UserInputCodeFormFooter>;
-    PasswordlessUserInputCodeForm?: ComponentOverride<typeof UserInputCodeForm>;
+    PasswordlessUserInputCodeFormHeader_Override?: ComponentOverride<typeof UserInputCodeFormHeader>;
+    PasswordlessUserInputCodeFormFooter_Override?: ComponentOverride<typeof UserInputCodeFormFooter>;
+    PasswordlessUserInputCodeForm_Override?: ComponentOverride<typeof UserInputCodeForm>;
 
-    PasswordlessLinkSent?: ComponentOverride<typeof LinkSent>;
+    PasswordlessLinkSent_Override?: ComponentOverride<typeof LinkSent>;
 
-    PasswordlessLinkClickedScreen?: ComponentOverride<typeof LinkClickedScreen>;
-    PasswordlessCloseTabScreen?: ComponentOverride<typeof CloseTabScreen>;
+    PasswordlessLinkClickedScreen_Override?: ComponentOverride<typeof LinkClickedScreen>;
+    PasswordlessCloseTabScreen_Override?: ComponentOverride<typeof CloseTabScreen>;
 };

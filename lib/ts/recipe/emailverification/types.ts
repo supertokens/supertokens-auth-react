@@ -32,8 +32,8 @@ export type UserInputForAuthRecipeModule = {
 };
 
 export type ComponentOverrideMap = {
-    EmailVerificationSendVerifyEmail?: ComponentOverride<typeof SendVerifyEmail>;
-    EmailVerificationVerifyEmailLinkClicked?: ComponentOverride<typeof VerifyEmailLinkClicked>;
+    EmailVerificationSendVerifyEmail_Override?: ComponentOverride<typeof SendVerifyEmail>;
+    EmailVerificationVerifyEmailLinkClicked_Override?: ComponentOverride<typeof VerifyEmailLinkClicked>;
 };
 
 export type UserInput = UserInputForAuthRecipeModule & {

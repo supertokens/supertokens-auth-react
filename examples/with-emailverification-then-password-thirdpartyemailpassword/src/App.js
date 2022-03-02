@@ -55,14 +55,14 @@ SuperTokens.init({
             },
             override: {
                 components: {
-                    ThirdPartySignInAndUpProvidersForm: ({ DefaultComponent, ...props }) => {
+                    ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => {
                         if (window.location.pathname === "/set-password") {
                             return null;
                         } else {
                             return <DefaultComponent {...props} />;
                         }
                     },
-                    EmailPasswordSignUpForm: CustomSignUp,
+                    EmailPasswordSignUpForm_Override: CustomSignUp,
                 },
             },
             emailVerificationFeature: {

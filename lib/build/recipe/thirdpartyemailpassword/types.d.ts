@@ -44,7 +44,7 @@ import { Header } from "./components/themes/signInAndUp/header";
 import { Dispatch } from "react";
 export declare type ComponentOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap & {
-        ThirdPartyEmailPasswordHeader?: ComponentOverride<typeof Header>;
+        ThirdPartyEmailPasswordHeader_Override?: ComponentOverride<typeof Header>;
     };
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;

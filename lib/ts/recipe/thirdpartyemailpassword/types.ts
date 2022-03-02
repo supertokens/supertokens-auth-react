@@ -64,7 +64,7 @@ import { Dispatch } from "react";
 
 export type ComponentOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap & {
-        ThirdPartyEmailPasswordHeader?: ComponentOverride<typeof Header>;
+        ThirdPartyEmailPasswordHeader_Override?: ComponentOverride<typeof Header>;
     };
 
 export type UserInput = {
