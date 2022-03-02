@@ -27,9 +27,8 @@ import {
     PreAndPostAPIHookContext,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
 } from "./types";
-import { getRedirectToPathFromURL, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
@@ -39,8 +38,8 @@ import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import OverrideableBuilder from "supertokens-js-override";
 import WebJSThirdPartyRecipe from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 /*
  * Class.
@@ -53,7 +52,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
     static instance?: ThirdParty;
     static RECIPE_ID = "thirdparty";
 
-    recipeImpl: RecipeInterface;
+    recipeImpl: WebJSRecipeInterface;
     webJsRecipe: WebJSThirdPartyRecipe;
 
     constructor(
@@ -66,7 +65,6 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
-        const recipeId = this.config.recipeId;
         this.webJsRecipe = new WebJSThirdPartyRecipe(
             {
                 recipeId: config.recipeId,
@@ -74,23 +72,13 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
                 preAPIHook: config.preAPIHook,
                 postAPIHook: config.postAPIHook,
                 override: {
-                    functions: function (originalImplementation) {
-                        return {
-                            ...originalImplementation,
-                            setStateAndOtherInfoToStorage: function (input) {
-                                return originalImplementation.setStateAndOtherInfoToStorage<{
-                                    rid?: string;
-                                    redirectToPath?: string;
-                                }>({
-                                    ...input,
-                                    state: {
-                                        ...input.state,
-                                        rid: recipeId,
-                                        redirectToPath: getRedirectToPathFromURL(),
-                                    },
-                                });
-                            },
-                        };
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    functions: (_, builder) => {
+                        builder = builder.override((oI) => RecipeImplementation(oI, this.config));
+                        if (this.config.override.functions !== undefined) {
+                            builder = builder.override(this.config.override.functions);
+                        }
+                        return builder.build();
                     },
                 },
             },
@@ -99,10 +87,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
             }
         );
 
-        {
-            const builder = new OverrideableBuilder(RecipeImplementation(this.webJsRecipe, this.config.recipeId));
-            this.recipeImpl = builder.override(this.config.override.functions).build();
-        }
+        this.recipeImpl = this.webJsRecipe.recipeImplementation;
     }
 
     /*

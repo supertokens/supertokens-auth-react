@@ -82,7 +82,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                         // TODO NEMI: Handle user context in UI components
                         return await props.recipeImplementation.sendPasswordResetEmail({
                             formFields,
-                            config: props.config,
+                            config: props.recipe.webJsRecipe.config,
                             userContext: {},
                         });
                     }}

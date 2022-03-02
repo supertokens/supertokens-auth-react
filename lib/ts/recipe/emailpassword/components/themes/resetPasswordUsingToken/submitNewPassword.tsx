@@ -104,7 +104,7 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
 
                         const response = await props.recipeImplementation.submitNewPassword({
                             formFields: fields,
-                            config: props.config,
+                            config: props.recipe.webJsRecipe.config,
                             userContext: {},
                         });
                         if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {

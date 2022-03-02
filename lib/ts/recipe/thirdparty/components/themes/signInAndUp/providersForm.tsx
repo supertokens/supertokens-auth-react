@@ -20,6 +20,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import { SignInAndUpThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { redirectToThirdPartyLogin } from "../../../utils";
 
 export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -34,7 +35,8 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
     const signInClick = async (providerId: string): Promise<void> => {
         try {
             // TODO NEMI: handle user context for pre built UI
-            const response = await props.recipeImplementation.redirectToThirdPartyLogin({
+            const response = await redirectToThirdPartyLogin({
+                recipe: props.recipe,
                 thirdPartyId: providerId,
                 config: props.config,
                 userContext: {},

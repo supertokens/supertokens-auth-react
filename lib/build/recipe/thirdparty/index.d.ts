@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import Apple from "./providers/apple";
@@ -8,6 +8,7 @@ import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import { User } from "../authRecipeWithEmailVerification/types";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -39,9 +40,12 @@ export default class Wrapper {
                   redirectBack?: boolean;
               }
     ): Promise<void>;
-    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
-        status: "OK" | "ERROR";
-    }>;
+    static getAuthorizationURLWithQueryParamsAndSetState(input: {
+        providerId: string;
+        authorisationURL: string;
+        userContext: any;
+        providerClientId?: string;
+    }): Promise<string>;
     static signInAndUp(input?: { userContext?: any }): Promise<
         | {
               status: "OK";
@@ -69,7 +73,7 @@ declare const signOut: typeof Wrapper.signOut;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
 declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
-declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
+declare const getAuthorizationURLWithQueryParamsAndSetState: typeof Wrapper.getAuthorizationURLWithQueryParamsAndSetState;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
@@ -85,7 +89,7 @@ export {
     verifyEmail,
     sendVerificationEmail,
     signInAndUp,
-    redirectToThirdPartyLogin,
+    getAuthorizationURLWithQueryParamsAndSetState,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,

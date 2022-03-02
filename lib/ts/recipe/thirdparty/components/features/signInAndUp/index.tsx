@@ -26,7 +26,7 @@ import { defaultPalette } from "../../../../../styles/styles";
 import { FeatureBaseProps } from "../../../../../types";
 import { getQueryParams } from "../../../../../utils";
 import { getStyles } from "../../../components/themes/styles";
-import { ThirdPartySignInAndUpState, RecipeInterface } from "../../../types";
+import { ThirdPartySignInAndUpState } from "../../../types";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
@@ -64,13 +64,6 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         return false;
     };
 
-    modifiedRecipeImplementation: RecipeInterface = {
-        ...this.props.recipe.recipeImpl,
-        redirectToThirdPartyLogin: (input) => {
-            return this.props.recipe.recipeImpl.redirectToThirdPartyLogin(input);
-        },
-    };
-
     render = (): JSX.Element => {
         const componentOverrides = this.props.recipe.config.override.components;
 
@@ -84,7 +77,7 @@ class SignInAndUp extends PureComponent<PropType, ThirdPartySignInAndUpState> {
         const props = {
             error: this.state.error,
             providers: providers,
-            recipeImplementation: this.modifiedRecipeImplementation,
+            recipe: this.props.recipe,
             config: this.props.recipe.config,
         };
 

@@ -1,17 +1,13 @@
-import { RecipeInterface, NormalisedConfig } from "./types";
+import { NormalisedConfig } from "./types";
 import { User } from "../authRecipeWithEmailVerification/types";
-import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
-export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword): RecipeInterface {
+export default function getRecipeImplementation(
+    webJsImplementation: RecipeInterface,
+    authReactConfig: NormalisedConfig
+): RecipeInterface {
     return {
-        submitNewPassword: async function (input: {
-            formFields: {
-                id: string;
-                value: string;
-            }[];
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<
+        submitNewPassword: async function (input): Promise<
             | {
                   status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
                   fetchResponse: Response;
@@ -25,14 +21,14 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsRecipe.recipeImplementation.submitNewPassword({
-                config: webJsRecipe.config,
+            const response = await webJsImplementation.submitNewPassword({
+                config: input.config,
                 formFields: [input.formFields[0]],
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                input.config.onHandleEvent({
+                authReactConfig.onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL",
                 });
             }
@@ -40,14 +36,7 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
             return response;
         },
 
-        sendPasswordResetEmail: async function (input: {
-            formFields: {
-                id: string;
-                value: string;
-            }[];
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<
+        sendPasswordResetEmail: async function (input): Promise<
             | {
                   status: "OK";
                   fetchResponse: Response;
@@ -61,28 +50,21 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsRecipe.recipeImplementation.sendPasswordResetEmail({
-                config: webJsRecipe.config,
+            const response = await webJsImplementation.sendPasswordResetEmail({
+                config: input.config,
                 formFields: input.formFields,
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                input.config.onHandleEvent({
+                authReactConfig.onHandleEvent({
                     action: "RESET_PASSWORD_EMAIL_SENT",
                 });
             }
             return response;
         },
 
-        signUp: async function (input: {
-            formFields: {
-                id: string;
-                value: string;
-            }[];
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<
+        signUp: async function (input): Promise<
             | {
                   status: "OK";
                   user: User;
@@ -97,14 +79,14 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsRecipe.recipeImplementation.signUp({
-                config: webJsRecipe.config,
+            const response = await webJsImplementation.signUp({
+                config: input.config,
                 formFields: input.formFields,
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                input.config.onHandleEvent({
+                authReactConfig.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: true,
                     user: response.user,
@@ -113,14 +95,7 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
 
             return response;
         },
-        signIn: async function (input: {
-            formFields: {
-                id: string;
-                value: string;
-            }[];
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<
+        signIn: async function (input): Promise<
             | {
                   status: "OK";
                   user: User;
@@ -139,14 +114,14 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsRecipe.recipeImplementation.signIn({
-                config: webJsRecipe.config,
+            const response = await webJsImplementation.signIn({
+                config: input.config,
                 formFields: input.formFields,
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                input.config.onHandleEvent({
+                authReactConfig.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: false,
                     user: response.user,
@@ -154,21 +129,21 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
             }
             return response;
         },
-        doesEmailExist: async function (input: { email: string; config: NormalisedConfig; userContext: any }): Promise<{
+        doesEmailExist: async function (input): Promise<{
             status: "OK";
             doesExist: boolean;
             fetchResponse: Response;
         }> {
-            return await webJsRecipe.recipeImplementation.doesEmailExist({
-                config: webJsRecipe.config,
+            return await webJsImplementation.doesEmailExist({
+                config: input.config,
                 email: input.email,
                 userContext: input.userContext,
             });
         },
 
-        getSubmitPasswordTokenFromURL: function (input): string {
-            return webJsRecipe.recipeImplementation.getResetPasswordTokenFromURL({
-                config: webJsRecipe.config,
+        getResetPasswordTokenFromURL: function (input): string {
+            return webJsImplementation.getResetPasswordTokenFromURL({
+                config: input.config,
                 userContext: input.userContext,
             });
         },

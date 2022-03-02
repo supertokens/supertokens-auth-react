@@ -20,9 +20,10 @@ import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { getNormalisedUserContext } from "../../utils";
 import { User } from "../authRecipeWithEmailVerification/types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 export default class Wrapper {
     static init(config?: UserInput) {
@@ -112,7 +113,7 @@ export default class Wrapper {
 
         return recipeInstance.recipeImpl.submitNewPassword({
             ...input,
-            config: recipeInstance.config,
+            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -141,7 +142,7 @@ export default class Wrapper {
 
         return recipeInstance.recipeImpl.sendPasswordResetEmail({
             ...input,
-            config: recipeInstance.config,
+            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -171,7 +172,7 @@ export default class Wrapper {
 
         return recipeInstance.recipeImpl.signUp({
             ...input,
-            config: recipeInstance.config,
+            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -205,7 +206,7 @@ export default class Wrapper {
 
         return recipeInstance.recipeImpl.signIn({
             ...input,
-            config: recipeInstance.config,
+            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -219,7 +220,7 @@ export default class Wrapper {
 
         return recipeInstance.recipeImpl.doesEmailExist({
             ...input,
-            config: recipeInstance.config,
+            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }

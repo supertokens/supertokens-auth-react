@@ -1,8 +1,9 @@
 import { PureComponent } from "react";
 import { FormFieldThemeProps } from "../../../types";
 import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
-import { SignInAndUpState, RecipeInterface } from "../../../types";
+import { SignInAndUpState } from "../../../types";
 import Recipe from "../../../recipe";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 declare type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };

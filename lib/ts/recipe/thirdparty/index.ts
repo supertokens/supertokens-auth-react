@@ -20,7 +20,7 @@
 // /!\ ThirdParty must be imported before any of the providers to prevent circular dependencies.
 import ThirdParty from "./recipe";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import Apple from "./providers/apple";
@@ -29,7 +29,7 @@ import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import { getNormalisedUserContext } from "../../utils";
 import { User } from "../authRecipeWithEmailVerification/types";
-
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export default class Wrapper {
     /*
      * Static attributes.
@@ -97,15 +97,19 @@ export default class Wrapper {
         }
     }
 
-    static redirectToThirdPartyLogin(input: {
-        thirdPartyId: string;
-        userContext?: any;
-    }): Promise<{ status: "OK" | "ERROR" }> {
+    static getAuthorizationURLWithQueryParamsAndSetState(input: {
+        providerId: string;
+        authorisationURL: string;
+        userContext: any;
+        providerClientId?: string;
+    }): Promise<string> {
         const recipeInstance = ThirdParty.getInstanceOrThrow();
 
-        return recipeInstance.recipeImpl.redirectToThirdPartyLogin({
-            thirdPartyId: input.thirdPartyId,
-            config: recipeInstance.config,
+        return recipeInstance.recipeImpl.getAuthorizationURLWithQueryParamsAndSetState({
+            providerId: input.providerId,
+            authorisationURL: input.authorisationURL,
+            providerClientId: input.providerClientId,
+            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -125,7 +129,7 @@ export default class Wrapper {
         const recipeInstance = ThirdParty.getInstanceOrThrow();
 
         return recipeInstance.recipeImpl.signInAndUp({
-            config: recipeInstance.config,
+            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -150,7 +154,7 @@ const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
 const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
-const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
+const getAuthorizationURLWithQueryParamsAndSetState = Wrapper.getAuthorizationURLWithQueryParamsAndSetState;
 const signInAndUp = Wrapper.signInAndUp;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
@@ -167,7 +171,7 @@ export {
     verifyEmail,
     sendVerificationEmail,
     signInAndUp,
-    redirectToThirdPartyLogin,
+    getAuthorizationURLWithQueryParamsAndSetState,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,

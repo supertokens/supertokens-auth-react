@@ -1,3 +1,6 @@
-import { RecipeInterface } from "./types";
-import WebJSThirdPartyRecipe from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
-export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyRecipe, recipeId: string): RecipeInterface;
+import { NormalisedConfig } from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+export default function getRecipeImplementation(
+    webJsRecipe: RecipeInterface,
+    authReactConfig: NormalisedConfig
+): RecipeInterface;

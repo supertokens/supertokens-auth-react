@@ -27,7 +27,6 @@ import {
     Config,
     NormalisedConfig,
     UserInput,
-    RecipeInterface,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
@@ -40,8 +39,8 @@ import ResetPasswordUsingToken from "./components/features/resetPasswordUsingTok
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import OverrideableBuilder from "supertokens-js-override";
 import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
+import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 /*
  * Class.
@@ -54,7 +53,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
     static instance?: EmailPassword;
     static RECIPE_ID = "emailpassword";
 
-    recipeImpl: RecipeInterface;
+    recipeImpl: WebJsRecipeInterface;
     webJsRecipe: WebJSEmailPassword;
 
     constructor(
@@ -74,6 +73,16 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
                     recipeId: config.recipeId,
                     preAPIHook: config.preAPIHook,
                     postAPIHook: config.postAPIHook,
+                    override: {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        functions: (_, builder) => {
+                            builder = builder.override((oI) => RecipeImplementation(oI, this.config));
+                            if (this.config.override.functions !== undefined) {
+                                builder = builder.override(this.config.override.functions);
+                            }
+                            return builder.build();
+                        },
+                    },
                 },
                 {
                     emailVerification:
@@ -83,8 +92,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
                 }
             );
 
-            const builder = new OverrideableBuilder(RecipeImplementation(this.webJsRecipe));
-            this.recipeImpl = builder.override(this.config.override.functions).build();
+            this.recipeImpl = this.webJsRecipe.recipeImplementation;
         }
     }
 

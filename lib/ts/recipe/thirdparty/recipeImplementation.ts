@@ -1,29 +1,29 @@
-import { RecipeInterface, NormalisedConfig, StateObject } from "./types";
+import { NormalisedConfig, StateObject } from "./types";
 import { User } from "../authRecipeWithEmailVerification/types";
-import { getRedirectToPathFromURL, redirectWithFullPageReload } from "../../utils";
-import WebJSThirdPartyRecipe from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
+import { getRedirectToPathFromURL } from "../../utils";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import { NormalisedInputType } from "supertokens-web-js/lib/build/recipe/thirdparty/types";
 
-export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyRecipe, recipeId: string): RecipeInterface {
+export default function getRecipeImplementation(
+    webJsRecipe: RecipeInterface,
+    authReactConfig: NormalisedConfig
+): RecipeInterface {
     return {
-        getAuthorisationURLFromBackend: async function (input: {
-            thirdPartyId: string;
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<{
+        getAuthorisationURLFromBackend: async function (input): Promise<{
             status: "OK";
             url: string;
             fetchResponse: Response;
         }> {
-            const response = await webJsRecipe.recipeImplementation.getAuthorisationURLFromBackend({
-                providerId: input.thirdPartyId,
-                config: webJsRecipe.config,
+            const response = await webJsRecipe.getAuthorisationURLFromBackend({
+                providerId: input.providerId,
+                config: input.config,
                 userContext: input.userContext,
             });
 
             return response;
         },
 
-        signInAndUp: async function (input: { config: NormalisedConfig; userContext: any }): Promise<
+        signInAndUp: async function (input): Promise<
             | {
                   status: "OK";
                   user: User;
@@ -35,13 +35,13 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsRecipe.recipeImplementation.signInAndUp({
-                config: webJsRecipe.config,
+            const response = await webJsRecipe.signInAndUp({
+                config: input.config,
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                input.config.onHandleEvent({
+                authReactConfig.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: response.createdNewUser,
                     user: response.user,
@@ -50,86 +50,66 @@ export default function getRecipeImplementation(webJsRecipe: WebJSThirdPartyReci
 
             return response;
         },
-        getStateAndOtherInfoFromStorage: function (input: {
+        getStateAndOtherInfoFromStorage: function <CustomStateProperties>(input: {
+            config: NormalisedInputType;
             userContext: any;
-            config: NormalisedConfig;
-        }): StateObject | undefined {
-            return webJsRecipe.recipeImplementation.getStateAndOtherInfoFromStorage<{
-                rid?: string;
-                redirectToPath?: string;
-            }>({
-                config: webJsRecipe.config,
+        }): (StateObject & CustomStateProperties) | undefined {
+            return webJsRecipe.getStateAndOtherInfoFromStorage<CustomStateProperties>({
+                config: input.config,
                 userContext: input.userContext,
             });
         },
 
-        setStateAndOtherInfoToStorage: function (input: {
-            state: StateObject;
-            config: NormalisedConfig;
-            userContext: any;
-        }): void {
-            return webJsRecipe.recipeImplementation.setStateAndOtherInfoToStorage<{
+        setStateAndOtherInfoToStorage: function (input): void {
+            return webJsRecipe.setStateAndOtherInfoToStorage<{
                 rid?: string;
                 redirectToPath?: string;
             }>({
-                config: webJsRecipe.config,
+                config: input.config,
                 state: {
                     ...input.state,
-                    rid: recipeId,
+                    rid: authReactConfig.recipeId,
                     redirectToPath: getRedirectToPathFromURL(),
                 },
                 userContext: input.userContext,
             });
         },
 
-        redirectToThirdPartyLogin: async function (input: {
-            thirdPartyId: string;
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<{ status: "OK" | "ERROR" }> {
-            const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
-            if (provider === undefined) {
-                return { status: "ERROR" };
-            }
-
-            const response = await webJsRecipe.recipeImplementation.getAuthorizationURLWithQueryParamsAndSetState({
-                config: webJsRecipe.config,
-                providerId: input.thirdPartyId,
-                authorisationURL: provider.getRedirectURL(),
-                providerClientId: provider.clientId,
-                userContext: input.userContext,
-            });
-
-            // 4. Redirect to provider authorisation URL.
-            redirectWithFullPageReload(response);
-
-            return { status: "OK" };
-        },
-        generateStateToSendToOAuthProvider: function (input) {
-            return webJsRecipe.recipeImplementation.generateStateToSendToOAuthProvider({
+        getAuthorizationURLWithQueryParamsAndSetState: async function (input) {
+            return webJsRecipe.getAuthorizationURLWithQueryParamsAndSetState({
                 ...input,
-                config: webJsRecipe.config,
+            });
+        },
+
+        getAuthStateFromURL: function (input): string | undefined {
+            return webJsRecipe.getAuthStateFromURL(input);
+        },
+
+        generateStateToSendToOAuthProvider: function (input) {
+            return webJsRecipe.generateStateToSendToOAuthProvider({
+                ...input,
+                config: input.config,
             });
         },
         verifyAndGetStateOrThrowError: function (input) {
-            return webJsRecipe.recipeImplementation.verifyAndGetStateOrThrowError({
+            return webJsRecipe.verifyAndGetStateOrThrowError({
                 stateFromAuthProvider: input.stateFromAuthProvider,
                 stateObjectFromStorage: input.stateObjectFromStorage,
-                config: webJsRecipe.config,
+                config: input.config,
                 userContext: input.userContext,
             });
         },
 
         getAuthCodeFromURL: function (input): string {
-            return webJsRecipe.recipeImplementation.getAuthCodeFromURL({
-                config: webJsRecipe.config,
+            return webJsRecipe.getAuthCodeFromURL({
+                config: input.config,
                 userContext: input.userContext,
             });
         },
 
         getAuthErrorFromURL: function (input): string | undefined {
-            return webJsRecipe.recipeImplementation.getAuthErrorFromURL({
-                config: webJsRecipe.config,
+            return webJsRecipe.getAuthErrorFromURL({
+                config: input.config,
                 userContext: input.userContext,
             });
         },

@@ -26,7 +26,6 @@ import {
     NormalisedConfig,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
     PreAndPostAPIHookAction,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
@@ -38,11 +37,10 @@ import SignInAndUp from "./components/features/signInAndUp";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import RecipeImplementation from "./recipeImplementation";
-import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
-import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import OverrideableBuilder from "supertokens-js-override";
+import WebJSThirdPartyEmailPassword from "supertokens-web-js/lib/build/recipe/thirdpartyemailpassword/recipe";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
@@ -55,6 +53,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
     emailPasswordRecipe: EmailPassword | undefined;
 
     thirdPartyRecipe: ThirdParty | undefined;
+
+    webJsRecipe: WebJSThirdPartyEmailPassword;
 
     recipeImpl: RecipeInterface;
 
@@ -70,77 +70,32 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
-        {
-            const builder = new OverrideableBuilder(
-                RecipeImplementation(this.config, recipes.emailVerificationInstance)
-            );
-            this.recipeImpl = builder.override(this.config.override.functions).build();
-        }
+        this.webJsRecipe = new WebJSThirdPartyEmailPassword(
+            {
+                appInfo: config.appInfo,
+                recipeId: config.recipeId,
+                preAPIHook: config.preAPIHook,
+                postAPIHook: config.postAPIHook,
+                override: {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    functions: (_, builder) => {
+                        builder = builder.override((oI) => RecipeImplementation(oI));
+                        if (this.config.override.functions !== undefined) {
+                            builder = builder.override(this.config.override.functions);
+                        }
+                        return builder.build();
+                    },
+                },
+            },
+            {
+                emailVerification:
+                    recipes.emailVerificationInstance === undefined
+                        ? undefined
+                        : recipes.emailVerificationInstance.webJsRecipe,
+            }
+        );
 
-        this.emailPasswordRecipe =
-            recipes.emailPasswordInstance !== undefined
-                ? recipes.emailPasswordInstance
-                : this.config.disableEmailPassword
-                ? undefined
-                : new EmailPassword(
-                      {
-                          appInfo: this.config.appInfo,
-                          recipeId: this.config.recipeId,
-                          emailVerificationFeature: this.config.emailVerificationFeature,
-                          getRedirectionURL: this.config.getRedirectionURL,
-                          onHandleEvent: this.config.onHandleEvent,
-                          palette: this.config.palette,
-                          style: this.config.rootStyle,
-                          preAPIHook: this.config.preAPIHook,
-                          resetPasswordUsingTokenFeature: this.config.resetPasswordUsingTokenFeature,
-                          signInAndUpFeature: this.config.signInAndUpFeature,
-                          useShadowDom: this.config.useShadowDom,
-                          override: {
-                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                              functions: (_) => {
-                                  return getEmailPasswordImpl(this.recipeImpl);
-                              },
-                              components: this.config.override.components,
-                          },
-                      },
-                      {
-                          emailVerificationInstance: this.emailVerification,
-                      }
-                  );
-
-        // we initialise this recipe only if the user has provided thirdparty
-        // providers.
-        this.thirdPartyRecipe =
-            recipes.thirdPartyInstance !== undefined
-                ? recipes.thirdPartyInstance
-                : this.config.signInAndUpFeature.providers === undefined ||
-                  this.config.signInAndUpFeature.providers.length === 0
-                ? undefined
-                : new ThirdParty(
-                      {
-                          appInfo: this.config.appInfo,
-                          recipeId: this.config.recipeId,
-                          emailVerificationFeature: this.config.emailVerificationFeature,
-                          getRedirectionURL: this.config.getRedirectionURL,
-                          style: this.config.rootStyle,
-                          onHandleEvent: this.config.onHandleEvent,
-                          palette: this.config.palette,
-                          preAPIHook: this.config.preAPIHook,
-                          signInAndUpFeature: this.config.signInAndUpFeature,
-                          oAuthCallbackScreen: this.config.oAuthCallbackScreen,
-                          useShadowDom: this.config.useShadowDom,
-                          override: {
-                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                              functions: (_) => {
-                                  return getThirdPartyImpl(this.recipeImpl);
-                              },
-                              components: this.config.override.components,
-                          },
-                      },
-                      {
-                          emailVerificationInstance: this.emailVerification,
-                      }
-                  );
+        this.recipeImpl = this.webJsRecipe.recipeImplementation;
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {

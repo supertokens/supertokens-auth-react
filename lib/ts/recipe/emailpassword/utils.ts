@@ -36,7 +36,7 @@ import {
     defaultValidate,
 } from "./validators";
 import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
-import { RecipeInterface } from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(

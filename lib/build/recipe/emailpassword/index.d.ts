@@ -4,14 +4,22 @@ import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { User } from "../authRecipeWithEmailVerification/types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 export default class Wrapper {
     static init(
         config?: UserInput
     ): import("../../types").CreateRecipeFunction<
         GetRedirectionURLContext,
-        import("./types").PreAndPostAPIHookAction,
+        | "VERIFY_EMAIL"
+        | "SEND_VERIFY_EMAIL"
+        | "IS_EMAIL_VERIFIED"
+        | "EMAIL_PASSWORD_SIGN_UP"
+        | "EMAIL_PASSWORD_SIGN_IN"
+        | "SEND_RESET_PASSWORD_EMAIL"
+        | "SUBMIT_NEW_PASSWORD"
+        | "EMAIL_EXISTS",
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;

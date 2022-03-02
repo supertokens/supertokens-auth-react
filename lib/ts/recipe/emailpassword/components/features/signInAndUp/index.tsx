@@ -26,10 +26,11 @@ import SignInAndUpTheme from "../../themes/signInAndUp";
 import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import { getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { SignInAndUpState, RecipeInterface } from "../../../types";
+import { SignInAndUpState } from "../../../types";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -149,7 +150,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
                         const emailExists: boolean = (
                             await this.props.recipe.recipeImpl.doesEmailExist({
                                 email: value,
-                                config: this.props.recipe.config,
+                                config: this.props.recipe.webJsRecipe.config,
                                 userContext: {},
                             })
                         ).doesExist;
@@ -201,6 +202,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         const signInFeature = signInAndUpFeature.signInForm;
 
         const signInForm = {
+            recipe: this.props.recipe,
             recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
             styleFromInit: signInFeature.style,
@@ -210,6 +212,7 @@ class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
         };
 
         const signUpForm = {
+            recipe: this.props.recipe,
             recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
             styleFromInit: signUpFeature.style,

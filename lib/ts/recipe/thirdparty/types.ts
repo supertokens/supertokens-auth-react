@@ -18,7 +18,6 @@ import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     PreAndPostAPIHookAction as AuthRecipePreAndPostAPIHookAction,
-    User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
@@ -32,7 +31,12 @@ import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
 import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import OverrideableBuilder from "supertokens-js-override";
-import { StateObject as WebJsStateObject } from "supertokens-web-js/recipe/thirdparty";
+import {
+    StateObject as WebJsStateObject,
+    InputType as WebJSInputType,
+    RecipeInterface,
+} from "supertokens-web-js/recipe/thirdparty";
+import ThirdPartyRecipe from "./recipe";
 
 export type ComponentOverrideMap = {
     ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
@@ -56,7 +60,7 @@ export type UserInput = {
 export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
 
-export type NormalisedConfig = {
+export type NormalisedConfig = WebJSInputType & {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     oAuthCallbackScreen: FeatureBaseConfig;
     override: {
@@ -139,7 +143,7 @@ export type SignInAndUpThemeProps = {
         id: string;
         buttonComponent: JSX.Element;
     }[];
-    recipeImplementation: RecipeInterface;
+    recipe: ThirdPartyRecipe;
     config: NormalisedConfig;
     error: string | undefined;
 };
@@ -153,50 +157,7 @@ export type StateObject = WebJsStateObject & {
     redirectToPath?: string;
 };
 
-export type RecipeInterface = {
-    getStateAndOtherInfoFromStorage: (input: { userContext: any; config: NormalisedConfig }) => StateObject | undefined;
-
-    setStateAndOtherInfoToStorage: (input: { state: StateObject; config: NormalisedConfig; userContext: any }) => void;
-
-    redirectToThirdPartyLogin: (input: {
-        thirdPartyId: string;
-        config: NormalisedConfig;
-        userContext: any;
-    }) => Promise<{ status: "OK" | "ERROR" }>;
-
-    getAuthorisationURLFromBackend: (input: {
-        thirdPartyId: string;
-        config: NormalisedConfig;
-        userContext: any;
-    }) => Promise<{
-        status: "OK";
-        url: string;
-        fetchResponse: Response;
-    }>;
-
-    signInAndUp: (input: { config: NormalisedConfig; userContext: any }) => Promise<
-        | {
-              status: "OK";
-              user: User;
-              createdNewUser: boolean;
-              fetchResponse: Response;
-          }
-        | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-              fetchResponse: Response;
-          }
-    >;
-
-    generateStateToSendToOAuthProvider: (input: { userContext: any; config: NormalisedConfig }) => string;
-
-    verifyAndGetStateOrThrowError: (input: {
-        stateFromAuthProvider: string | undefined;
-        stateObjectFromStorage: StateObject | undefined;
-        config: NormalisedConfig;
-        userContext: any;
-    }) => Promise<StateObject>;
-
-    getAuthCodeFromURL: (input: { config: NormalisedConfig; userContext: any }) => string;
-
-    getAuthErrorFromURL: (input: { config: NormalisedConfig; userContext: any }) => string | undefined;
+export type CustomStateProperties = {
+    rid: string;
+    redirectToPath: string;
 };

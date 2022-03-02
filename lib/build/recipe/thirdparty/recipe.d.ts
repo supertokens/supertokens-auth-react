@@ -8,10 +8,10 @@ import {
     PreAndPostAPIHookContext,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
 } from "./types";
 import EmailVerification from "../emailverification/recipe";
 import WebJSThirdPartyRecipe from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export default class ThirdParty extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
     OnHandleEventContext,
@@ -19,7 +19,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
 > {
     static instance?: ThirdParty;
     static RECIPE_ID: string;
-    recipeImpl: RecipeInterface;
+    recipeImpl: WebJSRecipeInterface;
     webJsRecipe: WebJSThirdPartyRecipe;
     constructor(
         config: Config,

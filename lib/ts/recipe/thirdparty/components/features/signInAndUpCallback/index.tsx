@@ -24,7 +24,7 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
-import {} from "../../../types";
+import { CustomStateProperties } from "../../../types";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
@@ -45,7 +45,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
         try {
             // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipe.recipeImpl.signInAndUp({
-                config: this.props.recipe.config,
+                config: this.props.recipe.webJsRecipe.config,
                 userContext: {},
             });
 
@@ -57,10 +57,11 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
 
             if (response.status === "OK") {
                 // TODO NEMI: handle user context for pre built UI
-                const stateResponse = this.props.recipe.recipeImpl.getStateAndOtherInfoFromStorage({
-                    config: this.props.recipe.config,
-                    userContext: {},
-                });
+                const stateResponse =
+                    this.props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
+                        config: this.props.recipe.webJsRecipe.config,
+                        userContext: {},
+                    });
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
                 if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
