@@ -20,12 +20,14 @@ export default function getRecipeImplementation(webJsRecipe: RecipeInterface): R
         getAuthorizationURLWithQueryParamsAndSetState: async function (input) {
             return webJsRecipe.getAuthorizationURLWithQueryParamsAndSetState(input);
         },
-        signInAndUp: async function (input) {
-            if (input.type === "emailpassword") {
-                return webJsRecipe.signInAndUp(input);
-            } else {
-                return webJsRecipe.signInAndUp(input);
-            }
+        emailPasswordSignIn: async function (input) {
+            return webJsRecipe.emailPasswordSignIn(input);
+        },
+        emailPasswordSignUp: async function (input) {
+            return webJsRecipe.emailPasswordSignUp(input);
+        },
+        thirdPartySignInAndUp: async function (input) {
+            return webJsRecipe.thirdPartySignInAndUp(input);
         },
         getStateAndOtherInfoFromStorage: function (input) {
             return webJsRecipe.getStateAndOtherInfoFromStorage(input);

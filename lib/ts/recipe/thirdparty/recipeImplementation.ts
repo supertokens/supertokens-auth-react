@@ -81,7 +81,7 @@ export default function getRecipeImplementation(
             });
         },
 
-        getAuthStateFromURL: function (input): string | undefined {
+        getAuthStateFromURL: function (input): string {
             return webJsRecipe.getAuthStateFromURL(input);
         },
 

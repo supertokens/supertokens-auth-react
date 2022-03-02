@@ -92,6 +92,10 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
                     recipes.emailVerificationInstance === undefined
                         ? undefined
                         : recipes.emailVerificationInstance.webJsRecipe,
+                emailPassword:
+                    recipes.emailPasswordInstance === undefined ? undefined : recipes.emailPasswordInstance.webJsRecipe,
+                thirdParty:
+                    recipes.thirdPartyInstance === undefined ? undefined : recipes.thirdPartyInstance.webJsRecipe,
             }
         );
 
