@@ -107,6 +107,7 @@ export const useFeatureReducer = (
                     return {
                         ...oldState,
                         loginAttemptInfo: action.loginAttemptInfo,
+                        error: undefined,
                     };
                 case "successInAnotherTab":
                     return {
