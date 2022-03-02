@@ -92,7 +92,8 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
         } catch (err) {
             if (STGeneralError.isThisError(err)) {
                 return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: err.message,
+                    error: "custom",
+                    message: err.message,
                 });
             }
 
