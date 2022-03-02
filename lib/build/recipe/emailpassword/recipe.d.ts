@@ -25,6 +25,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
         config: Config,
         recipes: {
             emailVerificationInstance: EmailVerification | undefined;
+            webJSEmailPasswordInstance: WebJSEmailPassword | undefined;
         }
     );
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;

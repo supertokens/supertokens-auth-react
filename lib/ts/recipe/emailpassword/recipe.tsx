@@ -60,6 +60,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
         config: Config,
         recipes: {
             emailVerificationInstance: EmailVerification | undefined;
+            webJSEmailPasswordInstance: WebJSEmailPassword | undefined;
         }
     ) {
         super(normaliseEmailPasswordConfig(config), {
@@ -67,30 +68,33 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
         });
 
         {
-            this.webJsRecipe = new WebJSEmailPassword(
-                {
-                    appInfo: config.appInfo,
-                    recipeId: config.recipeId,
-                    preAPIHook: config.preAPIHook,
-                    postAPIHook: config.postAPIHook,
-                    override: {
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        functions: (_, builder) => {
-                            builder = builder.override((oI) => RecipeImplementation(oI, this.config));
-                            if (this.config.override.functions !== undefined) {
-                                builder = builder.override(this.config.override.functions);
-                            }
-                            return builder.build();
-                        },
-                    },
-                },
-                {
-                    emailVerification:
-                        recipes.emailVerificationInstance === undefined
-                            ? undefined
-                            : recipes.emailVerificationInstance.webJsRecipe,
-                }
-            );
+            this.webJsRecipe =
+                recipes.webJSEmailPasswordInstance !== undefined
+                    ? recipes.webJSEmailPasswordInstance
+                    : new WebJSEmailPassword(
+                          {
+                              appInfo: config.appInfo,
+                              recipeId: config.recipeId,
+                              preAPIHook: config.preAPIHook,
+                              postAPIHook: config.postAPIHook,
+                              override: {
+                                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                  functions: (_, builder) => {
+                                      builder = builder.override((oI) => RecipeImplementation(oI, this.config));
+                                      if (this.config.override.functions !== undefined) {
+                                          builder = builder.override(this.config.override.functions);
+                                      }
+                                      return builder.build();
+                                  },
+                              },
+                          },
+                          {
+                              emailVerification:
+                                  recipes.emailVerificationInstance === undefined
+                                      ? undefined
+                                      : recipes.emailVerificationInstance.webJsRecipe,
+                          }
+                      );
 
             this.recipeImpl = this.webJsRecipe.recipeImplementation;
         }
@@ -171,6 +175,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
                 },
                 {
                     emailVerificationInstance: undefined,
+                    webJSEmailPasswordInstance: undefined,
                 }
             );
             return EmailPassword.instance;

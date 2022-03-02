@@ -25,6 +25,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
         config: Config,
         recipes: {
             emailVerificationInstance: EmailVerification | undefined;
+            webJSThirdPartyInstance: WebJSThirdPartyRecipe | undefined;
         }
     );
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;

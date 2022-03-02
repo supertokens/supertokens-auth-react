@@ -774,9 +774,17 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
 
                 return {
                     ...implementation,
-                    signInAndUp(...args) {
+                    thirdPartySignInAndUp(...args) {
                         log(`SIGN_IN_AND_UP`);
-                        return implementation.signInAndUp(...args);
+                        return implementation.thirdPartySignInAndUp(...args);
+                    },
+                    emailPasswordSignIn(...args) {
+                        log(`SIGN_IN_AND_UP`);
+                        return implementation.emailPasswordSignIn(...args);
+                    },
+                    emailPasswordSignUp(...args) {
+                        log(`SIGN_IN_AND_UP`);
+                        return implementation.emailPasswordSignUp(...args);
                     },
                     setStateAndOtherInfoToStorage(...args) {
                         log(`SET_OAUTH_STATE`);

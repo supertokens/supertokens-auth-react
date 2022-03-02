@@ -59,33 +59,37 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
         config: Config,
         recipes: {
             emailVerificationInstance: EmailVerification | undefined;
+            webJSThirdPartyInstance: WebJSThirdPartyRecipe | undefined;
         }
     ) {
         super(normaliseThirdPartyConfig(config), {
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
-        this.webJsRecipe = new WebJSThirdPartyRecipe(
-            {
-                recipeId: config.recipeId,
-                appInfo: config.appInfo,
-                preAPIHook: config.preAPIHook,
-                postAPIHook: config.postAPIHook,
-                override: {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    functions: (_, builder) => {
-                        builder = builder.override((oI) => RecipeImplementation(oI, this.config));
-                        if (this.config.override.functions !== undefined) {
-                            builder = builder.override(this.config.override.functions);
-                        }
-                        return builder.build();
-                    },
-                },
-            },
-            {
-                emailVerification: recipes.emailVerificationInstance?.webJsRecipe,
-            }
-        );
+        this.webJsRecipe =
+            recipes.webJSThirdPartyInstance !== undefined
+                ? recipes.webJSThirdPartyInstance
+                : new WebJSThirdPartyRecipe(
+                      {
+                          recipeId: config.recipeId,
+                          appInfo: config.appInfo,
+                          preAPIHook: config.preAPIHook,
+                          postAPIHook: config.postAPIHook,
+                          override: {
+                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                              functions: (_, builder) => {
+                                  builder = builder.override((oI) => RecipeImplementation(oI, this.config));
+                                  if (this.config.override.functions !== undefined) {
+                                      builder = builder.override(this.config.override.functions);
+                                  }
+                                  return builder.build();
+                              },
+                          },
+                      },
+                      {
+                          emailVerification: recipes.emailVerificationInstance?.webJsRecipe,
+                      }
+                  );
 
         this.recipeImpl = this.webJsRecipe.recipeImplementation;
     }
@@ -169,6 +173,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
                 },
                 {
                     emailVerificationInstance: undefined,
+                    webJSThirdPartyInstance: undefined,
                 }
             );
             return ThirdParty.instance;

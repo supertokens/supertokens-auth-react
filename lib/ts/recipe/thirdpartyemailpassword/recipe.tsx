@@ -79,7 +79,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
                 override: {
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     functions: (_, builder) => {
-                        builder = builder.override((oI) => RecipeImplementation(oI));
+                        builder = builder.override((oI) => RecipeImplementation(oI, this.config));
                         if (this.config.override.functions !== undefined) {
                             builder = builder.override(this.config.override.functions);
                         }
@@ -100,6 +100,65 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
         );
 
         this.recipeImpl = this.webJsRecipe.recipeImplementation;
+
+        this.emailPasswordRecipe =
+            recipes.emailPasswordInstance !== undefined
+                ? recipes.emailPasswordInstance
+                : this.config.disableEmailPassword
+                ? undefined
+                : new EmailPassword(
+                      {
+                          appInfo: this.config.appInfo,
+                          recipeId: this.config.recipeId,
+                          emailVerificationFeature: this.config.emailVerificationFeature,
+                          getRedirectionURL: this.config.getRedirectionURL,
+                          onHandleEvent: this.config.onHandleEvent,
+                          palette: this.config.palette,
+                          style: this.config.rootStyle,
+                          preAPIHook: this.config.preAPIHook,
+                          resetPasswordUsingTokenFeature: this.config.resetPasswordUsingTokenFeature,
+                          signInAndUpFeature: this.config.signInAndUpFeature,
+                          useShadowDom: this.config.useShadowDom,
+                          override: {
+                              components: this.config.override.components,
+                          },
+                      },
+                      {
+                          emailVerificationInstance: this.emailVerification,
+                          webJSEmailPasswordInstance: this.webJsRecipe.emailPasswordRecipe,
+                      }
+                  );
+
+        // we initialise this recipe only if the user has provided thirdparty
+        // providers.
+        this.thirdPartyRecipe =
+            recipes.thirdPartyInstance !== undefined
+                ? recipes.thirdPartyInstance
+                : this.config.signInAndUpFeature.providers === undefined ||
+                  this.config.signInAndUpFeature.providers.length === 0
+                ? undefined
+                : new ThirdParty(
+                      {
+                          appInfo: this.config.appInfo,
+                          recipeId: this.config.recipeId,
+                          emailVerificationFeature: this.config.emailVerificationFeature,
+                          getRedirectionURL: this.config.getRedirectionURL,
+                          style: this.config.rootStyle,
+                          onHandleEvent: this.config.onHandleEvent,
+                          palette: this.config.palette,
+                          preAPIHook: this.config.preAPIHook,
+                          signInAndUpFeature: this.config.signInAndUpFeature,
+                          oAuthCallbackScreen: this.config.oAuthCallbackScreen,
+                          useShadowDom: this.config.useShadowDom,
+                          override: {
+                              components: this.config.override.components,
+                          },
+                      },
+                      {
+                          emailVerificationInstance: this.emailVerification,
+                          webJSThirdPartyInstance: this.webJsRecipe.thirdPartyRecipe,
+                      }
+                  );
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {

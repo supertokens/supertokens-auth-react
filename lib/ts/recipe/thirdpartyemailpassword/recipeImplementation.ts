@@ -1,6 +1,10 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { NormalisedConfig } from "./types";
 
-export default function getRecipeImplementation(webJsRecipe: RecipeInterface): RecipeInterface {
+export default function getRecipeImplementation(
+    webJsRecipe: RecipeInterface,
+    authReactConfig: NormalisedConfig
+): RecipeInterface {
     return {
         submitNewPassword: async function (input) {
             return webJsRecipe.submitNewPassword(input);
@@ -27,7 +31,17 @@ export default function getRecipeImplementation(webJsRecipe: RecipeInterface): R
             return webJsRecipe.emailPasswordSignUp(input);
         },
         thirdPartySignInAndUp: async function (input) {
-            return webJsRecipe.thirdPartySignInAndUp(input);
+            const response = await webJsRecipe.thirdPartySignInAndUp(input);
+
+            if (response.status === "OK") {
+                authReactConfig.onHandleEvent({
+                    action: "SUCCESS",
+                    isNewUser: response.createdNewUser,
+                    user: response.user,
+                });
+            }
+
+            return response;
         },
         getStateAndOtherInfoFromStorage: function (input) {
             return webJsRecipe.getStateAndOtherInfoFromStorage(input);
