@@ -129,6 +129,21 @@ export default class Wrapper {
         doesExist: boolean;
         fetchResponse: Response;
     }>;
+    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
+        status: "OK" | "ERROR";
+    }>;
+    static thirdPartySignInAndUp(input?: { userContext?: any }): Promise<
+        | {
+              status: "OK";
+              user: UserType;
+              createdNewUser: boolean;
+              fetchResponse: Response;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
+          }
+    >;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
@@ -155,6 +170,8 @@ declare const sendPasswordResetEmail: typeof Wrapper.sendPasswordResetEmail;
 declare const emailPasswordSignIn: typeof Wrapper.emailPasswordSignIn;
 declare const emailPasswordSignUp: typeof Wrapper.emailPasswordSignUp;
 declare const doesEmailExist: typeof Wrapper.doesEmailExist;
+declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
+declare const thirdPartySignInAndUp: typeof Wrapper.thirdPartySignInAndUp;
 export {
     ThirdPartyEmailPasswordAuth,
     init,
@@ -174,6 +191,8 @@ export {
     emailPasswordSignIn,
     emailPasswordSignUp,
     doesEmailExist,
+    redirectToThirdPartyLogin,
+    thirdPartySignInAndUp,
     EmailVerification,
     EmailVerificationTheme,
     ResetPasswordUsingToken,

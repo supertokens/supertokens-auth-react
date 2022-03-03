@@ -22,6 +22,7 @@ import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { getNormalisedUserContext } from "../../utils";
 import { RecipeInterface, UserType } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -253,6 +254,53 @@ export default class Wrapper {
         });
     }
 
+    static async redirectToThirdPartyLogin(input: {
+        thirdPartyId: string;
+        userContext?: any;
+    }): Promise<{ status: "OK" | "ERROR" }> {
+        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
+
+        if (recipeInstance.thirdPartyRecipe === undefined) {
+            throw new Error(
+                "Third party email password was initialised without any social providers. This function is only available if at least one social provider is initialised"
+            );
+        }
+
+        return UtilsRedirectToThirdPartyLogin({
+            thirdPartyId: input.thirdPartyId,
+            config: recipeInstance.thirdPartyRecipe.config,
+            userContext: getNormalisedUserContext(input.userContext),
+            recipe: recipeInstance.thirdPartyRecipe,
+        });
+    }
+
+    static thirdPartySignInAndUp(input?: { userContext?: any }): Promise<
+        | {
+              status: "OK";
+              user: UserType;
+              createdNewUser: boolean;
+              fetchResponse: Response;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
+          }
+    > {
+        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
+
+        if (recipeInstance.thirdPartyRecipe === undefined) {
+            throw new Error(
+                "Third party email password was initialised without any social providers. This function is only available if at least one social provider is initialised"
+            );
+        }
+
+        return recipeInstance.recipeImpl.thirdPartySignInAndUp({
+            ...input,
+            config: recipeInstance.thirdPartyRecipe.webJsRecipe.config,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
     static Google = Google;
     static Apple = Apple;
     static Facebook = Facebook;
@@ -283,6 +331,8 @@ const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
 const emailPasswordSignIn = Wrapper.emailPasswordSignIn;
 const emailPasswordSignUp = Wrapper.emailPasswordSignUp;
 const doesEmailExist = Wrapper.doesEmailExist;
+const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
+const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
 
 export {
     ThirdPartyEmailPasswordAuth,
@@ -303,6 +353,8 @@ export {
     emailPasswordSignIn,
     emailPasswordSignUp,
     doesEmailExist,
+    redirectToThirdPartyLogin,
+    thirdPartySignInAndUp,
     EmailVerification,
     EmailVerificationTheme,
     ResetPasswordUsingToken,
