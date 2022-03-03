@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Component override keys changed (all ending in `_Override` now)
 -   Removed `ThirdPartyEmailPasswordSignInAndUpForm` overrideable component (now reusing overrides of the email password recipe)
 
+### Bug fix:
+
+-   Fixed default translation strings for passwordless sign-in/up form labels
+
 ## [0.18.7] - 2022-02-11
 
 ### Optimised
