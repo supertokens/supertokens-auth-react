@@ -20,7 +20,7 @@ import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
 import { InputType, RecipeEvent, RecipeEventWithSessionContext, SessionContextType } from "./types";
-import sessionSdk from "supertokens-website";
+import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
 
@@ -33,7 +33,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     constructor(config: ConfigType) {
         super(config);
 
-        sessionSdk.init({
+        WebJSSessionRecipe.init({
             ...config,
             onHandleEvent: (event) => {
                 if (config.onHandleEvent !== undefined) {
@@ -74,23 +74,23 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     };
 
     getUserId = (): Promise<string> => {
-        return sessionSdk.getUserId();
+        return WebJSSessionRecipe.getUserId();
     };
 
     getAccessTokenPayloadSecurely = async (): Promise<any> => {
-        return sessionSdk.getAccessTokenPayloadSecurely();
+        return WebJSSessionRecipe.getAccessTokenPayloadSecurely();
     };
 
     doesSessionExist = (): Promise<boolean> => {
-        return sessionSdk.doesSessionExist();
+        return WebJSSessionRecipe.doesSessionExist();
     };
 
     signOut = (): Promise<void> => {
-        return sessionSdk.signOut();
+        return WebJSSessionRecipe.signOut();
     };
 
     attemptRefreshingSession = async (): Promise<boolean> => {
-        return sessionSdk.attemptRefreshingSession();
+        return WebJSSessionRecipe.attemptRefreshingSession();
     };
 
     /**
@@ -140,7 +140,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     static addAxiosInterceptors(axiosInstance: any): void {
-        return sessionSdk.addAxiosInterceptors(axiosInstance);
+        return WebJSSessionRecipe.addAxiosInterceptors(axiosInstance);
     }
 
     static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any> {
