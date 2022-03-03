@@ -207,7 +207,6 @@ export declare type SubmitNewPasswordProps = FormThemeBaseProps & {
 export declare type EnterEmailStatus = "READY" | "SENT";
 export declare type SubmitNewPasswordStatus = "READY" | "SUCCESS";
 export declare type FormBaseProps<T> = {
-    header?: JSX.Element;
     footer?: JSX.Element;
     formFields: FormFieldThemeProps[];
     showLabels: boolean;

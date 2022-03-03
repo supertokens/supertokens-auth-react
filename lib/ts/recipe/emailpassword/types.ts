@@ -380,8 +380,6 @@ export type EnterEmailStatus = "READY" | "SENT";
 export type SubmitNewPasswordStatus = "READY" | "SUCCESS";
 
 export type FormBaseProps<T> = {
-    header?: JSX.Element;
-
     footer?: JSX.Element;
 
     formFields: FormFieldThemeProps[];

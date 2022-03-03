@@ -70,6 +70,14 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
+                <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                    {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_TITLE")}
+                </div>
+                <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                    <div data-supertokens="secondaryText" css={styles.secondaryText}>
+                        {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_SUBTITLE")}
+                    </div>
+                </div>
                 {props.error !== undefined && <GeneralError error={props.error} />}
                 <FormBase
                     formFields={formFields}
@@ -97,18 +105,6 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
                               };
                     }}
                     showLabels={true}
-                    header={
-                        <Fragment>
-                            <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                                {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_TITLE")}
-                            </div>
-                            <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                                <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                                    {t("EMAIL_PASSWORD_RESET_SUBMIT_PW_HEADER_SUBTITLE")}
-                                </div>
-                            </div>
-                        </Fragment>
-                    }
                 />
             </div>
         </div>
