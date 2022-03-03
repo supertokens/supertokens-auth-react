@@ -8,8 +8,20 @@ export default abstract class AuthRecipe<
 > extends RecipeModule<T | GetRedirectionURLContext, Action, R | OnHandleEventContext, N> {
     constructor(config: N);
     getAuthRecipeDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
-    signOut: () => Promise<void>;
-    doesSessionExist: () => Promise<boolean>;
+    signOut: (
+        input?:
+            | {
+                  userContext?: any;
+              }
+            | undefined
+    ) => Promise<void>;
+    doesSessionExist: (
+        input?:
+            | {
+                  userContext?: any;
+              }
+            | undefined
+    ) => Promise<boolean>;
     redirectToAuthWithRedirectToPath: (
         show?: "signin" | "signup" | undefined,
         history?: any,

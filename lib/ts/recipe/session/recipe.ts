@@ -20,7 +20,7 @@ import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
 import { InputType, RecipeEvent, RecipeEventWithSessionContext, SessionContextType } from "./types";
-import WebJSSessionRecipe from "supertokens-web-js/recipe/session";
+import WebJSSessionRecipe from "supertokens-web-js/lib/build/recipe/session/recipe";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
 
@@ -28,12 +28,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static instance?: Session;
     static RECIPE_ID = "session";
 
+    webJsRecipe: WebJSSessionRecipe;
+
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
 
     constructor(config: ConfigType) {
         super(config);
 
-        WebJSSessionRecipe.init({
+        this.webJsRecipe = new WebJSSessionRecipe({
             ...config,
             onHandleEvent: (event) => {
                 if (config.onHandleEvent !== undefined) {
@@ -73,24 +75,24 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return {};
     };
 
-    getUserId = (): Promise<string> => {
-        return WebJSSessionRecipe.getUserId();
+    getUserId = (input: { userContext: any }): Promise<string> => {
+        return this.webJsRecipe.getUserId(input);
     };
 
-    getAccessTokenPayloadSecurely = async (): Promise<any> => {
-        return WebJSSessionRecipe.getAccessTokenPayloadSecurely();
+    getAccessTokenPayloadSecurely = async (input: { userContext: any }): Promise<any> => {
+        return this.webJsRecipe.getAccessTokenPayloadSecurely(input);
     };
 
-    doesSessionExist = (): Promise<boolean> => {
-        return WebJSSessionRecipe.doesSessionExist();
+    doesSessionExist = (input: { userContext: any }): Promise<boolean> => {
+        return this.webJsRecipe.doesSessionExist(input);
     };
 
-    signOut = (): Promise<void> => {
-        return WebJSSessionRecipe.signOut();
+    signOut = (input: { userContext: any }): Promise<void> => {
+        return this.webJsRecipe.signOut(input);
     };
 
     attemptRefreshingSession = async (): Promise<boolean> => {
-        return WebJSSessionRecipe.attemptRefreshingSession();
+        return this.webJsRecipe.attemptRefreshingSession();
     };
 
     /**
@@ -116,8 +118,12 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     private async getSessionContext({ action }: RecipeEvent): Promise<SessionContextType> {
         if (action === "SESSION_CREATED" || action === "REFRESH_SESSION") {
             const [userId, accessTokenPayload] = await Promise.all([
-                this.getUserId(),
-                this.getAccessTokenPayloadSecurely(),
+                this.getUserId({
+                    userContext: {},
+                }),
+                this.getAccessTokenPayloadSecurely({
+                    userContext: {},
+                }),
             ]);
 
             return {
@@ -139,8 +145,8 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    static addAxiosInterceptors(axiosInstance: any): void {
-        return WebJSSessionRecipe.addAxiosInterceptors(axiosInstance);
+    static addAxiosInterceptors(axiosInstance: any, userContext: any): void {
+        return WebJSSessionRecipe.addAxiosInterceptors(axiosInstance, userContext);
     }
 
     static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any> {
