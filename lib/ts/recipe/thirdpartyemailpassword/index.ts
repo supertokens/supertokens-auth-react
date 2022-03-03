@@ -21,7 +21,7 @@ import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { getNormalisedUserContext } from "../../utils";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { RecipeInterface, UserType } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -86,6 +86,173 @@ export default class Wrapper {
         }
     }
 
+    static submitNewPassword(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        token: string;
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
+
+        if (recipeInstance.emailPasswordRecipe === undefined) {
+            throw new Error(
+                "Email Password has not been enabled. This function is only available when disableEmailPassword in ThirdPartyEmailpassword.init is not set to false"
+            );
+        }
+
+        return recipeInstance.recipeImpl.submitNewPassword({
+            ...input,
+            config: recipeInstance.emailPasswordRecipe.webJsRecipe.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static sendPasswordResetEmail(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
+
+        if (recipeInstance.emailPasswordRecipe === undefined) {
+            throw new Error(
+                "Email Password has not been enabled. This function is only available when disableEmailPassword in ThirdPartyEmailpassword.init is not set to false"
+            );
+        }
+
+        return recipeInstance.recipeImpl.sendPasswordResetEmail({
+            ...input,
+            config: recipeInstance.emailPasswordRecipe.webJsRecipe.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static emailPasswordSignUp(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              user: UserType;
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
+
+        if (recipeInstance.emailPasswordRecipe === undefined) {
+            throw new Error(
+                "Email Password has not been enabled. This function is only available when disableEmailPassword in ThirdPartyEmailpassword.init is not set to false"
+            );
+        }
+
+        return recipeInstance.recipeImpl.emailPasswordSignUp({
+            ...input,
+            config: recipeInstance.emailPasswordRecipe.webJsRecipe.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static emailPasswordSignIn(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              user: UserType;
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+        | {
+              status: "WRONG_CREDENTIALS_ERROR";
+              fetchResponse: Response;
+          }
+    > {
+        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
+
+        if (recipeInstance.emailPasswordRecipe === undefined) {
+            throw new Error(
+                "Email Password has not been enabled. This function is only available when disableEmailPassword in ThirdPartyEmailpassword.init is not set to false"
+            );
+        }
+
+        return recipeInstance.recipeImpl.emailPasswordSignIn({
+            ...input,
+            config: recipeInstance.emailPasswordRecipe.webJsRecipe.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static doesEmailExist(input: { email: string; userContext?: any }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }> {
+        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
+
+        if (recipeInstance.emailPasswordRecipe === undefined) {
+            throw new Error(
+                "Email Password has not been enabled. This function is only available when disableEmailPassword in ThirdPartyEmailpassword.init is not set to false"
+            );
+        }
+
+        return recipeInstance.recipeImpl.doesEmailExist({
+            ...input,
+            config: recipeInstance.emailPasswordRecipe.webJsRecipe.config,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
     static Google = Google;
     static Apple = Apple;
     static Facebook = Facebook;
@@ -111,6 +278,11 @@ const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const EmailVerification = Wrapper.EmailVerification;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
+const submitNewPassword = Wrapper.submitNewPassword;
+const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
+const emailPasswordSignIn = Wrapper.emailPasswordSignIn;
+const emailPasswordSignUp = Wrapper.emailPasswordSignUp;
+const doesEmailExist = Wrapper.doesEmailExist;
 
 export {
     ThirdPartyEmailPasswordAuth,
@@ -126,6 +298,11 @@ export {
     SignInAndUpTheme,
     signOut,
     redirectToAuth,
+    submitNewPassword,
+    sendPasswordResetEmail,
+    emailPasswordSignIn,
+    emailPasswordSignUp,
+    doesEmailExist,
     EmailVerification,
     EmailVerificationTheme,
     ResetPasswordUsingToken,
