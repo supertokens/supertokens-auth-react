@@ -1,19 +1,27 @@
-import { PureComponent } from "react";
-import { FormFieldThemeProps } from "../../../types";
-import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
+import * as React from "react";
+import { EmailPasswordSignInAndUpAction, EmailPasswordSignInAndUpChildProps } from "../../../types";
+import { FeatureBaseProps } from "../../../../../types";
 import { SignInAndUpState } from "../../../types";
 import Recipe from "../../../recipe";
-import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-declare type PropType = FeatureBaseProps & {
-    recipe: Recipe;
-};
-declare class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
-    constructor(props: PropType);
-    getIsEmbedded: () => boolean;
-    onSignInSuccess: () => Promise<void>;
-    onSignUpSuccess: () => Promise<void>;
-    getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[];
-    modifiedRecipeImplementation: RecipeInterface;
-    render: () => JSX.Element;
-}
-export default SignInAndUp;
+import { Dispatch } from "react";
+export declare const useFeatureReducer: (
+    recipe: Recipe | undefined
+) => [SignInAndUpState, React.Dispatch<EmailPasswordSignInAndUpAction>];
+export declare function useChildProps(
+    recipe: Recipe,
+    state: SignInAndUpState,
+    dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
+    history: any
+): EmailPasswordSignInAndUpChildProps;
+export declare function useChildProps(
+    recipe: Recipe | undefined,
+    state: SignInAndUpState,
+    dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
+    history: any
+): EmailPasswordSignInAndUpChildProps | undefined;
+export declare const SignInAndUpFeature: React.FC<
+    FeatureBaseProps & {
+        recipe: Recipe;
+    }
+>;
+export default SignInAndUpFeature;

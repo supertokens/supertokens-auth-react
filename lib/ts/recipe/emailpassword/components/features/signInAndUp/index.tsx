@@ -19,236 +19,285 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import * as React from "react";
-import { PureComponent, Fragment } from "react";
+import { Fragment } from "react";
 
-import { FormFieldThemeProps } from "../../../types";
+import {
+    EmailPasswordSignInAndUpAction,
+    EmailPasswordSignInAndUpChildProps,
+    FormFieldThemeProps,
+} from "../../../types";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
-import { getRedirectToPathFromURL } from "../../../../../utils";
+import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { SignInAndUpState } from "../../../types";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import { useMemo } from "react";
+import { useCallback } from "react";
+import { Dispatch } from "react";
 
-type PropType = FeatureBaseProps & {
-    recipe: Recipe;
+export const useFeatureReducer = (recipe: Recipe | undefined) => {
+    return React.useReducer(
+        (oldState: SignInAndUpState, action: EmailPasswordSignInAndUpAction) => {
+            switch (action.type) {
+                case "setSignIn":
+                    return {
+                        ...oldState,
+                        isSignUp: false,
+                    };
+                case "setSignUp":
+                    return {
+                        ...oldState,
+                        isSignUp: true,
+                    };
+                case "setError":
+                    return {
+                        ...oldState,
+                        error: action.error,
+                    };
+                default:
+                    return oldState;
+            }
+        },
+        {
+            isSignUp: recipe === undefined ? false : recipe.config.signInAndUpFeature.defaultToSignUp,
+            user: undefined,
+            error: undefined,
+        },
+        (initArg) => {
+            const show = getQueryParams("show");
+            let isSignUp = initArg.isSignUp;
+            if (show !== null) {
+                isSignUp = show === "signup";
+            }
+
+            return {
+                isSignUp,
+                user: undefined,
+                error: undefined,
+            };
+        }
+    );
 };
 
-class SignInAndUp extends PureComponent<PropType, SignInAndUpState> {
-    constructor(props: PropType) {
-        super(props);
+// We are overloading to explicitly state that if recipe is defined then the return value is defined as well.
+export function useChildProps(
+    recipe: Recipe,
+    state: SignInAndUpState,
+    dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
+    history: any
+): EmailPasswordSignInAndUpChildProps;
+export function useChildProps(
+    recipe: Recipe | undefined,
+    state: SignInAndUpState,
+    dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
+    history: any
+): EmailPasswordSignInAndUpChildProps | undefined;
 
-        this.state = {
-            user: undefined,
-        };
-    }
+export function useChildProps(
+    recipe: Recipe | undefined,
+    state: SignInAndUpState,
+    dispatch: Dispatch<EmailPasswordSignInAndUpAction>,
+    history: any
+): EmailPasswordSignInAndUpChildProps | undefined {
+    const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.recipeImpl), [recipe]);
 
-    getIsEmbedded = (): boolean => {
-        if (this.props.isEmbedded !== undefined) {
-            return this.props.isEmbedded;
-        }
-        return false;
-    };
-
-    onSignInSuccess = async (): Promise<void> => {
-        if (this.state.user === undefined) {
+    const onSignInSuccess = useCallback(async (): Promise<void> => {
+        if (!recipe) {
             return;
         }
-
-        if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
+        if (recipe.emailVerification.config.mode === "REQUIRED") {
             let isEmailVerified = true;
             try {
                 // TODO NEMI: handle user context for pre built UI
-                isEmailVerified = (await this.props.recipe.emailVerification.isEmailVerified({})).isVerified;
+                isEmailVerified = (await recipe.emailVerification.isEmailVerified({})).isVerified;
             } catch (ignored) {}
             if (!isEmailVerified) {
-                await this.props.recipe.savePostEmailVerificationSuccessRedirectState({
+                await recipe.savePostEmailVerificationSuccessRedirectState({
                     redirectToPath: getRedirectToPathFromURL(),
                     isNewUser: false,
                     action: "SUCCESS",
                 });
-                return this.props.recipe.emailVerification.redirect(
+                return recipe.emailVerification.redirect(
                     {
                         action: "VERIFY_EMAIL",
                     },
-                    this.props.history
+                    history
                 );
             }
         }
 
-        return await this.props.recipe.redirect(
+        return await recipe.redirect(
             {
                 action: "SUCCESS",
                 isNewUser: false,
                 redirectToPath: getRedirectToPathFromURL(),
             },
-            this.props.history
+            history
         );
-    };
+    }, [recipe]);
 
-    onSignUpSuccess = async (): Promise<void> => {
-        if (this.state.user === undefined) {
+    const onSignUpSuccess = useCallback(async (): Promise<void> => {
+        if (!recipe) {
             return;
         }
-
-        if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
-            await this.props.recipe.savePostEmailVerificationSuccessRedirectState({
+        if (recipe.emailVerification.config.mode === "REQUIRED") {
+            await recipe.savePostEmailVerificationSuccessRedirectState({
                 redirectToPath: getRedirectToPathFromURL(),
                 isNewUser: true,
                 action: "SUCCESS",
             });
-            return await this.props.recipe.emailVerification.redirect(
+            return await recipe.emailVerification.redirect(
                 {
                     action: "VERIFY_EMAIL",
                 },
-                this.props.history
+                history
             );
         } else {
-            return await this.props.recipe.redirect(
+            return await recipe.redirect(
                 {
                     redirectToPath: getRedirectToPathFromURL(),
                     isNewUser: true,
                     action: "SUCCESS",
                 },
-                this.props.history
+                history
             );
         }
-    };
+    }, [recipe]);
 
-    getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[]): FormFieldThemeProps[] {
-        const emailPasswordOnly = formFields.length === 2;
-        return formFields.map((field) => ({
-            ...field,
-            showIsRequired: (() => {
-                // If email and password only, do not show required indicator (*).
-                if (emailPasswordOnly) {
-                    return false;
-                }
-                // Otherwise, show for all non optional fields (including email and password).
-                return field.optional === false;
-            })(),
-            validate: (() => {
-                // If field is not email, return field validate unchanged.
-                if (field.id !== "email") {
-                    return field.validate;
-                }
-
-                // Otherwise, if email, use syntax validate method and check if email exists.
-                return async (value: any): Promise<string | undefined> => {
-                    const error = await field.validate(value);
-                    if (error !== undefined) {
-                        return error;
-                    }
-
-                    if (typeof value !== "string") {
-                        return "GENERAL_ERROR_EMAIL_NON_STRING";
-                    }
-                    try {
-                        // TODO NEMI: handle user context for pre built UI
-                        const emailExists: boolean = (
-                            await this.props.recipe.recipeImpl.doesEmailExist({
-                                email: value,
-                                config: this.props.recipe.webJsRecipe.config,
-                                userContext: {},
-                            })
-                        ).doesExist;
-                        if (emailExists) {
-                            return "EMAIL_PASSWORD_EMAIL_ALREADY_EXISTS";
-                        }
-                    } catch (_) {}
-                    return undefined;
-                };
-            })(),
-        }));
-    }
-
-    modifiedRecipeImplementation: RecipeInterface = {
-        ...this.props.recipe.recipeImpl,
-        signIn: async (input) => {
-            const response = await this.props.recipe.recipeImpl.signIn(input);
-
-            this.setState((oldState) => {
-                return response.status !== "OK"
-                    ? oldState
-                    : {
-                          user: response.user,
-                      };
-            });
-
-            return response;
-        },
-        signUp: async (input) => {
-            const response = await this.props.recipe.recipeImpl.signUp(input);
-
-            this.setState((oldState) => {
-                return response.status !== "OK"
-                    ? oldState
-                    : {
-                          user: response.user,
-                      };
-            });
-
-            return response;
-        },
-    };
-
-    render = (): JSX.Element => {
-        const componentOverrides = this.props.recipe.config.override.components;
-
-        const signInAndUpFeature = this.props.recipe.config.signInAndUpFeature;
+    return useMemo(() => {
+        if (recipe === undefined || recipeImplementation === undefined) {
+            return;
+        }
+        const signInAndUpFeature = recipe.config.signInAndUpFeature;
         const signUpFeature = signInAndUpFeature.signUpForm;
         const signInFeature = signInAndUpFeature.signInForm;
 
         const signInForm = {
-            recipe: this.props.recipe,
-            recipeImplementation: this.modifiedRecipeImplementation,
-            config: this.props.recipe.config,
+            recipe,
+            recipeImplementation,
+            config: recipe.config,
             styleFromInit: signInFeature.style,
             formFields: signInFeature.formFields,
-            onSuccess: this.onSignInSuccess,
-            forgotPasswordClick: () => this.props.recipe.redirect({ action: "RESET_PASSWORD" }, this.props.history),
+            error: state.error,
+            clearError: () => dispatch({ type: "setError", error: undefined }),
+            onError: (error: string) => dispatch({ type: "setError", error }),
+            onSuccess: onSignInSuccess,
+            forgotPasswordClick: () => recipe.redirect({ action: "RESET_PASSWORD" }, history),
         };
 
         const signUpForm = {
-            recipe: this.props.recipe,
-            recipeImplementation: this.modifiedRecipeImplementation,
-            config: this.props.recipe.config,
+            recipe,
+            recipeImplementation,
+            config: recipe.config,
             styleFromInit: signUpFeature.style,
-            formFields: this.getThemeSignUpFeatureFormFields(signUpFeature.formFields),
-            onSuccess: this.onSignUpSuccess,
+            formFields: getThemeSignUpFeatureFormFields(signUpFeature.formFields, recipe),
+            error: state.error,
+            clearError: () => dispatch({ type: "setError", error: undefined }),
+            onError: (error: string) => dispatch({ type: "setError", error }),
+            onSuccess: onSignUpSuccess,
         };
 
-        const props = {
-            config: this.props.recipe.config,
+        return {
+            config: recipe.config,
             signInForm: signInForm,
             signUpForm: signUpForm,
         };
-
-        return (
-            <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper
-                    useShadowDom={this.props.recipe.config.useShadowDom}
-                    isEmbedded={this.getIsEmbedded()}
-                    defaultStore={defaultTranslationsEmailPassword}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {this.props.children === undefined && <SignInAndUpTheme {...props} />}
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children &&
-                            React.Children.map(this.props.children, (child) => {
-                                if (React.isValidElement(child)) {
-                                    return React.cloneElement(child, props);
-                                }
-
-                                return child;
-                            })}
-                    </Fragment>
-                </FeatureWrapper>
-            </ComponentOverrideContext.Provider>
-        );
-    };
+    }, [recipe, state, dispatch]);
 }
 
-export default SignInAndUp;
+export const SignInAndUpFeature: React.FC<
+    FeatureBaseProps & {
+        recipe: Recipe;
+    }
+> = (props) => {
+    const [state, dispatch] = useFeatureReducer(props.recipe);
+    const childProps = useChildProps(props.recipe, state, dispatch, props.history);
+
+    return (
+        <ComponentOverrideContext.Provider value={props.recipe.config.override.components}>
+            <FeatureWrapper
+                useShadowDom={props.recipe.config.useShadowDom}
+                defaultStore={defaultTranslationsEmailPassword}>
+                <Fragment>
+                    {/* No custom theme, use default. */}
+                    {props.children === undefined && (
+                        <SignInAndUpTheme {...childProps} featureState={state} dispatch={dispatch} />
+                    )}
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {props.children &&
+                        React.Children.map(props.children, (child) => {
+                            if (React.isValidElement(child)) {
+                                return React.cloneElement(child, {
+                                    ...childProps,
+                                    featureState: state,
+                                    dispatch: dispatch,
+                                });
+                            }
+
+                            return child;
+                        })}
+                </Fragment>
+            </FeatureWrapper>
+        </ComponentOverrideContext.Provider>
+    );
+};
+
+export default SignInAndUpFeature;
+
+const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInterface => {
+    return {
+        ...origImpl,
+    };
+};
+
+function getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[], recipe: Recipe): FormFieldThemeProps[] {
+    const emailPasswordOnly = formFields.length === 2;
+    return formFields.map((field) => ({
+        ...field,
+        showIsRequired: (() => {
+            // If email and password only, do not show required indicator (*).
+            if (emailPasswordOnly) {
+                return false;
+            }
+            // Otherwise, show for all non optional fields (including email and password).
+            return field.optional === false;
+        })(),
+        validate: (() => {
+            // If field is not email, return field validate unchanged.
+            if (field.id !== "email") {
+                return field.validate;
+            }
+
+            // Otherwise, if email, use syntax validate method and check if email exists.
+            return async (value: any): Promise<string | undefined> => {
+                const error = await field.validate(value);
+                if (error !== undefined) {
+                    return error;
+                }
+
+                if (typeof value !== "string") {
+                    return "GENERAL_ERROR_EMAIL_NON_STRING";
+                }
+                try {
+                    // TODO NEMI: handle user context for pre built UI
+                    const emailExists = (
+                        await recipe.recipeImpl.doesEmailExist({
+                            email: value,
+                            config: recipe.webJsRecipe.config,
+                            userContext: {},
+                        })
+                    ).doesExist;
+
+                    if (emailExists) {
+                        return "EMAIL_PASSWORD_EMAIL_ALREADY_EXISTS";
+                    }
+                } catch {}
+                return undefined;
+            };
+        })(),
+    }));
+}

@@ -26,12 +26,13 @@ export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",
     function PasswordlessPhoneForm(
         props: SignInUpPhoneFormProps & {
-            header?: JSX.Element;
             footer?: JSX.Element;
         }
     ): JSX.Element {
         return (
             <FormBase
+                clearError={props.clearError}
+                onError={props.onError}
                 formFields={[
                     {
                         id: "phoneNumber",
@@ -73,9 +74,7 @@ export const PhoneForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                header={props.header}
                 footer={props.footer}
-                error={props.error}
             />
         );
     }

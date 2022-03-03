@@ -25,79 +25,44 @@ import { ThemeBase } from "../themeBase";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 import { getStyles } from "../styles/styles";
-import { getQueryParams } from "../../../../../utils";
 
-/*
- * Component.
- */
-export class SignInAndUpTheme extends React.PureComponent<
-    SignInAndUpThemeProps,
-    {
-        isSignUp: boolean;
-    }
-> {
-    constructor(props: SignInAndUpThemeProps) {
-        super(props);
-
-        const show = getQueryParams("show");
-        let isSignUp = props.config.signInAndUpFeature.defaultToSignUp;
-        if (show !== null) {
-            isSignUp = show === "signup";
-        }
-
-        this.state = {
-            isSignUp,
-        };
-    }
-
-    render(): JSX.Element {
-        // If isSignUp, return signUp.
-        if (this.state.isSignUp) {
-            return (
-                <StyleProvider
-                    rawPalette={this.props.config.palette}
-                    defaultPalette={defaultPalette}
-                    styleFromInit={this.props.signUpForm.styleFromInit}
-                    rootStyleFromInit={this.props.config.rootStyle}
-                    getDefaultStyles={getStyles}>
-                    <SignUp
-                        {...this.props.signUpForm}
-                        signInClicked={() => {
-                            this.setState((oldState) => {
-                                return {
-                                    ...oldState,
-                                    isSignUp: false,
-                                };
-                            });
-                        }}
-                    />
-                </StyleProvider>
-            );
-        }
-
-        // Otherwise, return SignIn.
+export const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
+    // If isSignUp, return signUp.
+    if (props.featureState.isSignUp) {
         return (
             <StyleProvider
-                rawPalette={this.props.config.palette}
+                rawPalette={props.config.palette}
                 defaultPalette={defaultPalette}
-                styleFromInit={this.props.signInForm.styleFromInit}
-                rootStyleFromInit={this.props.config.rootStyle}
+                styleFromInit={props.signUpForm.styleFromInit}
+                rootStyleFromInit={props.config.rootStyle}
                 getDefaultStyles={getStyles}>
-                <SignIn
-                    {...this.props.signInForm}
-                    signUpClicked={() => {
-                        this.setState((oldState) => {
-                            return {
-                                ...oldState,
-                                isSignUp: true,
-                            };
-                        });
+                <SignUp
+                    {...props.signUpForm}
+                    signInClicked={() => {
+                        props.dispatch({ type: "setSignIn" });
                     }}
                 />
             </StyleProvider>
         );
     }
-}
+
+    // Otherwise, return SignIn.
+    return (
+        <StyleProvider
+            rawPalette={props.config.palette}
+            defaultPalette={defaultPalette}
+            styleFromInit={props.signInForm.styleFromInit}
+            rootStyleFromInit={props.config.rootStyle}
+            getDefaultStyles={getStyles}>
+            <SignIn
+                {...props.signInForm}
+                signUpClicked={() => {
+                    props.dispatch({ type: "setSignUp" });
+                }}
+            />
+        </StyleProvider>
+    );
+};
 
 function SignInAndUpThemeWrapper(props: SignInAndUpThemeProps): JSX.Element {
     const hasFont = hasFontDefined(props.config.rootStyle);

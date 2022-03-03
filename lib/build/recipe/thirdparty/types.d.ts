@@ -23,9 +23,9 @@ import {
 } from "supertokens-web-js/recipe/thirdparty";
 import ThirdPartyRecipe from "./recipe";
 export declare type ComponentOverrideMap = {
-    ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
-    ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
-    ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
+    ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
+    ThirdPartySignInAndUpProvidersForm_Override?: ComponentOverride<typeof ProvidersForm>;
+    ThirdPartySignInAndUpCallbackTheme_Override?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
 };
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
@@ -85,16 +85,24 @@ export declare type OnHandleEventContext =
           };
       };
 export declare type SignInAndUpThemeProps = {
+    featureState: {
+        error: string | undefined;
+    };
+    dispatch: (action: ThirdPartySignInUpActions) => void;
     providers: {
         id: string;
         buttonComponent: JSX.Element;
     }[];
     recipe: ThirdPartyRecipe;
     config: NormalisedConfig;
+};
+export declare type ThirdPartySignInUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
+export declare type ThirdPartySignInUpActions = {
+    type: "setError";
     error: string | undefined;
 };
 export declare type ThirdPartySignInAndUpState = {
-    error?: string;
+    error: string | undefined;
 };
 export declare type StateObject = WebJsStateObject & {
     rid?: string;

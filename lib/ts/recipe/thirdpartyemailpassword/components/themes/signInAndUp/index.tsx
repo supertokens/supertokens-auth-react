@@ -18,49 +18,36 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { useContext, useState } from "react";
-import { Fragment } from "react";
+import React, { useContext } from "react";
 import StyleContext, { StyleProvider } from "../../../../../styles/styleContext";
 import { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 import { Header } from "./header";
-import { default as ThirdPartySignInAndUp } from "../../../../thirdparty/components/features/signInAndUp";
-import { default as EmailPasswordSignInAndUp } from "../../../../emailpassword/components/features/signInAndUp";
-import { SignInAndUpForm as EmailPasswordSignInAndUpForm } from "../../themes/signInAndUp/signInAndUpForm";
-import { SignInAndUpThemeProps as ThirdPartySignInAndUpThemeProps } from "../../../../thirdparty/types";
-import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 import { getStyles } from "../styles";
-import { getQueryParams } from "../../../../../utils";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { useTranslation } from "../../../../../translation/translationContext";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { SignUpFooter } from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
+import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
+import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
+import { SignInFooter } from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
 
 const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
-    const show = getQueryParams("show");
-    let isSignUpConf = props.config.signInAndUpFeature.defaultToSignUp;
-    if (show !== null) {
-        isSignUpConf = show === "signup";
-    }
-    const [isSignUp, setIsSignUp] = useState(isSignUpConf);
     const t = useTranslation();
     const styles = useContext(StyleContext);
+
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
-                <Header isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
-                {props.thirdPartyRecipe !== undefined && (
-                    <Fragment>
-                        <ThirdPartySignInAndUp
-                            recipe={props.thirdPartyRecipe}
-                            history={props.history}
-                            isEmbedded={true}>
-                            <ProvidersForm
-                                // Seed props. Real props will be given by parent feature.
-                                {...({} as ThirdPartySignInAndUpThemeProps)}
-                            />
-                        </ThirdPartySignInAndUp>
-                    </Fragment>
+                <Header
+                    isSignUp={props.epState.isSignUp}
+                    setIsSignUp={(isSignUp) => props.epDispatch({ type: isSignUp ? "setSignUp" : "setSignIn" })}
+                />
+                {props.commonState.error && <GeneralError error={props.commonState.error} />}
+                {props.tpChildProps !== undefined && (
+                    <ProvidersForm {...props.tpChildProps} featureState={props.tpState} dispatch={props.tpDispatch} />
                 )}
                 {props.config.disableEmailPassword !== true && props.thirdPartyRecipe !== undefined && (
                     <div data-supertokens="thirdPartyEmailPasswordDivider" css={styles.thirdPartyEmailPasswordDivider}>
@@ -73,18 +60,27 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
                         <div data-supertokens="divider" css={styles.divider}></div>
                     </div>
                 )}
-                {props.emailPasswordRecipe !== undefined && (
-                    <EmailPasswordSignInAndUp
-                        recipe={props.emailPasswordRecipe}
-                        history={props.history}
-                        isEmbedded={true}>
-                        <EmailPasswordSignInAndUpForm
-                            // Seed props. Real props will be given by parent feature.
-                            {...({} as EmailPasswordSignInAndUpThemeProps)}
-                            isSignUp={isSignUp}
+                {props.epChildProps !== undefined &&
+                    (props.epState.isSignUp ? (
+                        <SignUpForm
+                            {...props.epChildProps.signUpForm}
+                            footer={
+                                <SignUpFooter
+                                    privacyPolicyLink={
+                                        props.epChildProps.config.signInAndUpFeature.signUpForm.privacyPolicyLink
+                                    }
+                                    termsOfServiceLink={
+                                        props.epChildProps.config.signInAndUpFeature.signUpForm.termsOfServiceLink
+                                    }
+                                />
+                            }
                         />
-                    </EmailPasswordSignInAndUp>
-                )}
+                    ) : (
+                        <SignInForm
+                            {...props.epChildProps.signInForm}
+                            footer={<SignInFooter onClick={props.epChildProps.signInForm.forgotPasswordClick} />}
+                        />
+                    ))}
             </div>
             <SuperTokensBranding />
         </div>
