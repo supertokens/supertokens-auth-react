@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Exports more recipe functions for emailverification recipe to allow them to be called without using the pre-built UI. Newly exported functions: `verifyEmail`, `sendVerificationEmail`
 -   Exports all emailverification recipe functions from emailpassword, thirdparty and thirdpartyemailpassword recipes.
 -   Exports more recipe functions for emailpassword recipe to allow them to be called without using the pre-built UI. Newly exported functions: `submitNewPassword`, `sendPasswordResetEmail`, `signUp`, `signIn`, `doesEmailExist`.
--   Exports more recipe functions for thirdparty recipe to allow them to be called without using the pre-built UI Newly exported function: `getAuthorizationURLWithQueryParamsAndSetState`, `signInAndUp`.
+-   Exports more recipe functions for thirdparty recipe to allow them to be called without using the pre-built UI. Newly exported functions: `getAuthorizationURLWithQueryParamsAndSetState`, `signInAndUp`.
+-   Exports emailpassword and thidparty recipe functions from thirdpartyemailpassword recipe to allow them to be called without using the pre-built UI. Also exports `redirectToThirdPartyLogin` from thirdpartyemailpassword recipe.
 -   Changes recipe functions for email verification recipe (this is breaking change if you use the override feature):
     -   `verifyEmail` -> No longer accepts `token` as a parameter, instead it calls `getEmailVerificationTokenFromURL`
     -   `getEmailVerificationTokenFromURL` -> NEW FUNCTION
