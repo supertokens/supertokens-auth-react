@@ -8,7 +8,6 @@ export default function getRecipeImplementation(webJsImplementation: WebJSEmailV
             fetchResponse: Response;
         }> {
             const response = await webJsImplementation.recipeImplementation.verifyEmail({
-                token: input.token,
                 config: webJsImplementation.config,
                 userContext: input.userContext,
             });

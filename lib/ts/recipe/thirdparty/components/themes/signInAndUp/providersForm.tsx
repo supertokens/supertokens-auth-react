@@ -15,21 +15,13 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { Fragment, useState, useContext, useEffect } from "react";
+import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { SignInAndUpThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
 
 export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {
     const styles = useContext(StyleContext);
-    const [error, setError] = useState<string | undefined>(props.error);
-
-    useEffect(() => {
-        if (props.error !== undefined) {
-            setError(props.error);
-        }
-    }, [props.error]);
 
     const signInClick = async (providerId: string): Promise<void> => {
         try {
@@ -40,16 +32,15 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
                 userContext: {},
             });
             if (response.status === "ERROR") {
-                setError("SOMETHING_WENT_WRONG_ERROR");
+                props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
             }
         } catch (err) {
-            setError("SOMETHING_WENT_WRONG_ERROR");
+            props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
         }
     };
 
     return (
         <Fragment>
-            {error !== undefined ? <GeneralError error={error} /> : null}
             {props.providers.map((provider) => {
                 return (
                     <div

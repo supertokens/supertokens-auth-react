@@ -47,7 +47,7 @@ SuperTokens.init({
             },
             override: {
                 components: {
-                    ThirdPartyEmailPasswordHeader: ({ DefaultComponent, ...props }) => {
+                    ThirdPartyEmailPasswordHeader_Override: ({ DefaultComponent, ...props }) => {
                         if (props.isSignUp) {
                             return <DefaultComponent {...props} />;
                         } else {

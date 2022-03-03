@@ -33,7 +33,10 @@ type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };
 
-class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | undefined }> {
+class ResetPasswordUsingToken extends PureComponent<
+    PropType,
+    { token: string | undefined; error: string | undefined }
+> {
     /*
      * Constructor.
      */
@@ -42,20 +45,14 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
 
         const token = getQueryParams("token");
         if (token === null) {
-            this.state = { token: undefined };
+            this.state = { token: undefined, error: undefined };
         } else {
             this.state = {
                 token,
+                error: undefined,
             };
         }
     }
-
-    getIsEmbedded = (): boolean => {
-        if (this.props.isEmbedded !== undefined) {
-            return this.props.isEmbedded;
-        }
-        return false;
-    };
 
     render = (): JSX.Element => {
         const enterEmailFormFeature = this.props.recipe.config.resetPasswordUsingTokenFeature.enterEmailForm;
@@ -69,6 +66,9 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
             this.state.token === undefined
                 ? undefined
                 : {
+                      error: this.state.error,
+                      onError: (error: string) => this.setState((os) => ({ ...os, error })),
+                      clearError: () => this.setState((os) => ({ ...os, error: undefined })),
                       styleFromInit: submitNewPasswordFormFeature.style,
                       formFields: submitNewPasswordFormFeature.formFields,
                       recipeImplementation: this.props.recipe.recipeImpl,
@@ -80,6 +80,9 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
                   };
 
         const enterEmailForm = {
+            error: this.state.error,
+            onError: (error: string) => this.setState((os) => ({ ...os, error })),
+            clearError: () => this.setState((os) => ({ ...os, error: undefined })),
             styleFromInit: enterEmailFormFeature.style,
             formFields: enterEmailFormFeature.formFields,
             recipeImplementation: this.props.recipe.recipeImpl,
@@ -95,7 +98,6 @@ class ResetPasswordUsingToken extends PureComponent<PropType, { token: string | 
         return (
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper
-                    isEmbedded={this.getIsEmbedded()}
                     useShadowDom={this.props.recipe.config.useShadowDom}
                     defaultStore={defaultTranslationsEmailPassword}>
                     <Fragment>

@@ -25,7 +25,6 @@ import { SignInAndUpCallbackTheme } from "../../lib/ts/recipe/thirdparty/compone
 import { SendVerifyEmail } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/verifyEmailLinkClicked";
 import { Header as ThirdPartyEmailPasswordHeader } from "../../lib/ts/recipe/thirdpartyemailpassword/components/themes/signInAndUp/header";
-import { SignInAndUpForm } from "../../lib/ts/recipe/thirdpartyemailpassword/components/themes/signInAndUp/signInAndUpForm";
 import { CloseTabScreen } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/closeTabScreen";
 import { ComponentOverride } from "../../lib/ts/components/componentOverride/componentOverride";
 import { LinkClickedScreen } from "../../lib/ts/recipe/passwordless/components/themes/linkClickedScreen";
@@ -55,34 +54,33 @@ describe("Theme component overrides", () => {
         // Required<T> ensures that we cover all available overrides in tests
         [K in keyof Required<AllComponentsOverrideMap>]: any;
     } = {
-        EmailPasswordSignUpHeader: SignUpHeader,
-        EmailPasswordSignInHeader: SignInHeader,
-        EmailPasswordResetPasswordEmail: ResetPasswordEmail,
-        EmailPasswordSignIn: SignIn,
-        EmailPasswordSignInFooter: SignInFooter,
-        EmailPasswordSignInForm: SignInForm,
-        EmailPasswordSignUp: SignUp,
-        EmailPasswordSignUpFooter: EmailPasswordSignUpFooter,
-        EmailPasswordSignUpForm: SignUpForm,
-        EmailPasswordSubmitNewPassword: SubmitNewPassword,
-        ThirdPartySignUpFooter: ThirdPartySignUpFooter,
-        ThirdPartySignInAndUpProvidersForm: ProvidersForm,
-        ThirdPartySignInAndUpCallbackTheme: SignInAndUpCallbackTheme,
-        EmailVerificationSendVerifyEmail: SendVerifyEmail,
-        EmailVerificationVerifyEmailLinkClicked: VerifyEmailLinkClicked,
-        ThirdPartyEmailPasswordHeader: ThirdPartyEmailPasswordHeader,
-        ThirdPartyEmailPasswordSignInAndUpForm: SignInAndUpForm,
-        PasswordlessEmailForm: EmailForm,
-        PasswordlessPhoneForm: PhoneForm,
-        PasswordlessEmailOrPhoneForm: EmailOrPhoneForm,
-        PasswordlessSignInUpFooter: SignInUpFooter,
-        PasswordlessSignInUpHeader: SignInUpHeader,
-        PasswordlessUserInputCodeForm: UserInputCodeForm,
-        PasswordlessUserInputCodeFormFooter: UserInputCodeFormFooter,
-        PasswordlessUserInputCodeFormHeader: UserInputCodeFormHeader,
-        PasswordlessLinkSent: LinkSent,
-        PasswordlessCloseTabScreen: CloseTabScreen,
-        PasswordlessLinkClickedScreen: LinkClickedScreen,
+        EmailPasswordSignUpHeader_Override: SignUpHeader,
+        EmailPasswordSignInHeader_Override: SignInHeader,
+        EmailPasswordResetPasswordEmail_Override: ResetPasswordEmail,
+        EmailPasswordSignIn_Override: SignIn,
+        EmailPasswordSignInFooter_Override: SignInFooter,
+        EmailPasswordSignInForm_Override: SignInForm,
+        EmailPasswordSignUp_Override: SignUp,
+        EmailPasswordSignUpFooter_Override: EmailPasswordSignUpFooter,
+        EmailPasswordSignUpForm_Override: SignUpForm,
+        EmailPasswordSubmitNewPassword_Override: SubmitNewPassword,
+        ThirdPartySignUpFooter_Override: ThirdPartySignUpFooter,
+        ThirdPartySignInAndUpProvidersForm_Override: ProvidersForm,
+        ThirdPartySignInAndUpCallbackTheme_Override: SignInAndUpCallbackTheme,
+        EmailVerificationSendVerifyEmail_Override: SendVerifyEmail,
+        EmailVerificationVerifyEmailLinkClicked_Override: VerifyEmailLinkClicked,
+        ThirdPartyEmailPasswordHeader_Override: ThirdPartyEmailPasswordHeader,
+        PasswordlessEmailForm_Override: EmailForm,
+        PasswordlessPhoneForm_Override: PhoneForm,
+        PasswordlessEmailOrPhoneForm_Override: EmailOrPhoneForm,
+        PasswordlessSignInUpFooter_Override: SignInUpFooter,
+        PasswordlessSignInUpHeader_Override: SignInUpHeader,
+        PasswordlessUserInputCodeForm_Override: UserInputCodeForm,
+        PasswordlessUserInputCodeFormFooter_Override: UserInputCodeFormFooter,
+        PasswordlessUserInputCodeFormHeader_Override: UserInputCodeFormHeader,
+        PasswordlessLinkSent_Override: LinkSent,
+        PasswordlessCloseTabScreen_Override: CloseTabScreen,
+        PasswordlessLinkClickedScreen_Override: LinkClickedScreen,
     };
 
     Object.entries(overrides).forEach(([key, comp]) => {

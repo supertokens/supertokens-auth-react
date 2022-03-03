@@ -276,12 +276,6 @@ export type FeatureBaseProps = {
      * History provided by react-router
      */
     history?: any;
-
-    /*
-     * Nested Features
-     * This is used to avoid reinitialising feature wrapper for nested features.
-     */
-    isEmbedded?: boolean;
 };
 
 export type PreAPIHookFunction = (context: {

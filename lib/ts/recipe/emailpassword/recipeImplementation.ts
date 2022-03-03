@@ -29,7 +29,6 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
             const response = await webJsRecipe.recipeImplementation.submitNewPassword({
                 config: webJsRecipe.config,
                 formFields: [input.formFields[0]],
-                token: input.token,
                 userContext: input.userContext,
             });
 

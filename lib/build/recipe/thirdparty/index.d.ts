@@ -1,4 +1,5 @@
 /// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
@@ -44,7 +45,7 @@ export default class Wrapper {
     static Github: typeof Github;
     static ThirdPartyAuth: typeof ThirdPartyAuth;
     static SignInAndUp: (prop?: any) => JSX.Element;
-    static SignInAndUpTheme: typeof SignInAndUpTheme;
+    static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }

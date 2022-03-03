@@ -34,13 +34,6 @@ import { defaultTranslationsThirdParty } from "../../themes/translations";
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 class SignInAndUpCallback extends PureComponent<PropType, unknown> {
-    getIsEmbedded = (): boolean => {
-        if (this.props.isEmbedded !== undefined) {
-            return this.props.isEmbedded;
-        }
-        return false;
-    };
-
     componentDidMount = async (): Promise<void> => {
         try {
             const pathName = getCurrentNormalisedUrlPath().getAsStringDangerous();
@@ -112,7 +105,6 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
-                    isEmbedded={this.getIsEmbedded()}
                     defaultStore={defaultTranslationsThirdParty}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}

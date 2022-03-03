@@ -34,9 +34,9 @@ import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallbac
 import OverrideableBuilder from "supertokens-js-override";
 
 export type ComponentOverrideMap = {
-    ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
-    ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
-    ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
+    ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
+    ThirdPartySignInAndUpProvidersForm_Override?: ComponentOverride<typeof ProvidersForm>;
+    ThirdPartySignInAndUpCallbackTheme_Override?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
 };
 
 export type UserInput = {
@@ -133,17 +133,26 @@ export type OnHandleEventContext =
       };
 
 export type SignInAndUpThemeProps = {
+    featureState: {
+        error: string | undefined;
+    };
+    dispatch: (action: ThirdPartySignInUpActions) => void;
     providers: {
         id: string;
         buttonComponent: JSX.Element;
     }[];
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
+};
+export type ThirdPartySignInUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
+
+export type ThirdPartySignInUpActions = {
+    type: "setError";
     error: string | undefined;
 };
 
 export type ThirdPartySignInAndUpState = {
-    error?: string;
+    error: string | undefined;
 };
 
 export type StateObject = {
