@@ -38,8 +38,8 @@ export const defaultTranslationsPasswordless = {
         PWLESS_SIGN_IN_UP_FOOTER_PP: "Privacy Policy",
         PWLESS_SIGN_IN_UP_FOOTER_END: "",
 
-        PWLESS_SIGN_IN_UP_EMAIL_LABEL: "Email or Phone number",
-        PWLESS_SIGN_IN_UP_PHONE_LABEL: "Your Phone Number",
+        PWLESS_SIGN_IN_UP_EMAIL_LABEL: "Email",
+        PWLESS_SIGN_IN_UP_PHONE_LABEL: "Phone Number",
         PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL: "Email or Phone number",
         PWLESS_SIGN_IN_UP_CONTINUE_BUTTON: "CONTINUE",
         PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR: "Please enter a valid phone number with its country code.",
