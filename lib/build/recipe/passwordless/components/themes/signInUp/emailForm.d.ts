@@ -3,7 +3,6 @@
 import { SignInUpEmailFormProps } from "../../../types";
 export declare const EmailForm: import("react").ComponentType<
     SignInUpEmailFormProps & {
-        header?: JSX.Element | undefined;
         footer?: JSX.Element | undefined;
     }
 >;

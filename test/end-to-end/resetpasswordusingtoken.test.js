@@ -283,12 +283,13 @@ describe("SuperTokens Reset password", function () {
             await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API);
             // Get valid token.
             const latestURLWithToken = await getLatestURLWithToken();
-            await page.goto(latestURLWithToken),
-                // Submit new password
-                await setInputValues(page, [
-                    { name: "password", value: "NEW_Str0ngP@ssw0rd" },
-                    { name: "confirm-password", value: "NEW_Str0ngP@ssw0rd" },
-                ]);
+            await page.goto(latestURLWithToken);
+
+            // Submit new password
+            await setInputValues(page, [
+                { name: "password", value: "NEW_Str0ngP@ssw0rd" },
+                { name: "confirm-password", value: "NEW_Str0ngP@ssw0rd" },
+            ]);
             await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
 
             const title = await getTextByDataSupertokens(page, "headerTitle");

@@ -30,17 +30,19 @@ export const EmailOrPhoneForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
-        const [phoneNumberInitialValue, setPhoneNumberInitialValue] = useState<string | undefined>();
+        const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
+
         return (
             <FormBase
+                clearError={props.clearError}
+                onError={props.onError}
                 formFields={[
                     {
                         id: "emailOrPhone",
                         label: "PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL",
-                        inputComponent: phoneNumberInitialValue
+                        inputComponent: isPhoneNumber
                             ? phoneNumberInputWithInjectedProps({
                                   defaultCountry: props.config.signInUpFeature.defaultCountry,
-                                  initialValue: phoneNumberInitialValue,
                               })
                             : undefined,
                         optional: false,
@@ -51,7 +53,7 @@ export const EmailOrPhoneForm = withOverride(
                 ]}
                 buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                 onSuccess={props.onSuccess}
-                callAPI={async (formFields) => {
+                callAPI={async (formFields, setValue) => {
                     const emailOrPhone = formFields.find((field) => field.id === "emailOrPhone")?.value;
                     if (emailOrPhone === undefined) {
                         return {
@@ -93,8 +95,9 @@ export const EmailOrPhoneForm = withOverride(
                                 props.config.signInUpFeature.defaultCountry
                             );
 
-                        if (intPhoneNumber && phoneNumberInitialValue === undefined) {
-                            setPhoneNumberInitialValue(intPhoneNumber);
+                        if (intPhoneNumber && isPhoneNumber !== true) {
+                            setValue("emailOrPhone", intPhoneNumber);
+                            setIsPhoneNumber(true);
                             return {
                                 status: "GENERAL_ERROR",
                                 message: "PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR",
@@ -109,9 +112,7 @@ export const EmailOrPhoneForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                header={props.header}
                 footer={props.footer}
-                error={props.error}
             />
         );
     }

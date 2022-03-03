@@ -5,7 +5,6 @@ declare type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };
 declare class SignInAndUpCallback extends PureComponent<PropType, unknown> {
-    getIsEmbedded: () => boolean;
     componentDidMount: () => Promise<void>;
     render: () => JSX.Element;
 }

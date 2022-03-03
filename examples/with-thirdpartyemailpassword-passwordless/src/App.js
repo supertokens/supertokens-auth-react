@@ -38,7 +38,7 @@ SuperTokens.init({
             },
             override: {
                 components: {
-                    ThirdPartySignInAndUpProvidersForm: ({ DefaultComponent, ...props }) => {
+                    ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => {
                         return (
                             <div>
                                 <DefaultComponent {...props} />

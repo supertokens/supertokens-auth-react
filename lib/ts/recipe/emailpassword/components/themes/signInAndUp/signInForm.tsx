@@ -35,6 +35,8 @@ export const SignInForm = withOverride(
         return (
             <FormBase
                 formFields={props.formFields}
+                clearError={props.clearError}
+                onError={props.onError}
                 buttonLabel={"EMAIL_PASSWORD_SIGN_IN_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {
@@ -53,7 +55,6 @@ export const SignInForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                header={props.header}
                 footer={props.footer}
             />
         );

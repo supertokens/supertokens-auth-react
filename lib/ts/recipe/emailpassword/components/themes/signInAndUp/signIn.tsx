@@ -28,6 +28,7 @@ import { SignInForm } from "./signInForm";
 import { SignInHeader } from "./signInHeader";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
+import GeneralError from "../../library/generalError";
 
 export const SignIn = withOverride("EmailPasswordSignIn", function EmailPasswordSignIn(props: SignInThemeProps) {
     const styles = useContext(StyleContext);
@@ -35,11 +36,10 @@ export const SignIn = withOverride("EmailPasswordSignIn", function EmailPassword
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
-                <SignInForm
-                    {...props}
-                    header={<SignInHeader onClick={props.signUpClicked} />}
-                    footer={<SignInFooter onClick={props.forgotPasswordClick} />}
-                />
+                {<SignInHeader onClick={props.signUpClicked} />}
+                {props.error !== undefined && <GeneralError error={props.error} />}
+
+                <SignInForm {...props} footer={<SignInFooter onClick={props.forgotPasswordClick} />} />
             </div>
             <SuperTokensBranding />
         </div>

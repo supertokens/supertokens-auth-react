@@ -1,6 +1,14 @@
 import React from "react";
 import { FAKE_PASSWORD } from "../App";
 
+function setInputValue(input, val) {
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+    nativeInputValueSetter.call(input, val);
+
+    var ev2 = new Event("input", { bubbles: true });
+    input.dispatchEvent(ev2);
+}
+
 export default function CustomSignUp({ DefaultComponent, ...props }) {
     // we use useLayoutEffect instead of useEffect because that prevent the UI glitch that
     // happens cause of the JS manipulation
@@ -13,9 +21,12 @@ export default function CustomSignUp({ DefaultComponent, ...props }) {
 
             // we set the fake password in the password field so that the UI will
             // call the sign up API
-            document
-                .querySelector("#supertokens-root")
-                .shadowRoot.querySelector("form > div:nth-child(2) > div > div > input").value = FAKE_PASSWORD;
+            setInputValue(
+                document
+                    .querySelector("#supertokens-root")
+                    .shadowRoot.querySelector("form > div:nth-child(2) > div > div > input"),
+                FAKE_PASSWORD
+            );
         } else {
             // we are in the /set-password page..
 
@@ -47,9 +58,12 @@ export default function CustomSignUp({ DefaultComponent, ...props }) {
                 .shadowRoot.querySelector("form > div:nth-child(3) > button").innerText = "CONTINUE";
 
             // we put a fake email so that the sign up button can work
-            document
-                .querySelector("#supertokens-root")
-                .shadowRoot.querySelector("form > div > div:nth-child(2) > div > input").value = "a@b.com";
+            setInputValue(
+                document
+                    .querySelector("#supertokens-root")
+                    .shadowRoot.querySelector("form > div > div:nth-child(2) > div > input"),
+                "a@b.com"
+            );
         }
     }, []);
     return <DefaultComponent {...props} />;

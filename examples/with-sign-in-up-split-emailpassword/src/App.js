@@ -58,7 +58,7 @@ SuperTokens.init({
             },
             override: {
                 components: {
-                    EmailPasswordSignIn: ({ DefaultComponent, ...props }) => {
+                    EmailPasswordSignIn_Override: ({ DefaultComponent, ...props }) => {
                         /* if the user visits the /signin route, we want to show the
                          default implementation. If thy visit the /signup 
                          route (which also renders the <SignInUp> component),
@@ -81,7 +81,7 @@ SuperTokens.init({
                             return null;
                         }
                     },
-                    EmailPasswordSignUp: ({ DefaultComponent, ...props }) => {
+                    EmailPasswordSignUp_Override: ({ DefaultComponent, ...props }) => {
                         /* if the user visits the /signup route, we want to show the
                          default implementation. If thy visit the /signin?show=signup
                          route, we want to show the sign in UI, so we redirect them to /signin
@@ -103,7 +103,7 @@ SuperTokens.init({
                             return null;
                         }
                     },
-                    EmailPasswordSignInHeader: ({ DefaultComponent, ...props }) => {
+                    EmailPasswordSignInHeader_Override: ({ DefaultComponent, ...props }) => {
                         return (
                             <div>
                                 <DefaultComponent {...props} />

@@ -408,7 +408,6 @@ describe("SuperTokens Passwordless", function () {
 
     before(async function () {
         const features = await getFeatureFlags();
-
         if (!features.includes("passwordless")) {
             this.skip();
         }
@@ -1414,7 +1413,7 @@ describe("SuperTokens Passwordless", function () {
                     await submitForm(page);
 
                     if (i === 1) {
-                        await waitForSTElement(page, "[data-supertokens~='generalError']");
+                        await waitForSTElement(page, `[data-supertokens~=input][name=${inputName}]`);
                     } else {
                         await waitForSTElement(page, "[data-supertokens~='generalError']");
                     }

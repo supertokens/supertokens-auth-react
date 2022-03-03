@@ -12,12 +12,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/*
- * Imports.
- */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { Fragment, useState, useContext } from "react";
+import { useContext, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 
 import { EnterEmailProps, EnterEmailStatus } from "../../../types";
@@ -25,6 +22,7 @@ import { EnterEmailProps, EnterEmailStatus } from "../../../types";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import GeneralError from "../../library/generalError";
 
 const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -61,7 +59,18 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
+                <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                    {t("EMAIL_PASSWORD_RESET_HEADER_TITLE")}
+                </div>
+                <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
+                    <div data-supertokens="secondaryText" css={styles.secondaryText}>
+                        {t("EMAIL_PASSWORD_RESET_HEADER_SUBTITLE")}
+                    </div>
+                </div>
+                {props.error !== undefined && <GeneralError error={props.error} />}
                 <FormBase
+                    clearError={props.clearError}
+                    onError={props.onError}
                     formFields={formFields}
                     buttonLabel={"EMAIL_PASSWORD_RESET_SEND_BTN"}
                     onSuccess={onSuccess}
@@ -73,18 +82,6 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                     }
                     showLabels={true}
                     validateOnBlur={true}
-                    header={
-                        <Fragment>
-                            <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                                {t("EMAIL_PASSWORD_RESET_HEADER_TITLE")}
-                            </div>
-                            <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
-                                <div data-supertokens="secondaryText" css={styles.secondaryText}>
-                                    {t("EMAIL_PASSWORD_RESET_HEADER_SUBTITLE")}
-                                </div>
-                            </div>
-                        </Fragment>
-                    }
                 />
             </div>
         </div>
