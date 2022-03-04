@@ -45,9 +45,31 @@ type PropType = FeatureBaseProps & {
 const SignInAndUp: React.FC<PropType> = (props) => {
     const [tpState, tpDispatch] = useThirdPartyFeatureReducer();
     const [pwlessState, pwlessDispatch] = usePasswordlessFeatureReducer(props.recipe.passwordlessRecipe?.recipeImpl);
+
     const [combinedState, dispatch] = React.useReducer(
         (state: { error: string | undefined }, action: ThirdPartySignInUpActions | PasswordlessSignInUpAction) => {
             switch (action.type) {
+                // Intentionally fall through, both of these should clear the error
+                case "startLogin":
+                case "resendCode":
+                    return {
+                        ...state,
+                        error: undefined,
+                    };
+
+                case "load":
+                    if (action.loginAttemptInfo !== undefined) {
+                        return {
+                            ...state,
+                            error: action.error,
+                        };
+                    }
+                    return {
+                        ...state,
+                        error: state.error !== undefined ? state.error : action.error,
+                    };
+                // Intentionally fall through, both of these should set the error
+                case "restartFlow":
                 case "setError":
                     return {
                         ...state,
@@ -57,7 +79,20 @@ const SignInAndUp: React.FC<PropType> = (props) => {
                     return state;
             }
         },
-        { error: tpState.error || pwlessState.error }
+        { error: undefined },
+        () => {
+            let error = tpState.error;
+            if (
+                pwlessState.error !== undefined &&
+                tpState.error !== undefined &&
+                tpState.error === "SOMETHING_WENT_WRONG_ERROR"
+            ) {
+                error = pwlessState.error;
+            }
+            return {
+                error,
+            };
+        }
     );
 
     const combinedTPDispatch = React.useCallback<typeof tpDispatch>(
@@ -69,7 +104,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
     );
     const tpChildProps = useThirdPartyChildProps(props.recipe.thirdPartyRecipe)!;
 
-    const combinedPWLessDispatch = React.useCallback<typeof pwlessDispatch>(
+    const combinedPwlessDispatch = React.useCallback<typeof pwlessDispatch>(
         (action) => {
             dispatch(action);
             pwlessDispatch(action);
@@ -77,11 +112,11 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         [pwlessDispatch, dispatch]
     );
 
-    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(pwlessState, combinedPWLessDispatch);
+    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(pwlessState, combinedPwlessDispatch);
 
     const pwlessChildProps = usePasswordlessChildProps(
         props.recipe.passwordlessRecipe,
-        combinedPWLessDispatch,
+        combinedPwlessDispatch,
         pwlessState,
         callingConsumeCodeRef,
         props.history
@@ -98,7 +133,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         tpDispatch: combinedTPDispatch,
         tpChildProps,
         pwlessState,
-        pwlessDispatch: combinedPWLessDispatch,
+        pwlessDispatch: combinedPwlessDispatch,
         pwlessChildProps,
     };
 

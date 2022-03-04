@@ -16,18 +16,19 @@
 /*
  * Imports.
  */
-import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
+import { FeatureBaseConfig, Styles } from "../../types";
 import {
     GetRedirectionURLContext as PasswordlessGetRedirectionURLContext,
     OnHandleEventContext as PasswordlessOnHandleEventContext,
     PreAPIHookContext as PasswordlessPreAPIHookContext,
 } from "../passwordless";
 import {
+    UserInput as PwlessUserInput,
     NormalisedConfig as PasswordlessConfig,
     PasswordlessFeatureBaseConfig,
     PasswordlessSignInUpAction,
     PasswordlessUser,
-    SignInUpFeatureConfigInput as PWLessSignInUpFeatureConfigInput,
+    SignInUpFeatureConfigInput as PwlessSignInUpFeatureConfigInput,
     ChildProps as PwlessChildProps,
     SignInUpState as PWlessSignInUpState,
 } from "../passwordless/types";
@@ -42,6 +43,7 @@ import {
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
+    UserInput as TPUserInput,
 } from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
@@ -75,7 +77,7 @@ export type ComponentOverrideMap = Omit<PasswordlessOverrideMap, "PasswordlessSi
 
 // TODO: move the definition here if necessary
 export type SignInUpFeatureConfigInput = WithRenamedProp<
-    PWLessSignInUpFeatureConfigInput,
+    PwlessSignInUpFeatureConfigInput,
     "emailOrPhoneFormStyle",
     "providerAndEmailOrPhoneFormStyle"
 > & {
@@ -132,38 +134,12 @@ export type UserInput = (
 export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
-export type NormalizedSignInUpFeatureConfig = {
-    resendEmailOrSMSGapInSeconds: number;
-    providers?: (Provider | CustomProviderConfig)[];
-    defaultCountry?: CountryCode;
-    guessInternationPhoneNumberFromInputPhoneNumber: (
-        inputPhoneNumber: string,
-        defaultCountryFromConfig?: CountryCode
-    ) => Promise<string | undefined> | string | undefined;
-    privacyPolicyLink?: string;
-    termsOfServiceLink?: string;
-    // TODO: better name
-    providerAndEmailOrPhoneFormStyle: Styles;
-    userInputCodeFormStyle: Styles;
-    linkSentScreenStyle: Styles;
-    closeTabScreenStyle: Styles;
-    disableDefaultImplementation?: boolean;
-};
-
 export type NormalisedConfig = {
-    contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
+    passwordlessUserInput: PwlessUserInput | undefined;
+    thirdpartyUserInput: TPUserInput | undefined;
 
-    validateEmailAddress: (email: string) => Promise<string | undefined> | string | undefined;
-    validatePhoneNumber: (phoneNumber: string) => Promise<string | undefined> | string | undefined;
+    providerAndEmailOrPhoneFormStyle: Styles | undefined;
 
-    signInUpFeature: NormalizedSignInUpFeatureConfig;
-
-    linkClickedScreenFeature: NormalisedBaseConfig & {
-        disableDefaultImplementation: boolean;
-    };
-
-    oAuthCallbackScreen: NormalisedBaseConfig;
-    disablePasswordless: boolean;
     override: {
         functions: (
             originalImplementation: TPPWlessRecipeInterface,

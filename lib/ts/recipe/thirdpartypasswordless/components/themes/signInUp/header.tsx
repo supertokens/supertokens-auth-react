@@ -25,16 +25,13 @@ import StyleContext from "../../../../../styles/styleContext";
 /*
  * Component.
  */
-export const Header = withOverride(
-    "ThirdPartyPasswordlessHeader",
-    function ThirdPartyPasswordlessHeader(): JSX.Element {
-        const styles = useContext(StyleContext);
-        const t = useTranslation();
+export const Header = withOverride("ThirdPartyPasswordlessHeader", function ThirdPartyPasswordlessHeader() {
+    const styles = useContext(StyleContext);
+    const t = useTranslation();
 
-        return (
-            <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                {t("THIRD_PARTY_PASSWORDLESS_SIGN_IN_AND_UP_HEADER_TITLE")}
-            </div>
-        );
-    }
-);
+    return (
+        <div data-supertokens="headerTitle" css={styles.headerTitle}>
+            {t("THIRD_PARTY_PASSWORDLESS_SIGN_IN_AND_UP_HEADER_TITLE")}
+        </div>
+    );
+});

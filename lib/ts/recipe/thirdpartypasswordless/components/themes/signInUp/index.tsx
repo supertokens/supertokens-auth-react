@@ -79,16 +79,16 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
                                     dispatch={props.tpDispatch}
                                 />
                             )}
-                        {props.config.disablePasswordless !== true &&
-                            props.thirdPartyRecipe !== undefined &&
+                        {props.thirdPartyRecipe !== undefined &&
+                            props.passwordlessRecipe !== undefined &&
                             props.activeScreen !== SignInUpScreens.UserInputCodeForm && (
                                 <div
                                     data-supertokens="thirdPartyPasswordlessDivider"
                                     css={styles.thirdPartyPasswordlessDivider}>
                                     <div data-supertokens="divider" css={styles.divider}></div>
                                     <div
-                                        data-supertokens="thirdPartyPasswordlessDividerOr"
-                                        css={styles.thirdPartyPasswordlessDividerOr}>
+                                        data-supertokens="thirdPartyPasswordlessDividerText"
+                                        css={styles.thirdPartyPasswordlessDividerText}>
                                         {t("THIRD_PARTY_PASSWORDLESS_SIGN_IN_AND_UP_DIVIDER_OR")}
                                     </div>
                                     <div data-supertokens="divider" css={styles.divider}></div>
@@ -115,29 +115,38 @@ const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithAct
     );
 };
 
-function SignInUpThemeWrapper(props: ThirdPartyPasswordlessSignInAndUpThemeProps): JSX.Element {
+function SignInUpThemeWrapper(props: ThirdPartyPasswordlessSignInAndUpThemeProps) {
     const hasFont = hasFontDefined(props.config.rootStyle);
-    const activeScreen =
-        props.pwlessChildProps !== undefined
-            ? getActiveScreen({
-                  config: props.pwlessChildProps.config,
-                  featureState: props.pwlessState,
-              })
-            : undefined;
+
+    // By defining it in a single object here TSC can deduce the connection between props
+    const childProps =
+        props.passwordlessRecipe !== undefined && props.pwlessChildProps !== undefined
+            ? {
+                  ...props,
+                  activeScreen: getActiveScreen({
+                      config: props.pwlessChildProps.config,
+                      featureState: props.pwlessState,
+                  }),
+                  pwlessChildProps: props.pwlessChildProps,
+                  passwordlessRecipe: props.passwordlessRecipe,
+              }
+            : {
+                  ...props,
+                  activeScreen: undefined,
+                  passwordlessRecipe: undefined,
+                  pwlessChildProps: undefined,
+              };
 
     let activeStyle;
-    if (activeScreen === SignInUpScreens.CloseTab) {
-        activeStyle = props.config.signInUpFeature.closeTabScreenStyle;
-    } else if (activeScreen === SignInUpScreens.LinkSent) {
-        activeStyle = props.config.signInUpFeature.linkSentScreenStyle;
-    } else if (activeScreen === SignInUpScreens.UserInputCodeForm) {
-        activeStyle = props.config.signInUpFeature.userInputCodeFormStyle;
-    } else if (activeScreen === SignInUpScreens.EmailForm) {
-        activeStyle = props.config.signInUpFeature.providerAndEmailOrPhoneFormStyle;
-    } else if (activeScreen === SignInUpScreens.PhoneForm) {
-        activeStyle = props.config.signInUpFeature.providerAndEmailOrPhoneFormStyle;
-    } else if (activeScreen === SignInUpScreens.EmailOrPhoneForm) {
-        activeStyle = props.config.signInUpFeature.providerAndEmailOrPhoneFormStyle;
+    if (childProps.activeScreen === SignInUpScreens.CloseTab) {
+        activeStyle = props.passwordlessRecipe!.config.signInUpFeature.closeTabScreenStyle;
+    } else if (childProps.activeScreen === SignInUpScreens.LinkSent) {
+        activeStyle = props.passwordlessRecipe!.config.signInUpFeature.linkSentScreenStyle;
+    } else if (childProps.activeScreen === SignInUpScreens.UserInputCodeForm) {
+        activeStyle = props.passwordlessRecipe!.config.signInUpFeature.userInputCodeFormStyle;
+    } else {
+        // This case also includes undefined which means that passwordless is disabled
+        activeStyle = props.config.providerAndEmailOrPhoneFormStyle;
     }
 
     // This style provider will override the parent with the screen specific user config
@@ -149,7 +158,7 @@ function SignInUpThemeWrapper(props: ThirdPartyPasswordlessSignInAndUpThemeProps
                 styleFromInit={activeStyle}
                 rootStyleFromInit={props.config.rootStyle}
                 getDefaultStyles={getStyles}>
-                <SignInUpTheme {...(props as any)} activeScreen={activeScreen} />
+                <SignInUpTheme {...childProps} />
             </StyleProvider>
         </ThemeBase>
     );

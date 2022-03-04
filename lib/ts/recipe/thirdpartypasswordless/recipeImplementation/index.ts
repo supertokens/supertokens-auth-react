@@ -4,7 +4,7 @@ import PasswordlessRecipeImplementation from "../../passwordless/recipeImplement
 import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
 import { NormalisedConfig as EPConfig } from "../../passwordless/types";
 import { NormalisedConfig as TPConfig, StateObject } from "../../thirdparty/types";
-import DerivedPWLess from "./passwordlessImplementation";
+import DerivedPwless from "./passwordlessImplementation";
 import DerivedTP from "./thirdPartyImplementation";
 
 export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): TPPWlessRecipeInterface {
@@ -13,28 +13,28 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
 
     return {
         consumeCode(input) {
-            return passwordlessImpl.consumeCode.bind(DerivedPWLess(this))(input);
+            return passwordlessImpl.consumeCode.bind(DerivedPwless(this))(input);
         },
         createCode(input) {
-            return passwordlessImpl.createCode.bind(DerivedPWLess(this))(input);
+            return passwordlessImpl.createCode.bind(DerivedPwless(this))(input);
         },
         doesPasswordlessUserPhoneNumberExist(input) {
-            return passwordlessImpl.doesPhoneNumberExist.bind(DerivedPWLess(this))(input);
+            return passwordlessImpl.doesPhoneNumberExist.bind(DerivedPwless(this))(input);
         },
         doesPasswordlessUserEmailExist: async function (input: { email: string; config: EPConfig }) {
-            return passwordlessImpl.doesEmailExist.bind(DerivedPWLess(this))(input);
+            return passwordlessImpl.doesEmailExist.bind(DerivedPwless(this))(input);
         },
         resendCode(input) {
-            return passwordlessImpl.resendCode.bind(DerivedPWLess(this))(input);
+            return passwordlessImpl.resendCode.bind(DerivedPwless(this))(input);
         },
         clearLoginAttemptInfo() {
-            return passwordlessImpl.clearLoginAttemptInfo.bind(DerivedPWLess(this))();
+            return passwordlessImpl.clearLoginAttemptInfo.bind(DerivedPwless(this))();
         },
         getLoginAttemptInfo() {
-            return passwordlessImpl.getLoginAttemptInfo.bind(DerivedPWLess(this))();
+            return passwordlessImpl.getLoginAttemptInfo.bind(DerivedPwless(this))();
         },
         setLoginAttemptInfo(input) {
-            return passwordlessImpl.setLoginAttemptInfo.bind(DerivedPWLess(this))(input);
+            return passwordlessImpl.setLoginAttemptInfo.bind(DerivedPwless(this))(input);
         },
 
         getOAuthAuthorisationURL: async function (input: { thirdPartyId: string; config: TPConfig }) {

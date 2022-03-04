@@ -79,28 +79,15 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
         this.passwordlessRecipe =
             recipes.passwordlessInstance !== undefined
                 ? recipes.passwordlessInstance
-                : this.config.disablePasswordless
+                : this.config.passwordlessUserInput === undefined
                 ? undefined
                 : new Passwordless({
+                      ...this.config.passwordlessUserInput,
                       appInfo: this.config.appInfo,
                       recipeId: this.config.recipeId,
-                      contactMethod: this.config.contactMethod,
-                      style: this.config.rootStyle,
-                      validateEmailAddress: this.config.validateEmailAddress,
-                      validatePhoneNumber: this.config.validatePhoneNumber,
-                      getRedirectionURL: this.config.getRedirectionURL,
-                      onHandleEvent: this.config.onHandleEvent,
-                      palette: this.config.palette,
-                      preAPIHook: this.config.preAPIHook,
-                      useShadowDom: this.config.useShadowDom,
-                      signInUpFeature: {
-                          ...this.config.signInUpFeature,
-                          emailOrPhoneFormStyle: this.config.signInUpFeature.providerAndEmailOrPhoneFormStyle,
-                      },
-                      linkClickedScreenFeature: this.config.linkClickedScreenFeature,
                       override: {
+                          ...this.config.passwordlessUserInput.override,
                           functions: () => getPasswordlessImpl(this.recipeImpl),
-                          components: this.config.override.components,
                       },
                   });
 
@@ -109,28 +96,16 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
         this.thirdPartyRecipe =
             recipes.thirdPartyInstance !== undefined
                 ? recipes.thirdPartyInstance
-                : this.config.signInUpFeature.providers === undefined ||
-                  this.config.signInUpFeature.providers.length === 0
+                : this.config.thirdpartyUserInput === undefined
                 ? undefined
                 : new ThirdParty(
                       {
+                          ...this.config.thirdpartyUserInput,
                           appInfo: this.config.appInfo,
                           recipeId: this.config.recipeId,
-                          emailVerificationFeature: this.config.emailVerificationFeature,
-                          getRedirectionURL: this.config.getRedirectionURL,
-                          style: this.config.rootStyle,
-                          onHandleEvent: this.config.onHandleEvent,
-                          palette: this.config.palette,
-                          preAPIHook: this.config.preAPIHook,
-                          signInAndUpFeature: {
-                              ...this.config.signInUpFeature,
-                              style: this.config.signInUpFeature.providerAndEmailOrPhoneFormStyle,
-                          },
-                          oAuthCallbackScreen: this.config.oAuthCallbackScreen,
-                          useShadowDom: this.config.useShadowDom,
                           override: {
+                              ...this.config.thirdpartyUserInput.override,
                               functions: () => getThirdPartyImpl(this.recipeImpl),
-                              components: this.config.override.components,
                           },
                       },
                       {
@@ -156,7 +131,12 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
             };
         }
 
-        if (this.config.signInUpFeature.disableDefaultImplementation !== true) {
+        if (
+            (this.config.passwordlessUserInput !== undefined &&
+                this.config.passwordlessUserInput.signInUpFeature?.disableDefaultImplementation !== true) ||
+            (this.config.thirdpartyUserInput !== undefined &&
+                this.config.thirdpartyUserInput.signInAndUpFeature?.disableDefaultImplementation !== true)
+        ) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),

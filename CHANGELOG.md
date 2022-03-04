@@ -57,8 +57,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Added `defaultCountry` to passwordless config input in the `EMAIL_OR_PHONE` case
 
-### Changes
-
 -   add workflow to verify if pr title follows conventional commits
 
 ## [0.18.4] - 2022-01-24

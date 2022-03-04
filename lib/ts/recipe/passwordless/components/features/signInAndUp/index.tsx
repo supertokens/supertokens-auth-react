@@ -87,6 +87,7 @@ export const useFeatureReducer = (
                     }
                     return {
                         ...oldState,
+                        error: undefined,
                         loginAttemptInfo: {
                             ...oldState.loginAttemptInfo,
                             lastResend: action.timestamp,
@@ -148,10 +149,12 @@ export const useFeatureReducer = (
             return;
         }
         async function load() {
+            const loginAttemptInfo = await recipeImpl!.getLoginAttemptInfo();
+
             let error: string | undefined = undefined;
             const errorQueryParam = getQueryParams("error");
             const messageQueryParam = getQueryParams("message");
-            if (errorQueryParam !== null) {
+            if (loginAttemptInfo === undefined && errorQueryParam !== null) {
                 if (errorQueryParam === "signin") {
                     error = "SOMETHING_WENT_WRONG_ERROR";
                 } else if (errorQueryParam === "restart_link") {
@@ -160,7 +163,6 @@ export const useFeatureReducer = (
                     error = messageQueryParam;
                 }
             }
-            const loginAttemptInfo = await recipeImpl!.getLoginAttemptInfo();
             // No need to check if the component is unmounting, since this has no effect then.
             dispatch({ type: "load", loginAttemptInfo, error });
         }

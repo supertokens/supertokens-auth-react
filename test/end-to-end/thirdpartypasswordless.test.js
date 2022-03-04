@@ -100,7 +100,7 @@ describe("SuperTokens Third Party Passwordless", function () {
         await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
     });
 
-    describe("Third Party Email Password test", function () {
+    describe("Third Party Passwordless test", function () {
         it("Successful signup with user input code", async function () {
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
@@ -166,6 +166,7 @@ describe("SuperTokens Third Party Passwordless", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_OAUTH_STATE", // we add this twice because useMemo in getRoutingComponent is called twice during development
                 "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE THIRD_PARTY_SIGN_IN_AND_UP",
                 "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS THIRD_PARTY_SIGN_IN_UP",
@@ -237,6 +238,7 @@ describe("SuperTokens Third Party Passwordless", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_OAUTH_STATE",
+                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_OAUTH_STATE", // we add this twice because useMemo in getRoutingComponent is called twice during development
                 "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE THIRD_PARTY_SIGN_IN_AND_UP",
                 "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_OAUTH_STATE",
                 "ST_LOGS THIRDPARTYPASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",

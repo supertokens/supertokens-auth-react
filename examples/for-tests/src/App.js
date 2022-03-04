@@ -570,7 +570,7 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
             verifyEmailLinkClickedScreen: {
                 style: theme.style,
             },
-            mode: "REQUIRED",
+            mode: emailVerificationMode,
         },
         override: {
             functions: (implementation) => {
@@ -656,10 +656,9 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
                 providerCustom: {
                     color: "red",
                 },
-
-                privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
-                termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
             },
+            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
             providers: [
                 ThirdPartyEmailPassword.Github.init(),
                 ThirdPartyEmailPassword.Google.init(),

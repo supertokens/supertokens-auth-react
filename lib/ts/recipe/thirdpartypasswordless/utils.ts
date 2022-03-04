@@ -16,30 +16,17 @@
 /*
  * Imports.
  */
-import { Config, NormalisedConfig, TPPWlessRecipeInterface, NormalizedSignInUpFeatureConfig } from "./types";
+import { Config, NormalisedConfig, TPPWlessRecipeInterface } from "./types";
 
 import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
-import Provider from "../thirdparty/providers";
-import Custom from "../thirdparty/providers/custom";
-import {
-    defaultEmailValidator,
-    defaultEmailValidatorForCombinedInput,
-    defaultPhoneNumberValidator,
-    defaultPhoneNumberValidatorForCombinedInput,
-} from "../passwordless/validators";
-import { defaultGuessInternationPhoneNumberFromInputPhoneNumber } from "../passwordless/utils";
 
-/*
- * Methods.
- */
 export function normaliseThirdPartyPasswordlessConfig(config: Config): NormalisedConfig {
     const disablePasswordless = config.disablePasswordless === true;
-    if (
-        disablePasswordless &&
-        (config.signInUpFeature === undefined ||
-            config.signInUpFeature.providers === undefined ||
-            config.signInUpFeature.providers.length === 0)
-    ) {
+    const disableThirdParty =
+        config.signInUpFeature === undefined ||
+        config.signInUpFeature.providers === undefined ||
+        config.signInUpFeature.providers.length === 0;
+    if (disablePasswordless && disableThirdParty) {
         throw new Error("You need to enable either email password or third party providers login.");
     }
 
@@ -49,119 +36,54 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
         ...config.override,
     };
 
-    let validateEmailAddress: NormalisedConfig["validateEmailAddress"] = defaultEmailValidator;
-    if (
-        (config.contactMethod === "EMAIL" || config.contactMethod === "EMAIL_OR_PHONE") &&
-        config.validateEmailAddress !== undefined
-    ) {
-        validateEmailAddress = config.validateEmailAddress;
-    } else if (config.contactMethod === "EMAIL_OR_PHONE") {
-        validateEmailAddress = defaultEmailValidatorForCombinedInput;
-    }
-
-    let validatePhoneNumber: NormalisedConfig["validatePhoneNumber"] = defaultPhoneNumberValidator;
-    if (
-        (config.contactMethod === "PHONE" || config.contactMethod === "EMAIL_OR_PHONE") &&
-        config.validatePhoneNumber !== undefined
-    ) {
-        validatePhoneNumber = config.validatePhoneNumber;
-    } else if (config.contactMethod === "EMAIL_OR_PHONE") {
-        validatePhoneNumber = defaultPhoneNumberValidatorForCombinedInput;
-    }
-
-    const signInUpFeature: NormalizedSignInUpFeatureConfig = normaliseSignInUpFeatureConfig(config);
-
+    const providerAndEmailOrPhoneFormStyle =
+        config?.signInUpFeature?.providerAndEmailOrPhoneFormStyle === undefined
+            ? {}
+            : config?.signInUpFeature.providerAndEmailOrPhoneFormStyle;
     return {
         ...normaliseAuthRecipeWithEmailVerificationConfig(config),
-        contactMethod: config.contactMethod,
-        validateEmailAddress,
-        validatePhoneNumber,
 
-        signInUpFeature,
-        oAuthCallbackScreen: {
-            style:
-                config.oAuthCallbackScreen === undefined || config.oAuthCallbackScreen.style === undefined
-                    ? {}
-                    : config.oAuthCallbackScreen.style,
-        },
-        linkClickedScreenFeature: {
-            disableDefaultImplementation: config.linkClickedScreenFeature?.disableDefaultImplementation === true,
-            style:
-                config.linkClickedScreenFeature === undefined || config.linkClickedScreenFeature.style === undefined
-                    ? {}
-                    : config.linkClickedScreenFeature.style,
-        },
-        disablePasswordless,
+        providerAndEmailOrPhoneFormStyle,
+        thirdpartyUserInput: disableThirdParty
+            ? undefined
+            : {
+                  emailVerificationFeature: config.emailVerificationFeature,
+                  getRedirectionURL: config.getRedirectionURL,
+                  style: config.style,
+                  onHandleEvent: config.onHandleEvent,
+                  palette: config.palette,
+                  preAPIHook: config.preAPIHook,
+                  signInAndUpFeature: {
+                      ...config.signInUpFeature,
+                      style: providerAndEmailOrPhoneFormStyle,
+                  },
+                  oAuthCallbackScreen: config.oAuthCallbackScreen,
+                  useShadowDom: config.useShadowDom,
+                  override: {
+                      components: override.components,
+                  },
+              },
+        passwordlessUserInput: disablePasswordless
+            ? undefined
+            : {
+                  contactMethod: config.contactMethod,
+                  style: config.style,
+                  validateEmailAddress: "validateEmailAddress" in config ? config.validateEmailAddress : undefined,
+                  validatePhoneNumber: "validatePhoneNumber" in config ? config.validatePhoneNumber : undefined,
+                  getRedirectionURL: config.getRedirectionURL,
+                  onHandleEvent: config.onHandleEvent,
+                  palette: config.palette,
+                  preAPIHook: config.preAPIHook,
+                  useShadowDom: config.useShadowDom,
+                  signInUpFeature: {
+                      ...config.signInUpFeature,
+                      emailOrPhoneFormStyle: providerAndEmailOrPhoneFormStyle,
+                  },
+                  linkClickedScreenFeature: config.linkClickedScreenFeature,
+                  override: {
+                      components: override.components,
+                  },
+              },
         override,
-    };
-}
-
-function normaliseSignInUpFeatureConfig(config: Config): NormalizedSignInUpFeatureConfig {
-    const disableDefaultImplementation =
-        config?.signInUpFeature?.disableDefaultImplementation === undefined
-            ? false
-            : config?.signInUpFeature?.disableDefaultImplementation;
-
-    /*
-     * Convert custom configs to custom providers.
-     */
-    const providersWithCustom = (config?.signInUpFeature?.providers || []).map((provider) => {
-        if (provider instanceof Provider) {
-            return provider;
-        }
-        return Custom.init(provider);
-    });
-
-    /*
-     * Make sure providers array is unique, filter duplicate values.
-     * First, create a new set with unique ids from the configs.
-     * Then map over those ids to find the first provider that matches from the configs.
-     */
-    const providers = Array.from(new Set(providersWithCustom.map((provider) => provider.id))).map(
-        (id) => providersWithCustom.find((provider) => provider.id === id) as Provider
-    );
-
-    config && config.contactMethod === "PHONE" && config.signInUpFeature?.defaultCountry;
-
-    return {
-        ...config,
-        providers,
-        disableDefaultImplementation,
-        resendEmailOrSMSGapInSeconds:
-            config?.signInUpFeature?.resendEmailOrSMSGapInSeconds === undefined
-                ? 15
-                : config?.signInUpFeature.resendEmailOrSMSGapInSeconds,
-
-        providerAndEmailOrPhoneFormStyle:
-            config?.signInUpFeature?.providerAndEmailOrPhoneFormStyle === undefined
-                ? {}
-                : config?.signInUpFeature.providerAndEmailOrPhoneFormStyle,
-        linkSentScreenStyle:
-            config?.signInUpFeature?.linkSentScreenStyle === undefined
-                ? {}
-                : config?.signInUpFeature.linkSentScreenStyle,
-        userInputCodeFormStyle:
-            config?.signInUpFeature?.userInputCodeFormStyle === undefined
-                ? {}
-                : config?.signInUpFeature.userInputCodeFormStyle,
-        closeTabScreenStyle:
-            config?.signInUpFeature?.closeTabScreenStyle === undefined
-                ? {}
-                : config?.signInUpFeature.closeTabScreenStyle,
-
-        defaultCountry:
-            ["PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod) &&
-            config?.signInUpFeature &&
-            "defaultCountry" in config.signInUpFeature
-                ? config?.signInUpFeature.defaultCountry
-                : undefined,
-
-        guessInternationPhoneNumberFromInputPhoneNumber:
-            config.contactMethod === "EMAIL_OR_PHONE" &&
-            config?.signInUpFeature &&
-            "guessInternationPhoneNumberFromInputPhoneNumber" in config?.signInUpFeature &&
-            config?.signInUpFeature.guessInternationPhoneNumberFromInputPhoneNumber !== undefined
-                ? config?.signInUpFeature.guessInternationPhoneNumberFromInputPhoneNumber
-                : defaultGuessInternationPhoneNumberFromInputPhoneNumber,
     };
 }
