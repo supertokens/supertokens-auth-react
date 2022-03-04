@@ -12,36 +12,23 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
-/*
- * Imports.
- */
-
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import { useContext } from "react";
+import { useTranslation } from "../../../../translation/translationContext";
 import StyleContext from "../../../../styles/styleContext";
-
-/*
- * Props.
- */
 
 type InputErrorProps = {
     error: string;
 };
 
-/*
- * Component.
- */
-
 export default function InputError({ error }: InputErrorProps): JSX.Element {
-    /*
-     * Render.
-     */
     const styles = useContext(StyleContext);
+    const t = useTranslation();
+
     return (
         <div data-supertokens="inputErrorMessage" css={styles.inputErrorMessage}>
-            {error}
+            {t(error)}
         </div>
     );
 }

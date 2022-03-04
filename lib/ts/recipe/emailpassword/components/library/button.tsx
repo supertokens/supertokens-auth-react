@@ -21,6 +21,7 @@
 import { jsx } from "@emotion/react";
 
 import { useContext } from "react";
+import { useTranslation } from "../../../..";
 import StyleContext from "../../../../styles/styleContext";
 /*
  * Props.
@@ -39,16 +40,15 @@ type ButtonProps = {
  */
 
 export default function Button({ type, label, disabled, isLoading, onClick }: ButtonProps): JSX.Element {
-    /*
-     * Render.
-     */
+    const t = useTranslation();
     const styles = useContext(StyleContext);
+
     if (disabled === undefined) {
         disabled = false;
     }
     return (
         <button type={type} disabled={disabled} onClick={onClick} css={styles.button} data-supertokens="button">
-            {label}
+            {t(label)}
             {isLoading && "..."}
         </button>
     );

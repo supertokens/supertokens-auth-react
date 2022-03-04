@@ -196,9 +196,8 @@ describe("ThirdParty", function () {
         );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 1);
         assert.deepStrictEqual(
-            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].getButton().props.children.props
-                .children,
-            ["Continue with ", "Twitch"]
+            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].getButton().props.displayName,
+            "Twitch"
         );
     });
 
@@ -225,9 +224,8 @@ describe("ThirdParty", function () {
         );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 1);
         assert.deepStrictEqual(
-            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].getButton().props.children.props
-                .children,
-            ["Continue with ", "Slack First Provider"]
+            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].getButton().props.displayName,
+            "Slack First Provider"
         );
     });
 
@@ -270,9 +268,8 @@ describe("ThirdParty", function () {
         );
         assert.deepStrictEqual(ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers.length, 2);
         assert.deepStrictEqual(
-            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].getButton().props.children.props
-                .children,
-            ["Continue with ", "Google"]
+            ThirdParty.getInstanceOrThrow().config.signInAndUpFeature.providers[0].getButton().props.displayName,
+            "Google"
         );
     });
 

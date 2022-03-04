@@ -18,115 +18,101 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { PureComponent } from "react";
-import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
+import { useContext, useEffect, useState } from "react";
 
 import StyleContext from "../../../../../styles/styleContext";
 import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
 import EmailLargeIcon from "../../../../../components/assets/emailLargeIcon";
 import { SendVerifyEmailThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { useTranslation } from "../../../../../translation/translationContext";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 
-/*
- * Component.
- */
+export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProps> = (props) => {
+    const styles = useContext(StyleContext);
+    const t = useTranslation();
+    const [status, setStatus] = useState("READY");
 
-class EmailVerificationSendVerifyEmail extends PureComponent<
-    SendVerifyEmailThemeProps,
-    { status: "READY" | "EMAIL_RESENT" | "ERROR" }
-> {
-    static contextType = StyleContext;
-
-    constructor(props: SendVerifyEmailThemeProps) {
-        super(props);
-        this.state = {
-            status: "READY",
-        };
-    }
-
-    resendEmail = async (): Promise<void> => {
+    const resendEmail = async (): Promise<void> => {
         try {
-            const response = await this.props.recipeImplementation.sendVerificationEmail({
-                config: this.props.config,
+            const response = await props.recipeImplementation.sendVerificationEmail({
+                config: props.config,
             });
 
             if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                await this.props.onEmailAlreadyVerified();
+                await props.onEmailAlreadyVerified();
             } else if (response.status === "OK") {
-                this.setState(() => ({
-                    status: "EMAIL_RESENT",
-                }));
+                setStatus("EMAIL_RESENT");
             }
         } catch (e) {
-            this.setState({
-                status: "ERROR",
-            });
+            setStatus("ERROR");
         }
     };
 
-    async componentDidMount() {
-        // we send an email on load...
-        const response = await this.props.recipeImplementation.sendVerificationEmail({
-            config: this.props.config,
-        });
+    useEffect(() => {
+        const abort = new AbortController();
+        void (async function () {
+            // we send an email on load...
+            const response = await props.recipeImplementation.sendVerificationEmail({
+                config: props.config,
+            });
+            if (abort.signal.aborted) {
+                return;
+            }
+            if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
+                await props.onEmailAlreadyVerified();
+            }
+        })();
 
-        if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-            await this.props.onEmailAlreadyVerified();
-        }
-    }
+        return () => {
+            abort.abort();
+        };
+    }, [props.recipeImplementation, props.onEmailAlreadyVerified, props.config]);
 
-    render(): JSX.Element {
-        const styles = this.context;
-        const { signOut } = this.props;
-        const { status } = this.state;
+    const { signOut } = props;
 
-        return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row" css={styles.row}>
-                    {status === "ERROR" && (
-                        <div data-supertokens="generalError" css={styles.generalError}>
-                            {SOMETHING_WENT_WRONG_ERROR}
-                        </div>
-                    )}
-                    {status === "EMAIL_RESENT" && (
-                        <div data-supertokens="generalSuccess" css={styles.generalSuccess}>
-                            Email resent
-                        </div>
-                    )}
-                    <div data-supertokens="sendVerifyEmailIcon" css={styles.sendVerifyEmailIcon}>
-                        <EmailLargeIcon />
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                {status === "ERROR" && <GeneralError error="SOMETHING_WENT_WRONG_ERROR" />}
+                {status === "EMAIL_RESENT" && (
+                    <div data-supertokens="generalSuccess" css={styles.generalSuccess}>
+                        {t("EMAIL_VERIFICATION_RESEND_SUCCESS")}
                     </div>
-                    <div
-                        data-supertokens="headerTitle headerTinyTitle"
-                        css={[styles.headerTitle, styles.headerTinyTitle]}>
-                        Verify your email address
-                    </div>
-                    <div
-                        data-supertokens="primaryText sendVerifyEmailText"
-                        css={[styles.primaryText, styles.sendVerifyEmailText]}>
-                        <strong>Please click on the link</strong> in the email we just sent you to confirm your email
-                        address.
-                    </div>
-                    {status !== "EMAIL_RESENT" && (
-                        <div
-                            data-supertokens="link sendVerifyEmailResend"
-                            css={[styles.link, styles.sendVerifyEmailResend]}
-                            onClick={this.resendEmail}>
-                            Resend Email
-                        </div>
-                    )}
-                    {
-                        <div
-                            data-supertokens="secondaryText secondaryLinkWithArrow"
-                            css={[styles.secondaryText, styles.secondaryLinkWithArrow]}
-                            onClick={() => signOut()}>
-                            Logout <ArrowRightIcon color={styles.palette.colors.textPrimary} />
-                        </div>
-                    }
+                )}
+                <div data-supertokens="sendVerifyEmailIcon" css={styles.sendVerifyEmailIcon}>
+                    <EmailLargeIcon />
                 </div>
+                <div data-supertokens="headerTitle headerTinyTitle" css={[styles.headerTitle, styles.headerTinyTitle]}>
+                    {t("EMAIL_VERIFICATION_SEND_TITLE")}
+                </div>
+                <div
+                    data-supertokens="primaryText sendVerifyEmailText"
+                    css={[styles.primaryText, styles.sendVerifyEmailText]}>
+                    {t("EMAIL_VERIFICATION_SEND_DESC_START")}
+                    <strong>{t("EMAIL_VERIFICATION_SEND_DESC_STRONG")}</strong>
+                    {t("EMAIL_VERIFICATION_SEND_DESC_END")}
+                </div>
+                {status !== "EMAIL_RESENT" && (
+                    <div
+                        data-supertokens="link sendVerifyEmailResend"
+                        css={[styles.link, styles.sendVerifyEmailResend]}
+                        onClick={resendEmail}>
+                        {t("EMAIL_VERIFICATION_RESEND_BTN")}
+                    </div>
+                )}
+                {
+                    <div
+                        data-supertokens="secondaryText secondaryLinkWithArrow"
+                        css={[styles.secondaryText, styles.secondaryLinkWithArrow]}
+                        onClick={() => signOut()}>
+                        {t("EMAIL_VERIFICATION_LOGOUT")}
+                        <ArrowRightIcon color={styles.palette.colors.textPrimary} />
+                    </div>
+                }
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
 
 export const SendVerifyEmail = withOverride("EmailVerificationSendVerifyEmail", EmailVerificationSendVerifyEmail);

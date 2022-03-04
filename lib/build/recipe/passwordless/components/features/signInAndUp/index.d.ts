@@ -1,24 +1,31 @@
-import { PureComponent } from "react";
+import * as React from "react";
 import Recipe from "../../../recipe";
-import { RecipeInterface, LoginAttemptInfo } from "../../../types";
+import { RecipeInterface, PasswordlessSignInUpAction, SignInUpState, ChildProps } from "../../../types";
 import { FeatureBaseProps } from "../../../../../types";
-declare type SignInUpState = {
-    error: string | undefined;
-    loaded: boolean;
-    loginAttemptInfo: LoginAttemptInfo | undefined;
-    checkSessionIntervalHandle: any;
-    successInAnotherTab: boolean;
-    callingConsume: boolean;
-};
-declare type PropType = FeatureBaseProps & {
-    recipe: Recipe;
-};
-declare class SignInUp extends PureComponent<PropType, SignInUpState> {
-    constructor(props: PropType);
-    getIsEmbedded: () => boolean;
-    getModifiedRecipeImplementation: () => RecipeInterface;
-    componentDidMount: () => Promise<void>;
-    componentWillUnmount: () => void;
-    render: () => JSX.Element;
-}
-export default SignInUp;
+export declare const useSuccessInAnotherTabChecker: (
+    state: SignInUpState,
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>
+) => React.MutableRefObject<boolean>;
+export declare const useFeatureReducer: (
+    recipeImpl: RecipeInterface | undefined
+) => [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>];
+export declare function useChildProps(
+    recipe: Recipe,
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    state: SignInUpState,
+    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    history: any
+): ChildProps;
+export declare function useChildProps(
+    recipe: Recipe | undefined,
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    state: SignInUpState,
+    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    history: any
+): ChildProps | undefined;
+export declare const SignInUpFeature: React.FC<
+    FeatureBaseProps & {
+        recipe: Recipe;
+    }
+>;
+export default SignInUpFeature;

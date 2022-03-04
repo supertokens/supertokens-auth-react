@@ -24,12 +24,12 @@ describe("Email password validators tests", function () {
         assert.strictEqual(await defaultEmailValidator("skjlblc3f3@fnldsks.co"), undefined);
         assert.strictEqual(await defaultEmailValidator("skjlbl+c3f3@fnldsks.co"), undefined);
         assert.strictEqual(await defaultEmailValidator("a@d.cp"), undefined);
-        assert.strictEqual(await defaultEmailValidator("a@d.c"), "Email is invalid");
-        assert.strictEqual(await defaultEmailValidator("sdkjfnas34@gmail.com.c"), "Email is invalid");
-        assert.strictEqual(await defaultEmailValidator("d@c"), "Email is invalid");
-        assert.strictEqual(await defaultEmailValidator("fasd"), "Email is invalid");
-        assert.strictEqual(await defaultEmailValidator("dfa@@@abc.com"), "Email is invalid");
-        assert.strictEqual(await defaultEmailValidator(""), "Email is invalid");
+        assert.strictEqual(await defaultEmailValidator("a@d.c"), "ERROR_EMAIL_INVALID");
+        assert.strictEqual(await defaultEmailValidator("sdkjfnas34@gmail.com.c"), "ERROR_EMAIL_INVALID");
+        assert.strictEqual(await defaultEmailValidator("d@c"), "ERROR_EMAIL_INVALID");
+        assert.strictEqual(await defaultEmailValidator("fasd"), "ERROR_EMAIL_INVALID");
+        assert.strictEqual(await defaultEmailValidator("dfa@@@abc.com"), "ERROR_EMAIL_INVALID");
+        assert.strictEqual(await defaultEmailValidator(""), "ERROR_EMAIL_INVALID");
     });
 
     it("checking password validator", async function () {
@@ -45,22 +45,13 @@ describe("Email password validators tests", function () {
         assert.strictEqual(await defaultPasswordValidator("    dsk  3"), undefined);
         assert.strictEqual(await defaultPasswordValidator("  d3    "), undefined);
 
-        assert(
-            (await defaultPasswordValidator("asd")) ===
-                "Password must contain at least 8 characters, including a number"
-        );
+        assert((await defaultPasswordValidator("asd")) === "ERROR_PASSWORD_TOO_SHORT");
         assert(
             (await defaultPasswordValidator(
                 "asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4asdfdefrg4"
-            )) === "Password's length must be lesser than 100 characters"
+            )) === "ERROR_PASSWORD_TOO_LONG"
         );
-        assert.strictEqual(
-            await defaultPasswordValidator("ascdvsdfvsIUOO"),
-            "Password must contain at least one number"
-        );
-        assert.strictEqual(
-            await defaultPasswordValidator("234235234523"),
-            "Password must contain at least one alphabet"
-        );
+        assert.strictEqual(await defaultPasswordValidator("ascdvsdfvsIUOO"), "ERROR_PASSWORD_NO_NUM");
+        assert.strictEqual(await defaultPasswordValidator("234235234523"), "ERROR_PASSWORD_NO_ALPHA");
     });
 });

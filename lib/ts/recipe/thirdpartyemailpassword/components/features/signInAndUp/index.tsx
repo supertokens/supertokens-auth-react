@@ -18,55 +18,106 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import * as React from "react";
-import { PureComponent, Fragment } from "react";
+import { Fragment } from "react";
 import { FeatureBaseProps } from "../../../../../types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import SignInAndUpTheme from "../../themes/signInAndUp";
+import { defaultTranslationsThirdPartyEmailPassword } from "../../themes/translations";
+import {
+    useChildProps as useThirdPartyChildProps,
+    useFeatureReducer as useThirdPartyFeatureReducer,
+} from "../../../../thirdparty/components/features/signInAndUp";
+import {
+    useChildProps as useEmailPasswordChildProps,
+    useFeatureReducer as useEmailPasswordFeatureReducer,
+} from "../../../../emailpassword/components/features/signInAndUp";
+
+import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
+import { EmailPasswordSignInAndUpAction } from "../../../../emailpassword/types";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };
 
-class SignInAndUp extends PureComponent<PropType, { status: "LOADING" | "READY" }> {
-    getIsEmbedded = (): boolean => {
-        if (this.props.isEmbedded !== undefined) {
-            return this.props.isEmbedded;
-        }
-        return false;
+const SignInAndUp: React.FC<PropType> = (props) => {
+    const [tpState, tpDispatch] = useThirdPartyFeatureReducer();
+    const [epState, epDispatch] = useEmailPasswordFeatureReducer(props.recipe.emailPasswordRecipe);
+    const [combinedState, dispatch] = React.useReducer(
+        (state: { error: string | undefined }, action: ThirdPartySignInUpActions | EmailPasswordSignInAndUpAction) => {
+            switch (action.type) {
+                case "setError":
+                    return {
+                        ...state,
+                        error: action.error,
+                    };
+                default:
+                    return state;
+            }
+        },
+        { error: tpState.error || epState.error }
+    );
+
+    const combinedTPDispatch = React.useCallback<typeof tpDispatch>(
+        (action) => {
+            dispatch(action);
+            tpDispatch(action);
+        },
+        [tpDispatch, dispatch]
+    );
+    const tpChildProps = useThirdPartyChildProps(props.recipe.thirdPartyRecipe)!;
+
+    const combinedEPDispatch = React.useCallback<typeof epDispatch>(
+        (action) => {
+            dispatch(action);
+            epDispatch(action);
+        },
+        [epDispatch, dispatch]
+    );
+    const epChildProps = useEmailPasswordChildProps(
+        props.recipe.emailPasswordRecipe,
+        epState,
+        combinedEPDispatch,
+        props.history
+    )!;
+
+    const componentOverrides = props.recipe.config.override.components;
+    const childProps = {
+        emailPasswordRecipe: props.recipe.emailPasswordRecipe,
+        thirdPartyRecipe: props.recipe.thirdPartyRecipe,
+        config: props.recipe.config,
+        history: props.history,
+        commonState: combinedState,
+        tpState,
+        tpDispatch: combinedTPDispatch,
+        tpChildProps,
+        epState,
+        epDispatch: combinedEPDispatch,
+        epChildProps,
     };
 
-    render = (): JSX.Element => {
-        const componentOverrides = this.props.recipe.config.override.components;
+    return (
+        <ComponentOverrideContext.Provider value={componentOverrides}>
+            <FeatureWrapper
+                useShadowDom={props.recipe.config.useShadowDom}
+                defaultStore={defaultTranslationsThirdPartyEmailPassword}>
+                <Fragment>
+                    {/* No custom theme, use default. */}
+                    {props.children === undefined && <SignInAndUpTheme {...childProps} />}
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {props.children &&
+                        React.Children.map(props.children, (child) => {
+                            if (React.isValidElement(child)) {
+                                return React.cloneElement(child, props);
+                            }
 
-        const props = {
-            emailPasswordRecipe: this.props.recipe.emailPasswordRecipe,
-            thirdPartyRecipe: this.props.recipe.thirdPartyRecipe,
-            config: this.props.recipe.config,
-            history: this.props.history,
-        };
-
-        return (
-            <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {this.props.children === undefined && <SignInAndUpTheme {...props} />}
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children &&
-                            React.Children.map(this.props.children, (child) => {
-                                if (React.isValidElement(child)) {
-                                    return React.cloneElement(child, props);
-                                }
-
-                                return child;
-                            })}
-                    </Fragment>
-                </FeatureWrapper>
-            </ComponentOverrideContext.Provider>
-        );
-    };
-}
+                            return child;
+                        })}
+                </Fragment>
+            </FeatureWrapper>
+        </ComponentOverrideContext.Provider>
+    );
+};
 
 export default SignInAndUp;

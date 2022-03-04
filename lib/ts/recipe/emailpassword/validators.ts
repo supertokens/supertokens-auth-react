@@ -19,7 +19,7 @@
 
 export async function defaultEmailValidator(value: any): Promise<string | undefined> {
     if (typeof value !== "string") {
-        return "Email must be of type string";
+        return "ERROR_EMAIL_NON_STRING";
     }
 
     const defaultEmailValidatorRegexp =
@@ -30,7 +30,7 @@ export async function defaultEmailValidator(value: any): Promise<string | undefi
     // Regex from https://stackoverflow.com/a/46181/3867175
 
     if (value.match(defaultEmailValidatorRegexp) === null) {
-        return "Email is invalid";
+        return "ERROR_EMAIL_INVALID";
     }
 
     return undefined;
@@ -44,7 +44,7 @@ export async function defaultEmailValidator(value: any): Promise<string | undefi
 
 export async function defaultPasswordValidator(value: any): Promise<string | undefined> {
     if (typeof value !== "string") {
-        return "Password must be of type string";
+        return "ERROR_PASSWORD_NON_STRING";
     }
 
     // length >= 8 && < 100
@@ -52,19 +52,19 @@ export async function defaultPasswordValidator(value: any): Promise<string | und
     // as per https://github.com/supertokens/supertokens-auth-react/issues/5#issuecomment-709512438
 
     if (value.length < 8) {
-        return "Password must contain at least 8 characters, including a number";
+        return "ERROR_PASSWORD_TOO_SHORT";
     }
 
     if (value.length >= 100) {
-        return "Password's length must be lesser than 100 characters";
+        return "ERROR_PASSWORD_TOO_LONG";
     }
 
     if (value.match(/^.*[A-Za-z]+.*$/) === null) {
-        return "Password must contain at least one alphabet";
+        return "ERROR_PASSWORD_NO_ALPHA";
     }
 
     if (value.match(/^.*[0-9]+.*$/) === null) {
-        return "Password must contain at least one number";
+        return "ERROR_PASSWORD_NO_NUM";
     }
 
     return undefined;
@@ -77,7 +77,7 @@ export async function defaultPasswordValidator(value: any): Promise<string | und
 
 export async function defaultLoginPasswordValidator(value: any): Promise<string | undefined> {
     if (typeof value !== "string") {
-        return "Password must be of type string";
+        return "ERROR_PASSWORD_NON_STRING";
     }
 
     return undefined;

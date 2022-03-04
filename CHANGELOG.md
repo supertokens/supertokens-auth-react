@@ -11,6 +11,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   ThirdParty+Passwordless recipe
 
+## [0.19.0]
+
+### Breaking changes
+
+-   Reworked feature components with several changes in state handling
+-   Component override keys changed (all ending in `_Override` now)
+-   Removed `ThirdPartyEmailPasswordSignInAndUpForm` overrideable component (now reusing overrides of the email password recipe)
+
+### Bug fix:
+
+-   Fixed default translation strings for passwordless sign-in/up form labels
+
+## [0.18.7] - 2022-02-11
+
+### Optimised
+
+-   Uses React.useMemo instead of useEffect in routing component to make first render non null
+
+### Added
+
+-   Adds test for third party with email verification
+
+### Bug fix:
+
+-   Fixes normalisation of thirdparty config to also normalise email verification config.
+
+## [0.18.6] - 2022-02-03
+
+### Added
+
+-   passwordless demo app
+-   Adds example app with Hasura
+-   Adds example app with thirdpartyemailpassword showcasing setting password after email verification
+-   Translateable components
+
+### Refactors
+
+-   Refactored some more pure components into functional
+-   Feature components now provide a stable modified recipe implementation as a prop instead of getter
+
 ## [0.18.5] - 2022-01-27
 
 ### Fixes

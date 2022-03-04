@@ -23,7 +23,7 @@ import {
     TPPWlessRecipeInterface,
 } from "./types";
 import ThirdPartyPasswordlessAuth from "./thirdpartyPasswordlessAuth";
-import { SignInUpTheme } from "./components/themes/signInUp";
+import SignInUpTheme from "./components/themes/signInUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 
 export default class Wrapper {

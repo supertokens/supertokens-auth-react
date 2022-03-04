@@ -7,15 +7,24 @@ import {
 import {
     NormalisedConfig as PasswordlessConfig,
     PasswordlessFeatureBaseConfig,
+    PasswordlessSignInUpAction,
     PasswordlessUser,
     SignInUpFeatureConfigInput as PWLessSignInUpFeatureConfigInput,
+    ChildProps as PwlessChildProps,
+    SignInUpState as PWlessSignInUpState,
 } from "../passwordless/types";
 import {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
-import { NormalisedConfig as TPConfig, StateObject } from "../thirdparty/types";
+import {
+    NormalisedConfig as TPConfig,
+    StateObject,
+    ThirdPartySignInAndUpState,
+    ThirdPartySignInUpActions,
+    ThirdPartySignInUpChildProps,
+} from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
@@ -33,12 +42,14 @@ import { ComponentOverrideMap as PasswordlessOverrideMap } from "../passwordless
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
 import { Header } from "./components/themes/signInUp/header";
 import { CountryCode } from "libphonenumber-js";
+import { Dispatch } from "react";
+import { SignInUpScreens } from "../passwordless/components/themes/signInUp";
 declare type WithRenamedProp<T, K extends keyof T, L extends string> = Omit<T, K> & {
     [P in L]: T[K];
 };
-export declare type ComponentOverrideMap = Omit<PasswordlessOverrideMap, "PasswordlessSignInUpHeader"> &
-    Omit<ThirdPartyOverrideMap, "ThirdPartySignUpFooter" | "ThirdPartySignUpHeader"> & {
-        ThirdPartyPasswordlessHeader?: ComponentOverride<typeof Header>;
+export declare type ComponentOverrideMap = Omit<PasswordlessOverrideMap, "PasswordlessSignInUpHeader_Override"> &
+    Omit<ThirdPartyOverrideMap, "ThirdPartySignUpFooter_Override" | "ThirdPartySignUpHeader_Override"> & {
+        ThirdPartyPasswordlessHeader_Override?: ComponentOverride<typeof Header>;
     };
 export declare type SignInUpFeatureConfigInput = WithRenamedProp<
     PWLessSignInUpFeatureConfigInput,
@@ -126,11 +137,46 @@ export declare type GetRedirectionURLContext =
 export declare type PreAPIHookContext = PasswordlessPreAPIHookContext | ThirdPartyPreAPIHookContext;
 export declare type OnHandleEventContext = PasswordlessOnHandleEventContext | ThirdPartyOnHandleEventContext;
 export declare type ThirdPartyPasswordlessSignInAndUpThemeProps = {
-    history?: any;
-    passwordlessRecipe?: PWlessRecipe;
-    thirdPartyRecipe?: TPRecipe;
     config: NormalisedConfig;
+    history?: any;
+    commonState: {
+        error: string | undefined;
+    };
+    passwordlessRecipe?: PWlessRecipe;
+    pwlessState: PWlessSignInUpState;
+    pwlessDispatch: Dispatch<PasswordlessSignInUpAction>;
+    pwlessChildProps?: PwlessChildProps;
+    thirdPartyRecipe?: TPRecipe;
+    tpState: ThirdPartySignInAndUpState;
+    tpDispatch: Dispatch<ThirdPartySignInUpActions>;
+    tpChildProps?: ThirdPartySignInUpChildProps;
 };
+export declare type ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen = {
+    config: NormalisedConfig;
+    history?: any;
+    commonState: {
+        error: string | undefined;
+    };
+    thirdPartyRecipe?: TPRecipe;
+    tpState: ThirdPartySignInAndUpState;
+    tpDispatch: Dispatch<ThirdPartySignInUpActions>;
+    tpChildProps?: ThirdPartySignInUpChildProps;
+} & (
+    | {
+          activeScreen: undefined;
+          passwordlessRecipe: undefined;
+          pwlessState: PWlessSignInUpState;
+          pwlessDispatch: Dispatch<PasswordlessSignInUpAction>;
+          pwlessChildProps: undefined;
+      }
+    | {
+          activeScreen: SignInUpScreens;
+          passwordlessRecipe: PWlessRecipe;
+          pwlessState: PWlessSignInUpState;
+          pwlessDispatch: Dispatch<PasswordlessSignInUpAction>;
+          pwlessChildProps: PwlessChildProps;
+      }
+);
 export declare type TPPWlessRecipeInterface = {
     createCode: (
         input: (

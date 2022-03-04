@@ -37,7 +37,9 @@ export const SignUpForm = withOverride(
         return (
             <FormBase
                 formFields={props.formFields}
-                buttonLabel={"SIGN UP"}
+                clearError={props.clearError}
+                onError={props.onError}
+                buttonLabel={"EMAIL_PASSWORD_SIGN_UP_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
                 callAPI={(formFields) =>
                     props.recipeImplementation.signUp({
@@ -47,7 +49,6 @@ export const SignUpForm = withOverride(
                 }
                 validateOnBlur={true}
                 showLabels={true}
-                header={props.header}
                 footer={props.footer}
             />
         );

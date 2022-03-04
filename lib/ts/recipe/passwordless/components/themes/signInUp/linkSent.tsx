@@ -18,8 +18,7 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { PureComponent } from "react";
-import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import StyleContext from "../../../../../styles/styleContext";
 import ArrowLeftIcon from "../../../../../components/assets/arrowLeftIcon";
@@ -28,114 +27,99 @@ import { LinkSentThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { ResendButton } from "./resendButton";
 import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
+import { useTranslation } from "../../../../../translation/translationContext";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 
-type LinkSentState = {
-    status: "READY" | "LINK_RESENT" | "ERROR";
-    resendNotifTimeout?: any;
-};
+const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
+    const styles = useContext(StyleContext);
+    const t = useTranslation();
+    const [status, setStatus] = useState(props.error !== undefined ? "ERROR" : "READY");
 
-/*
- * Component.
- */
+    // Any because node types are included here, messing with return type of setTimeout
+    const resendNotifTimeout = useRef<any>();
 
-class PasswordlessLinkSent extends PureComponent<LinkSentThemeProps, LinkSentState> {
-    static contextType = StyleContext;
-
-    constructor(props: LinkSentThemeProps) {
-        super(props);
-
-        this.state = {
-            status: props.error !== undefined ? "ERROR" : "READY",
+    useEffect(() => {
+        return () => {
+            // This can safely run even if it was cleared before
+            if (resendNotifTimeout.current) {
+                clearTimeout(resendNotifTimeout.current);
+            }
         };
-    }
+    }, []);
 
-    componentWillUnmount() {
-        if (this.state.resendNotifTimeout) {
-            clearTimeout(this.state.resendNotifTimeout);
-        }
-    }
-
-    resendEmail = async (): Promise<void> => {
+    const resendEmail = useCallback(async () => {
         try {
-            const response = await this.props.recipeImplementation.resendCode({
-                deviceId: this.props.loginAttemptInfo.deviceId,
-                preAuthSessionId: this.props.loginAttemptInfo.preAuthSessionId,
-                config: this.props.config,
+            props.clearError();
+            const response = await props.recipeImplementation.resendCode({
+                deviceId: props.loginAttemptInfo.deviceId,
+                preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
+                config: props.config,
             });
 
             if (response.status === "OK") {
-                this.setState(() => ({
-                    status: "LINK_RESENT",
-                    resendNotifTimeout: setTimeout(() => {
-                        this.setState((os) => (os.status === "LINK_RESENT" ? { ...os, status: "READY" } : os));
-                    }, 2000),
-                }));
+                setStatus("LINK_RESENT");
+                resendNotifTimeout.current = setTimeout(() => {
+                    setStatus((status) => (status === "LINK_RESENT" ? "READY" : status));
+                    resendNotifTimeout.current = undefined;
+                }, 2000);
             } else {
-                this.setState({
-                    status: "ERROR",
-                });
+                setStatus("ERROR");
+                if (response.status === "GENERAL_ERROR") {
+                    props.onError(response.message);
+                }
             }
         } catch (e) {
-            this.setState({
-                status: "ERROR",
-            });
+            setStatus("ERROR");
         }
-    };
+    }, [props.recipeImplementation, props.loginAttemptInfo, props.config, setStatus]);
 
-    render(): JSX.Element {
-        const styles = this.context;
-        const { status } = this.state;
+    const resendActive = status === "LINK_RESENT";
 
-        const resendActive = status === "LINK_RESENT";
-
-        return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row" css={styles.row}>
-                    {status === "ERROR" && (
-                        <div data-supertokens="generalError" css={styles.generalError}>
-                            {this.props.error === undefined ? SOMETHING_WENT_WRONG_ERROR : this.props.error}
-                        </div>
-                    )}
-                    {resendActive && (
-                        <div data-supertokens="generalSuccess" css={styles.generalSuccess}>
-                            Link resent
-                        </div>
-                    )}
-                    <div data-supertokens="sendCodeIcon" css={styles.sendCodeIcon}>
-                        {this.props.loginAttemptInfo.contactMethod === "EMAIL" ? <EmailLargeIcon /> : <SMSLargeIcon />}
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                {status === "ERROR" && (
+                    <GeneralError error={props.error === undefined ? "SOMETHING_WENT_WRONG_ERROR" : props.error} />
+                )}
+                {resendActive && (
+                    <div data-supertokens="generalSuccess" css={styles.generalSuccess}>
+                        {t("PWLESS_LINK_SENT_RESEND_SUCCESS")}
                     </div>
-                    <div
-                        data-supertokens="headerTitle headerTinyTitle"
-                        css={[styles.headerTitle, styles.headerTinyTitle]}>
-                        Link sent!
-                    </div>
-                    <div data-supertokens="primaryText sendCodeText" css={[styles.primaryText, styles.sendCodeText]}>
-                        We sent a link to
-                        {this.props.loginAttemptInfo.contactMethod === "EMAIL" ? " " : " your phone number "}
-                        <strong>{this.props.loginAttemptInfo.contactInfo}</strong>
-                        {this.props.loginAttemptInfo.contactMethod === "EMAIL"
-                            ? " Click the link to login or sign up"
-                            : ""}
-                    </div>
-                    <ResendButton
-                        loginAttemptInfo={this.props.loginAttemptInfo}
-                        resendEmailOrSMSGapInSeconds={this.props.config.signInUpFeature.resendEmailOrSMSGapInSeconds}
-                        target={this.props.loginAttemptInfo.contactMethod === "EMAIL" ? "Email" : "SMS"}
-                        onClick={this.resendEmail}
-                    />
-                    {
-                        <div
-                            data-supertokens="secondaryText secondaryLinkWithLeftArrow"
-                            css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
-                            onClick={() => this.props.recipeImplementation.clearLoginAttemptInfo()}>
-                            <ArrowLeftIcon color={styles.palette.colors.textPrimary} /> Change{" "}
-                            {this.props.loginAttemptInfo.contactMethod === "EMAIL" ? "email" : "phone number"}
-                        </div>
-                    }
+                )}
+                <div data-supertokens="sendCodeIcon" css={styles.sendCodeIcon}>
+                    {props.loginAttemptInfo.contactMethod === "EMAIL" ? <EmailLargeIcon /> : <SMSLargeIcon />}
                 </div>
+                <div data-supertokens="headerTitle headerTinyTitle" css={[styles.headerTitle, styles.headerTinyTitle]}>
+                    {t("PWLESS_LINK_SENT_RESEND_TITLE")}
+                </div>
+                <div data-supertokens="primaryText sendCodeText" css={[styles.primaryText, styles.sendCodeText]}>
+                    {props.loginAttemptInfo.contactMethod === "EMAIL"
+                        ? t("PWLESS_LINK_SENT_RESEND_DESC_START_EMAIL")
+                        : t("PWLESS_LINK_SENT_RESEND_DESC_START_PHONE")}
+                    <strong>{props.loginAttemptInfo.contactInfo}</strong>
+                    {props.loginAttemptInfo.contactMethod === "EMAIL"
+                        ? t("PWLESS_LINK_SENT_RESEND_DESC_END_EMAIL")
+                        : t("PWLESS_LINK_SENT_RESEND_DESC_END_PHONE")}
+                </div>
+                <ResendButton
+                    loginAttemptInfo={props.loginAttemptInfo}
+                    resendEmailOrSMSGapInSeconds={props.config.signInUpFeature.resendEmailOrSMSGapInSeconds}
+                    onClick={resendEmail}
+                />
+                {
+                    <div
+                        data-supertokens="secondaryText secondaryLinkWithLeftArrow"
+                        css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
+                        onClick={() => props.recipeImplementation.clearLoginAttemptInfo()}>
+                        <ArrowLeftIcon color={styles.palette.colors.textPrimary} />
+                        {props.loginAttemptInfo.contactMethod === "EMAIL"
+                            ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
+                            : t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE")}
+                    </div>
+                }
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
 
 export const LinkSent = withOverride("PasswordlessLinkSent", PasswordlessLinkSent);

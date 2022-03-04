@@ -13,6 +13,7 @@
  * under the License.
  */
 
+import { Dispatch } from "react";
 import { FeatureBaseConfig, NormalisedBaseConfig, Styles } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
@@ -283,13 +284,16 @@ export type UserInput = (
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
 
 export type SignInUpProps = {
-    loginAttemptInfo?: LoginAttemptInfo;
-    loaded: boolean;
-    successInAnotherTab: boolean;
-    error?: string;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess?: (result: { createdUser: boolean; user: PasswordlessUser }) => void;
+    dispatch: Dispatch<PasswordlessSignInUpAction>;
+    featureState: {
+        loginAttemptInfo?: LoginAttemptInfo;
+        loaded: boolean;
+        successInAnotherTab: boolean;
+        error: string | undefined;
+    };
 };
 export type LoginAttemptInfo = {
     deviceId: string;
@@ -302,28 +306,36 @@ export type LoginAttemptInfo = {
 };
 
 export type SignInUpEmailFormProps = {
-    error?: string;
+    clearError: () => void;
+    onError: (error: string) => void;
+    error: string | undefined;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
 
 export type SignInUpPhoneFormProps = {
-    error?: string;
+    clearError: () => void;
+    onError: (error: string) => void;
+    error: string | undefined;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
 
 export type SignInUpEmailOrPhoneFormProps = {
-    error?: string;
+    clearError: () => void;
+    onError: (error: string) => void;
+    error: string | undefined;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSuccess?: () => void;
 };
 
 export type SignInUpUserInputCodeFormProps = {
-    error?: string;
+    clearError: () => void;
+    onError: (error: string) => void;
+    error: string | undefined;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     loginAttemptInfo: LoginAttemptInfo;
@@ -341,8 +353,45 @@ export type CloseTabScreenProps = {
     config: NormalisedConfig;
 };
 
+export type PasswordlessSignInUpAction =
+    | {
+          type: "load";
+          loginAttemptInfo: LoginAttemptInfo | undefined;
+          error: string | undefined;
+      }
+    | {
+          type: "startLogin";
+          loginAttemptInfo: LoginAttemptInfo;
+      }
+    | {
+          type: "resendCode";
+          timestamp: number;
+      }
+    | {
+          type: "restartFlow";
+          error: string | undefined;
+      }
+    | {
+          type: "setError";
+          error: string | undefined;
+      }
+    | {
+          type: "successInAnotherTab";
+      };
+
+export type SignInUpState = {
+    error: string | undefined;
+    loaded: boolean;
+    loginAttemptInfo: LoginAttemptInfo | undefined;
+    successInAnotherTab: boolean;
+};
+
+export type ChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
+
 export type LinkSentThemeProps = {
-    error?: string;
+    clearError: () => void;
+    onError: (error: string) => void;
+    error: string | undefined;
     loginAttemptInfo: LoginAttemptInfo;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
@@ -361,18 +410,18 @@ export type UserInputCodeFormHeaderProps = {
 };
 
 export type ComponentOverrideMap = {
-    PasswordlessSignInUpHeader?: ComponentOverride<typeof SignInUpHeader>;
-    PasswordlessSignInUpFooter?: ComponentOverride<typeof SignInUpFooter>;
-    PasswordlessEmailForm?: ComponentOverride<typeof EmailForm>;
-    PasswordlessPhoneForm?: ComponentOverride<typeof PhoneForm>;
-    PasswordlessEmailOrPhoneForm?: ComponentOverride<typeof EmailOrPhoneForm>;
+    PasswordlessSignInUpHeader_Override?: ComponentOverride<typeof SignInUpHeader>;
+    PasswordlessSignInUpFooter_Override?: ComponentOverride<typeof SignInUpFooter>;
+    PasswordlessEmailForm_Override?: ComponentOverride<typeof EmailForm>;
+    PasswordlessPhoneForm_Override?: ComponentOverride<typeof PhoneForm>;
+    PasswordlessEmailOrPhoneForm_Override?: ComponentOverride<typeof EmailOrPhoneForm>;
 
-    PasswordlessUserInputCodeFormHeader?: ComponentOverride<typeof UserInputCodeFormHeader>;
-    PasswordlessUserInputCodeFormFooter?: ComponentOverride<typeof UserInputCodeFormFooter>;
-    PasswordlessUserInputCodeForm?: ComponentOverride<typeof UserInputCodeForm>;
+    PasswordlessUserInputCodeFormHeader_Override?: ComponentOverride<typeof UserInputCodeFormHeader>;
+    PasswordlessUserInputCodeFormFooter_Override?: ComponentOverride<typeof UserInputCodeFormFooter>;
+    PasswordlessUserInputCodeForm_Override?: ComponentOverride<typeof UserInputCodeForm>;
 
-    PasswordlessLinkSent?: ComponentOverride<typeof LinkSent>;
+    PasswordlessLinkSent_Override?: ComponentOverride<typeof LinkSent>;
 
-    PasswordlessLinkClickedScreen?: ComponentOverride<typeof LinkClickedScreen>;
-    PasswordlessCloseTabScreen?: ComponentOverride<typeof CloseTabScreen>;
+    PasswordlessLinkClickedScreen_Override?: ComponentOverride<typeof LinkClickedScreen>;
+    PasswordlessCloseTabScreen_Override?: ComponentOverride<typeof CloseTabScreen>;
 };

@@ -23,6 +23,10 @@ import { ST_ROOT_ID } from "../constants";
 import ErrorBoundary from "./errorBoundary";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
+import SuperTokens from "../superTokens";
+import { TranslationContextProvider } from "../translation/translationContext";
+import { TranslationStore } from "../translation/translationHelpers";
+import { mergeObjects } from "../utils";
 
 const superTokensEmotionCache = createCache({
     key: "supertokens",
@@ -35,32 +39,34 @@ const superTokensEmotionCache = createCache({
 type FeatureWrapperProps = {
     children: JSX.Element;
     useShadowDom?: boolean;
-    isEmbedded?: boolean;
+    defaultStore: TranslationStore;
 };
 
 /*
  * Component.
  */
 
-export default function FeatureWrapper({ isEmbedded, children, useShadowDom }: FeatureWrapperProps): JSX.Element {
-    /*
-     * Render.
-     */
-
-    /*
-     * Do not embed feature wrapper if the feature is embedded in another feature.
-     */
-    if (isEmbedded) {
-        return children;
-    }
+export default function FeatureWrapper({ children, useShadowDom, defaultStore }: FeatureWrapperProps): JSX.Element {
+    const st = SuperTokens.getInstanceOrThrow();
     return (
         <ErrorBoundary>
-            <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
+            <TranslationContextProvider
+                defaultLanguage={st.languageTranslations.defaultLanguage}
+                defaultStore={mergeObjects(defaultStore, st.languageTranslations.userTranslationStore)}
+                translationControlEventSource={st.languageTranslations.translationEventSource}
+                userTranslationFunc={st.languageTranslations.userTranslationFunc}>
+                <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
+            </TranslationContextProvider>
         </ErrorBoundary>
     );
 }
 
-function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps): JSX.Element {
+type WithOrWithoutShadowDomProps = {
+    children: JSX.Element;
+    useShadowDom?: boolean;
+};
+
+function WithOrWithoutShadowDom({ children, useShadowDom }: WithOrWithoutShadowDomProps): JSX.Element {
     // If explicitely specified to not use shadow dom.
     if (useShadowDom === false) {
         return (
@@ -81,6 +87,7 @@ function WithOrWithoutShadowDom({ children, useShadowDom }: FeatureWrapperProps)
 }
 
 function DisableAutoFillInput(): JSX.Element {
+    /* eslint-disable react/jsx-no-literals */
     return (
         <style type="text/css">
             {
@@ -88,4 +95,5 @@ function DisableAutoFillInput(): JSX.Element {
             }
         </style>
     );
+    /* eslint-enable react/jsx-no-literals */
 }

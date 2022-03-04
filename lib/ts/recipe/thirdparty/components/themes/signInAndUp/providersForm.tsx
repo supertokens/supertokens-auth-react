@@ -15,74 +15,42 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { PureComponent, Fragment } from "react";
+import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { SignInAndUpThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 
-class ThirdPartySignInAndUpProvidersForm extends PureComponent<SignInAndUpThemeProps, { error?: string }> {
-    static contextType = StyleContext;
+export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {
+    const styles = useContext(StyleContext);
 
-    constructor(props: SignInAndUpThemeProps) {
-        super(props);
-        if (this.props.error !== undefined) {
-            this.state = {
-                error: this.props.error,
-            };
-        } else {
-            this.state = {};
-        }
-    }
-
-    componentDidUpdate() {
-        if (this.props.error !== undefined) {
-            this.setState(() => ({
-                error: this.props.error,
-            }));
-        }
-    }
-
-    signInClick = async (providerId: string): Promise<void> => {
+    const signInClick = async (providerId: string): Promise<void> => {
         try {
-            const response = await this.props.recipeImplementation.redirectToThirdPartyLogin({
+            const response = await props.recipeImplementation.redirectToThirdPartyLogin({
                 thirdPartyId: providerId,
-                config: this.props.config,
+                config: props.config,
             });
             if (response.status === "ERROR") {
-                this.setState(() => ({
-                    error: "Something went wrong. Please try again",
-                }));
+                props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
             }
         } catch (err) {
-            this.setState(() => ({
-                error: "Something went wrong. Please try again",
-            }));
+            props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
         }
     };
 
-    render = (): JSX.Element => {
-        const styles = this.context;
-
-        return (
-            <Fragment>
-                {this.state.error !== undefined ? (
-                    <div data-supertokens="generalError" css={styles.generalError}>
-                        {this.state.error}
+    return (
+        <Fragment>
+            {props.providers.map((provider) => {
+                return (
+                    <div
+                        key={`provider-${provider.id}`}
+                        css={styles.providerContainer}
+                        data-supertokens="providerContainer">
+                        <span onClick={() => signInClick(provider.id)}>{provider.buttonComponent}</span>
                     </div>
-                ) : null}
-                {this.props.providers.map((provider) => {
-                    return (
-                        <div
-                            key={`provider-${provider.id}`}
-                            style={styles.providerContainer}
-                            data-supertokens="providerContainer">
-                            <span onClick={() => this.signInClick(provider.id)}>{provider.buttonComponent}</span>
-                        </div>
-                    );
-                })}
-            </Fragment>
-        );
-    };
-}
+                );
+            })}
+        </Fragment>
+    );
+};
 
 export const ProvidersForm = withOverride("ThirdPartySignInAndUpProvidersForm", ThirdPartySignInAndUpProvidersForm);

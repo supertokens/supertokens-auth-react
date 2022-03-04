@@ -70,6 +70,9 @@ export async function waitForSTElement(page, selector, inverted = false) {
             if (!root || !root.shadowRoot) {
                 return false;
             }
+            if (elementSelector === undefined) {
+                return true;
+            }
             const elem = root.shadowRoot.querySelector(elementSelector);
             return inverted ? elem === null : elem;
         },
@@ -102,6 +105,7 @@ export async function waitForText(page, selector, text, timeout = 10000, pollDel
 }
 
 export async function getSubmitFormButtonLabel(page) {
+    await waitForSTElement(page);
     return await page.evaluate(
         (ST_ROOT_SELECTOR) =>
             document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("form > div > button").innerText,
@@ -110,6 +114,7 @@ export async function getSubmitFormButtonLabel(page) {
 }
 
 export async function getProvidersLabels(page) {
+    await waitForSTElement(page);
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             Array.from(
@@ -127,15 +132,11 @@ export async function getSubmitFormButtonLabelWithoutShadowDom(page) {
 }
 
 export async function getSubmitFormButton(page) {
-    return await page.evaluateHandle(
-        `document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("[data-supertokens='button']")`
-    );
+    return waitForSTElement(page, "[data-supertokens='button']");
 }
 
 export async function getInputField(page, name) {
-    return await page.evaluateHandle(
-        `document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("input[name='${name}'")`
-    );
+    return waitForSTElement(page, `input[name='${name}'`);
 }
 
 export async function submitForm(page) {
@@ -148,24 +149,22 @@ export async function getLogoutButton(page) {
 }
 
 export async function getSignInOrSignUpSwitchLink(page) {
-    return await page.evaluateHandle(
-        `document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("div > div > [data-supertokens~='headerSubtitle'] > div > [data-supertokens~='link']")`
+    return waitForSTElement(
+        page,
+        "div > div > [data-supertokens~='headerSubtitle'] > div > [data-supertokens~='link']"
     );
 }
 
 export async function getForgotPasswordLink(page) {
-    return await page.evaluateHandle(
-        `document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("form > div > [data-supertokens~='forgotPasswordLink']")`
-    );
+    return waitForSTElement(page, "form > div > [data-supertokens~='forgotPasswordLink']");
 }
 
 export async function getResendResetPasswordEmailLink(page) {
-    return await page.evaluateHandle(
-        `document.querySelector("${ST_ROOT_SELECTOR}").shadowRoot.querySelector("div > div > [data-supertokens~='enterEmailSuccessMessage'] > span")`
-    );
+    return waitForSTElement(page, "div > div > [data-supertokens~='enterEmailSuccessMessage'] > span");
 }
 
 export async function getTextByDataSupertokens(page, value) {
+    await waitForSTElement(page, `[data-supertokens~='${value}']`);
     return await page.evaluate(
         (value) =>
             document.querySelector("#supertokens-root").shadowRoot.querySelector(`[data-supertokens~='${value}']`)
@@ -175,12 +174,7 @@ export async function getTextByDataSupertokens(page, value) {
 }
 
 export async function sendEmailResetPasswordSuccessMessage(page) {
-    return await page.evaluate(
-        () =>
-            document
-                .querySelector("#supertokens-root")
-                .shadowRoot.querySelector("div > div > [data-supertokens~='enterEmailSuccessMessage']").innerText
-    );
+    return getTextByDataSupertokens(page, "enterEmailSuccessMessage");
 }
 
 export async function getLoginWithRedirectToSignIn(page) {
@@ -197,10 +191,7 @@ export async function getLoginWithRedirectToSignUp(page) {
 
 export async function getAuthPageHeaderText(page) {
     // returns the big header text in /auth page
-    return await page.evaluate(() => {
-        return document.querySelector("#supertokens-root").shadowRoot.querySelector("[data-supertokens~=headerTitle]")
-            .innerText;
-    });
+    return getTextByDataSupertokens(page, "headerTitle");
 }
 
 export async function assertNoSTComponents(page) {
@@ -209,6 +200,7 @@ export async function assertNoSTComponents(page) {
 }
 
 export async function getInputNames(page) {
+    await waitForSTElement(page);
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             Array.from(
@@ -220,6 +212,7 @@ export async function getInputNames(page) {
 }
 
 export async function getInputAdornmentsSuccess(page) {
+    await waitForSTElement(page);
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             Array.from(
@@ -233,6 +226,7 @@ export async function getInputAdornmentsSuccess(page) {
 }
 
 export async function getInputAdornmentsError(page) {
+    await waitForSTElement(page);
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             Array.from(
@@ -246,6 +240,7 @@ export async function getInputAdornmentsError(page) {
 }
 
 export async function getInputTypes(page) {
+    await waitForSTElement(page);
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             Array.from(
@@ -257,6 +252,7 @@ export async function getInputTypes(page) {
 }
 
 export async function getLabelsText(page) {
+    await waitForSTElement(page);
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             Array.from(
@@ -268,6 +264,7 @@ export async function getLabelsText(page) {
 }
 
 export async function getPlaceholders(page) {
+    await waitForSTElement(page);
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             Array.from(
@@ -279,6 +276,7 @@ export async function getPlaceholders(page) {
 }
 
 export async function getShowPasswordIcon(page) {
+    await waitForSTElement(page);
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='showPassword']"),
@@ -287,14 +285,8 @@ export async function getShowPasswordIcon(page) {
 }
 
 export async function toggleShowPasswordIcon(page) {
-    return await page.evaluate(
-        ({ ST_ROOT_SELECTOR }) =>
-            document
-                .querySelector(ST_ROOT_SELECTOR)
-                .shadowRoot.querySelector("[data-supertokens~='showPassword']")
-                .click(),
-        { ST_ROOT_SELECTOR }
-    );
+    const icon = await waitForSTElement(page, "[data-supertokens~='showPassword']");
+    return icon.click();
 }
 
 export async function sendVerifyEmail(page) {
@@ -320,6 +312,7 @@ export async function clickLinkWithRightArrow(page) {
 }
 
 export async function getFieldErrors(page) {
+    await waitForSTElement(page);
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
             Array.from(
@@ -335,38 +328,19 @@ export async function getFieldErrors(page) {
 }
 
 export async function getGeneralError(page) {
-    return await page.evaluate(
-        ({ ST_ROOT_SELECTOR }) =>
-            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='generalError']")
-                .innerText,
-        { ST_ROOT_SELECTOR }
-    );
+    return getTextByDataSupertokens(page, "generalError");
 }
 
 export async function getGeneralSuccess(page) {
-    return await page.evaluate(
-        ({ ST_ROOT_SELECTOR }) =>
-            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='generalSuccess']")
-                .innerText,
-        { ST_ROOT_SELECTOR }
-    );
+    return getTextByDataSupertokens(page, "generalSuccess");
 }
 
 export async function getVerificationEmailTitle(page) {
-    return await page.evaluate(
-        ({ ST_ROOT_SELECTOR }) =>
-            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='headerTinyTitle']")
-                .innerText,
-        { ST_ROOT_SELECTOR }
-    );
+    return getTextByDataSupertokens(page, "headerTinyTitle");
 }
 
 export async function getVerificationEmailErrorTitle(page) {
-    return await page.evaluate(
-        ({ ST_ROOT_SELECTOR }) =>
-            document.querySelector(ST_ROOT_SELECTOR).shadowRoot.querySelector("[data-supertokens~='error']").innerText,
-        { ST_ROOT_SELECTOR }
-    );
+    return getTextByDataSupertokens(page, "error");
 }
 
 export async function setInputValues(page, fields) {
@@ -501,6 +475,7 @@ export async function assertProviders(page) {
 }
 
 export async function clickOnProviderButton(page, provider) {
+    await waitForSTElement(page);
     return await Promise.all([
         page.evaluate(
             ({ ST_ROOT_SELECTOR, provider }) => {

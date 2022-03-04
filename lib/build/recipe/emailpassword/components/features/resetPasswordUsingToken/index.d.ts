@@ -8,10 +8,10 @@ declare class ResetPasswordUsingToken extends PureComponent<
     PropType,
     {
         token: string | undefined;
+        error: string | undefined;
     }
 > {
     constructor(props: PropType);
-    getIsEmbedded: () => boolean;
     render: () => JSX.Element;
 }
 export default ResetPasswordUsingToken;

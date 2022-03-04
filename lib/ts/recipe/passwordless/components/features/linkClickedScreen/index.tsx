@@ -17,7 +17,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { Fragment, PureComponent } from "react";
+import { Fragment } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
 import { getQueryParams, getURLHash } from "../../../../../utils";
@@ -29,96 +29,101 @@ import {} from "../../../types";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
+import { defaultTranslationsPasswordless } from "../../themes/translations";
+import { useEffect } from "react";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
-class LinkClickedScreen extends PureComponent<PropType, unknown> {
-    getIsEmbedded = (): boolean => {
-        if (this.props.isEmbedded !== undefined) {
-            return this.props.isEmbedded;
-        }
-        return false;
-    };
+const LinkClickedScreen: React.FC<PropType> = (props) => {
+    useEffect(() => {
+        const abortController = new AbortController();
+        async function onLoad() {
+            try {
+                const preAuthSessionId = getQueryParams("preAuthSessionId");
+                const linkCode = getURLHash();
 
-    componentDidMount = async (): Promise<void> => {
-        try {
-            const preAuthSessionId = getQueryParams("preAuthSessionId");
-            const linkCode = getURLHash();
+                if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
+                    return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                        error: "signin",
+                    });
+                }
 
-            if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                const response = await props.recipe.recipeImpl.consumeCode({
+                    preAuthSessionId,
+                    linkCode,
+                    config: props.recipe.config,
+                });
+                if (abortController.signal.aborted) {
+                    return;
+                }
+
+                if (response.status === "GENERAL_ERROR") {
+                    return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                        error: "custom",
+                        message: response.message,
+                    });
+                }
+
+                if (response.status === "RESTART_FLOW_ERROR") {
+                    return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                        error: "restart_link",
+                    });
+                }
+                if (response.status === "OK") {
+                    const loginAttemptInfo = await props.recipe.recipeImpl.getLoginAttemptInfo();
+                    await props.recipe.recipeImpl.clearLoginAttemptInfo();
+                    return props.recipe.redirect(
+                        {
+                            action: "SUCCESS",
+                            isNewUser: response.createdUser,
+                            redirectToPath: loginAttemptInfo?.redirectToPath,
+                        },
+                        props.history
+                    );
+                }
+            } catch (err) {
+                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
                     error: "signin",
                 });
             }
-
-            const response = await this.props.recipe.recipeImpl.consumeCode({
-                preAuthSessionId,
-                linkCode,
-                config: this.props.recipe.config,
-            });
-
-            if (response.status === "GENERAL_ERROR") {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "custom",
-                    message: response.message,
-                });
-            }
-
-            if (response.status === "RESTART_FLOW_ERROR") {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "restart_link",
-                });
-            }
-            if (response.status === "OK") {
-                const loginAttemptInfo = await this.props.recipe.recipeImpl.getLoginAttemptInfo();
-                await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
-                return this.props.recipe.redirect(
-                    {
-                        action: "SUCCESS",
-                        isNewUser: response.createdUser,
-                        redirectToPath: loginAttemptInfo?.redirectToPath,
-                    },
-                    this.props.history
-                );
-            }
-        } catch (err) {
-            return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                error: "signin",
-            });
         }
-    };
-
-    render = (): JSX.Element => {
-        const componentOverrides = this.props.recipe.config.override.components;
-
-        const linkClickedScreen = this.props.recipe.config.linkClickedScreenFeature;
-
-        const props = {
-            recipeImplementation: this.props.recipe.recipeImpl,
-            config: this.props.recipe.config,
+        void onLoad();
+        return () => {
+            abortController.abort();
         };
+    }, [props.recipe]);
 
-        return (
-            <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom} isEmbedded={this.getIsEmbedded()}>
-                    <StyleProvider
-                        rawPalette={this.props.recipe.config.palette}
-                        defaultPalette={defaultPalette}
-                        styleFromInit={linkClickedScreen.style}
-                        rootStyleFromInit={this.props.recipe.config.rootStyle}
-                        getDefaultStyles={getStyles}>
-                        <Fragment>
-                            {/* No custom theme, use default. */}
-                            {this.props.children === undefined && <LinkClickedScreenTheme {...props} />}
+    const componentOverrides = props.recipe.config.override.components;
 
-                            {/* Otherwise, custom theme is provided, propagate props. */}
-                            {this.props.children}
-                        </Fragment>
-                    </StyleProvider>
-                </FeatureWrapper>
-            </ComponentOverrideContext.Provider>
-        );
+    const linkClickedScreen = props.recipe.config.linkClickedScreenFeature;
+
+    const childProps = {
+        recipeImplementation: props.recipe.recipeImpl,
+        config: props.recipe.config,
     };
-}
+
+    return (
+        <ComponentOverrideContext.Provider value={componentOverrides}>
+            <FeatureWrapper
+                useShadowDom={props.recipe.config.useShadowDom}
+                defaultStore={defaultTranslationsPasswordless}>
+                <StyleProvider
+                    rawPalette={props.recipe.config.palette}
+                    defaultPalette={defaultPalette}
+                    styleFromInit={linkClickedScreen.style}
+                    rootStyleFromInit={props.recipe.config.rootStyle}
+                    getDefaultStyles={getStyles}>
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {props.children === undefined && <LinkClickedScreenTheme {...childProps} />}
+
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {props.children}
+                    </Fragment>
+                </StyleProvider>
+            </FeatureWrapper>
+        </ComponentOverrideContext.Provider>
+    );
+};
 
 export default LinkClickedScreen;

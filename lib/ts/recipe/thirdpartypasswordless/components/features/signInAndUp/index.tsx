@@ -18,55 +18,111 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import * as React from "react";
-import { PureComponent, Fragment } from "react";
+import { Fragment } from "react";
 import { FeatureBaseProps } from "../../../../../types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { SignInUpTheme } from "../../themes/signInUp";
+import SignInUpTheme from "../../themes/signInUp";
+import { defaultTranslationsThirdPartyPasswordless } from "../../themes/translations";
+import {
+    useChildProps as useThirdPartyChildProps,
+    useFeatureReducer as useThirdPartyFeatureReducer,
+} from "../../../../thirdparty/components/features/signInAndUp";
+import {
+    useChildProps as usePasswordlessChildProps,
+    useFeatureReducer as usePasswordlessFeatureReducer,
+    useSuccessInAnotherTabChecker,
+} from "../../../../passwordless/components/features/signInAndUp";
+
+import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
+import { PasswordlessSignInUpAction } from "../../../../passwordless/types";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };
 
-class SignInAndUp extends PureComponent<PropType, { status: "LOADING" | "READY" }> {
-    getIsEmbedded = (): boolean => {
-        if (this.props.isEmbedded !== undefined) {
-            return this.props.isEmbedded;
-        }
-        return false;
+const SignInAndUp: React.FC<PropType> = (props) => {
+    const [tpState, tpDispatch] = useThirdPartyFeatureReducer();
+    const [pwlessState, pwlessDispatch] = usePasswordlessFeatureReducer(props.recipe.passwordlessRecipe?.recipeImpl);
+    const [combinedState, dispatch] = React.useReducer(
+        (state: { error: string | undefined }, action: ThirdPartySignInUpActions | PasswordlessSignInUpAction) => {
+            switch (action.type) {
+                case "setError":
+                    return {
+                        ...state,
+                        error: action.error,
+                    };
+                default:
+                    return state;
+            }
+        },
+        { error: tpState.error || pwlessState.error }
+    );
+
+    const combinedTPDispatch = React.useCallback<typeof tpDispatch>(
+        (action) => {
+            dispatch(action);
+            tpDispatch(action);
+        },
+        [tpDispatch, dispatch]
+    );
+    const tpChildProps = useThirdPartyChildProps(props.recipe.thirdPartyRecipe)!;
+
+    const combinedPWLessDispatch = React.useCallback<typeof pwlessDispatch>(
+        (action) => {
+            dispatch(action);
+            pwlessDispatch(action);
+        },
+        [pwlessDispatch, dispatch]
+    );
+
+    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(pwlessState, combinedPWLessDispatch);
+
+    const pwlessChildProps = usePasswordlessChildProps(
+        props.recipe.passwordlessRecipe,
+        combinedPWLessDispatch,
+        pwlessState,
+        callingConsumeCodeRef,
+        props.history
+    )!;
+
+    const componentOverrides = props.recipe.config.override.components;
+    const childProps = {
+        passwordlessRecipe: props.recipe.passwordlessRecipe,
+        thirdPartyRecipe: props.recipe.thirdPartyRecipe,
+        config: props.recipe.config,
+        history: props.history,
+        commonState: combinedState,
+        tpState,
+        tpDispatch: combinedTPDispatch,
+        tpChildProps,
+        pwlessState,
+        pwlessDispatch: combinedPWLessDispatch,
+        pwlessChildProps,
     };
 
-    render = (): JSX.Element => {
-        const componentOverrides = this.props.recipe.config.override.components;
+    return (
+        <ComponentOverrideContext.Provider value={componentOverrides}>
+            <FeatureWrapper
+                useShadowDom={props.recipe.config.useShadowDom}
+                defaultStore={defaultTranslationsThirdPartyPasswordless}>
+                <Fragment>
+                    {/* No custom theme, use default. */}
+                    {props.children === undefined && <SignInUpTheme {...childProps} />}
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {props.children &&
+                        React.Children.map(props.children, (child) => {
+                            if (React.isValidElement(child)) {
+                                return React.cloneElement(child, props);
+                            }
 
-        const props = {
-            passwordlessRecipe: this.props.recipe.passwordlessRecipe,
-            thirdPartyRecipe: this.props.recipe.thirdPartyRecipe,
-            config: this.props.recipe.config,
-            history: this.props.history,
-        };
-
-        return (
-            <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper useShadowDom={this.props.recipe.config.useShadowDom}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {this.props.children === undefined && <SignInUpTheme {...props} />}
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children &&
-                            React.Children.map(this.props.children, (child) => {
-                                if (React.isValidElement(child)) {
-                                    return React.cloneElement(child, props);
-                                }
-
-                                return child;
-                            })}
-                    </Fragment>
-                </FeatureWrapper>
-            </ComponentOverrideContext.Provider>
-        );
-    };
-}
+                            return child;
+                        })}
+                </Fragment>
+            </FeatureWrapper>
+        </ComponentOverrideContext.Provider>
+    );
+};
 
 export default SignInAndUp;

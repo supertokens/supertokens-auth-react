@@ -21,26 +21,24 @@ import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultEmailValidator, defaultValidate } from "../../../../emailpassword/validators";
 import { useState } from "react";
+import { SignInUpFooter } from "./signInUpFooter";
 
 export const EmailOrPhoneForm = withOverride(
     "PasswordlessEmailOrPhoneForm",
-    function PasswordlessEmailOrPhoneForm(
-        props: SignInUpEmailOrPhoneFormProps & {
-            header?: JSX.Element;
-            footer?: JSX.Element;
-        }
-    ): JSX.Element {
-        const [phoneNumberInitialValue, setPhoneNumberInitialValue] = useState<string | undefined>();
+    function PasswordlessEmailOrPhoneForm(props: SignInUpEmailOrPhoneFormProps): JSX.Element {
+        const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
+
         return (
             <FormBase
+                clearError={props.clearError}
+                onError={props.onError}
                 formFields={[
                     {
                         id: "emailOrPhone",
-                        label: "Email or Phone number",
-                        inputComponent: phoneNumberInitialValue
+                        label: "PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL",
+                        inputComponent: isPhoneNumber
                             ? phoneNumberInputWithInjectedProps({
                                   defaultCountry: props.config.signInUpFeature.defaultCountry,
-                                  initialValue: phoneNumberInitialValue,
                               })
                             : undefined,
                         optional: false,
@@ -49,14 +47,14 @@ export const EmailOrPhoneForm = withOverride(
                         validate: defaultValidate,
                     },
                 ]}
-                buttonLabel={"CONTINUE"}
+                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                 onSuccess={props.onSuccess}
-                callAPI={async (formFields) => {
+                callAPI={async (formFields, setValue) => {
                     const emailOrPhone = formFields.find((field) => field.id === "emailOrPhone")?.value;
                     if (emailOrPhone === undefined) {
                         return {
                             status: "GENERAL_ERROR",
-                            message: "Please add an email or phone number above.",
+                            message: "GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED",
                         };
                     }
 
@@ -93,11 +91,12 @@ export const EmailOrPhoneForm = withOverride(
                                 props.config.signInUpFeature.defaultCountry
                             );
 
-                        if (intPhoneNumber && phoneNumberInitialValue === undefined) {
-                            setPhoneNumberInitialValue(intPhoneNumber);
+                        if (intPhoneNumber && isPhoneNumber !== true) {
+                            setValue("emailOrPhone", intPhoneNumber);
+                            setIsPhoneNumber(true);
                             return {
                                 status: "GENERAL_ERROR",
-                                message: "Please enter a valid phone number with its country code.",
+                                message: "PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR",
                             };
                         } else {
                             return {
@@ -109,9 +108,12 @@ export const EmailOrPhoneForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                header={props.header}
-                footer={props.footer}
-                error={props.error}
+                footer={
+                    <SignInUpFooter
+                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
+                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
+                    />
+                }
             />
         );
     }

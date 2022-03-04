@@ -3,11 +3,19 @@ import RecipeModule from "./recipe/recipeModule";
 import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensConfig } from "./types";
 import NormalisedURLPath from "./normalisedURLPath";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
+import { TranslationController, TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 export default class SuperTokens {
     private static instance?;
     private static reactRouterDom?;
     private static reactRouterDomIsV6;
     appInfo: NormalisedAppInfo;
+    languageTranslations: {
+        defaultLanguage: string;
+        userTranslationStore: TranslationStore;
+        currentLanguageCookieScope: string | undefined;
+        translationEventSource: TranslationController;
+        userTranslationFunc?: TranslationFunc;
+    };
     recipeList: RecipeModule<any, any, any, any>[];
     private pathsToFeatureComponentWithRecipeIdMap?;
     constructor(config: SuperTokensConfig);
@@ -33,5 +41,7 @@ export default class SuperTokens {
               useHistoryCustom: () => any;
           }
         | undefined;
+    changeLanguage(lang: string): void;
+    loadTranslation(store: TranslationStore): void;
     static reset(): void;
 }

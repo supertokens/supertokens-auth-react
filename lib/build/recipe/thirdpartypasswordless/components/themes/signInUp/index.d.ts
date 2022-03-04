@@ -1,3 +1,4 @@
-import * as React from "react";
+/// <reference types="react" />
 import { ThirdPartyPasswordlessSignInAndUpThemeProps } from "../../../types";
-export declare const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemeProps>;
+declare function SignInUpThemeWrapper(props: ThirdPartyPasswordlessSignInAndUpThemeProps): JSX.Element;
+export default SignInUpThemeWrapper;

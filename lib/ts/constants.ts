@@ -24,8 +24,6 @@ export const DEFAULT_WEBSITE_BASE_PATH = "/auth";
 
 export const ST_ROOT_ID = "supertokens-root";
 
-export const SOMETHING_WENT_WRONG_ERROR = "Something went wrong. Please try again";
-
 export const SSR_ERROR =
     "\nIf you are trying to use this method doing server-side-rendering, please make sure you move this method inside a componentDidMount method or useEffect hook.";
 

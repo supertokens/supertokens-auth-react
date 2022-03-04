@@ -1,5 +1,4 @@
 /// <reference types="react" />
-/// <reference types="@emotion/react/types/css-prop" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import {
     UserInput,
@@ -9,7 +8,7 @@ import {
     TPPWlessRecipeInterface,
 } from "./types";
 import ThirdPartyPasswordlessAuth from "./thirdpartyPasswordlessAuth";
-import { SignInUpTheme } from "./components/themes/signInUp";
+import SignInUpTheme from "./components/themes/signInUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 export default class Wrapper {
     static init(
@@ -36,7 +35,7 @@ export default class Wrapper {
     static Github: typeof Github;
     static ThirdPartyPasswordlessAuth: typeof ThirdPartyPasswordlessAuth;
     static SignInAndUp: (prop?: any) => JSX.Element;
-    static SignInAndUpTheme: import("react").FC<import("./types").ThirdPartyPasswordlessSignInAndUpThemeProps>;
+    static SignInAndUpTheme: typeof SignInUpTheme;
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
     static LinkClicked: (prop?: any) => JSX.Element;

@@ -18,6 +18,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import { useContext } from "react";
+import { useTranslation } from "../../../../..";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import StyleContext from "../../../../../styles/styleContext";
 
@@ -28,10 +29,11 @@ export const Header = withOverride(
     "ThirdPartyPasswordlessHeader",
     function ThirdPartyPasswordlessHeader(): JSX.Element {
         const styles = useContext(StyleContext);
+        const t = useTranslation();
 
         return (
             <div data-supertokens="headerTitle" css={styles.headerTitle}>
-                Sign Up or Log In
+                {t("THIRD_PARTY_PASSWORDLESS_SIGN_IN_AND_UP_HEADER_TITLE")}
             </div>
         );
     }

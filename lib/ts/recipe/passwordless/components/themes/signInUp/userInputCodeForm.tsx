@@ -22,8 +22,9 @@ import { userInputCodeValidate } from "../../../validators";
 import { Label } from "../../../../emailpassword/components/library";
 import React, { useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
-import { SOMETHING_WENT_WRONG_ERROR } from "../../../../../constants";
 import { ResendButton } from "./resendButton";
+import { useTranslation } from "../../../../../translation/translationContext";
+import { UserInputCodeFormFooter } from "./userInputCodeFormFooter";
 
 export const UserInputCodeForm = withOverride(
     "PasswordlessUserInputCodeForm",
@@ -34,9 +35,10 @@ export const UserInputCodeForm = withOverride(
         }
     ): JSX.Element {
         const styles = useContext(StyleContext);
+        const t = useTranslation();
 
+        // We need this any because the node types are also loaded
         const [clearResendNotifTimeout, setClearResendNotifTimeout] = useState<any | undefined>();
-        const [error, setError] = useState<string | undefined>();
 
         useEffect(() => {
             // This is just to clean up on unmount and if the clear timeout changes
@@ -57,40 +59,44 @@ export const UserInputCodeForm = withOverride(
                     setClearResendNotifTimeout(
                         setTimeout(() => {
                             setClearResendNotifTimeout(undefined);
-                        }, 2000) // We need this cast because the node types are also loaded
+                        }, 2000)
                     );
                 } else if (response.status === "GENERAL_ERROR") {
-                    setError(response.message);
+                    props.onError(response.message);
                 }
             } catch (e) {
-                setError(SOMETHING_WENT_WRONG_ERROR);
+                props.onError("SOMETHING_WENT_WRONG_ERROR");
             }
         }
 
-        const resendTarget = props.loginAttemptInfo.contactMethod === "EMAIL" ? "Email" : "SMS";
-
         return (
             <React.Fragment>
-                {props.header}
                 {clearResendNotifTimeout !== undefined && (
                     <div data-supertokens="generalSuccess" css={[styles.generalSuccess]}>
-                        {resendTarget} resent
+                        {props.loginAttemptInfo.contactMethod === "EMAIL"
+                            ? t("PWLESS_RESEND_SUCCESS_EMAIL")
+                            : t("PWLESS_RESEND_SUCCESS_PHONE")}
                     </div>
                 )}
+
                 <FormBase
+                    clearError={props.clearError}
+                    onError={props.onError}
                     formFields={[
                         {
                             id: "userInputCode",
                             label: "",
                             labelComponent: (
                                 <div css={styles.codeInputLabelWrapper} data-supertokens="codeInputLabelWrapper">
-                                    <Label value={"OTP"} data-supertokens="codeInputLabel" />
+                                    <Label
+                                        value={"PWLESS_USER_INPUT_CODE_INPUT_LABEL"}
+                                        data-supertokens="codeInputLabel"
+                                    />
                                     <ResendButton
                                         loginAttemptInfo={props.loginAttemptInfo}
                                         resendEmailOrSMSGapInSeconds={
                                             props.config.signInUpFeature.resendEmailOrSMSGapInSeconds
                                         }
-                                        target={resendTarget}
                                         onClick={resend}
                                     />
                                 </div>
@@ -103,14 +109,13 @@ export const UserInputCodeForm = withOverride(
                         },
                     ]}
                     onSuccess={props.onSuccess}
-                    buttonLabel={"CONTINUE"}
-                    error={error || props.error}
+                    buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                     callAPI={async (formFields) => {
                         const userInputCode = formFields.find((field) => field.id === "userInputCode")?.value;
                         if (userInputCode === undefined || userInputCode.length === 0) {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: "Please fill your OTP",
+                                message: "GENERAL_ERROR_OTP_UNDEFINED",
                             };
                         }
                         const response = await props.recipeImplementation.consumeCode({
@@ -127,25 +132,25 @@ export const UserInputCodeForm = withOverride(
                         if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: "Invalid OTP",
+                                message: "GENERAL_ERROR_OTP_INVALID",
                             };
                         }
 
                         if (response.status === "EXPIRED_USER_INPUT_CODE_ERROR") {
                             return {
                                 status: "GENERAL_ERROR",
-                                message: "Expired OTP.",
+                                message: "GENERAL_ERROR_OTP_EXPIRED",
                             };
                         }
 
                         return {
                             status: "GENERAL_ERROR",
-                            message: SOMETHING_WENT_WRONG_ERROR,
+                            message: "SOMETHING_WENT_WRONG_ERROR",
                         };
                     }}
                     validateOnBlur={false}
                     showLabels={true}
-                    footer={props.footer}
+                    footer={<UserInputCodeFormFooter {...props} loginAttemptInfo={props.loginAttemptInfo} />}
                 />
             </React.Fragment>
         );

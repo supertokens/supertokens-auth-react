@@ -20,21 +20,19 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultValidate } from "../../../../emailpassword/validators";
+import { SignInUpFooter } from "./signInUpFooter";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",
-    function PasswordlessPhoneForm(
-        props: SignInUpPhoneFormProps & {
-            header?: JSX.Element;
-            footer?: JSX.Element;
-        }
-    ): JSX.Element {
+    function PasswordlessPhoneForm(props: SignInUpPhoneFormProps): JSX.Element {
         return (
             <FormBase
+                clearError={props.clearError}
+                onError={props.onError}
                 formFields={[
                     {
                         id: "phoneNumber",
-                        label: "Your Phone Number",
+                        label: "PWLESS_SIGN_IN_UP_PHONE_LABEL",
                         inputComponent: phoneNumberInputWithInjectedProps({
                             defaultCountry: props.config.signInUpFeature.defaultCountry,
                         }),
@@ -44,14 +42,14 @@ export const PhoneForm = withOverride(
                         validate: defaultValidate,
                     },
                 ]}
-                buttonLabel={"CONTINUE"}
+                buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {
                     const phoneNumber = formFields.find((field) => field.id === "phoneNumber")?.value;
                     if (phoneNumber === undefined) {
                         return {
                             status: "GENERAL_ERROR",
-                            message: "Please set your phone number",
+                            message: "GENERAL_ERROR_PHONE_UNDEFINED",
                         };
                     }
                     const validationRes = await props.config.validatePhoneNumber(phoneNumber);
@@ -70,9 +68,12 @@ export const PhoneForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                header={props.header}
-                footer={props.footer}
-                error={props.error}
+                footer={
+                    <SignInUpFooter
+                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
+                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
+                    />
+                }
             />
         );
     }

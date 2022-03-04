@@ -18,105 +18,74 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import * as React from "react";
-import { Fragment } from "react";
+import React, { useContext } from "react";
 import StyleContext, { StyleProvider } from "../../../../../styles/styleContext";
 import { ThirdPartyEmailPasswordSignInAndUpThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 import { Header } from "./header";
-import { default as ThirdPartySignInAndUp } from "../../../../thirdparty/components/features/signInAndUp";
-import { default as EmailPasswordSignInAndUp } from "../../../../emailpassword/components/features/signInAndUp";
-import { SignInAndUpForm as EmailPasswordSignInAndUpForm } from "../../themes/signInAndUp/signInAndUpForm";
-import { SignInAndUpThemeProps as ThirdPartySignInAndUpThemeProps } from "../../../../thirdparty/types";
-import { SignInAndUpThemeProps as EmailPasswordSignInAndUpThemeProps } from "../../../../emailpassword/types";
 import { ProvidersForm } from "../../../../thirdparty/components/themes/signInAndUp/providersForm";
 import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 import { getStyles } from "../styles";
-import { getQueryParams } from "../../../../../utils";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
+import { useTranslation } from "../../../../../translation/translationContext";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { SignUpFooter } from "../../../../emailpassword/components/themes/signInAndUp/signUpFooter";
+import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
+import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
+import { SignInFooter } from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
 
-class SignInAndUpTheme extends React.PureComponent<
-    ThirdPartyEmailPasswordSignInAndUpThemeProps,
-    {
-        isSignUp: boolean;
-    }
-> {
-    static contextType = StyleContext;
+const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
+    const t = useTranslation();
+    const styles = useContext(StyleContext);
 
-    constructor(props: ThirdPartyEmailPasswordSignInAndUpThemeProps) {
-        super(props);
-
-        const show = getQueryParams("show");
-        let isSignUp = props.config.signInAndUpFeature.defaultToSignUp;
-        if (show !== null) {
-            isSignUp = show === "signup";
-        }
-
-        this.state = {
-            isSignUp,
-        };
-    }
-
-    render(): JSX.Element {
-        const styles = this.context;
-        return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row" css={styles.row}>
-                    <Header
-                        isSignUp={this.state.isSignUp}
-                        setIsSignUp={(isSignUp: boolean) => {
-                            this.setState((oldState) => {
-                                return {
-                                    ...oldState,
-                                    isSignUp,
-                                };
-                            });
-                        }}
-                    />
-                    {this.props.thirdPartyRecipe !== undefined && (
-                        <Fragment>
-                            <ThirdPartySignInAndUp
-                                recipe={this.props.thirdPartyRecipe}
-                                history={this.props.history}
-                                isEmbedded={true}>
-                                <ProvidersForm
-                                    // Seed props. Real props will be given by parent feature.
-                                    {...({} as ThirdPartySignInAndUpThemeProps)}
-                                />
-                            </ThirdPartySignInAndUp>
-                        </Fragment>
-                    )}
-                    {this.props.config.disableEmailPassword !== true && this.props.thirdPartyRecipe !== undefined && (
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                <Header
+                    isSignUp={props.epState.isSignUp}
+                    setIsSignUp={(isSignUp) => props.epDispatch({ type: isSignUp ? "setSignUp" : "setSignIn" })}
+                />
+                {props.commonState.error && <GeneralError error={props.commonState.error} />}
+                {props.tpChildProps !== undefined && (
+                    <ProvidersForm {...props.tpChildProps} featureState={props.tpState} dispatch={props.tpDispatch} />
+                )}
+                {props.config.disableEmailPassword !== true && props.thirdPartyRecipe !== undefined && (
+                    <div data-supertokens="thirdPartyEmailPasswordDivider" css={styles.thirdPartyEmailPasswordDivider}>
+                        <div data-supertokens="divider" css={styles.divider}></div>
                         <div
-                            data-supertokens="thirdPartyEmailPasswordDivider"
-                            css={styles.thirdPartyEmailPasswordDivider}>
-                            <div data-supertokens="divider" css={styles.divider}></div>
-                            <div
-                                data-supertokens="thirdPartyEmailPasswordDividerOr"
-                                css={styles.thirdPartyEmailPasswordDividerOr}>
-                                or
-                            </div>
-                            <div data-supertokens="divider" css={styles.divider}></div>
+                            data-supertokens="thirdPartyEmailPasswordDividerOr"
+                            css={styles.thirdPartyEmailPasswordDividerOr}>
+                            {t("THIRD_PARTY_EMAIL_PASSWORD_SIGN_IN_AND_UP_DIVIDER_OR")}
                         </div>
-                    )}
-                    {this.props.emailPasswordRecipe !== undefined && (
-                        <EmailPasswordSignInAndUp
-                            recipe={this.props.emailPasswordRecipe}
-                            history={this.props.history}
-                            isEmbedded={true}>
-                            <EmailPasswordSignInAndUpForm
-                                // Seed props. Real props will be given by parent feature.
-                                {...({} as EmailPasswordSignInAndUpThemeProps)}
-                                isSignUp={this.state.isSignUp}
-                            />
-                        </EmailPasswordSignInAndUp>
-                    )}
-                </div>
-                <SuperTokensBranding />
+                        <div data-supertokens="divider" css={styles.divider}></div>
+                    </div>
+                )}
+                {props.epChildProps !== undefined &&
+                    (props.epState.isSignUp ? (
+                        <SignUpForm
+                            {...props.epChildProps.signUpForm}
+                            footer={
+                                <SignUpFooter
+                                    privacyPolicyLink={
+                                        props.epChildProps.config.signInAndUpFeature.signUpForm.privacyPolicyLink
+                                    }
+                                    termsOfServiceLink={
+                                        props.epChildProps.config.signInAndUpFeature.signUpForm.termsOfServiceLink
+                                    }
+                                />
+                            }
+                        />
+                    ) : (
+                        <SignInForm
+                            {...props.epChildProps.signInForm}
+                            footer={<SignInFooter onClick={props.epChildProps.signInForm.forgotPasswordClick} />}
+                        />
+                    ))}
             </div>
-        );
-    }
-}
+            <SuperTokensBranding />
+        </div>
+    );
+};
 
 export default function SignInAndUpThemeWrapper(props: ThirdPartyEmailPasswordSignInAndUpThemeProps): JSX.Element {
     const hasFont = hasFontDefined(props.config.rootStyle);

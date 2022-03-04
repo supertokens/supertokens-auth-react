@@ -1,7 +1,5 @@
 /// <reference types="react" />
-/// <reference types="@emotion/react/types/css-prop" />
 import { APIFormField } from "../../../../types";
-import { InputRef } from "../../types";
 export declare type InputProps = {
     type: string;
     name: string;
@@ -10,9 +8,10 @@ export declare type InputProps = {
     validated: boolean;
     hasError: boolean;
     placeholder: string;
+    value: string;
     onInputBlur?: (field: APIFormField) => void;
     onInputFocus?: (field: APIFormField) => void;
-    onChange?: (newValue: string) => void;
+    onChange?: (field: APIFormField) => void;
 };
-declare const _default: import("react").ForwardRefExoticComponent<InputProps & import("react").RefAttributes<InputRef>>;
-export default _default;
+declare const Input: React.FC<InputProps>;
+export default Input;

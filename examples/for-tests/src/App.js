@@ -244,6 +244,16 @@ SuperTokens.init({
         apiDomain: getApiDomain(),
         websiteBasePath,
     },
+    languageTranslations: {
+        translations: {
+            en: {
+                PWLESS_SIGN_IN_UP_FOOTER_TOS: "TOS",
+            },
+            hu: {
+                PWLESS_SIGN_IN_UP_FOOTER_TOS: "ÁSZF",
+            },
+        },
+    },
     recipeList,
 });
 
@@ -975,3 +985,5 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
         },
     });
 }
+
+window.SuperTokens = SuperTokens;
