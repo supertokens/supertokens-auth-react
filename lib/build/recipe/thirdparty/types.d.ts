@@ -17,7 +17,6 @@ import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import OverrideableBuilder from "supertokens-js-override";
 import { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import ThirdPartyRecipe from "./recipe";
 export declare type ComponentOverrideMap = {
     ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
     ThirdPartySignInAndUpProvidersForm_Override?: ComponentOverride<typeof ProvidersForm>;
@@ -89,7 +88,7 @@ export declare type SignInAndUpThemeProps = {
         id: string;
         buttonComponent: JSX.Element;
     }[];
-    recipe: ThirdPartyRecipe;
+    recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
 };
 export declare type ThirdPartySignInUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;

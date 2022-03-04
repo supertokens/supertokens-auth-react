@@ -5,7 +5,7 @@ export declare const SignUpForm: import("react").ComponentType<
         formFields: import("../../../types").FormFieldThemeProps[];
         error: string | undefined;
     } & {
-        recipe: import("../../../recipe").default;
+        recipeImplementation: import("supertokens-web-js/recipe/emailpassword").RecipeInterface;
         clearError: () => void;
         onError: (error: string) => void;
         config: import("../../../types").NormalisedConfig;

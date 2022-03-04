@@ -119,14 +119,14 @@ export async function redirectToThirdPartyLogin(input: {
     thirdPartyId: string;
     config: NormalisedConfig;
     userContext: any;
-    recipe: Recipe;
+    recipeImplementation: RecipeInterface;
 }): Promise<{ status: "OK" | "ERROR" }> {
     const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
     if (provider === undefined) {
         return { status: "ERROR" };
     }
 
-    const response = await input.recipe.recipeImpl.getAuthorizationURLWithQueryParamsAndSetState({
+    const response = await input.recipeImplementation.getAuthorizationURLWithQueryParamsAndSetState({
         providerId: input.thirdPartyId,
         authorisationURL: provider.getRedirectURL(),
         providerClientId: provider.clientId,

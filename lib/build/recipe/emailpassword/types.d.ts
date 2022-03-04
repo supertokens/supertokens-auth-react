@@ -32,7 +32,6 @@ import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 import { InputProps } from "./components/library/input";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import EmailPasswordRecipe from "./recipe";
 export declare type ComponentOverrideMap = {
     EmailPasswordSignIn_Override?: ComponentOverride<typeof SignIn>;
     EmailPasswordSignInFooter_Override?: ComponentOverride<typeof SignInFooter>;
@@ -120,7 +119,7 @@ declare type FormThemeBaseProps = ThemeBaseProps & {
     error: string | undefined;
 };
 export declare type SignInThemeProps = FormThemeBaseProps & {
-    recipe: EmailPasswordRecipe;
+    recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
@@ -129,7 +128,7 @@ export declare type SignInThemeProps = FormThemeBaseProps & {
     onSuccess: () => void;
 };
 export declare type SignUpThemeProps = FormThemeBaseProps & {
-    recipe: EmailPasswordRecipe;
+    recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
@@ -187,20 +186,20 @@ export declare type OnHandleEventContext =
           };
       };
 export declare type ResetPasswordUsingTokenThemeProps = {
-    recipe: EmailPasswordRecipe;
+    recipeImplementation: RecipeInterface;
     enterEmailForm: EnterEmailProps;
     submitNewPasswordForm: SubmitNewPasswordProps | undefined;
     config: NormalisedConfig;
 };
 export declare type EnterEmailProps = FormThemeBaseProps & {
-    recipe: EmailPasswordRecipe;
+    recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
 };
 export declare type SubmitNewPasswordProps = FormThemeBaseProps & {
-    recipe: EmailPasswordRecipe;
+    recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
     onError: (error: string) => void;

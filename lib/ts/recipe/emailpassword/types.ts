@@ -48,7 +48,6 @@ import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 import { InputProps } from "./components/library/input";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
-import EmailPasswordRecipe from "./recipe";
 
 export type ComponentOverrideMap = {
     EmailPasswordSignIn_Override?: ComponentOverride<typeof SignIn>;
@@ -244,7 +243,7 @@ type FormThemeBaseProps = ThemeBaseProps & {
 };
 
 export type SignInThemeProps = FormThemeBaseProps & {
-    recipe: EmailPasswordRecipe;
+    recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
@@ -254,7 +253,7 @@ export type SignInThemeProps = FormThemeBaseProps & {
 };
 
 export type SignUpThemeProps = FormThemeBaseProps & {
-    recipe: EmailPasswordRecipe;
+    recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
@@ -356,14 +355,14 @@ export type OnHandleEventContext =
       };
 
 export type ResetPasswordUsingTokenThemeProps = {
-    recipe: EmailPasswordRecipe;
+    recipeImplementation: RecipeInterface;
     enterEmailForm: EnterEmailProps;
     submitNewPasswordForm: SubmitNewPasswordProps | undefined;
     config: NormalisedConfig;
 };
 
 export type EnterEmailProps = FormThemeBaseProps & {
-    recipe: EmailPasswordRecipe;
+    recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
     onError: (error: string) => void;
@@ -371,7 +370,7 @@ export type EnterEmailProps = FormThemeBaseProps & {
 };
 
 export type SubmitNewPasswordProps = FormThemeBaseProps & {
-    recipe: EmailPasswordRecipe;
+    recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
     onError: (error: string) => void;

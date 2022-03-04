@@ -41,12 +41,9 @@ export default class Wrapper {
                   redirectBack?: boolean;
               }
     ): Promise<void>;
-    static getAuthorizationURLWithQueryParamsAndSetState(input: {
-        providerId: string;
-        authorisationURL: string;
-        userContext?: any;
-        providerClientId?: string;
-    }): Promise<string>;
+    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
+        status: "OK" | "ERROR";
+    }>;
     static signInAndUp(input?: { userContext?: any }): Promise<
         | {
               status: "OK";
@@ -74,7 +71,7 @@ declare const signOut: typeof Wrapper.signOut;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
 declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
-declare const getAuthorizationURLWithQueryParamsAndSetState: typeof Wrapper.getAuthorizationURLWithQueryParamsAndSetState;
+declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
@@ -90,7 +87,7 @@ export {
     verifyEmail,
     sendVerificationEmail,
     signInAndUp,
-    getAuthorizationURLWithQueryParamsAndSetState,
+    redirectToThirdPartyLogin,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,

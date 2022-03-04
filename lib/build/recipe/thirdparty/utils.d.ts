@@ -1,5 +1,6 @@
 import { NormalisedSignInAndUpFeatureConfig, NormalisedConfig, SignInAndUpFeatureUserInput, Config } from "./types";
 import Recipe from "./recipe";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export declare function normaliseThirdPartyConfig(config: Config): NormalisedConfig;
 export declare function normaliseSignInAndUpFeature(
     config: SignInAndUpFeatureUserInput | undefined
@@ -9,7 +10,7 @@ export declare function redirectToThirdPartyLogin(input: {
     thirdPartyId: string;
     config: NormalisedConfig;
     userContext: any;
-    recipe: Recipe;
+    recipeImplementation: RecipeInterface;
 }): Promise<{
     status: "OK" | "ERROR";
 }>;

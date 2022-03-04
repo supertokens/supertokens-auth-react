@@ -30,6 +30,7 @@ import Github from "./providers/github";
 import { getNormalisedUserContext } from "../../utils";
 import { User } from "../authRecipeWithEmailVerification/types";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
 export default class Wrapper {
     /*
      * Static attributes.
@@ -91,17 +92,17 @@ export default class Wrapper {
         }
     }
 
-    static getAuthorizationURLWithQueryParamsAndSetState(input: {
-        providerId: string;
-        authorisationURL: string;
+    static async redirectToThirdPartyLogin(input: {
+        thirdPartyId: string;
         userContext?: any;
-        providerClientId?: string;
-    }): Promise<string> {
-        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthorizationURLWithQueryParamsAndSetState({
-            providerId: input.providerId,
-            authorisationURL: input.authorisationURL,
-            providerClientId: input.providerClientId,
+    }): Promise<{ status: "OK" | "ERROR" }> {
+        const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
+
+        return UtilsRedirectToThirdPartyLogin({
+            thirdPartyId: input.thirdPartyId,
+            config: recipeInstance.config,
             userContext: getNormalisedUserContext(input.userContext),
+            recipeImplementation: recipeInstance.recipeImpl,
         });
     }
 
@@ -142,7 +143,7 @@ const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
 const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
-const getAuthorizationURLWithQueryParamsAndSetState = Wrapper.getAuthorizationURLWithQueryParamsAndSetState;
+const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
 const signInAndUp = Wrapper.signInAndUp;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
@@ -159,7 +160,7 @@ export {
     verifyEmail,
     sendVerificationEmail,
     signInAndUp,
-    getAuthorizationURLWithQueryParamsAndSetState,
+    redirectToThirdPartyLogin,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,

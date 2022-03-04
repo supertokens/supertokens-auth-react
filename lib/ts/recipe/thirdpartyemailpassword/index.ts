@@ -219,7 +219,7 @@ export default class Wrapper {
             thirdPartyId: input.thirdPartyId,
             config: recipeInstance.thirdPartyRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
-            recipe: recipeInstance.thirdPartyRecipe,
+            recipeImplementation: recipeInstance.thirdPartyRecipe.recipeImpl,
         });
     }
 

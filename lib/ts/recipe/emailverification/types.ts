@@ -20,7 +20,6 @@ import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerif
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 import OverrideableBuilder from "supertokens-js-override";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
-import EmailVerificationRecipe from "./recipe";
 
 // For AuthRecipeModule, we don't need to take signOut,
 // redirectToSignIn and postVerificationRedirect as inputs from the user.
@@ -90,14 +89,13 @@ export type OnHandleEventContext = {
 };
 
 export type EmailVerificationThemeProps = {
-    recipe: EmailVerificationRecipe;
+    recipeImplementation: RecipeInterface;
     sendVerifyEmailScreen: SendVerifyEmailThemeProps;
     verifyEmailLinkClickedScreen?: VerifyEmailLinkClickedThemeProps;
     config: NormalisedConfig;
 };
 
 export type SendVerifyEmailThemeProps = ThemeBaseProps & {
-    recipe: EmailVerificationRecipe;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signOut: () => Promise<void>;
@@ -105,7 +103,6 @@ export type SendVerifyEmailThemeProps = ThemeBaseProps & {
 };
 
 export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
-    recipe: EmailVerificationRecipe;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onContinueClicked: () => Promise<void>;

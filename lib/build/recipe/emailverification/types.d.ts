@@ -5,7 +5,6 @@ import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerif
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 import OverrideableBuilder from "supertokens-js-override";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
-import EmailVerificationRecipe from "./recipe";
 export declare type UserInputForAuthRecipeModule = {
     mode?: "OFF" | "REQUIRED";
     disableDefaultImplementation?: boolean;
@@ -60,20 +59,18 @@ export declare type OnHandleEventContext = {
     action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
 };
 export declare type EmailVerificationThemeProps = {
-    recipe: EmailVerificationRecipe;
+    recipeImplementation: RecipeInterface;
     sendVerifyEmailScreen: SendVerifyEmailThemeProps;
     verifyEmailLinkClickedScreen?: VerifyEmailLinkClickedThemeProps;
     config: NormalisedConfig;
 };
 export declare type SendVerifyEmailThemeProps = ThemeBaseProps & {
-    recipe: EmailVerificationRecipe;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signOut: () => Promise<void>;
     onEmailAlreadyVerified: () => Promise<void>;
 };
 export declare type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
-    recipe: EmailVerificationRecipe;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onContinueClicked: () => Promise<void>;

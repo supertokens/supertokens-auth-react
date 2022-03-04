@@ -20,6 +20,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import { SignInAndUpThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { redirectToThirdPartyLogin } from "../../../utils";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -28,7 +29,7 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
         try {
             // TODO NEMI: handle user context for pre built UI
             const response = await redirectToThirdPartyLogin({
-                recipe: props.recipe,
+                recipeImplementation: props.recipeImplementation,
                 thirdPartyId: providerId,
                 config: props.config,
                 userContext: {},
@@ -37,6 +38,13 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
                 props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
             }
         } catch (err) {
+            if (STGeneralError.isThisError(err)) {
+                props.dispatch({
+                    type: "setError",
+                    error: err.message,
+                });
+            }
+
             props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
         }
     };
