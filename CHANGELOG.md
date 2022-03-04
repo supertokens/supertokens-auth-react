@@ -157,6 +157,18 @@ async function isEmailVerified(input): Promise<{
 }> {...}
 ```
 
+## [0.19.0]
+
+### Breaking changes
+
+-   Reworked feature components with several changes in state handling
+-   Component override keys changed (all ending in `_Override` now)
+-   Removed `ThirdPartyEmailPasswordSignInAndUpForm` overrideable component (now reusing overrides of the email password recipe)
+
+### Bug fix:
+
+-   Fixed default translation strings for passwordless sign-in/up form labels
+
 ## [0.18.7] - 2022-02-11
 
 ### Optimised

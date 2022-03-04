@@ -34,18 +34,10 @@ import STGeneralError from "supertokens-web-js/lib/build/error";
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 class SignInAndUpCallback extends PureComponent<PropType, unknown> {
-    getIsEmbedded = (): boolean => {
-        if (this.props.isEmbedded !== undefined) {
-            return this.props.isEmbedded;
-        }
-        return false;
-    };
-
     componentDidMount = async (): Promise<void> => {
         try {
             // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipe.recipeImpl.signInAndUp({
-                config: this.props.recipe.webJsRecipe.config,
                 userContext: {},
             });
 
@@ -59,7 +51,6 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 // TODO NEMI: handle user context for pre built UI
                 const stateResponse =
                     this.props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
-                        config: this.props.recipe.webJsRecipe.config,
                         userContext: {},
                     });
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
@@ -112,7 +103,6 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
-                    isEmbedded={this.getIsEmbedded()}
                     defaultStore={defaultTranslationsThirdParty}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}

@@ -1,4 +1,5 @@
 /// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
@@ -14,7 +15,7 @@ export default class Wrapper {
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
         import("../authRecipeWithEmailVerification/types").GetRedirectionURLContext,
-        import("./types").PreAndPostAPIHookContext,
+        import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
@@ -24,7 +25,7 @@ export default class Wrapper {
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    static verifyEmail(input: { userContext?: any }): Promise<{
+    static verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }>;
@@ -40,12 +41,9 @@ export default class Wrapper {
                   redirectBack?: boolean;
               }
     ): Promise<void>;
-    static getAuthorizationURLWithQueryParamsAndSetState(input: {
-        providerId: string;
-        authorisationURL: string;
-        userContext: any;
-        providerClientId?: string;
-    }): Promise<string>;
+    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
+        status: "OK" | "ERROR";
+    }>;
     static signInAndUp(input?: { userContext?: any }): Promise<
         | {
               status: "OK";
@@ -64,7 +62,7 @@ export default class Wrapper {
     static Github: typeof Github;
     static ThirdPartyAuth: typeof ThirdPartyAuth;
     static SignInAndUp: (prop?: any) => JSX.Element;
-    static SignInAndUpTheme: typeof SignInAndUpTheme;
+    static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
@@ -73,7 +71,7 @@ declare const signOut: typeof Wrapper.signOut;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
 declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
-declare const getAuthorizationURLWithQueryParamsAndSetState: typeof Wrapper.getAuthorizationURLWithQueryParamsAndSetState;
+declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
@@ -89,7 +87,7 @@ export {
     verifyEmail,
     sendVerificationEmail,
     signInAndUp,
-    getAuthorizationURLWithQueryParamsAndSetState,
+    redirectToThirdPartyLogin,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,

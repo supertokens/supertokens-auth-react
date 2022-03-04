@@ -43,15 +43,12 @@ export default class Wrapper {
         );
     }
 
-    static async verifyEmail(input: { userContext?: any }): Promise<{
+    static async verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.verifyEmail({
-            config: recipeInstance.emailVerification.webJsRecipe.config,
-            userContext: getNormalisedUserContext(input.userContext),
+        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -59,10 +56,7 @@ export default class Wrapper {
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.sendVerificationEmail({
-            config: recipeInstance.emailVerification.webJsRecipe.config,
+        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -108,17 +102,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-
-        if (recipeInstance.emailPasswordRecipe === undefined) {
-            throw new Error(
-                "Email Password has not been enabled. This function is only available when disableEmailPassword in ThirdPartyEmailpassword.init is not set to false"
-            );
-        }
-
-        return recipeInstance.recipeImpl.submitNewPassword({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.submitNewPassword({
             ...input,
-            config: recipeInstance.emailPasswordRecipe.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -143,17 +128,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-
-        if (recipeInstance.emailPasswordRecipe === undefined) {
-            throw new Error(
-                "Email Password has not been enabled. This function is only available when disableEmailPassword in ThirdPartyEmailpassword.init is not set to false"
-            );
-        }
-
-        return recipeInstance.recipeImpl.sendPasswordResetEmail({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.sendPasswordResetEmail({
             ...input,
-            config: recipeInstance.emailPasswordRecipe.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -179,17 +155,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-
-        if (recipeInstance.emailPasswordRecipe === undefined) {
-            throw new Error(
-                "Email Password has not been enabled. This function is only available when disableEmailPassword in ThirdPartyEmailpassword.init is not set to false"
-            );
-        }
-
-        return recipeInstance.recipeImpl.emailPasswordSignUp({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.emailPasswordSignUp({
             ...input,
-            config: recipeInstance.emailPasswordRecipe.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -219,17 +186,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-
-        if (recipeInstance.emailPasswordRecipe === undefined) {
-            throw new Error(
-                "Email Password has not been enabled. This function is only available when disableEmailPassword in ThirdPartyEmailpassword.init is not set to false"
-            );
-        }
-
-        return recipeInstance.recipeImpl.emailPasswordSignIn({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.emailPasswordSignIn({
             ...input,
-            config: recipeInstance.emailPasswordRecipe.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -239,17 +197,8 @@ export default class Wrapper {
         doesExist: boolean;
         fetchResponse: Response;
     }> {
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-
-        if (recipeInstance.emailPasswordRecipe === undefined) {
-            throw new Error(
-                "Email Password has not been enabled. This function is only available when disableEmailPassword in ThirdPartyEmailpassword.init is not set to false"
-            );
-        }
-
-        return recipeInstance.recipeImpl.doesEmailExist({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.doesEmailExist({
             ...input,
-            config: recipeInstance.emailPasswordRecipe.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -270,7 +219,7 @@ export default class Wrapper {
             thirdPartyId: input.thirdPartyId,
             config: recipeInstance.thirdPartyRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
-            recipe: recipeInstance.thirdPartyRecipe,
+            recipeImplementation: recipeInstance.thirdPartyRecipe.recipeImpl,
         });
     }
 
@@ -286,17 +235,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-
-        if (recipeInstance.thirdPartyRecipe === undefined) {
-            throw new Error(
-                "Third party email password was initialised without any social providers. This function is only available if at least one social provider is initialised"
-            );
-        }
-
-        return recipeInstance.recipeImpl.thirdPartySignInAndUp({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.thirdPartySignInAndUp({
             ...input,
-            config: recipeInstance.thirdPartyRecipe.webJsRecipe.config,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }

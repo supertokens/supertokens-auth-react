@@ -1,22 +1,38 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
-import { NormalisedConfig } from "./types";
+import { OnHandleEventContext, PreAndPostAPIHookAction } from "./types";
+import WebJSRecipeImplementation from "supertokens-web-js/lib/build/recipe/emailverification/recipeImplementation";
+import { NormalisedAppInfo } from "../../types";
+import {
+    RecipeOnHandleEventFunction,
+    RecipePostAPIHookFunction,
+    RecipePreAPIHookFunction,
+} from "../recipeModule/types";
 
-export default function getRecipeImplementation(
-    webJsImplementation: RecipeInterface,
-    authReactConfig: NormalisedConfig
-): RecipeInterface {
+export default function getRecipeImplementation(recipeInput: {
+    recipeId: string;
+    appInfo: NormalisedAppInfo;
+    preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
+    postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
+    onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+}): RecipeInterface {
+    const webJsImplementation = WebJSRecipeImplementation(
+        recipeInput.recipeId,
+        recipeInput.appInfo,
+        recipeInput.preAPIHook,
+        recipeInput.postAPIHook
+    );
+
     return {
         verifyEmail: async function (input): Promise<{
             status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
             fetchResponse: Response;
         }> {
-            const response = await webJsImplementation.verifyEmail({
-                config: input.config,
+            const response = await webJsImplementation.verifyEmail.bind(this)({
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                authReactConfig.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "EMAIL_VERIFIED_SUCCESSFUL",
                 });
             }
@@ -28,13 +44,12 @@ export default function getRecipeImplementation(
             status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
             fetchResponse: Response;
         }> {
-            const response = await webJsImplementation.sendVerificationEmail({
-                config: input.config,
+            const response = await webJsImplementation.sendVerificationEmail.bind(this)({
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                authReactConfig.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "VERIFY_EMAIL_SENT",
                 });
             }
@@ -47,8 +62,7 @@ export default function getRecipeImplementation(
             isVerified: boolean;
             fetchResponse: Response;
         }> {
-            const response = await webJsImplementation.isEmailVerified({
-                config: input.config,
+            const response = await webJsImplementation.isEmailVerified.bind(this)({
                 userContext: input.userContext,
             });
 
@@ -56,8 +70,7 @@ export default function getRecipeImplementation(
         },
 
         getEmailVerificationTokenFromURL: function (input) {
-            return webJsImplementation.getEmailVerificationTokenFromURL({
-                config: input.config,
+            return webJsImplementation.getEmailVerificationTokenFromURL.bind(this)({
                 userContext: input.userContext,
             });
         },

@@ -30,6 +30,7 @@ import Github from "./providers/github";
 import { getNormalisedUserContext } from "../../utils";
 import { User } from "../authRecipeWithEmailVerification/types";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
 export default class Wrapper {
     /*
      * Static attributes.
@@ -53,15 +54,12 @@ export default class Wrapper {
         );
     }
 
-    static async verifyEmail(input: { userContext?: any }): Promise<{
+    static async verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.verifyEmail({
-            config: recipeInstance.emailVerification.webJsRecipe.config,
-            userContext: getNormalisedUserContext(input.userContext),
+        return ThirdParty.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -69,10 +67,7 @@ export default class Wrapper {
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.sendVerificationEmail({
-            config: recipeInstance.emailVerification.webJsRecipe.config,
+        return ThirdParty.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -97,20 +92,17 @@ export default class Wrapper {
         }
     }
 
-    static getAuthorizationURLWithQueryParamsAndSetState(input: {
-        providerId: string;
-        authorisationURL: string;
-        userContext: any;
-        providerClientId?: string;
-    }): Promise<string> {
-        const recipeInstance = ThirdParty.getInstanceOrThrow();
+    static async redirectToThirdPartyLogin(input: {
+        thirdPartyId: string;
+        userContext?: any;
+    }): Promise<{ status: "OK" | "ERROR" }> {
+        const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
 
-        return recipeInstance.recipeImpl.getAuthorizationURLWithQueryParamsAndSetState({
-            providerId: input.providerId,
-            authorisationURL: input.authorisationURL,
-            providerClientId: input.providerClientId,
-            config: recipeInstance.webJsRecipe.config,
+        return UtilsRedirectToThirdPartyLogin({
+            thirdPartyId: input.thirdPartyId,
+            config: recipeInstance.config,
             userContext: getNormalisedUserContext(input.userContext),
+            recipeImplementation: recipeInstance.recipeImpl,
         });
     }
 
@@ -126,10 +118,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance = ThirdParty.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.signInAndUp({
-            config: recipeInstance.webJsRecipe.config,
+        return ThirdParty.getInstanceOrThrow().recipeImpl.signInAndUp({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -154,7 +143,7 @@ const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
 const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
-const getAuthorizationURLWithQueryParamsAndSetState = Wrapper.getAuthorizationURLWithQueryParamsAndSetState;
+const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
 const signInAndUp = Wrapper.signInAndUp;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
@@ -171,7 +160,7 @@ export {
     verifyEmail,
     sendVerificationEmail,
     signInAndUp,
-    getAuthorizationURLWithQueryParamsAndSetState,
+    redirectToThirdPartyLogin,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,

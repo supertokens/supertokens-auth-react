@@ -25,12 +25,13 @@ export const EmailForm = withOverride(
     "PasswordlessEmailForm",
     function PasswordlessEmailForm(
         props: SignInUpEmailFormProps & {
-            header?: JSX.Element;
             footer?: JSX.Element;
         }
     ): JSX.Element {
         return (
             <FormBase
+                clearError={props.clearError}
+                onError={props.onError}
                 formFields={[
                     {
                         id: "email",
@@ -68,9 +69,7 @@ export const EmailForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                header={props.header}
                 footer={props.footer}
-                error={props.error}
             />
         );
     }

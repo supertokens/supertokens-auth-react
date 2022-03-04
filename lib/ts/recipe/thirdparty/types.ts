@@ -31,23 +31,17 @@ import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
 import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import OverrideableBuilder from "supertokens-js-override";
-import {
-    StateObject as WebJsStateObject,
-    InputType as WebJSInputType,
-    RecipeInterface,
-} from "supertokens-web-js/recipe/thirdparty";
-import ThirdPartyRecipe from "./recipe";
+import { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 export type ComponentOverrideMap = {
-    ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
-    ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
-    ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
+    ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
+    ThirdPartySignInAndUpProvidersForm_Override?: ComponentOverride<typeof ProvidersForm>;
+    ThirdPartySignInAndUpCallbackTheme_Override?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
 };
 
 export type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
     oAuthCallbackScreen?: FeatureBaseConfig;
-    // TODO NEMI: Allow overriding of web-js functions that read from query
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
@@ -55,12 +49,12 @@ export type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
-export type NormalisedConfig = WebJSInputType & {
+export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     oAuthCallbackScreen: FeatureBaseConfig;
     override: {
@@ -70,7 +64,7 @@ export type NormalisedConfig = WebJSInputType & {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
@@ -118,13 +112,13 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
 
 export type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 
-export type PreAndPostAPIHookContext =
+export type PreAndPostAPIHookAction =
     | AuthRecipePreAndPostAPIHookAction
     | "GET_AUTHORISATION_URL"
     | "THIRD_PARTY_SIGN_IN_UP";
 
 export type PreAPIHookContext = {
-    action: PreAndPostAPIHookContext;
+    action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
     userContext: any;
@@ -139,17 +133,26 @@ export type OnHandleEventContext =
       };
 
 export type SignInAndUpThemeProps = {
+    featureState: {
+        error: string | undefined;
+    };
+    dispatch: (action: ThirdPartySignInUpActions) => void;
     providers: {
         id: string;
         buttonComponent: JSX.Element;
     }[];
-    recipe: ThirdPartyRecipe;
+    recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
+};
+export type ThirdPartySignInUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
+
+export type ThirdPartySignInUpActions = {
+    type: "setError";
     error: string | undefined;
 };
 
 export type ThirdPartySignInAndUpState = {
-    error?: string;
+    error: string | undefined;
 };
 
 export type StateObject = WebJsStateObject & {

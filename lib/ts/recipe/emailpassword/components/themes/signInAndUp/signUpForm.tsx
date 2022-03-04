@@ -38,6 +38,8 @@ export const SignUpForm = withOverride(
         return (
             <FormBase
                 formFields={props.formFields}
+                clearError={props.clearError}
+                onError={props.onError}
                 buttonLabel={"EMAIL_PASSWORD_SIGN_UP_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
                 // TODO NEMI: handle user context for pre built UI
@@ -56,13 +58,11 @@ export const SignUpForm = withOverride(
 
                     return props.recipeImplementation.signUp({
                         formFields,
-                        config: props.recipe.webJsRecipe.config,
                         userContext: {},
                     });
                 }}
                 validateOnBlur={true}
                 showLabels={true}
-                header={props.header}
                 footer={props.footer}
             />
         );

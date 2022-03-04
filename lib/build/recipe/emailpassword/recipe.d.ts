@@ -10,7 +10,6 @@ import {
     UserInput,
 } from "./types";
 import EmailVerification from "../emailverification/recipe";
-import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
 import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 export default class EmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
@@ -20,12 +19,10 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
     static instance?: EmailPassword;
     static RECIPE_ID: string;
     recipeImpl: WebJsRecipeInterface;
-    webJsRecipe: WebJSEmailPassword;
     constructor(
         config: Config,
         recipes: {
             emailVerificationInstance: EmailVerification | undefined;
-            webJSEmailPasswordInstance: WebJSEmailPassword | undefined;
         }
     );
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;

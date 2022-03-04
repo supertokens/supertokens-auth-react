@@ -37,8 +37,8 @@ export const UserInputCodeForm = withOverride(
         const styles = useContext(StyleContext);
         const t = useTranslation();
 
+        // We need this any because the node types are also loaded
         const [clearResendNotifTimeout, setClearResendNotifTimeout] = useState<any | undefined>();
-        const [error, setError] = useState<string | undefined>();
 
         useEffect(() => {
             // This is just to clean up on unmount and if the clear timeout changes
@@ -61,19 +61,18 @@ export const UserInputCodeForm = withOverride(
                     setClearResendNotifTimeout(
                         setTimeout(() => {
                             setClearResendNotifTimeout(undefined);
-                        }, 2000) // We need this cast because the node types are also loaded
+                        }, 2000)
                     );
                 } else if (response.status === "GENERAL_ERROR") {
-                    setError(response.message);
+                    props.onError(response.message);
                 }
             } catch (e) {
-                setError("SOMETHING_WENT_WRONG_ERROR");
+                props.onError("SOMETHING_WENT_WRONG_ERROR");
             }
         }
 
         return (
             <React.Fragment>
-                {props.header}
                 {clearResendNotifTimeout !== undefined && (
                     <div data-supertokens="generalSuccess" css={[styles.generalSuccess]}>
                         {props.loginAttemptInfo.contactMethod === "EMAIL"
@@ -81,7 +80,10 @@ export const UserInputCodeForm = withOverride(
                             : t("PWLESS_RESEND_SUCCESS_PHONE")}
                     </div>
                 )}
+
                 <FormBase
+                    clearError={props.clearError}
+                    onError={props.onError}
                     formFields={[
                         {
                             id: "userInputCode",
@@ -110,7 +112,6 @@ export const UserInputCodeForm = withOverride(
                     ]}
                     onSuccess={props.onSuccess}
                     buttonLabel={"PWLESS_SIGN_IN_UP_CONTINUE_BUTTON"}
-                    error={error || props.error}
                     callAPI={async (formFields) => {
                         const userInputCode = formFields.find((field) => field.id === "userInputCode")?.value;
                         if (userInputCode === undefined || userInputCode.length === 0) {

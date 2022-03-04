@@ -69,7 +69,7 @@ SuperTokens.init({
             contactMethod: "PHONE",
             override: {
                 components: {
-                    PasswordlessSignInUpHeader: ({ DefaultComponent, ...props }) => {
+                    PasswordlessSignInUpHeader_Override: ({ DefaultComponent, ...props }) => {
                         return (
                             <>
                                 <div

@@ -16,16 +16,11 @@ import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
 import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import OverrideableBuilder from "supertokens-js-override";
-import {
-    StateObject as WebJsStateObject,
-    InputType as WebJSInputType,
-    RecipeInterface,
-} from "supertokens-web-js/recipe/thirdparty";
-import ThirdPartyRecipe from "./recipe";
+import { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export declare type ComponentOverrideMap = {
-    ThirdPartySignUpFooter?: ComponentOverride<typeof SignUpFooter>;
-    ThirdPartySignInAndUpProvidersForm?: ComponentOverride<typeof ProvidersForm>;
-    ThirdPartySignInAndUpCallbackTheme?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
+    ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
+    ThirdPartySignInAndUpProvidersForm_Override?: ComponentOverride<typeof ProvidersForm>;
+    ThirdPartySignInAndUpCallbackTheme_Override?: ComponentOverride<typeof SignInAndUpCallbackTheme>;
 };
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
@@ -37,10 +32,10 @@ export declare type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
-export declare type NormalisedConfig = WebJSInputType & {
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
+export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     oAuthCallbackScreen: FeatureBaseConfig;
     override: {
@@ -50,7 +45,7 @@ export declare type NormalisedConfig = WebJSInputType & {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     disableDefaultImplementation?: boolean;
     privacyPolicyLink?: string;
@@ -64,12 +59,12 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
     providers: Provider[];
 };
 export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
-export declare type PreAndPostAPIHookContext =
+export declare type PreAndPostAPIHookAction =
     | AuthRecipePreAndPostAPIHookAction
     | "GET_AUTHORISATION_URL"
     | "THIRD_PARTY_SIGN_IN_UP";
 export declare type PreAPIHookContext = {
-    action: PreAndPostAPIHookContext;
+    action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
     userContext: any;
@@ -85,16 +80,24 @@ export declare type OnHandleEventContext =
           };
       };
 export declare type SignInAndUpThemeProps = {
+    featureState: {
+        error: string | undefined;
+    };
+    dispatch: (action: ThirdPartySignInUpActions) => void;
     providers: {
         id: string;
         buttonComponent: JSX.Element;
     }[];
-    recipe: ThirdPartyRecipe;
+    recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
+};
+export declare type ThirdPartySignInUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
+export declare type ThirdPartySignInUpActions = {
+    type: "setError";
     error: string | undefined;
 };
 export declare type ThirdPartySignInAndUpState = {
-    error?: string;
+    error: string | undefined;
 };
 export declare type StateObject = WebJsStateObject & {
     rid?: string;

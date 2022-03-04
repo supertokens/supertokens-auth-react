@@ -680,6 +680,10 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
 
                 return {
                     ...implementation,
+                    getAuthorizationURLWithQueryParamsAndSetState(...args) {
+                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
+                        return implementation.getAuthorizationURLWithQueryParamsAndSetState(...args);
+                    },
                     getAuthorisationURLFromBackend(...args) {
                         log(`GET_OAUTH_AUTHORISATION_URL`);
                         return implementation.getAuthorisationURLFromBackend(...args);
@@ -774,6 +778,10 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
 
                 return {
                     ...implementation,
+                    getAuthorizationURLWithQueryParamsAndSetState(...args) {
+                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
+                        return implementation.getAuthorizationURLWithQueryParamsAndSetState(...args);
+                    },
                     thirdPartySignInAndUp(...args) {
                         log(`SIGN_IN_AND_UP`);
                         return implementation.thirdPartySignInAndUp(...args);

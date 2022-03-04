@@ -24,7 +24,7 @@ import {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
-    PreAndPostAPIHookContext,
+    PreAndPostAPIHookAction,
     OnHandleEventContext,
     UserInput,
 } from "./types";
@@ -38,8 +38,8 @@ import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import WebJSThirdPartyRecipe from "supertokens-web-js/lib/build/recipe/thirdparty/recipe";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import OverrideableBuilder from "supertokens-js-override";
 
 /*
  * Class.
@@ -53,45 +53,19 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
     static RECIPE_ID = "thirdparty";
 
     recipeImpl: WebJSRecipeInterface;
-    webJsRecipe: WebJSThirdPartyRecipe;
 
     constructor(
         config: Config,
         recipes: {
             emailVerificationInstance: EmailVerification | undefined;
-            webJSThirdPartyInstance: WebJSThirdPartyRecipe | undefined;
         }
     ) {
         super(normaliseThirdPartyConfig(config), {
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
-        this.webJsRecipe =
-            recipes.webJSThirdPartyInstance !== undefined
-                ? recipes.webJSThirdPartyInstance
-                : new WebJSThirdPartyRecipe(
-                      {
-                          recipeId: config.recipeId,
-                          appInfo: config.appInfo,
-                          preAPIHook: config.preAPIHook,
-                          postAPIHook: config.postAPIHook,
-                          override: {
-                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                              functions: (_, builder) => {
-                                  builder = builder.override((oI) => RecipeImplementation(oI, this.config));
-                                  if (this.config.override.functions !== undefined) {
-                                      builder = builder.override(this.config.override.functions);
-                                  }
-                                  return builder.build();
-                              },
-                          },
-                      },
-                      {
-                          emailVerification: recipes.emailVerificationInstance?.webJsRecipe,
-                      }
-                  );
-
-        this.recipeImpl = this.webJsRecipe.recipeImplementation;
+        const builder = new OverrideableBuilder(RecipeImplementation(this.config));
+        this.recipeImpl = builder.override(this.config.override.functions).build();
     }
 
     /*
@@ -134,7 +108,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
             return (
                 <AuthWidgetWrapper<
                     GetRedirectionURLContext,
-                    PreAndPostAPIHookContext,
+                    PreAndPostAPIHookAction,
                     OnHandleEventContext,
                     NormalisedConfig
                 >
@@ -156,15 +130,10 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    > {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
+        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
             ThirdParty.instance = new ThirdParty(
                 {
                     ...config,
@@ -173,7 +142,6 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
                 },
                 {
                     emailVerificationInstance: undefined,
-                    webJSThirdPartyInstance: undefined,
                 }
             );
             return ThirdParty.instance;

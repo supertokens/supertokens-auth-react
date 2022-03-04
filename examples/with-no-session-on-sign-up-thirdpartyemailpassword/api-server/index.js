@@ -7,8 +7,6 @@ let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
-let { signInUpPOST } = require("./customSignInUpPOST");
-let { signUpPOST } = require("./customSignUpPOST");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
@@ -51,16 +49,62 @@ supertokens.init({
                 }),
             ],
             override: {
-                apis: (oI) => {
+                functions: (oI) => {
                     return {
                         ...oI,
-                        thirdPartySignInUpPOST: signInUpPOST,
-                        emailPasswordSignUpPOST: signUpPOST,
+                        thirdPartySignInUp: async function (input) {
+                            let resp = await oI.thirdPartySignInUp(input);
+                            if (resp.status === "OK") {
+                                if (resp.createdNewUser) {
+                                    // we set this context here so that
+                                    // the createNewSession recipe function can
+                                    // check this and NOT create a new session
+                                    // (since we want to disable session creation during sign up)
+                                    input.userContext.isNewUser = true;
+                                }
+                            }
+                            return resp;
+                        },
+                        emailPasswordSignUp: async function (input) {
+                            input.userContext.isNewUser = true;
+                            // we set this context here so that
+                            // the createNewSession recipe function can
+                            // check this and NOT create a new session
+                            // (since we want to disable session creation during sign up)
+                            return oI.emailPasswordSignUp(input);
+                        },
                     };
                 },
             },
         }),
-        Session.init(),
+        Session.init({
+            override: {
+                functions: (oI) => {
+                    return {
+                        ...oI,
+                        createNewSession: async function (input) {
+                            if (input.userContext.isNewUser) {
+                                // we do not want to create a session for a new user.
+                                return {
+                                    getAccessToken: () => "",
+                                    getAccessTokenPayload: () => null,
+                                    getExpiry: () => -1,
+                                    getHandle: () => "",
+                                    getSessionData: () => null,
+                                    getTimeCreated: () => -1,
+                                    getUserId: () => "",
+                                    revokeSession: () => {},
+                                    updateAccessTokenPayload: () => {},
+                                    updateSessionData: () => {},
+                                }; // this is an empty session
+                            } else {
+                                return oI.createNewSession(input);
+                            }
+                        },
+                    };
+                },
+            },
+        }),
     ],
 });
 

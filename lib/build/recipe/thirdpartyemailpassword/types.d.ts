@@ -9,13 +9,21 @@ import {
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
     PreAndPostAPIHookAction as EmailPasswordPreAndPostAPIHookAction,
+    SignInAndUpState as EmailPasswordSignInAndUpState,
+    EmailPasswordSignInAndUpAction,
+    EmailPasswordSignInAndUpChildProps,
 } from "../emailpassword/types";
 import {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
-import { PreAndPostAPIHookContext as ThirdPartyPreAndPostAPIHookAction } from "../thirdparty/types";
+import {
+    PreAndPostAPIHookAction as ThirdPartyPreAndPostAPIHookAction,
+    ThirdPartySignInAndUpState,
+    ThirdPartySignInUpActions,
+    ThirdPartySignInUpChildProps,
+} from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
 import {
@@ -31,12 +39,11 @@ import { ComponentOverride } from "../../components/componentOverride/componentO
 import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpassword/types";
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
 import { Header } from "./components/themes/signInAndUp/header";
-import { SignInAndUpForm } from "./components/themes/signInAndUp/signInAndUpForm";
+import { Dispatch } from "react";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export declare type ComponentOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap & {
-        ThirdPartyEmailPasswordHeader?: ComponentOverride<typeof Header>;
-        ThirdPartyEmailPasswordSignInAndUpForm?: ComponentOverride<typeof SignInAndUpForm>;
+        ThirdPartyEmailPasswordHeader_Override?: ComponentOverride<typeof Header>;
     };
 export declare type UserInput = {
     signInAndUpFeature?: SignInAndUpFeatureUserInput;
@@ -87,8 +94,17 @@ export declare type PreAndPostAPIHookAction = EmailPasswordPreAndPostAPIHookActi
 export declare type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
 export declare type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
-    history?: any;
-    emailPasswordRecipe?: EPRecipe;
-    thirdPartyRecipe?: TPRecipe;
     config: NormalisedConfig;
+    history?: any;
+    commonState: {
+        error: string | undefined;
+    };
+    emailPasswordRecipe?: EPRecipe;
+    epState: EmailPasswordSignInAndUpState;
+    epDispatch: Dispatch<EmailPasswordSignInAndUpAction>;
+    epChildProps?: EmailPasswordSignInAndUpChildProps;
+    thirdPartyRecipe?: TPRecipe;
+    tpState: ThirdPartySignInAndUpState;
+    tpDispatch: Dispatch<ThirdPartySignInUpActions>;
+    tpChildProps?: ThirdPartySignInUpChildProps;
 };

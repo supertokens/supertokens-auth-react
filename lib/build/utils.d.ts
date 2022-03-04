@@ -23,13 +23,6 @@ export declare function getOriginOfPage(): NormalisedURLDomain;
 export declare function getLocalStorage(key: string): string | null;
 export declare function setLocalStorage(key: string, value: string): void;
 export declare function removeFromLocalStorage(key: string): void;
-export declare class Deferred<T> {
-    promise: Promise<T>;
-    resolve: (value: T) => void;
-    reject: (reason?: any) => void;
-    constructor();
-    attach(prom: Promise<T>): void;
-}
 export declare function mergeObjects<T>(obj1: T, obj2: T): T;
 export declare function normaliseCookieScopeOrThrowError(cookieScope: string): string;
 export declare function getDefaultCookieScope(): string | undefined;

@@ -50,6 +50,8 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
     const resendEmail = useCallback(async () => {
         try {
             // TODO NEMI: handle user context for pre built UI
+            props.clearError();
+            // TODO NEMI: handle user context for pre built UI
             const response = await props.recipeImplementation.resendCode({
                 deviceId: props.loginAttemptInfo.deviceId,
                 preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
@@ -65,6 +67,9 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                 }, 2000);
             } else {
                 setStatus("ERROR");
+                if (response.status === "GENERAL_ERROR") {
+                    props.onError(response.message);
+                }
             }
         } catch (e) {
             setStatus("ERROR");

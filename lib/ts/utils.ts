@@ -138,7 +138,7 @@ export async function validateForm(
         const field = configFormFields[i];
 
         // Find corresponding input value.
-        const input = <APIFormField>inputs.find((i) => i.id === field.id);
+        const input = inputs.find((i) => i.id === field.id)!;
 
         // Otherwise, use validate function.
 
@@ -252,23 +252,6 @@ export function setLocalStorage(key: string, value: string): void {
 
 export function removeFromLocalStorage(key: string): void {
     getWindowOrThrow().localStorage.removeItem(key);
-}
-
-export class Deferred<T> {
-    promise: Promise<T>;
-    resolve!: (value: T) => void;
-    reject!: (reason?: any) => void;
-
-    constructor() {
-        this.promise = new Promise((res, rej) => {
-            this.resolve = res;
-            this.reject = rej;
-        });
-    }
-
-    attach(prom: Promise<T>): void {
-        prom.then(this.resolve, this.reject);
-    }
 }
 
 export function mergeObjects<T>(obj1: T, obj2: T): T {

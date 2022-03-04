@@ -39,7 +39,6 @@ const superTokensEmotionCache = createCache({
 type FeatureWrapperProps = {
     children: JSX.Element;
     useShadowDom?: boolean;
-    isEmbedded?: boolean;
     defaultStore: TranslationStore;
 };
 
@@ -47,22 +46,7 @@ type FeatureWrapperProps = {
  * Component.
  */
 
-export default function FeatureWrapper({
-    isEmbedded,
-    children,
-    useShadowDom,
-    defaultStore,
-}: FeatureWrapperProps): JSX.Element {
-    /*
-     * Render.
-     */
-
-    /*
-     * Do not embed feature wrapper if the feature is embedded in another feature.
-     */
-    if (isEmbedded) {
-        return children;
-    }
+export default function FeatureWrapper({ children, useShadowDom, defaultStore }: FeatureWrapperProps): JSX.Element {
     const st = SuperTokens.getInstanceOrThrow();
     return (
         <ErrorBoundary>
@@ -80,7 +64,6 @@ export default function FeatureWrapper({
 type WithOrWithoutShadowDomProps = {
     children: JSX.Element;
     useShadowDom?: boolean;
-    isEmbedded?: boolean;
 };
 
 function WithOrWithoutShadowDom({ children, useShadowDom }: WithOrWithoutShadowDomProps): JSX.Element {

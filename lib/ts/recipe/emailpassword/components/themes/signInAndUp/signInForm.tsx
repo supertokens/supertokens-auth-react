@@ -37,6 +37,8 @@ export const SignInForm = withOverride(
         return (
             <FormBase
                 formFields={props.formFields}
+                clearError={props.clearError}
+                onError={props.onError}
                 buttonLabel={"EMAIL_PASSWORD_SIGN_IN_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
                 // TODO NEMI: handle user context for pre built UI
@@ -55,7 +57,6 @@ export const SignInForm = withOverride(
 
                     const response = await props.recipeImplementation.signIn({
                         formFields,
-                        config: props.recipe.webJsRecipe.config,
                         userContext: {},
                     });
                     if (response.status === "WRONG_CREDENTIALS_ERROR") {
@@ -66,7 +67,6 @@ export const SignInForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                header={props.header}
                 footer={props.footer}
             />
         );

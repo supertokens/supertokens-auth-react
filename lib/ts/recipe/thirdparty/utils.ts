@@ -104,7 +104,6 @@ export function normaliseSignInAndUpFeature(
 
 export function matchRecipeIdUsingState(recipe: Recipe, userContext: any): boolean {
     const stateResponse = recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
-        config: recipe.webJsRecipe.config,
         userContext,
     });
     if (stateResponse === undefined) {
@@ -120,15 +119,14 @@ export async function redirectToThirdPartyLogin(input: {
     thirdPartyId: string;
     config: NormalisedConfig;
     userContext: any;
-    recipe: Recipe;
+    recipeImplementation: RecipeInterface;
 }): Promise<{ status: "OK" | "ERROR" }> {
     const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
     if (provider === undefined) {
         return { status: "ERROR" };
     }
 
-    const response = await input.recipe.webJsRecipe.recipeImplementation.getAuthorizationURLWithQueryParamsAndSetState({
-        config: input.recipe.webJsRecipe.config,
+    const response = await input.recipeImplementation.getAuthorizationURLWithQueryParamsAndSetState({
         providerId: input.thirdPartyId,
         authorisationURL: provider.getRedirectURL(),
         providerClientId: provider.clientId,

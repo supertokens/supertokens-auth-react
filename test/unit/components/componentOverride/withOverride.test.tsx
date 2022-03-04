@@ -41,7 +41,7 @@ describe("withOverride", () => {
     test("display overriden component if context key matches override key", async () => {
         // given
         const overrides = {
-            DefaultComponent: OverridenComponent,
+            DefaultComponent_Override: OverridenComponent,
         };
 
         // when
@@ -58,7 +58,7 @@ describe("withOverride", () => {
     test("preserve override component state across rerenders", async () => {
         // given
         const overrides = {
-            DefaultComponent: OverridenComponent,
+            DefaultComponent_Override: OverridenComponent,
         };
 
         // when

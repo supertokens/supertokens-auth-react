@@ -88,7 +88,6 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
             // TODO NEMI: handle user context for pre built UI
             const isVerified: boolean = (
                 await this.props.recipe.recipeImpl.isEmailVerified({
-                    config: this.props.recipe.webJsRecipe.config,
                     userContext: {},
                 })
             ).isVerified;
@@ -115,7 +114,6 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
         const sendVerifyEmailScreenFeature = this.props.recipe.config.sendVerifyEmailScreen;
 
         const sendVerifyEmailScreen = {
-            recipe: this.props.recipe,
             styleFromInit: sendVerifyEmailScreenFeature.style,
             recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
@@ -135,11 +133,10 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
                       recipeImplementation: this.modifiedRecipeImplementation,
                       config: this.props.recipe.config,
                       token: this.state.token,
-                      recipe: this.props.recipe,
                   };
 
         const props = {
-            recipe: this.props.recipe,
+            recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
             sendVerifyEmailScreen: sendVerifyEmailScreen,
             verifyEmailLinkClickedScreen,

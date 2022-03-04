@@ -39,8 +39,10 @@ import ThirdParty from "../thirdparty/recipe";
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
-import WebJSThirdPartyEmailPassword from "supertokens-web-js/lib/build/recipe/thirdpartyemailpassword/recipe";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import OverrideableBuilder from "supertokens-js-override";
+import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
+import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 
 export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
@@ -53,8 +55,6 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
     emailPasswordRecipe: EmailPassword | undefined;
 
     thirdPartyRecipe: ThirdParty | undefined;
-
-    webJsRecipe: WebJSThirdPartyEmailPassword;
 
     recipeImpl: RecipeInterface;
 
@@ -70,36 +70,8 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
-        this.webJsRecipe = new WebJSThirdPartyEmailPassword(
-            {
-                appInfo: config.appInfo,
-                recipeId: config.recipeId,
-                preAPIHook: config.preAPIHook,
-                postAPIHook: config.postAPIHook,
-                override: {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    functions: (_, builder) => {
-                        builder = builder.override((oI) => RecipeImplementation(oI, this.config));
-                        if (this.config.override.functions !== undefined) {
-                            builder = builder.override(this.config.override.functions);
-                        }
-                        return builder.build();
-                    },
-                },
-            },
-            {
-                emailVerification:
-                    recipes.emailVerificationInstance === undefined
-                        ? undefined
-                        : recipes.emailVerificationInstance.webJsRecipe,
-                emailPassword:
-                    recipes.emailPasswordInstance === undefined ? undefined : recipes.emailPasswordInstance.webJsRecipe,
-                thirdParty:
-                    recipes.thirdPartyInstance === undefined ? undefined : recipes.thirdPartyInstance.webJsRecipe,
-            }
-        );
-
-        this.recipeImpl = this.webJsRecipe.recipeImplementation;
+        const builder = new OverrideableBuilder(RecipeImplementation(this.config));
+        this.recipeImpl = builder.override(this.config.override.functions).build();
 
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined
@@ -120,12 +92,15 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
                           signInAndUpFeature: this.config.signInAndUpFeature,
                           useShadowDom: this.config.useShadowDom,
                           override: {
+                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                              functions: (_: any) => {
+                                  return getEmailPasswordImpl(this.recipeImpl);
+                              },
                               components: this.config.override.components,
                           },
                       },
                       {
                           emailVerificationInstance: this.emailVerification,
-                          webJSEmailPasswordInstance: this.webJsRecipe.emailPasswordRecipe,
                       }
                   );
 
@@ -151,12 +126,15 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
                           oAuthCallbackScreen: this.config.oAuthCallbackScreen,
                           useShadowDom: this.config.useShadowDom,
                           override: {
+                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                              functions: (_: any) => {
+                                  return getThirdPartyImpl(this.recipeImpl);
+                              },
                               components: this.config.override.components,
                           },
                       },
                       {
                           emailVerificationInstance: this.emailVerification,
-                          webJSThirdPartyInstance: this.webJsRecipe.thirdPartyRecipe,
                       }
                   );
     }

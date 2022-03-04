@@ -2,7 +2,7 @@ import { Config, NormalisedConfig } from "./types";
 import { isIE } from "../../utils";
 
 export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): NormalisedConfig<T, S, R> {
-    let { onHandleEvent, getRedirectionURL } = config;
+    let { onHandleEvent, getRedirectionURL, preAPIHook, postAPIHook } = config;
     if (onHandleEvent === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
         onHandleEvent = (_: unknown): void => {};
@@ -11,6 +11,16 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
     if (getRedirectionURL === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         getRedirectionURL = async (_: unknown): Promise<string | undefined> => undefined;
+    }
+
+    if (preAPIHook === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        preAPIHook = async (context: any) => context;
+    }
+
+    if (postAPIHook === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        postAPIHook = async () => {};
     }
 
     let useShadowDom = config.useShadowDom === undefined ? true : config.useShadowDom;
@@ -23,6 +33,8 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
         ...config,
         getRedirectionURL,
         onHandleEvent,
+        preAPIHook,
+        postAPIHook,
         useShadowDom,
         palette,
         rootStyle,

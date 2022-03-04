@@ -18,68 +18,258 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import * as React from "react";
-import { PureComponent, Fragment } from "react";
+import { Fragment } from "react";
 import SignInUpThemeWrapper from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { clearErrorQueryParam, Deferred, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
+import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
-import { RecipeInterface, LoginAttemptInfo, PasswordlessUser } from "../../../types";
+import {
+    RecipeInterface,
+    PasswordlessSignInUpAction,
+    SignInUpState,
+    PasswordlessUser,
+    SignInUpProps,
+} from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { FeatureBaseProps } from "../../../../../types";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
 import Session from "../../../../session";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
+import { useMemo } from "react";
+import { useRef } from "react";
+import { useEffect } from "react";
+import { FeatureBaseProps } from "../../../../../types";
 
-type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
+export const useSuccessInAnotherTabChecker = (
+    state: SignInUpState,
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>
+) => {
+    const callingConsumeCodeRef = useRef(false);
 
-type SignInUpState = {
-    error: string | undefined;
-    loaded: boolean;
-    loginAttemptInfo: LoginAttemptInfo | undefined;
-    checkSessionIntervalHandle: any;
-    successInAnotherTab: boolean;
-    callingConsume: boolean;
-};
+    useEffect(() => {
+        // We only need to start checking this if we have an active login attempt
+        if (state.loginAttemptInfo && !state.successInAnotherTab) {
+            const checkSessionIntervalHandle = setInterval(async () => {
+                if (callingConsumeCodeRef.current === false) {
+                    const hasSession = await Session.doesSessionExist();
+                    if (hasSession) {
+                        dispatch({ type: "successInAnotherTab" });
+                    }
+                }
+            }, 2000);
 
-type PropType = FeatureBaseProps & {
-    recipe: Recipe;
-};
-
-class SignInUp extends PureComponent<PropType, SignInUpState> {
-    constructor(props: PropType) {
-        super(props);
-
-        let error: string | undefined = undefined;
-        const errorQueryParam = getQueryParams("error");
-        const messageQueryParam = getQueryParams("message");
-        if (errorQueryParam !== null) {
-            if (errorQueryParam === "signin") {
-                error = "SOMETHING_WENT_WRONG_ERROR";
-            } else if (errorQueryParam === "restart_link") {
-                error = "ERROR_SIGN_IN_UP_LINK";
-            } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
-                error = messageQueryParam;
-            }
+            return () => {
+                clearInterval(checkSessionIntervalHandle);
+            };
         }
-        this.state = {
+        // Nothing to clean up
+        return;
+    }, [state.loginAttemptInfo, state.successInAnotherTab]);
+
+    return callingConsumeCodeRef;
+};
+
+export const useFeatureReducer = (
+    recipeImpl: RecipeInterface | undefined
+): [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>] => {
+    const [state, dispatch] = React.useReducer(
+        (oldState: SignInUpState, action: PasswordlessSignInUpAction) => {
+            switch (action.type) {
+                case "load":
+                    return {
+                        loaded: true,
+                        error: action.error,
+                        loginAttemptInfo: action.loginAttemptInfo,
+                        successInAnotherTab: false,
+                    };
+                case "resendCode":
+                    if (!oldState.loginAttemptInfo) {
+                        return oldState;
+                    }
+                    return {
+                        ...oldState,
+                        loginAttemptInfo: {
+                            ...oldState.loginAttemptInfo,
+                            lastResend: action.timestamp,
+                        },
+                    };
+                case "restartFlow":
+                    return {
+                        ...oldState,
+                        error: action.error,
+                        loginAttemptInfo: undefined,
+                    };
+                case "setError":
+                    return {
+                        ...oldState,
+                        error: action.error,
+                    };
+                case "startLogin":
+                    return {
+                        ...oldState,
+                        loginAttemptInfo: action.loginAttemptInfo,
+                        error: undefined,
+                    };
+                case "successInAnotherTab":
+                    return {
+                        ...oldState,
+                        successInAnotherTab: true,
+                    };
+                default:
+                    return oldState;
+            }
+        },
+        {
+            error: undefined,
             loaded: false,
             loginAttemptInfo: undefined,
-            checkSessionIntervalHandle: undefined,
-            error,
             successInAnotherTab: false,
-            callingConsume: false,
-        };
-    }
-
-    getIsEmbedded = (): boolean => {
-        if (this.props.isEmbedded !== undefined) {
-            return this.props.isEmbedded;
+        },
+        (initArg) => {
+            let error: string | undefined = undefined;
+            const errorQueryParam = getQueryParams("error");
+            const messageQueryParam = getQueryParams("message");
+            if (errorQueryParam !== null) {
+                if (errorQueryParam === "signin") {
+                    error = "SOMETHING_WENT_WRONG_ERROR";
+                } else if (errorQueryParam === "restart_link") {
+                    error = "ERROR_SIGN_IN_UP_LINK";
+                } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
+                    error = messageQueryParam;
+                }
+            }
+            return {
+                ...initArg,
+                error,
+            };
         }
-        return false;
-    };
+    );
+    useEffect(() => {
+        if (recipeImpl === undefined) {
+            return;
+        }
+        async function load() {
+            let error: string | undefined = undefined;
+            const errorQueryParam = getQueryParams("error");
+            const messageQueryParam = getQueryParams("message");
+            if (errorQueryParam !== null) {
+                if (errorQueryParam === "signin") {
+                    error = "SOMETHING_WENT_WRONG_ERROR";
+                } else if (errorQueryParam === "restart_link") {
+                    error = "ERROR_SIGN_IN_UP_LINK";
+                } else if (errorQueryParam === "custom" && messageQueryParam !== null) {
+                    error = messageQueryParam;
+                }
+            }
+            const loginAttemptInfo = await recipeImpl!.getLoginAttemptInfo();
+            // No need to check if the component is unmounting, since this has no effect then.
+            dispatch({ type: "load", loginAttemptInfo, error });
+        }
+        if (state.loaded === false) {
+            void load();
+        }
+    }, [state.loaded, recipeImpl]);
+    return [state, dispatch];
+};
 
-    modifiedRecipeImplementation: RecipeInterface = {
-        ...this.props.recipe.recipeImpl,
+export type ChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
+
+// We are overloading to explicitly state that if recipe is defined then the return value is defined as well.
+export function useChildProps(
+    recipe: Recipe,
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    state: SignInUpState,
+    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    history: any
+): ChildProps;
+export function useChildProps(
+    recipe: Recipe | undefined,
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    state: SignInUpState,
+    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    history: any
+): ChildProps | undefined;
+
+export function useChildProps(
+    recipe: Recipe | undefined,
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    state: SignInUpState,
+    callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    history: any
+): ChildProps | undefined {
+    const recipeImplementation = React.useMemo(
+        () => recipe && getModifiedRecipeImplementation(recipe.recipeImpl, dispatch, callingConsumeCodeRef),
+        [recipe]
+    );
+
+    return useMemo(() => {
+        if (!recipe || !recipeImplementation) {
+            return undefined;
+        }
+        return {
+            onSuccess: (result: { createdUser: boolean; user: PasswordlessUser }) => {
+                const pathFromUrl = getRedirectToPathFromURL();
+
+                return recipe.redirect(
+                    {
+                        action: "SUCCESS",
+                        isNewUser: result.createdUser,
+                        redirectToPath:
+                            pathFromUrl !== undefined ? pathFromUrl : state.loginAttemptInfo?.redirectToPath,
+                    },
+                    history
+                );
+            },
+            recipeImplementation: recipeImplementation,
+            config: recipe.config,
+        };
+    }, [state, recipeImplementation]);
+}
+
+export const SignInUpFeature: React.FC<
+    FeatureBaseProps & {
+        recipe: Recipe;
+    }
+> = (props) => {
+    const componentOverrides = props.recipe.config.override.components;
+    const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl);
+    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch);
+    const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, props.history)!;
+
+    return (
+        <ComponentOverrideContext.Provider value={componentOverrides}>
+            <FeatureWrapper
+                useShadowDom={props.recipe.config.useShadowDom}
+                defaultStore={defaultTranslationsPasswordless}>
+                <Fragment>
+                    {/* No custom theme, use default. */}
+                    {props.children === undefined && (
+                        <SignInUpThemeWrapper {...childProps} featureState={state} dispatch={dispatch} />
+                    )}
+
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {props.children &&
+                        React.Children.map(props.children, (child) => {
+                            if (React.isValidElement(child)) {
+                                return React.cloneElement(child, childProps);
+                            }
+
+                            return child;
+                        })}
+                </Fragment>
+            </FeatureWrapper>
+        </ComponentOverrideContext.Provider>
+    );
+};
+
+export default SignInUpFeature;
+
+function getModifiedRecipeImplementation(
+    originalImpl: RecipeInterface,
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    callingConsumeCodeRef: React.MutableRefObject<boolean>
+): RecipeInterface {
+    return {
+        ...originalImpl,
         createCode: async (input) => {
             let contactInfo;
             if ("email" in input) {
@@ -87,7 +277,7 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
             } else {
                 contactInfo = formatPhoneNumberIntl(input.phoneNumber);
             }
-            const res = await this.props.recipe.recipeImpl.createCode(input);
+            const res = await originalImpl.createCode(input);
             if (res.status === "OK") {
                 // This contactMethod refers to the one that was used to deliver the login info
                 // This can be an important distinction in case both email and phone are allowed
@@ -99,168 +289,58 @@ class SignInUp extends PureComponent<PropType, SignInUpState> {
                     contactInfo,
                     redirectToPath: getRedirectToPathFromURL(),
                 };
-                await this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
-                this.setState((os) => ({
-                    ...os,
-                    error: undefined,
-                    loginAttemptInfo,
-                }));
+                await originalImpl.setLoginAttemptInfo(loginAttemptInfo);
+                dispatch({ type: "startLogin", loginAttemptInfo });
             } else if (res.status === "GENERAL_ERROR") {
-                this.setState((os) => ({
-                    ...os,
-                    error: res.message,
-                }));
+                dispatch({ type: "setError", error: res.message });
             }
             return res;
         },
         resendCode: async (input) => {
-            if (!this.state.loginAttemptInfo) {
-                // This should never happen, but it makes TS happy
-                throw new Error("Resend without loginAttemptInfo");
-            }
-            const res = await this.props.recipe.recipeImpl.resendCode(input);
+            const res = await originalImpl.resendCode(input);
             if (res.status === "OK") {
-                const loginAttemptInfo = {
-                    ...this.state.loginAttemptInfo,
-                    lastResend: new Date().getTime(),
-                };
-                await this.props.recipe.recipeImpl.setLoginAttemptInfo(loginAttemptInfo);
-                this.setState((os) => ({
-                    ...os,
-                    error: undefined,
-                    loginAttemptInfo,
-                }));
+                const loginAttemptInfo = await originalImpl.getLoginAttemptInfo();
+                // If it was cleared or overwritten we don't want to save this.
+                // TODO: extend session checker to check for this case as well
+                if (loginAttemptInfo !== undefined && loginAttemptInfo.deviceId === input.deviceId) {
+                    const timestamp = new Date().getTime();
+                    await originalImpl.setLoginAttemptInfo({ ...loginAttemptInfo, lastResend: timestamp });
+                    dispatch({ type: "resendCode", timestamp });
+                }
             } else if (res.status === "RESTART_FLOW_ERROR") {
-                await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+                await originalImpl.clearLoginAttemptInfo();
 
-                this.setState((os) => ({
-                    ...os,
-                    error: "ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW",
-                    loginAttemptInfo: undefined,
-                }));
+                dispatch({ type: "restartFlow", error: "ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW" });
             } else if (res.status === "GENERAL_ERROR") {
-                this.setState((os) => ({
-                    ...os,
-                    error: res.message,
-                }));
+                dispatch({ type: "setError", error: res.message });
             }
             return res;
         },
 
         consumeCode: async (input) => {
-            const deferred = new Deferred<Awaited<ReturnType<RecipeInterface["consumeCode"]>>>();
             // We need to call consume code while callingConsume, so we don't detect
             // the session creation too early and go to successInAnotherTab too early
-            this.setState(
-                (os) => ({ ...os, callingConsume: true }),
-                () => {
-                    deferred.attach(this.props.recipe.recipeImpl.consumeCode(input));
-                }
-            );
-            const res = await deferred.promise;
+            callingConsumeCodeRef.current = true;
 
-            if (res.status !== "OK") {
-                this.setState((os) => ({ ...os, callingConsume: false }));
-            }
+            const res = await originalImpl.consumeCode(input);
 
             if (res.status === "RESTART_FLOW_ERROR") {
-                await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+                await originalImpl.clearLoginAttemptInfo();
 
-                this.setState((os) => ({
-                    ...os,
-                    error: "ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW",
-                    loginAttemptInfo: undefined,
-                }));
+                dispatch({ type: "restartFlow", error: "ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW" });
             } else if (res.status === "OK") {
-                await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+                await originalImpl.clearLoginAttemptInfo();
             }
+
+            callingConsumeCodeRef.current = false;
 
             return res;
         },
 
         clearLoginAttemptInfo: async () => {
-            await this.props.recipe.recipeImpl.clearLoginAttemptInfo();
+            await originalImpl.clearLoginAttemptInfo();
             clearErrorQueryParam();
-            this.setState((os) => ({
-                ...os,
-                loginAttemptInfo: undefined,
-                error: undefined,
-            }));
+            dispatch({ type: "restartFlow", error: undefined });
         },
     };
-
-    componentDidMount = async (): Promise<void> => {
-        const loginAttemptInfo = await this.modifiedRecipeImplementation.getLoginAttemptInfo();
-
-        // We could be using storage events for this, but we need to keep customization in mind.
-        // Someone could be using something else other than localstorage.
-        const checkSessionIntervalHandle = setInterval(async () => {
-            if (this.state.loginAttemptInfo && !this.state.successInAnotherTab && !this.state.callingConsume) {
-                const hasSession = await Session.doesSessionExist();
-                if (hasSession) {
-                    this.setState((os) => ({ ...os, successInAnotherTab: true }));
-                }
-            }
-        }, 2000);
-
-        this.setState((s) => ({ ...s, loaded: true, loginAttemptInfo, checkSessionIntervalHandle }));
-    };
-
-    componentWillUnmount = () => {
-        if (this.state.checkSessionIntervalHandle) {
-            clearInterval(this.state.checkSessionIntervalHandle);
-        }
-    };
-
-    render = (): JSX.Element => {
-        const componentOverrides = this.props.recipe.config.override.components;
-
-        const props = {
-            onSuccess: (result: { createdUser: boolean; user: PasswordlessUser }) => {
-                const pathFromUrl = getRedirectToPathFromURL();
-
-                return this.props.recipe.redirect(
-                    {
-                        action: "SUCCESS",
-                        isNewUser: result.createdUser,
-                        redirectToPath:
-                            pathFromUrl !== undefined ? pathFromUrl : this.state.loginAttemptInfo?.redirectToPath,
-                    },
-                    this.props.history
-                );
-            },
-            loaded: this.state.loaded,
-            loginAttemptInfo: this.state.loginAttemptInfo,
-            successInAnotherTab: this.state.successInAnotherTab,
-            error: this.state.error,
-            recipeImplementation: this.modifiedRecipeImplementation,
-            config: this.props.recipe.config,
-        };
-
-        return (
-            <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper
-                    useShadowDom={this.props.recipe.config.useShadowDom}
-                    isEmbedded={this.getIsEmbedded()}
-                    defaultStore={defaultTranslationsPasswordless}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {this.props.children === undefined && <SignInUpThemeWrapper {...props} />}
-
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children &&
-                            React.Children.map(this.props.children, (child) => {
-                                if (React.isValidElement(child)) {
-                                    return React.cloneElement(child, props);
-                                }
-
-                                return child;
-                            })}
-                    </Fragment>
-                </FeatureWrapper>
-            </ComponentOverrideContext.Provider>
-        );
-    };
 }
-
-export default SignInUp;

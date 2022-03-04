@@ -18,13 +18,14 @@ import { CSSObject } from "@emotion/react";
 import { getDefaultStyles, getMergedStyles } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";
 import { getStyles as getEmailPasswordStyles } from "../../../emailpassword/components/themes/styles/styles";
-import { getStyles as getThirdPartyStyles } from "../../../emailpassword/components/themes/styles/styles";
+import { getStyles as getThirdPartyStyles } from "../../../thirdparty/components/themes/styles";
 
 export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
     const baseStyles = getDefaultStyles(palette);
     const emailPasswordStyles = getEmailPasswordStyles(palette);
     const thirdPartyStyles = getThirdPartyStyles(palette);
     const baseRecipeStyles = getMergedStyles(emailPasswordStyles, thirdPartyStyles);
+
     const thirdPartyEmailPasswordStyle: Record<string, CSSObject> = {
         thirdPartyEmailPasswordDivider: {
             paddingTop: "5px",
