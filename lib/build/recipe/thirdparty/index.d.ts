@@ -15,7 +15,7 @@ export default class Wrapper {
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
         import("../authRecipeWithEmailVerification/types").GetRedirectionURLContext,
-        import("./types").PreAndPostAPIHookContext,
+        import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
@@ -25,7 +25,7 @@ export default class Wrapper {
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    static verifyEmail(input: { userContext?: any }): Promise<{
+    static verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }>;
@@ -44,7 +44,7 @@ export default class Wrapper {
     static getAuthorizationURLWithQueryParamsAndSetState(input: {
         providerId: string;
         authorisationURL: string;
-        userContext: any;
+        userContext?: any;
         providerClientId?: string;
     }): Promise<string>;
     static signInAndUp(input?: { userContext?: any }): Promise<

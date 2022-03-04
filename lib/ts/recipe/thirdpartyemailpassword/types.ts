@@ -37,7 +37,7 @@ import {
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
 import {
-    PreAndPostAPIHookContext as ThirdPartyPreAndPostAPIHookAction,
+    PreAndPostAPIHookAction as ThirdPartyPreAndPostAPIHookAction,
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,

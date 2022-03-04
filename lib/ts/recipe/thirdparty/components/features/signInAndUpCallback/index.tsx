@@ -38,7 +38,6 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
         try {
             // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipe.recipeImpl.signInAndUp({
-                config: this.props.recipe.webJsRecipe.config,
                 userContext: {},
             });
 
@@ -52,7 +51,6 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 // TODO NEMI: handle user context for pre built UI
                 const stateResponse =
                     this.props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
-                        config: this.props.recipe.webJsRecipe.config,
                         userContext: {},
                     });
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;

@@ -44,15 +44,12 @@ export default class Wrapper {
         );
     }
 
-    static async verifyEmail(input: { userContext?: any }): Promise<{
+    static async verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.verifyEmail({
-            config: recipeInstance.emailVerification.webJsRecipe.config,
-            userContext: getNormalisedUserContext(input.userContext),
+        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -60,10 +57,7 @@ export default class Wrapper {
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.sendVerificationEmail({
-            config: recipeInstance.emailVerification.webJsRecipe.config,
+        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -109,11 +103,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.submitNewPassword({
+        return EmailPassword.getInstanceOrThrow().recipeImpl.submitNewPassword({
             ...input,
-            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -138,11 +129,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.sendPasswordResetEmail({
+        return EmailPassword.getInstanceOrThrow().recipeImpl.sendPasswordResetEmail({
             ...input,
-            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -152,7 +140,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        userContext: any;
+        userContext?: any;
     }): Promise<
         | {
               status: "OK";
@@ -168,11 +156,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.signUp({
+        return EmailPassword.getInstanceOrThrow().recipeImpl.signUp({
             ...input,
-            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -182,7 +167,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        userContext: any;
+        userContext?: any;
     }): Promise<
         | {
               status: "OK";
@@ -202,25 +187,19 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.signIn({
+        return EmailPassword.getInstanceOrThrow().recipeImpl.signIn({
             ...input,
-            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
 
-    static doesEmailExist(input: { email: string; userContext: any }): Promise<{
+    static doesEmailExist(input: { email: string; userContext?: any }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
     }> {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.doesEmailExist({
+        return EmailPassword.getInstanceOrThrow().recipeImpl.doesEmailExist({
             ...input,
-            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }

@@ -12,14 +12,7 @@ export default class Wrapper {
         config?: UserInput
     ): import("../../types").CreateRecipeFunction<
         GetRedirectionURLContext,
-        | "VERIFY_EMAIL"
-        | "SEND_VERIFY_EMAIL"
-        | "IS_EMAIL_VERIFIED"
-        | "EMAIL_PASSWORD_SIGN_UP"
-        | "EMAIL_PASSWORD_SIGN_IN"
-        | "SEND_RESET_PASSWORD_EMAIL"
-        | "SUBMIT_NEW_PASSWORD"
-        | "EMAIL_EXISTS",
+        import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
@@ -29,7 +22,7 @@ export default class Wrapper {
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    static verifyEmail(input: { userContext?: any }): Promise<{
+    static verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }>;
@@ -91,7 +84,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        userContext: any;
+        userContext?: any;
     }): Promise<
         | {
               status: "OK";
@@ -112,7 +105,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        userContext: any;
+        userContext?: any;
     }): Promise<
         | {
               status: "OK";
@@ -132,7 +125,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static doesEmailExist(input: { email: string; userContext: any }): Promise<{
+    static doesEmailExist(input: { email: string; userContext?: any }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;

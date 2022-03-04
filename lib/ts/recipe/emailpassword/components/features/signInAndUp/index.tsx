@@ -287,7 +287,6 @@ function getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[], reci
                     const emailExists = (
                         await recipe.recipeImpl.doesEmailExist({
                             email: value,
-                            config: recipe.webJsRecipe.config,
                             userContext: {},
                         })
                     ).doesExist;

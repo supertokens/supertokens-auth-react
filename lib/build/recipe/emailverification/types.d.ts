@@ -1,6 +1,5 @@
 import { FeatureBaseConfig, ThemeBaseProps } from "../../types";
 import { Config as RecipeModuleConfig, NormalisedConfig as NormalisedRecipeModuleConfig } from "../recipeModule/types";
-import { InputType as WebJSInputType } from "supertokens-web-js/recipe/emailverification";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
@@ -31,7 +30,7 @@ export declare type UserInput = UserInputForAuthRecipeModule & {
 };
 export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
-export declare type NormalisedConfig = WebJSInputType & {
+export declare type NormalisedConfig = {
     mode: "OFF" | "REQUIRED";
     disableDefaultImplementation: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
@@ -40,6 +39,10 @@ export declare type NormalisedConfig = WebJSInputType & {
     redirectToSignIn(history?: any): Promise<void>;
     postVerificationRedirect(history?: any): Promise<void>;
     override: {
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
 } & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;

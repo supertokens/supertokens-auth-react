@@ -1,11 +1,27 @@
-import { NormalisedConfig } from "./types";
+import { OnHandleEventContext, PreAndPostAPIHookAction } from "./types";
 import { User } from "../authRecipeWithEmailVerification/types";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import WebJSRecipeImplementation from "supertokens-web-js/lib/build/recipe/emailpassword/recipeImplementation";
+import { NormalisedAppInfo } from "../../types";
+import {
+    RecipeOnHandleEventFunction,
+    RecipePostAPIHookFunction,
+    RecipePreAPIHookFunction,
+} from "../recipeModule/types";
 
-export default function getRecipeImplementation(
-    webJsImplementation: RecipeInterface,
-    authReactConfig: NormalisedConfig
-): RecipeInterface {
+export default function getRecipeImplementation(recipeInput: {
+    recipeId: string;
+    appInfo: NormalisedAppInfo;
+    preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
+    postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
+    onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+}): RecipeInterface {
+    const webJsImplementation = WebJSRecipeImplementation(
+        recipeInput.recipeId,
+        recipeInput.appInfo,
+        recipeInput.preAPIHook,
+        recipeInput.postAPIHook
+    );
     return {
         submitNewPassword: async function (input): Promise<
             | {
@@ -21,14 +37,13 @@ export default function getRecipeImplementation(
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsImplementation.submitNewPassword({
-                config: input.config,
+            const response = await webJsImplementation.submitNewPassword.bind(this)({
                 formFields: [input.formFields[0]],
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                authReactConfig.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL",
                 });
             }
@@ -50,14 +65,13 @@ export default function getRecipeImplementation(
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsImplementation.sendPasswordResetEmail({
-                config: input.config,
+            const response = await webJsImplementation.sendPasswordResetEmail.bind(this)({
                 formFields: input.formFields,
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                authReactConfig.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "RESET_PASSWORD_EMAIL_SENT",
                 });
             }
@@ -79,14 +93,13 @@ export default function getRecipeImplementation(
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsImplementation.signUp({
-                config: input.config,
+            const response = await webJsImplementation.signUp.bind(this)({
                 formFields: input.formFields,
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                authReactConfig.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: true,
                     user: response.user,
@@ -114,14 +127,13 @@ export default function getRecipeImplementation(
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsImplementation.signIn({
-                config: input.config,
+            const response = await webJsImplementation.signIn.bind(this)({
                 formFields: input.formFields,
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                authReactConfig.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: false,
                     user: response.user,
@@ -134,16 +146,14 @@ export default function getRecipeImplementation(
             doesExist: boolean;
             fetchResponse: Response;
         }> {
-            return await webJsImplementation.doesEmailExist({
-                config: input.config,
+            return await webJsImplementation.doesEmailExist.bind(this)({
                 email: input.email,
                 userContext: input.userContext,
             });
         },
 
         getResetPasswordTokenFromURL: function (input): string {
-            return webJsImplementation.getResetPasswordTokenFromURL({
-                config: input.config,
+            return webJsImplementation.getResetPasswordTokenFromURL.bind(this)({
                 userContext: input.userContext,
             });
         },

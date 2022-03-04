@@ -10,7 +10,7 @@ export default class Wrapper {
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
         GetRedirectionURLContext,
-        import("supertokens-web-js/lib/build/recipe/emailverification/types").PreAndPostAPIHookAction,
+        import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
@@ -19,7 +19,7 @@ export default class Wrapper {
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    static verifyEmail(input: { token: string; userContext?: any }): Promise<{
+    static verifyEmail(input: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }>;

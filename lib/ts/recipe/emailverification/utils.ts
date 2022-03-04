@@ -16,6 +16,7 @@
 import { NormalisedBaseConfig } from "../../types";
 import { Config, NormalisedConfig } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export function normaliseEmailVerificationFeature(config: Config): NormalisedConfig {
     const disableDefaultImplementation = config.disableDefaultImplementation === true;
@@ -39,7 +40,8 @@ export function normaliseEmailVerificationFeature(config: Config): NormalisedCon
         style: verifyEmailLinkClickedScreenStyle,
     };
 
-    const override: any = {
+    const override = {
+        functions: (originalImplementation: RecipeInterface) => originalImplementation,
         components: {},
         ...config.override,
     };

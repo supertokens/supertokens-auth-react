@@ -55,9 +55,8 @@ export const SignInForm = withOverride(
                         };
                     }
 
-                    const response = await props.recipe.webJsRecipe.recipeImplementation.signIn({
+                    const response = await props.recipe.recipeImpl.signIn({
                         formFields,
-                        config: props.recipe.webJsRecipe.config,
                         userContext: {},
                     });
                     if (response.status === "WRONG_CREDENTIALS_ERROR") {

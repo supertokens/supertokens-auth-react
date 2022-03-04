@@ -53,15 +53,12 @@ export default class Wrapper {
         );
     }
 
-    static async verifyEmail(input: { userContext?: any }): Promise<{
+    static async verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.verifyEmail({
-            config: recipeInstance.emailVerification.webJsRecipe.config,
-            userContext: getNormalisedUserContext(input.userContext),
+        return ThirdParty.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -69,10 +66,7 @@ export default class Wrapper {
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.sendVerificationEmail({
-            config: recipeInstance.emailVerification.webJsRecipe.config,
+        return ThirdParty.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -100,16 +94,13 @@ export default class Wrapper {
     static getAuthorizationURLWithQueryParamsAndSetState(input: {
         providerId: string;
         authorisationURL: string;
-        userContext: any;
+        userContext?: any;
         providerClientId?: string;
     }): Promise<string> {
-        const recipeInstance = ThirdParty.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.getAuthorizationURLWithQueryParamsAndSetState({
+        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthorizationURLWithQueryParamsAndSetState({
             providerId: input.providerId,
             authorisationURL: input.authorisationURL,
             providerClientId: input.providerClientId,
-            config: recipeInstance.webJsRecipe.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -126,10 +117,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance = ThirdParty.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.signInAndUp({
-            config: recipeInstance.webJsRecipe.config,
+        return ThirdParty.getInstanceOrThrow().recipeImpl.signInAndUp({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
