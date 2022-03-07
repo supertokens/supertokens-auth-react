@@ -74,7 +74,7 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
         } catch (e) {
             setStatus("ERROR");
         }
-    }, [props.recipeImplementation, props.loginAttemptInfo, props.config, setStatus]);
+    }, [props.recipeImplementation, props.loginAttemptInfo, props.config, setStatus, userContext]);
 
     const resendActive = status === "LINK_RESENT";
 

@@ -71,7 +71,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
             // We need this cause we are doing an async task in this.
             thisUseEffectMustReturnImmediately = true;
         };
-    }, [doesSessionExist, emailVerificationMode]);
+    }, [doesSessionExist, emailVerificationMode, userContext]);
 
     if (sessionContext.doesSessionExist === false) {
         return <>{children}</>;

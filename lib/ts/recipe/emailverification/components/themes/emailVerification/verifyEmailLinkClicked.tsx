@@ -66,7 +66,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
         return () => {
             abortController.abort();
         };
-    }, [props.recipeImplementation, props.config, props.token]);
+    }, [props.recipeImplementation, props.config, props.token, userContext]);
 
     const { onTokenInvalidRedirect, onContinueClicked } = props;
 

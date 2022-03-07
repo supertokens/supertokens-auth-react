@@ -39,6 +39,7 @@ import { useMemo } from "react";
 import { useCallback } from "react";
 import { Dispatch } from "react";
 import STGeneralError from "supertokens-web-js/lib/build/error";
+import { useUserContext } from "../../../../../usercontext";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(
@@ -105,6 +106,7 @@ export function useChildProps(
     history: any
 ): EmailPasswordSignInAndUpChildProps | undefined {
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.recipeImpl), [recipe]);
+    const userContext = useUserContext();
 
     const onSignInSuccess = useCallback(async (): Promise<void> => {
         if (!recipe) {
@@ -113,8 +115,7 @@ export function useChildProps(
         if (recipe.emailVerification.config.mode === "REQUIRED") {
             let isEmailVerified = true;
             try {
-                // TODO NEMI: handle user context for pre built UI
-                isEmailVerified = (await recipe.emailVerification.isEmailVerified({})).isVerified;
+                isEmailVerified = (await recipe.emailVerification.isEmailVerified(userContext)).isVerified;
             } catch (ignored) {}
             if (!isEmailVerified) {
                 await recipe.savePostEmailVerificationSuccessRedirectState({
@@ -139,7 +140,7 @@ export function useChildProps(
             },
             history
         );
-    }, [recipe]);
+    }, [recipe, userContext]);
 
     const onSignUpSuccess = useCallback(async (): Promise<void> => {
         if (!recipe) {
@@ -195,7 +196,7 @@ export function useChildProps(
             recipeImplementation,
             config: recipe.config,
             styleFromInit: signUpFeature.style,
-            formFields: getThemeSignUpFeatureFormFields(signUpFeature.formFields, recipe),
+            formFields: getThemeSignUpFeatureFormFields(signUpFeature.formFields, recipe, userContext),
             error: state.error,
             clearError: () => dispatch({ type: "setError", error: undefined }),
             onError: (error: string) => dispatch({ type: "setError", error }),
@@ -207,7 +208,7 @@ export function useChildProps(
             signInForm: signInForm,
             signUpForm: signUpForm,
         };
-    }, [recipe, state, dispatch]);
+    }, [recipe, state, dispatch, userContext]);
 }
 
 export const SignInAndUpFeature: React.FC<
@@ -255,7 +256,11 @@ const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInter
     };
 };
 
-function getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[], recipe: Recipe): FormFieldThemeProps[] {
+function getThemeSignUpFeatureFormFields(
+    formFields: NormalisedFormField[],
+    recipe: Recipe,
+    userContext: any
+): FormFieldThemeProps[] {
     const emailPasswordOnly = formFields.length === 2;
     return formFields.map((field) => ({
         ...field,
@@ -284,11 +289,10 @@ function getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[], reci
                     return "GENERAL_ERROR_EMAIL_NON_STRING";
                 }
                 try {
-                    // TODO NEMI: handle user context for pre built UI
                     const emailExists = (
                         await recipe.recipeImpl.doesEmailExist({
                             email: value,
-                            userContext: {},
+                            userContext,
                         })
                     ).doesExist;
 

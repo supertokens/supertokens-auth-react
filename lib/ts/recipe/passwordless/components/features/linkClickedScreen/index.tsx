@@ -94,7 +94,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         return () => {
             abortController.abort();
         };
-    }, [props.recipe]);
+    }, [props.recipe, userContext]);
 
     const componentOverrides = props.recipe.config.override.components;
 

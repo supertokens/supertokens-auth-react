@@ -69,7 +69,7 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
         return () => {
             abort.abort();
         };
-    }, [props.recipeImplementation, props.onEmailAlreadyVerified, props.config]);
+    }, [props.recipeImplementation, props.onEmailAlreadyVerified, props.config, userContext]);
 
     const { signOut } = props;
 
