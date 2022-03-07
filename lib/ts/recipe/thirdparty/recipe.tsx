@@ -40,6 +40,7 @@ import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import OverrideableBuilder from "supertokens-js-override";
+import { UserContextContext } from "../../usercontext";
 
 /*
  * Class.
@@ -88,7 +89,6 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
-                // TODO NEMI: Is passing nothing as userContext ok in this case?
                 matches: () => matchRecipeIdUsingState(this, {}),
                 component: (prop: any) => this.getFeatureComponent("signinupcallback", prop),
             };
@@ -118,7 +118,19 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
                 </AuthWidgetWrapper>
             );
         } else if (componentName === "signinupcallback") {
-            return <SignInAndUpCallback recipe={this} {...props} />;
+            return (
+                <UserContextContext.Consumer>
+                    {(value) => (
+                        <SignInAndUpCallback
+                            recipe={this}
+                            {...{
+                                ...props,
+                                userContext: value,
+                            }}
+                        />
+                    )}
+                </UserContextContext.Consumer>
+            );
         } else {
             return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);
         }

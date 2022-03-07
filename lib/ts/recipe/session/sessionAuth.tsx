@@ -20,6 +20,7 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEventWithSessionContext, SessionContextType } from "./types";
+import { useUserContext } from "../../usercontext";
 
 // if it's not the default context, it means SessionAuth from top has
 // given us a sessionContext.
@@ -56,6 +57,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     );
 
     const session = useRef(Session.getInstanceOrThrow());
+    const userContext = useUserContext();
 
     // on mount
     useEffect(() => {
@@ -67,8 +69,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
             }
 
             const sessionExists = await session.current.doesSessionExist({
-                // TODO NEMI: Handle user context in UI components
-                userContext: {},
+                userContext,
             });
 
             if (sessionExists === false) {
@@ -82,12 +83,10 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
             return {
                 doesSessionExist: true,
                 accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
-                    // TODO NEMI: Handle user context in UI components
-                    userContext: {},
+                    userContext,
                 }),
                 userId: await session.current.getUserId({
-                    // TODO NEMI: Handle user context in UI components
-                    userContext: {},
+                    userContext,
                 }),
             };
         };

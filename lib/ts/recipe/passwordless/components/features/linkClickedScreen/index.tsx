@@ -25,16 +25,18 @@ import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
-import {} from "../../../types";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 import { useEffect } from "react";
+import { useUserContext } from "../../../../../usercontext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
+    const userContext = useUserContext();
+
     useEffect(() => {
         const abortController = new AbortController();
         async function onLoad() {
@@ -48,12 +50,11 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                     });
                 }
 
-                // TODO NEMI: handle user context for pre built UI
                 const response = await props.recipe.recipeImpl.consumeCode({
                     preAuthSessionId,
                     linkCode,
                     config: props.recipe.config,
-                    userContext: {},
+                    userContext,
                 });
                 if (abortController.signal.aborted) {
                     return;

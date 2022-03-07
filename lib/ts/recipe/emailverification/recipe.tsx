@@ -39,6 +39,7 @@ import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import OverrideableBuilder from "supertokens-js-override";
+import { UserContextContext } from "../../usercontext";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -107,7 +108,17 @@ export default class EmailVerification extends RecipeModule<
     getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
         return (
             <SessionAuth requireAuth={false}>
-                <EmailVerificationFeature recipe={this} {...props} />
+                <UserContextContext.Consumer>
+                    {(value) => (
+                        <EmailVerificationFeature
+                            recipe={this}
+                            {...{
+                                ...props,
+                                userContext: value,
+                            }}
+                        />
+                    )}
+                </UserContextContext.Consumer>
             </SessionAuth>
         );
     };

@@ -27,17 +27,18 @@ import { SendVerifyEmailThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { useUserContext } from "../../../../../usercontext";
 
 export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
+    const userContext = useUserContext();
     const [status, setStatus] = useState("READY");
 
     const resendEmail = async (): Promise<void> => {
         try {
-            // TODO NEMI: handle user context for pre built UI
             const response = await props.recipeImplementation.sendVerificationEmail({
-                userContext: {},
+                userContext,
             });
 
             if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
@@ -54,9 +55,8 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
         const abort = new AbortController();
         void (async function () {
             // we send an email on load...
-            // TODO NEMI: handle user context for pre built UI
             const response = await props.recipeImplementation.sendVerificationEmail({
-                userContext: {},
+                userContext,
             });
             if (abort.signal.aborted) {
                 return;

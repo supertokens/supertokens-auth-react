@@ -24,10 +24,12 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import { useTranslation } from "../../../../../translation/translationContext";
 import { validateForm } from "../../../../../utils";
 import GeneralError from "../../library/generalError";
+import { useUserContext } from "../../../../../usercontext";
 
 const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
+    const userContext = useUserContext();
     const [status, setStatus] = useState<EnterEmailStatus>("READY");
 
     const onSuccess = (): void => {
@@ -88,10 +90,9 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                             };
                         }
 
-                        // TODO NEMI: Handle user context in UI components
                         return await props.recipeImplementation.sendPasswordResetEmail({
                             formFields,
-                            userContext: {},
+                            userContext,
                         });
                     }}
                     showLabels={true}

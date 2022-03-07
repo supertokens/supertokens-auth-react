@@ -25,6 +25,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import { ResendButton } from "./resendButton";
 import { useTranslation } from "../../../../../translation/translationContext";
 import STGeneralError from "supertokens-web-js/lib/build/error";
+import { useUserContext } from "../../../../../usercontext";
 
 export const UserInputCodeForm = withOverride(
     "PasswordlessUserInputCodeForm",
@@ -36,6 +37,7 @@ export const UserInputCodeForm = withOverride(
     ): JSX.Element {
         const styles = useContext(StyleContext);
         const t = useTranslation();
+        const userContext = useUserContext();
 
         // We need this any because the node types are also loaded
         const [clearResendNotifTimeout, setClearResendNotifTimeout] = useState<any | undefined>();
@@ -49,12 +51,11 @@ export const UserInputCodeForm = withOverride(
 
         async function resend() {
             try {
-                // TODO NEMI: handle user context for pre built UI
                 const response = await props.recipeImplementation.resendCode({
                     deviceId: props.loginAttemptInfo.deviceId,
                     preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                     config: props.config,
-                    userContext: {},
+                    userContext,
                 });
 
                 if (response.status === "OK") {
@@ -117,13 +118,12 @@ export const UserInputCodeForm = withOverride(
                         if (userInputCode === undefined || userInputCode.length === 0) {
                             throw new STGeneralError("GENERAL_ERROR_OTP_UNDEFINED");
                         }
-                        // TODO NEMI: handle user context for pre built UI
                         const response = await props.recipeImplementation.consumeCode({
                             deviceId: props.loginAttemptInfo.deviceId,
                             preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                             userInputCode,
                             config: props.config,
-                            userContext: {},
+                            userContext,
                         });
 
                         if (response.status === "OK") {

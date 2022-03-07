@@ -29,10 +29,12 @@ import { ResendButton } from "./resendButton";
 import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
 import { useTranslation } from "../../../../../translation/translationContext";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { useUserContext } from "../../../../../usercontext";
 
 const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
+    const userContext = useUserContext();
     const [status, setStatus] = useState(props.error !== undefined ? "ERROR" : "READY");
 
     // Any because node types are included here, messing with return type of setTimeout
@@ -49,14 +51,12 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
 
     const resendEmail = useCallback(async () => {
         try {
-            // TODO NEMI: handle user context for pre built UI
             props.clearError();
-            // TODO NEMI: handle user context for pre built UI
             const response = await props.recipeImplementation.resendCode({
                 deviceId: props.loginAttemptInfo.deviceId,
                 preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                 config: props.config,
-                userContext: {},
+                userContext,
             });
 
             if (response.status === "OK") {

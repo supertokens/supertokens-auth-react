@@ -30,6 +30,7 @@ import { Button } from "../../../../emailpassword/components/library";
 import { VerifyEmailLinkClickedThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import { useUserContext } from "../../../../../usercontext";
 
 /*
  * Component.
@@ -38,15 +39,15 @@ import { useTranslation } from "../../../../../translation/translationContext";
 export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkClickedThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
+    const userContext = useUserContext();
     const [status, setStatus] = useState<"LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL">("LOADING");
 
     useEffect(() => {
         const abortController = new AbortController();
         void (async () => {
             try {
-                // TODO NEMI: handle user context for pre built UI
                 const response = await props.recipeImplementation.verifyEmail({
-                    userContext: {},
+                    userContext,
                 });
                 if (abortController.signal.aborted) {
                     return;
