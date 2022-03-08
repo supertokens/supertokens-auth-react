@@ -40,6 +40,13 @@ import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BAS
  * Tests.
  */
 describe("SuperTokens Passwordless", function () {
+    getPasswordlessTestCases({
+        authRecipe: "passwordless",
+        logId: "PASSWORDLESS",
+    });
+});
+
+export function getPasswordlessTestCases({ authRecipe, logId }) {
     let browser;
     let page;
     let consoleLogs = [];
@@ -68,7 +75,7 @@ describe("SuperTokens Passwordless", function () {
             const contactMethod = "EMAIL_OR_PHONE";
 
             before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
             });
 
@@ -117,24 +124,24 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -147,7 +154,9 @@ describe("SuperTokens Passwordless", function () {
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
-                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, { defaultCountry: "HU" }));
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, {
+                        defaultCountry: "HU",
+                    }));
                     await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
                 });
 
@@ -235,7 +244,7 @@ describe("SuperTokens Passwordless", function () {
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
-                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                     await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
                 });
 
@@ -323,7 +332,9 @@ describe("SuperTokens Passwordless", function () {
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
-                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, { disablePhoneGuess: true }));
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, {
+                        disablePhoneGuess: true,
+                    }));
                     await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
                 });
 
@@ -418,7 +429,7 @@ describe("SuperTokens Passwordless", function () {
     function getTestCases(contactMethod, inputName, contactInfo) {
         describe(`UserInputCode`, function () {
             before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
             });
 
@@ -463,19 +474,19 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -506,19 +517,19 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
 
@@ -599,19 +610,19 @@ describe("SuperTokens Passwordless", function () {
                     [
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                        "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                        `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                        `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
                     ],
                     consoleLogs
                 );
@@ -661,19 +672,19 @@ describe("SuperTokens Passwordless", function () {
                     [
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                        "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                        `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                        `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
                     ],
                     consoleLogs
                 );
@@ -815,7 +826,7 @@ describe("SuperTokens Passwordless", function () {
 
         describe(`Link`, function () {
             before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 await setPasswordlessFlowType(contactMethod, "MAGIC_LINK");
             });
 
@@ -858,22 +869,22 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -901,22 +912,22 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
 
@@ -1058,8 +1069,8 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
 
@@ -1074,11 +1085,11 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
 
@@ -1096,10 +1107,10 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
 
@@ -1117,11 +1128,11 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
 
@@ -1139,8 +1150,8 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
 
@@ -1158,15 +1169,15 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
         });
 
         describe(`Link/Code`, function () {
             before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
                 await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE_AND_MAGIC_LINK");
             });
 
@@ -1209,22 +1220,22 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1258,17 +1269,17 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1298,19 +1309,19 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1341,19 +1352,19 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
 
@@ -1390,17 +1401,17 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1433,26 +1444,26 @@ describe("SuperTokens Passwordless", function () {
                     [
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                        "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                        `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                        `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                        "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                        `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     ],
                     consoleLogs
                 );
@@ -1499,25 +1510,25 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1730,7 +1741,7 @@ describe("SuperTokens Passwordless", function () {
             });
         });
     }
-});
+}
 
 async function checkInputValue(page, input, expected) {
     const actual = await page.evaluate((ele) => ele.value, input);
@@ -1762,7 +1773,7 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
     return getPasswordlessDevice(loginAttemptInfo);
 }
 
-async function initBrowser(contactMethod, consoleLogs, { defaultCountry, disablePhoneGuess } = {}) {
+async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCountry, disablePhoneGuess } = {}) {
     await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
         method: "POST",
     }).catch(console.error);
@@ -1795,7 +1806,7 @@ async function initBrowser(contactMethod, consoleLogs, { defaultCountry, disable
 
     await Promise.all([
         page.goto(
-            `${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactMethodType=${contactMethod}` +
+            `${TEST_CLIENT_BASE_URL}/auth?authRecipe=${authRecipe}&passwordlessContactMethodType=${contactMethod}` +
                 (defaultCountry !== undefined ? `&passwordlessDefaultCountry=${defaultCountry}` : "") +
                 (disablePhoneGuess !== undefined ? `&passwordlessDisablePhoneGuess=true` : "")
         ),

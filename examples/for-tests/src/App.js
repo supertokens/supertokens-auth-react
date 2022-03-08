@@ -573,6 +573,26 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
             mode: emailVerificationMode,
         },
         override: {
+            emailVerification: {
+                functions: (implementation) => {
+                    const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE EMAIL_VERIFICATION`);
+
+                    return {
+                        sendVerificationEmail(...args) {
+                            log(`SEND_VERIFICATION_EMAIL`);
+                            return implementation.sendVerificationEmail(...args);
+                        },
+                        isEmailVerified(...args) {
+                            log(`IS_EMAIL_VERIFIED`);
+                            return implementation.isEmailVerified(...args);
+                        },
+                        verifyEmail(...args) {
+                            log(`VERIFY_EMAIL`);
+                            return implementation.verifyEmail(...args);
+                        },
+                    };
+                },
+            },
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE`);
 
@@ -597,13 +617,13 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
                         log(`CONSUME_CODE`);
                         return implementation.consumeCode(...args);
                     },
-                    getLoginAttemptInfo(...args) {
+                    getPasswordlessLoginAttemptInfo(...args) {
                         log(`GET_LOGIN_ATTEMPT_INFO`);
-                        return implementation.getLoginAttemptInfo(...args);
+                        return implementation.getPasswordlessLoginAttemptInfo(...args);
                     },
-                    setLoginAttemptInfo(...args) {
+                    setPasswordlessLoginAttemptInfo(...args) {
                         log(`SET_LOGIN_ATTEMPT_INFO`);
-                        return implementation.setLoginAttemptInfo(...args);
+                        return implementation.setPasswordlessLoginAttemptInfo(...args);
                     },
                     clearLoginAttemptInfo(...args) {
                         log(`CLEAR_LOGIN_ATTEMPT_INFO`);
@@ -652,7 +672,7 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
         signInUpFeature: {
             disableDefaultImplementation,
             style: theme.style,
-            providerAndEmailOrPhoneFormStyle: {
+            thirdPartyProviderAndEmailOrPhoneFormStyle: {
                 providerCustom: {
                     color: "red",
                 },
