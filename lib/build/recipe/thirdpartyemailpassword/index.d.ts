@@ -1,10 +1,11 @@
 /// <reference types="react" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { RecipeInterface, UserType } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -20,7 +21,7 @@ export default class Wrapper {
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    static verifyEmail(input: { token: string; userContext?: any }): Promise<{
+    static verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }>;
@@ -36,6 +37,113 @@ export default class Wrapper {
                   redirectBack?: boolean;
               }
     ): Promise<void>;
+    static submitNewPassword(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        token: string;
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    >;
+    static sendPasswordResetEmail(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    >;
+    static emailPasswordSignUp(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              user: UserType;
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    >;
+    static emailPasswordSignIn(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              user: UserType;
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+        | {
+              status: "WRONG_CREDENTIALS_ERROR";
+              fetchResponse: Response;
+          }
+    >;
+    static doesEmailExist(input: { email: string; userContext?: any }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }>;
+    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
+        status: "OK" | "ERROR";
+    }>;
+    static thirdPartySignInAndUp(input?: { userContext?: any }): Promise<
+        | {
+              status: "OK";
+              user: UserType;
+              createdNewUser: boolean;
+              fetchResponse: Response;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
+          }
+    >;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
@@ -57,6 +165,13 @@ declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
+declare const submitNewPassword: typeof Wrapper.submitNewPassword;
+declare const sendPasswordResetEmail: typeof Wrapper.sendPasswordResetEmail;
+declare const emailPasswordSignIn: typeof Wrapper.emailPasswordSignIn;
+declare const emailPasswordSignUp: typeof Wrapper.emailPasswordSignUp;
+declare const doesEmailExist: typeof Wrapper.doesEmailExist;
+declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
+declare const thirdPartySignInAndUp: typeof Wrapper.thirdPartySignInAndUp;
 export {
     ThirdPartyEmailPasswordAuth,
     init,
@@ -71,6 +186,13 @@ export {
     SignInAndUpTheme,
     signOut,
     redirectToAuth,
+    submitNewPassword,
+    sendPasswordResetEmail,
+    emailPasswordSignIn,
+    emailPasswordSignUp,
+    doesEmailExist,
+    redirectToThirdPartyLogin,
+    thirdPartySignInAndUp,
     EmailVerification,
     EmailVerificationTheme,
     ResetPasswordUsingToken,

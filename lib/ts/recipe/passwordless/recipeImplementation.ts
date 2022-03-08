@@ -84,14 +84,15 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
 
             const response: CreateCodeApiResponse = await querier.post(
                 "/signinup/code",
-                { body: JSON.stringify(bodyObj) },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "PASSWORDLESS_CREATE_CODE",
-                        userContext: input.userContext,
-                    });
-                }
+                { body: JSON.stringify(bodyObj) }
+                // TODO NEMI: This is temporary and will be solved once passwordless is implemented
+                // (context) => {
+                //     return input.config.preAPIHook({
+                //         ...context,
+                //         action: "PASSWORDLESS_CREATE_CODE",
+                //         userContext: input.userContext,
+                //     });
+                // }
             );
 
             if (response.status === "OK") {
@@ -116,14 +117,15 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
 
             const response: ResendCodeApiResponse = await querier.post(
                 "/signinup/code/resend",
-                { body: JSON.stringify(bodyObj) },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "PASSWORDLESS_RESEND_CODE",
-                        userContext: input.userContext,
-                    });
-                }
+                { body: JSON.stringify(bodyObj) }
+                // TODO NEMI: This is temporary and will be solved once passwordless is implemented
+                // (context) => {
+                //     return input.config.preAPIHook({
+                //         ...context,
+                //         action: "PASSWORDLESS_RESEND_CODE",
+                //         userContext: input.userContext,
+                //     });
+                // }
             );
 
             if (response.status === "RESTART_FLOW_ERROR") {
@@ -171,14 +173,15 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
 
             const response: ConsumeCodeApiResponse = await querier.post(
                 "/signinup/code/consume",
-                { body: JSON.stringify(bodyObj) },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "PASSWORDLESS_CONSUME_CODE",
-                        userContext: input.userContext,
-                    });
-                }
+                { body: JSON.stringify(bodyObj) }
+                // TODO NEMI: This is temporary and will be solved once passwordless is implemented
+                // (context) => {
+                //     return input.config.preAPIHook({
+                //         ...context,
+                //         action: "PASSWORDLESS_CONSUME_CODE",
+                //         userContext: input.userContext,
+                //     });
+                // }
             );
 
             if (response.status === "RESTART_FLOW_ERROR") {
@@ -202,14 +205,15 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             const response: ExistsAPIResponse = await querier.get(
                 "/signup/email/exists",
                 {},
-                { email: input.email },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "EMAIL_EXISTS",
-                        userContext: input.userContext,
-                    });
-                }
+                { email: input.email }
+                // TODO NEMI: This is temporary and will be solved once passwordless is implemented
+                // (context) => {
+                //     return input.config.preAPIHook({
+                //         ...context,
+                //         action: "EMAIL_EXISTS",
+                //         userContext: input.userContext,
+                //     });
+                // }
             );
 
             return response.exists;
@@ -223,14 +227,15 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             const response: ExistsAPIResponse = await querier.get(
                 "/signup/phoneNumber/exists",
                 {},
-                { phoneNumber: input.phoneNumber },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "PHONE_NUMBER_EXISTS",
-                        userContext: input.userContext,
-                    });
-                }
+                { phoneNumber: input.phoneNumber }
+                // TODO NEMI: This is temporary and will be solved once passwordless is implemented
+                // (context) => {
+                //     return input.config.preAPIHook({
+                //         ...context,
+                //         action: "PHONE_NUMBER_EXISTS",
+                //         userContext: input.userContext,
+                //     });
+                // }
             );
 
             return response.exists;

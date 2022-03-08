@@ -4,8 +4,9 @@ import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { User } from "../authRecipeWithEmailVerification/types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 export default class Wrapper {
     static init(
         config?: UserInput
@@ -21,7 +22,7 @@ export default class Wrapper {
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    static verifyEmail(input: { token: string; userContext?: any }): Promise<{
+    static verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }>;
@@ -42,7 +43,6 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        token: string;
         userContext?: any;
     }): Promise<
         | {
@@ -83,7 +83,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        userContext: any;
+        userContext?: any;
     }): Promise<
         | {
               status: "OK";
@@ -104,7 +104,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        userContext: any;
+        userContext?: any;
     }): Promise<
         | {
               status: "OK";
@@ -124,7 +124,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static doesEmailExist(input: { email: string; userContext: any }): Promise<{
+    static doesEmailExist(input: { email: string; userContext?: any }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;

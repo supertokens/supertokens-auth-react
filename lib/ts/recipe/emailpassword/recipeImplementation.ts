@@ -1,18 +1,29 @@
-import { RecipeInterface, NormalisedConfig } from "./types";
+import { OnHandleEventContext, PreAndPostAPIHookAction } from "./types";
 import { User } from "../authRecipeWithEmailVerification/types";
-import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import WebJSRecipeImplementation from "supertokens-web-js/lib/build/recipe/emailpassword/recipeImplementation";
+import { NormalisedAppInfo } from "../../types";
+import {
+    RecipeOnHandleEventFunction,
+    RecipePostAPIHookFunction,
+    RecipePreAPIHookFunction,
+} from "../recipeModule/types";
 
-export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword): RecipeInterface {
+export default function getRecipeImplementation(recipeInput: {
+    recipeId: string;
+    appInfo: NormalisedAppInfo;
+    preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
+    postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
+    onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+}): RecipeInterface {
+    const webJsImplementation = WebJSRecipeImplementation(
+        recipeInput.recipeId,
+        recipeInput.appInfo,
+        recipeInput.preAPIHook,
+        recipeInput.postAPIHook
+    );
     return {
-        submitNewPassword: async function (input: {
-            formFields: {
-                id: string;
-                value: string;
-            }[];
-            token: string;
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<
+        submitNewPassword: async function (input): Promise<
             | {
                   status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
                   fetchResponse: Response;
@@ -26,14 +37,13 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsRecipe.recipeImplementation.submitNewPassword({
-                config: webJsRecipe.config,
+            const response = await webJsImplementation.submitNewPassword.bind(this)({
                 formFields: [input.formFields[0]],
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                input.config.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL",
                 });
             }
@@ -41,14 +51,7 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
             return response;
         },
 
-        sendPasswordResetEmail: async function (input: {
-            formFields: {
-                id: string;
-                value: string;
-            }[];
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<
+        sendPasswordResetEmail: async function (input): Promise<
             | {
                   status: "OK";
                   fetchResponse: Response;
@@ -62,28 +65,20 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsRecipe.recipeImplementation.sendPasswordResetEmail({
-                config: webJsRecipe.config,
+            const response = await webJsImplementation.sendPasswordResetEmail.bind(this)({
                 formFields: input.formFields,
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                input.config.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "RESET_PASSWORD_EMAIL_SENT",
                 });
             }
             return response;
         },
 
-        signUp: async function (input: {
-            formFields: {
-                id: string;
-                value: string;
-            }[];
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<
+        signUp: async function (input): Promise<
             | {
                   status: "OK";
                   user: User;
@@ -98,14 +93,13 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsRecipe.recipeImplementation.signUp({
-                config: webJsRecipe.config,
+            const response = await webJsImplementation.signUp.bind(this)({
                 formFields: input.formFields,
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                input.config.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: true,
                     user: response.user,
@@ -114,14 +108,7 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
 
             return response;
         },
-        signIn: async function (input: {
-            formFields: {
-                id: string;
-                value: string;
-            }[];
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<
+        signIn: async function (input): Promise<
             | {
                   status: "OK";
                   user: User;
@@ -140,14 +127,13 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
                   fetchResponse: Response;
               }
         > {
-            const response = await webJsRecipe.recipeImplementation.signIn({
-                config: webJsRecipe.config,
+            const response = await webJsImplementation.signIn.bind(this)({
                 formFields: input.formFields,
                 userContext: input.userContext,
             });
 
             if (response.status === "OK") {
-                input.config.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: false,
                     user: response.user,
@@ -155,14 +141,19 @@ export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword)
             }
             return response;
         },
-        doesEmailExist: async function (input: { email: string; config: NormalisedConfig; userContext: any }): Promise<{
+        doesEmailExist: async function (input): Promise<{
             status: "OK";
             doesExist: boolean;
             fetchResponse: Response;
         }> {
-            return await webJsRecipe.recipeImplementation.doesEmailExist({
-                config: webJsRecipe.config,
+            return await webJsImplementation.doesEmailExist.bind(this)({
                 email: input.email,
+                userContext: input.userContext,
+            });
+        },
+
+        getResetPasswordTokenFromURL: function (input): string {
+            return webJsImplementation.getResetPasswordTokenFromURL.bind(this)({
                 userContext: input.userContext,
             });
         },

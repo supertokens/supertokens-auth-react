@@ -30,13 +30,15 @@ import SignInAndUpTheme from "../../themes/signInAndUp";
 import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { SignInAndUpState, RecipeInterface } from "../../../types";
+import { SignInAndUpState } from "../../../types";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { useMemo } from "react";
 import { useCallback } from "react";
 import { Dispatch } from "react";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(
@@ -176,7 +178,7 @@ export function useChildProps(
         const signInFeature = signInAndUpFeature.signInForm;
 
         const signInForm = {
-            recipeImplementation: recipeImplementation,
+            recipeImplementation,
             config: recipe.config,
             styleFromInit: signInFeature.style,
             formFields: signInFeature.formFields,
@@ -188,7 +190,7 @@ export function useChildProps(
         };
 
         const signUpForm = {
-            recipeImplementation: recipeImplementation,
+            recipeImplementation,
             config: recipe.config,
             styleFromInit: signUpFeature.style,
             formFields: getThemeSignUpFeatureFormFields(signUpFeature.formFields, recipe),
@@ -284,7 +286,6 @@ function getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[], reci
                     const emailExists = (
                         await recipe.recipeImpl.doesEmailExist({
                             email: value,
-                            config: recipe.config,
                             userContext: {},
                         })
                     ).doesExist;
@@ -292,7 +293,11 @@ function getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[], reci
                     if (emailExists) {
                         return "EMAIL_PASSWORD_EMAIL_ALREADY_EXISTS";
                     }
-                } catch (_) {}
+                } catch (err) {
+                    if (STGeneralError.isThisError(err)) {
+                        return err.message;
+                    }
+                }
                 return undefined;
             };
         })(),

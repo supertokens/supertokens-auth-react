@@ -27,7 +27,6 @@ import {
     Config,
     NormalisedConfig,
     UserInput,
-    RecipeInterface,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailPasswordConfig } from "./utils";
@@ -40,8 +39,8 @@ import ResetPasswordUsingToken from "./components/features/resetPasswordUsingTok
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import OverrideableBuilder from "supertokens-js-override";
-import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
 
 /*
  * Class.
@@ -54,8 +53,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
     static instance?: EmailPassword;
     static RECIPE_ID = "emailpassword";
 
-    recipeImpl: RecipeInterface;
-    webJsRecipe: WebJSEmailPassword;
+    recipeImpl: WebJsRecipeInterface;
 
     constructor(
         config: Config,
@@ -67,25 +65,16 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
-        {
-            this.webJsRecipe = new WebJSEmailPassword(
-                {
-                    appInfo: config.appInfo,
-                    recipeId: config.recipeId,
-                    preAPIHook: config.preAPIHook,
-                    postAPIHook: config.postAPIHook,
-                },
-                {
-                    emailVerification:
-                        recipes.emailVerificationInstance === undefined
-                            ? undefined
-                            : recipes.emailVerificationInstance.webJsRecipe,
-                }
-            );
-
-            const builder = new OverrideableBuilder(RecipeImplementation(this.webJsRecipe));
-            this.recipeImpl = builder.override(this.config.override.functions).build();
-        }
+        const builder = new OverrideableBuilder(
+            RecipeImplementation({
+                appInfo: this.config.appInfo,
+                recipeId: this.config.recipeId,
+                onHandleEvent: this.config.onHandleEvent,
+                preAPIHook: this.config.preAPIHook,
+                postAPIHook: this.config.postAPIHook,
+            })
+        );
+        this.recipeImpl = builder.override(this.config.override.functions).build();
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {

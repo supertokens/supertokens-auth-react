@@ -15,11 +15,19 @@ export type RecipePostAPIHookContext<Action> = {
     userContext: any;
 };
 
+export type RecipePreAPIHookFunction<Action> = (
+    context: RecipePreAPIHookContext<Action>
+) => Promise<{ url: string; requestInit: RequestInit }>;
+
+export type RecipePostAPIHookFunction<Action> = (context: RecipePostAPIHookContext<Action>) => Promise<void>;
+
+export type RecipeOnHandleEventFunction<EventType> = (context: EventType) => void;
+
 export type UserInput<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
     getRedirectionURL?: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
-    preAPIHook?: (context: RecipePreAPIHookContext<Action>) => Promise<{ url: string; requestInit: RequestInit }>;
-    postAPIHook?: (context: RecipePostAPIHookContext<Action>) => Promise<void>;
-    onHandleEvent?: (context: OnHandleEventContextType) => void;
+    preAPIHook?: RecipePreAPIHookFunction<Action>;
+    postAPIHook?: RecipePostAPIHookFunction<Action>;
+    onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContextType>;
     useShadowDom?: boolean;
     palette?: Record<string, string>;
     style?: Styles;
@@ -30,14 +38,16 @@ export type Config<GetRedirectionURLContextType, Action, OnHandleEventContextTyp
     appInfo: NormalisedAppInfo;
 } & UserInput<GetRedirectionURLContextType, Action, OnHandleEventContextType>;
 
-export type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
-    recipeId: string;
-    appInfo: NormalisedAppInfo;
-    getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
-    preAPIHook: (context: RecipePreAPIHookContext<Action>) => Promise<{ url: string; requestInit: RequestInit }>;
-    postAPIHook: (context: RecipePostAPIHookContext<Action>) => Promise<void>;
-    onHandleEvent: (context: OnHandleEventContextType) => void;
-    useShadowDom: boolean;
-    palette: Record<string, string>;
-    rootStyle: Styles;
-};
+import { RecipeConfig as WebJSRecipeConfig } from "supertokens-web-js/lib/build/recipe/recipeModule/types";
+
+export type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> =
+    WebJSRecipeConfig<Action> & {
+        appInfo: NormalisedAppInfo;
+        getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
+        onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
+        useShadowDom: boolean;
+        palette: Record<string, string>;
+        rootStyle: Styles;
+        preAPIHook: (context: RecipePreAPIHookContext<Action>) => Promise<{ url: string; requestInit: RequestInit }>;
+        postAPIHook: (context: RecipePostAPIHookContext<Action>) => Promise<void>;
+    };

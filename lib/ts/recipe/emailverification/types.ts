@@ -19,6 +19,7 @@ import { ComponentOverride } from "../../components/componentOverride/componentO
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 import OverrideableBuilder from "supertokens-js-override";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 // For AuthRecipeModule, we don't need to take signOut,
 // redirectToSignIn and postVerificationRedirect as inputs from the user.
@@ -106,22 +107,4 @@ export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
     onContinueClicked: () => Promise<void>;
     onTokenInvalidRedirect: () => Promise<void>;
     token: string;
-};
-
-export type RecipeInterface = {
-    verifyEmail: (input: { token: string; config: NormalisedConfig; userContext: any }) => Promise<{
-        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
-        fetchResponse: Response;
-    }>;
-
-    sendVerificationEmail: (input: { config: NormalisedConfig; userContext: any }) => Promise<{
-        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-        fetchResponse: Response;
-    }>;
-
-    isEmailVerified: (input: { config: NormalisedConfig; userContext: any }) => Promise<{
-        status: "OK";
-        isVerified: boolean;
-        fetchResponse: Response;
-    }>;
 };

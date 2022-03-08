@@ -175,6 +175,7 @@ let recipeList = [
                 const log = logWithPrefix(`ST_LOGS SESSION OVERRIDE`);
 
                 return {
+                    ...implementation,
                     addAxiosInterceptors(...args) {
                         log(`ADD_AXIOS_INTERCEPTORS`);
                         return implementation.addAxiosInterceptors(...args);
@@ -455,6 +456,7 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
                     const log = logWithPrefix(`ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION`);
 
                     return {
+                        ...implementation,
                         sendVerificationEmail(...args) {
                             log(`SEND_VERIFICATION_EMAIL`);
                             return implementation.sendVerificationEmail(...args);
@@ -474,6 +476,7 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
                 const log = logWithPrefix(`ST_LOGS EMAIL_PASSWORD OVERRIDE`);
 
                 return {
+                    ...implementation,
                     doesEmailExist(...args) {
                         log(`DOES_EMAIL_EXIST`);
                         return implementation.doesEmailExist(...args);
@@ -559,6 +562,7 @@ function getPasswordlessConfigs({ disableDefaultImplementation }) {
                 const log = logWithPrefix(`ST_LOGS PASSWORDLESS OVERRIDE`);
 
                 return {
+                    ...implementation,
                     doesEmailExist(...args) {
                         log(`DOES_EMAIL_EXIST`);
                         return implementation.doesEmailExist(...args);
@@ -655,6 +659,7 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
                     const log = logWithPrefix(`ST_LOGS THIRD_PARTY OVERRIDE EMAIL_VERIFICATION`);
 
                     return {
+                        ...implementation,
                         sendVerificationEmail(...args) {
                             log(`SEND_VERIFICATION_EMAIL`);
                             return implementation.sendVerificationEmail(...args);
@@ -674,21 +679,22 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
                 const log = logWithPrefix(`ST_LOGS THIRD_PARTY OVERRIDE`);
 
                 return {
-                    getOAuthAuthorisationURL(...args) {
+                    ...implementation,
+                    getAuthorizationURLWithQueryParamsAndSetState(...args) {
+                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
+                        return implementation.getAuthorizationURLWithQueryParamsAndSetState(...args);
+                    },
+                    getAuthorisationURLFromBackend(...args) {
                         log(`GET_OAUTH_AUTHORISATION_URL`);
-                        return implementation.getOAuthAuthorisationURL(...args);
+                        return implementation.getAuthorisationURLFromBackend(...args);
                     },
-                    getOAuthState(...args) {
+                    getStateAndOtherInfoFromStorage(...args) {
                         log(`GET_OAUTH_STATE`);
-                        return implementation.getOAuthState(...args);
+                        return implementation.getStateAndOtherInfoFromStorage(...args);
                     },
-                    redirectToThirdPartyLogin(...args) {
-                        log(`REDIRECT_TO_THIRD_PARTY_LOGIN`);
-                        return implementation.redirectToThirdPartyLogin(...args);
-                    },
-                    setOAuthState(...args) {
+                    setStateAndOtherInfoToStorage(...args) {
                         log(`SET_OAUTH_STATE`);
-                        return implementation.setOAuthState(...args);
+                        return implementation.setStateAndOtherInfoToStorage(...args);
                     },
                     signInAndUp(...args) {
                         log(`SIGN_IN_AND_UP`);
@@ -751,6 +757,7 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
                     const log = logWithPrefix(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION`);
 
                     return {
+                        ...implementation,
                         sendVerificationEmail(...args) {
                             log(`SEND_VERIFICATION_EMAIL`);
                             return implementation.sendVerificationEmail(...args);
@@ -770,25 +777,34 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
                 const log = logWithPrefix(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE`);
 
                 return {
-                    signInAndUp(...args) {
+                    ...implementation,
+                    getAuthorizationURLWithQueryParamsAndSetState(...args) {
+                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
+                        return implementation.getAuthorizationURLWithQueryParamsAndSetState(...args);
+                    },
+                    thirdPartySignInAndUp(...args) {
                         log(`SIGN_IN_AND_UP`);
-                        return implementation.signInAndUp(...args);
+                        return implementation.thirdPartySignInAndUp(...args);
                     },
-                    setOAuthState(...args) {
+                    emailPasswordSignIn(...args) {
+                        log(`SIGN_IN_AND_UP`);
+                        return implementation.emailPasswordSignIn(...args);
+                    },
+                    emailPasswordSignUp(...args) {
+                        log(`SIGN_IN_AND_UP`);
+                        return implementation.emailPasswordSignUp(...args);
+                    },
+                    setStateAndOtherInfoToStorage(...args) {
                         log(`SET_OAUTH_STATE`);
-                        return implementation.setOAuthState(...args);
+                        return implementation.setStateAndOtherInfoToStorage(...args);
                     },
-                    redirectToThirdPartyLogin(...args) {
-                        log(`REDIRECT_TO_THIRD_PARTY_LOGIN`);
-                        return implementation.redirectToThirdPartyLogin(...args);
-                    },
-                    getOAuthState(...args) {
+                    getStateAndOtherInfoFromStorage(...args) {
                         log(`GET_OAUTH_STATE`);
-                        return implementation.getOAuthState(...args);
+                        return implementation.getStateAndOtherInfoFromStorage(...args);
                     },
-                    getOAuthAuthorisationURL(...args) {
+                    getAuthorisationURLFromBackend(...args) {
                         log(`GET_OAUTH_AUTHORISATION_URL`);
-                        return implementation.getOAuthAuthorisationURL(...args);
+                        return implementation.getAuthorisationURLFromBackend(...args);
                     },
                     submitNewPassword(...args) {
                         log(`SUBMIT_NEW_PASSWORD`);

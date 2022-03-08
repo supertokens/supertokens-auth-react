@@ -7,12 +7,12 @@ import {
     NormalisedConfig,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
     PreAndPostAPIHookAction,
 } from "./types";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import EmailVerification from "../emailverification/recipe";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
     OnHandleEventContext,

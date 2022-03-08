@@ -20,49 +20,40 @@ import { jsx } from "@emotion/react";
 import { Fragment, PureComponent } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
-import { getCurrentNormalisedUrlPath } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
-import {} from "../../../types";
+import { CustomStateProperties } from "../../../types";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 class SignInAndUpCallback extends PureComponent<PropType, unknown> {
     componentDidMount = async (): Promise<void> => {
         try {
-            const pathName = getCurrentNormalisedUrlPath().getAsStringDangerous();
-            const providerId = pathName.split("/")[pathName.split("/").length - 1];
             // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipe.recipeImpl.signInAndUp({
-                thirdPartyId: providerId,
-                config: this.props.recipe.config,
                 userContext: {},
             });
-            if (response.status === "GENERAL_ERROR") {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "signin",
-                });
-            }
+
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
                 return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                     error: "no_email_present",
                 });
             }
-            if (response.status === "FIELD_ERROR") {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "custom",
-                    message: response.error,
-                });
-            }
+
             if (response.status === "OK") {
-                const state = this.props.recipe.recipeImpl.getOAuthState();
-                const redirectToPath = state === undefined ? undefined : state.redirectToPath;
+                // TODO NEMI: handle user context for pre built UI
+                const stateResponse =
+                    this.props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
+                        userContext: {},
+                    });
+                const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
                 if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
                     let isEmailVerified = true;
@@ -90,6 +81,13 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 );
             }
         } catch (err) {
+            if (STGeneralError.isThisError(err)) {
+                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                    error: "custom",
+                    message: err.message,
+                });
+            }
+
             return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                 error: "signin",
             });

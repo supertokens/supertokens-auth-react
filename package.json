@@ -64,7 +64,7 @@
         "react-select": "^5.2.1",
         "react-shadow": "^19.0.2",
         "supertokens-js-override": "^0.0.4",
-        "supertokens-web-js": "github:supertokens/supertokens-web-js#0.0",
+        "supertokens-web-js": "github:supertokens/supertokens-web-js#recipe-implementation-refactor",
         "supertokens-website": "^10.0.8"
     },
     "peerDependencies": {
@@ -106,7 +106,7 @@
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
-            "limit": "116kb"
+            "limit": "117kb"
         },
         {
             "path": "recipe/thirdparty/index.js",

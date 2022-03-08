@@ -24,10 +24,9 @@ import {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
-    PreAndPostAPIHookContext,
+    PreAndPostAPIHookAction,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
@@ -39,6 +38,7 @@ import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import RecipeImplementation from "./recipeImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import OverrideableBuilder from "supertokens-js-override";
 
 /*
@@ -52,7 +52,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
     static instance?: ThirdParty;
     static RECIPE_ID = "thirdparty";
 
-    recipeImpl: RecipeInterface;
+    recipeImpl: WebJSRecipeInterface;
 
     constructor(
         config: Config,
@@ -64,10 +64,16 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
-        {
-            const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
-            this.recipeImpl = builder.override(this.config.override.functions).build();
-        }
+        const builder = new OverrideableBuilder(
+            RecipeImplementation({
+                appInfo: this.config.appInfo,
+                recipeId: this.config.recipeId,
+                onHandleEvent: this.config.onHandleEvent,
+                preAPIHook: this.config.preAPIHook,
+                postAPIHook: this.config.postAPIHook,
+            })
+        );
+        this.recipeImpl = builder.override(this.config.override.functions).build();
     }
 
     /*
@@ -90,7 +96,8 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
                 new NormalisedURLPath(`/callback/${provider.id}`)
             );
             features[normalisedFullPath.getAsStringDangerous()] = {
-                matches: () => matchRecipeIdUsingState(this),
+                // TODO NEMI: Is passing nothing as userContext ok in this case?
+                matches: () => matchRecipeIdUsingState(this, {}),
                 component: (prop: any) => this.getFeatureComponent("signinupcallback", prop),
             };
         });
@@ -109,7 +116,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
             return (
                 <AuthWidgetWrapper<
                     GetRedirectionURLContext,
-                    PreAndPostAPIHookContext,
+                    PreAndPostAPIHookAction,
                     OnHandleEventContext,
                     NormalisedConfig
                 >
@@ -131,15 +138,10 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<
-        GetRedirectionURLContext,
-        PreAndPostAPIHookContext,
-        OnHandleEventContext,
-        NormalisedConfig
-    > {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
+        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
             ThirdParty.instance = new ThirdParty(
                 {
                     ...config,

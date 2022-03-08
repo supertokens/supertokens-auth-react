@@ -20,8 +20,8 @@ import {
     PreAPIHookContext as EmailVerificationPreAPIHookContext,
     PreAndPostAPIHookAction as EmailVerificationPreAndPostAPIHookAction,
     ComponentOverrideMap as EmailVerificationComponentOverrideMap,
-    RecipeInterface,
 } from "../emailverification/types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import * as AuthRecipeType from "../authRecipe/types";
 
 export type User = AuthRecipeType.User;

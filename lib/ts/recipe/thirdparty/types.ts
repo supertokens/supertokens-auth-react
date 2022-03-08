@@ -18,7 +18,6 @@ import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
     PreAndPostAPIHookAction as AuthRecipePreAndPostAPIHookAction,
-    User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
@@ -32,6 +31,7 @@ import { ProvidersForm } from "./components/themes/signInAndUp/providersForm";
 import { SignUpFooter } from "./components/themes/signInAndUp/signUpFooter";
 import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import OverrideableBuilder from "supertokens-js-override";
+import { StateObject as WebJsStateObject, RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 export type ComponentOverrideMap = {
     ThirdPartySignUpFooter_Override?: ComponentOverride<typeof SignUpFooter>;
@@ -49,10 +49,10 @@ export type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
@@ -64,7 +64,7 @@ export type NormalisedConfig = {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
@@ -112,13 +112,13 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
 
 export type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
 
-export type PreAndPostAPIHookContext =
+export type PreAndPostAPIHookAction =
     | AuthRecipePreAndPostAPIHookAction
     | "GET_AUTHORISATION_URL"
     | "THIRD_PARTY_SIGN_IN_UP";
 
 export type PreAPIHookContext = {
-    action: PreAndPostAPIHookContext;
+    action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
     userContext: any;
@@ -155,43 +155,12 @@ export type ThirdPartySignInAndUpState = {
     error: string | undefined;
 };
 
-export type StateObject = {
-    state?: string;
+export type StateObject = WebJsStateObject & {
     rid?: string;
-    thirdPartyId?: string;
     redirectToPath?: string;
 };
 
-export type RecipeInterface = {
-    getOAuthState(): StateObject | undefined;
-
-    setOAuthState(state: StateObject): void;
-
-    redirectToThirdPartyLogin: (input: {
-        thirdPartyId: string;
-        config: NormalisedConfig;
-        state?: StateObject;
-        userContext: any;
-    }) => Promise<{ status: "OK" | "ERROR" }>;
-
-    getOAuthAuthorisationURL: (input: {
-        thirdPartyId: string;
-        config: NormalisedConfig;
-        userContext: any;
-    }) => Promise<string>;
-
-    signInAndUp: (input: { thirdPartyId: string; config: NormalisedConfig; userContext: any }) => Promise<
-        | {
-              status: "OK";
-              user: User;
-              createdNewUser: boolean;
-          }
-        | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
-          }
-        | {
-              status: "FIELD_ERROR";
-              error: string;
-          }
-    >;
+export type CustomStateProperties = {
+    rid: string;
+    redirectToPath: string;
 };

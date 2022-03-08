@@ -26,7 +26,6 @@ import {
     GetRedirectionURLContext,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
     PreAndPostAPIHookAction,
 } from "./types";
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
@@ -38,8 +37,8 @@ import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import OverrideableBuilder from "supertokens-js-override";
-import WebJSEmailVerification from "supertokens-web-js/lib/build/recipe/emailverification/recipe";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -51,20 +50,20 @@ export default class EmailVerification extends RecipeModule<
     static RECIPE_ID = "emailverification";
 
     recipeImpl: RecipeInterface;
-    webJsRecipe: WebJSEmailVerification;
 
     constructor(config: Config) {
         super(normaliseEmailVerificationFeature(config));
 
         {
-            this.webJsRecipe = new WebJSEmailVerification({
-                appInfo: config.appInfo,
-                recipeId: config.recipeId,
-                preAPIHook: config.preAPIHook,
-                postAPIHook: config.postAPIHook,
-            });
-
-            const builder = new OverrideableBuilder(RecipeImplementation(this.webJsRecipe));
+            const builder = new OverrideableBuilder(
+                RecipeImplementation({
+                    appInfo: this.config.appInfo,
+                    recipeId: this.config.recipeId,
+                    onHandleEvent: this.config.onHandleEvent,
+                    preAPIHook: this.config.preAPIHook,
+                    postAPIHook: this.config.postAPIHook,
+                })
+            );
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
     }
@@ -127,7 +126,6 @@ export default class EmailVerification extends RecipeModule<
         fetchResponse: Response;
     }> {
         return await this.recipeImpl.isEmailVerified({
-            config: this.config,
             userContext,
         });
     }

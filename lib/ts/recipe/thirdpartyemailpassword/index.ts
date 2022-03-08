@@ -16,11 +16,13 @@ import ThirdPartyEmailPassword from "./recipe";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { getNormalisedUserContext } from "../../utils";
+import { RecipeInterface, UserType } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -41,16 +43,12 @@ export default class Wrapper {
         );
     }
 
-    static async verifyEmail(input: { token: string; userContext?: any }): Promise<{
+    static async verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.verifyEmail({
-            token: input.token,
-            config: recipeInstance.emailVerification.config,
-            userContext: getNormalisedUserContext(input.userContext),
+        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -58,10 +56,7 @@ export default class Wrapper {
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.sendVerificationEmail({
-            config: recipeInstance.emailVerification.config,
+        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -84,6 +79,166 @@ export default class Wrapper {
                 return ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
             }
         }
+    }
+
+    static submitNewPassword(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        token: string;
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.submitNewPassword({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static sendPasswordResetEmail(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.sendPasswordResetEmail({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static emailPasswordSignUp(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              user: UserType;
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.emailPasswordSignUp({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static emailPasswordSignIn(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              user: UserType;
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+        | {
+              status: "WRONG_CREDENTIALS_ERROR";
+              fetchResponse: Response;
+          }
+    > {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.emailPasswordSignIn({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static doesEmailExist(input: { email: string; userContext?: any }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }> {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.doesEmailExist({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async redirectToThirdPartyLogin(input: {
+        thirdPartyId: string;
+        userContext?: any;
+    }): Promise<{ status: "OK" | "ERROR" }> {
+        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
+
+        if (recipeInstance.thirdPartyRecipe === undefined) {
+            throw new Error(
+                "Third party email password was initialised without any social providers. This function is only available if at least one social provider is initialised"
+            );
+        }
+
+        return UtilsRedirectToThirdPartyLogin({
+            thirdPartyId: input.thirdPartyId,
+            config: recipeInstance.thirdPartyRecipe.config,
+            userContext: getNormalisedUserContext(input.userContext),
+            recipeImplementation: recipeInstance.thirdPartyRecipe.recipeImpl,
+        });
+    }
+
+    static thirdPartySignInAndUp(input?: { userContext?: any }): Promise<
+        | {
+              status: "OK";
+              user: UserType;
+              createdNewUser: boolean;
+              fetchResponse: Response;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
+          }
+    > {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.thirdPartySignInAndUp({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     static Google = Google;
@@ -111,6 +266,13 @@ const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const EmailVerification = Wrapper.EmailVerification;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
+const submitNewPassword = Wrapper.submitNewPassword;
+const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
+const emailPasswordSignIn = Wrapper.emailPasswordSignIn;
+const emailPasswordSignUp = Wrapper.emailPasswordSignUp;
+const doesEmailExist = Wrapper.doesEmailExist;
+const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
+const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
 
 export {
     ThirdPartyEmailPasswordAuth,
@@ -126,6 +288,13 @@ export {
     SignInAndUpTheme,
     signOut,
     redirectToAuth,
+    submitNewPassword,
+    sendPasswordResetEmail,
+    emailPasswordSignIn,
+    emailPasswordSignUp,
+    doesEmailExist,
+    redirectToThirdPartyLogin,
+    thirdPartySignInAndUp,
     EmailVerification,
     EmailVerificationTheme,
     ResetPasswordUsingToken,

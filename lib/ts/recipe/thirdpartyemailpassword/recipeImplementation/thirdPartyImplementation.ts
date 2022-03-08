@@ -1,37 +1,40 @@
-import { RecipeInterface } from "../../thirdparty/types";
-import { RecipeInterface as TPEPRecipeInterface } from "..";
+/* Copyright (c) 2022, VRAI Labs and/or its affiliates. All rights reserved.
+ *
+ * This software is licensed under the Apache License, Version 2.0 (the
+ * "License") as published by the Apache Software Foundation.
+ *
+ * You may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
 
-export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
+import { RecipeInterface as WebJSThirdPartyRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import { RecipeInterface as WebJSThirdPartyEmailPasswordRecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+
+export default function getRecipeImplementation(
+    originalImplementation: WebJSThirdPartyEmailPasswordRecipeInterface
+): WebJSThirdPartyRecipeInterface {
     return {
-        getOAuthAuthorisationURL: oI.getOAuthAuthorisationURL.bind(oI),
-        getOAuthState: oI.getOAuthState.bind(oI),
-        redirectToThirdPartyLogin: oI.redirectToThirdPartyLogin.bind(oI),
-        setOAuthState: oI.setOAuthState.bind(oI),
-        signInAndUp: async function (input) {
-            const response = await oI.signInAndUp({
-                type: "thirdparty",
-                ...input,
-            });
-            if (response.type === "thirdparty") {
-                if (response.status === "OK") {
-                    return {
-                        status: "OK",
-                        createdNewUser: response.createdNewUser,
-                        user: response.user,
-                    };
-                } else if (response.status === "FIELD_ERROR") {
-                    return {
-                        status: "FIELD_ERROR",
-                        error: response.error,
-                    };
-                } else {
-                    return {
-                        status: response.status,
-                    };
-                }
-            } else {
-                throw Error("Should never come here");
-            }
-        },
+        generateStateToSendToOAuthProvider:
+            originalImplementation.generateStateToSendToOAuthProvider.bind(originalImplementation),
+        getAuthCodeFromURL: originalImplementation.getAuthCodeFromURL.bind(originalImplementation),
+        getAuthErrorFromURL: originalImplementation.getAuthErrorFromURL.bind(originalImplementation),
+        getAuthStateFromURL: originalImplementation.getAuthStateFromURL.bind(originalImplementation),
+        getAuthorisationURLFromBackend:
+            originalImplementation.getAuthorisationURLFromBackend.bind(originalImplementation),
+        getAuthorizationURLWithQueryParamsAndSetState:
+            originalImplementation.getAuthorizationURLWithQueryParamsAndSetState.bind(originalImplementation),
+        getStateAndOtherInfoFromStorage:
+            originalImplementation.getStateAndOtherInfoFromStorage.bind(originalImplementation),
+        setStateAndOtherInfoToStorage:
+            originalImplementation.setStateAndOtherInfoToStorage.bind(originalImplementation),
+        signInAndUp: originalImplementation.thirdPartySignInAndUp.bind(originalImplementation),
+        verifyAndGetStateOrThrowError:
+            originalImplementation.verifyAndGetStateOrThrowError.bind(originalImplementation),
     };
 }

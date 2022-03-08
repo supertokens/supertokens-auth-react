@@ -58,7 +58,6 @@ export const SignUpForm = withOverride(
 
                     return props.recipeImplementation.signUp({
                         formFields,
-                        config: props.config,
                         userContext: {},
                     });
                 }}

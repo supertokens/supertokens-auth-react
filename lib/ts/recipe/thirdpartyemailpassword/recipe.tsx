@@ -26,7 +26,6 @@ import {
     NormalisedConfig,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
     PreAndPostAPIHookAction,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
@@ -38,11 +37,12 @@ import SignInAndUp from "./components/features/signInAndUp";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import RecipeImplementation from "./recipeImplementation";
-import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
-import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import OverrideableBuilder from "supertokens-js-override";
+import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
+import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 
 export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
@@ -70,12 +70,16 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
-        {
-            const builder = new OverrideableBuilder(
-                RecipeImplementation(this.config, recipes.emailVerificationInstance)
-            );
-            this.recipeImpl = builder.override(this.config.override.functions).build();
-        }
+        const builder = new OverrideableBuilder(
+            RecipeImplementation({
+                appInfo: this.config.appInfo,
+                recipeId: this.config.recipeId,
+                onHandleEvent: this.config.onHandleEvent,
+                preAPIHook: this.config.preAPIHook,
+                postAPIHook: this.config.postAPIHook,
+            })
+        );
+        this.recipeImpl = builder.override(this.config.override.functions).build();
 
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined
@@ -97,7 +101,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
                           useShadowDom: this.config.useShadowDom,
                           override: {
                               // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                              functions: (_) => {
+                              functions: (_: any) => {
                                   return getEmailPasswordImpl(this.recipeImpl);
                               },
                               components: this.config.override.components,
@@ -131,7 +135,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
                           useShadowDom: this.config.useShadowDom,
                           override: {
                               // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                              functions: (_) => {
+                              functions: (_: any) => {
                                   return getThirdPartyImpl(this.recipeImpl);
                               },
                               components: this.config.override.components,

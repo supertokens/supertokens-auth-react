@@ -1,3 +1,15 @@
-import { RecipeInterface } from "./types";
-import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
-export default function getRecipeImplementation(webJsRecipe: WebJSEmailPassword): RecipeInterface;
+import { OnHandleEventContext, PreAndPostAPIHookAction } from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import { NormalisedAppInfo } from "../../types";
+import {
+    RecipeOnHandleEventFunction,
+    RecipePostAPIHookFunction,
+    RecipePreAPIHookFunction,
+} from "../recipeModule/types";
+export default function getRecipeImplementation(recipeInput: {
+    recipeId: string;
+    appInfo: NormalisedAppInfo;
+    preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
+    postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
+    onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+}): RecipeInterface;

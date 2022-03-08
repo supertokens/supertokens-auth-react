@@ -20,9 +20,10 @@ import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { getNormalisedUserContext } from "../../utils";
 import { User } from "../authRecipeWithEmailVerification/types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 export default class Wrapper {
     static init(config?: UserInput) {
@@ -43,16 +44,12 @@ export default class Wrapper {
         );
     }
 
-    static async verifyEmail(input: { token: string; userContext?: any }): Promise<{
+    static async verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.verifyEmail({
-            token: input.token,
-            config: recipeInstance.emailVerification.config,
-            userContext: getNormalisedUserContext(input.userContext),
+        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -60,10 +57,7 @@ export default class Wrapper {
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.emailVerification.recipeImpl.sendVerificationEmail({
-            config: recipeInstance.emailVerification.config,
+        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -93,7 +87,6 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        token: string;
         userContext?: any;
     }): Promise<
         | {
@@ -109,11 +102,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.submitNewPassword({
+        return EmailPassword.getInstanceOrThrow().recipeImpl.submitNewPassword({
             ...input,
-            config: recipeInstance.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -138,11 +128,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.sendPasswordResetEmail({
+        return EmailPassword.getInstanceOrThrow().recipeImpl.sendPasswordResetEmail({
             ...input,
-            config: recipeInstance.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -152,7 +139,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        userContext: any;
+        userContext?: any;
     }): Promise<
         | {
               status: "OK";
@@ -168,11 +155,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.signUp({
+        return EmailPassword.getInstanceOrThrow().recipeImpl.signUp({
             ...input,
-            config: recipeInstance.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
@@ -182,7 +166,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        userContext: any;
+        userContext?: any;
     }): Promise<
         | {
               status: "OK";
@@ -202,25 +186,19 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.signIn({
+        return EmailPassword.getInstanceOrThrow().recipeImpl.signIn({
             ...input,
-            config: recipeInstance.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }
 
-    static doesEmailExist(input: { email: string; userContext: any }): Promise<{
+    static doesEmailExist(input: { email: string; userContext?: any }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
     }> {
-        const recipeInstance: EmailPassword = EmailPassword.getInstanceOrThrow();
-
-        return recipeInstance.recipeImpl.doesEmailExist({
+        return EmailPassword.getInstanceOrThrow().recipeImpl.doesEmailExist({
             ...input,
-            config: recipeInstance.config,
             userContext: getNormalisedUserContext(input.userContext),
         });
     }

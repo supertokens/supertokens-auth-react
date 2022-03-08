@@ -1,19 +1,21 @@
 /// <reference types="react" />
 /// <reference types="@emotion/react/types/css-prop" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
+import { User } from "../authRecipeWithEmailVerification/types";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export default class Wrapper {
     static init(
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
         import("../authRecipeWithEmailVerification/types").GetRedirectionURLContext,
-        import("./types").PreAndPostAPIHookContext,
+        import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
@@ -23,7 +25,7 @@ export default class Wrapper {
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    static verifyEmail(input: { token: string; userContext?: any }): Promise<{
+    static verifyEmail(input?: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }>;
@@ -39,6 +41,21 @@ export default class Wrapper {
                   redirectBack?: boolean;
               }
     ): Promise<void>;
+    static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
+        status: "OK" | "ERROR";
+    }>;
+    static signInAndUp(input?: { userContext?: any }): Promise<
+        | {
+              status: "OK";
+              user: User;
+              createdNewUser: boolean;
+              fetchResponse: Response;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
+          }
+    >;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
@@ -54,6 +71,8 @@ declare const signOut: typeof Wrapper.signOut;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
 declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
+declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
+declare const signInAndUp: typeof Wrapper.signInAndUp;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
@@ -67,12 +86,15 @@ export {
     isEmailVerified,
     verifyEmail,
     sendVerificationEmail,
+    signInAndUp,
+    redirectToThirdPartyLogin,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
     redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
+    User,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

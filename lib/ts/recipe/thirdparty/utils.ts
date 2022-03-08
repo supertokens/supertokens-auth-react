@@ -23,10 +23,12 @@ import {
     NormalisedConfig,
     SignInAndUpFeatureUserInput,
     Config,
-    RecipeInterface,
+    CustomStateProperties,
 } from "./types";
 import Recipe from "./recipe";
 import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import { redirectWithFullPageReload } from "../../utils";
 
 /*
  * Methods.
@@ -100,13 +102,37 @@ export function normaliseSignInAndUpFeature(
     };
 }
 
-export function matchRecipeIdUsingState(recipe: Recipe): boolean {
-    const state = recipe.recipeImpl.getOAuthState();
-    if (state === undefined) {
+export function matchRecipeIdUsingState(recipe: Recipe, userContext: any): boolean {
+    const stateResponse = recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
+        userContext,
+    });
+    if (stateResponse === undefined) {
         return false;
     }
-    if (state.rid === recipe.config.recipeId) {
+    if (stateResponse.rid === recipe.config.recipeId) {
         return true;
     }
     return false;
+}
+
+export async function redirectToThirdPartyLogin(input: {
+    thirdPartyId: string;
+    config: NormalisedConfig;
+    userContext: any;
+    recipeImplementation: RecipeInterface;
+}): Promise<{ status: "OK" | "ERROR" }> {
+    const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
+    if (provider === undefined) {
+        return { status: "ERROR" };
+    }
+
+    const response = await input.recipeImplementation.getAuthorizationURLWithQueryParamsAndSetState({
+        providerId: input.thirdPartyId,
+        authorisationURL: provider.getRedirectURL(),
+        providerClientId: provider.clientId,
+        userContext: input.userContext,
+    });
+
+    redirectWithFullPageReload(response);
+    return { status: "OK" };
 }

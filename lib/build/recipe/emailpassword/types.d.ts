@@ -31,6 +31,7 @@ import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
 import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 import { InputProps } from "./components/library/input";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 export declare type ComponentOverrideMap = {
     EmailPasswordSignIn_Override?: ComponentOverride<typeof SignIn>;
     EmailPasswordSignInFooter_Override?: ComponentOverride<typeof SignInFooter>;
@@ -118,18 +119,18 @@ declare type FormThemeBaseProps = ThemeBaseProps & {
     error: string | undefined;
 };
 export declare type SignInThemeProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
-    recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signUpClicked?: () => void;
     forgotPasswordClick: () => void;
     onSuccess: () => void;
 };
 export declare type SignUpThemeProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
-    recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signInClicked?: () => void;
     onSuccess: () => void;
@@ -190,17 +191,17 @@ export declare type ResetPasswordUsingTokenThemeProps = {
     config: NormalisedConfig;
 };
 export declare type EnterEmailProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
     onError: (error: string) => void;
-    recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
 };
 export declare type SubmitNewPasswordProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
     onError: (error: string) => void;
-    recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSignInClicked: () => void;
     token: string;
@@ -252,102 +253,4 @@ export declare type EmailPasswordSignInAndUpAction =
           type: "setSignIn";
       };
 export declare type EmailPasswordSignInAndUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
-export declare type RecipeInterface = {
-    submitNewPassword: (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        token: string;
-        config: NormalisedConfig;
-        userContext: any;
-    }) => Promise<
-        | {
-              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
-              fetchResponse: Response;
-          }
-        | {
-              status: "FIELD_ERROR";
-              formFields: {
-                  id: string;
-                  error: string;
-              }[];
-              fetchResponse: Response;
-          }
-    >;
-    sendPasswordResetEmail: (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        config: NormalisedConfig;
-        userContext: any;
-    }) => Promise<
-        | {
-              status: "OK";
-              fetchResponse: Response;
-          }
-        | {
-              status: "FIELD_ERROR";
-              formFields: {
-                  id: string;
-                  error: string;
-              }[];
-              fetchResponse: Response;
-          }
-    >;
-    signUp: (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        config: NormalisedConfig;
-        userContext: any;
-    }) => Promise<
-        | {
-              status: "OK";
-              user: User;
-              fetchResponse: Response;
-          }
-        | {
-              status: "FIELD_ERROR";
-              formFields: {
-                  id: string;
-                  error: string;
-              }[];
-              fetchResponse: Response;
-          }
-    >;
-    signIn: (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        config: NormalisedConfig;
-        userContext: any;
-    }) => Promise<
-        | {
-              status: "OK";
-              user: User;
-              fetchResponse: Response;
-          }
-        | {
-              status: "FIELD_ERROR";
-              formFields: {
-                  id: string;
-                  error: string;
-              }[];
-              fetchResponse: Response;
-          }
-        | {
-              status: "WRONG_CREDENTIALS_ERROR";
-              fetchResponse: Response;
-          }
-    >;
-    doesEmailExist: (input: { email: string; config: NormalisedConfig; userContext: any }) => Promise<{
-        status: "OK";
-        doesExist: boolean;
-        fetchResponse: Response;
-    }>;
-};
 export {};

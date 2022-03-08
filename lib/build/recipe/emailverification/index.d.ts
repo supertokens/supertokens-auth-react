@@ -1,7 +1,8 @@
 /// <reference types="react" />
 import { UserInput } from "./types";
 import EmailVerificationTheme from "./components/themes/emailVerification";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 export default class Wrapper {
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
@@ -18,7 +19,7 @@ export default class Wrapper {
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    static verifyEmail(input: { token: string; userContext?: any }): Promise<{
+    static verifyEmail(input: { userContext?: any }): Promise<{
         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
         fetchResponse: Response;
     }>;

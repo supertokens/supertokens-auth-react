@@ -1,115 +1,78 @@
-import { NormalisedConfig, RecipeInterface, SignInAndUpInput, SignInAndUpOutput } from "../types";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { OnHandleEventContext, PreAndPostAPIHookAction } from "../types";
+import { NormalisedAppInfo } from "../../../types";
+import {
+    RecipeOnHandleEventFunction,
+    RecipePostAPIHookFunction,
+    RecipePreAPIHookFunction,
+} from "../../recipeModule/types";
 import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImplementation";
 import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
-import { NormalisedConfig as EPConfig } from "../../emailpassword/types";
-import { NormalisedConfig as TPConfig, StateObject } from "../../thirdparty/types";
 import DerivedEP from "./emailPasswordImplementation";
 import DerivedTP from "./thirdPartyImplementation";
-import WebJSEmailPassword from "supertokens-web-js/lib/build/recipe/emailpassword/recipe";
-import EmailVerification from "../../emailverification/recipe";
 
-export default function getRecipeImplementation(
-    config: NormalisedConfig,
-    emailVerificationInstance: EmailVerification | undefined
-): RecipeInterface {
-    // TODO NEMI: This is temporary to fix types for email password, will be refactored when tpep is implemented
-    const webJsEmailPassword = new WebJSEmailPassword(
-        {
-            appInfo: config.appInfo,
-            recipeId: config.recipeId,
-            preAPIHook: config.preAPIHook,
-            postAPIHook: config.postAPIHook,
-        },
-        {
-            emailVerification: emailVerificationInstance?.webJsRecipe,
-        }
-    );
-
-    const emailpasswordImpl = EmailPasswordRecipeImplementation(webJsEmailPassword);
-    const thirdPartyImpl = ThirdPartyRecipeImplementation(config.recipeId, config.appInfo);
+export default function getRecipeImplementation(recipeInput: {
+    recipeId: string;
+    appInfo: NormalisedAppInfo;
+    preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
+    postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
+    onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+}): RecipeInterface {
+    const emailpasswordImpl = EmailPasswordRecipeImplementation({
+        ...recipeInput,
+    });
+    const thirdPartyImpl = ThirdPartyRecipeImplementation({
+        ...recipeInput,
+    });
 
     return {
-        submitNewPassword: async function (input: {
-            formFields: {
-                id: string;
-                value: string;
-            }[];
-            token: string;
-            config: EPConfig;
-            userContext: any;
-        }) {
+        submitNewPassword: async function (input) {
             return emailpasswordImpl.submitNewPassword.bind(DerivedEP(this))(input);
         },
-        sendPasswordResetEmail: async function (input: {
-            formFields: {
-                id: string;
-                value: string;
-            }[];
-            config: EPConfig;
-            userContext: any;
-        }) {
+        sendPasswordResetEmail: async function (input) {
             return emailpasswordImpl.sendPasswordResetEmail.bind(DerivedEP(this))(input);
         },
-        doesEmailExist: async function (input: { email: string; config: EPConfig; userContext: any }) {
+        doesEmailExist: async function (input) {
             return emailpasswordImpl.doesEmailExist.bind(DerivedEP(this))(input);
         },
-        getOAuthAuthorisationURL: async function (input: { thirdPartyId: string; config: TPConfig; userContext: any }) {
-            return thirdPartyImpl.getOAuthAuthorisationURL.bind(DerivedTP(this))(input);
+        getResetPasswordTokenFromURL: function (input) {
+            return emailpasswordImpl.getResetPasswordTokenFromURL.bind(DerivedEP(this))(input);
         },
-        signInAndUp: async function (input: SignInAndUpInput): Promise<SignInAndUpOutput> {
-            if (input.type === "emailpassword") {
-                if (input.isSignIn) {
-                    const response = await emailpasswordImpl.signIn.bind(DerivedEP(this))(input);
-                    if (response.status === "OK") {
-                        return {
-                            ...response,
-                            createdNewUser: false,
-                            type: "emailpassword",
-                        };
-                    } else {
-                        return {
-                            ...response,
-                            type: "emailpassword",
-                        };
-                    }
-                } else {
-                    const response = await emailpasswordImpl.signUp.bind(DerivedEP(this))(input);
-                    if (response.status === "OK") {
-                        return {
-                            ...response,
-                            createdNewUser: true,
-                            type: "emailpassword",
-                        };
-                    } else {
-                        return {
-                            ...response,
-                            type: "emailpassword",
-                        };
-                    }
-                }
-            } else {
-                const response = await thirdPartyImpl.signInAndUp.bind(DerivedTP(this))(input);
-                return {
-                    ...response,
-                    type: "thirdparty",
-                    // TODO NEMI: This is temporary and will be fied when TPEP is implemented
-                    fetchResponse: {} as any,
-                };
-            }
+        emailPasswordSignIn: async function (input) {
+            return await emailpasswordImpl.signIn.bind(DerivedEP(this))(input);
         },
-        getOAuthState: function () {
-            return thirdPartyImpl.getOAuthState.bind(DerivedTP(this))();
+        emailPasswordSignUp: async function (input) {
+            return emailpasswordImpl.signUp.bind(DerivedEP(this))(input);
         },
-        setOAuthState: function (input: StateObject) {
-            return thirdPartyImpl.setOAuthState.bind(DerivedTP(this))(input);
+        getAuthorisationURLFromBackend: async function (input) {
+            return thirdPartyImpl.getAuthorisationURLFromBackend.bind(DerivedTP(this))(input);
         },
-        redirectToThirdPartyLogin: function (input: {
-            thirdPartyId: string;
-            config: TPConfig;
-            state?: StateObject;
-            userContext: any;
-        }) {
-            return thirdPartyImpl.redirectToThirdPartyLogin.bind(DerivedTP(this))(input);
+        getAuthorizationURLWithQueryParamsAndSetState: async function (input) {
+            return thirdPartyImpl.getAuthorizationURLWithQueryParamsAndSetState.bind(DerivedTP(this))(input);
+        },
+        thirdPartySignInAndUp: async function (input) {
+            return await thirdPartyImpl.signInAndUp.bind(DerivedTP(this))(input);
+        },
+        getStateAndOtherInfoFromStorage: function (input) {
+            return thirdPartyImpl.getStateAndOtherInfoFromStorage.bind(DerivedTP(this))(input);
+        },
+        setStateAndOtherInfoToStorage: function (input) {
+            return thirdPartyImpl.setStateAndOtherInfoToStorage.bind(DerivedTP(this))(input);
+        },
+        generateStateToSendToOAuthProvider: function (input) {
+            return thirdPartyImpl.generateStateToSendToOAuthProvider.bind(DerivedTP(this))(input);
+        },
+        verifyAndGetStateOrThrowError: function (input) {
+            return thirdPartyImpl.verifyAndGetStateOrThrowError.bind(DerivedTP(this))(input);
+        },
+        getAuthCodeFromURL: function (input) {
+            return thirdPartyImpl.getAuthCodeFromURL.bind(DerivedTP(this))(input);
+        },
+        getAuthErrorFromURL: function (input) {
+            return thirdPartyImpl.getAuthErrorFromURL.bind(DerivedTP(this))(input);
+        },
+        getAuthStateFromURL: function (input) {
+            return thirdPartyImpl.getAuthStateFromURL.bind(DerivedTP(this))(input);
         },
     };
 }
