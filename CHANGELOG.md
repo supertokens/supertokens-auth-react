@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `emailPasswordSignUp` -> NEW FUNCTION
     -   `emailPasswordSignIn` -> NEW FUNCTION
     -   `thirdPartySignInAndUp` -> NEW FUNCTION
+-   Session recipe now uses supertokens-web-js internally (previously used supertokens-website)
 
 ### Breaking changes
 
