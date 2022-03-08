@@ -81,11 +81,13 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         },
         { error: undefined },
         () => {
+            // Here we want to select the more specific error message
             let error = tpState.error;
             if (
+                // If we have an error in pwless and
                 pwlessState.error !== undefined &&
-                tpState.error !== undefined &&
-                tpState.error === "SOMETHING_WENT_WRONG_ERROR"
+                // either we didn't have one in thirdparty or it was the default one
+                (error === undefined || error === "SOMETHING_WENT_WRONG_ERROR")
             ) {
                 error = pwlessState.error;
             }

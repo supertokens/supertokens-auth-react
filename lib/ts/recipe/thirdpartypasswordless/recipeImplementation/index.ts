@@ -30,10 +30,10 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         clearLoginAttemptInfo() {
             return passwordlessImpl.clearLoginAttemptInfo.bind(DerivedPwless(this))();
         },
-        getLoginAttemptInfo() {
+        getPasswordlessLoginAttemptInfo() {
             return passwordlessImpl.getLoginAttemptInfo.bind(DerivedPwless(this))();
         },
-        setLoginAttemptInfo(input) {
+        setPasswordlessLoginAttemptInfo(input) {
             return passwordlessImpl.setLoginAttemptInfo.bind(DerivedPwless(this))(input);
         },
 

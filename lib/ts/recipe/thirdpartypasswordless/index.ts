@@ -25,6 +25,7 @@ import {
 import ThirdPartyPasswordlessAuth from "./thirdpartyPasswordlessAuth";
 import SignInUpTheme from "./components/themes/signInUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { LinkClickedScreen } from "../passwordless/components/themes/linkClickedScreen";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -71,7 +72,8 @@ export default class Wrapper {
         ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
 
-    static LinkClicked = (prop?: any) =>
+    static PasswordlessLinkClickedTheme = LinkClickedScreen;
+    static PasswordlessLinkClicked = (prop?: any) =>
         ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("linkClickedScreen", prop);
 }
 
@@ -81,7 +83,7 @@ const isEmailVerified = Wrapper.isEmailVerified;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const EmailVerification = Wrapper.EmailVerification;
-const LinkClicked = Wrapper.LinkClicked;
+const PasswordlessLinkClicked = Wrapper.PasswordlessLinkClicked;
 
 export {
     ThirdPartyPasswordlessAuth,
@@ -97,7 +99,7 @@ export {
     redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
-    LinkClicked,
+    PasswordlessLinkClicked,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

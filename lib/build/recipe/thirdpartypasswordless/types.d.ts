@@ -11,7 +11,7 @@ import {
     PasswordlessSignInUpAction,
     PasswordlessUser,
     SignInUpFeatureConfigInput as PwlessSignInUpFeatureConfigInput,
-    ChildProps as PwlessChildProps,
+    SignInUpChildProps as PwlessChildProps,
     SignInUpState as PWlessSignInUpState,
 } from "../passwordless/types";
 import {
@@ -33,7 +33,6 @@ import {
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
-    User,
     UserInputOverride as AuthRecipeUserInputOverride,
 } from "../authRecipeWithEmailVerification/types";
 import PWlessRecipe from "../passwordless/recipe";
@@ -46,6 +45,7 @@ import { Header } from "./components/themes/signInUp/header";
 import { CountryCode } from "libphonenumber-js";
 import { Dispatch } from "react";
 import { SignInUpScreens } from "../passwordless/components/themes/signInUp";
+import { User } from "../authRecipe/types";
 declare type WithRenamedProp<T, K extends keyof T, L extends string> = Omit<T, K> & {
     [P in L]: T[K];
 };
@@ -56,7 +56,7 @@ export declare type ComponentOverrideMap = Omit<PasswordlessOverrideMap, "Passwo
 export declare type SignInUpFeatureConfigInput = WithRenamedProp<
     PwlessSignInUpFeatureConfigInput,
     "emailOrPhoneFormStyle",
-    "providerAndEmailOrPhoneFormStyle"
+    "thirdPartyProviderAndEmailOrPhoneFormStyle"
 > & {
     providers?: (Provider | CustomProviderConfig)[];
 };
@@ -102,7 +102,7 @@ export declare type Config = UserInput &
 export declare type NormalisedConfig = {
     passwordlessUserInput: PwlessUserInput | undefined;
     thirdpartyUserInput: TPUserInput | undefined;
-    providerAndEmailOrPhoneFormStyle: Styles | undefined;
+    thirdPartyProviderAndEmailOrPhoneFormStyle: Styles | undefined;
     override: {
         functions: (
             originalImplementation: TPPWlessRecipeInterface,
@@ -235,7 +235,7 @@ export declare type TPPWlessRecipeInterface = {
         phoneNumber: string;
         config: PasswordlessConfig;
     }) => Promise<boolean>;
-    getLoginAttemptInfo: () =>
+    getPasswordlessLoginAttemptInfo: () =>
         | Promise<
               | undefined
               | {
@@ -258,7 +258,7 @@ export declare type TPPWlessRecipeInterface = {
               redirectToPath?: string;
           }
         | undefined;
-    setLoginAttemptInfo: (input: {
+    setPasswordlessLoginAttemptInfo: (input: {
         deviceId: string;
         preAuthSessionId: string;
         contactInfo: string;

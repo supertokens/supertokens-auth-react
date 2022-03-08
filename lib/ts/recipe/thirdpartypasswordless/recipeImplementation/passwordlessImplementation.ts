@@ -8,8 +8,8 @@ export default function getImpl(oI: TPPWlessRecipeInterface): PasswordlessRecipe
         createCode: oI.createCode.bind(oI),
         doesEmailExist: oI.doesPasswordlessUserEmailExist.bind(oI),
         doesPhoneNumberExist: oI.doesPasswordlessUserPhoneNumberExist.bind(oI),
-        getLoginAttemptInfo: oI.getLoginAttemptInfo.bind(oI),
+        getLoginAttemptInfo: oI.getPasswordlessLoginAttemptInfo.bind(oI),
         resendCode: oI.resendCode.bind(oI),
-        setLoginAttemptInfo: oI.setLoginAttemptInfo.bind(oI),
+        setLoginAttemptInfo: oI.setPasswordlessLoginAttemptInfo.bind(oI),
     };
 }

@@ -40,7 +40,7 @@ import { UserInputCodeForm } from "../../../../passwordless/components/themes/si
 import { EmailOrPhoneForm } from "../../../../passwordless/components/themes/signInUp/emailOrPhoneForm";
 import { PhoneForm } from "../../../../passwordless/components/themes/signInUp/phoneForm";
 import { EmailForm } from "../../../../passwordless/components/themes/signInUp/emailForm";
-import { ChildProps } from "../../../../passwordless/types";
+import { SignInUpChildProps as PwlessSignInUpChildProps } from "../../../../passwordless/types";
 
 const SignInUpTheme: React.FC<ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen> = (props) => {
     const t = useTranslation();
@@ -146,7 +146,7 @@ function SignInUpThemeWrapper(props: ThirdPartyPasswordlessSignInAndUpThemeProps
         activeStyle = props.passwordlessRecipe!.config.signInUpFeature.userInputCodeFormStyle;
     } else {
         // This case also includes undefined which means that passwordless is disabled
-        activeStyle = props.config.providerAndEmailOrPhoneFormStyle;
+        activeStyle = props.config.thirdPartyProviderAndEmailOrPhoneFormStyle;
     }
 
     // This style provider will override the parent with the screen specific user config
@@ -166,7 +166,10 @@ function SignInUpThemeWrapper(props: ThirdPartyPasswordlessSignInAndUpThemeProps
 export default SignInUpThemeWrapper;
 
 // Simple convenience function
-function getCommonPwlessProps(childProps: ChildProps, props: ThirdPartyPasswordlessSignInAndUpThemeProps) {
+function getCommonPwlessProps(
+    childProps: PwlessSignInUpChildProps,
+    props: ThirdPartyPasswordlessSignInAndUpThemeProps
+) {
     return {
         recipeImplementation: childProps.recipeImplementation,
         config: childProps.config,

@@ -27,7 +27,7 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
         config.signInUpFeature.providers === undefined ||
         config.signInUpFeature.providers.length === 0;
     if (disablePasswordless && disableThirdParty) {
-        throw new Error("You need to enable either email password or third party providers login.");
+        throw new Error("You need to enable either passwordless or third party providers login.");
     }
 
     const override: any = {
@@ -36,14 +36,14 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
         ...config.override,
     };
 
-    const providerAndEmailOrPhoneFormStyle =
-        config?.signInUpFeature?.providerAndEmailOrPhoneFormStyle === undefined
+    const thirdPartyProviderAndEmailOrPhoneFormStyle =
+        config?.signInUpFeature?.thirdPartyProviderAndEmailOrPhoneFormStyle === undefined
             ? {}
-            : config?.signInUpFeature.providerAndEmailOrPhoneFormStyle;
+            : config?.signInUpFeature.thirdPartyProviderAndEmailOrPhoneFormStyle;
     return {
         ...normaliseAuthRecipeWithEmailVerificationConfig(config),
 
-        providerAndEmailOrPhoneFormStyle,
+        thirdPartyProviderAndEmailOrPhoneFormStyle,
         thirdpartyUserInput: disableThirdParty
             ? undefined
             : {
@@ -55,7 +55,7 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   preAPIHook: config.preAPIHook,
                   signInAndUpFeature: {
                       ...config.signInUpFeature,
-                      style: providerAndEmailOrPhoneFormStyle,
+                      style: thirdPartyProviderAndEmailOrPhoneFormStyle,
                   },
                   oAuthCallbackScreen: config.oAuthCallbackScreen,
                   useShadowDom: config.useShadowDom,
@@ -77,7 +77,7 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
                   useShadowDom: config.useShadowDom,
                   signInUpFeature: {
                       ...config.signInUpFeature,
-                      emailOrPhoneFormStyle: providerAndEmailOrPhoneFormStyle,
+                      emailOrPhoneFormStyle: thirdPartyProviderAndEmailOrPhoneFormStyle,
                   },
                   linkClickedScreenFeature: config.linkClickedScreenFeature,
                   override: {

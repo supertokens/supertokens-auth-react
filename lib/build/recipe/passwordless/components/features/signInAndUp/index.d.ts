@@ -1,6 +1,6 @@
 import * as React from "react";
 import Recipe from "../../../recipe";
-import { RecipeInterface, PasswordlessSignInUpAction, SignInUpState, ChildProps } from "../../../types";
+import { RecipeInterface, PasswordlessSignInUpAction, SignInUpState, SignInUpChildProps } from "../../../types";
 import { FeatureBaseProps } from "../../../../../types";
 export declare const useSuccessInAnotherTabChecker: (
     state: SignInUpState,
@@ -15,14 +15,14 @@ export declare function useChildProps(
     state: SignInUpState,
     callingConsumeCodeRef: React.MutableRefObject<boolean>,
     history: any
-): ChildProps;
+): SignInUpChildProps;
 export declare function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     callingConsumeCodeRef: React.MutableRefObject<boolean>,
     history: any
-): ChildProps | undefined;
+): SignInUpChildProps | undefined;
 export declare const SignInUpFeature: React.FC<
     FeatureBaseProps & {
         recipe: Recipe;
