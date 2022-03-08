@@ -90,7 +90,6 @@ class ResetPasswordUsingToken extends PureComponent<
         };
 
         const props = {
-            recipeImplementation: this.props.recipe.recipeImpl,
             config: this.props.recipe.config,
             submitNewPasswordForm: submitNewPasswordForm,
             enterEmailForm: enterEmailForm,

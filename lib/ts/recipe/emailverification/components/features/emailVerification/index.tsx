@@ -136,7 +136,6 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
                   };
 
         const props = {
-            recipeImplementation: this.modifiedRecipeImplementation,
             config: this.props.recipe.config,
             sendVerifyEmailScreen: sendVerifyEmailScreen,
             verifyEmailLinkClickedScreen,

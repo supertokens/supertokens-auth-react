@@ -59,7 +59,6 @@ export declare type OnHandleEventContext = {
     action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
 };
 export declare type EmailVerificationThemeProps = {
-    recipeImplementation: RecipeInterface;
     sendVerifyEmailScreen: SendVerifyEmailThemeProps;
     verifyEmailLinkClickedScreen?: VerifyEmailLinkClickedThemeProps;
     config: NormalisedConfig;
