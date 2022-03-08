@@ -177,11 +177,11 @@ function getRecipeList() {
             override: {
                 functions: (oI) => {
                     return {
-                        addAxiosInterceptors: (input) => {
-                            return oI.addAxiosInterceptors(input);
+                        addAxiosInterceptors: (instance) => {
+                            return oI.addAxiosInterceptors(instance);
                         },
-                        addFetchInterceptorsAndReturnModifiedFetch: (input) => {
-                            return oI.addFetchInterceptorsAndReturnModifiedFetch(input);
+                        addFetchInterceptorsAndReturnModifiedFetch: (f) => {
+                            return oI.addFetchInterceptorsAndReturnModifiedFetch(f);
                         },
                         doesSessionExist: (input) => {
                             return oI.doesSessionExist(input);

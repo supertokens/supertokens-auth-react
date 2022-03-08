@@ -36,17 +36,17 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
                 userContext,
             });
             if (response.status === "ERROR") {
-                props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+                return props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
             }
         } catch (err) {
             if (STGeneralError.isThisError(err)) {
-                props.dispatch({
+                return props.dispatch({
                     type: "setError",
                     error: err.message,
                 });
             }
 
-            props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+            return props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
         }
     };
 

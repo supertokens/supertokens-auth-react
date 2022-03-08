@@ -186,7 +186,6 @@ export declare type OnHandleEventContext =
           };
       };
 export declare type ResetPasswordUsingTokenThemeProps = {
-    recipeImplementation: RecipeInterface;
     enterEmailForm: EnterEmailProps;
     submitNewPasswordForm: SubmitNewPasswordProps | undefined;
     config: NormalisedConfig;

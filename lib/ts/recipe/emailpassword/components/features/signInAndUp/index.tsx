@@ -179,7 +179,6 @@ export function useChildProps(
         const signInFeature = signInAndUpFeature.signInForm;
 
         const signInForm = {
-            recipe,
             recipeImplementation,
             config: recipe.config,
             styleFromInit: signInFeature.style,
@@ -192,7 +191,6 @@ export function useChildProps(
         };
 
         const signUpForm = {
-            recipe,
             recipeImplementation,
             config: recipe.config,
             styleFromInit: signUpFeature.style,
