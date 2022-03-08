@@ -87,7 +87,6 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        token: string;
         userContext?: any;
     }): Promise<
         | {
