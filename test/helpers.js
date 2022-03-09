@@ -64,6 +64,7 @@ export async function waitFor(ms) {
  */
 
 export async function waitForSTElement(page, selector, inverted = false) {
+    await page.waitForSelector(ST_ROOT_SELECTOR);
     const res = await page.waitForFunction(
         (elementSelector, rootSelector, inverted) => {
             const root = document.querySelector(rootSelector);

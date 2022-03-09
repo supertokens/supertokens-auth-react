@@ -92,7 +92,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
 
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                 consoleLogs.length = 0;
             });
@@ -173,7 +173,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
 
                 beforeEach(async function () {
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                    page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                     consoleLogs.length = 0;
                 });
@@ -261,7 +261,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
 
                 beforeEach(async function () {
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                    page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                     consoleLogs.length = 0;
                 });
@@ -351,7 +351,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
 
                 beforeEach(async function () {
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                    page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                     consoleLogs.length = 0;
                 });
@@ -446,7 +446,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
 
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                 consoleLogs.length = 0;
             });
@@ -1194,7 +1194,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
 
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                 consoleLogs.length = 0;
             });

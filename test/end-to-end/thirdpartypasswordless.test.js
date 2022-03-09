@@ -90,13 +90,13 @@ describe("SuperTokens Third Party Passwordless", function () {
         beforeEach(async function () {
             consoleLogs = [];
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK"),
-                await Promise.all([
-                    page.goto(
-                        `${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartypasswordless&passwordlessContactMethodType=EMAIL_OR_PHONE`
-                    ),
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                ]);
+            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE_AND_MAGIC_LINK");
+            await Promise.all([
+                page.goto(
+                    `${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartypasswordless&passwordlessContactMethodType=EMAIL_OR_PHONE`
+                ),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
         });
 
         afterEach(async function () {
@@ -106,7 +106,7 @@ describe("SuperTokens Third Party Passwordless", function () {
         it("No account consolidation", async function () {
             // 1. Sign up with credentials
             await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE");
-            page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+            await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -144,6 +144,55 @@ describe("SuperTokens Third Party Passwordless", function () {
 
             // 4. Compare userIds
             assert.notDeepStrictEqual(thirdPartyUserId, passwordlessUserId);
+        });
+
+        it("Successful signin with passwordless w/ required email verification", async function () {
+            await setPasswordlessFlowType("EMAIL_OR_PHONE", "USER_INPUT_CODE");
+            await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+
+            await setInputValues(page, [{ name: "emailOrPhone", value: "surely-not-verified" + email }]);
+            await submitForm(page);
+            await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+            const loginAttemptInfo = JSON.parse(
+                await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+            );
+            const device = await getPasswordlessDevice(loginAttemptInfo);
+            await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+            await submitForm(page);
+
+            await Promise.all([page.waitForSelector(".sessionInfo-user-id"), page.waitForNetworkIdle()]);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE CREATE_CODE",
+                "ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
+                "ST_LOGS THIRDPARTYPASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
+                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE CONSUME_CODE",
+                "ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS THIRDPARTYPASSWORDLESS ON_HANDLE_EVENT SUCCESS",
+                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                "ST_LOGS THIRDPARTYPASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE EMAIL_VERIFICATION IS_EMAIL_VERIFIED",
+                "ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS IS_EMAIL_VERIFIED",
+            ]);
         });
     });
 
