@@ -481,9 +481,20 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
                         log(`DOES_EMAIL_EXIST`);
                         return implementation.doesEmailExist(...args);
                     },
-                    sendPasswordResetEmail(...args) {
+                    sendPasswordResetEmail(input) {
+                        if (input.userContext["key"] === "value") {
+                            log(`SEND_PASSWORD_RESET_EMAIL RECEIVED_USER_CONTEXT`);
+                        }
+
                         log(`SEND_PASSWORD_RESET_EMAIL`);
-                        return implementation.sendPasswordResetEmail(...args);
+                        return implementation.sendPasswordResetEmail(input);
+                    },
+                    getResetPasswordTokenFromURL(input) {
+                        if (input.userContext["key"] === "value") {
+                            log(`GET_RESET_TOKEN_FROM_URL RECEIVED_USER_CONTEXT`);
+                        }
+
+                        return implementation.getResetPasswordTokenFromURL(input);
                     },
                     signIn(...args) {
                         log(`SIGN_IN`);
@@ -493,9 +504,13 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
                         log(`SIGN_UP`);
                         return implementation.signUp(...args);
                     },
-                    submitNewPassword(...args) {
+                    submitNewPassword(input) {
+                        if (input.userContext["key"] === "value") {
+                            log(`SUBMIT_NEW_PASSWORD RECEIVED_USER_CONTEXT`);
+                        }
+
                         log(`SUBMIT_NEW_PASSWORD`);
-                        return implementation.submitNewPassword(...args);
+                        return implementation.submitNewPassword(input);
                     },
                 };
             },

@@ -119,9 +119,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         if (action === "SESSION_CREATED" || action === "REFRESH_SESSION") {
             const [userId, accessTokenPayload] = await Promise.all([
                 this.getUserId({
+                    // TODO NEMI: Is this OK?
                     userContext: {},
                 }),
                 this.getAccessTokenPayloadSecurely({
+                    // TODO NEMI: Is this OK?
                     userContext: {},
                 }),
             ]);

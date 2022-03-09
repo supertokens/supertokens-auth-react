@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword";
+import { SignInAndUp, ResetPasswordUsingToken } from "supertokens-auth-react/recipe/emailpassword";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
 import Auth from "./Auth";
 
@@ -51,6 +51,16 @@ function AppWithReactDomRouter(props) {
 
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/custom-supertokens-login" element={<SignInAndUp />} />
+                        <Route
+                            path="/custom-reset-password"
+                            element={
+                                <ResetPasswordUsingToken
+                                    userContext={{
+                                        key: "value",
+                                    }}
+                                />
+                            }
+                        />
                     </Routes>
                 </BaseComponent>
             </Router>
