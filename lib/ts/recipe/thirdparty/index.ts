@@ -75,6 +75,8 @@ export default class Wrapper {
     static ThirdPartyAuth = ThirdPartyAuth;
     static SignInAndUp = (prop?: any) => ThirdParty.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
+    static SignInAndUpCallback = (prop?: any) =>
+        ThirdParty.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
     static EmailVerification = (prop?: any) =>
         ThirdParty.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
@@ -85,6 +87,7 @@ const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
+const SignInAndUpCallback = Wrapper.SignInAndUpCallback;
 const EmailVerification = Wrapper.EmailVerification;
 
 export {
@@ -97,6 +100,7 @@ export {
     isEmailVerified,
     SignInAndUp,
     SignInAndUpTheme,
+    SignInAndUpCallback,
     signOut,
     redirectToAuth,
     EmailVerification,

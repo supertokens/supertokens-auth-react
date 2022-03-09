@@ -37,7 +37,7 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
         context: import("../authRecipeWithEmailVerification/types").GetRedirectionURLContext
     ) => Promise<string>;
     getFeatureComponent: (
-        componentName: "emailverification" | "signInUp" | "linkClickedScreen",
+        componentName: "emailverification" | "signInUp" | "linkClickedScreen" | "signinupcallback",
         props: any
     ) => JSX.Element;
     static init(

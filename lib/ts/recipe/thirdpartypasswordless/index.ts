@@ -68,6 +68,8 @@ export default class Wrapper {
     static SignInAndUp = (prop?: any) =>
         ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
     static SignInAndUpTheme = SignInUpTheme;
+    static ThirdPartySignInAndUpCallback = (prop?: any) =>
+        ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
     static EmailVerification = (prop?: any) =>
         ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
@@ -82,6 +84,7 @@ const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
+const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
 const EmailVerification = Wrapper.EmailVerification;
 const PasswordlessLinkClicked = Wrapper.PasswordlessLinkClicked;
 
@@ -95,6 +98,7 @@ export {
     isEmailVerified,
     SignInAndUp,
     SignInUpTheme,
+    ThirdPartySignInAndUpCallback,
     signOut,
     redirectToAuth,
     EmailVerification,

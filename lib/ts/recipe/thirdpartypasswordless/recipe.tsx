@@ -155,7 +155,7 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
     };
 
     getFeatureComponent = (
-        componentName: "emailverification" | "signInUp" | "linkClickedScreen",
+        componentName: "emailverification" | "signInUp" | "linkClickedScreen" | "signinupcallback",
         props: any
     ): JSX.Element => {
         if (componentName === "signInUp") {
@@ -173,6 +173,13 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
                 );
             }
             return this.passwordlessRecipe.getFeatureComponent(componentName, props);
+        } else if (componentName === "signinupcallback") {
+            if (this.thirdPartyRecipe === undefined) {
+                throw new Error(
+                    "Embedding this component requires the thirdparty recipe to be enabled. Please check the value of signInUpFeature.providers in the configuration."
+                );
+            }
+            return this.thirdPartyRecipe.getFeatureComponent(componentName, props);
         } else {
             return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);
         }
