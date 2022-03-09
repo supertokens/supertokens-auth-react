@@ -66,8 +66,10 @@ import { Dispatch } from "react";
 import { SignInUpScreens } from "../passwordless/components/themes/signInUp";
 import { User } from "../authRecipe/types";
 
-type WithRenamedProp<T, K extends keyof T, L extends string> = Omit<T, K> & {
-    [P in L]: T[K];
+// This defines a new type by renaming a single K property to L and as optional
+// If we upgrade to typescript 4.1> this could just keep the optionality of the original (with the as keyword)
+type WithRenamedOptionalProp<T, K extends keyof T, L extends string> = Omit<T, K> & {
+    [P in L]?: T[K];
 };
 
 export type ComponentOverrideMap = Omit<PasswordlessOverrideMap, "PasswordlessSignInUpHeader_Override"> &
@@ -75,7 +77,7 @@ export type ComponentOverrideMap = Omit<PasswordlessOverrideMap, "PasswordlessSi
         ThirdPartyPasswordlessHeader_Override?: ComponentOverride<typeof Header>;
     };
 
-export type SignInUpFeatureConfigInput = WithRenamedProp<
+export type SignInUpFeatureConfigInput = WithRenamedOptionalProp<
     PwlessSignInUpFeatureConfigInput,
     "emailOrPhoneFormStyle",
     "thirdPartyProviderAndEmailOrPhoneFormStyle"

@@ -46,14 +46,14 @@ import { CountryCode } from "libphonenumber-js";
 import { Dispatch } from "react";
 import { SignInUpScreens } from "../passwordless/components/themes/signInUp";
 import { User } from "../authRecipe/types";
-declare type WithRenamedProp<T, K extends keyof T, L extends string> = Omit<T, K> & {
-    [P in L]: T[K];
+declare type WithRenamedOptionalProp<T, K extends keyof T, L extends string> = Omit<T, K> & {
+    [P in L]?: T[K];
 };
 export declare type ComponentOverrideMap = Omit<PasswordlessOverrideMap, "PasswordlessSignInUpHeader_Override"> &
     Omit<ThirdPartyOverrideMap, "ThirdPartySignUpFooter_Override" | "ThirdPartySignUpHeader_Override"> & {
         ThirdPartyPasswordlessHeader_Override?: ComponentOverride<typeof Header>;
     };
-export declare type SignInUpFeatureConfigInput = WithRenamedProp<
+export declare type SignInUpFeatureConfigInput = WithRenamedOptionalProp<
     PwlessSignInUpFeatureConfigInput,
     "emailOrPhoneFormStyle",
     "thirdPartyProviderAndEmailOrPhoneFormStyle"
