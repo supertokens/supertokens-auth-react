@@ -105,7 +105,8 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
-                    defaultStore={defaultTranslationsThirdParty}>
+                    defaultStore={defaultTranslationsThirdParty}
+                    userContext={this.props.userContext}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}

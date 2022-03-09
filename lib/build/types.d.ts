@@ -86,6 +86,7 @@ export declare type ThemeBaseProps = {
 export declare type FeatureBaseProps = {
     children?: React.ReactNode;
     history?: any;
+    userContext?: any;
 };
 export declare type PreAPIHookFunction = (context: { requestInit: RequestInit; url: string }) => Promise<{
     url: string;

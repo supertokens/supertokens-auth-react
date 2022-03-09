@@ -53,10 +53,12 @@ export default function PasswordlessAuthWrapper({
     children,
     requireAuth,
     onSessionExpired,
+    userContext,
 }: {
     children: React.ReactNode;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
+    userContext?: any;
 }) {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
@@ -66,7 +68,8 @@ export default function PasswordlessAuthWrapper({
             history={history}
             onSessionExpired={onSessionExpired}
             requireAuth={requireAuth}
-            recipe={Passwordless.getInstanceOrThrow()}>
+            recipe={Passwordless.getInstanceOrThrow()}
+            userContext={userContext}>
             {children}
         </PasswordlessAuthMemo>
     );

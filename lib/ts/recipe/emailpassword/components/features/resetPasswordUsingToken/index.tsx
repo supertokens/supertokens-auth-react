@@ -99,7 +99,8 @@ class ResetPasswordUsingToken extends PureComponent<
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
-                    defaultStore={defaultTranslationsEmailPassword}>
+                    defaultStore={defaultTranslationsEmailPassword}
+                    userContext={this.props.userContext}>
                     <Fragment>
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <ResetPasswordUsingTokenTheme {...props} />}
