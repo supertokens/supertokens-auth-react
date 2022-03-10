@@ -176,6 +176,7 @@ export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
           action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+          userContext: any;
       }
     | {
           action: "SUCCESS";
@@ -184,6 +185,7 @@ export declare type OnHandleEventContext =
               id: string;
               email: string;
           };
+          userContext: any;
       };
 export declare type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailProps;

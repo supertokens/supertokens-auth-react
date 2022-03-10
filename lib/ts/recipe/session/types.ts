@@ -19,10 +19,12 @@ import OverrideableBuilder from "supertokens-js-override";
 export type RecipeEvent =
     | {
           action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED";
+          userContext: any;
       }
     | {
           action: "UNAUTHORISED";
           sessionExpiredOrRevoked: boolean;
+          userContext: any;
       };
 
 export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextType };

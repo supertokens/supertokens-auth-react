@@ -45,6 +45,7 @@ export default function getRecipeImplementation(recipeInput: {
             if (response.status === "OK") {
                 recipeInput.onHandleEvent({
                     action: "PASSWORD_RESET_SUCCESSFUL",
+                    userContext: input.userContext,
                 });
             }
 
@@ -73,6 +74,7 @@ export default function getRecipeImplementation(recipeInput: {
             if (response.status === "OK") {
                 recipeInput.onHandleEvent({
                     action: "RESET_PASSWORD_EMAIL_SENT",
+                    userContext: input.userContext,
                 });
             }
             return response;
@@ -103,6 +105,7 @@ export default function getRecipeImplementation(recipeInput: {
                     action: "SUCCESS",
                     isNewUser: true,
                     user: response.user,
+                    userContext: input.userContext,
                 });
             }
 
@@ -137,6 +140,7 @@ export default function getRecipeImplementation(recipeInput: {
                     action: "SUCCESS",
                     isNewUser: false,
                     user: response.user,
+                    userContext: input.userContext,
                 });
             }
             return response;

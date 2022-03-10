@@ -130,6 +130,7 @@ export type OnHandleEventContext =
           action: "SUCCESS";
           isNewUser: boolean;
           user: { id: string; email: string };
+          userContext: any;
       };
 
 export type SignInAndUpThemeProps = {

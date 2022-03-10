@@ -78,6 +78,7 @@ export declare type OnHandleEventContext =
               id: string;
               email: string;
           };
+          userContext: any;
       };
 export declare type SignInAndUpThemeProps = {
     featureState: {

@@ -20,7 +20,7 @@
 import Session from "../session/recipe";
 import RecipeModule from "../recipeModule";
 import { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
-import { getCurrentNormalisedUrlPath } from "../../utils";
+import { getCurrentNormalisedUrlPath, getNormalisedUserContext } from "../../utils";
 
 export default abstract class AuthRecipe<
     T,
@@ -42,12 +42,16 @@ export default abstract class AuthRecipe<
         }
     };
 
-    signOut = async (): Promise<void> => {
-        return await Session.getInstanceOrThrow().signOut();
+    signOut = async (input?: { userContext?: any }): Promise<void> => {
+        return await Session.getInstanceOrThrow().signOut({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     };
 
-    doesSessionExist = async (): Promise<boolean> => {
-        return await Session.getInstanceOrThrow().doesSessionExist();
+    doesSessionExist = async (input?: { userContext?: any }): Promise<boolean> => {
+        return await Session.getInstanceOrThrow().doesSessionExist({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     };
 
     redirectToAuthWithRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {

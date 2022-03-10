@@ -66,7 +66,10 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                 return parentSessionContext;
             }
 
-            const sessionExists = await session.current.doesSessionExist();
+            const sessionExists = await session.current.doesSessionExist({
+                // TODO NEMI: Handle user context in UI components
+                userContext: {},
+            });
 
             if (sessionExists === false) {
                 return {
@@ -78,8 +81,14 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
             return {
                 doesSessionExist: true,
-                accessTokenPayload: await session.current.getAccessTokenPayloadSecurely(),
-                userId: await session.current.getUserId(),
+                accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
+                    // TODO NEMI: Handle user context in UI components
+                    userContext: {},
+                }),
+                userId: await session.current.getUserId({
+                    // TODO NEMI: Handle user context in UI components
+                    userContext: {},
+                }),
             };
         };
 
