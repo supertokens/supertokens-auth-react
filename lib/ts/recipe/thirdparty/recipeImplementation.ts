@@ -59,6 +59,7 @@ export default function getRecipeImplementation(recipeInput: {
                     action: "SUCCESS",
                     isNewUser: response.createdNewUser,
                     user: response.user,
+                    userContext: input.userContext,
                 });
             }
 

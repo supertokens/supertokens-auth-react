@@ -34,6 +34,7 @@ export default function getRecipeImplementation(recipeInput: {
             if (response.status === "OK") {
                 recipeInput.onHandleEvent({
                     action: "EMAIL_VERIFIED_SUCCESSFUL",
+                    userContext: input.userContext,
                 });
             }
 
@@ -51,6 +52,7 @@ export default function getRecipeImplementation(recipeInput: {
             if (response.status === "OK") {
                 recipeInput.onHandleEvent({
                     action: "VERIFY_EMAIL_SENT",
+                    userContext: input.userContext,
                 });
             }
 

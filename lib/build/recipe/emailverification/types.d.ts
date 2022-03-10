@@ -57,6 +57,7 @@ export declare type PreAPIHookContext = {
 };
 export declare type OnHandleEventContext = {
     action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
+    userContext: any;
 };
 export declare type EmailVerificationThemeProps = {
     sendVerifyEmailScreen: SendVerifyEmailThemeProps;
