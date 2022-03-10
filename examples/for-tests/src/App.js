@@ -495,7 +495,7 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
                     },
                     submitNewPassword(...args) {
                         log(`SUBMIT_NEW_PASSWORD`);
-                        return implementation.submitNewPassword(args);
+                        return implementation.submitNewPassword(...args);
                     },
                 };
             },

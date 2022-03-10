@@ -11,6 +11,13 @@ import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from
 import Auth from "./Auth";
 
 function AppWithReactDomRouter(props) {
+    /**
+     * For user context tests we add this query param so the additional routes
+     * dont interfere with other tests
+     */
+    const urlParams = new URLSearchParams(window.location.search);
+    const isForUserContext = urlParams.get("forUserContext") === "true";
+
     return (
         <div className="App">
             <Router>
@@ -58,16 +65,18 @@ function AppWithReactDomRouter(props) {
                         <Route path="/custom-supertokens-login" element={<SignInAndUp />} />
 
                         {/* User context paths */}
-                        <Route
-                            path="/auth/reset-password"
-                            element={
-                                <ResetPasswordUsingToken
-                                    userContext={{
-                                        key: "value",
-                                    }}
-                                />
-                            }
-                        />
+                        {isForUserContext && (
+                            <Route
+                                path="/auth/reset-password"
+                                element={
+                                    <ResetPasswordUsingToken
+                                        userContext={{
+                                            key: "value",
+                                        }}
+                                    />
+                                }
+                            />
+                        )}
 
                         <Route
                             path="/auth/customcallback/auth0"
@@ -80,16 +89,18 @@ function AppWithReactDomRouter(props) {
                             }
                         />
 
-                        <Route
-                            path="/auth"
-                            element={
-                                <TPSignInAndUp
-                                    userContext={{
-                                        key: "value",
-                                    }}
-                                />
-                            }
-                        />
+                        {isForUserContext && (
+                            <Route
+                                path="/auth"
+                                element={
+                                    <TPSignInAndUp
+                                        userContext={{
+                                            key: "value",
+                                        }}
+                                    />
+                                }
+                            />
+                        )}
                     </Routes>
                 </BaseComponent>
             </Router>

@@ -87,20 +87,22 @@ describe("SuperTokens userContext with UI components test", function () {
 
     it("Test that user context gets passed correctly when resetting password", async function () {
         await Promise.all([
-            page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword&mode=OFF`),
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword&mode=OFF&forUserContext=true`),
             page.waitForNavigation({ waitUntil: "networkidle0" }),
         ]);
         // Sign Up first.
         await toggleSignInSignUp(page);
         await defaultSignUp(page, "thirdpartyemailpassword");
 
-        await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?disableDefaultImplementation=true`);
+        await page.goto(
+            `${TEST_CLIENT_BASE_URL}/auth/reset-password?disableDefaultImplementation=true&forUserContext=true`
+        );
 
         await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
         await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API);
 
         const latestURLWithToken = await getLatestURLWithToken();
-        await page.goto(latestURLWithToken + "&disableDefaultImplementation=true");
+        await page.goto(latestURLWithToken + "&disableDefaultImplementation=true&forUserContext=true");
 
         await setInputValues(page, [
             { name: "password", value: "NEW_Str0ngP@ssw0rd" },
@@ -147,7 +149,7 @@ describe("SuperTokens userContext with UI components test", function () {
         });
 
         await Promise.all([
-            page.goto(`${TEST_CLIENT_BASE_URL}/auth?disableDefaultImplementation=true`),
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth?disableDefaultImplementation=true&forUserContext=true`),
             page.waitForNavigation({ waitUntil: "networkidle0" }),
         ]);
 
