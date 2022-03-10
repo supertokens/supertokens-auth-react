@@ -1,4 +1,5 @@
 /// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
@@ -6,6 +7,7 @@ import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { RecipeInterface, UserType } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import { SignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -155,6 +157,8 @@ export default class Wrapper {
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
+    static SignInAndUpCallback: (prop?: any) => JSX.Element;
+    static SignInAndUpCallbackTheme: import("react").ComponentType<{}>;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
@@ -172,6 +176,7 @@ declare const emailPasswordSignUp: typeof Wrapper.emailPasswordSignUp;
 declare const doesEmailExist: typeof Wrapper.doesEmailExist;
 declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
 declare const thirdPartySignInAndUp: typeof Wrapper.thirdPartySignInAndUp;
+declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
 export {
     ThirdPartyEmailPasswordAuth,
     init,
@@ -184,6 +189,8 @@ export {
     sendVerificationEmail,
     SignInAndUp,
     SignInAndUpTheme,
+    SignInAndUpCallback,
+    SignInAndUpCallbackTheme,
     signOut,
     redirectToAuth,
     submitNewPassword,

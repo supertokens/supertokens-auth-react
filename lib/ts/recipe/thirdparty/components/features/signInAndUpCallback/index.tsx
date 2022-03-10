@@ -32,7 +32,7 @@ import { defaultTranslationsThirdParty } from "../../themes/translations";
 import STGeneralError from "supertokens-web-js/lib/build/error";
 import { getNormalisedUserContext } from "../../../../../utils";
 
-type PropType = FeatureBaseProps & { recipe: Recipe; userContext?: any };
+type PropType = FeatureBaseProps & { recipe: Recipe };
 
 class SignInAndUpCallback extends PureComponent<PropType, unknown> {
     componentDidMount = async (): Promise<void> => {

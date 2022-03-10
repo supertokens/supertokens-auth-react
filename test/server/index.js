@@ -278,6 +278,12 @@ function initST({ passwordlessConfig } = {}) {
             signUpFeature: {
                 formFields,
             },
+            resetPasswordUsingTokenFeature: {
+                createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
+                    console.log(passwordResetURLWithToken);
+                    latestURLWithToken = passwordResetURLWithToken;
+                },
+            },
             providers: [
                 ThirdPartyEmailPassword.Google({
                     clientSecret: process.env.GOOGLE_CLIENT_SECRET,

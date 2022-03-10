@@ -28,7 +28,7 @@ import {
     OnHandleEventContext,
     UserInput,
 } from "./types";
-import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { getNormalisedUserContext, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
@@ -40,7 +40,6 @@ import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import OverrideableBuilder from "supertokens-js-override";
-import { UserContextContext } from "../../usercontext";
 
 /*
  * Class.
@@ -127,17 +126,13 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
             );
         } else if (componentName === "signinupcallback") {
             return (
-                <UserContextContext.Consumer>
-                    {(value) => (
-                        <SignInAndUpCallback
-                            recipe={this}
-                            {...{
-                                ...props,
-                                userContext: value,
-                            }}
-                        />
-                    )}
-                </UserContextContext.Consumer>
+                <SignInAndUpCallback
+                    recipe={this}
+                    {...{
+                        ...props,
+                        userContext: getNormalisedUserContext(props.userContext),
+                    }}
+                />
             );
         } else {
             return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);

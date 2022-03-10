@@ -22,8 +22,17 @@ import {
     defaultSignUp,
     setInputValues,
     submitFormReturnRequestAndResponse,
+    assertProviders,
+    clickOnProviderButton,
+    loginWithAuth0,
 } from "../helpers";
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, RESET_PASSWORD_TOKEN_API, RESET_PASSWORD_API } from "../constants";
+import {
+    TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
+    RESET_PASSWORD_TOKEN_API,
+    RESET_PASSWORD_API,
+    SIGN_IN_UP_API,
+} from "../constants";
 import assert from "assert";
 
 // Run the tests in a DOM environment.
@@ -47,21 +56,17 @@ describe("SuperTokens userContext with UI components test", function () {
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true,
         });
-
         page = await browser.newPage();
-
-        // Sign Up first.
-        await Promise.all([
-            page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-            page.waitForNavigation({ waitUntil: "networkidle0" }),
-        ]);
-        await toggleSignInSignUp(page);
-        await defaultSignUp(page);
+        page.on("console", (consoleObj) => {
+            const log = consoleObj.text();
+            if (log.startsWith("ST_LOGS")) {
+                consoleLogs.push(log);
+            }
+        });
     });
 
     after(async function () {
         await browser.close();
-
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST",
         }).catch(console.error);
@@ -71,46 +76,136 @@ describe("SuperTokens userContext with UI components test", function () {
         }).catch(console.error);
     });
 
-    describe("Reset password using token tests", function () {
-        beforeEach(async function () {
-            page = await browser.newPage();
-            consoleLogs = [];
-            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-            page.on("console", (consoleObj) => {
-                const log = consoleObj.text();
-                if (log.startsWith("ST_LOGS")) {
-                    consoleLogs.push(log);
-                }
-            });
-            await page.goto(`${TEST_CLIENT_BASE_URL}/custom-reset-password`);
+    beforeEach(async function () {
+        consoleLogs = [];
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+    });
+
+    it("Test that user context gets passed correctly when resetting password", async function () {
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword&mode=OFF`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+        // Sign Up first.
+        await toggleSignInSignUp(page);
+        await defaultSignUp(page, "thirdpartyemailpassword");
+
+        await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?disableDefaultImplementation=true`);
+
+        await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
+        await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API);
+
+        const latestURLWithToken = await getLatestURLWithToken();
+        await page.goto(latestURLWithToken + "&disableDefaultImplementation=true");
+
+        await setInputValues(page, [
+            { name: "password", value: "NEW_Str0ngP@ssw0rd" },
+            { name: "confirm-password", value: "NEW_Str0ngP@ssw0rd" },
+        ]);
+        await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
+
+        assert(
+            consoleLogs.includes(
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SEND_PASSWORD_RESET_EMAIL RECEIVED_USER_CONTEXT"
+            )
+        );
+
+        assert(
+            consoleLogs.includes(
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SUBMIT_NEW_PASSWORD RECEIVED_USER_CONTEXT"
+            )
+        );
+
+        assert(
+            consoleLogs.includes(
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_RESET_TOKEN_FROM_URL RECEIVED_USER_CONTEXT"
+            )
+        );
+    });
+
+    it("Test that userContext is passed correctly when using third party with Auth0", async function () {
+        await page.setRequestInterception(true);
+        page.on("request", (req) => {
+            const originalURL = req.url();
+            // For this test we want to use the SignInUpCallback component manually
+            if (req.isNavigationRequest() && req.url().includes("/auth/callback/auth0")) {
+                const URLObj = new URL(originalURL);
+                URLObj.pathname = "/auth/customcallback/auth0";
+                req.respond({
+                    status: 302,
+                    headers: {
+                        location: URLObj.toString(),
+                    },
+                });
+            } else {
+                req.continue();
+            }
         });
 
-        it("Test that passing userContext to Reset password works", async function () {
-            await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
-            await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API);
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth?disableDefaultImplementation=true`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
 
-            // TODO NEMI: This is a hack, check if there is a better way
-            const latestURLWithToken = (await getLatestURLWithToken()).replace(
-                "/auth/reset-password",
-                "/custom-reset-password"
-            );
-            await page.goto(latestURLWithToken);
+        await assertProviders(page);
+        await clickOnProviderButton(page, "Auth0");
+        await Promise.all([
+            loginWithAuth0(page),
+            page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+        ]);
+        const pathname = await page.evaluate(() => window.location.pathname);
+        assert.deepStrictEqual(pathname, "/dashboard");
 
-            await setInputValues(page, [
-                { name: "password", value: "NEW_Str0ngP@ssw0rd" },
-                { name: "confirm-password", value: "NEW_Str0ngP@ssw0rd" },
-            ]);
-            await submitFormReturnRequestAndResponse(page, RESET_PASSWORD_API);
+        assert(
+            consoleLogs.includes(
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE RECEIVED_USER_CONTEXT"
+            )
+        );
 
-            assert(
-                consoleLogs.includes("ST_LOGS EMAIL_PASSWORD OVERRIDE SEND_PASSWORD_RESET_EMAIL RECEIVED_USER_CONTEXT")
-            );
+        assert(
+            consoleLogs.includes("ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GENERATE_STATE RECEIVED_USER_CONTEXT")
+        );
 
-            assert(consoleLogs.includes("ST_LOGS EMAIL_PASSWORD OVERRIDE SUBMIT_NEW_PASSWORD RECEIVED_USER_CONTEXT"));
+        assert(
+            consoleLogs.includes("ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SET_OAUTH_STATE RECEIVED_USER_CONTEXT")
+        );
 
-            assert(
-                consoleLogs.includes("ST_LOGS EMAIL_PASSWORD OVERRIDE GET_RESET_TOKEN_FROM_URL RECEIVED_USER_CONTEXT")
-            );
-        });
+        assert(
+            consoleLogs.includes(
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_AUTHORISATION_URL RECEIVED_USER_CONTEXT"
+            )
+        );
+
+        assert(
+            consoleLogs.includes("ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE SIGN_IN_AND_UP RECEIVED_USER_CONTEXT")
+        );
+
+        assert(
+            consoleLogs.includes("ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_STATE RECEIVED_USER_CONTEXT")
+        );
+
+        assert(consoleLogs.includes("ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE VERIFY_STATE RECEIVED_USER_CONTEXT"));
+
+        assert(
+            consoleLogs.includes(
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_AUTH_CODE_FROM_URL RECEIVED_USER_CONTEXT"
+            )
+        );
+
+        assert(
+            consoleLogs.includes(
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_OAUTH_AUTHORISATION_URL RECEIVED_USER_CONTEXT"
+            )
+        );
+
+        assert(
+            consoleLogs.includes(
+                "ST_LOGS THIRD_PARTY_EMAIL_PASSWORD OVERRIDE GET_AUTH_ERROR_FROM_URL RECEIVED_USER_CONTEXT"
+            )
+        );
     });
 });
