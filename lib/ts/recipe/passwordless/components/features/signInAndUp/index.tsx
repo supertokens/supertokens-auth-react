@@ -273,54 +273,45 @@ function getModifiedRecipeImplementation(
     return {
         ...recipe.recipeImpl,
         createCode: async (input) => {
-            try {
-                let contactInfo;
-                if ("email" in input) {
-                    contactInfo = input.email;
-                } else {
-                    contactInfo = formatPhoneNumberIntl(input.phoneNumber);
-                }
-
-                if ("email" in input) {
-                    const validationRes = await recipe.config.validateEmailAddress(input.email);
-                    if (validationRes !== undefined) {
-                        throw new STGeneralError(validationRes);
-                    }
-                }
-                if ("phoneNumber" in input) {
-                    const validationRes = await recipe.config.validatePhoneNumber(input.phoneNumber);
-                    if (validationRes !== undefined) {
-                        throw new STGeneralError(validationRes);
-                    }
-                }
-
-                const res = await recipe.recipeImpl.createCode(input);
-                if (res.status === "OK") {
-                    // This contactMethod refers to the one that was used to deliver the login info
-                    // This can be an important distinction in case both email and phone are allowed
-                    const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
-                    const loginAttemptInfo = {
-                        ...res,
-                        lastResend: new Date().getTime(),
-                        contactMethod,
-                        contactInfo,
-                        redirectToPath: getRedirectToPathFromURL(),
-                    };
-                    await recipe.recipeImpl.setLoginAttemptInfo({
-                        attemptInfo: loginAttemptInfo,
-                        userContext: input.userContext,
-                    });
-                    dispatch({ type: "startLogin", loginAttemptInfo });
-                }
-                return res;
-            } catch (e) {
-                if (STGeneralError.isThisError(e)) {
-                    // TODO NEMI: IDeally this should throw instead od dispatching
-                    dispatch({ type: "setError", error: e.message });
-                }
-
-                throw e;
+            let contactInfo;
+            if ("email" in input) {
+                contactInfo = input.email;
+            } else {
+                contactInfo = formatPhoneNumberIntl(input.phoneNumber);
             }
+
+            if ("email" in input) {
+                const validationRes = await recipe.config.validateEmailAddress(input.email);
+                if (validationRes !== undefined) {
+                    throw new STGeneralError(validationRes);
+                }
+            }
+            if ("phoneNumber" in input) {
+                const validationRes = await recipe.config.validatePhoneNumber(input.phoneNumber);
+                if (validationRes !== undefined) {
+                    throw new STGeneralError(validationRes);
+                }
+            }
+
+            const res = await recipe.recipeImpl.createCode(input);
+            if (res.status === "OK") {
+                // This contactMethod refers to the one that was used to deliver the login info
+                // This can be an important distinction in case both email and phone are allowed
+                const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
+                const loginAttemptInfo = {
+                    ...res,
+                    lastResend: new Date().getTime(),
+                    contactMethod,
+                    contactInfo,
+                    redirectToPath: getRedirectToPathFromURL(),
+                };
+                await recipe.recipeImpl.setLoginAttemptInfo({
+                    attemptInfo: loginAttemptInfo,
+                    userContext: input.userContext,
+                });
+                dispatch({ type: "startLogin", loginAttemptInfo });
+            }
+            return res;
         },
         resendCode: async (input) => {
             try {
