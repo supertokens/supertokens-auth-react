@@ -1,102 +1,34 @@
-import { RecipeInterface, NormalisedConfig } from "./types";
+import { OnHandleEventContext, PreAndPostAPIHookAction } from "./types";
 import { NormalisedAppInfo } from "../../types";
-import Querier from "../../querier";
-import { PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY } from "./constants";
-import { getLocalStorage, removeFromLocalStorage, setLocalStorage } from "../../utils";
+import { getRedirectToPathFromURL } from "../../utils";
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import {
+    RecipeOnHandleEventFunction,
+    RecipePostAPIHookFunction,
+    RecipePreAPIHookFunction,
+} from "../recipeModule/types";
+import WebJSRecipeImplementation from "supertokens-web-js/lib/build/recipe/passwordless/recipeImplementation";
 
-type FlowType = "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
-
-type CreateCodeApiResponse =
-    | {
-          status: "OK";
-          deviceId: string;
-          preAuthSessionId: string;
-          flowType: FlowType;
-      }
-    | {
-          status: "GENERAL_ERROR";
-          message: string;
-      };
-
-type ResendCodeApiResponse = {
-    status: "OK" | "RESTART_FLOW_ERROR";
-};
-
-type ConsumeCodeApiResponse =
-    | {
-          status: "OK";
-          createdUser: boolean;
-          user: {
-              id: string;
-              email?: string;
-              phoneNumber?: string;
-              timeJoined: number;
-          };
-      }
-    | {
-          status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
-          failedCodeInputAttemptCount: number;
-          maximumCodeInputAttempts: number;
-      }
-    | { status: "GENERAL_ERROR"; message: string }
-    | { status: "RESTART_FLOW_ERROR" };
-
-type ExistsAPIResponse = {
-    status: "OK";
-    exists: boolean;
-};
-
-export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface {
-    const querier = new Querier(recipeId, appInfo);
+export default function getRecipeImplementation(recipeInput: {
+    recipeId: string;
+    appInfo: NormalisedAppInfo;
+    preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
+    postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
+    onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+}): RecipeInterface {
+    const webJsImplementation = WebJSRecipeImplementation(
+        recipeInput.recipeId,
+        recipeInput.appInfo,
+        recipeInput.preAPIHook,
+        recipeInput.postAPIHook
+    );
 
     return {
-        createCode: async function (
-            input: ({ email: string } | { phoneNumber: string } | { deviceId: string; preAuthSessionId: string }) & {
-                config: NormalisedConfig;
-                userContext: any;
-            }
-        ): Promise<CreateCodeApiResponse> {
-            let bodyObj;
-            if ("email" in input) {
-                const validationRes = await input.config.validateEmailAddress(input.email);
-                if (validationRes !== undefined) {
-                    return {
-                        status: "GENERAL_ERROR",
-                        message: validationRes,
-                    };
-                }
-                bodyObj = {
-                    email: input.email,
-                };
-            }
-            if ("phoneNumber" in input) {
-                const validationRes = await input.config.validatePhoneNumber(input.phoneNumber);
-                if (validationRes !== undefined) {
-                    return {
-                        status: "GENERAL_ERROR",
-                        message: validationRes,
-                    };
-                }
-                bodyObj = {
-                    phoneNumber: input.phoneNumber,
-                };
-            }
-
-            const response: CreateCodeApiResponse = await querier.post(
-                "/signinup/code",
-                { body: JSON.stringify(bodyObj) }
-                // TODO NEMI: This is temporary and will be solved once passwordless is implemented
-                // (context) => {
-                //     return input.config.preAPIHook({
-                //         ...context,
-                //         action: "PASSWORDLESS_CREATE_CODE",
-                //         userContext: input.userContext,
-                //     });
-                // }
-            );
+        createCode: async function (input) {
+            const response = await webJsImplementation.createCode.bind(this)(input);
 
             if (response.status === "OK") {
-                input.config.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "PASSWORDLESS_CODE_SENT",
                     isResend: false,
                 });
@@ -104,92 +36,30 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
 
             return response;
         },
-        resendCode: async function (
-            input: { deviceId: string; preAuthSessionId: string } & {
-                config: NormalisedConfig;
-                userContext: any;
-            }
-        ): Promise<ResendCodeApiResponse> {
-            const bodyObj = {
-                deviceId: input.deviceId,
-                preAuthSessionId: input.preAuthSessionId,
-            };
-
-            const response: ResendCodeApiResponse = await querier.post(
-                "/signinup/code/resend",
-                { body: JSON.stringify(bodyObj) }
-                // TODO NEMI: This is temporary and will be solved once passwordless is implemented
-                // (context) => {
-                //     return input.config.preAPIHook({
-                //         ...context,
-                //         action: "PASSWORDLESS_RESEND_CODE",
-                //         userContext: input.userContext,
-                //     });
-                // }
-            );
+        resendCode: async function (input) {
+            const response = await webJsImplementation.resendCode.bind(this)(input);
 
             if (response.status === "RESTART_FLOW_ERROR") {
-                input.config.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "PASSWORDLESS_RESTART_FLOW",
                 });
             } else if (response.status === "OK") {
-                input.config.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "PASSWORDLESS_CODE_SENT",
                     isResend: true,
                 });
             }
             return response;
         },
-        consumeCode: async function (
-            input: (
-                | {
-                      userInputCode: string;
-                      deviceId: string;
-                      preAuthSessionId: string;
-                  }
-                | {
-                      preAuthSessionId: string;
-                      linkCode: string;
-                  }
-            ) & {
-                config: NormalisedConfig;
-                userContext: any;
-            }
-        ): Promise<ConsumeCodeApiResponse> {
-            let bodyObj;
-            if ("userInputCode" in input) {
-                bodyObj = {
-                    userInputCode: input.userInputCode,
-                    deviceId: input.deviceId,
-                    preAuthSessionId: input.preAuthSessionId,
-                };
-            }
-            if ("linkCode" in input) {
-                bodyObj = {
-                    linkCode: input.linkCode,
-                    preAuthSessionId: input.preAuthSessionId,
-                };
-            }
-
-            const response: ConsumeCodeApiResponse = await querier.post(
-                "/signinup/code/consume",
-                { body: JSON.stringify(bodyObj) }
-                // TODO NEMI: This is temporary and will be solved once passwordless is implemented
-                // (context) => {
-                //     return input.config.preAPIHook({
-                //         ...context,
-                //         action: "PASSWORDLESS_CONSUME_CODE",
-                //         userContext: input.userContext,
-                //     });
-                // }
-            );
+        consumeCode: async function (input) {
+            const response = await webJsImplementation.consumeCode.bind(this)(input);
 
             if (response.status === "RESTART_FLOW_ERROR") {
-                input.config.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "PASSWORDLESS_RESTART_FLOW",
                 });
             } else if (response.status === "OK") {
-                input.config.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: response.createdUser,
                     user: response.user,
@@ -197,99 +67,29 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
             }
             return response;
         },
-        doesEmailExist: async function (input: {
-            email: string;
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<boolean> {
-            const response: ExistsAPIResponse = await querier.get(
-                "/signup/email/exists",
-                {},
-                { email: input.email }
-                // TODO NEMI: This is temporary and will be solved once passwordless is implemented
-                // (context) => {
-                //     return input.config.preAPIHook({
-                //         ...context,
-                //         action: "EMAIL_EXISTS",
-                //         userContext: input.userContext,
-                //     });
-                // }
-            );
-
-            return response.exists;
+        doesEmailExist: async function (input) {
+            return await webJsImplementation.doesEmailExist.bind(this)(input);
         },
 
-        doesPhoneNumberExist: async function (input: {
-            phoneNumber: string;
-            config: NormalisedConfig;
-            userContext: any;
-        }): Promise<boolean> {
-            const response: ExistsAPIResponse = await querier.get(
-                "/signup/phoneNumber/exists",
-                {},
-                { phoneNumber: input.phoneNumber }
-                // TODO NEMI: This is temporary and will be solved once passwordless is implemented
-                // (context) => {
-                //     return input.config.preAPIHook({
-                //         ...context,
-                //         action: "PHONE_NUMBER_EXISTS",
-                //         userContext: input.userContext,
-                //     });
-                // }
-            );
-
-            return response.exists;
+        doesPhoneNumberExist: async function (input) {
+            return await webJsImplementation.doesPhoneNumberExist.bind(this)(input);
         },
-        getLoginAttemptInfo: function ():
-            | undefined
-            | {
-                  deviceId: string;
-                  preAuthSessionId: string;
-                  flowType: FlowType;
-                  contactInfo: string;
-                  contactMethod: "EMAIL" | "PHONE";
-                  lastResend: number;
-                  redirectToPath?: string;
-              } {
-            const storedInfo = getLocalStorage(PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY);
-            if (!storedInfo) {
-                return undefined;
-            }
-            try {
-                const info = JSON.parse(storedInfo);
-
-                return {
-                    contactInfo: info.contactInfo,
-                    contactMethod: info.contactMethod,
-                    deviceId: info.deviceId,
-                    flowType: info.flowType,
-                    preAuthSessionId: info.preAuthSessionId,
-                    lastResend: info.lastResend,
-                    redirectToPath: info.redirectToPath,
-                };
-            } catch (ex) {
-                return undefined;
-            }
+        getLoginAttemptInfo: function <CustomAttemptInfoProperties>(input: { userContext: any }) {
+            return webJsImplementation.getLoginAttemptInfo.bind(this)<CustomAttemptInfoProperties>(input);
         },
-        setLoginAttemptInfo: function (input: {
-            deviceId: string;
-            preAuthSessionId: string;
-            flowType: FlowType;
-            contactInfo: string;
-            contactMethod: "EMAIL" | "PHONE";
-            redirectToPath?: string;
-        }): void {
-            setLocalStorage(
-                PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY,
-                JSON.stringify({
-                    // This can make future changes/migrations a lot cleaner
-                    version: 1,
-                    ...input,
-                })
-            );
+        setLoginAttemptInfo: async function (input) {
+            return webJsImplementation.setLoginAttemptInfo.bind(this)<{
+                redirectToPath?: string;
+            }>({
+                attemptInfo: {
+                    ...input.attemptInfo,
+                    redirectToPath: getRedirectToPathFromURL(),
+                },
+                userContext: input.userContext,
+            });
         },
-        clearLoginAttemptInfo: function (): void {
-            removeFromLocalStorage(PASSWORDLESS_LOGIN_ATTEMPT_INFO_STORAGE_KEY);
+        clearLoginAttemptInfo: function (input) {
+            return webJsImplementation.clearLoginAttemptInfo.bind(this)(input);
         },
     };
 }

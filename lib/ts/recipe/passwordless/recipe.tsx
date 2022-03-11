@@ -26,7 +26,6 @@ import {
     Config,
     NormalisedConfig,
     UserInput,
-    RecipeInterface,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normalisePasswordlessConfig } from "./utils";
@@ -39,6 +38,7 @@ import SignInUp from "./components/features/signInAndUp";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 
 /*
  * Class.
@@ -57,7 +57,15 @@ export default class Passwordless extends AuthRecipe<
     constructor(config: Config) {
         super(normalisePasswordlessConfig(config));
 
-        const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
+        const builder = new OverrideableBuilder(
+            RecipeImplementation({
+                appInfo: this.config.appInfo,
+                recipeId: this.config.recipeId,
+                onHandleEvent: this.config.onHandleEvent,
+                preAPIHook: this.config.preAPIHook,
+                postAPIHook: this.config.postAPIHook,
+            })
+        );
         this.recipeImpl = builder.override(this.config.override.functions).build();
     }
 

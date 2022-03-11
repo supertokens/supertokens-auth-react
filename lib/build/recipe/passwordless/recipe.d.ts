@@ -7,9 +7,9 @@ import {
     Config,
     NormalisedConfig,
     UserInput,
-    RecipeInterface,
 } from "./types";
 import AuthRecipe from "../authRecipe";
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,

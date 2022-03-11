@@ -23,13 +23,7 @@ import SignInUpThemeWrapper from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
-import {
-    RecipeInterface,
-    PasswordlessSignInUpAction,
-    SignInUpState,
-    PasswordlessUser,
-    SignInUpProps,
-} from "../../../types";
+import { PasswordlessSignInUpAction, SignInUpState, SignInUpProps } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
 import Session from "../../../../session";
@@ -38,6 +32,9 @@ import { useMemo } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
 import { FeatureBaseProps } from "../../../../../types";
+import { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
+import { useUserContext } from "../../../../../usercontext";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 export const useSuccessInAnotherTabChecker = (
     state: SignInUpState,
@@ -69,7 +66,8 @@ export const useSuccessInAnotherTabChecker = (
 };
 
 export const useFeatureReducer = (
-    recipeImpl: RecipeInterface | undefined
+    recipeImpl: RecipeInterface | undefined,
+    userContext: any
 ): [SignInUpState, React.Dispatch<PasswordlessSignInUpAction>] => {
     const [state, dispatch] = React.useReducer(
         (oldState: SignInUpState, action: PasswordlessSignInUpAction) => {
@@ -160,7 +158,9 @@ export const useFeatureReducer = (
                     error = messageQueryParam;
                 }
             }
-            const loginAttemptInfo = await recipeImpl!.getLoginAttemptInfo();
+            const loginAttemptInfo = await recipeImpl!.getLoginAttemptInfo({
+                userContext,
+            });
             // No need to check if the component is unmounting, since this has no effect then.
             dispatch({ type: "load", loginAttemptInfo, error });
         }
@@ -197,7 +197,7 @@ export function useChildProps(
     history: any
 ): ChildProps | undefined {
     const recipeImplementation = React.useMemo(
-        () => recipe && getModifiedRecipeImplementation(recipe.recipeImpl, dispatch, callingConsumeCodeRef),
+        () => recipe && getModifiedRecipeImplementation(recipe, dispatch, callingConsumeCodeRef),
         [recipe]
     );
 
@@ -231,7 +231,8 @@ export const SignInUpFeature: React.FC<
     }
 > = (props) => {
     const componentOverrides = props.recipe.config.override.components;
-    const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl);
+    const userContext = useUserContext();
+    const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl, userContext);
     const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch);
     const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, props.history)!;
 
@@ -265,57 +266,97 @@ export const SignInUpFeature: React.FC<
 export default SignInUpFeature;
 
 function getModifiedRecipeImplementation(
-    originalImpl: RecipeInterface,
+    recipe: Recipe,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     callingConsumeCodeRef: React.MutableRefObject<boolean>
 ): RecipeInterface {
     return {
-        ...originalImpl,
+        ...recipe.recipeImpl,
         createCode: async (input) => {
-            let contactInfo;
-            if ("email" in input) {
-                contactInfo = input.email;
-            } else {
-                contactInfo = formatPhoneNumberIntl(input.phoneNumber);
+            try {
+                let contactInfo;
+                if ("email" in input) {
+                    contactInfo = input.email;
+                } else {
+                    contactInfo = formatPhoneNumberIntl(input.phoneNumber);
+                }
+
+                if ("email" in input) {
+                    const validationRes = await recipe.config.validateEmailAddress(input.email);
+                    if (validationRes !== undefined) {
+                        throw new STGeneralError(validationRes);
+                    }
+                }
+                if ("phoneNumber" in input) {
+                    const validationRes = await recipe.config.validatePhoneNumber(input.phoneNumber);
+                    if (validationRes !== undefined) {
+                        throw new STGeneralError(validationRes);
+                    }
+                }
+
+                const res = await recipe.recipeImpl.createCode(input);
+                if (res.status === "OK") {
+                    // This contactMethod refers to the one that was used to deliver the login info
+                    // This can be an important distinction in case both email and phone are allowed
+                    const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
+                    const loginAttemptInfo = {
+                        ...res,
+                        lastResend: new Date().getTime(),
+                        contactMethod,
+                        contactInfo,
+                        redirectToPath: getRedirectToPathFromURL(),
+                    };
+                    await recipe.recipeImpl.setLoginAttemptInfo({
+                        attemptInfo: loginAttemptInfo,
+                        userContext: input.userContext,
+                    });
+                    dispatch({ type: "startLogin", loginAttemptInfo });
+                }
+                return res;
+            } catch (e) {
+                if (STGeneralError.isThisError(e)) {
+                    // TODO NEMI: IDeally this should throw instead od dispatching
+                    dispatch({ type: "setError", error: e.message });
+                }
+
+                throw e;
             }
-            const res = await originalImpl.createCode(input);
-            if (res.status === "OK") {
-                // This contactMethod refers to the one that was used to deliver the login info
-                // This can be an important distinction in case both email and phone are allowed
-                const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
-                const loginAttemptInfo = {
-                    ...res,
-                    lastResend: new Date().getTime(),
-                    contactMethod,
-                    contactInfo,
-                    redirectToPath: getRedirectToPathFromURL(),
-                };
-                await originalImpl.setLoginAttemptInfo(loginAttemptInfo);
-                dispatch({ type: "startLogin", loginAttemptInfo });
-            } else if (res.status === "GENERAL_ERROR") {
-                dispatch({ type: "setError", error: res.message });
-            }
-            return res;
         },
         resendCode: async (input) => {
-            const res = await originalImpl.resendCode(input);
-            if (res.status === "OK") {
-                const loginAttemptInfo = await originalImpl.getLoginAttemptInfo();
-                // If it was cleared or overwritten we don't want to save this.
-                // TODO: extend session checker to check for this case as well
-                if (loginAttemptInfo !== undefined && loginAttemptInfo.deviceId === input.deviceId) {
-                    const timestamp = new Date().getTime();
-                    await originalImpl.setLoginAttemptInfo({ ...loginAttemptInfo, lastResend: timestamp });
-                    dispatch({ type: "resendCode", timestamp });
-                }
-            } else if (res.status === "RESTART_FLOW_ERROR") {
-                await originalImpl.clearLoginAttemptInfo();
+            try {
+                const res = await recipe.recipeImpl.resendCode(input);
+                if (res.status === "OK") {
+                    const loginAttemptInfo = await recipe.recipeImpl.getLoginAttemptInfo({
+                        userContext: input.userContext,
+                    });
+                    // If it was cleared or overwritten we don't want to save this.
+                    // TODO: extend session checker to check for this case as well
+                    if (loginAttemptInfo !== undefined && loginAttemptInfo.deviceId === input.deviceId) {
+                        const timestamp = new Date().getTime();
+                        await recipe.recipeImpl.setLoginAttemptInfo({
+                            attemptInfo: {
+                                ...loginAttemptInfo,
+                                lastResend: timestamp,
+                            },
+                            userContext: input.userContext,
+                        });
+                        dispatch({ type: "resendCode", timestamp });
+                    }
+                } else if (res.status === "RESTART_FLOW_ERROR") {
+                    await recipe.recipeImpl.clearLoginAttemptInfo({
+                        userContext: input.userContext,
+                    });
 
-                dispatch({ type: "restartFlow", error: "ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW" });
-            } else if (res.status === "GENERAL_ERROR") {
-                dispatch({ type: "setError", error: res.message });
+                    dispatch({ type: "restartFlow", error: "ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW" });
+                }
+                return res;
+            } catch (e) {
+                if (STGeneralError.isThisError(e)) {
+                    dispatch({ type: "setError", error: e.message });
+                }
+
+                throw e;
             }
-            return res;
         },
 
         consumeCode: async (input) => {
@@ -323,14 +364,18 @@ function getModifiedRecipeImplementation(
             // the session creation too early and go to successInAnotherTab too early
             callingConsumeCodeRef.current = true;
 
-            const res = await originalImpl.consumeCode(input);
+            const res = await recipe.recipeImpl.consumeCode(input);
 
             if (res.status === "RESTART_FLOW_ERROR") {
-                await originalImpl.clearLoginAttemptInfo();
+                await recipe.recipeImpl.clearLoginAttemptInfo({
+                    userContext: input.userContext,
+                });
 
                 dispatch({ type: "restartFlow", error: "ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW" });
             } else if (res.status === "OK") {
-                await originalImpl.clearLoginAttemptInfo();
+                await recipe.recipeImpl.clearLoginAttemptInfo({
+                    userContext: input.userContext,
+                });
             }
 
             callingConsumeCodeRef.current = false;
@@ -338,8 +383,10 @@ function getModifiedRecipeImplementation(
             return res;
         },
 
-        clearLoginAttemptInfo: async () => {
-            await originalImpl.clearLoginAttemptInfo();
+        clearLoginAttemptInfo: async (input) => {
+            await recipe.recipeImpl.clearLoginAttemptInfo({
+                userContext: input.userContext,
+            });
             clearErrorQueryParam();
             dispatch({ type: "restartFlow", error: undefined });
         },

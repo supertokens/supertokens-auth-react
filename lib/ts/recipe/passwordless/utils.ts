@@ -18,7 +18,7 @@ import parsePhoneNumber, { parseIncompletePhoneNumber } from "libphonenumber-js/
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 import { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
-import { RecipeInterface } from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import {
     defaultPhoneNumberValidator,
     defaultPhoneNumberValidatorForCombinedInput,

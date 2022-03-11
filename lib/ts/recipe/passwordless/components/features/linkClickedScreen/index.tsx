@@ -31,6 +31,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 import { useEffect } from "react";
 import { useUserContext } from "../../../../../usercontext";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -53,18 +54,10 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 const response = await props.recipe.recipeImpl.consumeCode({
                     preAuthSessionId,
                     linkCode,
-                    config: props.recipe.config,
                     userContext,
                 });
                 if (abortController.signal.aborted) {
                     return;
-                }
-
-                if (response.status === "GENERAL_ERROR") {
-                    return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                        error: "custom",
-                        message: response.message,
-                    });
                 }
 
                 if (response.status === "RESTART_FLOW_ERROR") {
@@ -73,8 +66,14 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                     });
                 }
                 if (response.status === "OK") {
-                    const loginAttemptInfo = await props.recipe.recipeImpl.getLoginAttemptInfo();
-                    await props.recipe.recipeImpl.clearLoginAttemptInfo();
+                    const loginAttemptInfo = await props.recipe.recipeImpl.getLoginAttemptInfo<{
+                        redirectToPath?: string;
+                    }>({
+                        userContext,
+                    });
+                    await props.recipe.recipeImpl.clearLoginAttemptInfo({
+                        userContext,
+                    });
                     return props.recipe.redirect(
                         {
                             action: "SUCCESS",
@@ -85,6 +84,13 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                     );
                 }
             } catch (err) {
+                if (STGeneralError.isThisError(err)) {
+                    return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                        error: "custom",
+                        message: err.message,
+                    });
+                }
+
                 return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
                     error: "signin",
                 });

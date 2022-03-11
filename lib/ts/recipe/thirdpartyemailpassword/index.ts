@@ -236,13 +236,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        /**
-         * We do it this way here because prettier behaves in a weird way without it.
-         * If you return directly, build-pretty will succeed but pretty-check will fail
-         * when you try to commit and you will have to run pretty manually every time
-         */
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-        return recipeInstance.recipeImpl.thirdPartySignInAndUp({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.thirdPartySignInAndUp({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });

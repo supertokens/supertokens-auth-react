@@ -1,8 +1,9 @@
 /// <reference types="react" />
 import { UserInput } from "./types";
 import PasswordlessAuth from "./passwordlessAuth";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInUpThemeWrapper from "./components/themes/signInUp";
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 export default class Wrapper {
     static init(
         config: UserInput

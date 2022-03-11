@@ -54,7 +54,6 @@ export const UserInputCodeForm = withOverride(
                 const response = await props.recipeImplementation.resendCode({
                     deviceId: props.loginAttemptInfo.deviceId,
                     preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
-                    config: props.config,
                     userContext,
                 });
 
@@ -64,10 +63,13 @@ export const UserInputCodeForm = withOverride(
                             setClearResendNotifTimeout(undefined);
                         }, 2000)
                     );
-                } else if (response.status === "GENERAL_ERROR") {
-                    props.onError(response.message);
                 }
             } catch (e) {
+                if (STGeneralError.isThisError(e)) {
+                    props.onError(e.message);
+                    return;
+                }
+
                 props.onError("SOMETHING_WENT_WRONG_ERROR");
             }
         }
@@ -122,16 +124,11 @@ export const UserInputCodeForm = withOverride(
                             deviceId: props.loginAttemptInfo.deviceId,
                             preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                             userInputCode,
-                            config: props.config,
                             userContext,
                         });
 
                         if (response.status === "OK") {
                             return response;
-                        }
-
-                        if (response.status === "GENERAL_ERROR") {
-                            throw new STGeneralError(response.message);
                         }
 
                         if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {

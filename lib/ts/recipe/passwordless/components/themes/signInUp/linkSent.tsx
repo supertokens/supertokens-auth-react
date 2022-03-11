@@ -55,7 +55,6 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
             const response = await props.recipeImplementation.resendCode({
                 deviceId: props.loginAttemptInfo.deviceId,
                 preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
-                config: props.config,
                 userContext,
             });
 
@@ -67,9 +66,6 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                 }, 2000);
             } else {
                 setStatus("ERROR");
-                if (response.status === "GENERAL_ERROR") {
-                    props.onError(response.message);
-                }
             }
         } catch (e) {
             setStatus("ERROR");
@@ -113,7 +109,11 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                     <div
                         data-supertokens="secondaryText secondaryLinkWithLeftArrow"
                         css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
-                        onClick={() => props.recipeImplementation.clearLoginAttemptInfo()}>
+                        onClick={() =>
+                            props.recipeImplementation.clearLoginAttemptInfo({
+                                userContext,
+                            })
+                        }>
                         <ArrowLeftIcon color={styles.palette.colors.textPrimary} />
                         {props.loginAttemptInfo.contactMethod === "EMAIL"
                             ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")
