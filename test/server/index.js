@@ -198,6 +198,10 @@ app.get("/test/featureFlags", (req, res) => {
         available.push("passwordless");
     }
 
+    if (thirdPartyPasswordlessSupported) {
+        available.push("thirdpartypasswordless");
+    }
+
     res.send({
         available,
     });

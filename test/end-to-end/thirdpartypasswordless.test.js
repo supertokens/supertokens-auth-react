@@ -35,6 +35,7 @@ import {
     waitForSTElement,
     getPasswordlessDevice,
     setPasswordlessFlowType,
+    getFeatureFlags,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
 import { getThirdPartyTestCases } from "./thirdparty.test";
@@ -52,6 +53,13 @@ describe("SuperTokens Third Party Passwordless", function () {
     let consoleLogs;
 
     const email = "bradparishdoh@gmail.com";
+
+    before(async function () {
+        const features = await getFeatureFlags();
+        if (!features.includes("thirdpartypasswordless")) {
+            this.skip();
+        }
+    });
 
     describe("Recipe combination tests", () => {
         before(async function () {
