@@ -42,7 +42,7 @@ export default function SuccessView(props) {
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />
             <a
-                href="https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-passwordless"
+                href="https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-thirdpartypasswordless"
                 target="_blank"
                 rel="noreferrer">
                 View the code on GitHub
