@@ -39,6 +39,7 @@ import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import OverrideableBuilder from "supertokens-js-override";
+import { UserContextProvider } from "../../usercontext";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -114,15 +115,17 @@ export default class EmailVerification extends RecipeModule<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
         return (
-            <SessionAuth requireAuth={false}>
-                <EmailVerificationFeature
-                    recipe={this}
-                    {...{
-                        ...props,
-                        userContext: getNormalisedUserContext(props.userContext),
-                    }}
-                />
-            </SessionAuth>
+            <UserContextProvider userContext={props.userContext}>
+                <SessionAuth requireAuth={false}>
+                    <EmailVerificationFeature
+                        recipe={this}
+                        {...{
+                            ...props,
+                            userContext: getNormalisedUserContext(props.userContext),
+                        }}
+                    />
+                </SessionAuth>
+            </UserContextProvider>
         );
     };
 

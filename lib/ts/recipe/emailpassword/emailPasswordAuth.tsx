@@ -25,6 +25,7 @@ import SessionAuth from "../session/sessionAuth";
 import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
+import { UserContextProvider } from "../../usercontext";
 
 type Props = FeatureBaseProps & {
     recipe: Recipe;
@@ -34,10 +35,7 @@ type Props = FeatureBaseProps & {
 
 function EmailPasswordAuth(props: Props) {
     const emailVerification = (
-        <EmailVerificationAuth
-            recipe={props.recipe.emailVerification}
-            history={props.history}
-            userContext={props.userContext}>
+        <EmailVerificationAuth recipe={props.recipe.emailVerification} history={props.history}>
             {props.children}
         </EmailVerificationAuth>
     );
@@ -75,13 +73,14 @@ export default function EmailPasswordAuthWrapper({
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
 
     return (
-        <EmailPasswordAuthMemo
-            history={history}
-            onSessionExpired={onSessionExpired}
-            requireAuth={requireAuth}
-            recipe={EmailPassword.getInstanceOrThrow()}
-            userContext={userContext}>
-            {children}
-        </EmailPasswordAuthMemo>
+        <UserContextProvider userContext={userContext}>
+            <EmailPasswordAuthMemo
+                history={history}
+                onSessionExpired={onSessionExpired}
+                requireAuth={requireAuth}
+                recipe={EmailPassword.getInstanceOrThrow()}>
+                {children}
+            </EmailPasswordAuthMemo>
+        </UserContextProvider>
     );
 }

@@ -145,8 +145,7 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
-                    defaultStore={defaultTranslationsEmailVerification}
-                    userContext={this.props.userContext}>
+                    defaultStore={defaultTranslationsEmailVerification}>
                     <Fragment>
                         {/* No custom theme, use default. */}
                         {this.props.children === undefined && <EmailVerificationTheme {...props} />}

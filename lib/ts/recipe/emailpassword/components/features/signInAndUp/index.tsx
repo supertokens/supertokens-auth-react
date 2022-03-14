@@ -221,8 +221,7 @@ export const SignInAndUpFeature: React.FC<
         <ComponentOverrideContext.Provider value={props.recipe.config.override.components}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
-                defaultStore={defaultTranslationsEmailPassword}
-                userContext={props.userContext}>
+                defaultStore={defaultTranslationsEmailPassword}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {props.children === undefined && (

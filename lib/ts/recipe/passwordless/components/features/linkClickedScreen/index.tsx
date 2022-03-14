@@ -109,8 +109,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         <ComponentOverrideContext.Provider value={componentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
-                defaultStore={defaultTranslationsPasswordless}
-                userContext={props.userContext}>
+                defaultStore={defaultTranslationsPasswordless}>
                 <StyleProvider
                     rawPalette={props.recipe.config.palette}
                     defaultPalette={defaultPalette}

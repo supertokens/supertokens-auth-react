@@ -31,14 +31,19 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 import STGeneralError from "supertokens-web-js/lib/build/error";
 import { getNormalisedUserContext } from "../../../../../utils";
+import { UserContextContext } from "../../../../../usercontext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 class SignInAndUpCallback extends PureComponent<PropType, unknown> {
+    static contextType: typeof UserContextContext;
+
     componentDidMount = async (): Promise<void> => {
+        const userContext = this.context;
+
         try {
             const response = await this.props.recipe.recipeImpl.signInAndUp({
-                userContext: getNormalisedUserContext(this.props.userContext),
+                userContext: getNormalisedUserContext(userContext),
             });
 
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
@@ -50,7 +55,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
             if (response.status === "OK") {
                 const stateResponse =
                     this.props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
-                        userContext: getNormalisedUserContext(this.props.userContext),
+                        userContext: getNormalisedUserContext(userContext),
                     });
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
@@ -59,7 +64,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                     try {
                         isEmailVerified = (
                             await this.props.recipe.emailVerification.isEmailVerified(
-                                getNormalisedUserContext(this.props.userContext)
+                                getNormalisedUserContext(userContext)
                             )
                         ).isVerified;
                     } catch (ignored) {}
@@ -105,8 +110,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
-                    defaultStore={defaultTranslationsThirdParty}
-                    userContext={this.props.userContext}>
+                    defaultStore={defaultTranslationsThirdParty}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}

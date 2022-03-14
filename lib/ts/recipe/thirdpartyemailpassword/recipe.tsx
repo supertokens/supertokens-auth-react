@@ -43,6 +43,7 @@ import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpasswo
 import OverrideableBuilder from "supertokens-js-override";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
+import { UserContextProvider } from "../../usercontext";
 
 export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
@@ -195,16 +196,18 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <AuthWidgetWrapper<
-                    GetRedirectionURLContext,
-                    PreAndPostAPIHookAction,
-                    OnHandleEventContext,
-                    NormalisedConfig
-                >
-                    authRecipe={this}
-                    history={props.history}>
-                    <SignInAndUp recipe={this} {...props} />
-                </AuthWidgetWrapper>
+                <UserContextProvider userContext={props.userContext}>
+                    <AuthWidgetWrapper<
+                        GetRedirectionURLContext,
+                        PreAndPostAPIHookAction,
+                        OnHandleEventContext,
+                        NormalisedConfig
+                    >
+                        authRecipe={this}
+                        history={props.history}>
+                        <SignInAndUp recipe={this} {...props} />
+                    </AuthWidgetWrapper>
+                </UserContextProvider>
             );
         } else if (componentName === "resetpassword") {
             if (this.emailPasswordRecipe === undefined) {

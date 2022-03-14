@@ -21,6 +21,7 @@ import { memo } from "react";
 import SuperTokens from "../../superTokens";
 
 import { FeatureBaseProps } from "../../types";
+import { UserContextProvider } from "../../usercontext";
 import SessionAuth from "../session/sessionAuth";
 import Passwordless from "./recipe";
 
@@ -64,13 +65,14 @@ export default function PasswordlessAuthWrapper({
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
 
     return (
-        <PasswordlessAuthMemo
-            history={history}
-            onSessionExpired={onSessionExpired}
-            requireAuth={requireAuth}
-            recipe={Passwordless.getInstanceOrThrow()}
-            userContext={userContext}>
-            {children}
-        </PasswordlessAuthMemo>
+        <UserContextProvider userContext={userContext}>
+            <PasswordlessAuthMemo
+                history={history}
+                onSessionExpired={onSessionExpired}
+                requireAuth={requireAuth}
+                recipe={Passwordless.getInstanceOrThrow()}>
+                {children}
+            </PasswordlessAuthMemo>
+        </UserContextProvider>
     );
 }

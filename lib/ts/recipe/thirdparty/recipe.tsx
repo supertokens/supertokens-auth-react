@@ -40,6 +40,7 @@ import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import OverrideableBuilder from "supertokens-js-override";
+import { UserContextProvider } from "../../usercontext";
 
 /*
  * Class.
@@ -113,26 +114,30 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <AuthWidgetWrapper<
-                    GetRedirectionURLContext,
-                    PreAndPostAPIHookAction,
-                    OnHandleEventContext,
-                    NormalisedConfig
-                >
-                    authRecipe={this}
-                    history={props.history}>
-                    <SignInAndUp recipe={this} {...props} />
-                </AuthWidgetWrapper>
+                <UserContextProvider userContext={props.userContext}>
+                    <AuthWidgetWrapper<
+                        GetRedirectionURLContext,
+                        PreAndPostAPIHookAction,
+                        OnHandleEventContext,
+                        NormalisedConfig
+                    >
+                        authRecipe={this}
+                        history={props.history}>
+                        <SignInAndUp recipe={this} {...props} />
+                    </AuthWidgetWrapper>
+                </UserContextProvider>
             );
         } else if (componentName === "signinupcallback") {
             return (
-                <SignInAndUpCallback
-                    recipe={this}
-                    {...{
-                        ...props,
-                        userContext: getNormalisedUserContext(props.userContext),
-                    }}
-                />
+                <UserContextProvider userContext={props.userContext}>
+                    <SignInAndUpCallback
+                        recipe={this}
+                        {...{
+                            ...props,
+                            userContext: getNormalisedUserContext(props.userContext),
+                        }}
+                    />
+                </UserContextProvider>
             );
         } else {
             return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);

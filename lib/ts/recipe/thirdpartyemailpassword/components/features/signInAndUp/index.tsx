@@ -101,8 +101,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         <ComponentOverrideContext.Provider value={componentOverrides}>
             <FeatureWrapper
                 useShadowDom={props.recipe.config.useShadowDom}
-                defaultStore={defaultTranslationsThirdPartyEmailPassword}
-                userContext={props.userContext}>
+                defaultStore={defaultTranslationsThirdPartyEmailPassword}>
                 <Fragment>
                     {/* No custom theme, use default. */}
                     {props.children === undefined && <SignInAndUpTheme {...childProps} />}
