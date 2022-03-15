@@ -28,7 +28,7 @@ import {
     OnHandleEventContext,
     UserInput,
 } from "./types";
-import { getNormalisedUserContext, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
@@ -130,13 +130,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
         } else if (componentName === "signinupcallback") {
             return (
                 <UserContextWrapper userContext={props.userContext}>
-                    <SignInAndUpCallback
-                        recipe={this}
-                        {...{
-                            ...props,
-                            userContext: getNormalisedUserContext(props.userContext),
-                        }}
-                    />
+                    <SignInAndUpCallback recipe={this} {...props} />
                 </UserContextWrapper>
             );
         } else {

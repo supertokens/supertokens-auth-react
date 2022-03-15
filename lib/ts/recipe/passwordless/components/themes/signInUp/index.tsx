@@ -133,11 +133,7 @@ const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }>
     );
 };
 
-function SignInUpThemeWrapper(
-    props: SignInUpProps & {
-        userContext?: any;
-    }
-): JSX.Element {
+function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     const activeScreen = getActiveScreen(props);

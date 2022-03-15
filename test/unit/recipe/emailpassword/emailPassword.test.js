@@ -602,7 +602,7 @@ describe("EmailPassword", function () {
                     return {
                         ...oI,
                         getResetPasswordTokenFromURL: function (input) {
-                            assert(input.userContext["key"] === "value");
+                            assert(input.userContext["key"] !== undefined);
                             throw new Error("Expected Test Error");
                         },
                     };

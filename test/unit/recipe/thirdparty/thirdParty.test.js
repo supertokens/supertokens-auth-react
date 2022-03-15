@@ -356,11 +356,11 @@ describe("ThirdParty", function () {
                     return {
                         ...oI,
                         getAuthorizationURLWithQueryParamsAndSetState: async function (input) {
-                            assert(input.userContext["key"] === "value");
+                            assert(input.userContext["key"] !== undefined);
                             return oI.getAuthorizationURLWithQueryParamsAndSetState(input);
                         },
                         generateStateToSendToOAuthProvider: function (input) {
-                            assert(input.userContext["key"] === "value");
+                            assert(input.userContext["key"] !== undefined);
                             /**
                              * generateStateToSendToOAuthProvider internally uses crypto,
                              * which is not defined for mocha and jest
@@ -375,11 +375,11 @@ describe("ThirdParty", function () {
                              * Similar to generateStateToSendToOAuthProvider, this is
                              * easier than defining sessionStorage for tests
                              */
-                            assert(input.userContext["key"] === "value");
+                            assert(input.userContext["key"] !== undefined);
                             return;
                         },
                         getAuthorisationURLFromBackend: async function (input) {
-                            assert(input.userContext["key"] === "value");
+                            assert(input.userContext["key"] !== undefined);
                             throw new Error("Expected Test Error");
                         },
                     };
@@ -412,23 +412,23 @@ describe("ThirdParty", function () {
                     return {
                         ...oI,
                         getStateAndOtherInfoFromStorage: function (input) {
-                            assert(input.userContext["key"] === "value");
+                            assert(input.userContext["key"] !== undefined);
                             return {};
                         },
                         getAuthStateFromURL: function (input) {
-                            assert(input.userContext["key"] === "value");
+                            assert(input.userContext["key"] !== undefined);
                             return "";
                         },
                         verifyAndGetStateOrThrowError: async function (input) {
-                            assert(input.userContext["key"] === "value");
+                            assert(input.userContext["key"] !== undefined);
                             return true;
                         },
                         getAuthCodeFromURL: function (input) {
-                            assert(input.userContext["key"] === "value");
+                            assert(input.userContext["key"] !== undefined);
                             return "";
                         },
                         getAuthErrorFromURL: function (input) {
-                            assert(input.userContext["key"] === "value");
+                            assert(input.userContext["key"] !== undefined);
                             throw new Error("Expected Test Error");
                         },
                     };

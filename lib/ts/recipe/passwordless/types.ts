@@ -303,6 +303,7 @@ export type SignInUpProps = {
         successInAnotherTab: boolean;
         error: string | undefined;
     };
+    userContext?: any;
 };
 export type LoginAttemptInfo = {
     deviceId: string;

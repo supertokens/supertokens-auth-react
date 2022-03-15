@@ -20,7 +20,7 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import { PureComponent, Fragment } from "react";
-import { getNormalisedUserContext, getQueryParams } from "../../../../../utils";
+import { getQueryParams } from "../../../../../utils";
 import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
@@ -30,7 +30,7 @@ import { SessionContextType, SessionContext } from "../../../../session";
 import { defaultTranslationsEmailVerification } from "../../themes/translations";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
-type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
+type Prop = FeatureBaseProps & { recipe: Recipe; userContext: any };
 
 class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING"; token: string | undefined }> {
     static contextType = SessionContext;
@@ -87,7 +87,7 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
             // we check if the email is already verified, and if it is, then we redirect the user
             const isVerified: boolean = (
                 await this.props.recipe.recipeImpl.isEmailVerified({
-                    userContext: getNormalisedUserContext(this.props.userContext),
+                    userContext: this.props.userContext,
                 })
             ).isVerified;
             if (isVerified) {
