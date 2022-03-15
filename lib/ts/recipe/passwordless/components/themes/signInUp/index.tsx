@@ -35,6 +35,7 @@ import { getStyles } from "../styles";
 import { EmailOrPhoneForm } from "./emailOrPhoneForm";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import UserContextWrapper from "../../../../../usercontext/userContextThemeWrapper";
 
 enum SignInUpScreens {
     CloseTab,
@@ -132,7 +133,11 @@ const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }>
     );
 };
 
-function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
+function SignInUpThemeWrapper(
+    props: SignInUpProps & {
+        userContext?: any;
+    }
+): JSX.Element {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     const activeScreen = getActiveScreen(props);
@@ -153,16 +158,18 @@ function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
     }
 
     return (
-        <ThemeBase loadDefaultFont={!hasFont}>
-            <StyleProvider
-                rawPalette={props.config.palette}
-                defaultPalette={defaultPalette}
-                styleFromInit={activeStyle}
-                rootStyleFromInit={props.config.rootStyle}
-                getDefaultStyles={getStyles}>
-                <SignInUpTheme {...props} activeScreen={activeScreen!} />
-            </StyleProvider>
-        </ThemeBase>
+        <UserContextWrapper userContext={props.userContext}>
+            <ThemeBase loadDefaultFont={!hasFont}>
+                <StyleProvider
+                    rawPalette={props.config.palette}
+                    defaultPalette={defaultPalette}
+                    styleFromInit={activeStyle}
+                    rootStyleFromInit={props.config.rootStyle}
+                    getDefaultStyles={getStyles}>
+                    <SignInUpTheme {...props} activeScreen={activeScreen!} />
+                </StyleProvider>
+            </ThemeBase>
+        </UserContextWrapper>
     );
 }
 

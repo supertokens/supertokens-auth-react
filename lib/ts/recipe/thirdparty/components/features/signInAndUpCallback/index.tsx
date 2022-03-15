@@ -36,7 +36,7 @@ import { UserContextContext } from "../../../../../usercontext";
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 class SignInAndUpCallback extends PureComponent<PropType, unknown> {
-    static contextType: typeof UserContextContext;
+    static contextType = UserContextContext;
 
     componentDidMount = async (): Promise<void> => {
         const userContext = this.context;

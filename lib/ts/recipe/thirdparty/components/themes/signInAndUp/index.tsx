@@ -29,6 +29,7 @@ import { ProvidersForm } from "./providersForm";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { useTranslation } from "../../../../..";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import UserContextWrapper from "../../../../../usercontext/userContextThemeWrapper";
 
 const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
     const t = useTranslation();
@@ -57,20 +58,26 @@ const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
     );
 };
 
-const SignInAndUpThemeWrapper: React.FC<SignInAndUpThemeProps> = (props) => {
+const SignInAndUpThemeWrapper: React.FC<SignInAndUpThemeProps> = (
+    props: SignInAndUpThemeProps & {
+        userContext?: any;
+    }
+) => {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     return (
-        <ThemeBase loadDefaultFont={!hasFont}>
-            <StyleProvider
-                rawPalette={props.config.palette}
-                defaultPalette={defaultPalette}
-                styleFromInit={props.config.signInAndUpFeature.style}
-                rootStyleFromInit={props.config.rootStyle}
-                getDefaultStyles={getStyles}>
-                <SignInAndUpTheme {...props} />
-            </StyleProvider>
-        </ThemeBase>
+        <UserContextWrapper userContext={props.userContext}>
+            <ThemeBase loadDefaultFont={!hasFont}>
+                <StyleProvider
+                    rawPalette={props.config.palette}
+                    defaultPalette={defaultPalette}
+                    styleFromInit={props.config.signInAndUpFeature.style}
+                    rootStyleFromInit={props.config.rootStyle}
+                    getDefaultStyles={getStyles}>
+                    <SignInAndUpTheme {...props} />
+                </StyleProvider>
+            </ThemeBase>
+        </UserContextWrapper>
     );
 };
 

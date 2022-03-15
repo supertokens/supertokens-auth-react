@@ -41,7 +41,7 @@ import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJsRecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import OverrideableBuilder from "supertokens-js-override";
-import { UserContextProvider } from "../../usercontext";
+import UserContextWrapper from "../../usercontext/userContextThemeWrapper";
 
 /*
  * Class.
@@ -121,7 +121,7 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <UserContextProvider userContext={props.userContext}>
+                <UserContextWrapper userContext={props.userContext}>
                     <AuthWidgetWrapper<
                         GetRedirectionURLContext,
                         PreAndPostAPIHookAction,
@@ -132,13 +132,13 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
                         history={props.history}>
                         <SignInAndUp recipe={this} {...props} />
                     </AuthWidgetWrapper>
-                </UserContextProvider>
+                </UserContextWrapper>
             );
         } else if (componentName === "resetpassword") {
             return (
-                <UserContextProvider userContext={props.userContext}>
+                <UserContextWrapper userContext={props.userContext}>
                     <ResetPasswordUsingToken recipe={this} {...props} />
-                </UserContextProvider>
+                </UserContextWrapper>
             );
         } else {
             return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);

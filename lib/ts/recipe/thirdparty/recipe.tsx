@@ -40,7 +40,7 @@ import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import OverrideableBuilder from "supertokens-js-override";
-import { UserContextProvider } from "../../usercontext";
+import UserContextWrapper from "../../usercontext/userContextThemeWrapper";
 
 /*
  * Class.
@@ -114,7 +114,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <UserContextProvider userContext={props.userContext}>
+                <UserContextWrapper userContext={props.userContext}>
                     <AuthWidgetWrapper<
                         GetRedirectionURLContext,
                         PreAndPostAPIHookAction,
@@ -125,11 +125,11 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
                         history={props.history}>
                         <SignInAndUp recipe={this} {...props} />
                     </AuthWidgetWrapper>
-                </UserContextProvider>
+                </UserContextWrapper>
             );
         } else if (componentName === "signinupcallback") {
             return (
-                <UserContextProvider userContext={props.userContext}>
+                <UserContextWrapper userContext={props.userContext}>
                     <SignInAndUpCallback
                         recipe={this}
                         {...{
@@ -137,7 +137,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
                             userContext: getNormalisedUserContext(props.userContext),
                         }}
                     />
-                </UserContextProvider>
+                </UserContextWrapper>
             );
         } else {
             return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);

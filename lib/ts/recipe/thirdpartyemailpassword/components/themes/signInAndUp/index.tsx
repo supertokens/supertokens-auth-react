@@ -33,6 +33,7 @@ import { SignUpFooter } from "../../../../emailpassword/components/themes/signIn
 import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
 import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
 import { SignInFooter } from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
+import UserContextWrapper from "../../../../../usercontext/userContextThemeWrapper";
 
 const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
     const t = useTranslation();
@@ -87,19 +88,25 @@ const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> =
     );
 };
 
-export default function SignInAndUpThemeWrapper(props: ThirdPartyEmailPasswordSignInAndUpThemeProps): JSX.Element {
+export default function SignInAndUpThemeWrapper(
+    props: ThirdPartyEmailPasswordSignInAndUpThemeProps & {
+        userContext?: any;
+    }
+): JSX.Element {
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     return (
-        <ThemeBase loadDefaultFont={!hasFont}>
-            <StyleProvider
-                rawPalette={props.config.palette}
-                defaultPalette={defaultPalette}
-                styleFromInit={props.config.signInAndUpFeature.style}
-                rootStyleFromInit={props.config.rootStyle}
-                getDefaultStyles={getStyles}>
-                <SignInAndUpTheme {...props} />
-            </StyleProvider>
-        </ThemeBase>
+        <UserContextWrapper userContext={props.userContext}>
+            <ThemeBase loadDefaultFont={!hasFont}>
+                <StyleProvider
+                    rawPalette={props.config.palette}
+                    defaultPalette={defaultPalette}
+                    styleFromInit={props.config.signInAndUpFeature.style}
+                    rootStyleFromInit={props.config.rootStyle}
+                    getDefaultStyles={getStyles}>
+                    <SignInAndUpTheme {...props} />
+                </StyleProvider>
+            </ThemeBase>
+        </UserContextWrapper>
     );
 }
