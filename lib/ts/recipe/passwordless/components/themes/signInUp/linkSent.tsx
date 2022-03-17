@@ -34,7 +34,7 @@ import { useUserContext } from "../../../../../usercontext";
 const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
-    const userContext = useUserContext();
+    const { userContext } = useUserContext();
     const [status, setStatus] = useState(props.error !== undefined ? "ERROR" : "READY");
 
     // Any because node types are included here, messing with return type of setTimeout

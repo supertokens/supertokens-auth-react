@@ -33,7 +33,7 @@ export const EmailOrPhoneForm = withOverride(
         }
     ): JSX.Element {
         const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
-        const userContext = useUserContext();
+        const { userContext } = useUserContext();
 
         return (
             <FormBase

@@ -15,10 +15,15 @@
 
 import React, { useState } from "react";
 import { getNormalisedUserContext } from "../utils";
+import { UserContextType } from "./types";
 
-export const UserContextContext = React.createContext<any>(undefined);
+export const UserContextContext = React.createContext<UserContextType>({
+    userContext: undefined,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    updateUserContext: () => {},
+});
 
-export const useUserContext = (): any => {
+export const useUserContext = (): UserContextType => {
     return React.useContext(UserContextContext);
 };
 
@@ -26,7 +31,15 @@ export const UserContextProvider: React.FC<{
     children: React.ReactNode;
     userContext?: any;
 }> = ({ children, userContext }) => {
-    const [currentUserContext] = useState<any>(getNormalisedUserContext(userContext));
+    const [currentUserContext, setUserContext] = useState<any>(getNormalisedUserContext(userContext));
 
-    return <UserContextContext.Provider value={currentUserContext}>{children}</UserContextContext.Provider>;
+    return (
+        <UserContextContext.Provider
+            value={{
+                userContext: currentUserContext,
+                updateUserContext: setUserContext,
+            }}>
+            {children}
+        </UserContextContext.Provider>
+    );
 };

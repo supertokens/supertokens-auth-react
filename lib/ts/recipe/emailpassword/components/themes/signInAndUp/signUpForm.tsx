@@ -36,7 +36,7 @@ export const SignUpForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
-        const userContext = useUserContext();
+        const { userContext } = useUserContext();
 
         return (
             <FormBase

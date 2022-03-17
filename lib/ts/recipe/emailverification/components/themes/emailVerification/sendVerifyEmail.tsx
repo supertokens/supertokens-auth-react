@@ -32,7 +32,7 @@ import { useUserContext } from "../../../../../usercontext";
 export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
-    const userContext = useUserContext();
+    const { userContext } = useUserContext();
     const [status, setStatus] = useState("READY");
 
     const resendEmail = async (): Promise<void> => {

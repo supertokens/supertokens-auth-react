@@ -37,7 +37,7 @@ export const UserInputCodeForm = withOverride(
     ): JSX.Element {
         const styles = useContext(StyleContext);
         const t = useTranslation();
-        const userContext = useUserContext();
+        const { userContext } = useUserContext();
 
         // We need this any because the node types are also loaded
         const [clearResendNotifTimeout, setClearResendNotifTimeout] = useState<any | undefined>();

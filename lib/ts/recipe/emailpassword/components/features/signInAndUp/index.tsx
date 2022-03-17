@@ -106,7 +106,7 @@ export function useChildProps(
     history: any
 ): EmailPasswordSignInAndUpChildProps | undefined {
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.recipeImpl), [recipe]);
-    const userContext = useUserContext();
+    const { userContext } = useUserContext();
 
     const onSignInSuccess = useCallback(async (): Promise<void> => {
         if (!recipe) {
