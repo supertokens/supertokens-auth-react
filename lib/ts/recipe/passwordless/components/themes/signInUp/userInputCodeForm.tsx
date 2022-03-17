@@ -24,6 +24,7 @@ import React, { useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { ResendButton } from "./resendButton";
 import { useTranslation } from "../../../../../translation/translationContext";
+import { UserInputCodeFormFooter } from "./userInputCodeFormFooter";
 
 export const UserInputCodeForm = withOverride(
     "PasswordlessUserInputCodeForm",
@@ -149,7 +150,7 @@ export const UserInputCodeForm = withOverride(
                     }}
                     validateOnBlur={false}
                     showLabels={true}
-                    footer={props.footer}
+                    footer={<UserInputCodeFormFooter {...props} loginAttemptInfo={props.loginAttemptInfo} />}
                 />
             </React.Fragment>
         );

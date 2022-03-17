@@ -20,14 +20,11 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultValidate } from "../../../../emailpassword/validators";
+import { SignInUpFooter } from "./signInUpFooter";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",
-    function PasswordlessPhoneForm(
-        props: SignInUpPhoneFormProps & {
-            footer?: JSX.Element;
-        }
-    ): JSX.Element {
+    function PasswordlessPhoneForm(props: SignInUpPhoneFormProps): JSX.Element {
         return (
             <FormBase
                 clearError={props.clearError}
@@ -71,7 +68,12 @@ export const PhoneForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                footer={props.footer}
+                footer={
+                    <SignInUpFooter
+                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
+                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
+                    />
+                }
             />
         );
     }

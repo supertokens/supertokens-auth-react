@@ -21,15 +21,11 @@ import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultEmailValidator, defaultValidate } from "../../../../emailpassword/validators";
 import { useState } from "react";
+import { SignInUpFooter } from "./signInUpFooter";
 
 export const EmailOrPhoneForm = withOverride(
     "PasswordlessEmailOrPhoneForm",
-    function PasswordlessEmailOrPhoneForm(
-        props: SignInUpEmailOrPhoneFormProps & {
-            header?: JSX.Element;
-            footer?: JSX.Element;
-        }
-    ): JSX.Element {
+    function PasswordlessEmailOrPhoneForm(props: SignInUpEmailOrPhoneFormProps): JSX.Element {
         const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
 
         return (
@@ -112,7 +108,12 @@ export const EmailOrPhoneForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                footer={props.footer}
+                footer={
+                    <SignInUpFooter
+                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
+                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
+                    />
+                }
             />
         );
     }

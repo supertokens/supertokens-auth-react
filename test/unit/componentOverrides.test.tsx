@@ -8,6 +8,7 @@ import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../../lib/ts/reci
 import { ComponentOverrideMap as EmailVerificationOverrideMap } from "../../lib/ts/recipe/emailverification/types";
 import { ComponentOverrideMap as ThirdPartyEmailPasswordOverrideMap } from "../../lib/ts/recipe/thirdpartyemailpassword/types";
 import { ComponentOverrideMap as PasswordlessOverrideMap } from "../../lib/ts/recipe/passwordless/types";
+import { ComponentOverrideMap as ThirdPartyPasswordlessOverrideMap } from "../../lib/ts/recipe/thirdpartypasswordless/types";
 
 import { SignUp } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUp";
 import { SignUpHeader } from "../../lib/ts/recipe/emailpassword/components/themes/signInAndUp/signUpHeader";
@@ -25,6 +26,7 @@ import { SignInAndUpCallbackTheme } from "../../lib/ts/recipe/thirdparty/compone
 import { SendVerifyEmail } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "../../lib/ts/recipe/emailverification/components/themes/emailVerification/verifyEmailLinkClicked";
 import { Header as ThirdPartyEmailPasswordHeader } from "../../lib/ts/recipe/thirdpartyemailpassword/components/themes/signInAndUp/header";
+import { Header as ThirdPartyPasswordlessHeader } from "../../lib/ts/recipe/thirdpartypasswordless/components/themes/signInUp/header";
 import { CloseTabScreen } from "../../lib/ts/recipe/passwordless/components/themes/signInUp/closeTabScreen";
 import { ComponentOverride } from "../../lib/ts/components/componentOverride/componentOverride";
 import { LinkClickedScreen } from "../../lib/ts/recipe/passwordless/components/themes/linkClickedScreen";
@@ -42,7 +44,8 @@ type AllComponentsOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap &
     EmailVerificationOverrideMap &
     ThirdPartyEmailPasswordOverrideMap &
-    PasswordlessOverrideMap;
+    PasswordlessOverrideMap &
+    ThirdPartyPasswordlessOverrideMap;
 
 const makeOverride = () => () => <h1 data-testid="override">Override</h1>;
 const WithProvider: React.FC<any> = ({ overrideMap, children }) => {
@@ -81,6 +84,7 @@ describe("Theme component overrides", () => {
         PasswordlessLinkSent_Override: LinkSent,
         PasswordlessCloseTabScreen_Override: CloseTabScreen,
         PasswordlessLinkClickedScreen_Override: LinkClickedScreen,
+        ThirdPartyPasswordlessHeader_Override: ThirdPartyPasswordlessHeader,
     };
 
     Object.entries(overrides).forEach(([key, comp]) => {

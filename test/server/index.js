@@ -46,6 +46,18 @@ try {
     passwordlessSupported = false;
 }
 
+let thirdPartyPasswordlessSupported;
+let ThirdPartyPasswordlessRaw;
+let ThirdPartyPasswordless;
+
+try {
+    ThirdPartyPasswordlessRaw = require("supertokens-node/lib/build/recipe/thirdpartypasswordless/recipe").default;
+    ThirdPartyPasswordless = require("supertokens-node/recipe/thirdpartypasswordless");
+    thirdPartyPasswordlessSupported = true;
+} catch (ex) {
+    thirdPartyPasswordlessSupported = false;
+}
+
 let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
 let jsonParser = bodyParser.json({ limit: "20mb" });
 
@@ -60,6 +72,7 @@ let latestURLWithToken = "";
 
 let deviceStore = new Map();
 function saveCode({ email, phoneNumber, preAuthSessionId, urlWithLinkCode, userInputCode }) {
+    console.log(arguments[0]);
     const device = deviceStore.get(preAuthSessionId) || {
         preAuthSessionId,
         codes: [],
@@ -185,6 +198,10 @@ app.get("/test/featureFlags", (req, res) => {
         available.push("passwordless");
     }
 
+    if (thirdPartyPasswordlessSupported) {
+        available.push("thirdpartypasswordless");
+    }
+
     res.send({
         available,
     });
@@ -225,6 +242,10 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
 
 function initST({ passwordlessConfig } = {}) {
     if (process.env.TEST_MODE) {
+        if (thirdPartyPasswordlessSupported) {
+            ThirdPartyPasswordlessRaw.reset();
+        }
+
         if (passwordlessSupported) {
             PasswordlessRaw.reset();
         }
@@ -297,15 +318,37 @@ function initST({ passwordlessConfig } = {}) {
         Session.init({}),
     ];
 
+    passwordlessConfig = {
+        contactMethod: "EMAIL_OR_PHONE",
+        flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
+        createAndSendCustomTextMessage: saveCode,
+        createAndSendCustomEmail: saveCode,
+        ...passwordlessConfig,
+    };
     if (passwordlessSupported) {
+        recipeList.push(Passwordless.init(passwordlessConfig));
+    }
+
+    if (thirdPartyPasswordlessSupported) {
         recipeList.push(
-            Passwordless.init(
-                passwordlessConfig || {
-                    contactMethod: "PHONE",
-                    flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
-                    createAndSendCustomTextMessage: saveCode,
-                }
-            )
+            ThirdPartyPasswordless.init({
+                ...passwordlessConfig,
+                providers: [
+                    ThirdPartyEmailPassword.Google({
+                        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                        clientId: process.env.GOOGLE_CLIENT_ID,
+                    }),
+                    ThirdPartyEmailPassword.Github({
+                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                        clientId: process.env.GITHUB_CLIENT_ID,
+                    }),
+                    ThirdPartyEmailPassword.Facebook({
+                        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+                        clientId: process.env.FACEBOOK_CLIENT_ID,
+                    }),
+                    customAuth0Provider(),
+                ],
+            })
         );
     }
 

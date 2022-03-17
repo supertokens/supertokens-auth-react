@@ -185,7 +185,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
     };
 
     getFeatureComponent = (
-        componentName: "signinup" | "resetpassword" | "emailverification",
+        componentName: "signinup" | "signinupcallback" | "resetpassword" | "emailverification",
         props: any
     ): JSX.Element => {
         if (componentName === "signinup") {
@@ -201,6 +201,13 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
                 throw new Error("Should not come here...");
             }
             return this.emailPasswordRecipe.getFeatureComponent(componentName, props);
+        } else if (componentName === "signinupcallback") {
+            if (this.thirdPartyRecipe === undefined) {
+                throw new Error(
+                    "Embedding this component requires the thirdparty recipe to be enabled. Please check the value of signInAndUpFeature.providers in the configuration."
+                );
+            }
+            return this.thirdPartyRecipe.getFeatureComponent(componentName, props);
         } else {
             return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);
         }

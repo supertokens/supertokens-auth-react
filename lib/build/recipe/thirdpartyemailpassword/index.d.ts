@@ -31,6 +31,7 @@ export default class Wrapper {
     static ThirdPartyEmailPasswordAuth: typeof ThirdPartyEmailPasswordAuth;
     static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
+    static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static EmailVerification: (prop?: any) => JSX.Element;
@@ -41,6 +42,7 @@ declare const signOut: typeof Wrapper.signOut;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
+declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 export {
@@ -53,6 +55,7 @@ export {
     isEmailVerified,
     SignInAndUp,
     SignInAndUpTheme,
+    ThirdPartySignInAndUpCallback,
     signOut,
     redirectToAuth,
     EmailVerification,
