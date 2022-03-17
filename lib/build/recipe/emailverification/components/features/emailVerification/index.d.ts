@@ -6,7 +6,7 @@ import { SessionContextType } from "../../../../session";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 declare type Prop = FeatureBaseProps & {
     recipe: Recipe;
-    userContext?: any;
+    userContext: any;
 };
 declare class EmailVerification extends PureComponent<
     Prop,

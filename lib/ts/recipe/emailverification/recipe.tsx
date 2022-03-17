@@ -31,7 +31,7 @@ import {
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import { getNormalisedUserContext, matchRecipeIdUsingQueryParams } from "../../utils";
+import { matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseEmailVerificationFeature } from "./utils";
 import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
@@ -39,6 +39,8 @@ import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import OverrideableBuilder from "supertokens-js-override";
+import UserContextWrapper from "../../usercontext/userContextThemeWrapper";
+import { UserContextContext } from "../../usercontext";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -114,15 +116,24 @@ export default class EmailVerification extends RecipeModule<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
         return (
-            <SessionAuth requireAuth={false}>
-                <EmailVerificationFeature
-                    recipe={this}
-                    {...{
-                        ...props,
-                        userContext: getNormalisedUserContext(props.userContext),
-                    }}
-                />
-            </SessionAuth>
+            <UserContextWrapper userContext={props.userContext}>
+                <SessionAuth requireAuth={false}>
+                    {
+                        // TODO NEMI: Is it a better idea to pass userContext from props directly?
+                    }
+                    <UserContextContext.Consumer>
+                        {(value) => (
+                            <EmailVerificationFeature
+                                recipe={this}
+                                {...{
+                                    ...props,
+                                    userContext: value,
+                                }}
+                            />
+                        )}
+                    </UserContextContext.Consumer>
+                </SessionAuth>
+            </UserContextWrapper>
         );
     };
 

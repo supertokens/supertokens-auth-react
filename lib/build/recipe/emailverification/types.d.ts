@@ -63,6 +63,7 @@ export declare type EmailVerificationThemeProps = {
     sendVerifyEmailScreen: SendVerifyEmailThemeProps;
     verifyEmailLinkClickedScreen?: VerifyEmailLinkClickedThemeProps;
     config: NormalisedConfig;
+    userContext?: any;
 };
 export declare type SendVerifyEmailThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;

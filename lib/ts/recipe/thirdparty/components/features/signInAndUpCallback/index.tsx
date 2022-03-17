@@ -30,15 +30,19 @@ import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 import STGeneralError from "supertokens-web-js/lib/build/error";
-import { getNormalisedUserContext } from "../../../../../utils";
+import { UserContextContext } from "../../../../../usercontext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 class SignInAndUpCallback extends PureComponent<PropType, unknown> {
+    static contextType = UserContextContext;
+
     componentDidMount = async (): Promise<void> => {
+        const userContext = this.context;
+
         try {
             const response = await this.props.recipe.recipeImpl.signInAndUp({
-                userContext: getNormalisedUserContext(this.props.userContext),
+                userContext,
             });
 
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
@@ -50,18 +54,15 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
             if (response.status === "OK") {
                 const stateResponse =
                     this.props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
-                        userContext: getNormalisedUserContext(this.props.userContext),
+                        userContext,
                     });
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
                 if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
                     let isEmailVerified = true;
                     try {
-                        isEmailVerified = (
-                            await this.props.recipe.emailVerification.isEmailVerified(
-                                getNormalisedUserContext(this.props.userContext)
-                            )
-                        ).isVerified;
+                        isEmailVerified = (await this.props.recipe.emailVerification.isEmailVerified(userContext))
+                            .isVerified;
                     } catch (ignored) {}
                     if (!isEmailVerified) {
                         await this.props.recipe.savePostEmailVerificationSuccessRedirectState({
@@ -105,8 +106,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
             <ComponentOverrideContext.Provider value={componentOverrides}>
                 <FeatureWrapper
                     useShadowDom={this.props.recipe.config.useShadowDom}
-                    defaultStore={defaultTranslationsThirdParty}
-                    userContext={this.props.userContext}>
+                    defaultStore={defaultTranslationsThirdParty}>
                     <StyleProvider
                         rawPalette={this.props.recipe.config.palette}
                         defaultPalette={defaultPalette}

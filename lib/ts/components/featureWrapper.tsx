@@ -27,7 +27,6 @@ import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "../translation/translationContext";
 import { TranslationStore } from "../translation/translationHelpers";
 import { mergeObjects } from "../utils";
-import { UserContextProvider } from "../usercontext";
 
 const superTokensEmotionCache = createCache({
     key: "supertokens",
@@ -41,31 +40,23 @@ type FeatureWrapperProps = {
     children: JSX.Element;
     useShadowDom?: boolean;
     defaultStore: TranslationStore;
-    userContext?: any;
 };
 
 /*
  * Component.
  */
 
-export default function FeatureWrapper({
-    children,
-    useShadowDom,
-    defaultStore,
-    userContext,
-}: FeatureWrapperProps): JSX.Element {
+export default function FeatureWrapper({ children, useShadowDom, defaultStore }: FeatureWrapperProps): JSX.Element {
     const st = SuperTokens.getInstanceOrThrow();
     return (
         <ErrorBoundary>
-            <UserContextProvider userContext={userContext}>
-                <TranslationContextProvider
-                    defaultLanguage={st.languageTranslations.defaultLanguage}
-                    defaultStore={mergeObjects(defaultStore, st.languageTranslations.userTranslationStore)}
-                    translationControlEventSource={st.languageTranslations.translationEventSource}
-                    userTranslationFunc={st.languageTranslations.userTranslationFunc}>
-                    <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
-                </TranslationContextProvider>
-            </UserContextProvider>
+            <TranslationContextProvider
+                defaultLanguage={st.languageTranslations.defaultLanguage}
+                defaultStore={mergeObjects(defaultStore, st.languageTranslations.userTranslationStore)}
+                translationControlEventSource={st.languageTranslations.translationEventSource}
+                userTranslationFunc={st.languageTranslations.userTranslationFunc}>
+                <WithOrWithoutShadowDom useShadowDom={useShadowDom}>{children}</WithOrWithoutShadowDom>
+            </TranslationContextProvider>
         </ErrorBoundary>
     );
 }

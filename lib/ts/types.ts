@@ -276,7 +276,6 @@ export type FeatureBaseProps = {
      * History provided by react-router
      */
     history?: any;
-    userContext?: any;
 };
 
 export type PreAPIHookFunction = (context: {

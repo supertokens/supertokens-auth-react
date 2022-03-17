@@ -35,6 +35,7 @@ import { getStyles } from "../styles";
 import { EmailOrPhoneForm } from "./emailOrPhoneForm";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import UserContextWrapper from "../../../../../usercontext/userContextThemeWrapper";
 
 enum SignInUpScreens {
     CloseTab,
@@ -153,16 +154,18 @@ function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
     }
 
     return (
-        <ThemeBase loadDefaultFont={!hasFont}>
-            <StyleProvider
-                rawPalette={props.config.palette}
-                defaultPalette={defaultPalette}
-                styleFromInit={activeStyle}
-                rootStyleFromInit={props.config.rootStyle}
-                getDefaultStyles={getStyles}>
-                <SignInUpTheme {...props} activeScreen={activeScreen!} />
-            </StyleProvider>
-        </ThemeBase>
+        <UserContextWrapper userContext={props.userContext}>
+            <ThemeBase loadDefaultFont={!hasFont}>
+                <StyleProvider
+                    rawPalette={props.config.palette}
+                    defaultPalette={defaultPalette}
+                    styleFromInit={activeStyle}
+                    rootStyleFromInit={props.config.rootStyle}
+                    getDefaultStyles={getStyles}>
+                    <SignInUpTheme {...props} activeScreen={activeScreen!} />
+                </StyleProvider>
+            </ThemeBase>
+        </UserContextWrapper>
     );
 }
 

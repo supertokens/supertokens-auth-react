@@ -269,6 +269,7 @@ export type SignInAndUpThemeProps = {
     };
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>;
     config: NormalisedConfig;
+    userContext?: any;
 };
 
 export type FormFieldThemeProps = NormalisedFormField & {
@@ -360,6 +361,7 @@ export type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailProps;
     submitNewPasswordForm: SubmitNewPasswordProps | undefined;
     config: NormalisedConfig;
+    userContext?: any;
 };
 
 export type EnterEmailProps = FormThemeBaseProps & {

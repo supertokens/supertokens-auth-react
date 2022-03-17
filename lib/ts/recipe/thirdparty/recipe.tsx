@@ -28,7 +28,7 @@ import {
     OnHandleEventContext,
     UserInput,
 } from "./types";
-import { getNormalisedUserContext, isTest, matchRecipeIdUsingQueryParams } from "../../utils";
+import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyConfig, matchRecipeIdUsingState } from "./utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
@@ -40,6 +40,7 @@ import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import OverrideableBuilder from "supertokens-js-override";
+import UserContextWrapper from "../../usercontext/userContextThemeWrapper";
 
 /*
  * Class.
@@ -113,26 +114,24 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <AuthWidgetWrapper<
-                    GetRedirectionURLContext,
-                    PreAndPostAPIHookAction,
-                    OnHandleEventContext,
-                    NormalisedConfig
-                >
-                    authRecipe={this}
-                    history={props.history}>
-                    <SignInAndUp recipe={this} {...props} />
-                </AuthWidgetWrapper>
+                <UserContextWrapper userContext={props.userContext}>
+                    <AuthWidgetWrapper<
+                        GetRedirectionURLContext,
+                        PreAndPostAPIHookAction,
+                        OnHandleEventContext,
+                        NormalisedConfig
+                    >
+                        authRecipe={this}
+                        history={props.history}>
+                        <SignInAndUp recipe={this} {...props} />
+                    </AuthWidgetWrapper>
+                </UserContextWrapper>
             );
         } else if (componentName === "signinupcallback") {
             return (
-                <SignInAndUpCallback
-                    recipe={this}
-                    {...{
-                        ...props,
-                        userContext: getNormalisedUserContext(props.userContext),
-                    }}
-                />
+                <UserContextWrapper userContext={props.userContext}>
+                    <SignInAndUpCallback recipe={this} {...props} />
+                </UserContextWrapper>
             );
         } else {
             return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);

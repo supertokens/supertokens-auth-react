@@ -93,6 +93,7 @@ export type EmailVerificationThemeProps = {
     sendVerifyEmailScreen: SendVerifyEmailThemeProps;
     verifyEmailLinkClickedScreen?: VerifyEmailLinkClickedThemeProps;
     config: NormalisedConfig;
+    userContext?: any;
 };
 
 export type SendVerifyEmailThemeProps = ThemeBaseProps & {
