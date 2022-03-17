@@ -33,7 +33,7 @@ import { SignUpFooter } from "../../../../emailpassword/components/themes/signIn
 import { SignInForm } from "../../../../emailpassword/components/themes/signInAndUp/signInForm";
 import { SignUpForm } from "../../../../emailpassword/components/themes/signInAndUp/signUpForm";
 import { SignInFooter } from "../../../../emailpassword/components/themes/signInAndUp/signInFooter";
-import UserContextWrapper from "../../../../../usercontext/userContextThemeWrapper";
+import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 
 const SignInAndUpTheme: React.FC<ThirdPartyEmailPasswordSignInAndUpThemeProps> = (props) => {
     const t = useTranslation();

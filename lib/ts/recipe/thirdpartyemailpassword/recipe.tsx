@@ -43,7 +43,7 @@ import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpasswo
 import OverrideableBuilder from "supertokens-js-override";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
-import UserContextWrapper from "../../usercontext/userContextThemeWrapper";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,

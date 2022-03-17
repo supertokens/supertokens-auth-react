@@ -21,8 +21,8 @@ import { memo } from "react";
 import SuperTokens from "../../superTokens";
 
 import { FeatureBaseProps } from "../../types";
-import UserContextWrapper from "../../usercontext/userContextThemeWrapper";
-import SessionAuth from "../session/sessionAuth";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import SessionAuthWrapper from "../session/sessionAuth";
 import Passwordless from "./recipe";
 
 type Props = FeatureBaseProps & {
@@ -33,18 +33,18 @@ type Props = FeatureBaseProps & {
 
 function PasswordlessAuth(props: Props) {
     if (props.requireAuth === false) {
-        return <SessionAuth onSessionExpired={props.onSessionExpired}>{props.children}</SessionAuth>;
+        return <SessionAuthWrapper onSessionExpired={props.onSessionExpired}>{props.children}</SessionAuthWrapper>;
     }
 
     return (
-        <SessionAuth
+        <SessionAuthWrapper
             redirectToLogin={() =>
                 Passwordless.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
             requireAuth={true}
             onSessionExpired={props.onSessionExpired}>
             {props.children}
-        </SessionAuth>
+        </SessionAuthWrapper>
     );
 }
 

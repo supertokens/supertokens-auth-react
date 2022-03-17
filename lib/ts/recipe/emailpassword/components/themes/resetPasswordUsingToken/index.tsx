@@ -25,7 +25,7 @@ import { SubmitNewPassword } from "./submitNewPassword";
 import { getStyles } from "../styles/styles";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
-import UserContextWrapper from "../../../../../usercontext/userContextThemeWrapper";
+import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 
 /*
  * Component.

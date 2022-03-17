@@ -21,11 +21,11 @@ import { memo } from "react";
 
 import ThirdPartyEmailPassword from "./recipe";
 import { FeatureBaseProps } from "../../types";
-import SessionAuth from "../session/sessionAuth";
+import SessionAuthWrapper from "../session/sessionAuth";
 import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
-import UserContextWrapper from "../../usercontext/userContextThemeWrapper";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 type Props = FeatureBaseProps & {
     recipe: Recipe;
@@ -41,11 +41,11 @@ function ThirdPartyEmailPasswordAuth(props: Props) {
     );
 
     if (props.requireAuth === false) {
-        return <SessionAuth onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuth>;
+        return <SessionAuthWrapper onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuthWrapper>;
     }
 
     return (
-        <SessionAuth
+        <SessionAuthWrapper
             redirectToLogin={() => {
                 void ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(
                     undefined,
@@ -55,7 +55,7 @@ function ThirdPartyEmailPasswordAuth(props: Props) {
             requireAuth={true}
             onSessionExpired={props.onSessionExpired}>
             {emailVerification}
-        </SessionAuth>
+        </SessionAuthWrapper>
     );
 }
 

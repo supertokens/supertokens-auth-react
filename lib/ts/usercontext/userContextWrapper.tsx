@@ -39,7 +39,7 @@ export default function UserContextWrapper(props: { children: React.ReactNode; u
                  * of this theme component
                  */
                 if (value === undefined) {
-                    return <UserContextProvider userContext={props.userContext}>{props.children}</UserContextProvider>;
+                    return <UserContextProvider userContext={undefined}>{props.children}</UserContextProvider>;
                 }
 
                 /**

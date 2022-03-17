@@ -39,8 +39,7 @@ import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import OverrideableBuilder from "supertokens-js-override";
-import UserContextWrapper from "../../usercontext/userContextThemeWrapper";
-import { UserContextContext } from "../../usercontext";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -118,20 +117,7 @@ export default class EmailVerification extends RecipeModule<
         return (
             <UserContextWrapper userContext={props.userContext}>
                 <SessionAuth requireAuth={false}>
-                    {
-                        // TODO NEMI: Is it a better idea to pass userContext from props directly?
-                    }
-                    <UserContextContext.Consumer>
-                        {(value) => (
-                            <EmailVerificationFeature
-                                recipe={this}
-                                {...{
-                                    ...props,
-                                    userContext: value,
-                                }}
-                            />
-                        )}
-                    </UserContextContext.Consumer>
+                    <EmailVerificationFeature recipe={this} {...props} />
                 </SessionAuth>
             </UserContextWrapper>
         );
