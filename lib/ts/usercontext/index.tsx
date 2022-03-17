@@ -31,7 +31,7 @@ export const UserContextProvider: React.FC<{
     children: React.ReactNode;
     userContext?: any;
 }> = ({ children, userContext }) => {
-    const [currentUserContext, setUserContext] = useState<any>(getNormalisedUserContext(userContext));
+    const [currentUserContext, setUserContext] = useState(getNormalisedUserContext(userContext));
 
     return (
         <UserContextContext.Provider
