@@ -22,7 +22,7 @@ import { memo } from "react";
 import ThirdPartyEmailPassword from "./recipe";
 import { FeatureBaseProps } from "../../types";
 import SessionAuthWrapper from "../session/sessionAuth";
-import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
+import EmailVerificationAuthWrapper from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
@@ -35,9 +35,9 @@ type Props = FeatureBaseProps & {
 
 function ThirdPartyEmailPasswordAuth(props: Props) {
     const emailVerification = (
-        <EmailVerificationAuth recipe={props.recipe.emailVerification} history={props.history}>
+        <EmailVerificationAuthWrapper recipe={props.recipe.emailVerification} history={props.history}>
             {props.children}
-        </EmailVerificationAuth>
+        </EmailVerificationAuthWrapper>
     );
 
     if (props.requireAuth === false) {
