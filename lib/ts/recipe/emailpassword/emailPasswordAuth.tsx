@@ -35,13 +35,20 @@ type Props = FeatureBaseProps & {
 
 function EmailPasswordAuth(props: Props) {
     const emailVerification = (
-        <EmailVerificationAuthWrapper recipe={props.recipe.emailVerification} history={props.history}>
+        <EmailVerificationAuthWrapper
+            recipe={props.recipe.emailVerification}
+            history={props.history}
+            userContext={undefined}>
             {props.children}
         </EmailVerificationAuthWrapper>
     );
 
     if (props.requireAuth === false) {
-        return <SessionAuthWrapper onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuthWrapper>;
+        return (
+            <SessionAuthWrapper onSessionExpired={props.onSessionExpired} userContext={undefined}>
+                {emailVerification}
+            </SessionAuthWrapper>
+        );
     }
 
     return (
@@ -50,7 +57,8 @@ function EmailPasswordAuth(props: Props) {
                 EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
             requireAuth={true}
-            onSessionExpired={props.onSessionExpired}>
+            onSessionExpired={props.onSessionExpired}
+            userContext={undefined}>
             {emailVerification}
         </SessionAuthWrapper>
     );

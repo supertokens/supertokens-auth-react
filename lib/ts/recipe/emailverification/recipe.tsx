@@ -117,7 +117,14 @@ export default class EmailVerification extends RecipeModule<
         return (
             <UserContextWrapper userContext={props.userContext}>
                 <SessionAuth requireAuth={false}>
-                    <EmailVerificationFeature recipe={this} {...props} />
+                    <EmailVerificationFeature
+                        recipe={this}
+                        {...{
+                            ...props,
+                            // We do this to make sure it does not add another provider
+                            userContext: undefined,
+                        }}
+                    />
                 </SessionAuth>
             </UserContextWrapper>
         );

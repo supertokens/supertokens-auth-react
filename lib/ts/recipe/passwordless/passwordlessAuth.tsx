@@ -33,7 +33,11 @@ type Props = FeatureBaseProps & {
 
 function PasswordlessAuth(props: Props) {
     if (props.requireAuth === false) {
-        return <SessionAuthWrapper onSessionExpired={props.onSessionExpired}>{props.children}</SessionAuthWrapper>;
+        return (
+            <SessionAuthWrapper onSessionExpired={props.onSessionExpired} userContext={undefined}>
+                {props.children}
+            </SessionAuthWrapper>
+        );
     }
 
     return (
@@ -42,7 +46,8 @@ function PasswordlessAuth(props: Props) {
                 Passwordless.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
             requireAuth={true}
-            onSessionExpired={props.onSessionExpired}>
+            onSessionExpired={props.onSessionExpired}
+            userContext={undefined}>
             {props.children}
         </SessionAuthWrapper>
     );
