@@ -151,8 +151,15 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                 }
             } catch (e) {
                 if (STGeneralError.isThisError(e)) {
-                    const message = e.message;
-                    props.onError(message);
+                    /**
+                     * Because status: GENERAL_ERROR has been replaced with
+                     * throwing STGeneralError, we need to make this check here too
+                     */
+                    if (unmounting.current.signal.aborted) {
+                        return;
+                    }
+
+                    props.onError(e.message);
                     return;
                 }
 
