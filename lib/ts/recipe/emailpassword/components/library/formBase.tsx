@@ -98,6 +98,16 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
         [updateFieldState]
     );
 
+    const handleFieldStateChange = (fieldUpdates: FieldState[]) => {
+        for (const field of formFields) {
+            const update = fieldUpdates.find((f) => f.id === field.id);
+            if (update || field.clearOnSubmit === true) {
+                // We can do these one by one, it's almost never more than one field
+                updateFieldState(field.id, (os) => ({ ...os, value: update ? update.value : "" }));
+            }
+        }
+    };
+
     const onFormSubmit = useCallback(
         async (e: FormEvent): Promise<void> => {
             // Prevent default event propagation.
@@ -117,20 +127,15 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                 };
             });
 
+            const fieldUpdates: FieldState[] = [];
             // Call API.
             try {
-                const fieldUpdates: FieldState[] = [];
                 const result = await props.callAPI(apiFields, (id, value) => fieldUpdates.push({ id, value }));
                 if (unmounting.current.signal.aborted) {
                     return;
                 }
-                for (const field of formFields) {
-                    const update = fieldUpdates.find((f) => f.id === field.id);
-                    if (update || field.clearOnSubmit === true) {
-                        // We can do these one by one, it's almost never more than one field
-                        updateFieldState(field.id, (os) => ({ ...os, value: update ? update.value : "" }));
-                    }
-                }
+
+                handleFieldStateChange(fieldUpdates);
 
                 // If successful
                 if (result.status === "OK") {
@@ -153,11 +158,13 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                 if (STGeneralError.isThisError(e)) {
                     /**
                      * Because status: GENERAL_ERROR has been replaced with
-                     * throwing STGeneralError, we need to make this check here too
+                     * throwing STGeneralError, we need to handle this here too
                      */
                     if (unmounting.current.signal.aborted) {
                         return;
                     }
+
+                    handleFieldStateChange(fieldUpdates);
 
                     props.onError(e.message);
                     return;
