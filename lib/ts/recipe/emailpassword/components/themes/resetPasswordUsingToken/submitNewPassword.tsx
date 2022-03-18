@@ -34,7 +34,7 @@ import { useUserContext } from "../../../../../usercontext";
 const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
-    const userContext = useUserContext();
+    const { userContext } = useUserContext();
     const [status, setStatus] = useState<SubmitNewPasswordStatus>("READY");
 
     const onSuccess = (): void => {

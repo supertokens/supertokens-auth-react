@@ -21,11 +21,11 @@ import { memo } from "react";
 
 import EmailPassword from "./recipe";
 import { FeatureBaseProps } from "../../types";
-import SessionAuth from "../session/sessionAuth";
-import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
+import SessionAuthWrapper from "../session/sessionAuth";
+import EmailVerificationAuthWrapper from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
-import UserContextWrapper from "../../usercontext/userContextThemeWrapper";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 type Props = FeatureBaseProps & {
     recipe: Recipe;
@@ -35,24 +35,32 @@ type Props = FeatureBaseProps & {
 
 function EmailPasswordAuth(props: Props) {
     const emailVerification = (
-        <EmailVerificationAuth recipe={props.recipe.emailVerification} history={props.history}>
+        <EmailVerificationAuthWrapper
+            recipe={props.recipe.emailVerification}
+            history={props.history}
+            userContext={undefined}>
             {props.children}
-        </EmailVerificationAuth>
+        </EmailVerificationAuthWrapper>
     );
 
     if (props.requireAuth === false) {
-        return <SessionAuth onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuth>;
+        return (
+            <SessionAuthWrapper onSessionExpired={props.onSessionExpired} userContext={undefined}>
+                {emailVerification}
+            </SessionAuthWrapper>
+        );
     }
 
     return (
-        <SessionAuth
+        <SessionAuthWrapper
             redirectToLogin={() =>
                 EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
             requireAuth={true}
-            onSessionExpired={props.onSessionExpired}>
+            onSessionExpired={props.onSessionExpired}
+            userContext={undefined}>
             {emailVerification}
-        </SessionAuth>
+        </SessionAuthWrapper>
     );
 }
 

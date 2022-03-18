@@ -39,7 +39,7 @@ import { useUserContext } from "../../../../../usercontext";
 export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkClickedThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
-    const userContext = useUserContext();
+    const { userContext } = useUserContext();
     const [status, setStatus] = useState<"LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL">("LOADING");
 
     useEffect(() => {

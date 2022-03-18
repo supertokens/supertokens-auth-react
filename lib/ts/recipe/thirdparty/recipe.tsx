@@ -40,7 +40,7 @@ import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import OverrideableBuilder from "supertokens-js-override";
-import UserContextWrapper from "../../usercontext/userContextThemeWrapper";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 /*
  * Class.

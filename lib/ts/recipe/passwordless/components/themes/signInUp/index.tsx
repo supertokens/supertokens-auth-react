@@ -35,7 +35,7 @@ import { getStyles } from "../styles";
 import { EmailOrPhoneForm } from "./emailOrPhoneForm";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
-import UserContextWrapper from "../../../../../usercontext/userContextThemeWrapper";
+import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 
 enum SignInUpScreens {
     CloseTab,

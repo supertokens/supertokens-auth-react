@@ -6,7 +6,7 @@ declare type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };
 declare class SignInAndUpCallback extends PureComponent<PropType, unknown> {
-    static contextType: import("react").Context<any>;
+    static contextType: import("react").Context<import("../../../../../usercontext/types").UserContextType>;
     componentDidMount: () => Promise<void>;
     render: () => JSX.Element;
 }

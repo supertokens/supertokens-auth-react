@@ -10,12 +10,16 @@ export default class SessionAPIWrapper {
               requireAuth?: false | undefined;
           } & {
               onSessionExpired?: (() => void) | undefined;
+          } & {
+              userContext?: any;
           })
         | ({
               requireAuth: true;
               redirectToLogin: () => void;
           } & {
               onSessionExpired?: (() => void) | undefined;
+          } & {
+              userContext?: any;
           })
     >;
     static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
@@ -32,12 +36,16 @@ declare const SessionAuth: import("react").FC<
           requireAuth?: false | undefined;
       } & {
           onSessionExpired?: (() => void) | undefined;
+      } & {
+          userContext?: any;
       })
     | ({
           requireAuth: true;
           redirectToLogin: () => void;
       } & {
           onSessionExpired?: (() => void) | undefined;
+      } & {
+          userContext?: any;
       })
 >;
 declare const init: typeof SessionAPIWrapper.init;

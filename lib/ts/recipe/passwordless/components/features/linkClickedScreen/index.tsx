@@ -36,7 +36,7 @@ import STGeneralError from "supertokens-web-js/lib/build/error";
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
-    const userContext = useUserContext();
+    const { userContext } = useUserContext();
 
     useEffect(() => {
         const abortController = new AbortController();

@@ -19,6 +19,7 @@ import { FeatureBaseProps } from "../../types";
 import Recipe from "./recipe";
 import { SessionContext } from "../session";
 import { useUserContext } from "../../usercontext";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 type Props = FeatureBaseProps & { recipe: Recipe };
 
@@ -34,7 +35,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     const doesSessionExist = sessionContext.doesSessionExist;
     const emailVerificationMode = props.recipe.config.mode;
     const propsRef = React.useRef(props);
-    const userContext = useUserContext();
+    const { userContext } = useUserContext();
 
     useEffect(() => {
         let thisUseEffectMustReturnImmediately = false;
@@ -84,4 +85,16 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     return isEmailVerified ? <>{children}</> : null;
 };
 
-export default EmailVerificationAuth;
+const EmailVerificationAuthWrapper: React.FC<
+    Props & {
+        userContext?: any;
+    }
+> = (props) => {
+    return (
+        <UserContextWrapper userContext={props.userContext}>
+            <EmailVerificationAuth {...props} />
+        </UserContextWrapper>
+    );
+};
+
+export default EmailVerificationAuthWrapper;

@@ -21,6 +21,7 @@ import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 // if it's not the default context, it means SessionAuth from top has
 // given us a sessionContext.
@@ -57,7 +58,8 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     );
 
     const session = useRef(Session.getInstanceOrThrow());
-    const userContext = useUserContext();
+
+    const { userContext } = useUserContext();
 
     // on mount
     useEffect(() => {
@@ -173,4 +175,16 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     return <SessionContext.Provider value={context}>{children}</SessionContext.Provider>;
 };
 
-export default SessionAuth;
+const SessionAuthWrapper: React.FC<
+    Props & {
+        userContext?: any;
+    }
+> = (props) => {
+    return (
+        <UserContextWrapper userContext={props.userContext}>
+            <SessionAuth {...props} />
+        </UserContextWrapper>
+    );
+};
+
+export default SessionAuthWrapper;

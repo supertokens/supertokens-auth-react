@@ -29,7 +29,7 @@ import { ProvidersForm } from "./providersForm";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import { useTranslation } from "../../../../..";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
-import UserContextWrapper from "../../../../../usercontext/userContextThemeWrapper";
+import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 
 const SignInAndUpTheme: React.FC<SignInAndUpThemeProps> = (props) => {
     const t = useTranslation();
