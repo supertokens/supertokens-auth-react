@@ -9,17 +9,17 @@ export default class SessionAPIWrapper {
         | ({
               requireAuth?: false | undefined;
           } & {
-              requiredGrants?: import("./types").Grant<any>[] | undefined;
+              requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
               onSessionExpired?: (() => void) | undefined;
-              onMissingGrant?: ((grantKey: string) => void) | undefined;
+              onMissingClaim?: ((claimId: string) => void) | undefined;
           })
         | ({
               requireAuth: true;
               redirectToLogin: () => void;
           } & {
-              requiredGrants?: import("./types").Grant<any>[] | undefined;
+              requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
               onSessionExpired?: (() => void) | undefined;
-              onMissingGrant?: ((grantKey: string) => void) | undefined;
+              onMissingClaim?: ((claimId: string) => void) | undefined;
           })
     >;
     static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
@@ -35,17 +35,17 @@ declare const SessionAuth: import("react").FC<
     | ({
           requireAuth?: false | undefined;
       } & {
-          requiredGrants?: import("./types").Grant<any>[] | undefined;
+          requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
           onSessionExpired?: (() => void) | undefined;
-          onMissingGrant?: ((grantKey: string) => void) | undefined;
+          onMissingClaim?: ((claimId: string) => void) | undefined;
       })
     | ({
           requireAuth: true;
           redirectToLogin: () => void;
       } & {
-          requiredGrants?: import("./types").Grant<any>[] | undefined;
+          requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
           onSessionExpired?: (() => void) | undefined;
-          onMissingGrant?: ((grantKey: string) => void) | undefined;
+          onMissingClaim?: ((claimId: string) => void) | undefined;
       })
 >;
 declare const init: typeof SessionAPIWrapper.init;

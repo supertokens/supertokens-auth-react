@@ -19,7 +19,7 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
-import { Grant, RecipeEventWithSessionContext, SessionContextType } from "./types";
+import { SessionClaim, RecipeEventWithSessionContext, SessionContextType } from "./types";
 
 // if it's not the default context, it means SessionAuth from top has
 // given us a sessionContext.
@@ -35,9 +35,9 @@ type PropsWithAuth = {
 };
 
 type Props = (PropsWithoutAuth | PropsWithAuth) & {
-    requiredGrants?: Grant<any>[];
+    requiredClaims?: SessionClaim<any>[];
     onSessionExpired?: () => void;
-    onMissingGrant?: (grantKey: string) => void;
+    onMissingClaim?: (claimId: string) => void;
 };
 
 const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
@@ -144,9 +144,9 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                         }
                     }
                     return;
-                case "GRANT_MISSING":
-                    if (props.onMissingGrant !== undefined) {
-                        props.onMissingGrant(event.grantKey);
+                case "CLAIM_MISSING":
+                    if (props.onMissingClaim !== undefined) {
+                        props.onMissingClaim(event.claimId);
                     }
                     return;
             }

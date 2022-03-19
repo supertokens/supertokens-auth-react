@@ -1,5 +1,5 @@
 import React from "react";
-import { Grant } from "./types";
+import { SessionClaim } from "./types";
 declare type PropsWithoutAuth = {
     requireAuth?: false;
 };
@@ -8,9 +8,9 @@ declare type PropsWithAuth = {
     redirectToLogin: () => void;
 };
 declare type Props = (PropsWithoutAuth | PropsWithAuth) & {
-    requiredGrants?: Grant<any>[];
+    requiredClaims?: SessionClaim<any>[];
     onSessionExpired?: () => void;
-    onMissingGrant?: (grantKey: string) => void;
+    onMissingClaim?: (claimId: string) => void;
 };
 declare const SessionAuth: React.FC<Props>;
 export default SessionAuth;

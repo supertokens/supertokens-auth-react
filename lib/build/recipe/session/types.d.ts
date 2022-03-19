@@ -10,8 +10,8 @@ export declare type RecipeEvent =
           sessionExpiredOrRevoked: boolean;
       }
     | {
-          action: "GRANT_MISSING";
-          grantKey: string;
+          action: "CLAIM_MISSING";
+          claimId: string;
       };
 export declare type RecipeEventWithSessionContext = RecipeEvent & {
     sessionContext: SessionContextType;
@@ -45,20 +45,20 @@ export declare type SessionContextType = {
     userId: string;
     accessTokenPayload: any;
 };
-export declare abstract class Grant<T> {
+export declare abstract class SessionClaim<T> {
     readonly key: string;
     constructor(key: string);
     /**
-     * Makes an API call that will refresh the grant in the token.
+     * Makes an API call that will refresh the claim in the token.
      */
-    abstract refreshGrant(userId: string, userContext: any): Awaitable<T | undefined>;
+    abstract refreshClaim(userId: string, userContext: any): Awaitable<T | undefined>;
     /**
-     * Decides if we need to refresh the grant value before checking the payload with `isGrantValid`.
+     * Decides if we need to refresh the claim value before checking the payload with `isClaimValid`.
      * E.g.: if the information in the payload is expired, or is not sufficient for this check.
      */
-    abstract shouldRefreshGrant(grantPayload: any, userContext: any): Awaitable<boolean>;
+    abstract shouldRefreshClaim(sessionClaims: any, userContext: any): Awaitable<boolean>;
     /**
-     * Decides if the grant is valid based on the grant payload (and not checking DB or anything else)
+     * Decides if the claim is valid based on the sessionClaims object (and not checking DB or anything else)
      */
-    abstract isGrantValid(grantPayload: any, userContext: any): Awaitable<boolean>;
+    abstract isClaimValid(sessionClaims: any, userContext: any): Awaitable<boolean>;
 }
