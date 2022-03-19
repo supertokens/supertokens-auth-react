@@ -96,3 +96,4 @@ export declare type PostAPIHookFunction = (context: {
     url: string;
     response: Response;
 }) => Promise<Response>;
+export declare type Awaitable<T> = Promise<T> | T;

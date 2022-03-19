@@ -163,6 +163,7 @@ function getRecipeList() {
             onHandleEvent: (context) => {
                 if (context.action === "REFRESH_SESSION") {
                 } else if (context.action === "SIGN_OUT") {
+                } else if (context.action === "GRANT_MISSING") {
                 } else if (context.action === "UNAUTHORISED") {
                     if (context.sessionExpiredOrRevoked) {
                     }

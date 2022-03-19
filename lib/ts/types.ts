@@ -288,3 +288,5 @@ export type PostAPIHookFunction = (context: {
     url: string;
     response: Response;
 }) => Promise<Response>;
+
+export type Awaitable<T> = Promise<T> | T;
