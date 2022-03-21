@@ -35,7 +35,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     const doesSessionExist = sessionContext.doesSessionExist;
     const emailVerificationMode = props.recipe.config.mode;
     const propsRef = React.useRef(props);
-    const { userContext } = useUserContext();
+    const userContext = useUserContext();
 
     useEffect(() => {
         let thisUseEffectMustReturnImmediately = false;

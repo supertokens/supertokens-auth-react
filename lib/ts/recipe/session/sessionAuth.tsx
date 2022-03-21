@@ -59,7 +59,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
 
     const session = useRef(Session.getInstanceOrThrow());
 
-    const { userContext } = useUserContext();
+    const userContext = useUserContext();
 
     // on mount
     useEffect(() => {

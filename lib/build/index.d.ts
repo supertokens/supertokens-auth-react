@@ -10,7 +10,7 @@ export default class SuperTokensAPIWrapper {
     static loadTranslation(store: TranslationStore): void;
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[];
     static useTranslation: () => import("./translation/translationHelpers").TranslationFunc;
-    static useUserContext: () => import("./usercontext/types").UserContextType;
+    static useUserContext: () => any;
 }
 export declare const canHandleRoute: typeof SuperTokensAPIWrapper.canHandleRoute;
 export declare const init: typeof SuperTokensAPIWrapper.init;

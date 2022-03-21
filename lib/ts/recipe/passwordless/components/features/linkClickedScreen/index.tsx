@@ -35,7 +35,7 @@ import { useUserContext } from "../../../../../usercontext";
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
-    const { userContext } = useUserContext();
+    const userContext = useUserContext();
 
     useEffect(() => {
         const abortController = new AbortController();
