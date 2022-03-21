@@ -25,7 +25,7 @@ import { useUserContext } from "../../../../../usercontext";
 
 export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {
     const styles = useContext(StyleContext);
-    const { userContext } = useUserContext();
+    const userContext = useUserContext();
 
     const signInClick = async (providerId: string): Promise<void> => {
         try {

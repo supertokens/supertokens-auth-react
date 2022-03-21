@@ -34,6 +34,10 @@ type Props = FeatureBaseProps & {
 };
 
 function ThirdPartyAuth(props: Props) {
+    /**
+     * Refer to comment in ts/recipe/emailpassword/emailPasswordAuth.tsx:EmailPasswordAuth
+     * to know why userContext is explicitly set to undefined
+     */
     const emailVerification = (
         <EmailVerificationAuthWrapper
             recipe={props.recipe.emailVerification}
@@ -44,6 +48,10 @@ function ThirdPartyAuth(props: Props) {
     );
 
     if (props.requireAuth === false) {
+        /**
+         * Refer to comment in ts/recipe/emailpassword/emailPasswordAuth.tsx:EmailPasswordAuth
+         * to know why userContext is explicitly set to undefined
+         */
         return (
             <SessionAuthWrapper onSessionExpired={props.onSessionExpired} userContext={undefined}>
                 {emailVerification}
@@ -51,6 +59,10 @@ function ThirdPartyAuth(props: Props) {
         );
     }
 
+    /**
+     * Refer to comment in ts/recipe/emailpassword/emailPasswordAuth.tsx:EmailPasswordAuth
+     * to know why userContext is explicitly set to undefined
+     */
     return (
         <SessionAuthWrapper
             redirectToLogin={() => {

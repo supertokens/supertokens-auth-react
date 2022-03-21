@@ -38,7 +38,7 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
     static contextType = UserContextContext;
 
     componentDidMount = async (): Promise<void> => {
-        const { userContext } = this.context;
+        const userContext = this.context;
 
         try {
             const response = await this.props.recipe.recipeImpl.signInAndUp({

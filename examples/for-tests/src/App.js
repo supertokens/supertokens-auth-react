@@ -779,7 +779,6 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
                 return {
                     ...implementation,
                     getAuthorizationURLWithQueryParamsAndSetState(input) {
-                        console.log(input);
                         if (input.userContext["key"] !== undefined) {
                             log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE RECEIVED_USER_CONTEXT`);
                         }

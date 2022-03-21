@@ -29,7 +29,6 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { SessionContextType, SessionContext } from "../../../../session";
 import { defaultTranslationsEmailVerification } from "../../themes/translations";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
-import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
 
@@ -143,27 +142,25 @@ class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING
         };
 
         return (
-            <UserContextWrapper userContext={this.props.userContext}>
-                <ComponentOverrideContext.Provider value={componentOverrides}>
-                    <FeatureWrapper
-                        useShadowDom={this.props.recipe.config.useShadowDom}
-                        defaultStore={defaultTranslationsEmailVerification}>
-                        <Fragment>
-                            {/* No custom theme, use default. */}
-                            {this.props.children === undefined && <EmailVerificationTheme {...props} />}
-                            {/* Otherwise, custom theme is provided, propagate props. */}
-                            {this.props.children &&
-                                React.Children.map(this.props.children, (child) => {
-                                    if (React.isValidElement(child)) {
-                                        return React.cloneElement(child, props);
-                                    }
+            <ComponentOverrideContext.Provider value={componentOverrides}>
+                <FeatureWrapper
+                    useShadowDom={this.props.recipe.config.useShadowDom}
+                    defaultStore={defaultTranslationsEmailVerification}>
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {this.props.children === undefined && <EmailVerificationTheme {...props} />}
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {this.props.children &&
+                            React.Children.map(this.props.children, (child) => {
+                                if (React.isValidElement(child)) {
+                                    return React.cloneElement(child, props);
+                                }
 
-                                    return child;
-                                })}
-                        </Fragment>
-                    </FeatureWrapper>
-                </ComponentOverrideContext.Provider>
-            </UserContextWrapper>
+                                return child;
+                            })}
+                    </Fragment>
+                </FeatureWrapper>
+            </ComponentOverrideContext.Provider>
         );
     };
 }
