@@ -32,30 +32,17 @@ type Props = FeatureBaseProps & {
 };
 
 function PasswordlessAuth(props: Props) {
-    /**
-     * Refer to comment in ts/recipe/emailpassword/emailPasswordAuth.tsx:EmailPasswordAuth
-     * to know why userContext is explicitly set to undefined
-     */
     if (props.requireAuth === false) {
-        return (
-            <SessionAuthWrapper onSessionExpired={props.onSessionExpired} userContext={undefined}>
-                {props.children}
-            </SessionAuthWrapper>
-        );
+        return <SessionAuthWrapper onSessionExpired={props.onSessionExpired}>{props.children}</SessionAuthWrapper>;
     }
 
-    /**
-     * Refer to comment in ts/recipe/emailpassword/emailPasswordAuth.tsx:EmailPasswordAuth
-     * to know why userContext is explicitly set to undefined
-     */
     return (
         <SessionAuthWrapper
             redirectToLogin={() =>
                 Passwordless.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
             requireAuth={true}
-            onSessionExpired={props.onSessionExpired}
-            userContext={undefined}>
+            onSessionExpired={props.onSessionExpired}>
             {props.children}
         </SessionAuthWrapper>
     );

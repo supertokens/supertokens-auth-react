@@ -34,35 +34,16 @@ type Props = FeatureBaseProps & {
 };
 
 function ThirdPartyEmailPasswordAuth(props: Props) {
-    /**
-     * Refer to comment in ts/recipe/emailpassword/emailPasswordAuth.tsx:EmailPasswordAuth
-     * to know why userContext is explicitly set to undefined
-     */
     const emailVerification = (
-        <EmailVerificationAuthWrapper
-            recipe={props.recipe.emailVerification}
-            history={props.history}
-            userContext={undefined}>
+        <EmailVerificationAuthWrapper recipe={props.recipe.emailVerification} history={props.history}>
             {props.children}
         </EmailVerificationAuthWrapper>
     );
 
     if (props.requireAuth === false) {
-        /**
-         * Refer to comment in ts/recipe/emailpassword/emailPasswordAuth.tsx:EmailPasswordAuth
-         * to know why userContext is explicitly set to undefined
-         */
-        return (
-            <SessionAuthWrapper onSessionExpired={props.onSessionExpired} userContext={undefined}>
-                {emailVerification}
-            </SessionAuthWrapper>
-        );
+        return <SessionAuthWrapper onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuthWrapper>;
     }
 
-    /**
-     * Refer to comment in ts/recipe/emailpassword/emailPasswordAuth.tsx:EmailPasswordAuth
-     * to know why userContext is explicitly set to undefined
-     */
     return (
         <SessionAuthWrapper
             redirectToLogin={() => {
@@ -72,8 +53,7 @@ function ThirdPartyEmailPasswordAuth(props: Props) {
                 );
             }}
             requireAuth={true}
-            onSessionExpired={props.onSessionExpired}
-            userContext={undefined}>
+            onSessionExpired={props.onSessionExpired}>
             {emailVerification}
         </SessionAuthWrapper>
     );
