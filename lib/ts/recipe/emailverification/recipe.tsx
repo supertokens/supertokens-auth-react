@@ -122,7 +122,7 @@ export default class EmailVerification extends RecipeModule<
                      * EmailVerificationFeature is a class component that accepts userContext
                      * as a prop. If we pass userContext as a prop directly then Emailverification
                      * will not respond to changes when the userContext in UserContextWrapper
-                     * changes. In order to prevent this we user a Consumer that will respond
+                     * changes. In order to prevent this we use a Consumer that will respond
                      * to changes in UserContextWrapper and update the prop for EmailVerificationFeature
                      *
                      * NOTE: We cannot use static contextType in EmailVerificationFeature to solve

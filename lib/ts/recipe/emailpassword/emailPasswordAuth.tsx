@@ -34,46 +34,23 @@ type Props = FeatureBaseProps & {
 };
 
 function EmailPasswordAuth(props: Props) {
-    /**
-     * When we use EmailverificationAuthWrapper here we want it to rely on
-     * the userContext provided by the UserContextWrapper used in EmailPasswordAuthWrapper.
-     *
-     * If userContext is explicitly passed as undefined, the UserContextWrapper inside
-     * EmailVerificationAuthWrapper will defer to the userContext provided by the first
-     * instance of UserContextProvider in its parent tree and will not add its own Provider.
-     *
-     * NOTE: If EmailVerificationAuthWrapper adds its own UserContextProvider, changes to the
-     * userContext React context triggered by the EmailVerificationAuthWrapper will result in
-     * updates to EmailVerificationAuthWrapper and its children and will not apply to any of its
-     * parents. Read more here: https://reactjs.org/docs/context.html#contextprovider
-     */
     const emailVerification = (
-        <EmailVerificationAuthWrapper
-            recipe={props.recipe.emailVerification}
-            history={props.history}
-            userContext={undefined}>
+        <EmailVerificationAuthWrapper recipe={props.recipe.emailVerification} history={props.history}>
             {props.children}
         </EmailVerificationAuthWrapper>
     );
 
     if (props.requireAuth === false) {
-        // Refer to comment above to know why userContext is undefined
-        return (
-            <SessionAuthWrapper onSessionExpired={props.onSessionExpired} userContext={undefined}>
-                {emailVerification}
-            </SessionAuthWrapper>
-        );
+        return <SessionAuthWrapper onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuthWrapper>;
     }
 
-    // Refer to comment above to know why userContext is undefined
     return (
         <SessionAuthWrapper
             redirectToLogin={() =>
                 EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
             requireAuth={true}
-            onSessionExpired={props.onSessionExpired}
-            userContext={undefined}>
+            onSessionExpired={props.onSessionExpired}>
             {emailVerification}
         </SessionAuthWrapper>
     );
