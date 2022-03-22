@@ -22,6 +22,7 @@ import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultEmailValidator, defaultValidate } from "../../../../emailpassword/validators";
 import { useState } from "react";
 import STGeneralError from "supertokens-web-js/lib/build/error";
+import { useUserContext } from "../../../../../usercontext";
 
 export const EmailOrPhoneForm = withOverride(
     "PasswordlessEmailOrPhoneForm",
@@ -32,6 +33,7 @@ export const EmailOrPhoneForm = withOverride(
         }
     ): JSX.Element {
         const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
+        const userContext = useUserContext();
 
         return (
             <FormBase
@@ -68,11 +70,10 @@ export const EmailOrPhoneForm = withOverride(
                     if ((await defaultEmailValidator(emailOrPhone)) === undefined) {
                         const emailValidationRes = await props.config.validateEmailAddress(emailOrPhone);
                         if (emailValidationRes === undefined) {
-                            // TODO NEMI: handle user context for pre built UI
                             const response = await props.recipeImplementation.createCode({
                                 email: emailOrPhone,
                                 config: props.config,
-                                userContext: {},
+                                userContext,
                             });
 
                             if (response.status === "GENERAL_ERROR") {
@@ -86,11 +87,10 @@ export const EmailOrPhoneForm = withOverride(
                     } else {
                         const phoneValidationRes = await props.config.validatePhoneNumber(emailOrPhone);
                         if (phoneValidationRes === undefined) {
-                            // TODO NEMI: handle user context for pre built UI
                             const response = await props.recipeImplementation.createCode({
                                 phoneNumber: emailOrPhone,
                                 config: props.config,
-                                userContext: {},
+                                userContext,
                             });
 
                             if (response.status === "GENERAL_ERROR") {

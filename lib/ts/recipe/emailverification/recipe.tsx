@@ -39,6 +39,8 @@ import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import OverrideableBuilder from "supertokens-js-override";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { UserContextContext } from "../../usercontext";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -114,9 +116,36 @@ export default class EmailVerification extends RecipeModule<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
         return (
-            <SessionAuth requireAuth={false}>
-                <EmailVerificationFeature recipe={this} {...props} />
-            </SessionAuth>
+            <UserContextWrapper userContext={props.userContext}>
+                <SessionAuth requireAuth={false}>
+                    {/**
+                     * EmailVerificationFeature is a class component that accepts userContext
+                     * as a prop. If we pass userContext as a prop directly then Emailverification
+                     * will not respond to changes when the userContext in UserContextWrapper
+                     * changes. In order to prevent this we use a Consumer that will respond
+                     * to changes in UserContextWrapper and update the prop for EmailVerificationFeature
+                     *
+                     * NOTE: We cannot use static contextType in EmailVerificationFeature to solve
+                     * this because EmailVerificationFeature already uses SessionContext as its
+                     * context type. Read more here:
+                     * https://reactjs.org/docs/context.html#consuming-multiple-contexts
+                     */}
+                    <UserContextContext.Consumer>
+                        {(value) => {
+                            return (
+                                <EmailVerificationFeature
+                                    recipe={this}
+                                    {...{
+                                        ...props,
+                                        // We do this to make sure it does not add another provider
+                                        userContext: value,
+                                    }}
+                                />
+                            );
+                        }}
+                    </UserContextContext.Consumer>
+                </SessionAuth>
+            </UserContextWrapper>
         );
     };
 

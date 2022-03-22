@@ -43,6 +43,7 @@ import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpasswo
 import OverrideableBuilder from "supertokens-js-override";
 import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
 import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
@@ -190,27 +191,34 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
     };
 
     getFeatureComponent = (
-        componentName: "signinup" | "resetpassword" | "emailverification",
+        componentName: "signinup" | "resetpassword" | "emailverification" | "signinupcallback",
         props: any
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <AuthWidgetWrapper<
-                    GetRedirectionURLContext,
-                    PreAndPostAPIHookAction,
-                    OnHandleEventContext,
-                    NormalisedConfig
-                >
-                    authRecipe={this}
-                    history={props.history}>
-                    <SignInAndUp recipe={this} {...props} />
-                </AuthWidgetWrapper>
+                <UserContextWrapper userContext={props.userContext}>
+                    <AuthWidgetWrapper<
+                        GetRedirectionURLContext,
+                        PreAndPostAPIHookAction,
+                        OnHandleEventContext,
+                        NormalisedConfig
+                    >
+                        authRecipe={this}
+                        history={props.history}>
+                        <SignInAndUp recipe={this} {...props} />
+                    </AuthWidgetWrapper>
+                </UserContextWrapper>
             );
         } else if (componentName === "resetpassword") {
             if (this.emailPasswordRecipe === undefined) {
                 throw new Error("Should not come here...");
             }
             return this.emailPasswordRecipe.getFeatureComponent(componentName, props);
+        } else if (componentName === "signinupcallback") {
+            if (this.thirdPartyRecipe === undefined) {
+                throw new Error("Should not come here...");
+            }
+            return this.thirdPartyRecipe.getFeatureComponent(componentName, props);
         } else {
             return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);
         }

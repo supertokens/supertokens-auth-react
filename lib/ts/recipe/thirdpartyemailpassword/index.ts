@@ -23,6 +23,7 @@ import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { getNormalisedUserContext } from "../../utils";
 import { RecipeInterface, UserType } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
+import { SignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -235,7 +236,13 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.thirdPartySignInAndUp({
+        /**
+         * We do it this way here because prettier behaves in a weird way without it.
+         * If you return directly, build-pretty will succeed but pretty-check will fail
+         * when you try to commit and you will have to run pretty manually every time
+         */
+        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
+        return recipeInstance.recipeImpl.thirdPartySignInAndUp({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -255,6 +262,9 @@ export default class Wrapper {
     static EmailVerification = (prop?: any) =>
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
+    static SignInAndUpCallback = (prop?: any) =>
+        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
+    static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
 }
 
 const init = Wrapper.init;
@@ -273,6 +283,7 @@ const emailPasswordSignUp = Wrapper.emailPasswordSignUp;
 const doesEmailExist = Wrapper.doesEmailExist;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
 const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
+const SignInAndUpCallback = Wrapper.SignInAndUpCallback;
 
 export {
     ThirdPartyEmailPasswordAuth,
@@ -286,6 +297,8 @@ export {
     sendVerificationEmail,
     SignInAndUp,
     SignInAndUpTheme,
+    SignInAndUpCallback,
+    SignInAndUpCallbackTheme,
     signOut,
     redirectToAuth,
     submitNewPassword,

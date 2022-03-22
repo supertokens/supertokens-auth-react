@@ -18,6 +18,8 @@ import React, { useEffect, useState, useContext } from "react";
 import { FeatureBaseProps } from "../../types";
 import Recipe from "./recipe";
 import { SessionContext } from "../session";
+import { useUserContext } from "../../usercontext";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 type Props = FeatureBaseProps & { recipe: Recipe };
 
@@ -33,6 +35,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     const doesSessionExist = sessionContext.doesSessionExist;
     const emailVerificationMode = props.recipe.config.mode;
     const propsRef = React.useRef(props);
+    const userContext = useUserContext();
 
     useEffect(() => {
         let thisUseEffectMustReturnImmediately = false;
@@ -40,8 +43,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
             if (doesSessionExist && emailVerificationMode === "REQUIRED") {
                 let isEmailVerified: boolean;
                 try {
-                    // TODO NEMI: handle user context for pre built UI
-                    isEmailVerified = (await propsRef.current.recipe.isEmailVerified({})).isVerified;
+                    isEmailVerified = (await propsRef.current.recipe.isEmailVerified(userContext)).isVerified;
                 } catch (_) {
                     /* if there is an error, we assume that the email is verified
                      * so that the user can see the content on the page...
@@ -70,7 +72,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
             // We need this cause we are doing an async task in this.
             thisUseEffectMustReturnImmediately = true;
         };
-    }, [doesSessionExist, emailVerificationMode]);
+    }, [doesSessionExist, emailVerificationMode, userContext]);
 
     if (sessionContext.doesSessionExist === false) {
         return <>{children}</>;
@@ -83,4 +85,16 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     return isEmailVerified ? <>{children}</> : null;
 };
 
-export default EmailVerificationAuth;
+const EmailVerificationAuthWrapper: React.FC<
+    Props & {
+        userContext?: any;
+    }
+> = (props) => {
+    return (
+        <UserContextWrapper userContext={props.userContext}>
+            <EmailVerificationAuth {...props} />
+        </UserContextWrapper>
+    );
+};
+
+export default EmailVerificationAuthWrapper;

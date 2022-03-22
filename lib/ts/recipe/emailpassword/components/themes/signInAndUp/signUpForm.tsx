@@ -22,6 +22,7 @@ import { SignUpThemeProps } from "../../../types";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { validateForm } from "../../../../../utils";
+import { useUserContext } from "../../../../../usercontext";
 
 /*
  * Component.
@@ -35,6 +36,8 @@ export const SignUpForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
+        const userContext = useUserContext();
+
         return (
             <FormBase
                 formFields={props.formFields}
@@ -42,7 +45,6 @@ export const SignUpForm = withOverride(
                 onError={props.onError}
                 buttonLabel={"EMAIL_PASSWORD_SIGN_UP_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
-                // TODO NEMI: handle user context for pre built UI
                 callAPI={async (formFields) => {
                     const validationErrors = await validateForm(
                         formFields,
@@ -58,7 +60,7 @@ export const SignUpForm = withOverride(
 
                     return props.recipeImplementation.signUp({
                         formFields,
-                        userContext: {},
+                        userContext,
                     });
                 }}
                 validateOnBlur={true}

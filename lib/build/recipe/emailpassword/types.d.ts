@@ -143,6 +143,7 @@ export declare type SignInAndUpThemeProps = {
     };
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>;
     config: NormalisedConfig;
+    userContext?: any;
 };
 export declare type FormFieldThemeProps = NormalisedFormField & {
     labelComponent?: JSX.Element;
@@ -191,6 +192,7 @@ export declare type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailProps;
     submitNewPasswordForm: SubmitNewPasswordProps | undefined;
     config: NormalisedConfig;
+    userContext?: any;
 };
 export declare type EnterEmailProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;

@@ -4,6 +4,7 @@ import EmailVerificationTheme from "../emailverification/components/themes/email
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
+import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
@@ -63,6 +64,8 @@ export default class Wrapper {
     static ThirdPartyAuth: typeof ThirdPartyAuth;
     static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
+    static SignInAndUpCallback: (prop?: any) => JSX.Element;
+    static SignInAndUpCallbackTheme: import("react").ComponentType<{}>;
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
@@ -76,6 +79,7 @@ declare const signInAndUp: typeof Wrapper.signInAndUp;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
+declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
 export {
     ThirdPartyAuth,
     init,
@@ -90,6 +94,8 @@ export {
     redirectToThirdPartyLogin,
     SignInAndUp,
     SignInAndUpTheme,
+    SignInAndUpCallback,
+    SignInAndUpCallbackTheme,
     signOut,
     redirectToAuth,
     EmailVerification,

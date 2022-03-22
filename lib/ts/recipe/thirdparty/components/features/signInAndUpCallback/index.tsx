@@ -30,15 +30,19 @@ import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 import STGeneralError from "supertokens-web-js/lib/build/error";
+import { UserContextContext } from "../../../../../usercontext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 class SignInAndUpCallback extends PureComponent<PropType, unknown> {
+    static contextType = UserContextContext;
+
     componentDidMount = async (): Promise<void> => {
+        const userContext = this.context;
+
         try {
-            // TODO NEMI: handle user context for pre built UI
             const response = await this.props.recipe.recipeImpl.signInAndUp({
-                userContext: {},
+                userContext,
             });
 
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
@@ -48,18 +52,17 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
             }
 
             if (response.status === "OK") {
-                // TODO NEMI: handle user context for pre built UI
                 const stateResponse =
                     this.props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
-                        userContext: {},
+                        userContext,
                     });
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
                 if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
                     let isEmailVerified = true;
                     try {
-                        // TODO NEMI: handle user context for pre built UI
-                        isEmailVerified = (await this.props.recipe.emailVerification.isEmailVerified({})).isVerified;
+                        isEmailVerified = (await this.props.recipe.emailVerification.isEmailVerified(userContext))
+                            .isVerified;
                     } catch (ignored) {}
                     if (!isEmailVerified) {
                         await this.props.recipe.savePostEmailVerificationSuccessRedirectState({

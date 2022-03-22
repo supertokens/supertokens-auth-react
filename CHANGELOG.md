@@ -9,16 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   All recipe functions now accept an additional parameter `userContext`
+-   All recipe functions now accept an additional parameter `userContext`, learn more about this by visiting the advanced cusotmisations section in the documentation
+-   All UI components exported by the SDK now accept an additional `userContext` prop, learn more about this by visiting the advanced cusotmisations section in the documentation
 -   Exports more recipe functions for emailverification recipe to allow them to be called without using the pre-built UI. Newly exported functions: `verifyEmail`, `sendVerificationEmail`
 -   Exports all emailverification recipe functions from emailpassword, thirdparty and thirdpartyemailpassword recipes.
 -   Exports more recipe functions for emailpassword recipe to allow them to be called without using the pre-built UI. Newly exported functions: `submitNewPassword`, `sendPasswordResetEmail`, `signUp`, `signIn`, `doesEmailExist`.
 -   Exports more recipe functions for thirdparty recipe to allow them to be called without using the pre-built UI. Newly exported functions: `getAuthorizationURLWithQueryParamsAndSetState`, `signInAndUp`.
 -   Exports emailpassword and thidparty recipe functions from thirdpartyemailpassword recipe to allow them to be called without using the pre-built UI. Also exports `redirectToThirdPartyLogin` from thirdpartyemailpassword recipe.
--   Changes recipe functions for email verification recipe (this is breaking change if you use the override feature):
+-   Changes recipe functions for email verification recipe **(this is breaking change if you use the override feature)**:
     -   `verifyEmail` -> No longer accepts `token` as a parameter, instead it calls `getEmailVerificationTokenFromURL`
     -   `getEmailVerificationTokenFromURL` -> NEW FUNCTION
--   Changes recipe functions for email password recipe (this is breaking change if you use the override feature):
+-   Changes recipe functions for email password recipe **(this is breaking change if you use the override feature)**:
     -   `submitNewPassword` -> No longer accepts `token` as a parameter, instead calls `getResetPasswordTokenFromURL`
     -   `getResetPasswordTokenFromURL` -> NEW FUNCTION
 -   Changes recipe functions for third party recipe (this is breaking change if you use the override feature):
@@ -32,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `getAuthErrorFromURL` -> NEW FUNCTION
     -   `getAuthStateFromURL` -> NEW FUNCTION
     -   `redirectToThirdPartyLogin` -> REMOVED (use `getAuthorizationURLWithQueryParamsAndSetState` instead). NOTE: If you call this function yourself the SDK will no longer auto-redirect, you will need to redirect to the result url manually.
--   Changes recipe funtions for third party email password recipe (this is breaking change if you use the override feature):
+-   Changes recipe funtions for third party email password recipe **(this is breaking change if you use the override feature)**:
     -   Changes for email password functions explained above
     -   Changes for third party functions explained above
     -   `signInAndUp` -> REMOVED, this function has been split into 3 new functions for simplicity (explained below)

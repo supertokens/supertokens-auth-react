@@ -21,18 +21,19 @@ import { SignInAndUpThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { redirectToThirdPartyLogin } from "../../../utils";
 import STGeneralError from "supertokens-web-js/lib/build/error";
+import { useUserContext } from "../../../../../usercontext";
 
 export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {
     const styles = useContext(StyleContext);
+    const userContext = useUserContext();
 
     const signInClick = async (providerId: string): Promise<void> => {
         try {
-            // TODO NEMI: handle user context for pre built UI
             const response = await redirectToThirdPartyLogin({
                 recipeImplementation: props.recipeImplementation,
                 thirdPartyId: providerId,
                 config: props.config,
-                userContext: {},
+                userContext,
             });
             if (response.status === "ERROR") {
                 return props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });

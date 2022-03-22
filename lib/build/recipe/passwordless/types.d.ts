@@ -254,6 +254,7 @@ export declare type SignInUpProps = {
         successInAnotherTab: boolean;
         error: string | undefined;
     };
+    userContext?: any;
 };
 export declare type LoginAttemptInfo = {
     deviceId: string;

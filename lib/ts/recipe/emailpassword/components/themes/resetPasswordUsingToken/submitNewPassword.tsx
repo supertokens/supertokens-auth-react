@@ -29,10 +29,12 @@ import { useTranslation } from "../../../../../translation/translationContext";
 import STGeneralError from "supertokens-web-js/lib/build/error";
 import { validateForm } from "../../../../../utils";
 import GeneralError from "../../library/generalError";
+import { useUserContext } from "../../../../../usercontext";
 
 const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
+    const userContext = useUserContext();
     const [status, setStatus] = useState<SubmitNewPasswordStatus>("READY");
 
     const onSuccess = (): void => {
@@ -116,7 +118,7 @@ const EmailPasswordSubmitNewPassword: React.FC<SubmitNewPasswordProps> = (props)
 
                         const response = await props.recipeImplementation.submitNewPassword({
                             formFields: fields,
-                            userContext: {},
+                            userContext,
                         });
                         if (response.status === "RESET_PASSWORD_INVALID_TOKEN_ERROR") {
                             throw new STGeneralError("EMAIL_PASSWORD_RESET_PASSWORD_INVALID_TOKEN_ERROR");

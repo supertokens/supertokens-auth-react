@@ -25,6 +25,7 @@ import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { validateForm } from "../../../../../utils";
 import STGeneralError from "supertokens-web-js/lib/build/error";
+import { useUserContext } from "../../../../../usercontext";
 
 export const SignInForm = withOverride(
     "EmailPasswordSignInForm",
@@ -34,6 +35,8 @@ export const SignInForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
+        const userContext = useUserContext();
+
         return (
             <FormBase
                 formFields={props.formFields}
@@ -41,7 +44,6 @@ export const SignInForm = withOverride(
                 onError={props.onError}
                 buttonLabel={"EMAIL_PASSWORD_SIGN_IN_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
-                // TODO NEMI: handle user context for pre built UI
                 callAPI={async (formFields) => {
                     const validationErrors = await validateForm(
                         formFields,
@@ -57,7 +59,7 @@ export const SignInForm = withOverride(
 
                     const response = await props.recipeImplementation.signIn({
                         formFields,
-                        userContext: {},
+                        userContext,
                     });
                     if (response.status === "WRONG_CREDENTIALS_ERROR") {
                         throw new STGeneralError("EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR");

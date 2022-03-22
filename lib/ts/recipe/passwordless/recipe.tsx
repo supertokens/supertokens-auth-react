@@ -39,6 +39,7 @@ import SignInUp from "./components/features/signInAndUp";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 /*
  * Class.
@@ -88,20 +89,26 @@ export default class Passwordless extends AuthRecipe<
     getFeatureComponent = (componentName: "signInUp" | "linkClickedScreen", props: any | undefined): JSX.Element => {
         if (componentName === "signInUp") {
             return (
-                <AuthWidgetWrapper<
-                    GetRedirectionURLContext,
-                    PreAndPostAPIHookAction,
-                    OnHandleEventContext,
-                    NormalisedConfig
-                >
-                    authRecipe={this}
-                    history={props.history}>
-                    <SignInUp recipe={this} {...props} />
-                </AuthWidgetWrapper>
+                <UserContextWrapper userContext={props.userContext}>
+                    <AuthWidgetWrapper<
+                        GetRedirectionURLContext,
+                        PreAndPostAPIHookAction,
+                        OnHandleEventContext,
+                        NormalisedConfig
+                    >
+                        authRecipe={this}
+                        history={props.history}>
+                        <SignInUp recipe={this} {...props} />
+                    </AuthWidgetWrapper>
+                </UserContextWrapper>
             );
         }
         if (componentName === "linkClickedScreen") {
-            return <LinkClickedScreen recipe={this} {...props} />;
+            return (
+                <UserContextWrapper userContext={props.userContext}>
+                    <LinkClickedScreen recipe={this} {...props} />
+                </UserContextWrapper>
+            );
         }
         return <div>Not implemented</div>;
     };

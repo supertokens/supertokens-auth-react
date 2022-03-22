@@ -26,6 +26,7 @@ import { defaultLoginPasswordValidator, defaultValidate } from "../../../../lib/
 import assert from "assert";
 import SuperTokens from "../../../../lib/build/superTokens";
 import { assertFormFieldsEqual } from "../../../helpers";
+import EmailPasswordIndex from "../../../../lib/build/recipe/emailpassword";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -592,5 +593,35 @@ describe("EmailPassword", function () {
             validateForm(input, EmailPassword.getInstanceOrThrow().config.signInAndUpFeature.signUpForm.formFields),
             Error("Are you sending too many / too few formFields?")
         );
+    });
+
+    it("Test that when calling submitNewPassword, userContext gets passed to getResetPasswordTokenFromURL", async function () {
+        EmailPassword.init({
+            override: {
+                functions: (oI) => {
+                    return {
+                        ...oI,
+                        getResetPasswordTokenFromURL: function (input) {
+                            assert(input.userContext["key"] !== undefined);
+                            throw new Error("Expected Test Error");
+                        },
+                    };
+                },
+            },
+        })(SuperTokens.getInstanceOrThrow().appInfo);
+
+        try {
+            await EmailPasswordIndex.submitNewPassword({
+                formFields: [],
+                userContext: {
+                    key: "value",
+                },
+            });
+            throw new Error("submitNewPassword should have failed but didnt");
+        } catch (e) {
+            if (e.message !== "Expected Test Error") {
+                throw e;
+            }
+        }
     });
 });

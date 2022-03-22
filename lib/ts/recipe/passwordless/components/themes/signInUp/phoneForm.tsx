@@ -21,6 +21,7 @@ import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultValidate } from "../../../../emailpassword/validators";
 import STGeneralError from "supertokens-web-js/lib/build/error";
+import { useUserContext } from "../../../../../usercontext";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",
@@ -29,6 +30,8 @@ export const PhoneForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
+        const userContext = useUserContext();
+
         return (
             <FormBase
                 clearError={props.clearError}
@@ -59,11 +62,10 @@ export const PhoneForm = withOverride(
                         throw new STGeneralError(validationRes);
                     }
 
-                    // TODO NEMI: handle user context for pre built UI
                     const response = await props.recipeImplementation.createCode({
                         phoneNumber,
                         config: props.config,
-                        userContext: {},
+                        userContext,
                     });
 
                     if (response.status === "GENERAL_ERROR") {

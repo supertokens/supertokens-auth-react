@@ -21,10 +21,11 @@ import { memo } from "react";
 
 import EmailPassword from "./recipe";
 import { FeatureBaseProps } from "../../types";
-import SessionAuth from "../session/sessionAuth";
-import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
+import SessionAuthWrapper from "../session/sessionAuth";
+import EmailVerificationAuthWrapper from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 type Props = FeatureBaseProps & {
     recipe: Recipe;
@@ -34,24 +35,24 @@ type Props = FeatureBaseProps & {
 
 function EmailPasswordAuth(props: Props) {
     const emailVerification = (
-        <EmailVerificationAuth recipe={props.recipe.emailVerification} history={props.history}>
+        <EmailVerificationAuthWrapper recipe={props.recipe.emailVerification} history={props.history}>
             {props.children}
-        </EmailVerificationAuth>
+        </EmailVerificationAuthWrapper>
     );
 
     if (props.requireAuth === false) {
-        return <SessionAuth onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuth>;
+        return <SessionAuthWrapper onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuthWrapper>;
     }
 
     return (
-        <SessionAuth
+        <SessionAuthWrapper
             redirectToLogin={() =>
                 EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
             requireAuth={true}
             onSessionExpired={props.onSessionExpired}>
             {emailVerification}
-        </SessionAuth>
+        </SessionAuthWrapper>
     );
 }
 
@@ -61,21 +62,25 @@ export default function EmailPasswordAuthWrapper({
     children,
     requireAuth,
     onSessionExpired,
+    userContext,
 }: {
     children: React.ReactNode;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
+    userContext?: any;
 }) {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
 
     return (
-        <EmailPasswordAuthMemo
-            history={history}
-            onSessionExpired={onSessionExpired}
-            requireAuth={requireAuth}
-            recipe={EmailPassword.getInstanceOrThrow()}>
-            {children}
-        </EmailPasswordAuthMemo>
+        <UserContextWrapper userContext={userContext}>
+            <EmailPasswordAuthMemo
+                history={history}
+                onSessionExpired={onSessionExpired}
+                requireAuth={requireAuth}
+                recipe={EmailPassword.getInstanceOrThrow()}>
+                {children}
+            </EmailPasswordAuthMemo>
+        </UserContextWrapper>
     );
 }
