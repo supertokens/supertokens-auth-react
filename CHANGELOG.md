@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   ThirdParty+Passwordless recipe
 
+### Changed
+
+-   Adds 3 retries to mocha tests
+
 ### Breaking changes
 
 -   Removed footer prop from `PasswordlessEmailForm`, `PasswordlessPhoneForm` and `PasswordlessEmailOrPhoneForm` overridable components.
