@@ -25,6 +25,7 @@ import {
     defaultEmailValidator,
     defaultEmailValidatorForCombinedInput,
 } from "./validators";
+import { PasswordlessFlowType } from "supertokens-web-js/lib/build/recipe/passwordless/types";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     if (!["EMAIL", "PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod)) {
@@ -157,4 +158,29 @@ export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
         return undefined;
     }
     return value;
+}
+
+export async function getLoginAttemptInfoFromStorage(input: {
+    recipeImplementation: RecipeInterface;
+    userContext: any;
+}): Promise<
+    | {
+          deviceId: string;
+          preAuthSessionId: string;
+          flowType: PasswordlessFlowType;
+          contactInfo: string;
+          contactMethod: "EMAIL" | "PHONE";
+          lastResend: number;
+          redirectToPath?: string;
+      }
+    | undefined
+> {
+    return await input.recipeImplementation.getLoginAttemptInfo<{
+        contactInfo: string;
+        contactMethod: "EMAIL" | "PHONE";
+        lastResend: number;
+        redirectToPath?: string;
+    }>({
+        userContext: input.userContext,
+    });
 }

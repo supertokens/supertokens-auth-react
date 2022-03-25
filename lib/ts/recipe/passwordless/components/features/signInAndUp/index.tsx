@@ -35,6 +35,7 @@ import { FeatureBaseProps } from "../../../../../types";
 import { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 import { useUserContext } from "../../../../../usercontext";
 import STGeneralError from "supertokens-web-js/lib/build/error";
+import { getLoginAttemptInfoFromStorage } from "../../../utils";
 
 export const useSuccessInAnotherTabChecker = (
     state: SignInUpState,
@@ -158,7 +159,8 @@ export const useFeatureReducer = (
                     error = messageQueryParam;
                 }
             }
-            const loginAttemptInfo = await recipeImpl!.getLoginAttemptInfo({
+            const loginAttemptInfo = await getLoginAttemptInfoFromStorage({
+                recipeImplementation: recipeImpl!,
                 userContext,
             });
             // No need to check if the component is unmounting, since this has no effect then.
@@ -298,7 +300,9 @@ function getModifiedRecipeImplementation(
                 // This can be an important distinction in case both email and phone are allowed
                 const contactMethod: "EMAIL" | "PHONE" = "email" in input ? "EMAIL" : "PHONE";
                 const loginAttemptInfo = {
-                    ...res,
+                    deviceId: res.deviceId,
+                    preAuthSessionId: res.preAuthSessionId,
+                    flowType: res.flowType,
                     lastResend: new Date().getTime(),
                     contactMethod,
                     contactInfo,
@@ -316,7 +320,8 @@ function getModifiedRecipeImplementation(
             try {
                 const res = await recipe.recipeImpl.resendCode(input);
                 if (res.status === "OK") {
-                    const loginAttemptInfo = await recipe.recipeImpl.getLoginAttemptInfo({
+                    const loginAttemptInfo = await getLoginAttemptInfoFromStorage({
+                        recipeImplementation: recipe.recipeImpl,
                         userContext: input.userContext,
                     });
                     // If it was cleared or overwritten we don't want to save this.

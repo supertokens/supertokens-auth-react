@@ -67,6 +67,12 @@ export default function getRecipeImplementation(recipeInput: {
             }
             return response;
         },
+        getLinkCodeFromURL: function (input) {
+            return webJsImplementation.getLinkCodeFromURL.bind(this)(input);
+        },
+        getPreAuthSessionIdFromURL: function (input) {
+            return webJsImplementation.getPreAuthSessionIdFromURL.bind(this)(input);
+        },
         doesEmailExist: async function (input) {
             return await webJsImplementation.doesEmailExist.bind(this)(input);
         },
@@ -90,6 +96,9 @@ export default function getRecipeImplementation(recipeInput: {
         },
         clearLoginAttemptInfo: function (input) {
             return webJsImplementation.clearLoginAttemptInfo.bind(this)(input);
+        },
+        didLoginAttemptInfoChangeAfterResend: function (input) {
+            return webJsImplementation.didLoginAttemptInfoChangeAfterResend.bind(this)(input);
         },
     };
 }
