@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Fixes
+
+-   Added missing divider below the header in thirdpartypasswordless
+
 ## [0.20.0] - 2022-03-17
 
 ### Added
