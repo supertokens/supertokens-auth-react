@@ -32,6 +32,7 @@ let cookieParser = require("cookie-parser");
 let bodyParser = require("body-parser");
 let http = require("http");
 let cors = require("cors");
+const morgan = require("morgan");
 let { startST, killAllST, setupST, cleanST, setKeyValueInConfig, customAuth0Provider } = require("./utils");
 
 let passwordlessSupported;
@@ -50,6 +51,10 @@ let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, pa
 let jsonParser = bodyParser.json({ limit: "20mb" });
 
 let app = express();
+morgan.token("body", function (req, res) {
+    return JSON.stringify(req.body && req.body["formFields"]);
+});
+app.use(morgan("[:date[iso]] :url :method :status :response-time ms - :res[content-length] - :body"));
 app.use(urlencodedParser);
 app.use(jsonParser);
 app.use(cookieParser());

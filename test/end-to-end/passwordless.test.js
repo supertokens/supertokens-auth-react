@@ -21,6 +21,7 @@
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
+import fetch from "isomorphic-fetch";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     setInputValues,
@@ -28,6 +29,7 @@ import {
     waitFor,
     getFeatureFlags,
     waitForText,
+    screenshotOnFailure,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -44,6 +46,10 @@ describe("SuperTokens Passwordless", function () {
 
     const examplePhoneNumber = "+36701231212";
     const exampleEmail = "test@example.com";
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
+    });
 
     describe("with EMAIL", () => {
         getTestCases("EMAIL", "email", exampleEmail);
