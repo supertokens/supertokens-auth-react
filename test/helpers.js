@@ -66,6 +66,7 @@ export async function waitFor(ms) {
  */
 
 export async function waitForSTElement(page, selector, inverted = false) {
+    await page.waitForSelector(ST_ROOT_SELECTOR);
     const res = await page.waitForFunction(
         (elementSelector, rootSelector, inverted) => {
             const root = document.querySelector(rootSelector);
@@ -661,4 +662,27 @@ export async function screenshotOnFailure(ctx, browser) {
             });
         }
     }
+}
+
+export async function getPasswordlessDevice(loginAttemptInfo) {
+    const deviceResp = await fetch(
+        `${TEST_APPLICATION_SERVER_BASE_URL}/test/getDevice?preAuthSessionId=${encodeURIComponent(
+            loginAttemptInfo.preAuthSessionId
+        )}`,
+        {
+            method: "GET",
+        }
+    );
+    return await deviceResp.json();
+}
+
+export function setPasswordlessFlowType(contactMethod, flowType) {
+    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setFlow`, {
+        method: "POST",
+        headers: [["content-type", "application/json"]],
+        body: JSON.stringify({
+            contactMethod,
+            flowType,
+        }),
+    });
 }

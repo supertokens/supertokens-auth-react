@@ -329,6 +329,7 @@ export declare type SignInUpState = {
     loginAttemptInfo: LoginAttemptInfo | undefined;
     successInAnotherTab: boolean;
 };
+export declare type SignInUpChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
 export declare type LinkSentThemeProps = {
     clearError: () => void;
     onError: (error: string) => void;

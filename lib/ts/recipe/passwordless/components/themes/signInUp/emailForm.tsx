@@ -19,14 +19,11 @@ import { SignInUpEmailFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultValidate } from "../../../../emailpassword/validators";
+import { SignInUpFooter } from "./signInUpFooter";
 
 export const EmailForm = withOverride(
     "PasswordlessEmailForm",
-    function PasswordlessEmailForm(
-        props: SignInUpEmailFormProps & {
-            footer?: JSX.Element;
-        }
-    ): JSX.Element {
+    function PasswordlessEmailForm(props: SignInUpEmailFormProps): JSX.Element {
         return (
             <FormBase
                 clearError={props.clearError}
@@ -68,7 +65,12 @@ export const EmailForm = withOverride(
                 }}
                 validateOnBlur={false}
                 showLabels={true}
-                footer={props.footer}
+                footer={
+                    <SignInUpFooter
+                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
+                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
+                    />
+                }
             />
         );
     }

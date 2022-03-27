@@ -386,6 +386,8 @@ export type SignInUpState = {
     successInAnotherTab: boolean;
 };
 
+export type SignInUpChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
+
 export type LinkSentThemeProps = {
     clearError: () => void;
     onError: (error: string) => void;

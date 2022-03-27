@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.19.0",
+    "version": "0.20.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -122,6 +122,10 @@
         {
             "path": "recipe/passwordless/index.js",
             "limit": "200kb"
+        },
+        {
+            "path": "recipe/thirdpartypasswordless/index.js",
+            "limit": "210kb"
         }
     ],
     "repository": {

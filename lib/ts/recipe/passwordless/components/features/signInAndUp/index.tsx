@@ -28,7 +28,7 @@ import {
     PasswordlessSignInUpAction,
     SignInUpState,
     PasswordlessUser,
-    SignInUpProps,
+    SignInUpChildProps,
 } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
@@ -87,6 +87,7 @@ export const useFeatureReducer = (
                     }
                     return {
                         ...oldState,
+                        error: undefined,
                         loginAttemptInfo: {
                             ...oldState.loginAttemptInfo,
                             lastResend: action.timestamp,
@@ -160,6 +161,7 @@ export const useFeatureReducer = (
                     error = messageQueryParam;
                 }
             }
+
             const loginAttemptInfo = await recipeImpl!.getLoginAttemptInfo();
             // No need to check if the component is unmounting, since this has no effect then.
             dispatch({ type: "load", loginAttemptInfo, error });
@@ -171,8 +173,6 @@ export const useFeatureReducer = (
     return [state, dispatch];
 };
 
-export type ChildProps = Omit<SignInUpProps, "featureState" | "dispatch">;
-
 // We are overloading to explicitly state that if recipe is defined then the return value is defined as well.
 export function useChildProps(
     recipe: Recipe,
@@ -180,14 +180,14 @@ export function useChildProps(
     state: SignInUpState,
     callingConsumeCodeRef: React.MutableRefObject<boolean>,
     history: any
-): ChildProps;
+): SignInUpChildProps;
 export function useChildProps(
     recipe: Recipe | undefined,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     callingConsumeCodeRef: React.MutableRefObject<boolean>,
     history: any
-): ChildProps | undefined;
+): SignInUpChildProps | undefined;
 
 export function useChildProps(
     recipe: Recipe | undefined,
@@ -195,7 +195,7 @@ export function useChildProps(
     state: SignInUpState,
     callingConsumeCodeRef: React.MutableRefObject<boolean>,
     history: any
-): ChildProps | undefined {
+): SignInUpChildProps | undefined {
     const recipeImplementation = React.useMemo(
         () => recipe && getModifiedRecipeImplementation(recipe.recipeImpl, dispatch, callingConsumeCodeRef),
         [recipe]
