@@ -17,7 +17,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { useContext } from "react";
+import { Fragment, useContext } from "react";
 import { useTranslation } from "../../../../..";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import StyleContext from "../../../../../styles/styleContext";
@@ -30,8 +30,11 @@ export const Header = withOverride("ThirdPartyPasswordlessHeader", function Thir
     const t = useTranslation();
 
     return (
-        <div data-supertokens="headerTitle" css={styles.headerTitle}>
-            {t("THIRD_PARTY_PASSWORDLESS_SIGN_IN_AND_UP_HEADER_TITLE")}
-        </div>
+        <Fragment>
+            <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                {t("THIRD_PARTY_PASSWORDLESS_SIGN_IN_AND_UP_HEADER_TITLE")}
+            </div>
+            <div data-supertokens="divider" css={styles.divider}></div>
+        </Fragment>
     );
 });
