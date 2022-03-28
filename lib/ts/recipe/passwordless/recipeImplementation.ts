@@ -97,8 +97,5 @@ export default function getRecipeImplementation(recipeInput: {
         clearLoginAttemptInfo: function (input) {
             return webJsImplementation.clearLoginAttemptInfo.bind(this)(input);
         },
-        didLoginAttemptInfoChangeAfterResend: function (input) {
-            return webJsImplementation.didLoginAttemptInfoChangeAfterResend.bind(this)(input);
-        },
     };
 }
