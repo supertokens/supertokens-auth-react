@@ -144,6 +144,19 @@ export declare type LoginAttemptInfo = {
     redirectToPath?: string;
     flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
 };
+/**
+ * When calling getLoginAttemptInfo/setLoginAttemptInfo from web-js we use generics to get
+ * access to properties in local storage that web-js does not set by default.
+ * This allows us to strongly type the response while keeping it dynamic.
+ *
+ * In the context of auth-react this type indicates all the additional properties we need.
+ */
+export declare type AdditionalLoginAttemptInfoProperties = {
+    contactInfo: string;
+    contactMethod: "EMAIL" | "PHONE";
+    lastResend: number;
+    redirectToPath?: string;
+};
 export declare type SignInUpEmailFormProps = {
     clearError: () => void;
     onError: (error: string) => void;

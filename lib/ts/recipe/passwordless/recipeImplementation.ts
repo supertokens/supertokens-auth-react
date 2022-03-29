@@ -1,6 +1,5 @@
 import { OnHandleEventContext, PreAndPostAPIHookAction } from "./types";
 import { NormalisedAppInfo } from "../../types";
-import { getRedirectToPathFromURL } from "../../utils";
 import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import {
     RecipeOnHandleEventFunction,
@@ -84,15 +83,7 @@ export default function getRecipeImplementation(recipeInput: {
             return webJsImplementation.getLoginAttemptInfo.bind(this)<CustomAttemptInfoProperties>(input);
         },
         setLoginAttemptInfo: async function (input) {
-            return webJsImplementation.setLoginAttemptInfo.bind(this)<{
-                redirectToPath?: string;
-            }>({
-                attemptInfo: {
-                    ...input.attemptInfo,
-                    redirectToPath: getRedirectToPathFromURL(),
-                },
-                userContext: input.userContext,
-            });
+            return webJsImplementation.setLoginAttemptInfo.bind(this)(input);
         },
         clearLoginAttemptInfo: function (input) {
             return webJsImplementation.clearLoginAttemptInfo.bind(this)(input);

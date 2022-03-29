@@ -23,7 +23,12 @@ import SignInUpThemeWrapper from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
-import { PasswordlessSignInUpAction, SignInUpState, SignInUpProps } from "../../../types";
+import {
+    PasswordlessSignInUpAction,
+    SignInUpState,
+    SignInUpProps,
+    AdditionalLoginAttemptInfoProperties,
+} from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
 import Session from "../../../../session";
@@ -169,7 +174,7 @@ export const useFeatureReducer = (
         if (state.loaded === false) {
             void load();
         }
-    }, [state.loaded, recipeImpl]);
+    }, [state.loaded, recipeImpl, userContext]);
     return [state, dispatch];
 };
 
@@ -277,17 +282,14 @@ function getModifiedRecipeImplementation(
             let contactInfo;
             if ("email" in input) {
                 contactInfo = input.email;
-            } else {
-                contactInfo = formatPhoneNumberIntl(input.phoneNumber);
-            }
 
-            if ("email" in input) {
                 const validationRes = await recipe.config.validateEmailAddress(input.email);
                 if (validationRes !== undefined) {
                     throw new STGeneralError(validationRes);
                 }
-            }
-            if ("phoneNumber" in input) {
+            } else {
+                contactInfo = formatPhoneNumberIntl(input.phoneNumber);
+
                 const validationRes = await recipe.config.validatePhoneNumber(input.phoneNumber);
                 if (validationRes !== undefined) {
                     throw new STGeneralError(validationRes);
@@ -303,12 +305,12 @@ function getModifiedRecipeImplementation(
                     deviceId: res.deviceId,
                     preAuthSessionId: res.preAuthSessionId,
                     flowType: res.flowType,
-                    lastResend: new Date().getTime(),
+                    lastResend: Date.now(),
                     contactMethod,
                     contactInfo,
                     redirectToPath: getRedirectToPathFromURL(),
                 };
-                await recipe.recipeImpl.setLoginAttemptInfo({
+                await recipe.recipeImpl.setLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                     attemptInfo: loginAttemptInfo,
                     userContext: input.userContext,
                 });
@@ -327,8 +329,8 @@ function getModifiedRecipeImplementation(
                     // If it was cleared or overwritten we don't want to save this.
                     // TODO: extend session checker to check for this case as well
                     if (loginAttemptInfo !== undefined && loginAttemptInfo.deviceId === input.deviceId) {
-                        const timestamp = new Date().getTime();
-                        await recipe.recipeImpl.setLoginAttemptInfo({
+                        const timestamp = Date.now();
+                        await recipe.recipeImpl.setLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
                             attemptInfo: {
                                 ...loginAttemptInfo,
                                 lastResend: timestamp,

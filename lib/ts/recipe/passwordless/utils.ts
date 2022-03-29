@@ -17,7 +17,13 @@ import { CountryCode } from "libphonenumber-js";
 import parsePhoneNumber, { parseIncompletePhoneNumber } from "libphonenumber-js/min";
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
-import { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
+import {
+    AdditionalLoginAttemptInfoProperties,
+    Config,
+    LoginAttemptInfo,
+    NormalisedConfig,
+    SignInUpFeatureConfigInput,
+} from "./types";
 import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import {
     defaultPhoneNumberValidator,
@@ -25,7 +31,6 @@ import {
     defaultEmailValidator,
     defaultEmailValidatorForCombinedInput,
 } from "./validators";
-import { PasswordlessFlowType } from "supertokens-web-js/lib/build/recipe/passwordless/types";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     if (!["EMAIL", "PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod)) {
@@ -163,24 +168,8 @@ export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
 export async function getLoginAttemptInfoFromStorage(input: {
     recipeImplementation: RecipeInterface;
     userContext: any;
-}): Promise<
-    | {
-          deviceId: string;
-          preAuthSessionId: string;
-          flowType: PasswordlessFlowType;
-          contactInfo: string;
-          contactMethod: "EMAIL" | "PHONE";
-          lastResend: number;
-          redirectToPath?: string;
-      }
-    | undefined
-> {
-    return await input.recipeImplementation.getLoginAttemptInfo<{
-        contactInfo: string;
-        contactMethod: "EMAIL" | "PHONE";
-        lastResend: number;
-        redirectToPath?: string;
-    }>({
+}): Promise<LoginAttemptInfo | undefined> {
+    return await input.recipeImplementation.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
         userContext: input.userContext,
     });
 }

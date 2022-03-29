@@ -98,18 +98,18 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
         [updateFieldState]
     );
 
-    const handleFieldStateChange = (fieldUpdates: FieldState[]) => {
-        for (const field of formFields) {
-            const update = fieldUpdates.find((f) => f.id === field.id);
-            if (update || field.clearOnSubmit === true) {
-                // We can do these one by one, it's almost never more than one field
-                updateFieldState(field.id, (os) => ({ ...os, value: update ? update.value : "" }));
-            }
-        }
-    };
-
     const onFormSubmit = useCallback(
         async (e: FormEvent): Promise<void> => {
+            const handleFieldStateChange = (fieldUpdates: FieldState[]) => {
+                for (const field of formFields) {
+                    const update = fieldUpdates.find((f) => f.id === field.id);
+                    if (update || field.clearOnSubmit === true) {
+                        // We can do these one by one, it's almost never more than one field
+                        updateFieldState(field.id, (os) => ({ ...os, value: update ? update.value : "" }));
+                    }
+                }
+            };
+
             // Prevent default event propagation.
             e.preventDefault();
 
