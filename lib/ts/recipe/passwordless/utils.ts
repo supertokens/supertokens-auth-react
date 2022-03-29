@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { CountryCode } from "libphonenumber-js";
+import { CountryCode, NumberType } from "libphonenumber-js";
 import parsePhoneNumber, { parseIncompletePhoneNumber } from "libphonenumber-js/min";
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
@@ -171,5 +171,16 @@ export async function getLoginAttemptInfoFromStorage(input: {
 }): Promise<LoginAttemptInfo | undefined> {
     return await input.recipeImplementation.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
         userContext: input.userContext,
+    });
+}
+
+export async function setLoginAttemptInfoToStorage(input: {
+    recipeImplementation: RecipeInterface;
+    userContext: NumberType;
+    attemptInfo: LoginAttemptInfo;
+}): Promise<void> {
+    return await input.recipeImplementation.setLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
+        userContext: input.userContext,
+        attemptInfo: input.attemptInfo,
     });
 }

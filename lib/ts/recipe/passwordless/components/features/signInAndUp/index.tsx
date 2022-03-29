@@ -23,12 +23,7 @@ import SignInUpThemeWrapper from "../../themes/signInUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { clearErrorQueryParam, getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import Recipe from "../../../recipe";
-import {
-    PasswordlessSignInUpAction,
-    SignInUpState,
-    SignInUpProps,
-    AdditionalLoginAttemptInfoProperties,
-} from "../../../types";
+import { PasswordlessSignInUpAction, SignInUpState, SignInUpProps } from "../../../types";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { formatPhoneNumberIntl } from "react-phone-number-input/min";
 import Session from "../../../../session";
@@ -40,7 +35,7 @@ import { FeatureBaseProps } from "../../../../../types";
 import { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 import { useUserContext } from "../../../../../usercontext";
 import STGeneralError from "supertokens-web-js/lib/build/error";
-import { getLoginAttemptInfoFromStorage } from "../../../utils";
+import { getLoginAttemptInfoFromStorage, setLoginAttemptInfoToStorage } from "../../../utils";
 
 export const useSuccessInAnotherTabChecker = (
     state: SignInUpState,
@@ -310,9 +305,11 @@ function getModifiedRecipeImplementation(
                     contactInfo,
                     redirectToPath: getRedirectToPathFromURL(),
                 };
-                await recipe.recipeImpl.setLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
-                    attemptInfo: loginAttemptInfo,
+
+                await setLoginAttemptInfoToStorage({
+                    recipeImplementation: recipe.recipeImpl,
                     userContext: input.userContext,
+                    attemptInfo: loginAttemptInfo,
                 });
                 dispatch({ type: "startLogin", loginAttemptInfo });
             }
@@ -330,12 +327,14 @@ function getModifiedRecipeImplementation(
                     // TODO: extend session checker to check for this case as well
                     if (loginAttemptInfo !== undefined && loginAttemptInfo.deviceId === input.deviceId) {
                         const timestamp = Date.now();
-                        await recipe.recipeImpl.setLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
+
+                        await setLoginAttemptInfoToStorage({
+                            recipeImplementation: recipe.recipeImpl,
+                            userContext: input.userContext,
                             attemptInfo: {
                                 ...loginAttemptInfo,
                                 lastResend: timestamp,
                             },
-                            userContext: input.userContext,
                         });
                         dispatch({ type: "resendCode", timestamp });
                     }
