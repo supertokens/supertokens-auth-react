@@ -35,7 +35,7 @@ import { FeatureBaseProps } from "../../../../../types";
 import { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 import { useUserContext } from "../../../../../usercontext";
 import STGeneralError from "supertokens-web-js/lib/build/error";
-import { getLoginAttemptInfoFromStorage, setLoginAttemptInfoToStorage } from "../../../utils";
+import { getLoginAttemptInfo, setLoginAttemptInfo } from "../../../utils";
 
 export const useSuccessInAnotherTabChecker = (
     state: SignInUpState,
@@ -159,7 +159,7 @@ export const useFeatureReducer = (
                     error = messageQueryParam;
                 }
             }
-            const loginAttemptInfo = await getLoginAttemptInfoFromStorage({
+            const loginAttemptInfo = await getLoginAttemptInfo({
                 recipeImplementation: recipeImpl!,
                 userContext,
             });
@@ -277,18 +277,8 @@ function getModifiedRecipeImplementation(
             let contactInfo;
             if ("email" in input) {
                 contactInfo = input.email;
-
-                const validationRes = await recipe.config.validateEmailAddress(input.email);
-                if (validationRes !== undefined) {
-                    throw new STGeneralError(validationRes);
-                }
             } else {
                 contactInfo = formatPhoneNumberIntl(input.phoneNumber);
-
-                const validationRes = await recipe.config.validatePhoneNumber(input.phoneNumber);
-                if (validationRes !== undefined) {
-                    throw new STGeneralError(validationRes);
-                }
             }
 
             const res = await recipe.recipeImpl.createCode(input);
@@ -306,7 +296,7 @@ function getModifiedRecipeImplementation(
                     redirectToPath: getRedirectToPathFromURL(),
                 };
 
-                await setLoginAttemptInfoToStorage({
+                await setLoginAttemptInfo({
                     recipeImplementation: recipe.recipeImpl,
                     userContext: input.userContext,
                     attemptInfo: loginAttemptInfo,
@@ -319,7 +309,7 @@ function getModifiedRecipeImplementation(
             try {
                 const res = await recipe.recipeImpl.resendCode(input);
                 if (res.status === "OK") {
-                    const loginAttemptInfo = await getLoginAttemptInfoFromStorage({
+                    const loginAttemptInfo = await getLoginAttemptInfo({
                         recipeImplementation: recipe.recipeImpl,
                         userContext: input.userContext,
                     });
@@ -328,7 +318,7 @@ function getModifiedRecipeImplementation(
                     if (loginAttemptInfo !== undefined && loginAttemptInfo.deviceId === input.deviceId) {
                         const timestamp = Date.now();
 
-                        await setLoginAttemptInfoToStorage({
+                        await setLoginAttemptInfo({
                             recipeImplementation: recipe.recipeImpl,
                             userContext: input.userContext,
                             attemptInfo: {

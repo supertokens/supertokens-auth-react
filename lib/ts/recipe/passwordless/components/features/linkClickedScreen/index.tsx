@@ -32,7 +32,7 @@ import { defaultTranslationsPasswordless } from "../../themes/translations";
 import { useEffect } from "react";
 import { useUserContext } from "../../../../../usercontext";
 import STGeneralError from "supertokens-web-js/lib/build/error";
-import { getLoginAttemptInfoFromStorage } from "../../../utils";
+import { getLoginAttemptInfo } from "../../../utils";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -67,7 +67,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                     });
                 }
                 if (response.status === "OK") {
-                    const loginAttemptInfo = await getLoginAttemptInfoFromStorage({
+                    const loginAttemptInfo = await getLoginAttemptInfo({
                         recipeImplementation: props.recipe.recipeImpl,
                         userContext,
                     });

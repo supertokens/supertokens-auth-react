@@ -165,7 +165,7 @@ export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
     return value;
 }
 
-export async function getLoginAttemptInfoFromStorage(input: {
+export async function getLoginAttemptInfo(input: {
     recipeImplementation: RecipeInterface;
     userContext: any;
 }): Promise<LoginAttemptInfo | undefined> {
@@ -174,7 +174,7 @@ export async function getLoginAttemptInfoFromStorage(input: {
     });
 }
 
-export async function setLoginAttemptInfoToStorage(input: {
+export async function setLoginAttemptInfo(input: {
     recipeImplementation: RecipeInterface;
     userContext: NumberType;
     attemptInfo: LoginAttemptInfo;

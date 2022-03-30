@@ -30,6 +30,7 @@ import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
 import { useTranslation } from "../../../../../translation/translationContext";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { useUserContext } from "../../../../../usercontext";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -69,6 +70,10 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
             }
         } catch (e) {
             setStatus("ERROR");
+
+            if (STGeneralError.isThisError(e)) {
+                props.onError(e.message);
+            }
         }
     }, [props.recipeImplementation, props.loginAttemptInfo, props.config, setStatus, userContext]);
 

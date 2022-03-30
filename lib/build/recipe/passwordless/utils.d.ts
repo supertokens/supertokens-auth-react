@@ -6,11 +6,11 @@ export declare function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
     value: string,
     defaultCountryFromConfig?: CountryCode
 ): string | undefined;
-export declare function getLoginAttemptInfoFromStorage(input: {
+export declare function getLoginAttemptInfo(input: {
     recipeImplementation: RecipeInterface;
     userContext: any;
 }): Promise<LoginAttemptInfo | undefined>;
-export declare function setLoginAttemptInfoToStorage(input: {
+export declare function setLoginAttemptInfo(input: {
     recipeImplementation: RecipeInterface;
     userContext: NumberType;
     attemptInfo: LoginAttemptInfo;
