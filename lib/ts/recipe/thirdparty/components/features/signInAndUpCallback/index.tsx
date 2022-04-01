@@ -31,6 +31,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 import STGeneralError from "supertokens-web-js/lib/build/error";
 import { UserContextContext } from "../../../../../usercontext";
+import { UserType } from "supertokens-web-js/recipe/emailpassword";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -41,9 +42,42 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
         const userContext = this.context;
 
         try {
-            const response = await this.props.recipe.recipeImpl.signInAndUp({
-                userContext,
-            });
+            let response:
+                | {
+                      status: "OK";
+                      user: UserType;
+                      createdNewUser: boolean;
+                      fetchResponse: Response;
+                  }
+                | {
+                      status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+                      fetchResponse: Response;
+                  }
+                | undefined;
+            let generalError: STGeneralError | undefined;
+
+            try {
+                response = await this.props.recipe.recipeImpl.signInAndUp({
+                    userContext,
+                });
+            } catch (e) {
+                if (STGeneralError.isThisError(e)) {
+                    generalError = e;
+                } else {
+                    throw e;
+                }
+            }
+
+            if (generalError !== undefined) {
+                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                    error: "custom",
+                    message: generalError.message,
+                });
+            }
+
+            if (response === undefined) {
+                throw new Error("Should never come here");
+            }
 
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
                 return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
@@ -84,13 +118,6 @@ class SignInAndUpCallback extends PureComponent<PropType, unknown> {
                 );
             }
         } catch (err) {
-            if (STGeneralError.isThisError(err)) {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "custom",
-                    message: err.message,
-                });
-            }
-
             return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
                 error: "signin",
             });

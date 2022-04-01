@@ -51,25 +51,39 @@ export const UserInputCodeForm = withOverride(
 
         async function resend() {
             try {
-                const response = await props.recipeImplementation.resendCode({
-                    deviceId: props.loginAttemptInfo.deviceId,
-                    preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
-                    userContext,
-                });
+                let response;
+                let generalError: STGeneralError | undefined;
 
-                if (response.status === "OK") {
-                    setClearResendNotifTimeout(
-                        setTimeout(() => {
-                            setClearResendNotifTimeout(undefined);
-                        }, 2000)
-                    );
+                try {
+                    response = await props.recipeImplementation.resendCode({
+                        deviceId: props.loginAttemptInfo.deviceId,
+                        preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
+                        userContext,
+                    });
+                } catch (e) {
+                    if (STGeneralError.isThisError(e)) {
+                        generalError = e;
+                    } else {
+                        throw e;
+                    }
+                }
+
+                if (generalError !== undefined) {
+                    props.onError(generalError.message);
+                } else {
+                    if (response === undefined) {
+                        throw new Error("Should not come here");
+                    }
+
+                    if (response.status === "OK") {
+                        setClearResendNotifTimeout(
+                            setTimeout(() => {
+                                setClearResendNotifTimeout(undefined);
+                            }, 2000)
+                        );
+                    }
                 }
             } catch (e) {
-                if (STGeneralError.isThisError(e)) {
-                    props.onError(e.message);
-                    return;
-                }
-
                 props.onError("SOMETHING_WENT_WRONG_ERROR");
             }
         }

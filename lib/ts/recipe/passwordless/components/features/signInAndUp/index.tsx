@@ -34,7 +34,6 @@ import { useEffect } from "react";
 import { FeatureBaseProps } from "../../../../../types";
 import { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 import { useUserContext } from "../../../../../usercontext";
-import STGeneralError from "supertokens-web-js/lib/build/error";
 import { getLoginAttemptInfo, setLoginAttemptInfo } from "../../../utils";
 
 export const useSuccessInAnotherTabChecker = (
@@ -306,43 +305,40 @@ function getModifiedRecipeImplementation(
             return res;
         },
         resendCode: async (input) => {
-            try {
-                const res = await recipe.recipeImpl.resendCode(input);
-                if (res.status === "OK") {
-                    const loginAttemptInfo = await getLoginAttemptInfo({
+            /**
+             * In this case we want the code that is calling resendCode in the
+             * UI to handle STGeneralError so we let this throw
+             */
+            const res = await recipe.recipeImpl.resendCode(input);
+
+            if (res.status === "OK") {
+                const loginAttemptInfo = await getLoginAttemptInfo({
+                    recipeImplementation: recipe.recipeImpl,
+                    userContext: input.userContext,
+                });
+                // If it was cleared or overwritten we don't want to save this.
+                // TODO: extend session checker to check for this case as well
+                if (loginAttemptInfo !== undefined && loginAttemptInfo.deviceId === input.deviceId) {
+                    const timestamp = Date.now();
+
+                    await setLoginAttemptInfo({
                         recipeImplementation: recipe.recipeImpl,
                         userContext: input.userContext,
+                        attemptInfo: {
+                            ...loginAttemptInfo,
+                            lastResend: timestamp,
+                        },
                     });
-                    // If it was cleared or overwritten we don't want to save this.
-                    // TODO: extend session checker to check for this case as well
-                    if (loginAttemptInfo !== undefined && loginAttemptInfo.deviceId === input.deviceId) {
-                        const timestamp = Date.now();
-
-                        await setLoginAttemptInfo({
-                            recipeImplementation: recipe.recipeImpl,
-                            userContext: input.userContext,
-                            attemptInfo: {
-                                ...loginAttemptInfo,
-                                lastResend: timestamp,
-                            },
-                        });
-                        dispatch({ type: "resendCode", timestamp });
-                    }
-                } else if (res.status === "RESTART_FLOW_ERROR") {
-                    await recipe.recipeImpl.clearLoginAttemptInfo({
-                        userContext: input.userContext,
-                    });
-
-                    dispatch({ type: "restartFlow", error: "ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW" });
+                    dispatch({ type: "resendCode", timestamp });
                 }
-                return res;
-            } catch (e) {
-                if (STGeneralError.isThisError(e)) {
-                    dispatch({ type: "setError", error: e.message });
-                }
+            } else if (res.status === "RESTART_FLOW_ERROR") {
+                await recipe.recipeImpl.clearLoginAttemptInfo({
+                    userContext: input.userContext,
+                });
 
-                throw e;
+                dispatch({ type: "restartFlow", error: "ERROR_SIGN_IN_UP_RESEND_RESTART_FLOW" });
             }
+            return res;
         },
 
         consumeCode: async (input) => {

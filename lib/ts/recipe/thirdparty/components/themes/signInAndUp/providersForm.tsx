@@ -29,23 +29,39 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
 
     const signInClick = async (providerId: string): Promise<void> => {
         try {
-            const response = await redirectToThirdPartyLogin({
-                recipeImplementation: props.recipeImplementation,
-                thirdPartyId: providerId,
-                config: props.config,
-                userContext,
-            });
+            let response;
+            let generalError: STGeneralError | undefined;
+
+            try {
+                response = await redirectToThirdPartyLogin({
+                    recipeImplementation: props.recipeImplementation,
+                    thirdPartyId: providerId,
+                    config: props.config,
+                    userContext,
+                });
+            } catch (e) {
+                if (STGeneralError.isThisError(e)) {
+                    generalError = e;
+                } else {
+                    throw e;
+                }
+            }
+
+            if (generalError !== undefined) {
+                return props.dispatch({
+                    type: "setError",
+                    error: generalError.message,
+                });
+            }
+
+            if (response === undefined) {
+                throw new Error("Should not come here");
+            }
+
             if (response.status === "ERROR") {
                 return props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
             }
         } catch (err) {
-            if (STGeneralError.isThisError(err)) {
-                return props.dispatch({
-                    type: "setError",
-                    error: err.message,
-                });
-            }
-
             return props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
         }
     };

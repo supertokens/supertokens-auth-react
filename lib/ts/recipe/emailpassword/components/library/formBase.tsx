@@ -100,16 +100,6 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
 
     const onFormSubmit = useCallback(
         async (e: FormEvent): Promise<void> => {
-            const handleFieldStateChange = (fieldUpdates: FieldState[]) => {
-                for (const field of formFields) {
-                    const update = fieldUpdates.find((f) => f.id === field.id);
-                    if (update || field.clearOnSubmit === true) {
-                        // We can do these one by one, it's almost never more than one field
-                        updateFieldState(field.id, (os) => ({ ...os, value: update ? update.value : "" }));
-                    }
-                }
-            };
-
             // Prevent default event propagation.
             e.preventDefault();
 
@@ -130,46 +120,51 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
             const fieldUpdates: FieldState[] = [];
             // Call API.
             try {
-                const result = await props.callAPI(apiFields, (id, value) => fieldUpdates.push({ id, value }));
+                let result;
+                let generalError: STGeneralError | undefined;
+                try {
+                    result = await props.callAPI(apiFields, (id, value) => fieldUpdates.push({ id, value }));
+                } catch (e) {
+                    if (STGeneralError.isThisError(e)) {
+                        generalError = e;
+                    } else {
+                        throw e;
+                    }
+                }
                 if (unmounting.current.signal.aborted) {
                     return;
                 }
 
-                handleFieldStateChange(fieldUpdates);
-
-                // If successful
-                if (result.status === "OK") {
-                    setIsLoading(false);
-                    props.clearError();
-                    if (props.onSuccess !== undefined) {
-                        props.onSuccess(result);
+                for (const field of formFields) {
+                    const update = fieldUpdates.find((f) => f.id === field.id);
+                    if (update || field.clearOnSubmit === true) {
+                        // We can do these one by one, it's almost never more than one field
+                        updateFieldState(field.id, (os) => ({ ...os, value: update ? update.value : "" }));
                     }
                 }
 
-                // If field error.
-                if (result.status === "FIELD_ERROR") {
-                    const errorFields = result.formFields;
+                if (generalError !== undefined) {
+                    props.onError(generalError.message);
+                } else {
+                    // If successful
+                    if (result.status === "OK") {
+                        setIsLoading(false);
+                        props.clearError();
+                        if (props.onSuccess !== undefined) {
+                            props.onSuccess(result);
+                        }
+                    }
 
-                    setFieldStates((os) =>
-                        os.map((fs) => ({ ...fs, error: errorFields.find((ef: any) => ef.id === fs.id)?.error }))
-                    );
+                    // If field error.
+                    if (result.status === "FIELD_ERROR") {
+                        const errorFields = result.formFields;
+
+                        setFieldStates((os) =>
+                            os.map((fs) => ({ ...fs, error: errorFields.find((ef: any) => ef.id === fs.id)?.error }))
+                        );
+                    }
                 }
             } catch (e) {
-                if (STGeneralError.isThisError(e)) {
-                    /**
-                     * Because status: GENERAL_ERROR has been replaced with
-                     * throwing STGeneralError, we need to handle this here too
-                     */
-                    if (unmounting.current.signal.aborted) {
-                        return;
-                    }
-
-                    handleFieldStateChange(fieldUpdates);
-
-                    props.onError(e.message);
-                    return;
-                }
-
                 props.onError("SOMETHING_WENT_WRONG_ERROR");
             } finally {
                 setIsLoading(false);
