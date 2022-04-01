@@ -5,18 +5,6 @@ orbs:
     slack: circleci/slack@3.4.2
     jq: circleci/jq@2.2.0
 jobs:
-    publish:
-        docker:
-            - image: rishabhpoddar/supertokens_website_sdk_testing
-        steps:
-            - checkout
-            - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-            - run:
-                  name: Publish
-                  command: |
-                      cd .circleci
-                      ./publish.sh
-            - slack/status
     build:
         docker:
             - image: rishabhpoddar/supertokens_website_sdk_testing
@@ -67,113 +55,23 @@ jobs:
             - run: (cd .circleci && ./markPassed.sh)
             - slack/status
 
-    update-demo-apps:
-        machine:
-            image: ubuntu-1604:201903-01
-        steps:
-            - add_ssh_keys:
-                  fingerprints:
-                      - "35:1e:5e:0a:95:ec:f3:3e:79:7b:b4:39:ac:00:5f:b2"
-            - run:
-                  name: updating emailpassword
-                  command: |
-                      ssh ubuntu@ssh.supertokens.com '\
-                          cd supertokens-auth-react/examples/with-emailpassword/ && \
-                          git reset --hard && \
-                          git pull && \
-                          (rm -f package-lock.json || true) && \
-                          (rm -rf node_modules || true) && \
-                          npm i && \
-                          REACT_APP_API_PORT=10001 REACT_APP_API_URL=https://api-emailpassword.demo.supertokens.com REACT_APP_WEBSITE_PORT=10000 REACT_APP_WEBSITE_URL=https://emailpassword.demo.supertokens.com npm run build && \
-                          docker rm demo-app -f || true && \
-                          bash /home/ubuntu/supertokens-auth-react/examples/with-emailpassword/scripts/start_container.sh'
-            - run:
-                  name: updating thirdparty
-                  command: |
-                      ssh ubuntu@ssh.supertokens.com '\
-                          cd supertokens-auth-react/examples/with-thirdparty/ && \
-                          git reset --hard && \
-                          git pull && \
-                          (rm -f package-lock.json || true) && \
-                          (rm -rf node_modules || true) && \
-                          npm i && \
-                          REACT_APP_API_PORT=10001 REACT_APP_API_URL=https://api-thirdparty.demo.supertokens.com REACT_APP_WEBSITE_PORT=10000 REACT_APP_WEBSITE_URL=https://thirdparty.demo.supertokens.com npm run build && \
-                          docker rm demo-app-thirdparty -f || true && \
-                          bash /home/ubuntu/supertokens-auth-react/examples/with-thirdparty/scripts/start_container.sh'
-            - run:
-                  name: updating thirdpartyemailpassword
-                  command: |
-                      ssh ubuntu@ssh.supertokens.com '\
-                          cd supertokens-auth-react/examples/with-thirdpartyemailpassword/ && \
-                          git reset --hard && \
-                          git pull && \
-                          (rm -f package-lock.json || true) && \
-                          (rm -rf node_modules || true) && \
-                          npm i && \
-                          REACT_APP_API_PORT=10001 REACT_APP_API_URL=https://api-thirdpartyemailpassword.demo.supertokens.com REACT_APP_WEBSITE_PORT=10000 REACT_APP_WEBSITE_URL=https://thirdpartyemailpassword.demo.supertokens.com npm run build && \
-                          docker rm demo-app-thirdpartyemailpassword -f || true && \
-                          bash /home/ubuntu/supertokens-auth-react/examples/with-thirdpartyemailpassword/scripts/start_container.sh'
-            - run:
-                  name: updating passwordless
-                  command: |
-                      ssh ubuntu@ssh.supertokens.com '\
-                          cd supertokens-auth-react/examples/with-passwordless/ && \
-                          git reset --hard && \
-                          git pull && \
-                          (rm -f package-lock.json || true) && \
-                          (rm -rf node_modules || true) && \
-                          npm i && \
-                          REACT_APP_API_PORT=10001 REACT_APP_API_URL=https://api-passwordless.demo.supertokens.com REACT_APP_WEBSITE_PORT=10000 REACT_APP_WEBSITE_URL=https://passwordless.demo.supertokens.com npm run build && \
-                          docker rm demo-app-passwordless -f || true && \
-                          bash /home/ubuntu/supertokens-auth-react/examples/with-passwordless/scripts/start_container.sh'
-            - slack/status
-    update-docs:
-        docker:
-            - image: rishabhpoddar/supertokens_website_sdk_testing
-        steps:
-            - checkout
-            - run: cd ../ && git clone git@github.com:supertokens/supertokens-backend-website.git
-            - run: (cd .circleci && ./updateDocsInWebsite.sh)
-            - slack/status
-
 workflows:
     version: 2
     tagged-build:
         jobs:
-            - publish:
+            - build:
                   context:
                       - slack-notification
-                  filters:
-                      tags:
-                          only: /v[0-9]+(\.[0-9]+)*/
-                      branches:
-                          ignore: /.*/
-            - build
-              # context:
-              #     - slack-notification
+
             - test:
                   requires:
                       - build
                   matrix:
                       parameters:
                           fdi-version: placeholder
+
             - mark-passed:
-                  # context:
-                  #     - slack-notification
+                  context:
+                      - slack-notification
                   requires:
                       - test
-
-            - update-demo-apps:
-                  context:
-                      - slack-notification
-                  filters:
-                      branches:
-                          only:
-                              - master
-            - update-docs:
-                  context:
-                      - slack-notification
-                  filters:
-                      branches:
-                          only:
-                              - master
