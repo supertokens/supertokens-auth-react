@@ -198,7 +198,7 @@ export function useChildProps(
     history: any
 ): ChildProps | undefined {
     const recipeImplementation = React.useMemo(
-        () => recipe && getModifiedRecipeImplementation(recipe, dispatch, callingConsumeCodeRef),
+        () => recipe && getModifiedRecipeImplementation(recipe.recipeImpl, dispatch, callingConsumeCodeRef),
         [recipe]
     );
 
@@ -266,12 +266,12 @@ export const SignInUpFeature: React.FC<
 export default SignInUpFeature;
 
 function getModifiedRecipeImplementation(
-    recipe: Recipe,
+    originalImpl: RecipeInterface,
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     callingConsumeCodeRef: React.MutableRefObject<boolean>
 ): RecipeInterface {
     return {
-        ...recipe.recipeImpl,
+        ...originalImpl,
         createCode: async (input) => {
             let contactInfo;
             if ("email" in input) {
@@ -280,7 +280,7 @@ function getModifiedRecipeImplementation(
                 contactInfo = formatPhoneNumberIntl(input.phoneNumber);
             }
 
-            const res = await recipe.recipeImpl.createCode(input);
+            const res = await originalImpl.createCode(input);
             if (res.status === "OK") {
                 // This contactMethod refers to the one that was used to deliver the login info
                 // This can be an important distinction in case both email and phone are allowed
@@ -296,7 +296,7 @@ function getModifiedRecipeImplementation(
                 };
 
                 await setLoginAttemptInfo({
-                    recipeImplementation: recipe.recipeImpl,
+                    recipeImplementation: originalImpl,
                     userContext: input.userContext,
                     attemptInfo: loginAttemptInfo,
                 });
@@ -309,11 +309,11 @@ function getModifiedRecipeImplementation(
              * In this case we want the code that is calling resendCode in the
              * UI to handle STGeneralError so we let this throw
              */
-            const res = await recipe.recipeImpl.resendCode(input);
+            const res = await originalImpl.resendCode(input);
 
             if (res.status === "OK") {
                 const loginAttemptInfo = await getLoginAttemptInfo({
-                    recipeImplementation: recipe.recipeImpl,
+                    recipeImplementation: originalImpl,
                     userContext: input.userContext,
                 });
                 // If it was cleared or overwritten we don't want to save this.
@@ -322,7 +322,7 @@ function getModifiedRecipeImplementation(
                     const timestamp = Date.now();
 
                     await setLoginAttemptInfo({
-                        recipeImplementation: recipe.recipeImpl,
+                        recipeImplementation: originalImpl,
                         userContext: input.userContext,
                         attemptInfo: {
                             ...loginAttemptInfo,
@@ -332,7 +332,7 @@ function getModifiedRecipeImplementation(
                     dispatch({ type: "resendCode", timestamp });
                 }
             } else if (res.status === "RESTART_FLOW_ERROR") {
-                await recipe.recipeImpl.clearLoginAttemptInfo({
+                await originalImpl.clearLoginAttemptInfo({
                     userContext: input.userContext,
                 });
 
@@ -346,16 +346,16 @@ function getModifiedRecipeImplementation(
             // the session creation too early and go to successInAnotherTab too early
             callingConsumeCodeRef.current = true;
 
-            const res = await recipe.recipeImpl.consumeCode(input);
+            const res = await originalImpl.consumeCode(input);
 
             if (res.status === "RESTART_FLOW_ERROR") {
-                await recipe.recipeImpl.clearLoginAttemptInfo({
+                await originalImpl.clearLoginAttemptInfo({
                     userContext: input.userContext,
                 });
 
                 dispatch({ type: "restartFlow", error: "ERROR_SIGN_IN_UP_CODE_CONSUME_RESTART_FLOW" });
             } else if (res.status === "OK") {
-                await recipe.recipeImpl.clearLoginAttemptInfo({
+                await originalImpl.clearLoginAttemptInfo({
                     userContext: input.userContext,
                 });
             }
@@ -366,7 +366,7 @@ function getModifiedRecipeImplementation(
         },
 
         clearLoginAttemptInfo: async (input) => {
-            await recipe.recipeImpl.clearLoginAttemptInfo({
+            await originalImpl.clearLoginAttemptInfo({
                 userContext: input.userContext,
             });
             clearErrorQueryParam();

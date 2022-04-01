@@ -53,13 +53,24 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
     const resendEmail = useCallback(async () => {
         try {
             props.clearError();
-            const response = await props.recipeImplementation.resendCode({
-                deviceId: props.loginAttemptInfo.deviceId,
-                preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
-                userContext,
-            });
+            let response;
+            let generalError: STGeneralError | undefined;
 
-            if (response.status === "OK") {
+            try {
+                response = await props.recipeImplementation.resendCode({
+                    deviceId: props.loginAttemptInfo.deviceId,
+                    preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
+                    userContext,
+                });
+            } catch (e) {
+                if (STGeneralError.isThisError(e)) {
+                    generalError = e;
+                } else {
+                    throw e;
+                }
+            }
+
+            if (response !== undefined && response.status === "OK") {
                 setStatus("LINK_RESENT");
                 resendNotifTimeout.current = setTimeout(() => {
                     setStatus((status) => (status === "LINK_RESENT" ? "READY" : status));
@@ -67,13 +78,13 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                 }, 2000);
             } else {
                 setStatus("ERROR");
+
+                if (generalError !== undefined) {
+                    props.onError(generalError.message);
+                }
             }
         } catch (e) {
             setStatus("ERROR");
-
-            if (STGeneralError.isThisError(e)) {
-                props.onError(e.message);
-            }
         }
     }, [props.recipeImplementation, props.loginAttemptInfo, props.config, setStatus, userContext]);
 
