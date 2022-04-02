@@ -114,7 +114,12 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     };
 
     private async getSessionContext({ action }: RecipeEvent): Promise<SessionContextType> {
-        if (action === "SESSION_CREATED" || action === "REFRESH_SESSION" || action === "CLAIM_MISSING") {
+        if (
+            action === "SESSION_CREATED" ||
+            action === "REFRESH_SESSION" ||
+            action === "MISSING_CLAIM" ||
+            action === "TOKEN_UPDATED"
+        ) {
             const [userId, accessTokenPayload] = await Promise.all([
                 this.getUserId(),
                 this.getAccessTokenPayloadSecurely(),

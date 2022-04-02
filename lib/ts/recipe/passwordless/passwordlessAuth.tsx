@@ -22,17 +22,27 @@ import SuperTokens from "../../superTokens";
 
 import { FeatureBaseProps } from "../../types";
 import SessionAuth from "../session/sessionAuth";
+import { SessionClaim } from "../session/types";
 import Passwordless from "./recipe";
 
 type Props = FeatureBaseProps & {
     recipe: Passwordless;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
+    onMissingClaim?: (claimId: string) => void;
+    requiredClaims?: SessionClaim<any>[];
 };
 
 function PasswordlessAuth(props: Props) {
     if (props.requireAuth === false) {
-        return <SessionAuth onSessionExpired={props.onSessionExpired}>{props.children}</SessionAuth>;
+        return (
+            <SessionAuth
+                onSessionExpired={props.onSessionExpired}
+                onMissingClaim={props.onMissingClaim}
+                requiredClaims={props.requiredClaims}>
+                {props.children}
+            </SessionAuth>
+        );
     }
 
     return (
@@ -41,7 +51,9 @@ function PasswordlessAuth(props: Props) {
                 Passwordless.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
             requireAuth={true}
-            onSessionExpired={props.onSessionExpired}>
+            onSessionExpired={props.onSessionExpired}
+            onMissingClaim={props.onMissingClaim}
+            requiredClaims={props.requiredClaims}>
             {props.children}
         </SessionAuth>
     );
@@ -53,10 +65,14 @@ export default function PasswordlessAuthWrapper({
     children,
     requireAuth,
     onSessionExpired,
+    onMissingClaim,
+    requiredClaims,
 }: {
     children: React.ReactNode;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
+    onMissingClaim?: (claimId: string) => void;
+    requiredClaims?: SessionClaim<any>[];
 }) {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
@@ -65,6 +81,8 @@ export default function PasswordlessAuthWrapper({
         <PasswordlessAuthMemo
             history={history}
             onSessionExpired={onSessionExpired}
+            onMissingClaim={onMissingClaim}
+            requiredClaims={requiredClaims}
             requireAuth={requireAuth}
             recipe={Passwordless.getInstanceOrThrow()}>
             {children}

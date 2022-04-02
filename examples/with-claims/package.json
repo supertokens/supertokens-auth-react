@@ -1,0 +1,63 @@
+{
+    "name": "emailpassword",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@emotion/react": "^11.8.2",
+        "@emotion/styled": "^11.8.1",
+        "@mui/icons-material": "^5.5.1",
+        "@mui/material": "^5.5.3",
+        "axios": "^0.21.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "helmet": "^4.6.0",
+        "material-ui-popup-state": "^2.0.0",
+        "morgan": "^1.10.0",
+        "npm-run-all": "^4.1.5",
+        "react": "^17.0.1",
+        "react-dom": "^17.0.1",
+        "react-router-dom": "^6.0.0",
+        "react-scripts": "4.0.0",
+        "supertokens-auth-react": "^0.19.0",
+        "supertokens-node": "^9.0.0",
+        "ts-node": "^10.7.0",
+        "web-vitals": "^0.2.4"
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "^5.12.0",
+        "@testing-library/react": "^11.1.0",
+        "@testing-library/user-event": "^12.6.2",
+        "nodemon": "^2.0.12"
+    },
+    "scripts": {
+        "start": "npm-run-all --parallel spa api-server",
+        "spa": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "api-server": "ts-node api/index.ts",
+        "server": "node ignore_this.js",
+        "server:dev": "nodemon ignore_this.js",
+        "dev": "npm-run-all --parallel spa api-server:dev",
+        "prod": "npm-run-all --parallel server api-server",
+        "release": "bash -c './scripts/release.sh'"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}

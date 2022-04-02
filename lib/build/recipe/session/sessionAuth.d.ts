@@ -8,8 +8,8 @@ declare type PropsWithAuth = {
     redirectToLogin: () => void;
 };
 declare type Props = (PropsWithoutAuth | PropsWithAuth) & {
-    requiredClaims?: SessionClaim<any>[];
     onSessionExpired?: () => void;
+    requiredClaims?: SessionClaim<any>[];
     onMissingClaim?: (claimId: string) => void;
 };
 declare const SessionAuth: React.FC<Props>;

@@ -19,14 +19,14 @@ import { Awaitable } from "../../types";
 
 export type RecipeEvent =
     | {
-          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED";
+          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED" | "TOKEN_UPDATED";
       }
     | {
           action: "UNAUTHORISED";
           sessionExpiredOrRevoked: boolean;
       }
     | {
-          action: "CLAIM_MISSING";
+          action: "MISSING_CLAIM";
           claimId: string;
       };
 
@@ -61,21 +61,21 @@ export type SessionContextType = {
 };
 
 export abstract class SessionClaim<T> {
-    constructor(public readonly key: string) {}
+    constructor(public readonly id: string) {}
 
     /**
      * Makes an API call that will refresh the claim in the token.
      */
-    abstract refreshClaim(userId: string, userContext: any): Awaitable<T | undefined>;
+    abstract refresh(userContext: any): Awaitable<T | undefined>;
 
     /**
      * Decides if we need to refresh the claim value before checking the payload with `isClaimValid`.
      * E.g.: if the information in the payload is expired, or is not sufficient for this check.
      */
-    abstract shouldRefreshClaim(sessionClaims: any, userContext: any): Awaitable<boolean>;
+    abstract shouldRefresh(accessTokenPayload: any, userContext: any): Awaitable<boolean>;
 
     /**
-     * Decides if the claim is valid based on the sessionClaims object (and not checking DB or anything else)
+     * Decides if the claim is valid based on the accessTokenPayload object (and not checking DB or anything else)
      */
-    abstract isClaimValid(sessionClaims: any, userContext: any): Awaitable<boolean>;
+    abstract isValid(accessTokenPayload: any, userContext: any): Awaitable<boolean>;
 }

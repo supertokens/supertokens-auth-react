@@ -35,14 +35,17 @@ type PropsWithAuth = {
 };
 
 type Props = (PropsWithoutAuth | PropsWithAuth) & {
-    requiredClaims?: SessionClaim<any>[];
     onSessionExpired?: () => void;
+    requiredClaims?: SessionClaim<any>[];
     onMissingClaim?: (claimId: string) => void;
 };
 
 const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     if (props.requireAuth === true && props.redirectToLogin === undefined) {
         throw new Error("You have to provide redirectToLogin or onSessionExpired function when requireAuth is true");
+    }
+    if (props.requiredClaims !== undefined && props.onMissingClaim === undefined) {
+        throw new Error("You have to provide onMissingClaim when requiredClaims are set");
     }
     const requireAuth = useRef(props.requireAuth);
 
@@ -93,10 +96,29 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
             if (cancelUseEffect) {
                 return;
             }
-
             if (!toSetContext.doesSessionExist && props.requireAuth === true) {
                 props.redirectToLogin();
             } else {
+                if (toSetContext.doesSessionExist && props.requiredClaims !== undefined) {
+                    for (const claim of props.requiredClaims) {
+                        // TODO: user proper userContext
+                        const ctx = {};
+                        if (await claim.shouldRefresh(toSetContext.accessTokenPayload, ctx)) {
+                            await claim.refresh(ctx);
+                        }
+                        toSetContext.accessTokenPayload = await session.current.getAccessTokenPayloadSecurely();
+
+                        // This can happen as a result of claim.refresh
+                        if (cancelUseEffect) {
+                            return;
+                        }
+                        if (!(await claim.isValid(toSetContext.accessTokenPayload, ctx))) {
+                            props.onMissingClaim!(claim.id);
+                            return;
+                        }
+                    }
+                }
+
                 if (context === undefined) {
                     setContext(toSetContext);
                 }
@@ -119,6 +141,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     useEffect(() => {
         function onHandleEvent(event: RecipeEventWithSessionContext) {
             switch (event.action) {
+                case "TOKEN_UPDATED":
                 case "SESSION_CREATED":
                     setContext(event.sessionContext);
                     return;
@@ -144,7 +167,7 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                         }
                     }
                     return;
-                case "CLAIM_MISSING":
+                case "MISSING_CLAIM":
                     if (props.onMissingClaim !== undefined) {
                         props.onMissingClaim(event.claimId);
                     }

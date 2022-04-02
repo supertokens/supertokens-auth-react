@@ -9,16 +9,16 @@ export default class SessionAPIWrapper {
         | ({
               requireAuth?: false | undefined;
           } & {
-              requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
               onSessionExpired?: (() => void) | undefined;
+              requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
               onMissingClaim?: ((claimId: string) => void) | undefined;
           })
         | ({
               requireAuth: true;
               redirectToLogin: () => void;
           } & {
-              requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
               onSessionExpired?: (() => void) | undefined;
+              requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
               onMissingClaim?: ((claimId: string) => void) | undefined;
           })
     >;
@@ -35,16 +35,16 @@ declare const SessionAuth: import("react").FC<
     | ({
           requireAuth?: false | undefined;
       } & {
-          requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
           onSessionExpired?: (() => void) | undefined;
+          requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
           onMissingClaim?: ((claimId: string) => void) | undefined;
       })
     | ({
           requireAuth: true;
           redirectToLogin: () => void;
       } & {
-          requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
           onSessionExpired?: (() => void) | undefined;
+          requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
           onMissingClaim?: ((claimId: string) => void) | undefined;
       })
 >;

@@ -25,11 +25,14 @@ import SessionAuth from "../session/sessionAuth";
 import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
+import { SessionClaim } from "../session/types";
 
 type Props = FeatureBaseProps & {
     recipe: Recipe;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
+    onMissingClaim?: (claimId: string) => void;
+    requiredClaims?: SessionClaim<any>[];
 };
 
 function EmailPasswordAuth(props: Props) {
@@ -40,7 +43,14 @@ function EmailPasswordAuth(props: Props) {
     );
 
     if (props.requireAuth === false) {
-        return <SessionAuth onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuth>;
+        return (
+            <SessionAuth
+                onSessionExpired={props.onSessionExpired}
+                onMissingClaim={props.onMissingClaim}
+                requiredClaims={props.requiredClaims}>
+                {emailVerification}
+            </SessionAuth>
+        );
     }
 
     return (
@@ -49,7 +59,9 @@ function EmailPasswordAuth(props: Props) {
                 EmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
             requireAuth={true}
-            onSessionExpired={props.onSessionExpired}>
+            onSessionExpired={props.onSessionExpired}
+            onMissingClaim={props.onMissingClaim}
+            requiredClaims={props.requiredClaims}>
             {emailVerification}
         </SessionAuth>
     );
@@ -61,10 +73,14 @@ export default function EmailPasswordAuthWrapper({
     children,
     requireAuth,
     onSessionExpired,
+    onMissingClaim,
+    requiredClaims,
 }: {
     children: React.ReactNode;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
+    onMissingClaim?: (claimId: string) => void;
+    requiredClaims?: SessionClaim<any>[];
 }) {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
@@ -74,6 +90,8 @@ export default function EmailPasswordAuthWrapper({
             history={history}
             onSessionExpired={onSessionExpired}
             requireAuth={requireAuth}
+            onMissingClaim={onMissingClaim}
+            requiredClaims={requiredClaims}
             recipe={EmailPassword.getInstanceOrThrow()}>
             {children}
         </EmailPasswordAuthMemo>
