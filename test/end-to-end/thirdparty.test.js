@@ -20,7 +20,7 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import { spawn } from "child_process";
+import fetch from "isomorphic-fetch";
 import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
@@ -31,6 +31,7 @@ import {
     loginWithAuth0,
     getGeneralError,
     waitFor,
+    screenshotOnFailure,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -84,6 +85,10 @@ export function getThirdPartyTestCases({ authRecipe, rid, logId, signInUpPageLoa
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
             method: "POST",
         }).catch(console.error);
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
     });
 
     beforeEach(async function () {

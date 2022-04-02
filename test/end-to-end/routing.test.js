@@ -36,6 +36,7 @@ import {
     getSubmitFormButtonLabelWithoutShadowDom,
     assertNoSTComponents,
     clearBrowserCookiesWithoutAffectingConsole,
+    screenshotOnFailure,
 } from "../helpers";
 /*
  * Tests.
@@ -53,6 +54,10 @@ describe("SuperTokens Routing in Test App", function () {
 
     after(async function () {
         await browser.close();
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
     });
 
     describe("with react-router-dom", function () {

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### CI changes
+
+-   Now using parallel builds
+-   Screenshotting failed tests
+-   Exporting test results
+
 ## [0.20.1] - 2022-03-31
 
 ### Changed
