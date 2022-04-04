@@ -48,21 +48,21 @@ export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps>
             }
 
             if (generalError !== undefined) {
-                return props.dispatch({
+                props.dispatch({
                     type: "setError",
                     error: generalError.message,
                 });
-            }
+            } else {
+                if (response === undefined) {
+                    throw new Error("Should not come here");
+                }
 
-            if (response === undefined) {
-                throw new Error("Should not come here");
-            }
-
-            if (response.status === "ERROR") {
-                return props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+                if (response.status === "ERROR") {
+                    props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+                }
             }
         } catch (err) {
-            return props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+            props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
         }
     };
 
