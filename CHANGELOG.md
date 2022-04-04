@@ -7,11 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.20.1] - 2022-03-31
+
+### Changed
+
+-   Refactor to the URL for the powered by component displayed on the auth forms
+
 ## [0.20.0] - 2022-03-17
 
 ### Added
 
 -   ThirdParty+Passwordless recipe
+
+### Changed
+
+-   Adds 3 retries to mocha tests
 
 ### Breaking changes
 
