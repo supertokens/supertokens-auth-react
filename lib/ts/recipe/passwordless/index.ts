@@ -17,8 +17,11 @@ import { UserInput } from "./types";
 
 import Passwordless from "./recipe";
 import PasswordlessAuth from "./passwordlessAuth";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInUpThemeWrapper from "./components/themes/signInUp";
+import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/lib/build/recipe/passwordless/types";
+import { getNormalisedUserContext } from "../../utils";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -49,6 +52,167 @@ export default class Wrapper {
         }
     }
 
+    static async createCode(
+        input:
+            | { email: string; userContext?: any; options?: RecipeFunctionOptions }
+            | { phoneNumber: string; userContext?: any; options?: RecipeFunctionOptions }
+    ): Promise<{
+        status: "OK";
+        deviceId: string;
+        preAuthSessionId: string;
+        flowType: PasswordlessFlowType;
+        fetchResponse: Response;
+    }> {
+        const recipe: Passwordless = Passwordless.getInstanceOrThrow();
+        const normalisedUserContext = getNormalisedUserContext(input.userContext);
+
+        const createCodeResponse = await recipe.recipeImpl.createCode({
+            ...input,
+            userContext: normalisedUserContext,
+        });
+
+        await recipe.recipeImpl.setLoginAttemptInfo({
+            attemptInfo: {
+                deviceId: createCodeResponse.deviceId,
+                preAuthSessionId: createCodeResponse.preAuthSessionId,
+                flowType: createCodeResponse.flowType,
+            },
+            userContext: normalisedUserContext,
+        });
+
+        return createCodeResponse;
+    }
+
+    static async resendCode(input: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "RESTART_FLOW_ERROR";
+        fetchResponse: Response;
+    }> {
+        const recipe: Passwordless = Passwordless.getInstanceOrThrow();
+        const normalisedUserContext = getNormalisedUserContext(input.userContext);
+
+        const previousAttemptInfo = await recipe.recipeImpl.getLoginAttemptInfo({
+            userContext: normalisedUserContext,
+        });
+
+        /**
+         * If previousAttemptInfo is undefined then local storage was probably cleared by another tab.
+         * In this case we use empty strings when calling the API because we want to
+         * return "RESTART_FLOW_ERROR"
+         */
+        return recipe.recipeImpl.resendCode({
+            ...input,
+            userContext: normalisedUserContext,
+            deviceId: previousAttemptInfo === undefined ? "" : previousAttemptInfo.deviceId,
+            preAuthSessionId: previousAttemptInfo === undefined ? "" : previousAttemptInfo.preAuthSessionId,
+        });
+    }
+
+    static async consumeCode(
+        input:
+            | {
+                  userInputCode: string;
+                  userContext?: any;
+                  options?: RecipeFunctionOptions;
+              }
+            | {
+                  userContext?: any;
+                  options?: RecipeFunctionOptions;
+              }
+    ): Promise<
+        | {
+              status: "OK";
+              createdUser: boolean;
+              user: PasswordlessUser;
+              fetchResponse: Response;
+          }
+        | {
+              status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
+              failedCodeInputAttemptCount: number;
+              maximumCodeInputAttempts: number;
+              fetchResponse: Response;
+          }
+        | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
+    > {
+        const recipe: Passwordless = Passwordless.getInstanceOrThrow();
+        const normalisedUserContext = getNormalisedUserContext(input.userContext);
+
+        let additionalParams:
+            | {
+                  userInputCode: string;
+                  deviceId: string;
+                  preAuthSessionId: string;
+              }
+            | {
+                  linkCode: string;
+                  preAuthSessionId: string;
+              };
+
+        if ("userInputCode" in input) {
+            const attemptInfoFromStorage = await recipe.recipeImpl.getLoginAttemptInfo({
+                userContext: normalisedUserContext,
+            });
+
+            /**
+             * If attemptInfoFromStorage is undefined then local storage was probably cleared by another tab.
+             * In this case we use empty strings when calling the API because we want to
+             * return "RESTART_FLOW_ERROR"
+             *
+             * Note: We dont do this for the linkCode flow because that does not depend on local storage.
+             */
+
+            additionalParams = {
+                userInputCode: input.userInputCode,
+                deviceId: attemptInfoFromStorage === undefined ? "" : attemptInfoFromStorage.deviceId,
+                preAuthSessionId: attemptInfoFromStorage === undefined ? "" : attemptInfoFromStorage.preAuthSessionId,
+            };
+        } else {
+            const linkCode = recipe.recipeImpl.getLinkCodeFromURL({
+                userContext: input.userContext,
+            });
+
+            const preAuthSessionId = recipe.recipeImpl.getPreAuthSessionIdFromURL({
+                userContext: input.userContext,
+            });
+
+            additionalParams = {
+                linkCode,
+                preAuthSessionId,
+            };
+        }
+
+        return recipe.recipeImpl.consumeCode({
+            userContext: normalisedUserContext,
+            options: input.options,
+            ...additionalParams,
+        });
+    }
+
+    static doesEmailExist(input: { email: string; userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }> {
+        return Passwordless.getInstanceOrThrow().recipeImpl.doesEmailExist({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static doesPhoneNumberExist(input: {
+        phoneNumber: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }> {
+        return Passwordless.getInstanceOrThrow().recipeImpl.doesPhoneNumberExist({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
     static PasswordlessAuth = PasswordlessAuth;
 
     static SignInUp = (prop?: any) => Passwordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
@@ -59,6 +223,11 @@ export default class Wrapper {
 }
 
 const init = Wrapper.init;
+const createCode = Wrapper.createCode;
+const resendCode = Wrapper.resendCode;
+const consumeCode = Wrapper.consumeCode;
+const doesEmailExist = Wrapper.doesEmailExist;
+const doesPhoneNumberExist = Wrapper.doesPhoneNumberExist;
 const signOut = Wrapper.signOut;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInUp = Wrapper.SignInUp;
@@ -71,6 +240,11 @@ export {
     SignInUpTheme,
     LinkClicked,
     init,
+    createCode,
+    resendCode,
+    consumeCode,
+    doesEmailExist,
+    doesPhoneNumberExist,
     signOut,
     redirectToAuth,
     GetRedirectionURLContext,

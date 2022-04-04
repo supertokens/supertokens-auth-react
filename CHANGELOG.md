@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `emailPasswordSignIn` -> NEW FUNCTION
     -   `thirdPartySignInAndUp` -> NEW FUNCTION
 -   Session recipe now uses supertokens-web-js internally (previously used supertokens-website)
+-   All recipes now include a `postAPIHook` configuration parameter that can be used to respond to network actions.
 
 ### Breaking changes
 

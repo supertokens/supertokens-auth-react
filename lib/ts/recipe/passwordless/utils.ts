@@ -13,12 +13,18 @@
  * under the License.
  */
 
-import { CountryCode } from "libphonenumber-js";
+import { CountryCode, NumberType } from "libphonenumber-js";
 import parsePhoneNumber, { parseIncompletePhoneNumber } from "libphonenumber-js/min";
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
-import { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
-import { RecipeInterface } from "./types";
+import {
+    AdditionalLoginAttemptInfoProperties,
+    Config,
+    LoginAttemptInfo,
+    NormalisedConfig,
+    SignInUpFeatureConfigInput,
+} from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import {
     defaultPhoneNumberValidator,
     defaultPhoneNumberValidatorForCombinedInput,
@@ -157,4 +163,24 @@ export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
         return undefined;
     }
     return value;
+}
+
+export async function getLoginAttemptInfo(input: {
+    recipeImplementation: RecipeInterface;
+    userContext: any;
+}): Promise<LoginAttemptInfo | undefined> {
+    return await input.recipeImplementation.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
+        userContext: input.userContext,
+    });
+}
+
+export async function setLoginAttemptInfo(input: {
+    recipeImplementation: RecipeInterface;
+    userContext: NumberType;
+    attemptInfo: LoginAttemptInfo;
+}): Promise<void> {
+    return await input.recipeImplementation.setLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
+        userContext: input.userContext,
+        attemptInfo: input.attemptInfo,
+    });
 }

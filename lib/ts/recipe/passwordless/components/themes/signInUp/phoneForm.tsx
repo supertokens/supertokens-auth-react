@@ -64,13 +64,8 @@ export const PhoneForm = withOverride(
 
                     const response = await props.recipeImplementation.createCode({
                         phoneNumber,
-                        config: props.config,
                         userContext,
                     });
-
-                    if (response.status === "GENERAL_ERROR") {
-                        throw new STGeneralError(response.message);
-                    }
 
                     return response;
                 }}

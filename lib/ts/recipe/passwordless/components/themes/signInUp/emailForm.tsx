@@ -60,13 +60,8 @@ export const EmailForm = withOverride(
 
                     const response = await props.recipeImplementation.createCode({
                         email,
-                        config: props.config,
                         userContext,
                     });
-
-                    if (response.status === "GENERAL_ERROR") {
-                        throw new STGeneralError(response.message);
-                    }
 
                     return response;
                 }}

@@ -51,21 +51,37 @@ export const UserInputCodeForm = withOverride(
 
         async function resend() {
             try {
-                const response = await props.recipeImplementation.resendCode({
-                    deviceId: props.loginAttemptInfo.deviceId,
-                    preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
-                    config: props.config,
-                    userContext,
-                });
+                let response;
+                let generalError: STGeneralError | undefined;
 
-                if (response.status === "OK") {
-                    setClearResendNotifTimeout(
-                        setTimeout(() => {
-                            setClearResendNotifTimeout(undefined);
-                        }, 2000)
-                    );
-                } else if (response.status === "GENERAL_ERROR") {
-                    props.onError(response.message);
+                try {
+                    response = await props.recipeImplementation.resendCode({
+                        deviceId: props.loginAttemptInfo.deviceId,
+                        preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
+                        userContext,
+                    });
+                } catch (e) {
+                    if (STGeneralError.isThisError(e)) {
+                        generalError = e;
+                    } else {
+                        throw e;
+                    }
+                }
+
+                if (generalError !== undefined) {
+                    props.onError(generalError.message);
+                } else {
+                    if (response === undefined) {
+                        throw new Error("Should not come here");
+                    }
+
+                    if (response.status === "OK") {
+                        setClearResendNotifTimeout(
+                            setTimeout(() => {
+                                setClearResendNotifTimeout(undefined);
+                            }, 2000)
+                        );
+                    }
                 }
             } catch (e) {
                 props.onError("SOMETHING_WENT_WRONG_ERROR");
@@ -122,16 +138,11 @@ export const UserInputCodeForm = withOverride(
                             deviceId: props.loginAttemptInfo.deviceId,
                             preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                             userInputCode,
-                            config: props.config,
                             userContext,
                         });
 
                         if (response.status === "OK") {
                             return response;
-                        }
-
-                        if (response.status === "GENERAL_ERROR") {
-                            throw new STGeneralError(response.message);
                         }
 
                         if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
