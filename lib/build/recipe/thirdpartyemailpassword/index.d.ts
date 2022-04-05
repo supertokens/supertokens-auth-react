@@ -158,8 +158,7 @@ export default class Wrapper {
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
-    static SignInAndUpCallback: (prop?: any) => JSX.Element;
-    static SignInAndUpCallbackTheme: import("react").ComponentType<{}>;
+    static ThirdPartySignInAndUpCallbackTheme: import("react").ComponentType<{}>;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;

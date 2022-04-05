@@ -600,6 +600,7 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
                 const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE`);
 
                 return {
+                    ...implementation,
                     doesPasswordlessUserEmailExist(...args) {
                         log(`DOES_PASSWORDLESS_USER_EMAIL_EXIST`);
                         return implementation.doesPasswordlessUserEmailExist(...args);
@@ -628,25 +629,25 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
                         log(`SET_LOGIN_ATTEMPT_INFO`);
                         return implementation.setPasswordlessLoginAttemptInfo(...args);
                     },
-                    clearLoginAttemptInfo(...args) {
+                    clearPasswordlessLoginAttemptInfo(...args) {
                         log(`CLEAR_LOGIN_ATTEMPT_INFO`);
-                        return implementation.clearLoginAttemptInfo(...args);
+                        return implementation.clearPasswordlessLoginAttemptInfo(...args);
                     },
-                    getOAuthAuthorisationURL(...args) {
+                    getAuthorisationURLFromBackend(...args) {
                         log(`GET_OAUTH_AUTHORISATION_URL`);
-                        return implementation.getOAuthAuthorisationURL(...args);
+                        return implementation.getAuthorisationURLFromBackend(...args);
                     },
-                    getOAuthState(...args) {
+                    getStateAndOtherInfoFromStorage(...args) {
                         log(`GET_OAUTH_STATE`);
-                        return implementation.getOAuthState(...args);
+                        return implementation.getStateAndOtherInfoFromStorage(...args);
                     },
-                    redirectToThirdPartyLogin(...args) {
-                        log(`REDIRECT_TO_THIRD_PARTY_LOGIN`);
-                        return implementation.redirectToThirdPartyLogin(...args);
+                    getAuthorizationURLWithQueryParamsAndSetState(...args) {
+                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
+                        return implementation.getAuthorizationURLWithQueryParamsAndSetState(...args);
                     },
-                    setOAuthState(...args) {
+                    setStateAndOtherInfoToStorage(...args) {
                         log(`SET_OAUTH_STATE`);
-                        return implementation.setOAuthState(...args);
+                        return implementation.setStateAndOtherInfoToStorage(...args);
                     },
                     thirdPartySignInAndUp(...args) {
                         log(`THIRD_PARTY_SIGN_IN_AND_UP`);

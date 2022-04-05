@@ -264,9 +264,7 @@ export default class Wrapper {
     static EmailVerification = (prop?: any) =>
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
-    static SignInAndUpCallback = (prop?: any) =>
-        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
-    static SignInAndUpCallbackTheme = ThirdPartySignInAndUpCallbackTheme;
+    static ThirdPartySignInAndUpCallbackTheme = ThirdPartySignInAndUpCallbackTheme;
 }
 
 const init = Wrapper.init;
