@@ -21,6 +21,7 @@
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
+import fetch from "isomorphic-fetch";
 import { SEND_VERIFY_EMAIL_API, VERIFY_EMAIL_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
@@ -36,6 +37,7 @@ import {
     toggleSignInSignUp,
     defaultSignUp,
     signUp,
+    screenshotOnFailure,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -76,6 +78,10 @@ describe("SuperTokens Email Verification", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
             method: "POST",
         }).catch(console.error);
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
     });
 
     describe("Email verification screen", function () {

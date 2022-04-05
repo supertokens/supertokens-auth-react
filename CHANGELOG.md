@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## unreleased
+## [unreleased]
+
+### CI changes
+
+-   Now using parallel builds
+-   Screenshotting failed tests
+-   Exporting test results
 
 ### Added
 
@@ -159,6 +165,26 @@ async function isEmailVerified(input): Promise<{
     fetchResponse: Response, // Refer to point above
 }> {...}
 ```
+
+## [0.20.1] - 2022-03-31
+
+### Changed
+
+-   Refactor to the URL for the powered by component displayed on the auth forms
+
+## [0.20.0] - 2022-03-17
+
+### Added
+
+-   ThirdParty+Passwordless recipe
+
+### Changed
+
+-   Adds 3 retries to mocha tests
+
+### Breaking changes
+
+-   Removed footer prop from `PasswordlessEmailForm`, `PasswordlessPhoneForm` and `PasswordlessEmailOrPhoneForm` overridable components.
 
 ## [0.19.0]
 

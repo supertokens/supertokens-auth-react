@@ -151,8 +151,8 @@ const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
 const signInAndUp = Wrapper.signInAndUp;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
-const EmailVerification = Wrapper.EmailVerification;
 const SignInAndUpCallback = Wrapper.SignInAndUpCallback;
+const EmailVerification = Wrapper.EmailVerification;
 
 export {
     ThirdPartyAuth,

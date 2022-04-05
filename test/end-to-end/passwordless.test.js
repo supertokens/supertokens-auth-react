@@ -21,13 +21,17 @@
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
+import fetch from "isomorphic-fetch";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
+    getPasswordlessDevice,
     setInputValues,
     waitForSTElement,
     waitFor,
     getFeatureFlags,
     waitForText,
+    screenshotOnFailure,
+    setPasswordlessFlowType,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -38,12 +42,23 @@ import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BAS
  * Tests.
  */
 describe("SuperTokens Passwordless", function () {
+    getPasswordlessTestCases({
+        authRecipe: "passwordless",
+        logId: "PASSWORDLESS",
+    });
+});
+
+export function getPasswordlessTestCases({ authRecipe, logId }) {
     let browser;
     let page;
     let consoleLogs = [];
 
     const examplePhoneNumber = "+36701231212";
     const exampleEmail = "test@example.com";
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
+    });
 
     describe("with EMAIL", () => {
         getTestCases("EMAIL", "email", exampleEmail);
@@ -66,8 +81,8 @@ describe("SuperTokens Passwordless", function () {
             const contactMethod = "EMAIL_OR_PHONE";
 
             before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
-                await setFlow(contactMethod, "USER_INPUT_CODE");
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
+                await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
             });
 
             after(async function () {
@@ -83,7 +98,7 @@ describe("SuperTokens Passwordless", function () {
 
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                 consoleLogs.length = 0;
             });
@@ -106,7 +121,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
@@ -115,24 +130,24 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -145,8 +160,10 @@ describe("SuperTokens Passwordless", function () {
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
-                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, { defaultCountry: "HU" }));
-                    await setFlow(contactMethod, "USER_INPUT_CODE");
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, {
+                        defaultCountry: "HU",
+                    }));
+                    await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
                 });
 
                 after(async function () {
@@ -162,7 +179,7 @@ describe("SuperTokens Passwordless", function () {
 
                 beforeEach(async function () {
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                    page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                     consoleLogs.length = 0;
                 });
@@ -233,8 +250,8 @@ describe("SuperTokens Passwordless", function () {
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
-                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
-                    await setFlow(contactMethod, "USER_INPUT_CODE");
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
+                    await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
                 });
 
                 after(async function () {
@@ -250,7 +267,7 @@ describe("SuperTokens Passwordless", function () {
 
                 beforeEach(async function () {
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                    page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                     consoleLogs.length = 0;
                 });
@@ -321,8 +338,10 @@ describe("SuperTokens Passwordless", function () {
                 const contactMethod = "EMAIL_OR_PHONE";
 
                 before(async function () {
-                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, { disablePhoneGuess: true }));
-                    await setFlow(contactMethod, "USER_INPUT_CODE");
+                    ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe, {
+                        disablePhoneGuess: true,
+                    }));
+                    await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
                 });
 
                 after(async function () {
@@ -338,7 +357,7 @@ describe("SuperTokens Passwordless", function () {
 
                 beforeEach(async function () {
                     await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                    page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                    await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                     consoleLogs.length = 0;
                 });
@@ -416,8 +435,8 @@ describe("SuperTokens Passwordless", function () {
     function getTestCases(contactMethod, inputName, contactInfo) {
         describe(`UserInputCode`, function () {
             before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
-                await setFlow(contactMethod, "USER_INPUT_CODE");
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
+                await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE");
             });
 
             after(async function () {
@@ -433,7 +452,7 @@ describe("SuperTokens Passwordless", function () {
 
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                 consoleLogs.length = 0;
             });
@@ -452,7 +471,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
@@ -461,19 +480,19 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -493,7 +512,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
@@ -504,19 +523,19 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
 
@@ -597,19 +616,19 @@ describe("SuperTokens Passwordless", function () {
                     [
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                        "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                        `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                        `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
                     ],
                     consoleLogs
                 );
@@ -636,7 +655,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await waitFor(5500);
                 for (let i = 3; i > 0; i--) {
                     await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
@@ -659,19 +678,19 @@ describe("SuperTokens Passwordless", function () {
                     [
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                        "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                        `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                        `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
                     ],
                     consoleLogs
                 );
@@ -798,7 +817,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
@@ -813,8 +832,8 @@ describe("SuperTokens Passwordless", function () {
 
         describe(`Link`, function () {
             before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
-                await setFlow(contactMethod, "MAGIC_LINK");
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
+                await setPasswordlessFlowType(contactMethod, "MAGIC_LINK");
             });
 
             after(async function () {
@@ -848,7 +867,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await page.goto(device.codes[0].urlWithLinkCode);
 
                 await page.waitForSelector(".sessionInfo-user-id");
@@ -856,22 +875,22 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -890,7 +909,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await page.goto(device.codes[0].urlWithLinkCode);
                 await page.waitForNavigation({ waitUntil: "networkidle0" });
 
@@ -899,22 +918,22 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
 
@@ -1031,7 +1050,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await page.goto(device.codes[0].urlWithLinkCode);
 
                 // We have been redirected to linkSent
@@ -1056,8 +1075,8 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
 
@@ -1072,11 +1091,11 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
 
@@ -1094,10 +1113,10 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
 
@@ -1115,11 +1134,11 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
 
@@ -1137,8 +1156,8 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
 
@@ -1156,16 +1175,16 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                 ]);
             });
         });
 
         describe(`Link/Code`, function () {
             before(async function () {
-                ({ browser, page } = await initBrowser(contactMethod, consoleLogs));
-                await setFlow(contactMethod, "USER_INPUT_CODE_AND_MAGIC_LINK");
+                ({ browser, page } = await initBrowser(contactMethod, consoleLogs, authRecipe));
+                await setPasswordlessFlowType(contactMethod, "USER_INPUT_CODE_AND_MAGIC_LINK");
             });
 
             after(async function () {
@@ -1181,7 +1200,7 @@ describe("SuperTokens Passwordless", function () {
 
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-                page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
 
                 consoleLogs.length = 0;
             });
@@ -1199,7 +1218,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
 
                 await page.goto(device.codes[0].urlWithLinkCode);
 
@@ -1207,22 +1226,22 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1241,7 +1260,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
 
                 const anotherTab = await browser.newPage();
                 await anotherTab.goto(device.codes[0].urlWithLinkCode);
@@ -1256,17 +1275,17 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1287,7 +1306,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
@@ -1296,19 +1315,19 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1328,7 +1347,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
@@ -1339,19 +1358,19 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
 
@@ -1368,7 +1387,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
 
                 const anotherTab = await browser.newPage();
                 await Promise.all([
@@ -1388,17 +1407,17 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1431,26 +1450,26 @@ describe("SuperTokens Passwordless", function () {
                     [
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                        "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                        `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                        `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                        "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                        "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW",
-                        "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                        "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                        `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                        `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                        `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
+                        `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     ],
                     consoleLogs
                 );
@@ -1469,7 +1488,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
 
                 const anotherTab = await browser.newPage();
 
@@ -1497,25 +1516,25 @@ describe("SuperTokens Passwordless", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
-                    "ST_LOGS PASSWORDLESS OVERRIDE SET_LOGIN_ATTEMPT_INFO",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SIGN_IN_AND_UP",
-                    "ST_LOGS PASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CONSUME_CODE",
-                    "ST_LOGS PASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE",
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
-                    "ST_LOGS PASSWORDLESS ON_HANDLE_EVENT SUCCESS",
-                    "ST_LOGS PASSWORDLESS OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO",
-                    "ST_LOGS PASSWORDLESS GET_REDIRECTION_URL SUCCESS",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1602,7 +1621,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
                 await waitForSTElement(page, "[data-supertokens~='generalError']");
@@ -1645,7 +1664,7 @@ describe("SuperTokens Passwordless", function () {
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
-                const device = await getDevice(loginAttemptInfo);
+                const device = await getPasswordlessDevice(loginAttemptInfo);
                 await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
                 await submitForm(page);
 
@@ -1728,34 +1747,11 @@ describe("SuperTokens Passwordless", function () {
             });
         });
     }
-});
+}
 
 async function checkInputValue(page, input, expected) {
     const actual = await page.evaluate((ele) => ele.value, input);
     assert.equal(actual.replace(/\s/g, ""), expected);
-}
-
-async function getDevice(loginAttemptInfo) {
-    const deviceResp = await fetch(
-        `${TEST_APPLICATION_SERVER_BASE_URL}/test/getDevice?preAuthSessionId=${encodeURIComponent(
-            loginAttemptInfo.preAuthSessionId
-        )}`,
-        {
-            method: "GET",
-        }
-    );
-    return await deviceResp.json();
-}
-
-function setFlow(contactMethod, flowType) {
-    return fetch(`${TEST_APPLICATION_SERVER_BASE_URL}/test/setFlow`, {
-        method: "POST",
-        headers: [["content-type", "application/json"]],
-        body: JSON.stringify({
-            contactMethod,
-            flowType,
-        }),
-    });
 }
 
 async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cleanLoginAttemptInfo = true) {
@@ -1780,10 +1776,10 @@ async function setupDevice(page, inputName, contactInfo, forLinkOnly = true, cle
         await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
     }
 
-    return getDevice(loginAttemptInfo);
+    return getPasswordlessDevice(loginAttemptInfo);
 }
 
-async function initBrowser(contactMethod, consoleLogs, { defaultCountry, disablePhoneGuess } = {}) {
+async function initBrowser(contactMethod, consoleLogs, authRecipe, { defaultCountry, disablePhoneGuess } = {}) {
     await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
         method: "POST",
     }).catch(console.error);
@@ -1816,7 +1812,7 @@ async function initBrowser(contactMethod, consoleLogs, { defaultCountry, disable
 
     await Promise.all([
         page.goto(
-            `${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactMethodType=${contactMethod}` +
+            `${TEST_CLIENT_BASE_URL}/auth?authRecipe=${authRecipe}&passwordlessContactMethodType=${contactMethod}` +
                 (defaultCountry !== undefined ? `&passwordlessDefaultCountry=${defaultCountry}` : "") +
                 (disablePhoneGuess !== undefined ? `&passwordlessDisablePhoneGuess=true` : "")
         ),

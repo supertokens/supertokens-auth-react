@@ -49,6 +49,7 @@ import {
     getUserIdFromSessionContext,
     getTextInDashboardNoAuth,
     waitForSTElement,
+    screenshotOnFailure,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -91,6 +92,10 @@ describe("SuperTokens SignIn", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
             method: "POST",
         }).catch(console.error);
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
     });
 
     beforeEach(async function () {
