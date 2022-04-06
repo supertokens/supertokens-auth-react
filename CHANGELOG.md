@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Exports more recipe functions for thirdparty recipe to allow them to be called without using the pre-built UI. Newly exported functions: `getAuthorizationURLWithQueryParamsAndSetState`, `signInAndUp`.
 -   Exports emailpassword and thidparty recipe functions from thirdpartyemailpassword recipe to allow them to be called without using the pre-built UI. Also exports `redirectToThirdPartyLogin` from thirdpartyemailpassword recipe.
 -   Exports more recipe functions for passwordless recipe to allow them to be called without using the pre-built UI. Newly exported functions: `createCode`, `resendCode`, `consumeCode`, `doesEmailExist`, `doesPhoneNumberExist`
+-   Exports more recipe functions for thirdpartypasswordless recipe to allow them to be called without using the pre-built UI. Newly exported functions: `redirectToThirdPartyLogin`, `thirdPartySignInAndUp`, `createCode`, `resendCode`, `consumeCode`, `doesPasswordlessUserEmailExist`, `doesPasswordlessUserPhoneNumberExist`
 -   Changes recipe functions for email verification recipe **(this is breaking change if you use the override feature)**:
     -   `verifyEmail` -> No longer accepts `token` as a parameter, instead it calls `getEmailVerificationTokenFromURL`
     -   `getEmailVerificationTokenFromURL` -> NEW FUNCTION
@@ -50,6 +51,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Changes recipe functions for passwordless recipe **(this is breaking change if you use the override feature)**:
     -   `getLinkCodeFromURL` -> NEW FUNCTION
     -   `getPreAuthSessionIdFromURL` -> NEW FUNCTION
+-   Changes recipe functions for thirdpartpasswordless recipe : **(this is breaking change if you use the override feature)**:
+    -   Changes for third party functions explained above
+    -   Changes for passwordless recipe explained above
+    -   `clearLoginAttemptInfo` -> RENAMED TO `clearPasswordlessLoginAttemptInfo`
 -   Session recipe now uses supertokens-web-js internally (previously used supertokens-website)
 -   All recipes now include a `postAPIHook` configuration parameter that can be used to respond to network actions.
 
