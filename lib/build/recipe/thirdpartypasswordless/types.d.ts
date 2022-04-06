@@ -19,7 +19,6 @@ import {
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
 import {
-    StateObject,
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
@@ -44,9 +43,7 @@ import { Header } from "./components/themes/signInUp/header";
 import { CountryCode } from "libphonenumber-js";
 import { Dispatch } from "react";
 import { SignInUpScreens } from "../passwordless/components/themes/signInUp";
-import { PasswordlessUser, RecipeFunctionOptions } from "supertokens-web-js/recipe/passwordless";
-import { PasswordlessFlowType } from "supertokens-web-js/lib/build/recipe/passwordless/types";
-import { UserType } from "supertokens-web-js/lib/build/recipe/authRecipeWithEmailVerification/types";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 declare type WithRenamedOptionalProp<T, K extends keyof T, L extends string> = Omit<T, K> & {
     [P in L]?: T[K];
 };
@@ -89,9 +86,9 @@ export declare type UserInput = (
 ) & {
     override?: {
         functions?: (
-            originalImplementation: TPPWlessRecipeInterface,
-            builder?: OverrideableBuilder<TPPWlessRecipeInterface>
-        ) => TPPWlessRecipeInterface;
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
@@ -106,9 +103,9 @@ export declare type NormalisedConfig = {
     thirdPartyProviderAndEmailOrPhoneFormStyle: Styles | undefined;
     override: {
         functions: (
-            originalImplementation: TPPWlessRecipeInterface,
-            builder?: OverrideableBuilder<TPPWlessRecipeInterface>
-        ) => TPPWlessRecipeInterface;
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
@@ -159,155 +156,4 @@ export declare type ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen 
           pwlessChildProps: PwlessChildProps;
       }
 );
-export declare type TPPWlessRecipeInterface = {
-    createCode: (
-        input:
-            | {
-                  email: string;
-                  userContext: any;
-                  options?: RecipeFunctionOptions;
-              }
-            | {
-                  phoneNumber: string;
-                  userContext: any;
-                  options?: RecipeFunctionOptions;
-              }
-    ) => Promise<{
-        status: "OK";
-        deviceId: string;
-        preAuthSessionId: string;
-        flowType: PasswordlessFlowType;
-        fetchResponse: Response;
-    }>;
-    resendCode: (input: {
-        userContext: any;
-        deviceId: string;
-        preAuthSessionId: string;
-        options?: RecipeFunctionOptions;
-    }) => Promise<{
-        status: "OK" | "RESTART_FLOW_ERROR";
-        fetchResponse: Response;
-    }>;
-    consumeCode: (
-        input:
-            | {
-                  userInputCode: string;
-                  deviceId: string;
-                  preAuthSessionId: string;
-                  userContext: any;
-                  options?: RecipeFunctionOptions;
-              }
-            | {
-                  preAuthSessionId: string;
-                  linkCode: string;
-                  userContext: any;
-                  options?: RecipeFunctionOptions;
-              }
-    ) => Promise<
-        | {
-              status: "OK";
-              createdUser: boolean;
-              user: PasswordlessUser;
-              fetchResponse: Response;
-          }
-        | {
-              status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
-              failedCodeInputAttemptCount: number;
-              maximumCodeInputAttempts: number;
-              fetchResponse: Response;
-          }
-        | {
-              status: "RESTART_FLOW_ERROR";
-              fetchResponse: Response;
-          }
-    >;
-    getPasswordlessLinkCodeFromURL: (input: { userContext: any }) => string;
-    getPasswordlessPreAuthSessionIdFromURL: (input: { userContext: any }) => string;
-    doesPasswordlessUserEmailExist: (input: {
-        email: string;
-        userContext: any;
-        options?: RecipeFunctionOptions;
-    }) => Promise<{
-        status: "OK";
-        doesExist: boolean;
-        fetchResponse: Response;
-    }>;
-    doesPasswordlessUserPhoneNumberExist: (input: {
-        phoneNumber: string;
-        userContext: any;
-        options?: RecipeFunctionOptions;
-    }) => Promise<{
-        status: "OK";
-        doesExist: boolean;
-        fetchResponse: Response;
-    }>;
-    getPasswordlessLoginAttemptInfo: <CustomLoginAttemptInfoProperties>(input: { userContext: any }) =>
-        | Promise<
-              | undefined
-              | ({
-                    deviceId: string;
-                    preAuthSessionId: string;
-                    flowType: PasswordlessFlowType;
-                } & CustomLoginAttemptInfoProperties)
-          >
-        | ({
-              deviceId: string;
-              preAuthSessionId: string;
-              flowType: PasswordlessFlowType;
-          } & CustomLoginAttemptInfoProperties)
-        | undefined;
-    setPasswordlessLoginAttemptInfo: <CustomStateProperties>(input: {
-        attemptInfo: {
-            deviceId: string;
-            preAuthSessionId: string;
-            flowType: PasswordlessFlowType;
-        } & CustomStateProperties;
-        userContext: any;
-    }) => Promise<void> | void;
-    clearPasswordlessLoginAttemptInfo: (input: { userContext: any }) => Promise<void> | void;
-    getAuthorisationURLFromBackend: (input: {
-        providerId: string;
-        userContext: any;
-        options?: RecipeFunctionOptions;
-    }) => Promise<{
-        status: "OK";
-        url: string;
-        fetchResponse: Response;
-    }>;
-    thirdPartySignInAndUp: (input: { userContext: any; options?: RecipeFunctionOptions }) => Promise<
-        | {
-              status: "OK";
-              user: UserType;
-              createdNewUser: boolean;
-              fetchResponse: Response;
-          }
-        | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-              fetchResponse: Response;
-          }
-    >;
-    getStateAndOtherInfoFromStorage: <CustomStateProperties>(input: {
-        userContext: any;
-    }) => (StateObject & CustomStateProperties) | undefined;
-    setStateAndOtherInfoToStorage: <CustomStateProperties>(input: {
-        state: StateObject & CustomStateProperties;
-        userContext: any;
-    }) => void;
-    getAuthorizationURLWithQueryParamsAndSetState: (input: {
-        providerId: string;
-        authorisationURL: string;
-        userContext: any;
-        providerClientId?: string;
-        options?: RecipeFunctionOptions;
-    }) => Promise<string>;
-    generateStateToSendToOAuthProvider: (input: { userContext: any }) => string;
-    verifyAndGetStateOrThrowError: <CustomStateProperties>(input: {
-        stateFromAuthProvider: string | undefined;
-        stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
-        userContext: any;
-    }) => Promise<StateObject & CustomStateProperties>;
-    getAuthCodeFromURL: (input: { userContext: any }) => string;
-    getAuthErrorFromURL: (input: { userContext: any }) => string | undefined;
-    getAuthStateFromURL: (input: { userContext: any }) => string;
-};
 export {};

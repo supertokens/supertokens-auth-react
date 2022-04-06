@@ -1,10 +1,11 @@
-import { TPPWlessRecipeInterface, PreAndPostAPIHookAction, OnHandleEventContext } from "../types";
+import { PreAndPostAPIHookAction, OnHandleEventContext } from "../types";
 import { NormalisedAppInfo } from "../../../types";
 import {
     RecipeOnHandleEventFunction,
     RecipePostAPIHookFunction,
     RecipePreAPIHookFunction,
 } from "../../recipeModule/types";
+import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
     appInfo: NormalisedAppInfo;

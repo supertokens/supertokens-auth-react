@@ -7,12 +7,12 @@ import {
     NormalisedConfig,
     OnHandleEventContext,
     UserInput,
-    TPPWlessRecipeInterface,
     PreAndPostAPIHookAction,
 } from "./types";
 import Passwordless from "../passwordless/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import EmailVerification from "../emailverification/recipe";
+import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
     OnHandleEventContext,

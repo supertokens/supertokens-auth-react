@@ -1,16 +1,11 @@
 /// <reference types="react" />
 /// <reference types="@emotion/react/types/css-prop" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import {
-    UserInput,
-    GetRedirectionURLContext,
-    PreAPIHookContext,
-    OnHandleEventContext,
-    TPPWlessRecipeInterface as RecipeInterface,
-} from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyPasswordlessAuth from "./thirdpartyPasswordlessAuth";
 import SignInUpTheme from "./components/themes/signInUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 export default class Wrapper {
     static init(
         config: UserInput
