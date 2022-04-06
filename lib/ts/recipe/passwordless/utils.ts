@@ -187,6 +187,11 @@ export async function setLoginAttemptInfo(input: {
     });
 }
 
+/**
+ * These functions are helper functions so that the logic can be exposed from both
+ * passwordless and thirdpartypasswordless recipes without having to duplicate code
+ */
+
 export async function createCode(
     input:
         | { email: string; userContext?: any; options?: RecipeFunctionOptions; recipeImplementation: RecipeInterface }

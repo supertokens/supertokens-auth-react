@@ -112,7 +112,7 @@ export default class Wrapper {
         });
     }
 
-    static async createCode(
+    static async createPasswordlessCode(
         input:
             | { email: string; userContext?: any; options?: RecipeFunctionOptions }
             | { phoneNumber: string; userContext?: any; options?: RecipeFunctionOptions }
@@ -137,7 +137,7 @@ export default class Wrapper {
         });
     }
 
-    static async resendCode(input: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async resendPasswordlessCode(input: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }> {
@@ -155,7 +155,7 @@ export default class Wrapper {
         });
     }
 
-    static async consumeCode(
+    static async consumePasswordlessCode(
         input:
             | {
                   userInputCode: string;
@@ -271,9 +271,9 @@ const sendVerificationEmail = Wrapper.sendVerificationEmail;
 const verifyEmail = Wrapper.verifyEmail;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
 const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
-const createCode = Wrapper.createCode;
-const resendCode = Wrapper.resendCode;
-const consumeCode = Wrapper.consumeCode;
+const createPasswordlessCode = Wrapper.createPasswordlessCode;
+const resendPasswordlessCode = Wrapper.resendPasswordlessCode;
+const consumePasswordlessCode = Wrapper.consumePasswordlessCode;
 const doesPasswordlessUserEmailExist = Wrapper.doesPasswordlessUserEmailExist;
 const doesPasswordlessUserPhoneNumberExist = Wrapper.doesPasswordlessUserPhoneNumberExist;
 const redirectToAuth = Wrapper.redirectToAuth;
@@ -294,9 +294,9 @@ export {
     verifyEmail,
     redirectToThirdPartyLogin,
     thirdPartySignInAndUp,
-    createCode,
-    resendCode,
-    consumeCode,
+    createPasswordlessCode,
+    resendPasswordlessCode,
+    consumePasswordlessCode,
     doesPasswordlessUserEmailExist,
     doesPasswordlessUserPhoneNumberExist,
     SignInAndUp,

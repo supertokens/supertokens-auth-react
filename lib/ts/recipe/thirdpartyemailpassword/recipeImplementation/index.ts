@@ -47,8 +47,8 @@ export default function getRecipeImplementation(recipeInput: {
         getAuthorisationURLFromBackend: async function (input) {
             return thirdPartyImpl.getAuthorisationURLFromBackend.bind(DerivedTP(this))(input);
         },
-        getAuthorizationURLWithQueryParamsAndSetState: async function (input) {
-            return thirdPartyImpl.getAuthorizationURLWithQueryParamsAndSetState.bind(DerivedTP(this))(input);
+        getAuthorisationURLWithQueryParamsAndSetState: async function (input) {
+            return thirdPartyImpl.getAuthorisationURLWithQueryParamsAndSetState.bind(DerivedTP(this))(input);
         },
         thirdPartySignInAndUp: async function (input) {
             return await thirdPartyImpl.signInAndUp.bind(DerivedTP(this))(input);

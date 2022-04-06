@@ -26,10 +26,10 @@ export default function getRecipeImplementation(recipeInput: {
     });
 
     return {
-        consumeCode(input) {
+        consumePasswordlessCode(input) {
             return passwordlessImpl.consumeCode.bind(DerivedPwless(this))(input);
         },
-        createCode(input) {
+        createPasswordlessCode(input) {
             return passwordlessImpl.createCode.bind(DerivedPwless(this))(input);
         },
         doesPasswordlessUserPhoneNumberExist(input) {
@@ -38,7 +38,7 @@ export default function getRecipeImplementation(recipeInput: {
         doesPasswordlessUserEmailExist: async function (input) {
             return passwordlessImpl.doesEmailExist.bind(DerivedPwless(this))(input);
         },
-        resendCode(input) {
+        resendPasswordlessCode(input) {
             return passwordlessImpl.resendCode.bind(DerivedPwless(this))(input);
         },
         clearPasswordlessLoginAttemptInfo(input) {
@@ -62,28 +62,28 @@ export default function getRecipeImplementation(recipeInput: {
         thirdPartySignInAndUp: async function (input) {
             return thirdPartyImpl.signInAndUp.bind(DerivedTP(this))(input);
         },
-        getStateAndOtherInfoFromStorage: function (input) {
+        getThirdPartyStateAndOtherInfoFromStorage: function (input) {
             return thirdPartyImpl.getStateAndOtherInfoFromStorage.bind(DerivedTP(this))(input);
         },
-        setStateAndOtherInfoToStorage: function (input) {
+        setThirdPartyStateAndOtherInfoToStorage: function (input) {
             return thirdPartyImpl.setStateAndOtherInfoToStorage.bind(DerivedTP(this))(input);
         },
-        getAuthorizationURLWithQueryParamsAndSetState: function (input) {
-            return thirdPartyImpl.getAuthorizationURLWithQueryParamsAndSetState.bind(DerivedTP(this))(input);
+        getThirdPartyAuthorisationURLWithQueryParamsAndSetState: function (input) {
+            return thirdPartyImpl.getAuthorisationURLWithQueryParamsAndSetState.bind(DerivedTP(this))(input);
         },
-        generateStateToSendToOAuthProvider: function (input) {
+        generateThirdPartyStateToSendToOAuthProvider: function (input) {
             return thirdPartyImpl.generateStateToSendToOAuthProvider.bind(DerivedTP(this))(input);
         },
-        verifyAndGetStateOrThrowError: function (input) {
+        verifyAndGetThirdPartyStateOrThrowError: function (input) {
             return thirdPartyImpl.verifyAndGetStateOrThrowError.bind(DerivedTP(this))(input);
         },
-        getAuthCodeFromURL: function (input) {
+        getThirdPartyAuthCodeFromURL: function (input) {
             return thirdPartyImpl.getAuthCodeFromURL.bind(DerivedTP(this))(input);
         },
-        getAuthErrorFromURL: function (input) {
+        getThirdPartyAuthErrorFromURL: function (input) {
             return thirdPartyImpl.getAuthErrorFromURL.bind(DerivedTP(this))(input);
         },
-        getAuthStateFromURL: function (input) {
+        getThirdPartyAuthStateFromURL: function (input) {
             return thirdPartyImpl.getAuthStateFromURL.bind(DerivedTP(this))(input);
         },
     };

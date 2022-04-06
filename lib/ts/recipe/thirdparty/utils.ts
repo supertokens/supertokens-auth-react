@@ -126,7 +126,7 @@ export async function redirectToThirdPartyLogin(input: {
         return { status: "ERROR" };
     }
 
-    const response = await input.recipeImplementation.getAuthorizationURLWithQueryParamsAndSetState({
+    const response = await input.recipeImplementation.getAuthorisationURLWithQueryParamsAndSetState({
         providerId: input.thirdPartyId,
         authorisationURL: provider.getRedirectURL(),
         providerClientId: provider.clientId,

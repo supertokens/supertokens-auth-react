@@ -50,7 +50,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static createCode(
+    static createPasswordlessCode(
         input:
             | {
                   email: string;
@@ -69,11 +69,11 @@ export default class Wrapper {
         flowType: PasswordlessFlowType;
         fetchResponse: Response;
     }>;
-    static resendCode(input: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static resendPasswordlessCode(input: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }>;
-    static consumeCode(
+    static consumePasswordlessCode(
         input:
             | {
                   userInputCode: string;
@@ -150,9 +150,9 @@ declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
 declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
 declare const thirdPartySignInAndUp: typeof Wrapper.thirdPartySignInAndUp;
-declare const createCode: typeof Wrapper.createCode;
-declare const resendCode: typeof Wrapper.resendCode;
-declare const consumeCode: typeof Wrapper.consumeCode;
+declare const createPasswordlessCode: typeof Wrapper.createPasswordlessCode;
+declare const resendPasswordlessCode: typeof Wrapper.resendPasswordlessCode;
+declare const consumePasswordlessCode: typeof Wrapper.consumePasswordlessCode;
 declare const doesPasswordlessUserEmailExist: typeof Wrapper.doesPasswordlessUserEmailExist;
 declare const doesPasswordlessUserPhoneNumberExist: typeof Wrapper.doesPasswordlessUserPhoneNumberExist;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
@@ -172,9 +172,9 @@ export {
     verifyEmail,
     redirectToThirdPartyLogin,
     thirdPartySignInAndUp,
-    createCode,
-    resendCode,
-    consumeCode,
+    createPasswordlessCode,
+    resendPasswordlessCode,
+    consumePasswordlessCode,
     doesPasswordlessUserEmailExist,
     doesPasswordlessUserPhoneNumberExist,
     SignInAndUp,

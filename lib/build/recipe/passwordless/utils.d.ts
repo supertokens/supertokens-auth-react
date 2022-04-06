@@ -16,6 +16,10 @@ export declare function setLoginAttemptInfo(input: {
     userContext: NumberType;
     attemptInfo: LoginAttemptInfo;
 }): Promise<void>;
+/**
+ * These functions are helper functions so that the logic can be exposed from both
+ * passwordless and thirdpartypasswordless recipes without having to duplicate code
+ */
 export declare function createCode(
     input:
         | {
