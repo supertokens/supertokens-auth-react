@@ -18,10 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   All recipe functions now accept an additional parameter `userContext`, learn more about this by visiting the advanced cusotmisations section in the documentation
 -   All UI components exported by the SDK now accept an additional `userContext` prop, learn more about this by visiting the advanced cusotmisations section in the documentation
 -   Exports more recipe functions for emailverification recipe to allow them to be called without using the pre-built UI. Newly exported functions: `verifyEmail`, `sendVerificationEmail`
--   Exports all emailverification recipe functions from emailpassword, thirdparty and thirdpartyemailpassword recipes.
+-   Exports all emailverification recipe functions from emailpassword, thirdparty, thirdpartyemailpassword and thirdpartypasswordless recipes.
 -   Exports more recipe functions for emailpassword recipe to allow them to be called without using the pre-built UI. Newly exported functions: `submitNewPassword`, `sendPasswordResetEmail`, `signUp`, `signIn`, `doesEmailExist`.
 -   Exports more recipe functions for thirdparty recipe to allow them to be called without using the pre-built UI. Newly exported functions: `getAuthorizationURLWithQueryParamsAndSetState`, `signInAndUp`.
 -   Exports emailpassword and thidparty recipe functions from thirdpartyemailpassword recipe to allow them to be called without using the pre-built UI. Also exports `redirectToThirdPartyLogin` from thirdpartyemailpassword recipe.
+-   Exports more recipe functions for passwordless recipe to allow them to be called without using the pre-built UI. Newly exported functions: `createCode`, `resendCode`, `consumeCode`, `doesEmailExist`, `doesPhoneNumberExist`
 -   Changes recipe functions for email verification recipe **(this is breaking change if you use the override feature)**:
     -   `verifyEmail` -> No longer accepts `token` as a parameter, instead it calls `getEmailVerificationTokenFromURL`
     -   `getEmailVerificationTokenFromURL` -> NEW FUNCTION
@@ -46,6 +47,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `emailPasswordSignUp` -> NEW FUNCTION
     -   `emailPasswordSignIn` -> NEW FUNCTION
     -   `thirdPartySignInAndUp` -> NEW FUNCTION
+-   Changes recipe functions for passwordless recipe **(this is breaking change if you use the override feature)**:
+    -   `getLinkCodeFromURL` -> NEW FUNCTION
+    -   `getPreAuthSessionIdFromURL` -> NEW FUNCTION
 -   Session recipe now uses supertokens-web-js internally (previously used supertokens-website)
 -   All recipes now include a `postAPIHook` configuration parameter that can be used to respond to network actions.
 
