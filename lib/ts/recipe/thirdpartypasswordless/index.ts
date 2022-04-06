@@ -21,7 +21,15 @@ import SignInUpTheme from "./components/themes/signInUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { LinkClickedScreen } from "../passwordless/components/themes/linkClickedScreen";
 import { getNormalisedUserContext } from "../../utils";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import {
+    PasswordlessFlowType,
+    PasswordlessUser,
+    RecipeFunctionOptions,
+    RecipeInterface,
+} from "supertokens-web-js/recipe/thirdpartypasswordless";
+import { UserType } from "supertokens-web-js/recipe/thirdparty";
+import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
+import * as PasswordlessUtilFunctions from "../passwordless/utils";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -40,6 +48,181 @@ export default class Wrapper {
         return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.isEmailVerified(
             getNormalisedUserContext(input?.userContext)
         );
+    }
+
+    static async verifyEmail(input?: { userContext?: any }): Promise<{
+        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+        fetchResponse: Response;
+    }> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+        fetchResponse: Response;
+    }> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async redirectToThirdPartyLogin(input: {
+        thirdPartyId: string;
+        userContext?: any;
+    }): Promise<{ status: "OK" | "ERROR" }> {
+        const recipeInstance: ThirdPartyPasswordless = ThirdPartyPasswordless.getInstanceOrThrow();
+
+        if (recipeInstance.thirdPartyRecipe === undefined) {
+            throw new Error(
+                "Third party passwordless was initialised without any social providers. This function is only available if at least one social provider is initialised"
+            );
+        }
+
+        return UtilsRedirectToThirdPartyLogin({
+            thirdPartyId: input.thirdPartyId,
+            config: recipeInstance.thirdPartyRecipe.config,
+            userContext: getNormalisedUserContext(input.userContext),
+            recipeImplementation: recipeInstance.thirdPartyRecipe.recipeImpl,
+        });
+    }
+
+    static thirdPartySignInAndUp(input?: { userContext?: any }): Promise<
+        | {
+              status: "OK";
+              user: UserType;
+              createdNewUser: boolean;
+              fetchResponse: Response;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
+          }
+    > {
+        /**
+         * We do it this way here because prettier behaves in a weird way without it.
+         * If you return directly, build-pretty will succeed but pretty-check will fail
+         * when you try to commit and you will have to run pretty manually every time
+         */
+        const recipeInstance: ThirdPartyPasswordless = ThirdPartyPasswordless.getInstanceOrThrow();
+        return recipeInstance.recipeImpl.thirdPartySignInAndUp({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async createCode(
+        input:
+            | { email: string; userContext?: any; options?: RecipeFunctionOptions }
+            | { phoneNumber: string; userContext?: any; options?: RecipeFunctionOptions }
+    ): Promise<{
+        status: "OK";
+        deviceId: string;
+        preAuthSessionId: string;
+        flowType: PasswordlessFlowType;
+        fetchResponse: Response;
+    }> {
+        const recipe: ThirdPartyPasswordless = ThirdPartyPasswordless.getInstanceOrThrow();
+
+        if (recipe.passwordlessRecipe === undefined) {
+            throw new Error(
+                "createCode requires the passwordless recipe to be enabled. Please check the value of disablePasswordless in the configuration."
+            );
+        }
+
+        return PasswordlessUtilFunctions.createCode({
+            ...input,
+            recipeImplementation: recipe.passwordlessRecipe.recipeImpl,
+        });
+    }
+
+    static async resendCode(input: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "RESTART_FLOW_ERROR";
+        fetchResponse: Response;
+    }> {
+        const recipe: ThirdPartyPasswordless = ThirdPartyPasswordless.getInstanceOrThrow();
+
+        if (recipe.passwordlessRecipe === undefined) {
+            throw new Error(
+                "createCode requires the passwordless recipe to be enabled. Please check the value of disablePasswordless in the configuration."
+            );
+        }
+
+        return PasswordlessUtilFunctions.resendCode({
+            ...input,
+            recipeImplementation: recipe.passwordlessRecipe.recipeImpl,
+        });
+    }
+
+    static async consumeCode(
+        input:
+            | {
+                  userInputCode: string;
+                  userContext?: any;
+                  options?: RecipeFunctionOptions;
+              }
+            | {
+                  userContext?: any;
+                  options?: RecipeFunctionOptions;
+              }
+    ): Promise<
+        | {
+              status: "OK";
+              createdUser: boolean;
+              user: PasswordlessUser;
+              fetchResponse: Response;
+          }
+        | {
+              status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
+              failedCodeInputAttemptCount: number;
+              maximumCodeInputAttempts: number;
+              fetchResponse: Response;
+          }
+        | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
+    > {
+        const recipe: ThirdPartyPasswordless = ThirdPartyPasswordless.getInstanceOrThrow();
+
+        if (recipe.passwordlessRecipe === undefined) {
+            throw new Error(
+                "createCode requires the passwordless recipe to be enabled. Please check the value of disablePasswordless in the configuration."
+            );
+        }
+
+        return PasswordlessUtilFunctions.consumeCode({
+            ...input,
+            recipeImplementation: recipe.passwordlessRecipe.recipeImpl,
+        });
+    }
+
+    static doesPasswordlessUserEmailExist(input: {
+        email: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.doesPasswordlessUserEmailExist({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static doesPasswordlessUserPhoneNumberExist(input: {
+        phoneNumber: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.doesPasswordlessUserPhoneNumberExist({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"
@@ -84,6 +267,15 @@ export default class Wrapper {
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
+const sendVerificationEmail = Wrapper.sendVerificationEmail;
+const verifyEmail = Wrapper.verifyEmail;
+const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
+const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
+const createCode = Wrapper.createCode;
+const resendCode = Wrapper.resendCode;
+const consumeCode = Wrapper.consumeCode;
+const doesPasswordlessUserEmailExist = Wrapper.doesPasswordlessUserEmailExist;
+const doesPasswordlessUserPhoneNumberExist = Wrapper.doesPasswordlessUserPhoneNumberExist;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
@@ -98,6 +290,15 @@ export {
     Facebook,
     Github,
     isEmailVerified,
+    sendVerificationEmail,
+    verifyEmail,
+    redirectToThirdPartyLogin,
+    thirdPartySignInAndUp,
+    createCode,
+    resendCode,
+    consumeCode,
+    doesPasswordlessUserEmailExist,
+    doesPasswordlessUserPhoneNumberExist,
     SignInAndUp,
     SignInUpTheme,
     ThirdPartySignInAndUpCallback,
