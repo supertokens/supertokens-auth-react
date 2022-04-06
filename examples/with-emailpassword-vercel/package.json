@@ -1,5 +1,5 @@
 {
-    "name": "emailpassword",
+    "name": "with-emailpassword-vercel",
     "version": "0.1.0",
     "private": true,
     "dependencies": {
