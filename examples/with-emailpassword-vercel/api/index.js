@@ -8,7 +8,7 @@ let { verifySession } = require("supertokens-node/recipe/session/framework/expre
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 
-// const apiPort = process.env.REACT_APP_API_PORT || 3001;
+const apiPort = process.env.REACT_APP_API_PORT || 3001;
 // const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
 // const websitePort = process.env.VERCEL_URL || 3000;
 // const websiteDomain = process.env.VERCEL_URL || `http://localhost:${websitePort}`;
