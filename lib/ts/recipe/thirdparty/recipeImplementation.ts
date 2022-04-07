@@ -17,12 +17,12 @@ export default function getRecipeImplementation(recipeInput: {
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
 }): RecipeInterface {
-    const webJsImplementation = WebJSRecipeImplementation(
-        recipeInput.recipeId,
-        recipeInput.appInfo,
-        recipeInput.preAPIHook,
-        recipeInput.postAPIHook
-    );
+    const webJsImplementation = WebJSRecipeImplementation({
+        recipeId: recipeInput.recipeId,
+        appInfo: recipeInput.appInfo,
+        preAPIHook: recipeInput.preAPIHook,
+        postAPIHook: recipeInput.postAPIHook,
+    });
 
     return {
         getAuthorisationURLFromBackend: async function (input): Promise<{
@@ -73,7 +73,7 @@ export default function getRecipeImplementation(recipeInput: {
             });
         },
 
-        setStateAndOtherInfoToStorage: function (input): void {
+        setStateAndOtherInfoToStorage: function (input): Promise<void> {
             return webJsImplementation.setStateAndOtherInfoToStorage.bind(this)<{
                 rid?: string;
                 redirectToPath?: string;

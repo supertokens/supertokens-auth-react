@@ -16,12 +16,12 @@ export default function getRecipeImplementation(recipeInput: {
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
 }): RecipeInterface {
-    const webJsImplementation = WebJSRecipeImplementation(
-        recipeInput.recipeId,
-        recipeInput.appInfo,
-        recipeInput.preAPIHook,
-        recipeInput.postAPIHook
-    );
+    const webJsImplementation = WebJSRecipeImplementation({
+        recipeId: recipeInput.recipeId,
+        appInfo: recipeInput.appInfo,
+        preAPIHook: recipeInput.preAPIHook,
+        postAPIHook: recipeInput.postAPIHook,
+    });
     return {
         submitNewPassword: async function (input): Promise<
             | {
