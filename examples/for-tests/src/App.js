@@ -637,13 +637,13 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
                         log(`GET_OAUTH_AUTHORISATION_URL`);
                         return implementation.getAuthorisationURLFromBackend(...args);
                     },
-                    getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args) {
+                    getThirdPartyStateAndOtherInfoFromStorage(...args) {
                         log(`GET_OAUTH_STATE`);
-                        return implementation.getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args);
+                        return implementation.getThirdPartyStateAndOtherInfoFromStorage(...args);
                     },
-                    getAuthorisationURLWithQueryParamsAndSetState(...args) {
+                    getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args) {
                         log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(...args);
+                        return implementation.getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args);
                     },
                     setThirdPartyStateAndOtherInfoToStorage(...args) {
                         log(`SET_OAUTH_STATE`);
