@@ -48,7 +48,7 @@ function startEndToEnd () {
         APP_SERVER=$apiPort TEST_MODE=testing multi="spec=- mocha-junit-reporter=/dev/null" mocha --reporter mocha-multi --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $SPEC_FILES
     fi
     testPassed=$?;
-    if [[ -z "${CI}" ]]; then
+    if ! [[ -z "${CI}" ]]; then
         cp ../supertokens-root/logs/error.log test_report/logs/core_error.log
         cp ../supertokens-root/logs/info.log test_report/logs/core_info.log
     fi
