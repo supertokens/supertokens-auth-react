@@ -36,6 +36,9 @@ function startEndToEnd () {
     sleep 2 # Because the server is responding does not mean the app is ready. Let's wait another 5secs to make sure the app is up.
     echo "Start mocha testing"
 
+    echo $MOCHA_FILE
+    echo $CIRCLE_NODE_TOTAL
+    echo $CIRCLE_NODE_INDEX
     if [[ -z "${MOCHA_FILE}" ]]; then
         APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000
     else
