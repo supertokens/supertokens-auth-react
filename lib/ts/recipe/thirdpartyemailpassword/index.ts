@@ -23,7 +23,7 @@ import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { getNormalisedUserContext } from "../../utils";
 import { RecipeInterface, UserType } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
-import { SignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
+import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -256,15 +256,15 @@ export default class Wrapper {
     static SignInAndUp = (prop?: any) =>
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
+    static ThirdPartySignInAndUpCallback = (prop?: any) =>
+        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
     static ResetPasswordUsingToken = (prop?: any) =>
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("resetpassword", prop);
     static ResetPasswordUsingTokenTheme = ResetPasswordUsingTokenTheme;
     static EmailVerification = (prop?: any) =>
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
-    static SignInAndUpCallback = (prop?: any) =>
-        ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
-    static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
+    static ThirdPartySignInAndUpCallbackTheme = ThirdPartySignInAndUpCallbackTheme;
 }
 
 const init = Wrapper.init;
@@ -274,6 +274,7 @@ const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
+const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
 const EmailVerification = Wrapper.EmailVerification;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 const submitNewPassword = Wrapper.submitNewPassword;
@@ -283,7 +284,6 @@ const emailPasswordSignUp = Wrapper.emailPasswordSignUp;
 const doesEmailExist = Wrapper.doesEmailExist;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
 const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
-const SignInAndUpCallback = Wrapper.SignInAndUpCallback;
 
 export {
     ThirdPartyEmailPasswordAuth,
@@ -297,8 +297,8 @@ export {
     sendVerificationEmail,
     SignInAndUp,
     SignInAndUpTheme,
-    SignInAndUpCallback,
-    SignInAndUpCallbackTheme,
+    ThirdPartySignInAndUpCallback,
+    ThirdPartySignInAndUpCallbackTheme,
     signOut,
     redirectToAuth,
     submitNewPassword,

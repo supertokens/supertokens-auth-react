@@ -26,7 +26,7 @@ export function SuperTokensBranding(): JSX.Element {
         <a
             data-supertokens="superTokensBranding"
             css={styles.superTokensBranding}
-            href="https://supertokens.com?campaign=poweredby"
+            href="https://supertokens.com?utm_campaign=poweredby"
             target="_blank">
             {t("BRANDING_POWERED_BY_START")}
             <strong>SuperTokens</strong>

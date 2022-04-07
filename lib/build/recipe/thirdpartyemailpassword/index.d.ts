@@ -7,7 +7,7 @@ import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { RecipeInterface, UserType } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-import { SignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
+import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -153,12 +153,12 @@ export default class Wrapper {
     static ThirdPartyEmailPasswordAuth: typeof ThirdPartyEmailPasswordAuth;
     static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
+    static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
-    static SignInAndUpCallback: (prop?: any) => JSX.Element;
-    static SignInAndUpCallbackTheme: import("react").ComponentType<{}>;
+    static ThirdPartySignInAndUpCallbackTheme: import("react").ComponentType<{}>;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
@@ -167,6 +167,7 @@ declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
+declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 declare const submitNewPassword: typeof Wrapper.submitNewPassword;
@@ -176,7 +177,6 @@ declare const emailPasswordSignUp: typeof Wrapper.emailPasswordSignUp;
 declare const doesEmailExist: typeof Wrapper.doesEmailExist;
 declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
 declare const thirdPartySignInAndUp: typeof Wrapper.thirdPartySignInAndUp;
-declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
 export {
     ThirdPartyEmailPasswordAuth,
     init,
@@ -189,8 +189,8 @@ export {
     sendVerificationEmail,
     SignInAndUp,
     SignInAndUpTheme,
-    SignInAndUpCallback,
-    SignInAndUpCallbackTheme,
+    ThirdPartySignInAndUpCallback,
+    ThirdPartySignInAndUpCallbackTheme,
     signOut,
     redirectToAuth,
     submitNewPassword,

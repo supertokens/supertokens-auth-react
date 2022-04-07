@@ -11,6 +11,8 @@ import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
+
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
@@ -74,7 +76,7 @@ if (getQueryParams("passwordlessContactMethodType")) {
     window.localStorage.setItem("passwordlessContactMethodType", getQueryParams("passwordlessContactMethodType"));
 }
 
-const passwordlessContactMethodType = window.localStorage.getItem("passwordlessContactMethodType") || "EMAIL";
+const passwordlessContactMethodType = window.localStorage.getItem("passwordlessContactMethodType") || "EMAIL_OR_PHONE";
 
 if (getQueryParams("passwordlessDefaultCountry")) {
     window.localStorage.setItem("passwordlessDefaultCountry", getQueryParams("passwordlessDefaultCountry"));
@@ -232,6 +234,8 @@ if (authRecipe === "thirdparty") {
     recipeList = [getThirdPartyEmailPasswordConfigs(testContext), ...recipeList];
 } else if (authRecipe === "passwordless") {
     recipeList = [getPasswordlessConfigs(testContext), ...recipeList];
+} else if (authRecipe === "thirdpartypasswordless") {
+    recipeList = [getThirdPartyPasswordlessConfigs(testContext), ...recipeList];
 }
 
 SuperTokens.init({
@@ -322,6 +326,8 @@ function goToAuth(show) {
         EmailPassword.redirectToAuth(show);
     } else if (recipe === "passwordless") {
         Passwordless.redirectToAuth(show);
+    } else if (recipe === "thirdpartypasswordless") {
+        ThirdPartyPasswordless.redirectToAuth(show);
     } else if (recipe === "thirdparty") {
         ThirdParty.redirectToAuth(show);
     } else if (recipe === "thirdpartyemailpassword") {
@@ -370,6 +376,8 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
             await ThirdPartyEmailPassword.signOut();
         } else if (useRecipe === "passwordless") {
             await Passwordless.signOut();
+        } else if (useRecipe === "thirdpartypasswordless") {
+            await ThirdPartyPasswordless.signOut();
         } else {
             await EmailPassword.signOut();
         }
@@ -550,6 +558,158 @@ function getEmailPasswordConfigs({ disableDefaultImplementation }) {
     });
 }
 
+function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
+    return ThirdPartyPasswordless.init({
+        style: {
+            container: {
+                // fontFamily: "cursive",
+            },
+        },
+        emailVerificationFeature: {
+            disableDefaultImplementation,
+            sendVerifyEmailScreen: {
+                style: theme.style,
+            },
+            verifyEmailLinkClickedScreen: {
+                style: theme.style,
+            },
+            mode: emailVerificationMode,
+        },
+        override: {
+            emailVerification: {
+                functions: (implementation) => {
+                    const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE EMAIL_VERIFICATION`);
+
+                    return {
+                        sendVerificationEmail(...args) {
+                            log(`SEND_VERIFICATION_EMAIL`);
+                            return implementation.sendVerificationEmail(...args);
+                        },
+                        isEmailVerified(...args) {
+                            log(`IS_EMAIL_VERIFIED`);
+                            return implementation.isEmailVerified(...args);
+                        },
+                        verifyEmail(...args) {
+                            log(`VERIFY_EMAIL`);
+                            return implementation.verifyEmail(...args);
+                        },
+                    };
+                },
+            },
+            functions: (implementation) => {
+                const log = logWithPrefix(`ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE`);
+
+                return {
+                    ...implementation,
+                    doesPasswordlessUserEmailExist(...args) {
+                        log(`DOES_PASSWORDLESS_USER_EMAIL_EXIST`);
+                        return implementation.doesPasswordlessUserEmailExist(...args);
+                    },
+                    doesPasswordlessUserPhoneNumberExist(...args) {
+                        log(`DOES_PASSWORDLESS_USER_PHONE_NUMBER_EXIST`);
+                        return implementation.doesPasswordlessUserPhoneNumberExist(...args);
+                    },
+                    createPasswordlessCode(...args) {
+                        log(`CREATE_CODE`);
+                        return implementation.createPasswordlessCode(...args);
+                    },
+                    resendPasswordlessCode(...args) {
+                        log(`RESEND_CODE`);
+                        return implementation.resendPasswordlessCode(...args);
+                    },
+                    consumePasswordlessCode(...args) {
+                        log(`CONSUME_CODE`);
+                        return implementation.consumePasswordlessCode(...args);
+                    },
+                    getPasswordlessLoginAttemptInfo(...args) {
+                        log(`GET_LOGIN_ATTEMPT_INFO`);
+                        return implementation.getPasswordlessLoginAttemptInfo(...args);
+                    },
+                    setPasswordlessLoginAttemptInfo(...args) {
+                        log(`SET_LOGIN_ATTEMPT_INFO`);
+                        return implementation.setPasswordlessLoginAttemptInfo(...args);
+                    },
+                    clearPasswordlessLoginAttemptInfo(...args) {
+                        log(`CLEAR_LOGIN_ATTEMPT_INFO`);
+                        return implementation.clearPasswordlessLoginAttemptInfo(...args);
+                    },
+                    getAuthorisationURLFromBackend(...args) {
+                        log(`GET_OAUTH_AUTHORISATION_URL`);
+                        return implementation.getAuthorisationURLFromBackend(...args);
+                    },
+                    getThirdPartyStateAndOtherInfoFromStorage(...args) {
+                        log(`GET_OAUTH_STATE`);
+                        return implementation.getThirdPartyStateAndOtherInfoFromStorage(...args);
+                    },
+                    getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args) {
+                        log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
+                        return implementation.getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args);
+                    },
+                    setThirdPartyStateAndOtherInfoToStorage(...args) {
+                        log(`SET_OAUTH_STATE`);
+                        return implementation.setThirdPartyStateAndOtherInfoToStorage(...args);
+                    },
+                    thirdPartySignInAndUp(...args) {
+                        log(`THIRD_PARTY_SIGN_IN_AND_UP`);
+                        return implementation.thirdPartySignInAndUp(...args);
+                    },
+                };
+            },
+        },
+        palette: theme.colors,
+        preAPIHook: async (context) => {
+            console.log(`ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS ${context.action}`);
+            return context;
+        },
+        getRedirectionURL: async (context) => {
+            console.log(`ST_LOGS THIRDPARTYPASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
+            if (context.action === "SUCCESS") {
+                return context.redirectToPath || "/dashboard";
+            }
+        },
+        onHandleEvent: async (context) => {
+            console.log(`ST_LOGS THIRDPARTYPASSWORDLESS ON_HANDLE_EVENT ${context.action}`);
+        },
+        useShadowDom,
+        contactMethod: passwordlessContactMethodType,
+        disablePasswordless: false,
+        signInUpFeature: {
+            disableDefaultImplementation,
+            style: theme.style,
+            thirdPartyProviderAndEmailOrPhoneFormStyle: {
+                providerCustom: {
+                    color: "red",
+                },
+            },
+            privacyPolicyLink: "https://supertokens.io/legal/privacy-policy",
+            termsOfServiceLink: "https://supertokens.io/legal/terms-and-conditions",
+            providers: [
+                ThirdPartyEmailPassword.Github.init(),
+                ThirdPartyEmailPassword.Google.init(),
+                ThirdPartyEmailPassword.Facebook.init(),
+                ThirdPartyEmailPassword.Apple.init(),
+                {
+                    id: "custom",
+                    name: "Custom",
+                },
+                {
+                    id: "auth0",
+                    name: "Auth0",
+                },
+            ],
+            defaultCountry: passwordlessDefaultCountry,
+            resendEmailOrSMSGapInSeconds: 2,
+            guessInternationPhoneNumberFromInputPhoneNumber: passwordlessDisablePhoneGuess
+                ? () => undefined
+                : undefined,
+        },
+        linkClickedScreenFeature: {
+            disableDefaultImplementation,
+            style: theme.style,
+        },
+    });
+}
+
 function getPasswordlessConfigs({ disableDefaultImplementation }) {
     return Passwordless.init({
         style: {
@@ -680,9 +840,9 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
 
                 return {
                     ...implementation,
-                    getAuthorizationURLWithQueryParamsAndSetState(...args) {
+                    getAuthorisationURLWithQueryParamsAndSetState(...args) {
                         log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getAuthorizationURLWithQueryParamsAndSetState(...args);
+                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(...args);
                     },
                     getAuthorisationURLFromBackend(...args) {
                         log(`GET_OAUTH_AUTHORISATION_URL`);
@@ -778,13 +938,13 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
 
                 return {
                     ...implementation,
-                    getAuthorizationURLWithQueryParamsAndSetState(input) {
+                    getAuthorisationURLWithQueryParamsAndSetState(input) {
                         if (input.userContext["key"] !== undefined) {
                             log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE RECEIVED_USER_CONTEXT`);
                         }
 
                         log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getAuthorizationURLWithQueryParamsAndSetState(input);
+                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(input);
                     },
                     generateStateToSendToOAuthProvider(input) {
                         if (input.userContext["key"] !== undefined) {

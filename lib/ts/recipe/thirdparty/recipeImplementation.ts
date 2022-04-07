@@ -87,8 +87,8 @@ export default function getRecipeImplementation(recipeInput: {
             });
         },
 
-        getAuthorizationURLWithQueryParamsAndSetState: async function (input) {
-            return webJsImplementation.getAuthorizationURLWithQueryParamsAndSetState.bind(this)({
+        getAuthorisationURLWithQueryParamsAndSetState: async function (input) {
+            return webJsImplementation.getAuthorisationURLWithQueryParamsAndSetState.bind(this)({
                 ...input,
             });
         },

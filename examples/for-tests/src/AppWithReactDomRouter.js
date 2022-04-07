@@ -5,7 +5,7 @@ import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword";
 import {
     ResetPasswordUsingToken,
     SignInAndUp as TPSignInAndUp,
-    SignInAndUpCallback,
+    ThirdPartySignInAndUpCallback,
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
 import Auth from "./Auth";
@@ -81,7 +81,7 @@ function AppWithReactDomRouter(props) {
                         <Route
                             path="/auth/customcallback/auth0"
                             element={
-                                <SignInAndUpCallback
+                                <ThirdPartySignInAndUpCallback
                                     userContext={{
                                         key: "value",
                                     }}

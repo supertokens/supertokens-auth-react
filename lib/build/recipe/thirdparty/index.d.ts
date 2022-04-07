@@ -78,8 +78,8 @@ declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogi
 declare const signInAndUp: typeof Wrapper.signInAndUp;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
-declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const SignInAndUpCallback: (prop?: any) => JSX.Element;
+declare const EmailVerification: (prop?: any) => JSX.Element;
 export {
     ThirdPartyAuth,
     init,

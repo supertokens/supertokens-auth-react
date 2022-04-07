@@ -18,26 +18,24 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import React, { useContext } from "react";
+import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import StyleContext, { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
+import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
+import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { SignInUpProps } from "../../../types";
+import { getStyles } from "../styles";
 import { ThemeBase } from "../themeBase";
 import { CloseTabScreen } from "./closeTabScreen";
 import { EmailForm } from "./emailForm";
+import { EmailOrPhoneForm } from "./emailOrPhoneForm";
 import { LinkSent } from "./linkSent";
 import { PhoneForm } from "./phoneForm";
-import { UserInputCodeFormFooter } from "./userInputCodeFormFooter";
-import { UserInputCodeFormHeader } from "./userInputCodeFormHeader";
-import { SignInUpFooter } from "./signInUpFooter";
 import { SignInUpHeader } from "./signInUpHeader";
 import { UserInputCodeForm } from "./userInputCodeForm";
-import { getStyles } from "../styles";
-import { EmailOrPhoneForm } from "./emailOrPhoneForm";
-import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
-import GeneralError from "../../../../emailpassword/components/library/generalError";
-import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
+import { UserInputCodeFormHeader } from "./userInputCodeFormHeader";
 
-enum SignInUpScreens {
+export enum SignInUpScreens {
     CloseTab,
     LinkSent,
     EmailForm,
@@ -83,46 +81,16 @@ const SignInUpTheme: React.FC<SignInUpProps & { activeScreen: SignInUpScreens }>
                         )}
                         {featureState.error !== undefined && <GeneralError error={featureState.error} />}
                         {activeScreen === SignInUpScreens.EmailForm ? (
-                            <EmailForm
-                                {...commonProps}
-                                footer={
-                                    <SignInUpFooter
-                                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                                    />
-                                }
-                            />
+                            <EmailForm {...commonProps} />
                         ) : activeScreen === SignInUpScreens.PhoneForm ? (
-                            <PhoneForm
-                                {...commonProps}
-                                footer={
-                                    <SignInUpFooter
-                                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                                    />
-                                }
-                            />
+                            <PhoneForm {...commonProps} />
                         ) : activeScreen === SignInUpScreens.EmailOrPhoneForm ? (
-                            <EmailOrPhoneForm
-                                {...commonProps}
-                                footer={
-                                    <SignInUpFooter
-                                        privacyPolicyLink={props.config.signInUpFeature.privacyPolicyLink}
-                                        termsOfServiceLink={props.config.signInUpFeature.termsOfServiceLink}
-                                    />
-                                }
-                            />
+                            <EmailOrPhoneForm {...commonProps} />
                         ) : activeScreen === SignInUpScreens.UserInputCodeForm ? (
                             <UserInputCodeForm
                                 {...commonProps}
                                 loginAttemptInfo={featureState.loginAttemptInfo!}
                                 onSuccess={props.onSuccess}
-                                footer={
-                                    <UserInputCodeFormFooter
-                                        {...commonProps}
-                                        loginAttemptInfo={featureState.loginAttemptInfo!}
-                                    />
-                                }
                             />
                         ) : null}
                     </React.Fragment>
@@ -171,7 +139,7 @@ function SignInUpThemeWrapper(props: SignInUpProps): JSX.Element {
 
 export default SignInUpThemeWrapper;
 
-function getActiveScreen(props: SignInUpProps) {
+export function getActiveScreen(props: Pick<SignInUpProps, "featureState" | "config">) {
     if (props.featureState.successInAnotherTab) {
         return SignInUpScreens.CloseTab;
     } else if (props.featureState.loginAttemptInfo && props.featureState.loginAttemptInfo.flowType === "MAGIC_LINK") {

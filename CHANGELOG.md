@@ -5,17 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
-## unreleased
+## [unreleased]
+
+### CI changes
+
+-   Now using parallel builds
+-   Screenshotting failed tests
+-   Exporting test results
 
 ### Added
 
 -   All recipe functions now accept an additional parameter `userContext`, learn more about this by visiting the advanced cusotmisations section in the documentation
 -   All UI components exported by the SDK now accept an additional `userContext` prop, learn more about this by visiting the advanced cusotmisations section in the documentation
 -   Exports more recipe functions for emailverification recipe to allow them to be called without using the pre-built UI. Newly exported functions: `verifyEmail`, `sendVerificationEmail`
--   Exports all emailverification recipe functions from emailpassword, thirdparty and thirdpartyemailpassword recipes.
+-   Exports all emailverification recipe functions from emailpassword, thirdparty, thirdpartyemailpassword and thirdpartypasswordless recipes.
 -   Exports more recipe functions for emailpassword recipe to allow them to be called without using the pre-built UI. Newly exported functions: `submitNewPassword`, `sendPasswordResetEmail`, `signUp`, `signIn`, `doesEmailExist`.
--   Exports more recipe functions for thirdparty recipe to allow them to be called without using the pre-built UI. Newly exported functions: `getAuthorizationURLWithQueryParamsAndSetState`, `signInAndUp`.
+-   Exports more recipe functions for thirdparty recipe to allow them to be called without using the pre-built UI. Newly exported functions: `getAuthorisationURLWithQueryParamsAndSetState`, `signInAndUp`.
 -   Exports emailpassword and thidparty recipe functions from thirdpartyemailpassword recipe to allow them to be called without using the pre-built UI. Also exports `redirectToThirdPartyLogin` from thirdpartyemailpassword recipe.
+-   Exports more recipe functions for passwordless recipe to allow them to be called without using the pre-built UI. Newly exported functions: `createCode`, `resendCode`, `consumeCode`, `doesEmailExist`, `doesPhoneNumberExist`
+-   Exports more recipe functions for thirdpartypasswordless recipe to allow them to be called without using the pre-built UI. Newly exported functions: `redirectToThirdPartyLogin`, `thirdPartySignInAndUp`, `createCode`, `resendCode`, `consumeCode`, `doesPasswordlessUserEmailExist`, `doesPasswordlessUserPhoneNumberExist`
 -   Changes recipe functions for email verification recipe **(this is breaking change if you use the override feature)**:
     -   `verifyEmail` -> No longer accepts `token` as a parameter, instead it calls `getEmailVerificationTokenFromURL`
     -   `getEmailVerificationTokenFromURL` -> NEW FUNCTION
@@ -26,13 +34,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `getOAuthState` -> RENAMED TO `getStateAndOtherInfoFromStorage`
     -   `setOAuthState` -> RENAMED TO `setStateAndOtherInfoToStorage`
     -   `getOAuthAuthorisationURL` -> RENAMED TO `getAuthorisationURLFromBackend`
-    -   `getAuthorizationURLWithQueryParamsAndSetState` -> NEW FUNCTION
+    -   `getAuthorisationURLWithQueryParamsAndSetState` -> NEW FUNCTION
     -   `generateStateToSendToOAuthProvider` -> NEW FUNCTION
     -   `verifyAndGetStateOrThrowError` -> NEW FUNCTION
     -   `getAuthCodeFromURL` -> NEW FUNCTION
     -   `getAuthErrorFromURL` -> NEW FUNCTION
     -   `getAuthStateFromURL` -> NEW FUNCTION
-    -   `redirectToThirdPartyLogin` -> REMOVED (use `getAuthorizationURLWithQueryParamsAndSetState` instead). NOTE: If you call this function yourself the SDK will no longer auto-redirect, you will need to redirect to the result url manually.
+    -   `redirectToThirdPartyLogin` -> REMOVED (use `getAuthorisationURLWithQueryParamsAndSetState` instead). NOTE: If you call this function yourself the SDK will no longer auto-redirect, you will need to redirect to the result url manually.
 -   Changes recipe funtions for third party email password recipe **(this is breaking change if you use the override feature)**:
     -   Changes for email password functions explained above
     -   Changes for third party functions explained above
@@ -40,6 +48,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `emailPasswordSignUp` -> NEW FUNCTION
     -   `emailPasswordSignIn` -> NEW FUNCTION
     -   `thirdPartySignInAndUp` -> NEW FUNCTION
+-   Changes recipe functions for passwordless recipe **(this is breaking change if you use the override feature)**:
+    -   `getLinkCodeFromURL` -> NEW FUNCTION
+    -   `getPreAuthSessionIdFromURL` -> NEW FUNCTION
+-   Changes recipe functions for thirdpartpasswordless recipe : **(this is breaking change if you use the override feature)**:
+    -   Changes for third party functions explained above
+    -   Changes for passwordless recipe explained above
+    -   `clearLoginAttemptInfo` -> RENAMED TO `clearPasswordlessLoginAttemptInfo`
 -   Session recipe now uses supertokens-web-js internally (previously used supertokens-website)
 -   All recipes now include a `postAPIHook` configuration parameter that can be used to respond to network actions.
 
@@ -159,6 +174,26 @@ async function isEmailVerified(input): Promise<{
     fetchResponse: Response, // Refer to point above
 }> {...}
 ```
+
+## [0.20.1] - 2022-03-31
+
+### Changed
+
+-   Refactor to the URL for the powered by component displayed on the auth forms
+
+## [0.20.0] - 2022-03-17
+
+### Added
+
+-   ThirdParty+Passwordless recipe
+
+### Changed
+
+-   Adds 3 retries to mocha tests
+
+### Breaking changes
+
+-   Removed footer prop from `PasswordlessEmailForm`, `PasswordlessPhoneForm` and `PasswordlessEmailOrPhoneForm` overridable components.
 
 ## [0.19.0]
 

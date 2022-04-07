@@ -12,7 +12,7 @@ declare type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCont
  */
 declare const AuthWidgetWrapper: <
     T,
-    S,
+    Action,
     R,
     N extends import("../recipeModule/types").NormalisedConfig<
         | {
@@ -24,11 +24,11 @@ declare const AuthWidgetWrapper: <
               action: "SIGN_IN_AND_UP";
           }
         | T,
-        S,
+        Action,
         OnHandleEventContext | R
     >
 >(
-    props: Props<T, S, R, N> & {
+    props: Props<T, Action, R, N> & {
         children?: React.ReactNode;
     }
 ) => React.ReactElement<
