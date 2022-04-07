@@ -41,6 +41,7 @@ app.use(
     })
 );
 
+//add morgan to log HTTP requests
 app.use(morgan("dev"));
 app.use(
     helmet({

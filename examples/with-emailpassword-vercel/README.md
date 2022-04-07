@@ -8,7 +8,7 @@ This demo app demonstrates deploying a react + nodejs express app on Vercel.
 
 -   The frontend code is located in the `src` folder.
 -   The backend API is in the `api/index.js` file .
--   The `vercel.json` file contains the configurations that allow Vercel to know where to direct the requests on production
+-   The `vercel.json` file contains the configurations that allow Vercel to rewrite to push all traffic on `/api` routes to the backend.
 
 ## Deploy to Vercel
 
