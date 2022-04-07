@@ -13,7 +13,7 @@ done <<< "$version"
 
 FILENAME=$(mktemp)
 echo "calling /frontend PATCH to make testing passed"
-responseStatus=`curl -s -o $FILENAME -w "%{http_code}" -X PATCH \
+responseStatus=`curl -o $FILENAME -w "%{http_code}" -X PATCH \
     https://api.supertokens.io/0/frontend \
     -H 'Content-Type: application/json' \
     -H 'api-version: 0' \
