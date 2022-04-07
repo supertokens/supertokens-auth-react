@@ -609,17 +609,17 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
                         log(`DOES_PASSWORDLESS_USER_PHONE_NUMBER_EXIST`);
                         return implementation.doesPasswordlessUserPhoneNumberExist(...args);
                     },
-                    createCode(...args) {
+                    createPasswordlessCode(...args) {
                         log(`CREATE_CODE`);
-                        return implementation.createCode(...args);
+                        return implementation.createPasswordlessCode(...args);
                     },
-                    resendCode(...args) {
+                    resendPasswordlessCode(...args) {
                         log(`RESEND_CODE`);
-                        return implementation.resendCode(...args);
+                        return implementation.resendPasswordlessCode(...args);
                     },
-                    consumeCode(...args) {
+                    consumePasswordlessCode(...args) {
                         log(`CONSUME_CODE`);
-                        return implementation.consumeCode(...args);
+                        return implementation.consumePasswordlessCode(...args);
                     },
                     getPasswordlessLoginAttemptInfo(...args) {
                         log(`GET_LOGIN_ATTEMPT_INFO`);
@@ -637,17 +637,17 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultImplementation }) {
                         log(`GET_OAUTH_AUTHORISATION_URL`);
                         return implementation.getAuthorisationURLFromBackend(...args);
                     },
-                    getStateAndOtherInfoFromStorage(...args) {
+                    getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args) {
                         log(`GET_OAUTH_STATE`);
-                        return implementation.getStateAndOtherInfoFromStorage(...args);
+                        return implementation.getThirdPartyAuthorisationURLWithQueryParamsAndSetState(...args);
                     },
-                    getAuthorizationURLWithQueryParamsAndSetState(...args) {
+                    getAuthorisationURLWithQueryParamsAndSetState(...args) {
                         log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getAuthorizationURLWithQueryParamsAndSetState(...args);
+                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(...args);
                     },
-                    setStateAndOtherInfoToStorage(...args) {
+                    setThirdPartyStateAndOtherInfoToStorage(...args) {
                         log(`SET_OAUTH_STATE`);
-                        return implementation.setStateAndOtherInfoToStorage(...args);
+                        return implementation.setThirdPartyStateAndOtherInfoToStorage(...args);
                     },
                     thirdPartySignInAndUp(...args) {
                         log(`THIRD_PARTY_SIGN_IN_AND_UP`);
@@ -840,9 +840,9 @@ function getThirdPartyConfigs({ disableDefaultImplementation }) {
 
                 return {
                     ...implementation,
-                    getAuthorizationURLWithQueryParamsAndSetState(...args) {
+                    getAuthorisationURLWithQueryParamsAndSetState(...args) {
                         log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getAuthorizationURLWithQueryParamsAndSetState(...args);
+                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(...args);
                     },
                     getAuthorisationURLFromBackend(...args) {
                         log(`GET_OAUTH_AUTHORISATION_URL`);
@@ -938,13 +938,13 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultImplementation }) {
 
                 return {
                     ...implementation,
-                    getAuthorizationURLWithQueryParamsAndSetState(input) {
+                    getAuthorisationURLWithQueryParamsAndSetState(input) {
                         if (input.userContext["key"] !== undefined) {
                             log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE RECEIVED_USER_CONTEXT`);
                         }
 
                         log(`GET_AUTH_URL_WITH_QUERY_PARAMS_AND_SET_STATE`);
-                        return implementation.getAuthorizationURLWithQueryParamsAndSetState(input);
+                        return implementation.getAuthorisationURLWithQueryParamsAndSetState(input);
                     },
                     generateStateToSendToOAuthProvider(input) {
                         if (input.userContext["key"] !== undefined) {

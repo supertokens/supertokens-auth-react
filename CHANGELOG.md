@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Exports more recipe functions for emailverification recipe to allow them to be called without using the pre-built UI. Newly exported functions: `verifyEmail`, `sendVerificationEmail`
 -   Exports all emailverification recipe functions from emailpassword, thirdparty, thirdpartyemailpassword and thirdpartypasswordless recipes.
 -   Exports more recipe functions for emailpassword recipe to allow them to be called without using the pre-built UI. Newly exported functions: `submitNewPassword`, `sendPasswordResetEmail`, `signUp`, `signIn`, `doesEmailExist`.
--   Exports more recipe functions for thirdparty recipe to allow them to be called without using the pre-built UI. Newly exported functions: `getAuthorizationURLWithQueryParamsAndSetState`, `signInAndUp`.
+-   Exports more recipe functions for thirdparty recipe to allow them to be called without using the pre-built UI. Newly exported functions: `getAuthorisationURLWithQueryParamsAndSetState`, `signInAndUp`.
 -   Exports emailpassword and thidparty recipe functions from thirdpartyemailpassword recipe to allow them to be called without using the pre-built UI. Also exports `redirectToThirdPartyLogin` from thirdpartyemailpassword recipe.
 -   Exports more recipe functions for passwordless recipe to allow them to be called without using the pre-built UI. Newly exported functions: `createCode`, `resendCode`, `consumeCode`, `doesEmailExist`, `doesPhoneNumberExist`
 -   Exports more recipe functions for thirdpartypasswordless recipe to allow them to be called without using the pre-built UI. Newly exported functions: `redirectToThirdPartyLogin`, `thirdPartySignInAndUp`, `createCode`, `resendCode`, `consumeCode`, `doesPasswordlessUserEmailExist`, `doesPasswordlessUserPhoneNumberExist`
@@ -34,13 +34,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `getOAuthState` -> RENAMED TO `getStateAndOtherInfoFromStorage`
     -   `setOAuthState` -> RENAMED TO `setStateAndOtherInfoToStorage`
     -   `getOAuthAuthorisationURL` -> RENAMED TO `getAuthorisationURLFromBackend`
-    -   `getAuthorizationURLWithQueryParamsAndSetState` -> NEW FUNCTION
+    -   `getAuthorisationURLWithQueryParamsAndSetState` -> NEW FUNCTION
     -   `generateStateToSendToOAuthProvider` -> NEW FUNCTION
     -   `verifyAndGetStateOrThrowError` -> NEW FUNCTION
     -   `getAuthCodeFromURL` -> NEW FUNCTION
     -   `getAuthErrorFromURL` -> NEW FUNCTION
     -   `getAuthStateFromURL` -> NEW FUNCTION
-    -   `redirectToThirdPartyLogin` -> REMOVED (use `getAuthorizationURLWithQueryParamsAndSetState` instead). NOTE: If you call this function yourself the SDK will no longer auto-redirect, you will need to redirect to the result url manually.
+    -   `redirectToThirdPartyLogin` -> REMOVED (use `getAuthorisationURLWithQueryParamsAndSetState` instead). NOTE: If you call this function yourself the SDK will no longer auto-redirect, you will need to redirect to the result url manually.
 -   Changes recipe funtions for third party email password recipe **(this is breaking change if you use the override feature)**:
     -   Changes for email password functions explained above
     -   Changes for third party functions explained above
