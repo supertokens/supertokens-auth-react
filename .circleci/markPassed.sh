@@ -11,8 +11,9 @@ while IFS='"' read -ra ADDR; do
     done
 done <<< "$version"
 
+FILENAME=$(mktemp)
 echo "calling /frontend PATCH to make testing passed"
-responseStatus=`curl -s -o /dev/null -w "%{http_code}" -X PATCH \
+responseStatus=`curl -s -o $FILENAME -w "%{http_code}" -X PATCH \
     https://api.supertokens.io/0/frontend \
     -H 'Content-Type: application/json' \
     -H 'api-version: 0' \
@@ -24,6 +25,7 @@ responseStatus=`curl -s -o /dev/null -w "%{http_code}" -X PATCH \
     }"`
 if [ $responseStatus -ne "200" ]
 then
-    echo "patch api failed"
+    echo "failed core PATCH API status code: $responseStatus. Exiting!"
+    cat $FILENAME
     exit 1
 fi

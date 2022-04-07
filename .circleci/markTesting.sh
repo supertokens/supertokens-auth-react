@@ -14,6 +14,7 @@ while IFS='"' read -ra ADDR; do
         counter=$(($counter+1))
     done
 done <<< "$version"
+FILENAME=$(mktemp)
 responseStatus=`curl -s -o /dev/null -w "%{http_code}" -X PUT \
   https://api.supertokens.io/0/frontend \
   -H 'Content-Type: application/json' \
@@ -27,5 +28,6 @@ responseStatus=`curl -s -o /dev/null -w "%{http_code}" -X PUT \
 if [ $responseStatus -ne "200" ]
 then
     echo "failed core PUT API status code: $responseStatus. Exiting!"
+    cat $FILENAME
 	exit 1
 fi
