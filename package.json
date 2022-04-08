@@ -68,7 +68,7 @@
         "react-select": "^5.2.1",
         "react-shadow": "^19.0.2",
         "supertokens-js-override": "^0.0.4",
-        "supertokens-web-js": "github:supertokens/supertokens-web-js#thirdparty-passwordless"
+        "supertokens-web-js": "github:supertokens/supertokens-web-js#0.0"
     },
     "peerDependencies": {
         "react": ">=16.8.0"
