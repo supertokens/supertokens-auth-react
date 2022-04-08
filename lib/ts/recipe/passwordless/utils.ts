@@ -32,7 +32,7 @@ import {
     defaultEmailValidatorForCombinedInput,
 } from "./validators";
 import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/lib/build/recipe/passwordless/types";
-import { getNormalisedUserContext } from "../../utils";
+import WebJSUtils from "supertokens-web-js/lib/build/recipe/passwordless/utils";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     if (!["EMAIL", "PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod)) {
@@ -208,23 +208,7 @@ export async function createCode(
     flowType: PasswordlessFlowType;
     fetchResponse: Response;
 }> {
-    const normalisedUserContext = getNormalisedUserContext(input.userContext);
-
-    const createCodeResponse = await input.recipeImplementation.createCode({
-        ...input,
-        userContext: normalisedUserContext,
-    });
-
-    await input.recipeImplementation.setLoginAttemptInfo({
-        attemptInfo: {
-            deviceId: createCodeResponse.deviceId,
-            preAuthSessionId: createCodeResponse.preAuthSessionId,
-            flowType: createCodeResponse.flowType,
-        },
-        userContext: normalisedUserContext,
-    });
-
-    return createCodeResponse;
+    return WebJSUtils.createCode(input);
 }
 
 export async function resendCode(input: {
@@ -235,23 +219,7 @@ export async function resendCode(input: {
     status: "OK" | "RESTART_FLOW_ERROR";
     fetchResponse: Response;
 }> {
-    const normalisedUserContext = getNormalisedUserContext(input.userContext);
-
-    const previousAttemptInfo = await input.recipeImplementation.getLoginAttemptInfo({
-        userContext: normalisedUserContext,
-    });
-
-    /**
-     * If previousAttemptInfo is undefined then local storage was probably cleared by another tab.
-     * In this case we use empty strings when calling the API because we want to
-     * return "RESTART_FLOW_ERROR"
-     */
-    return input.recipeImplementation.resendCode({
-        ...input,
-        userContext: normalisedUserContext,
-        deviceId: previousAttemptInfo === undefined ? "" : previousAttemptInfo.deviceId,
-        preAuthSessionId: previousAttemptInfo === undefined ? "" : previousAttemptInfo.preAuthSessionId,
-    });
+    return WebJSUtils.resendCode(input);
 }
 
 export async function consumeCode(
@@ -282,55 +250,5 @@ export async function consumeCode(
       }
     | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
 > {
-    const normalisedUserContext = getNormalisedUserContext(input.userContext);
-
-    let additionalParams:
-        | {
-              userInputCode: string;
-              deviceId: string;
-              preAuthSessionId: string;
-          }
-        | {
-              linkCode: string;
-              preAuthSessionId: string;
-          };
-
-    if ("userInputCode" in input) {
-        const attemptInfoFromStorage = await input.recipeImplementation.getLoginAttemptInfo({
-            userContext: normalisedUserContext,
-        });
-
-        /**
-         * If attemptInfoFromStorage is undefined then local storage was probably cleared by another tab.
-         * In this case we use empty strings when calling the API because we want to
-         * return "RESTART_FLOW_ERROR"
-         *
-         * Note: We dont do this for the linkCode flow because that does not depend on local storage.
-         */
-
-        additionalParams = {
-            userInputCode: input.userInputCode,
-            deviceId: attemptInfoFromStorage === undefined ? "" : attemptInfoFromStorage.deviceId,
-            preAuthSessionId: attemptInfoFromStorage === undefined ? "" : attemptInfoFromStorage.preAuthSessionId,
-        };
-    } else {
-        const linkCode = input.recipeImplementation.getLinkCodeFromURL({
-            userContext: input.userContext,
-        });
-
-        const preAuthSessionId = input.recipeImplementation.getPreAuthSessionIdFromURL({
-            userContext: input.userContext,
-        });
-
-        additionalParams = {
-            linkCode,
-            preAuthSessionId,
-        };
-    }
-
-    return input.recipeImplementation.consumeCode({
-        userContext: normalisedUserContext,
-        options: input.options,
-        ...additionalParams,
-    });
+    return WebJSUtils.consumeCode(input);
 }
