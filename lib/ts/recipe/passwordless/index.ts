@@ -64,11 +64,9 @@ export default class Wrapper {
         flowType: PasswordlessFlowType;
         fetchResponse: Response;
     }> {
-        const recipe: Passwordless = Passwordless.getInstanceOrThrow();
-
         return UtilFunctions.createCode({
             ...input,
-            recipeImplementation: recipe.recipeImpl,
+            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
         });
     }
 
@@ -76,11 +74,9 @@ export default class Wrapper {
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }> {
-        const recipe: Passwordless = Passwordless.getInstanceOrThrow();
-
         return UtilFunctions.resendCode({
             ...input,
-            recipeImplementation: recipe.recipeImpl,
+            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
         });
     }
 
@@ -110,11 +106,9 @@ export default class Wrapper {
           }
         | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
     > {
-        const recipe: Passwordless = Passwordless.getInstanceOrThrow();
-
         return UtilFunctions.consumeCode({
             ...input,
-            recipeImplementation: recipe.recipeImpl,
+            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
         });
     }
 
