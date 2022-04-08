@@ -45,7 +45,10 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
     const requireAuth = useRef(props.requireAuth);
 
     if (props.requireAuth !== requireAuth.current) {
-        throw new Error("requireAuth prop should not change.");
+        throw new Error(
+            // eslint-disable-next-line @typescript-eslint/quotes
+            'requireAuth prop should not change. If you are seeing this, it probably means that you are using SessionAuth in multiple routes with different values for requireAuth. To solve this, try adding the "key" prop to all uses of SessionAuth like <SessionAuth key="someUniqueKeyPerRoute" requireAuth={...}>'
+        );
     }
 
     const parentSessionContext = useContext(SessionContext);
