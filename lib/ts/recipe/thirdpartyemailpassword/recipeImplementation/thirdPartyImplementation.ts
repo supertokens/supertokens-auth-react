@@ -27,8 +27,8 @@ export default function getRecipeImplementation(
         getAuthStateFromURL: originalImplementation.getAuthStateFromURL.bind(originalImplementation),
         getAuthorisationURLFromBackend:
             originalImplementation.getAuthorisationURLFromBackend.bind(originalImplementation),
-        getAuthorizationURLWithQueryParamsAndSetState:
-            originalImplementation.getAuthorizationURLWithQueryParamsAndSetState.bind(originalImplementation),
+        getAuthorisationURLWithQueryParamsAndSetState:
+            originalImplementation.getAuthorisationURLWithQueryParamsAndSetState.bind(originalImplementation),
         getStateAndOtherInfoFromStorage:
             originalImplementation.getStateAndOtherInfoFromStorage.bind(originalImplementation),
         setStateAndOtherInfoToStorage:

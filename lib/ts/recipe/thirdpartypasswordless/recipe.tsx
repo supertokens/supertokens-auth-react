@@ -26,7 +26,6 @@ import {
     NormalisedConfig,
     OnHandleEventContext,
     UserInput,
-    TPPWlessRecipeInterface,
     PreAndPostAPIHookAction,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
@@ -43,6 +42,7 @@ import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import OverrideableBuilder from "supertokens-js-override";
+import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,

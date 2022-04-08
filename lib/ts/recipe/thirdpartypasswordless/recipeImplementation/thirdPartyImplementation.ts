@@ -1,25 +1,25 @@
 import { RecipeInterface as WebJSThirdPartyRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-import { TPPWlessRecipeInterface } from "../types";
+import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 export default function getRecipeImplementation(
     originalImplementation: TPPWlessRecipeInterface
 ): WebJSThirdPartyRecipeInterface {
     return {
         generateStateToSendToOAuthProvider:
-            originalImplementation.generateStateToSendToOAuthProvider.bind(originalImplementation),
-        getAuthCodeFromURL: originalImplementation.getAuthCodeFromURL.bind(originalImplementation),
-        getAuthErrorFromURL: originalImplementation.getAuthErrorFromURL.bind(originalImplementation),
-        getAuthStateFromURL: originalImplementation.getAuthStateFromURL.bind(originalImplementation),
+            originalImplementation.generateThirdPartyStateToSendToOAuthProvider.bind(originalImplementation),
+        getAuthCodeFromURL: originalImplementation.getThirdPartyAuthCodeFromURL.bind(originalImplementation),
+        getAuthErrorFromURL: originalImplementation.getThirdPartyAuthErrorFromURL.bind(originalImplementation),
+        getAuthStateFromURL: originalImplementation.getThirdPartyAuthStateFromURL.bind(originalImplementation),
         getAuthorisationURLFromBackend:
             originalImplementation.getAuthorisationURLFromBackend.bind(originalImplementation),
-        getAuthorizationURLWithQueryParamsAndSetState:
-            originalImplementation.getAuthorizationURLWithQueryParamsAndSetState.bind(originalImplementation),
+        getAuthorisationURLWithQueryParamsAndSetState:
+            originalImplementation.getThirdPartyAuthorisationURLWithQueryParamsAndSetState.bind(originalImplementation),
         getStateAndOtherInfoFromStorage:
-            originalImplementation.getStateAndOtherInfoFromStorage.bind(originalImplementation),
+            originalImplementation.getThirdPartyStateAndOtherInfoFromStorage.bind(originalImplementation),
         setStateAndOtherInfoToStorage:
-            originalImplementation.setStateAndOtherInfoToStorage.bind(originalImplementation),
+            originalImplementation.setThirdPartyStateAndOtherInfoToStorage.bind(originalImplementation),
         signInAndUp: originalImplementation.thirdPartySignInAndUp.bind(originalImplementation),
         verifyAndGetStateOrThrowError:
-            originalImplementation.verifyAndGetStateOrThrowError.bind(originalImplementation),
+            originalImplementation.verifyAndGetThirdPartyStateOrThrowError.bind(originalImplementation),
     };
 }

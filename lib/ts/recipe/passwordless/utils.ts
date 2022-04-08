@@ -24,13 +24,15 @@ import {
     NormalisedConfig,
     SignInUpFeatureConfigInput,
 } from "./types";
-import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import {
     defaultPhoneNumberValidator,
     defaultPhoneNumberValidatorForCombinedInput,
     defaultEmailValidator,
     defaultEmailValidatorForCombinedInput,
 } from "./validators";
+import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/lib/build/recipe/passwordless/types";
+import WebJSUtils from "supertokens-web-js/lib/build/recipe/passwordless/utils";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     if (!["EMAIL", "PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod)) {
@@ -183,4 +185,70 @@ export async function setLoginAttemptInfo(input: {
         userContext: input.userContext,
         attemptInfo: input.attemptInfo,
     });
+}
+
+/**
+ * These functions are helper functions so that the logic can be exposed from both
+ * passwordless and thirdpartypasswordless recipes without having to duplicate code
+ */
+
+export async function createCode(
+    input:
+        | { email: string; userContext?: any; options?: RecipeFunctionOptions; recipeImplementation: RecipeInterface }
+        | {
+              phoneNumber: string;
+              userContext?: any;
+              options?: RecipeFunctionOptions;
+              recipeImplementation: RecipeInterface;
+          }
+): Promise<{
+    status: "OK";
+    deviceId: string;
+    preAuthSessionId: string;
+    flowType: PasswordlessFlowType;
+    fetchResponse: Response;
+}> {
+    return WebJSUtils.createCode(input);
+}
+
+export async function resendCode(input: {
+    userContext?: any;
+    options?: RecipeFunctionOptions;
+    recipeImplementation: RecipeInterface;
+}): Promise<{
+    status: "OK" | "RESTART_FLOW_ERROR";
+    fetchResponse: Response;
+}> {
+    return WebJSUtils.resendCode(input);
+}
+
+export async function consumeCode(
+    input:
+        | {
+              userInputCode: string;
+              userContext?: any;
+              options?: RecipeFunctionOptions;
+              recipeImplementation: RecipeInterface;
+          }
+        | {
+              userContext?: any;
+              options?: RecipeFunctionOptions;
+              recipeImplementation: RecipeInterface;
+          }
+): Promise<
+    | {
+          status: "OK";
+          createdUser: boolean;
+          user: PasswordlessUser;
+          fetchResponse: Response;
+      }
+    | {
+          status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
+          failedCodeInputAttemptCount: number;
+          maximumCodeInputAttempts: number;
+          fetchResponse: Response;
+      }
+    | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
+> {
+    return WebJSUtils.consumeCode(input);
 }

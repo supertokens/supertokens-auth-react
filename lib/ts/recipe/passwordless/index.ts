@@ -22,6 +22,7 @@ import SignInUpThemeWrapper from "./components/themes/signInUp";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/lib/build/recipe/passwordless/types";
 import { getNormalisedUserContext } from "../../utils";
+import * as UtilFunctions from "./utils";
 
 export default class Wrapper {
     static init(config: UserInput) {
@@ -63,47 +64,19 @@ export default class Wrapper {
         flowType: PasswordlessFlowType;
         fetchResponse: Response;
     }> {
-        const recipe: Passwordless = Passwordless.getInstanceOrThrow();
-        const normalisedUserContext = getNormalisedUserContext(input.userContext);
-
-        const createCodeResponse = await recipe.recipeImpl.createCode({
+        return UtilFunctions.createCode({
             ...input,
-            userContext: normalisedUserContext,
+            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
         });
-
-        await recipe.recipeImpl.setLoginAttemptInfo({
-            attemptInfo: {
-                deviceId: createCodeResponse.deviceId,
-                preAuthSessionId: createCodeResponse.preAuthSessionId,
-                flowType: createCodeResponse.flowType,
-            },
-            userContext: normalisedUserContext,
-        });
-
-        return createCodeResponse;
     }
 
     static async resendCode(input: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }> {
-        const recipe: Passwordless = Passwordless.getInstanceOrThrow();
-        const normalisedUserContext = getNormalisedUserContext(input.userContext);
-
-        const previousAttemptInfo = await recipe.recipeImpl.getLoginAttemptInfo({
-            userContext: normalisedUserContext,
-        });
-
-        /**
-         * If previousAttemptInfo is undefined then local storage was probably cleared by another tab.
-         * In this case we use empty strings when calling the API because we want to
-         * return "RESTART_FLOW_ERROR"
-         */
-        return recipe.recipeImpl.resendCode({
+        return UtilFunctions.resendCode({
             ...input,
-            userContext: normalisedUserContext,
-            deviceId: previousAttemptInfo === undefined ? "" : previousAttemptInfo.deviceId,
-            preAuthSessionId: previousAttemptInfo === undefined ? "" : previousAttemptInfo.preAuthSessionId,
+            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
         });
     }
 
@@ -133,57 +106,9 @@ export default class Wrapper {
           }
         | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
     > {
-        const recipe: Passwordless = Passwordless.getInstanceOrThrow();
-        const normalisedUserContext = getNormalisedUserContext(input.userContext);
-
-        let additionalParams:
-            | {
-                  userInputCode: string;
-                  deviceId: string;
-                  preAuthSessionId: string;
-              }
-            | {
-                  linkCode: string;
-                  preAuthSessionId: string;
-              };
-
-        if ("userInputCode" in input) {
-            const attemptInfoFromStorage = await recipe.recipeImpl.getLoginAttemptInfo({
-                userContext: normalisedUserContext,
-            });
-
-            /**
-             * If attemptInfoFromStorage is undefined then local storage was probably cleared by another tab.
-             * In this case we use empty strings when calling the API because we want to
-             * return "RESTART_FLOW_ERROR"
-             *
-             * Note: We dont do this for the linkCode flow because that does not depend on local storage.
-             */
-
-            additionalParams = {
-                userInputCode: input.userInputCode,
-                deviceId: attemptInfoFromStorage === undefined ? "" : attemptInfoFromStorage.deviceId,
-                preAuthSessionId: attemptInfoFromStorage === undefined ? "" : attemptInfoFromStorage.preAuthSessionId,
-            };
-        } else {
-            const linkCode = recipe.recipeImpl.getLinkCodeFromURL({
-                userContext: input.userContext,
-            });
-
-            const preAuthSessionId = recipe.recipeImpl.getPreAuthSessionIdFromURL({
-                userContext: input.userContext,
-            });
-
-            additionalParams = {
-                linkCode,
-                preAuthSessionId,
-            };
-        }
-
-        return recipe.recipeImpl.consumeCode({
-            userContext: normalisedUserContext,
-            options: input.options,
-            ...additionalParams,
+        return UtilFunctions.consumeCode({
+            ...input,
+            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
         });
     }
 
