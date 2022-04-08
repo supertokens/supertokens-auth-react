@@ -48,8 +48,8 @@ jobs:
                   destination: logfiles
 
     mark-passed:
-        machine:
-            image: ubuntu-1604:201903-01
+        docker:
+            - image: rishabhpoddar/supertokens_website_sdk_testing
         steps:
             - checkout
             - run: (cd .circleci && ./markPassed.sh)
@@ -79,6 +79,11 @@ workflows:
                   matrix:
                       parameters:
                           fdi-version: placeholder
+                  filters:
+                      tags:
+                          only: /dev-v[0-9]+(\.[0-9]+)*/
+                      branches:
+                          ignore: /.*/
 
             - mark-passed:
                   context:
@@ -90,3 +95,8 @@ workflows:
                           ignore: /.*/
                   requires:
                       - test
+                  filters:
+                      tags:
+                          only: /dev-v[0-9]+(\.[0-9]+)*/
+                      branches:
+                          ignore: /.*/

@@ -14,18 +14,20 @@ while IFS='"' read -ra ADDR; do
         counter=$(($counter+1))
     done
 done <<< "$version"
-responseStatus=`curl -s -o /dev/null -w "%{http_code}" -X PUT \
-  https://api.supertokens.io/0/frontend \
-  -H 'Content-Type: application/json' \
-  -H 'api-version: 0' \
-  -d "{
-	\"password\": \"$SUPERTOKENS_API_KEY\",
-	\"version\":\"$version\",
-    \"name\": \"auth-react\",
-	\"frontendDriverInterfaces\": $frontendDriverArray
-}"`
+FILENAME=$(mktemp)
+responseStatus=`curl -o $FILENAME -w "%{http_code}" -X PUT \
+    https://api.supertokens.io/0/frontend \
+    -H 'Content-Type: application/json' \
+    -H 'api-version: 0' \
+    -d "{
+        \"password\": \"$SUPERTOKENS_API_KEY\",
+        \"version\":\"$version\",
+        \"name\": \"auth-react\",
+        \"frontendDriverInterfaces\": $frontendDriverArray
+    }"`
 if [ $responseStatus -ne "200" ]
 then
     echo "failed core PUT API status code: $responseStatus. Exiting!"
+    cat $FILENAME
 	exit 1
 fi

@@ -39,14 +39,16 @@ function startEndToEnd () {
     if [[ -z "${MOCHA_FILE}" ]]; then
         APP_SERVER=$apiPort TEST_MODE=testing mocha --require @babel/register --require test/test.mocha.env --timeout 40000
     else
-        if ! [[ -v CIRCLE_NODE_TOTAL ]]; then
+        if ! [[ -z "${CIRCLE_NODE_TOTAL}" ]]; then
             export SPEC_FILES=$(npx mocha-split-tests -r ./runtime.log -t $CIRCLE_NODE_TOTAL -g $CIRCLE_NODE_INDEX -f 'test/end-to-end/**/*.test.js' -f 'test/unit/**/*.test.js')
             echo "Running files: $SPEC_FILES, $CIRCLE_NODE_TOTAL/$CIRCLE_NODE_INDEX"
+        else
+            export SPEC_FILES="test/unit/**/*.test.js test/end-to-end/**/*.test.js"
         fi
         APP_SERVER=$apiPort TEST_MODE=testing multi="spec=- mocha-junit-reporter=/dev/null" mocha --reporter mocha-multi --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $SPEC_FILES
     fi
     testPassed=$?;
-    if ! [[ -v CI ]]; then
+    if ! [[ -z "${CI}" ]]; then
         cp ../supertokens-root/logs/error.log test_report/logs/core_error.log
         cp ../supertokens-root/logs/info.log test_report/logs/core_info.log
     fi
