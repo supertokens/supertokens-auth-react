@@ -9,9 +9,9 @@ let { middleware, errorHandler } = require("supertokens-node/framework/express")
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
-// const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
-// const websitePort = process.env.VERCEL_URL || 3000;
-// const websiteDomain = process.env.VERCEL_URL || `http://localhost:${websitePort}`;
+const apiDomain = process.env.VERCEL_URL || `http://localhost:${apiPort}`;
+const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
+const websiteDomain = process.env.REACT_APP_WEBSITE_PORT || `http://localhost:${websitePort}`;
 
 supertokens.init({
     framework: "express",
@@ -22,8 +22,8 @@ supertokens.init({
     },
     appInfo: {
         appName: "SuperTokens Demo App", // TODO: Your app name
-        apiDomain: process.env.VERCEL_URL,
-        websiteDomain: process.env.VERCEL_URL,
+        apiDomain,
+        websiteDomain,
         apiBasePath: "/api/auth",
         websiteBasePath: "/auth",
     },
@@ -34,7 +34,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: process.env.VERCEL_URL, // TODO: Change to your app's website domain
+        origin: websiteDomain, // TODO: Change to your app's website domain
         allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
         methods: ["GET", "PUT", "POST", "DELETE"],
         credentials: true,
@@ -51,7 +51,7 @@ app.use(
 app.use(middleware());
 
 // custom API that requires session verification
-app.get("/sessioninfo", verifySession(), async (req, res) => {
+app.get("/api/sessioninfo", verifySession(), async (req, res) => {
     let session = req.session;
     res.send({
         sessionHandle: session.getHandle(),
@@ -61,6 +61,7 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
 });
 
 app.use(errorHandler());
+
 
 app.use((err, req, res, next) => {
     res.status(500).send("Internal error: " + err.message);

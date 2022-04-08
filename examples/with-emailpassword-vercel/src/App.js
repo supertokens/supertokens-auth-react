@@ -9,13 +9,13 @@ import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 
 export function getApiDomain() {
-    const apiPort = window.location.hostname || 3001;
+    const apiPort = process.env.REACT_APP_API_PORT || 3001;
     const apiUrl = window.location.hostname || `http://localhost:${apiPort}`;
     return apiUrl;
 }
 
 export function getWebsiteDomain() {
-    const websitePort = window.location.hostname || 3000;
+    const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
     const websiteUrl = window.location.hostname || `http://localhost:${websitePort}`;
     return websiteUrl;
 }
@@ -25,7 +25,7 @@ SuperTokens.init({
         appName: "SuperTokens Demo App", // TODO: Your app name
         apiDomain: getApiDomain(), // TODO: Change to your app's API domain
         websiteDomain:  getWebsiteDomain(), // TODO: Change to your app's website domain
-        apiBasePath: "/api/auth",
+        apiBasePath: "api/auth",
         websiteBasePath: "/auth",
     },
     recipeList: [
