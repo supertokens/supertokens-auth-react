@@ -50,13 +50,11 @@ To deploy this demo application on Vercel, follow the steps outlined below:
      
 
        cd with-emailpassword-vercel
-          
+           
 
 3. Run the `vercel` command, to deploy the project.
 
-
        vercel
-
 
 Also, this project is [live](https://with-emailpassword-vercel-2b9e53tab-icode247.vercel.app/) on Vercel, feel free to test out the project. 
 
