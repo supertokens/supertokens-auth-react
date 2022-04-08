@@ -13,14 +13,14 @@
  * under the License.
  */
 
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { Fragment } from "react";
 
 /*
  * Component
  */
 
-export function ThemeBase({ children, loadDefaultFont }: { children: React.ReactNode; loadDefaultFont: boolean }) {
+export const ThemeBase: React.FC<PropsWithChildren<{ loadDefaultFont: boolean }>> = ({ children, loadDefaultFont }) => {
     return (
         <Fragment>
             {children}
@@ -32,4 +32,4 @@ export function ThemeBase({ children, loadDefaultFont }: { children: React.React
             )}
         </Fragment>
     );
-}
+};

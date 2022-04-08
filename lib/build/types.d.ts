@@ -2,7 +2,7 @@ import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
-import { ComponentClass } from "react";
+import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 export declare type SuperTokensConfig = {
@@ -83,10 +83,9 @@ export declare type NormalisedDefaultStyles = Record<string, CSSObject>;
 export declare type ThemeBaseProps = {
     styleFromInit?: Styles;
 };
-export declare type FeatureBaseProps = {
-    children?: React.ReactNode;
+export declare type FeatureBaseProps = PropsWithChildren<{
     history?: any;
-};
+}>;
 export declare type PreAPIHookFunction = (context: { requestInit: RequestInit; url: string }) => Promise<{
     url: string;
     requestInit: RequestInit;

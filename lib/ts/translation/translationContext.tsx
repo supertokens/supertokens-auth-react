@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import React, { PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
 import {
     getCurrentLanguageFromCookie,
     TranslationContextType,
@@ -20,13 +20,14 @@ export const useTranslation = (): TranslationFunc => {
     return useContext(TranslationContext).translate;
 };
 
-export const TranslationContextProvider: React.FC<{
-    children: ReactNode;
-    defaultLanguage: string;
-    defaultStore: TranslationStore;
-    userTranslationFunc?: TranslationFunc;
-    translationControlEventSource: TranslationControlEventSource;
-}> = ({ children, defaultLanguage, userTranslationFunc, defaultStore, translationControlEventSource }) => {
+export const TranslationContextProvider: React.FC<
+    PropsWithChildren<{
+        defaultLanguage: string;
+        defaultStore: TranslationStore;
+        userTranslationFunc?: TranslationFunc;
+        translationControlEventSource: TranslationControlEventSource;
+    }>
+> = ({ children, defaultLanguage, userTranslationFunc, defaultStore, translationControlEventSource }) => {
     const [translationStore, setTranslationStore] = useState<TranslationStore>(defaultStore);
     const cookieLang = getCurrentLanguageFromCookie();
     const [currentLanguage, setCurrentLanguage] = useState(cookieLang === null ? defaultLanguage : cookieLang);
