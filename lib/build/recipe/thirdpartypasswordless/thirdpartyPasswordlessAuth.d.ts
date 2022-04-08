@@ -1,10 +1,9 @@
 import * as React from "react";
-export default function ThirdPartyPasswordlessAuthWrapper({
-    children,
-    requireAuth,
-    onSessionExpired,
-}: {
-    children: React.ReactNode;
-    requireAuth?: boolean;
-    onSessionExpired?: () => void;
-}): JSX.Element;
+import { PropsWithChildren } from "react";
+declare const ThirdPartyPasswordlessAuthWrapper: React.FC<
+    PropsWithChildren<{
+        requireAuth?: boolean;
+        onSessionExpired?: () => void;
+    }>
+>;
+export default ThirdPartyPasswordlessAuthWrapper;

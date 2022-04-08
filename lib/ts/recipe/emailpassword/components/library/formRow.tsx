@@ -19,7 +19,7 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { useContext } from "react";
+import { PropsWithChildren, useContext } from "react";
 import StyleContext from "../../../../styles/styleContext";
 
 /*
@@ -27,7 +27,6 @@ import StyleContext from "../../../../styles/styleContext";
  */
 
 type FormRowProps = {
-    children: React.ReactNode;
     hasError?: boolean;
 };
 
@@ -35,7 +34,7 @@ type FormRowProps = {
  * Component.
  */
 
-export default function FormRow({ children, hasError }: FormRowProps) {
+export default function FormRow({ children, hasError }: PropsWithChildren<FormRowProps>) {
     /*
      * Render.
      */

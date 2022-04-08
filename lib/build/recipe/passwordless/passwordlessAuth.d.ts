@@ -1,10 +1,9 @@
-import * as React from "react";
+import { PropsWithChildren } from "react";
 export default function PasswordlessAuthWrapper({
     children,
     requireAuth,
     onSessionExpired,
-}: {
-    children: React.ReactNode;
+}: PropsWithChildren<{
     requireAuth?: boolean;
     onSessionExpired?: () => void;
-}): JSX.Element;
+}>): JSX.Element;
