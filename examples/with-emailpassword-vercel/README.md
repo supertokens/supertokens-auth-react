@@ -13,31 +13,24 @@ This demo app demonstrates deploying a react + nodejs express app on Vercel.
 ## Run application locally
 
 Follow the steps outlined below to run the application locally:
-1. Modify the `scripts` object in the `pacakge.json` file with the code snippet below:
 
+1. Change the `apiDomain` and `websiteDomain` variables in the `api/index.js` file with the code snippet below:
 
-              "scripts": {
-              "start": "npm-run-all --parallel spa api-server",
-              "spa": "react-scripts start",
-              "build": "react-scripts build",
-              "test": "react-scripts test",
-              "eject": "react-scripts eject",
-              "api-server": "node api/index.js",
-              "api-server:dev": "nodemon node api/index.js",
-              "server": "node ignore_this.js",
-              "server:dev": "nodemon ignore_this.js",
-              "dev": "npm-run-all --parallel spa api-server:dev",
-              "prod": "npm-run-all --parallel server api-server",
-              "release": "bash -c './scripts/release.sh'"
-              },
+         const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
+         onst websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
 
+2. In the `getApiDomain()` and `getWebsiteDomain()` functions in `src/App.js` file, change the `apiUrl` and `websiteUrl` variables with code snippet below:
+          
+          const apiUrl = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
+          const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
+          
 
-2. Run the command below to install the project dependencies.
+3. Run the command below to install the project dependencies.
   
         npm install 
 
 
-3. Start the application with the command below:
+4. Start the application with the command below:
       
         npm start
  
@@ -46,6 +39,7 @@ Follow the steps outlined below to run the application locally:
 
 To deploy this demo application on Vercel, follow the steps outlined below:
 1. Clone or download this project.
+
 2. Change directory to the **with-emailpassword-vercel** folder.
      
 
