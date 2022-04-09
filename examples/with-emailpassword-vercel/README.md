@@ -21,8 +21,7 @@ Follow the steps outlined below to run the application locally:
 
 2. In the `getApiDomain()` and `getWebsiteDomain()` functions in `src/App.js` file, change the `apiUrl` and `websiteUrl` variables with code snippet below:
           
-          const apiUrl = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
-          const websiteUrl = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
+
           
 
 3. Run the command below to install the project dependencies.

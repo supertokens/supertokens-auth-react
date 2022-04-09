@@ -10,13 +10,13 @@ import SessionExpiredPopup from "./SessionExpiredPopup";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
-    const apiUrl = window.location.hostname || `http://localhost:${apiPort}`;
+    const apiUrl = window.location.hostname !== undefined ? window.location.hostname : (process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`);
     return apiUrl;
 }
 
 export function getWebsiteDomain() {
     const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-    const websiteUrl = window.location.hostname || `http://localhost:${websitePort}`;
+    const websiteUrl = window.location.hostname !== undefined ? window.location.hostname : (process.env.REACT_APP_API_URL || `http://localhost:${websitePort}`);
     return websiteUrl;
 }
 
