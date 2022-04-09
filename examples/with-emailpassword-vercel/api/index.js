@@ -10,7 +10,7 @@ let EmailPassword = require("supertokens-node/recipe/emailpassword");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.VERCEL_URL !== undefined ? process.env.VERCEL_URL : (process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`)
-const websitePort =process.env.REACT_APP_API_URL || 3000;
+const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.VERCEL_URL !== undefined ? process.env.VERCEL_URL : (process.env.REACT_APP_API_URL|| `http://localhost:${websitePort}`);
 
 supertokens.init({

@@ -14,7 +14,13 @@ This demo app demonstrates deploying a react + nodejs express app on Vercel.
 
 Follow the steps outlined below to run the application locally:
 
-1. Run the command below to install the project dependencies.
+1. Change directory to the **with-emailpassword-vercel** folder.
+
+
+        cd supertokens-auth-react/examples/with-emailpassword-vercel
+
+2. Run the command below to install the project dependencies.
+
   
         npm install 
 
@@ -38,7 +44,7 @@ To deploy this demo application on Vercel, follow the steps outlined below:
 
        vercel
 
-Also, this project is [live](https://with-emailpassword-vercel-4ymtmp2cr-icode247.vercel.app/) on Vercel, feel free to test out the project. 
+Also, this project is [live](https://with-emailpassword-vercel-d1sj3fk2d-icode247.vercel.app/) on Vercel, feel free to test out the project. 
 
 ## Author
 
