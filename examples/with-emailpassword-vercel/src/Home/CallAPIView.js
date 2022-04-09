@@ -5,8 +5,9 @@ Session.addAxiosInterceptors(axios);
 
 export default function CallAPIView() {
     async function callAPIClicked() {
+        const protocol = process.env.REACT_APP_VERCEL_URL !== undefined ? 'https://': '';
         // this will also automatically refresh the session if needed
-        let response = await axios.get("https://" + getApiDomain() + "/api/sessioninfo");
+        let response = await axios.get(protocol + getApiDomain() + "/api/sessioninfo");
         window.alert("Session Information:\n" + JSON.stringify(response.data, null, 2));
     }
 

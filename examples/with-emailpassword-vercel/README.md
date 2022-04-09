@@ -14,20 +14,9 @@ This demo app demonstrates deploying a react + nodejs express app on Vercel.
 
 Follow the steps outlined below to run the application locally:
 
-1. Change the `apiDomain` and `websiteDomain` variables in the `api/index.js` file with the code snippet below:
-
-         const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
-         onst websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
-
-2. In the `getApiDomain()` and `getWebsiteDomain()` functions in `src/App.js` file, change the `apiUrl` and `websiteUrl` variables with code snippet below:
-          
-
-          
-
-3. Run the command below to install the project dependencies.
+1. Run the command below to install the project dependencies.
   
         npm install 
-
 
 4. Start the application with the command below:
       
@@ -42,7 +31,7 @@ To deploy this demo application on Vercel, follow the steps outlined below:
 2. Change directory to the **with-emailpassword-vercel** folder.
      
 
-       cd with-emailpassword-vercel
+       cd supertokens-auth-react/examples/with-emailpassword-vercel
            
 
 3. Run the `vercel` command, to deploy the project.
