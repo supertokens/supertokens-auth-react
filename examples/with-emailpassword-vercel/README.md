@@ -43,7 +43,7 @@ To deploy this demo application on Vercel, follow the steps outlined below:
 2. Change directory to the **with-emailpassword-vercel** folder.
      
 
-       cd with-emailpassword-vercel
+       cd supertokens-auth-react/examples/with-emailpassword-vercel
            
 
 3. Run the `vercel` command, to deploy the project.
