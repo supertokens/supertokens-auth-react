@@ -9,9 +9,15 @@ let { middleware, errorHandler } = require("supertokens-node/framework/express")
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
-const apiDomain = process.env.VERCEL_URL !== undefined ? process.env.VERCEL_URL : (process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`)
+const apiDomain =
+    process.env.VERCEL_URL !== undefined
+        ? process.env.VERCEL_URL
+        : process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-const websiteDomain = process.env.VERCEL_URL !== undefined ? process.env.VERCEL_URL : (process.env.REACT_APP_API_URL|| `http://localhost:${websitePort}`);
+const websiteDomain =
+    process.env.VERCEL_URL !== undefined
+        ? process.env.VERCEL_URL
+        : process.env.REACT_APP_API_URL || `http://localhost:${websitePort}`;
 
 supertokens.init({
     framework: "express",
@@ -61,7 +67,6 @@ app.get("/api/sessioninfo", verifySession(), async (req, res) => {
 });
 
 app.use(errorHandler());
-
 
 app.use((err, req, res, next) => {
     res.status(500).send("Internal error: " + err.message);

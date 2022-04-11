@@ -10,13 +10,15 @@ import SessionExpiredPopup from "./SessionExpiredPopup";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
-    const apiUrl = process.env.REACT_APP_VERCEL_URL !== undefined ? window.location.origin  : `http://localhost:${apiPort}`;
+    const apiUrl =
+        process.env.REACT_APP_VERCEL_URL !== undefined ? window.location.origin : `http://localhost:${apiPort}`;
     return apiUrl;
 }
 
 export function getWebsiteDomain() {
     const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-    const websiteUrl = process.env.REACT_APP_VERCEL_URL !== undefined ? window.location.origin  : `http://localhost:${websitePort}`;
+    const websiteUrl =
+        process.env.REACT_APP_VERCEL_URL !== undefined ? window.location.origin : `http://localhost:${websitePort}`;
     return websiteUrl;
 }
 
@@ -24,7 +26,7 @@ SuperTokens.init({
     appInfo: {
         appName: "SuperTokens Demo App", // TODO: Your app name
         apiDomain: getApiDomain(), // TODO: Change to your app's API domain
-        websiteDomain:  getWebsiteDomain(), // TODO: Change to your app's website domain
+        websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
         apiBasePath: "api/auth",
         websiteBasePath: "/auth",
     },

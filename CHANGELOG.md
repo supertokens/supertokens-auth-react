@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Adds an example app with emailpassword + vercel
+
 ## [0.20.4] - 2022-04-11
 
 -   Makes error message for changing of props in `SessionAuth` more clear.
