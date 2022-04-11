@@ -9,17 +9,14 @@ import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 
 export function getApiDomain() {
-    const apiPort = process.env.REACT_APP_API_PORT || 3001;
-    const apiUrl =
-        process.env.REACT_APP_VERCEL_URL !== undefined ? window.location.origin : `http://localhost:${apiPort}`;
-    return apiUrl;
+    if (window.location.hostname === "localhost") {
+        return "http://localhost:3001";
+    }
+    return window.location.origin;
 }
 
 export function getWebsiteDomain() {
-    const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-    const websiteUrl =
-        process.env.REACT_APP_VERCEL_URL !== undefined ? window.location.origin : `http://localhost:${websitePort}`;
-    return websiteUrl;
+    return window.location.origin;
 }
 
 SuperTokens.init({

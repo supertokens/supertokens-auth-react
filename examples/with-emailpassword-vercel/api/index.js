@@ -8,16 +8,8 @@ let { verifySession } = require("supertokens-node/recipe/session/framework/expre
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 
-const apiPort = process.env.REACT_APP_API_PORT || 3001;
-const apiDomain =
-    process.env.VERCEL_URL !== undefined
-        ? process.env.VERCEL_URL
-        : process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
-const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
-const websiteDomain =
-    process.env.VERCEL_URL !== undefined
-        ? process.env.VERCEL_URL
-        : process.env.REACT_APP_API_URL || `http://localhost:${websitePort}`;
+const apiDomain = process.env.VERCEL_URL !== undefined ? process.env.VERCEL_URL : `http://localhost:3001`;
+const websiteDomain = process.env.VERCEL_URL !== undefined ? process.env.VERCEL_URL : `http://localhost:3000`;
 
 supertokens.init({
     framework: "express",
@@ -72,6 +64,6 @@ app.use((err, req, res, next) => {
     res.status(500).send("Internal error: " + err.message);
 });
 
-app.listen(apiPort, () => console.log(`API Server listening on port ${apiPort}`));
+app.listen(3001, () => console.log(`API Server listening on port 3001`));
 
 module.exports = app;
