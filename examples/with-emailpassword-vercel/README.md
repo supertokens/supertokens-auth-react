@@ -48,7 +48,7 @@ To deploy this demo application on Vercel, follow the steps outlined below:
     vercel
     ```
 
-Also, this project is [live](https://with-emailpassword-vercel-d1sj3fk2d-icode247.vercel.app/) on Vercel, feel free to test out the project.
+Also, this project is [live](https://with-emailpassword-vercel-beryl.vercel.app/) on Vercel, feel free to test out the project.
 
 ## Author
 
