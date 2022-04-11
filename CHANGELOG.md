@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.20.4] - 2022-04-11
+
 -   Makes error message for changing of props in `SessionAuth` more clear.
+-   Freezes dependency lib versions since sometimes there can be unexpected changes in those that break our UI.
 
 ## [0.20.3] - 2022-04-08
 
