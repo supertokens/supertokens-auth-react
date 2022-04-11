@@ -20,7 +20,7 @@
 /* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
-import { spawn } from "child_process";
+import fetch from "isomorphic-fetch";
 import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
@@ -35,6 +35,7 @@ import {
     getLoginWithRedirectToSignIn,
     getLoginWithRedirectToSignUp,
     getAuthPageHeaderText,
+    screenshotOnFailure,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
 
@@ -80,6 +81,10 @@ describe("SuperTokens Third Party Email Password", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
             method: "POST",
         }).catch(console.error);
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
     });
 
     beforeEach(async function () {

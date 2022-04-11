@@ -12,4 +12,4 @@ screenshot.jpeg
 /examples/**/package-lock.json
 /examples/**/yarn.lock
 /eslint/node_modules
-.vercel
+/test_report/

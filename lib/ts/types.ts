@@ -16,7 +16,7 @@ import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
-import { ComponentClass } from "react";
+import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 
@@ -266,17 +266,12 @@ export type ThemeBaseProps = {
     styleFromInit?: Styles;
 };
 
-export type FeatureBaseProps = {
-    /*
-     * Children element
-     */
-    children?: React.ReactNode;
-
+export type FeatureBaseProps = PropsWithChildren<{
     /*
      * History provided by react-router
      */
     history?: any;
-};
+}>;
 
 export type PreAPIHookFunction = (context: {
     requestInit: RequestInit;

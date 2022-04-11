@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { PropsWithChildren } from "react";
 import {
     TranslationContextType,
     TranslationControlEventSource,
@@ -7,10 +7,11 @@ import {
 } from "./translationHelpers";
 export declare const TranslationContext: React.Context<TranslationContextType>;
 export declare const useTranslation: () => TranslationFunc;
-export declare const TranslationContextProvider: React.FC<{
-    children: ReactNode;
-    defaultLanguage: string;
-    defaultStore: TranslationStore;
-    userTranslationFunc?: TranslationFunc;
-    translationControlEventSource: TranslationControlEventSource;
-}>;
+export declare const TranslationContextProvider: React.FC<
+    PropsWithChildren<{
+        defaultLanguage: string;
+        defaultStore: TranslationStore;
+        userTranslationFunc?: TranslationFunc;
+        translationControlEventSource: TranslationControlEventSource;
+    }>
+>;

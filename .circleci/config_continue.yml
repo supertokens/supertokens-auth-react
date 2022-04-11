@@ -1,0 +1,92 @@
+version: 2.1
+
+orbs:
+    continuation: circleci/continuation@0.1.2
+    slack: circleci/slack@3.4.2
+    jq: circleci/jq@2.2.0
+jobs:
+    build:
+        docker:
+            - image: rishabhpoddar/supertokens_website_sdk_testing
+        steps:
+            - checkout
+            - run: apt-get install lsof
+            - run: npm run init
+            - run: npm run build-check
+            - run: npm run size
+            - run: npm run check-circular-dependencies
+            - run: (cd .circleci/ && ./markTesting.sh)
+            - persist_to_workspace:
+                  root: / # relative path to our working directory
+                  paths:
+                      - usr/lib/node_modules
+                      - root/project/node_modules
+                      - root/project/test/server/node_modules
+                      - root/project/examples/for-tests/node_modules
+    test:
+        docker:
+            - image: rishabhpoddar/supertokens_website_sdk_testing
+        environment:
+            MOCHA_FILE: test_report/report_node-<< parameters.fdi-version >>.xml
+        parameters:
+            fdi-version:
+                type: string
+        parallelism: 4
+        steps:
+            - checkout
+            - attach_workspace:
+                  at: /
+            - run: (cd .circleci && ./doTests.sh << parameters.fdi-version >>)
+            - run: ls -la test_report
+            - store_test_results:
+                  path: test_report/report_node-<< parameters.fdi-version >>.xml
+            - store_artifacts:
+                  path: test_report/screenshots
+                  destination: failed-test-screenshots
+            - store_artifacts:
+                  path: test_report/logs
+                  destination: logfiles
+
+    mark-passed:
+        docker:
+            - image: rishabhpoddar/supertokens_website_sdk_testing
+        steps:
+            - checkout
+            - run: (cd .circleci && ./markPassed.sh)
+            - slack/status
+
+workflows:
+    version: 2
+    tagged-build:
+        jobs:
+            - build:
+                  context:
+                      - slack-notification
+                  filters:
+                      tags:
+                          only: /dev-v[0-9]+(\.[0-9]+)*/
+                      branches:
+                          ignore: /.*/
+
+            - test:
+                  requires:
+                      - build
+                  filters:
+                      tags:
+                          only: /dev-v[0-9]+(\.[0-9]+)*/
+                      branches:
+                          ignore: /.*/
+                  matrix:
+                      parameters:
+                          fdi-version: placeholder
+
+            - mark-passed:
+                  context:
+                      - slack-notification
+                  filters:
+                      tags:
+                          only: /dev-v[0-9]+(\.[0-9]+)*/
+                      branches:
+                          ignore: /.*/
+                  requires:
+                      - test

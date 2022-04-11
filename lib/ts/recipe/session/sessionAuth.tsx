@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, { useEffect, useState, useContext, useRef, PropsWithChildren } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEventWithSessionContext, SessionContextType } from "./types";
@@ -38,14 +38,17 @@ type Props = (PropsWithoutAuth | PropsWithAuth) & {
     onSessionExpired?: () => void;
 };
 
-const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
+const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props }) => {
     if (props.requireAuth === true && props.redirectToLogin === undefined) {
         throw new Error("You have to provide redirectToLogin or onSessionExpired function when requireAuth is true");
     }
     const requireAuth = useRef(props.requireAuth);
 
     if (props.requireAuth !== requireAuth.current) {
-        throw new Error("requireAuth prop should not change.");
+        throw new Error(
+            // eslint-disable-next-line @typescript-eslint/quotes
+            'requireAuth prop should not change. If you are seeing this, it probably means that you are using SessionAuth in multiple routes with different values for requireAuth. To solve this, try adding the "key" prop to all uses of SessionAuth like <SessionAuth key="someUniqueKeyPerRoute" requireAuth={...}>'
+        );
     }
 
     const parentSessionContext = useContext(SessionContext);

@@ -78,6 +78,12 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
     npm run test
     ```
 
+### Screenshots
+
+You can set the `SCREENSHOT_ROOT` env var to a path to automatically save screenshots of failing e2e tests. This will save screenshots of failing test into subdirectories of `SCREENSHOT_ROOT` where the subdirectory identifies the test file and the file names of the screenshots identifying the test title and the
+
+`SCREENSHOT_ROOT=test_report npm run test`
+
 ## Run the test application.
 
 1. `npm run start`

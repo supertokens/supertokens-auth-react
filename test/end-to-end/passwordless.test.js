@@ -21,6 +21,7 @@
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
+import fetch from "isomorphic-fetch";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     getPasswordlessDevice,
@@ -29,6 +30,7 @@ import {
     waitFor,
     getFeatureFlags,
     waitForText,
+    screenshotOnFailure,
     setPasswordlessFlowType,
 } from "../helpers";
 
@@ -53,6 +55,10 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
 
     const examplePhoneNumber = "+36701231212";
     const exampleEmail = "test@example.com";
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
+    });
 
     describe("with EMAIL", () => {
         getTestCases("EMAIL", "email", exampleEmail);

@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Makes error message for changing of props in `SessionAuth` more clear.
+
+## [0.20.3] - 2022-04-08
+
+### Refactor
+
+-   Uses PropsWithChildren to define the type of the children props
+
+## [0.20.2] - 2022-04-07
+
+### Fixes
+
+-   Fixed FormBase behavior when mounted multiple times (NextJS issue)
+
+### CI changes
+
+-   Now using parallel builds
+-   Screenshotting failed tests
+-   Exporting test results
+
 ## [0.20.1] - 2022-03-31
 
 ### Changed

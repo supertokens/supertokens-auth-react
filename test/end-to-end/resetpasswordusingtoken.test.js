@@ -21,6 +21,7 @@
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
+import fetch from "isomorphic-fetch";
 import {
     EMAIL_EXISTS_API,
     RESET_PASSWORD_API,
@@ -48,6 +49,7 @@ import {
     submitFormReturnRequestAndResponse,
     toggleSignInSignUp,
     defaultSignUp,
+    screenshotOnFailure,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -96,6 +98,10 @@ describe("SuperTokens Reset password", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
             method: "POST",
         }).catch(console.error);
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
     });
 
     describe("Reset password enter email form test", function () {
