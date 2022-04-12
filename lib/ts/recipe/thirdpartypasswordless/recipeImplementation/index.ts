@@ -10,6 +10,7 @@ import {
     RecipePreAPIHookFunction,
 } from "../../recipeModule/types";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
+import { NormalisedStorageHandlers } from "supertokens-web-js/utils/storage";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
@@ -17,6 +18,7 @@ export default function getRecipeImplementation(recipeInput: {
     preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+    storageHandlers: NormalisedStorageHandlers;
 }): TPPWlessRecipeInterface {
     const passwordlessImpl = PasswordlessRecipeImplementation({
         ...recipeInput,

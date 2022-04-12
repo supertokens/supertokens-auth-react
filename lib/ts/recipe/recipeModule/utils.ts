@@ -1,5 +1,10 @@
 import { Config, NormalisedConfig } from "./types";
 import { isIE } from "../../utils";
+import {
+    getDefaultLocalStorageHandler,
+    getDefaultSessionStorageHandler,
+    NormalisedStorageHandlers,
+} from "supertokens-web-js/utils/storage";
 
 export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): NormalisedConfig<T, S, R> {
     let { onHandleEvent, getRedirectionURL, preAPIHook, postAPIHook } = config;
@@ -29,6 +34,11 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
     const palette = config.palette === undefined ? {} : config.palette;
     const rootStyle = config.style === undefined ? {} : config.style;
 
+    const storageHandlers: NormalisedStorageHandlers = {
+        sessionStorage: getDefaultSessionStorageHandler(),
+        localStorage: getDefaultLocalStorageHandler(),
+    };
+
     return {
         ...config,
         getRedirectionURL,
@@ -40,6 +50,7 @@ export function normaliseRecipeModuleConfig<T, S, R>(config: Config<T, S, R>): N
         rootStyle,
         recipeId: config.recipeId,
         appInfo: config.appInfo,
+        storageHandlers,
     };
 }
 

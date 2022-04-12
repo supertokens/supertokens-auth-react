@@ -7,6 +7,7 @@ import {
     RecipePreAPIHookFunction,
 } from "../recipeModule/types";
 import WebJSRecipeImplementation from "supertokens-web-js/lib/build/recipe/passwordless/recipeImplementation";
+import { NormalisedStorageHandlers } from "supertokens-web-js/utils/storage";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
@@ -14,12 +15,14 @@ export default function getRecipeImplementation(recipeInput: {
     preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+    storageHandlers: NormalisedStorageHandlers;
 }): RecipeInterface {
     const webJsImplementation = WebJSRecipeImplementation({
         recipeId: recipeInput.recipeId,
         appInfo: recipeInput.appInfo,
         preAPIHook: recipeInput.preAPIHook,
         postAPIHook: recipeInput.postAPIHook,
+        storageHandlers: recipeInput.storageHandlers,
     });
 
     return {

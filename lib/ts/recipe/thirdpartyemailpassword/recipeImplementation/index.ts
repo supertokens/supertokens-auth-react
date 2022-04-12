@@ -10,6 +10,7 @@ import EmailPasswordRecipeImplementation from "../../emailpassword/recipeImpleme
 import ThirdPartyRecipeImplementation from "../../thirdparty/recipeImplementation";
 import DerivedEP from "./emailPasswordImplementation";
 import DerivedTP from "./thirdPartyImplementation";
+import { NormalisedStorageHandlers } from "supertokens-web-js/utils/storage";
 
 export default function getRecipeImplementation(recipeInput: {
     recipeId: string;
@@ -17,6 +18,7 @@ export default function getRecipeImplementation(recipeInput: {
     preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
     postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
     onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+    storageHandlers: NormalisedStorageHandlers;
 }): RecipeInterface {
     const emailpasswordImpl = EmailPasswordRecipeImplementation({
         ...recipeInput,
