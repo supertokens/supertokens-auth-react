@@ -79,6 +79,14 @@ describe("Querier", () => {
             global["fetch"] = jest.fn().mockResolvedValue({
                 // Prevent error with calling .json() on response object
                 json: jest.fn(),
+                // web-js querier uses response.clone to check for general errors
+                clone: () => {
+                    return {
+                        json: () => {
+                            return {};
+                        },
+                    };
+                },
             });
             fetchSpy = jest.spyOn(global, "fetch");
 
