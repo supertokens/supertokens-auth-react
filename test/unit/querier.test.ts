@@ -10,7 +10,6 @@ describe("Querier", () => {
             apiBasePath: new NormalisedURLPath("/"),
             apiDomain: new NormalisedURLDomain("http://api.example.com"),
             appName: "test",
-            websiteBasePath: new NormalisedURLPath("/"),
         });
     });
 
