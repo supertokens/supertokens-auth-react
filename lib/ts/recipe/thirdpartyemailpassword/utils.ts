@@ -57,17 +57,15 @@ export function normaliseThirdPartyEmailPasswordConfig(config: Config): Normalis
 }
 
 function normaliseSignInUpFeatureConfig(config?: SignInAndUpFeatureUserInput): NormalisedSignInAndUpFeatureConfig {
-    const disableDefaultImplementation =
-        config === undefined || config.disableDefaultImplementation === undefined
-            ? false
-            : config.disableDefaultImplementation;
+    const disableDefaultUI =
+        config === undefined || config.disableDefaultUI === undefined ? false : config.disableDefaultUI;
 
     const defaultToSignUp =
         config === undefined || config.defaultToSignUp === undefined ? false : config.defaultToSignUp;
 
     return {
         ...config,
-        disableDefaultImplementation,
+        disableDefaultUI,
         defaultToSignUp,
         style: config === undefined || config.style === undefined ? {} : config.style,
     };

@@ -141,9 +141,9 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
 
         if (
             (this.config.passwordlessUserInput !== undefined &&
-                this.config.passwordlessUserInput.signInUpFeature?.disableDefaultImplementation !== true) ||
+                this.config.passwordlessUserInput.signInUpFeature?.disableDefaultUI !== true) ||
             (this.config.thirdpartyUserInput !== undefined &&
-                this.config.thirdpartyUserInput.signInAndUpFeature?.disableDefaultImplementation !== true)
+                this.config.thirdpartyUserInput.signInAndUpFeature?.disableDefaultUI !== true)
         ) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {

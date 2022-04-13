@@ -102,7 +102,7 @@ export default class EmailVerification extends RecipeModule<
 
     getFeatures = (): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
-        if (this.config.mode !== "OFF" && this.config.disableDefaultImplementation !== true) {
+        if (this.config.mode !== "OFF" && this.config.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
             );

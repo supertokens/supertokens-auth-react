@@ -90,7 +90,7 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
         config = {};
     }
 
-    const disableDefaultImplementation = config.disableDefaultImplementation === true;
+    const disableDefaultUI = config.disableDefaultUI === true;
     const signUpForm: NormalisedSignUpFormFeatureConfig = normaliseSignUpFormFeatureConfig(config.signUpForm);
     const defaultToSignUp = config.defaultToSignUp !== undefined ? config.defaultToSignUp : false;
 
@@ -126,7 +126,7 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
         config.signInForm
     );
     return {
-        disableDefaultImplementation,
+        disableDefaultUI,
         defaultToSignUp,
         signUpForm,
         signInForm,
@@ -223,7 +223,7 @@ export function normaliseResetPasswordUsingTokenFeature(
         config = {};
     }
 
-    const disableDefaultImplementation = config.disableDefaultImplementation === true;
+    const disableDefaultUI = config.disableDefaultUI === true;
 
     const submitNewPasswordFormStyle =
         config.submitNewPasswordForm !== undefined && config.submitNewPasswordForm.style !== undefined
@@ -270,7 +270,7 @@ export function normaliseResetPasswordUsingTokenFeature(
     };
 
     return {
-        disableDefaultImplementation,
+        disableDefaultUI,
         submitNewPasswordForm,
         enterEmailForm,
     };

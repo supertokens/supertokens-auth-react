@@ -70,7 +70,7 @@ export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
     /*
      * Disable default implementation with default routes.
      */
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
 
     /*
      * Privacy policy link for sign up form.
@@ -92,7 +92,7 @@ export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
     /*
      * Disable default implementation with default routes.
      */
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
 
     /*
      * Privacy policy link for sign up form.

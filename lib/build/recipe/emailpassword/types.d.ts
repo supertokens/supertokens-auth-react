@@ -69,13 +69,13 @@ export declare type NormalisedConfig = {
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     defaultToSignUp?: boolean;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;
 };
 export declare type NormalisedSignInAndUpFeatureConfig = {
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
     defaultToSignUp: boolean;
     signUpForm: NormalisedSignUpFormFeatureConfig;
     signInForm: NormalisedSignInFormFeatureConfig;
@@ -99,12 +99,12 @@ export declare type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
 export declare type FormFieldSignInConfig = FormFieldBaseConfig;
 export declare type FormFieldSignUpConfig = FormField;
 export declare type ResetPasswordUsingTokenUserInput = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     submitNewPasswordForm?: FeatureBaseConfig;
     enterEmailForm?: FeatureBaseConfig;
 };
 export declare type NormalisedResetPasswordUsingTokenFeatureConfig = {
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
     submitNewPasswordForm: NormalisedSubmitNewPasswordForm;
     enterEmailForm: NormalisedEnterEmailForm;
 };

@@ -47,13 +47,13 @@ export declare type NormalisedConfig = {
     };
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
     providers?: (Provider | CustomProviderConfig)[];
 };
 export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
     providers: Provider[];

@@ -27,7 +27,7 @@ import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 // for anyone who wants to use this recipe directly.
 export type UserInputForAuthRecipeModule = {
     mode?: "OFF" | "REQUIRED";
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
 };
@@ -56,7 +56,7 @@ export type Config = UserInput &
 
 export type NormalisedConfig = {
     mode: "OFF" | "REQUIRED";
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
     signOut(): Promise<void>;

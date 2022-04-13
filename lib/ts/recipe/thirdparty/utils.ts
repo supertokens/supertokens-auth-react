@@ -69,7 +69,7 @@ export function normaliseSignInAndUpFeature(
         throw new Error("ThirdParty signInAndUpFeature providers array cannot be empty.");
     }
 
-    const disableDefaultImplementation = config.disableDefaultImplementation === true;
+    const disableDefaultUI = config.disableDefaultUI === true;
     const style = config.style !== undefined ? config.style : {};
     const privacyPolicyLink = config.privacyPolicyLink;
     const termsOfServiceLink = config.termsOfServiceLink;
@@ -94,7 +94,7 @@ export function normaliseSignInAndUpFeature(
     );
 
     return {
-        disableDefaultImplementation,
+        disableDefaultUI,
         privacyPolicyLink,
         termsOfServiceLink,
         style,

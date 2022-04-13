@@ -48,7 +48,7 @@ export declare type OnHandleEventContext =
       }
     | AuthRecipeModuleOnHandleEventContext;
 export declare type PasswordlessNormalisedBaseConfig = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
 } & NormalisedBaseConfig;
 export declare type NormalisedConfig = {
     validateEmailAddress: (email: string) => Promise<string | undefined> | string | undefined;
@@ -66,7 +66,7 @@ export declare type NormalisedConfig = {
         userInputCodeFormStyle: Styles;
         linkSentScreenStyle: Styles;
         closeTabScreenStyle: Styles;
-        disableDefaultImplementation?: boolean;
+        disableDefaultUI?: boolean;
     };
     linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
     contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
@@ -78,10 +78,10 @@ export declare type NormalisedConfig = {
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type PasswordlessFeatureBaseConfig = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
 } & FeatureBaseConfig;
 export declare type SignInUpFeatureConfigInput = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     resendEmailOrSMSGapInSeconds?: number;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;

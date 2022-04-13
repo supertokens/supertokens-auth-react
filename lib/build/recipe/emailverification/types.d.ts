@@ -7,7 +7,7 @@ import OverrideableBuilder from "supertokens-js-override";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 export declare type UserInputForAuthRecipeModule = {
     mode?: "OFF" | "REQUIRED";
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
 };
@@ -31,7 +31,7 @@ export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     mode: "OFF" | "REQUIRED";
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
     signOut(): Promise<void>;
