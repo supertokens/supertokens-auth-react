@@ -1,4 +1,4 @@
-import { default as Querier } from "../../lib/ts/querier";
+import Querier from "supertokens-web-js/utils/querier";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 
@@ -11,7 +11,6 @@ describe("Querier", () => {
             apiDomain: new NormalisedURLDomain("http://api.example.com"),
             appName: "test",
             websiteBasePath: new NormalisedURLPath("/"),
-            websiteDomain: new NormalisedURLDomain("http://example.com"),
         });
     });
 
