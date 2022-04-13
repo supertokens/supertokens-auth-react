@@ -3,18 +3,18 @@ import OverrideableBuilder from "supertokens-js-override";
 import { Awaitable } from "../../types";
 export declare type RecipeEvent =
     | {
-          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED" | "TOKEN_UPDATED";
+          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED" | "ACCESS_TOKEN_PAYLOAD_UPDATED";
       }
     | {
           action: "UNAUTHORISED";
           sessionExpiredOrRevoked: boolean;
       }
     | {
-          action: "MISSING_CLAIM";
+          action: "API_INVALID_CLAIM";
           claimId: string;
       };
 export declare type RecipeEventWithSessionContext = RecipeEvent & {
-    sessionContext: SessionContextType;
+    sessionContext: SessionContextTypeWithoutInvalidClaim;
 };
 export declare type InputType = {
     apiDomain?: string;
@@ -44,8 +44,22 @@ export declare type SessionContextType = {
     doesSessionExist: boolean;
     userId: string;
     accessTokenPayload: any;
+    invalidClaim: ClaimValidationError | undefined;
 };
-export declare abstract class SessionClaim<T> {
+export declare type SessionContextTypeWithoutInvalidClaim = Omit<SessionContextType, "invalidClaim">;
+export declare type ClaimValidationResult =
+    | {
+          isValid: true;
+      }
+    | {
+          isValid: false;
+          reason?: any;
+      };
+export declare type ClaimValidationError = {
+    validatorId: string;
+    reason?: any;
+};
+export declare abstract class SessionClaimValidator<T> {
     readonly id: string;
     constructor(id: string);
     /**
@@ -60,5 +74,5 @@ export declare abstract class SessionClaim<T> {
     /**
      * Decides if the claim is valid based on the accessTokenPayload object (and not checking DB or anything else)
      */
-    abstract isValid(accessTokenPayload: any, userContext: any): Awaitable<boolean>;
+    abstract validate(accessTokenPayload: any, userContext: any): Awaitable<ClaimValidationResult>;
 }

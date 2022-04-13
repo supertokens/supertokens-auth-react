@@ -8,6 +8,7 @@ describe("SessionContext", () => {
             accessTokenPayload: {},
             userId: "DEFAULT_USER_ID",
             doesSessionExist: false,
+            invalidClaim: undefined,
         };
 
         // when
@@ -23,6 +24,7 @@ describe("SessionContext", () => {
             accessTokenPayload: {},
             doesSessionExist: false,
             userId: "NOT_DEFAULT_USER_ID",
+            invalidClaim: undefined,
         };
 
         // when

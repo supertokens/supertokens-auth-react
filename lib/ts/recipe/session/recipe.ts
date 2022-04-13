@@ -19,7 +19,14 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
-import { InputType, RecipeEvent, RecipeEventWithSessionContext, SessionContextType } from "./types";
+import {
+    ClaimValidationError,
+    InputType,
+    RecipeEvent,
+    RecipeEventWithSessionContext,
+    SessionClaimValidator,
+    SessionContextTypeWithoutInvalidClaim,
+} from "./types";
 import sessionSdk from "supertokens-website";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
@@ -93,6 +100,30 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return sessionSdk.attemptRefreshingSession();
     };
 
+    validateClaims = async (
+        claimValidators: SessionClaimValidator<any>[],
+        userContext?: any
+    ): Promise<ClaimValidationError | undefined> => {
+        let accessTokenPayload = await this.getAccessTokenPayloadSecurely();
+        // We first refresh all claims that needs this, so we avoid ha
+        for (const validator of claimValidators) {
+            if (await validator.shouldRefresh(accessTokenPayload, userContext)) {
+                await validator.refresh(userContext);
+                accessTokenPayload = await this.getAccessTokenPayloadSecurely();
+            }
+        }
+        for (const validator of claimValidators) {
+            const validationRes = await validator.validate(accessTokenPayload, userContext);
+            if (!validationRes.isValid) {
+                return {
+                    validatorId: validator.id,
+                    reason: validationRes.reason,
+                };
+            }
+        }
+        return undefined;
+    };
+
     /**
      * @returns Function to remove event listener
      */
@@ -113,12 +144,12 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         );
     };
 
-    private async getSessionContext({ action }: RecipeEvent): Promise<SessionContextType> {
+    private async getSessionContext({ action }: RecipeEvent): Promise<SessionContextTypeWithoutInvalidClaim> {
         if (
             action === "SESSION_CREATED" ||
             action === "REFRESH_SESSION" ||
-            action === "MISSING_CLAIM" ||
-            action === "TOKEN_UPDATED"
+            action === "API_INVALID_CLAIM" ||
+            action === "ACCESS_TOKEN_PAYLOAD_UPDATED"
         ) {
             const [userId, accessTokenPayload] = await Promise.all([
                 this.getUserId(),

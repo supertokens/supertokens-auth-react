@@ -1,7 +1,7 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
-import { InputType, RecipeEventWithSessionContext } from "./types";
+import { ClaimValidationError, InputType, RecipeEventWithSessionContext, SessionClaimValidator } from "./types";
 declare type ConfigType = InputType & {
     recipeId: string;
     appInfo: NormalisedAppInfo;
@@ -18,6 +18,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     doesSessionExist: () => Promise<boolean>;
     signOut: () => Promise<void>;
     attemptRefreshingSession: () => Promise<boolean>;
+    validateClaims: (
+        claimValidators: SessionClaimValidator<any>[],
+        userContext?: any
+    ) => Promise<ClaimValidationError | undefined>;
     /**
      * @returns Function to remove event listener
      */

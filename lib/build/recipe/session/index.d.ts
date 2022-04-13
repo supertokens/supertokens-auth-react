@@ -10,16 +10,14 @@ export default class SessionAPIWrapper {
               requireAuth?: false | undefined;
           } & {
               onSessionExpired?: (() => void) | undefined;
-              requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
-              onMissingClaim?: ((claimId: string) => void) | undefined;
+              claimValidators?: import("./types").SessionClaimValidator<any>[] | undefined;
           })
         | ({
               requireAuth: true;
               redirectToLogin: () => void;
           } & {
               onSessionExpired?: (() => void) | undefined;
-              requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
-              onMissingClaim?: ((claimId: string) => void) | undefined;
+              claimValidators?: import("./types").SessionClaimValidator<any>[] | undefined;
           })
     >;
     static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
@@ -36,16 +34,14 @@ declare const SessionAuth: import("react").FC<
           requireAuth?: false | undefined;
       } & {
           onSessionExpired?: (() => void) | undefined;
-          requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
-          onMissingClaim?: ((claimId: string) => void) | undefined;
+          claimValidators?: import("./types").SessionClaimValidator<any>[] | undefined;
       })
     | ({
           requireAuth: true;
           redirectToLogin: () => void;
       } & {
           onSessionExpired?: (() => void) | undefined;
-          requiredClaims?: import("./types").SessionClaim<any>[] | undefined;
-          onMissingClaim?: ((claimId: string) => void) | undefined;
+          claimValidators?: import("./types").SessionClaimValidator<any>[] | undefined;
       })
 >;
 declare const init: typeof SessionAPIWrapper.init;

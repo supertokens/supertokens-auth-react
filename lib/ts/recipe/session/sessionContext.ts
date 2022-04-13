@@ -5,6 +5,7 @@ const SessionContext = React.createContext<SessionContextType>({
     doesSessionExist: false,
     userId: "DEFAULT_USER_ID",
     accessTokenPayload: {},
+    invalidClaim: undefined,
 });
 
 export function isDefaultContext(sessionContext: SessionContextType): boolean {

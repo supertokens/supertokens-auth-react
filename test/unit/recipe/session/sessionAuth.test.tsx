@@ -48,6 +48,7 @@ describe("SessionAuth", () => {
             userId: "mock-user-id",
             accessTokenPayload: {},
             doesSessionExist: true,
+            invalidClaim: undefined,
         });
     });
 
@@ -134,6 +135,7 @@ describe("SessionAuth", () => {
                     doesSessionExist,
                     accessTokenPayload: {},
                     userId: "mock-id",
+                    invalidClaim: undefined,
                 });
 
                 // when
@@ -263,6 +265,7 @@ describe("SessionAuth", () => {
                 doesSessionExist: true,
                 accessTokenPayload: { foo: "bar" },
                 userId: "before-id",
+                invalidClaim: undefined,
             });
 
             const result = render(

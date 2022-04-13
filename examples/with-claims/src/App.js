@@ -2,19 +2,19 @@ import { useState } from "react";
 import "./App.css";
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
-import Session from "supertokens-auth-react/recipe/session";
-import Home from "./Home";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 import { RolesClaim } from "./claims/rolesClaim";
-import MissingClaimPopup from "./MissingClaimPopup";
 import { ThemeProvider } from "@emotion/react";
 import { CssBaseline } from "@mui/material";
-import { Route1 } from "./Route1/route1.component";
-import { Route2 } from "./Route1/route2.component";
 import { EmailVerifiedClaim } from "./claims/emailVerifiedClaim";
-import HeaderWrapper from "./header/header.component";
+import { api, TestContextProvider, useTestLogger } from "./test.context";
+import { TestScreen } from "./routes/testScreen.component";
+import { MFAClaim } from "./claims/mfaClaim";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -39,9 +39,15 @@ SuperTokens.init({
             emailVerificationFeature: {
                 mode: "OFF",
             },
+            onHandleEvent: (ev) => {
+                api.addLogItem("EP Event: " + JSON.stringify(ev));
+            },
         }),
         Session.init({
-            onHandleEvent: console.log,
+            defaultRequiredClaims: [],
+            onHandleEvent: (ev) => {
+                api.addLogItem("Session Event: " + JSON.stringify(ev));
+            },
         }),
     ],
 });
@@ -53,69 +59,93 @@ function App() {
         <div className="App">
             <ThemeProvider theme={{}}>
                 <CssBaseline />
-                <Router>
-                    <div className="fill">
-                        <HeaderWrapper />
-                        <Routes>
-                            {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-
-                            <Route
-                                path="/route1"
-                                element={
-                                    <EmailPassword.EmailPasswordAuth
-                                        onSessionExpired={() => {
-                                            updateShowSessionExpiredPopup(true);
-                                        }}
-                                        requiredClaims={[EmailVerifiedClaim.isVerified, RolesClaim.hasRole("admin")]}
-                                        onMissingClaim={(claimId) => {
-                                            console.log("route1 missing", claimId);
-                                            window.location.pathname = "/route2";
-                                        }}>
-                                        <Route1 />
-                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </EmailPassword.EmailPasswordAuth>
-                                }
-                            />
-                            <Route
-                                path="/route2"
-                                element={
-                                    <EmailPassword.EmailPasswordAuth
-                                        onSessionExpired={() => {
-                                            updateShowSessionExpiredPopup(true);
-                                        }}
-                                        requiredClaims={[EmailVerifiedClaim.isVerified, RolesClaim.hasRole("user")]}
-                                        onMissingClaim={(claimId) => {
-                                            console.log("route2 missing", claimId);
-                                            window.location.pathname = "/";
-                                        }}>
-                                        <Route2 />
-                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </EmailPassword.EmailPasswordAuth>
-                                }
-                            />
-                            <Route
-                                path="/"
-                                element={
-                                    /* This protects the "/" route so that it shows 
-                                <Home /> only if the user is logged in.
-                                Else it redirects the user to "/auth" */
-                                    <EmailPassword.EmailPasswordAuth
-                                        onSessionExpired={() => {
-                                            updateShowSessionExpiredPopup(true);
-                                        }}>
-                                        <Home />
-                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </EmailPassword.EmailPasswordAuth>
-                                }
-                            />
-                        </Routes>
-                    </div>
-                    <Footer />
-                </Router>
+                <TestContextProvider>
+                    <Router>
+                        <AppRoutes
+                            updateShowSessionExpiredPopup={updateShowSessionExpiredPopup}
+                            showSessionExpiredPopup={showSessionExpiredPopup}
+                        />
+                        <Footer />
+                    </Router>
+                </TestContextProvider>
             </ThemeProvider>
         </div>
     );
 }
 
 export default App;
+function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
+    // These have to be memoized in this test, because:
+    // 1. the refresh of a claim calls an api
+    // 2. the api call adds a log
+    // 3. adding the log rerenders this component
+    // 4. the rerender changes the references of the claims which causes the checking to restart
+    // 5. since the check (and the refresh) didn't complete the first time, it calls refresh again...
+    // This is not normally the case, the claim refreshing shouldn't rerender the auth component,
+    // it's just a weird test setup because of logging.
+    const route1Claims = useMemo(
+        () => [EmailVerifiedClaim.isVerified, RolesClaim.hasRole("admin"), MFAClaim.completed2FA()],
+        []
+    );
+    const route2Claims = useMemo(() => [EmailVerifiedClaim.isVerified], []);
+    const nav = useNavigate();
+    return (
+        <div className="fill">
+            <Routes>
+                {/* This shows the login UI on "/auth" route */}
+                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+
+                <Route
+                    path="/route1"
+                    element={
+                        <SessionAuth
+                            key="/route1"
+                            requireAuth={true}
+                            redirectToLogin={EmailPassword.redirectToAuth}
+                            onSessionExpired={() => {
+                                updateShowSessionExpiredPopup(true);
+                            }}
+                            claimValidators={route1Claims}>
+                            <TestScreen title="Route1" subTitle={"Required: Role(admin), Email.isVerified"} />
+                            {showSessionExpiredPopup && <SessionExpiredPopup />}
+                        </SessionAuth>
+                    }
+                />
+                <Route
+                    path="/route2"
+                    element={
+                        <SessionAuth
+                            key="/route2"
+                            requireAuth={true}
+                            redirectToLogin={EmailPassword.redirectToAuth}
+                            onSessionExpired={() => {
+                                updateShowSessionExpiredPopup(true);
+                            }}
+                            claimValidators={route2Claims}>
+                            <TestScreen title="Route2" subTitle={"Required: Email.isVerified"} />
+                            {showSessionExpiredPopup && <SessionExpiredPopup />}
+                        </SessionAuth>
+                    }
+                />
+                <Route
+                    path="/"
+                    element={
+                        /* This protects the "/" route so that it shows
+            <Home /> only if the user is logged in.
+            Else it redirects the user to "/auth" */
+                        <SessionAuth
+                            key="/"
+                            requireAuth={true}
+                            redirectToLogin={EmailPassword.redirectToAuth}
+                            onSessionExpired={() => {
+                                updateShowSessionExpiredPopup(true);
+                            }}>
+                            <TestScreen title="Home" subTitle={"No claims required"} />
+                            {showSessionExpiredPopup && <SessionExpiredPopup />}
+                        </SessionAuth>
+                    }
+                />
+            </Routes>
+        </div>
+    );
+}

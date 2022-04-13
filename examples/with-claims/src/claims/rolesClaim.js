@@ -1,13 +1,12 @@
-import { api } from "../api";
+import { api } from "../test.context";
 
-// This isn't really a PrimitiveClaim, but we could add some baseclass for this or extend that
 class RolesClaimClass {
     constructor() {
-        this.id = "st-role";
+        this.key = "st-r";
     }
 
     getValueFromPayload(payload, _userContext) {
-        return payload[this.id]?.v;
+        return payload[this.key]?.v;
     }
 
     async refresh(ctx) {
@@ -16,10 +15,14 @@ class RolesClaimClass {
 
     hasRole(role) {
         return {
+            id: this.key + "-" + role,
             refresh: (ctx) => this.refresh(ctx),
-            shouldRefresh: (payload, ctx) =>
-                this.getValueFromPayload(payload, ctx) === undefined || payload[this.id]?.t < Date.now() - 10000,
-            isValid: (payload, ctx) => this.getValueFromPayload(payload, ctx).includes(role),
+            shouldRefresh: (payload, ctx) => this.getValueFromPayload(payload, ctx) === undefined,
+            validate: (payload, ctx) => {
+                return this.getValueFromPayload(payload, ctx).includes(role)
+                    ? { isValid: true }
+                    : { isValid: false, reason: { missingRole: role } };
+            },
         };
     }
 }

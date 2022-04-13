@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import morgan from "morgan";
 import bodyParser from "body-parser";
 import supertokens from "supertokens-node";
 import Session, { SessionContainer } from "supertokens-node/recipe/session";
@@ -49,8 +50,8 @@ supertokens.init({
             },
         }),
         Session.init({
-            defaultLoadedClaims: [RolesClaim, EmailVerifiedClaim],
-            defaultRequiredClaims: [EmailVerifiedClaim.isVerified],
+            claimsToAddOnCreation: [RolesClaim, EmailVerifiedClaim],
+            defaultValidatorsForVerification: [EmailVerifiedClaim.isVerified],
         }),
     ],
 });
@@ -70,6 +71,7 @@ app.use(
         contentSecurityPolicy: false,
     })
 );
+app.use(morgan("dev") as any);
 app.use(bodyParser.json());
 
 app.use(middleware());
@@ -77,9 +79,8 @@ app.use(middleware());
 app.get(
     "/api1",
     verifySession({
-        requiredClaims: [
-            // TODO: I think I like the hasX names most
-            RolesClaim.hasRole("admin"),
+        overwriteDefaultValidators: [
+            RolesClaim.hasRole.including("admin"),
             EmailVerifiedClaim.isVerified, // Maybe this could be just EmailVerifiedClaim
             SecondFactorCheckers.any2Factors,
         ],
@@ -112,7 +113,7 @@ app.get(
 
 app.post("/second-factor", verifySession(), async (req, res) => {
     const session: SessionContainer = (req as any).session;
-    await session.addClaim(SecondFactorOTPClaim, true, {});
+    await SecondFactorOTPClaim.addToSession(session, true);
     res.send({
         status: "OK",
     });
@@ -124,7 +125,8 @@ app.post(
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
 
-        await session.updateClaim(RolesClaim);
+        await RolesClaim.updateRoles(session);
+
         res.send({
             status: "OK",
         });
@@ -133,11 +135,12 @@ app.post(
 
 app.post(
     "/refresh-email-verified",
-    verifySession({ requiredClaims: [] }), // This only requires the default EmailVerifiedClaim
+    verifySession({ overwriteDefaultValidators: [] }), // This only requires the default EmailVerifiedClaim
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
-
-        await session.updateClaim(EmailVerifiedClaim);
+        console.log("refresh email", new Date());
+        await EmailVerifiedClaim.addToSession(session, true);
+        console.log("refresh email2", new Date());
         res.send({
             status: "OK",
         });

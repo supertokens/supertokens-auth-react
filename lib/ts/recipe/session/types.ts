@@ -19,18 +19,18 @@ import { Awaitable } from "../../types";
 
 export type RecipeEvent =
     | {
-          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED" | "TOKEN_UPDATED";
+          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED" | "ACCESS_TOKEN_PAYLOAD_UPDATED";
       }
     | {
           action: "UNAUTHORISED";
           sessionExpiredOrRevoked: boolean;
       }
     | {
-          action: "MISSING_CLAIM";
+          action: "API_INVALID_CLAIM";
           claimId: string;
       };
 
-export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextType };
+export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextTypeWithoutInvalidClaim };
 
 export type InputType = {
     apiDomain?: string;
@@ -58,9 +58,17 @@ export type SessionContextType = {
     doesSessionExist: boolean;
     userId: string;
     accessTokenPayload: any;
+    invalidClaim: ClaimValidationError | undefined;
 };
 
-export abstract class SessionClaim<T> {
+export type SessionContextTypeWithoutInvalidClaim = Omit<SessionContextType, "invalidClaim">;
+export type ClaimValidationResult = { isValid: true } | { isValid: false; reason?: any };
+export type ClaimValidationError = {
+    validatorId: string;
+    reason?: any;
+};
+
+export abstract class SessionClaimValidator<T> {
     constructor(public readonly id: string) {}
 
     /**
@@ -77,5 +85,5 @@ export abstract class SessionClaim<T> {
     /**
      * Decides if the claim is valid based on the accessTokenPayload object (and not checking DB or anything else)
      */
-    abstract isValid(accessTokenPayload: any, userContext: any): Awaitable<boolean>;
+    abstract validate(accessTokenPayload: any, userContext: any): Awaitable<ClaimValidationResult>;
 }

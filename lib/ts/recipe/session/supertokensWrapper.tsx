@@ -1,4 +1,3 @@
-"use strict";
 /* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
@@ -13,11 +12,12 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-var SessionClaimValidator = /** @class */ (function () {
-    function SessionClaimValidator(id) {
-        this.id = id;
-    }
-    return SessionClaimValidator;
-})();
-exports.SessionClaimValidator = SessionClaimValidator;
+import React from "react";
+import SessionAuth from "./sessionAuth";
+
+/*
+ * Imports.
+ */
+const SuperTokens: React.FC = ({ children }) => <SessionAuth requireAuth={false}>{children}</SessionAuth>;
+
+export default SuperTokens;

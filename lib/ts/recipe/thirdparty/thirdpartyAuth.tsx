@@ -25,14 +25,13 @@ import SessionAuth from "../session/sessionAuth";
 import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
-import { SessionClaim } from "../session/types";
+import { SessionClaimValidator } from "../session/types";
 
 type Props = FeatureBaseProps & {
     recipe: Recipe;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
-    onMissingClaim?: (claimId: string) => void;
-    requiredClaims?: SessionClaim<any>[];
+    requiredClaims?: SessionClaimValidator<any>[];
 };
 
 function ThirdPartyAuth(props: Props) {
@@ -44,10 +43,7 @@ function ThirdPartyAuth(props: Props) {
 
     if (props.requireAuth === false) {
         return (
-            <SessionAuth
-                onSessionExpired={props.onSessionExpired}
-                onMissingClaim={props.onMissingClaim}
-                requiredClaims={props.requiredClaims}>
+            <SessionAuth onSessionExpired={props.onSessionExpired} claimValidators={props.requiredClaims}>
                 {emailVerification}
             </SessionAuth>
         );
@@ -60,8 +56,7 @@ function ThirdPartyAuth(props: Props) {
             }}
             requireAuth={true}
             onSessionExpired={props.onSessionExpired}
-            onMissingClaim={props.onMissingClaim}
-            requiredClaims={props.requiredClaims}>
+            claimValidators={props.requiredClaims}>
             {emailVerification}
         </SessionAuth>
     );
@@ -73,14 +68,12 @@ export default function ThirdPartyAuthWrapper({
     children,
     requireAuth,
     onSessionExpired,
-    onMissingClaim,
     requiredClaims,
 }: {
     children: React.ReactNode;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
-    onMissingClaim?: (claimId: string) => void;
-    requiredClaims?: SessionClaim<any>[];
+    requiredClaims?: SessionClaimValidator<any>[];
 }) {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
@@ -88,7 +81,6 @@ export default function ThirdPartyAuthWrapper({
         <ThirdPartyAuthMemo
             history={history}
             onSessionExpired={onSessionExpired}
-            onMissingClaim={onMissingClaim}
             requiredClaims={requiredClaims}
             requireAuth={requireAuth}
             recipe={ThirdParty.getInstanceOrThrow()}>

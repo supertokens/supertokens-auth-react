@@ -1,5 +1,5 @@
 import React from "react";
-import { SessionClaim } from "./types";
+import { SessionClaimValidator } from "./types";
 declare type PropsWithoutAuth = {
     requireAuth?: false;
 };
@@ -9,8 +9,7 @@ declare type PropsWithAuth = {
 };
 declare type Props = (PropsWithoutAuth | PropsWithAuth) & {
     onSessionExpired?: () => void;
-    requiredClaims?: SessionClaim<any>[];
-    onMissingClaim?: (claimId: string) => void;
+    claimValidators?: SessionClaimValidator<any>[];
 };
 declare const SessionAuth: React.FC<Props>;
 export default SessionAuth;
