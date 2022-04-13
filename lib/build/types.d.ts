@@ -87,13 +87,3 @@ export declare type FeatureBaseProps = {
     children?: React.ReactNode;
     history?: any;
 };
-export declare type PreAPIHookFunction = (context: { requestInit: RequestInit; url: string }) => Promise<{
-    url: string;
-    requestInit: RequestInit;
-}>;
-export declare type PostAPIHookFunction = (context: {
-    requestInit: RequestInit;
-    url: string;
-    fetchResponse: Response;
-    userContext: any;
-}) => Promise<void>;

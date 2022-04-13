@@ -277,15 +277,3 @@ export type FeatureBaseProps = {
      */
     history?: any;
 };
-
-export type PreAPIHookFunction = (context: {
-    requestInit: RequestInit;
-    url: string;
-}) => Promise<{ url: string; requestInit: RequestInit }>;
-
-export type PostAPIHookFunction = (context: {
-    requestInit: RequestInit;
-    url: string;
-    fetchResponse: Response;
-    userContext: any;
-}) => Promise<void>;
