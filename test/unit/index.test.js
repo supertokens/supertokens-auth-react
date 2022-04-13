@@ -228,7 +228,7 @@ describe("SuperTokens", function () {
             recipeList: [
                 EmailPassword.init({
                     signInAndUpFeature: {
-                        disableDefaultImplementation: true,
+                        disableDefaultUI: true,
                     },
                 }),
             ],
