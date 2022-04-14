@@ -13,8 +13,7 @@
  * under the License.
  */
 
-import { RecipeInterface } from "supertokens-website";
-import OverrideableBuilder from "supertokens-js-override";
+import { UserInput as WebJSInputType } from "supertokens-web-js/lib/build/recipe/session/types";
 
 export type RecipeEvent =
     | {
@@ -29,26 +28,8 @@ export type RecipeEvent =
 
 export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextType };
 
-export type InputType = {
-    apiDomain?: string;
-    apiBasePath?: string;
-    sessionScope?: string;
-    sessionExpiredStatusCode?: number;
-    autoAddCredentials?: boolean;
-    isInIframe?: boolean;
-    cookieDomain?: string;
-    preAPIHook?: (context: {
-        action: "SIGN_OUT" | "REFRESH_SESSION";
-        requestInit: RequestInit;
-        url: string;
-    }) => Promise<{ url: string; requestInit: RequestInit }>;
-    onHandleEvent?: (event: RecipeEvent) => void;
-    override?: {
-        functions?: (
-            originalImplementation: RecipeInterface,
-            builder?: OverrideableBuilder<RecipeInterface>
-        ) => RecipeInterface;
-    };
+export type InputType = WebJSInputType & {
+    onHandleEvent?: (event: RecipeEventWithSessionContext) => void;
 };
 
 export type SessionContextType = {
