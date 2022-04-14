@@ -221,7 +221,7 @@ let recipeList = [
 ];
 
 const testContext = {
-    disableDefaultUI: getQueryParams("disableDefaultImplementation") === "true",
+    disableDefaultUI: getQueryParams("disableDefaultUI") === "true",
 };
 
 if (authRecipe === "thirdparty") {
