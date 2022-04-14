@@ -29,7 +29,7 @@ SuperTokens.init({
     recipeList: [
         EmailPassword.init({
             signInAndUpFeature: {
-                disableDefaultImplementation: true, // this disables showing the default sign in + sign up component
+                disableDefaultUI: true, // this disables showing the default sign in + sign up component
 
                 signInForm: {
                     style: {
