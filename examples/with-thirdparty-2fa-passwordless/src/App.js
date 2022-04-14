@@ -54,7 +54,7 @@ SuperTokens.init({
         }),
         Passwordless.init({
             signInUpFeature: {
-                disableDefaultImplementation: true,
+                disableDefaultUI: true,
                 emailOrPhoneFormStyle: {
                     headerTitle: {
                         display: "none",

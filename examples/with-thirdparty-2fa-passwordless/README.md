@@ -10,7 +10,7 @@ This demo app demonstrates how we can implement sign in with google workspaces a
 -   We initialise Passwordless recipe on the frontend and backend as per its quick setup
 -   To disable sign ups via google workspaces login, we override the `signInUpPOST` API call as shown in `api-server/customSignInUpPOST.js` file.
 -   We override the implementation of `doesSessionExist` on the frontend to return `false` in case the user has not completed both the auth factors. This prevents the user from accessing any protected routes.
--   We disable the UI for passwordless sign up and show it in "/second-factor" route by using the disableDefaultImplementation flag in the Passwordless config
+-   We disable the UI for passwordless sign up and show it in "/second-factor" route by using the disableDefaultUI flag in the Passwordless config
 -   We change the redirection logic for ThirdParty auth to take the user to the /second-factor route after completing sign in with google workspaces. If the user has already completed the second factor too, then we take them to the home page. We do this by providing the getRedirectionURL callback to the ThirdParty recipe on the frontend.
 -   We override the consume code API for passwordless to not create a new session, but instead modify the existing session to add the second factor to it. This will then indicate to the application APIs and routes that the session exists and the user can then use the app.
 -   We change the APIs to use a custom middleware which will check that the access token has both the auth factors in it. If it doesn't then we return a 401, else we allow the API call.
