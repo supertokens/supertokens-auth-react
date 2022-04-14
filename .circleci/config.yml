@@ -42,6 +42,19 @@ jobs:
                   fingerprints:
                       - "35:1e:5e:0a:95:ec:f3:3e:79:7b:b4:39:ac:00:5f:b2"
             - run:
+                  name: updating thirdpartypasswordless
+                  command: |
+                      ssh ubuntu@ssh.supertokens.com '\
+                          cd supertokens-auth-react/examples/with-thirdpartypasswordless/ && \
+                          git reset --hard && \
+                          git pull && \
+                          (rm -f package-lock.json || true) && \
+                          (rm -rf node_modules || true) && \
+                          npm i && \
+                          REACT_APP_API_PORT=10001 REACT_APP_API_URL=https://api-thirdpartypasswordless.demo.supertokens.com REACT_APP_WEBSITE_PORT=10000 REACT_APP_WEBSITE_URL=https://thirdpartypasswordless.demo.supertokens.com npm run build && \
+                          docker rm demo-app-thirdpartypasswordless -f || true && \
+                          bash /home/ubuntu/supertokens-auth-react/examples/with-thirdpartypasswordless/scripts/start_container.sh'
+            - run:
                   name: updating emailpassword
                   command: |
                       ssh ubuntu@ssh.supertokens.com '\
