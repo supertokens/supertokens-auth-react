@@ -14,7 +14,7 @@
  */
 
 import Session from "./recipe";
-import { RecipeInterface } from "supertokens-website";
+import { RecipeInterface } from "supertokens-web-js/recipe/session";
 import SessionAuthWrapper from "./sessionAuth";
 import useSessionContextFunc from "./useSessionContext";
 import { InputType, SessionContextType } from "./types";

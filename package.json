@@ -68,7 +68,7 @@
         "react-select": "^5.2.1",
         "react-shadow": "^19.0.2",
         "supertokens-js-override": "^0.0.4",
-        "supertokens-web-js": "github:supertokens/supertokens-web-js#0.0"
+        "supertokens-web-js": "github:supertokens/supertokens-web-js#session-types-fix"
     },
     "peerDependencies": {
         "react": ">=16.8.0"
@@ -105,7 +105,7 @@
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "15kb"
+            "limit": "16kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
@@ -117,7 +117,7 @@
         },
         {
             "path": "recipe/emailpassword/index.js",
-            "limit": "105kb"
+            "limit": "106kb"
         },
         {
             "path": "recipe/passwordless/index.js",

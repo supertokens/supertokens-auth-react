@@ -19,8 +19,9 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
-import { InputType, RecipeEvent, RecipeEventWithSessionContext, SessionContextType } from "./types";
+import { RecipeEventWithSessionContext, SessionContextType, InputType } from "./types";
 import WebJSSessionRecipe from "supertokens-web-js/lib/build/recipe/session/recipe";
+import { RecipeEvent } from "supertokens-web-js/lib/build/recipe/session/types";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
 
@@ -155,6 +156,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 ...config,
                 appInfo,
                 recipeId: Session.RECIPE_ID,
+                apiDomain: appInfo.apiDomain.getAsStringDangerous(),
             });
             return Session.instance;
         };

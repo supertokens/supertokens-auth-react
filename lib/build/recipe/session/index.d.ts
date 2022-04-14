@@ -1,6 +1,6 @@
 /// <reference types="react" />
 /// <reference types="@emotion/react/types/css-prop" />
-import { RecipeInterface } from "supertokens-website";
+import { RecipeInterface } from "supertokens-web-js/recipe/session";
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 export default class SessionAPIWrapper {
