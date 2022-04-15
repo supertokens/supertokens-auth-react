@@ -98,7 +98,7 @@ export type NormalisedConfig = {
 } & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     defaultToSignUp?: boolean;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;
@@ -106,7 +106,7 @@ export type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
 };
 
 export type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
     defaultToSignUp: boolean;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;

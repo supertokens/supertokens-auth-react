@@ -93,7 +93,7 @@ export type SignInAndUpFeatureUserInput = {
     /*
      * Disable default implementation with default routes.
      */
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
 
     /*
      * Should default to Sign up form.
@@ -117,7 +117,7 @@ export type NormalisedSignInAndUpFeatureConfig = {
     /*
      * Disable default implementation with default routes.
      */
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
 
     /*
      * Default to sign up form.
@@ -191,7 +191,7 @@ export type ResetPasswordUsingTokenUserInput = {
     /*
      * Disable default implementation with default routes.
      */
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
 
     /*
      * submitNewPasswordForm config.
@@ -208,7 +208,7 @@ export type NormalisedResetPasswordUsingTokenFeatureConfig = {
     /*
      * Disable default implementation with default routes.
      */
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
 
     /*
      * Normalised submitNewPasswordForm config.

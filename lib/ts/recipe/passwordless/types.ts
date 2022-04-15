@@ -80,7 +80,7 @@ export type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext;
 
 export type PasswordlessNormalisedBaseConfig = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
 } & NormalisedBaseConfig;
 
 export type NormalisedConfig = {
@@ -103,7 +103,7 @@ export type NormalisedConfig = {
         linkSentScreenStyle: Styles;
         closeTabScreenStyle: Styles;
 
-        disableDefaultImplementation?: boolean;
+        disableDefaultUI?: boolean;
     };
     linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
 
@@ -119,11 +119,11 @@ export type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type PasswordlessFeatureBaseConfig = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
 } & FeatureBaseConfig;
 
 export type SignInUpFeatureConfigInput = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     resendEmailOrSMSGapInSeconds?: number;
 
     /*

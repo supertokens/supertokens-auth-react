@@ -90,7 +90,7 @@ describe("EmailPassword", function () {
     it("Initializing EmailPassword and disable default implementation but Email verification required", async function () {
         EmailPassword.init({
             signInAndUpFeature: {
-                disableDefaultImplementation: true,
+                disableDefaultUI: true,
                 signUpForm: {
                     privacyPolicyLink,
                     termsOfServiceLink,
@@ -98,7 +98,7 @@ describe("EmailPassword", function () {
                 signInForm: {},
             },
             resetPasswordUsingTokenFeature: {
-                disableDefaultImplementation: true,
+                disableDefaultUI: true,
             },
             emailVerificationFeature: {
                 mode: "REQUIRED",

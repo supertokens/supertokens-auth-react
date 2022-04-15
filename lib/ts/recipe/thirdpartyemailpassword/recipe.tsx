@@ -166,7 +166,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
             };
         }
 
-        if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
+        if (this.config.signInAndUpFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
