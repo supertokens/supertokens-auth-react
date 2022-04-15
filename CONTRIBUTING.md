@@ -22,7 +22,7 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 
 ### Project Setup
 
-1. Please setup supertokens-core by following this guide. If you are not contributing to supertokens-core, please skip steps 1 & 4 under "Project Setup" section.
+1. Please setup `supertokens-core` by following [this guide](https://github.com/supertokens/supertokens-core/blob/master/CONTRIBUTING.md#development-setup). If you are not contributing to `supertokens-core`, please skip steps 1 & 4 under "Project Setup" section.
 2. `git clone https://github.com/supertokens/supertokens-auth-react.git`, `supertokens-auth-react` and `supertokens-root` should exist side by side within the same parent directory.
 3. `cd supertokens-auth-react`
 4. Install the project dependencies
