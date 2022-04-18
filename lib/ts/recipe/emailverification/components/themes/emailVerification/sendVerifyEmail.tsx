@@ -28,12 +28,14 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import { useTranslation } from "../../../../../translation/translationContext";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { useUserContext } from "../../../../../usercontext";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
     const userContext = useUserContext();
     const [status, setStatus] = useState("READY");
+    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
     const resendEmail = async (): Promise<void> => {
         try {
@@ -47,6 +49,10 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
                 setStatus("EMAIL_RESENT");
             }
         } catch (e) {
+            if (STGeneralError.isThisError(e)) {
+                setErrorMessage(e.message);
+            }
+
             setStatus("ERROR");
         }
     };
@@ -54,15 +60,24 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
     useEffect(() => {
         const abort = new AbortController();
         void (async function () {
-            // we send an email on load...
-            const response = await props.recipeImplementation.sendVerificationEmail({
-                userContext,
-            });
-            if (abort.signal.aborted) {
-                return;
-            }
-            if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                await props.onEmailAlreadyVerified();
+            try {
+                // we send an email on load...
+                const response = await props.recipeImplementation.sendVerificationEmail({
+                    userContext,
+                });
+                if (abort.signal.aborted) {
+                    return;
+                }
+                if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
+                    await props.onEmailAlreadyVerified();
+                }
+            } catch (_) {
+                /**
+                 * In this case it would be strange for the user to land on a screen and see
+                 * an error state. So we ignore the error here, if there is an error the user
+                 * can use the resend button to trigger another email (resend has an error state
+                 * if it fails)
+                 */
             }
         })();
 
@@ -76,7 +91,9 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
-                {status === "ERROR" && <GeneralError error="SOMETHING_WENT_WRONG_ERROR" />}
+                {status === "ERROR" && (
+                    <GeneralError error={errorMessage === undefined ? "SOMETHING_WENT_WRONG_ERROR" : errorMessage} />
+                )}
                 {status === "EMAIL_RESENT" && (
                     <div data-supertokens="generalSuccess" css={styles.generalSuccess}>
                         {t("EMAIL_VERIFICATION_RESEND_SUCCESS")}
