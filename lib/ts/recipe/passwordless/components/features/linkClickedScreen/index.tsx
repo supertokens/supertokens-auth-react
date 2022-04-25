@@ -31,7 +31,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 import { useEffect } from "react";
 import { useUserContext } from "../../../../../usercontext";
-import STGeneralError from "supertokens-web-js/lib/build/error";
+import STGeneralError from "supertokens-web-js/utils/error";
 import { getLoginAttemptInfo } from "../../../utils";
 import { PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
 

@@ -27,7 +27,7 @@ import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 import { useCallback } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
-import STGeneralError from "supertokens-web-js/lib/build/error";
+import STGeneralError from "supertokens-web-js/utils/error";
 
 type FieldState = {
     id: string;
