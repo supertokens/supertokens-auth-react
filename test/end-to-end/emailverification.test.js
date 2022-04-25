@@ -397,7 +397,7 @@ describe("SuperTokens Email Verification general errors", function () {
                             "access-control-allow-credentials": "true",
                         },
                         body: JSON.stringify({
-                            status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR",
+                            status: "GENERAL_ERROR",
                             message: generalErrorMessageString,
                         }),
                     });

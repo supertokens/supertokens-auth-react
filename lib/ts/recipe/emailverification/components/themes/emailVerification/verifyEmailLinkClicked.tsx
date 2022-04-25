@@ -124,7 +124,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
                         onClick={onTokenInvalidRedirect}
                         data-supertokens="secondaryText secondaryLinkWithArrow"
                         css={[styles.secondaryText, styles.secondaryLinkWithArrow]}>
-                        {t(errorMessage === undefined ? "EMAIL_VERIFICATION_CONTINUE_LINK" : errorMessage)}
+                        {t("EMAIL_VERIFICATION_CONTINUE_LINK")}
                         <ArrowRightIcon color={styles.palette.colors.textPrimary} />
                     </div>
                 </div>
@@ -140,7 +140,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
                     {t("EMAIL_VERIFICATION_ERROR_TITLE")}
                 </div>
                 <div data-supertokens="primaryText" css={styles.primaryText}>
-                    {t("EMAIL_VERIFICATION_ERROR_DESC")}
+                    {t(errorMessage === undefined ? "EMAIL_VERIFICATION_ERROR_DESC" : errorMessage)}
                 </div>
             </div>
         </div>
