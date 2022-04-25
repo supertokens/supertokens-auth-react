@@ -13,7 +13,7 @@
  * under the License.
  */
 
-import { UserInput as WebJSInputType } from "supertokens-web-js/lib/build/recipe/session/types";
+import { UserInput as WebJSInputType } from "supertokens-web-js/recipe/session/types";
 
 export type RecipeEvent =
     | {
