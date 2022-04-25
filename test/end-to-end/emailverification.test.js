@@ -464,6 +464,10 @@ describe("SuperTokens Email Verification general errors", function () {
             await defaultSignUp(page);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
+            /**
+             * This adds interception mid test because adding it before conflicted with
+             * interceptors for defaultSignUp
+             */
             await page.setRequestInterception(true);
             page.on("request", (req) => {
                 if (req.url().includes("/auth/user/email/verify/token") && req.method() === "POST") {
