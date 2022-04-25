@@ -57,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `clearLoginAttemptInfo` -> RENAMED TO `clearPasswordlessLoginAttemptInfo`
 -   Session recipe now uses supertokens-web-js internally (previously used supertokens-website)
 -   All recipes now include a `postAPIHook` configuration parameter that can be used to respond to network actions.
+-   General error handling for email verification components
 
 ### Breaking changes
 
