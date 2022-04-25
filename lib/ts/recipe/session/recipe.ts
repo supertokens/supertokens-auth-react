@@ -20,7 +20,7 @@ import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
 import { RecipeEventWithSessionContext, SessionContextType, InputType } from "./types";
-import WebJSSessionRecipe from "supertokens-web-js/lib/build/recipe/session/recipe";
+import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };

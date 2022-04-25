@@ -31,7 +31,7 @@ export declare type Config<GetRedirectionURLContextType, Action, OnHandleEventCo
     recipeId: string;
     appInfo: NormalisedAppInfo;
 } & UserInput<GetRedirectionURLContextType, Action, OnHandleEventContextType>;
-import { RecipeConfig as WebJSRecipeConfig } from "supertokens-web-js/lib/build/recipe/recipeModule/types";
+import { RecipeConfig as WebJSRecipeConfig } from "supertokens-web-js/recipe/recipeModule/types";
 export declare type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> =
     WebJSRecipeConfig<Action> & {
         appInfo: NormalisedAppInfo;
