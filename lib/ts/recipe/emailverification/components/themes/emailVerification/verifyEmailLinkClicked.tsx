@@ -31,6 +31,7 @@ import { VerifyEmailLinkClickedThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
+import STGeneralError from "supertokens-web-js/lib/build/error";
 
 /*
  * Component.
@@ -41,6 +42,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
     const t = useTranslation();
     const userContext = useUserContext();
     const [status, setStatus] = useState<"LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL">("LOADING");
+    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -59,6 +61,10 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
                     setStatus("SUCCESSFUL");
                 }
             } catch (e) {
+                if (STGeneralError.isThisError(e)) {
+                    setErrorMessage(e.message);
+                }
+
                 setStatus("GENERAL_ERROR");
             }
         })();
@@ -134,7 +140,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
                     {t("EMAIL_VERIFICATION_ERROR_TITLE")}
                 </div>
                 <div data-supertokens="primaryText" css={styles.primaryText}>
-                    {t("EMAIL_VERIFICATION_ERROR_DESC")}
+                    {t(errorMessage === undefined ? "EMAIL_VERIFICATION_ERROR_DESC" : errorMessage)}
                 </div>
             </div>
         </div>
