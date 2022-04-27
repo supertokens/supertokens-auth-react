@@ -24,7 +24,7 @@ import React, { useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { ResendButton } from "./resendButton";
 import { useTranslation } from "../../../../../translation/translationContext";
-import STGeneralError from "supertokens-web-js/lib/build/error";
+import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 import { UserInputCodeFormFooter } from "./userInputCodeFormFooter";
 

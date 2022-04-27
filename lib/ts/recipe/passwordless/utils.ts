@@ -31,8 +31,8 @@ import {
     defaultEmailValidator,
     defaultEmailValidatorForCombinedInput,
 } from "./validators";
-import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/lib/build/recipe/passwordless/types";
-import WebJSUtils from "supertokens-web-js/lib/build/recipe/passwordless/utils";
+import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
+import WebJSUtils from "supertokens-web-js/recipe/passwordless/utils";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     if (!["EMAIL", "PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod)) {

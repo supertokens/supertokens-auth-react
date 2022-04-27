@@ -38,7 +38,7 @@ import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { useMemo } from "react";
 import { useCallback } from "react";
 import { Dispatch } from "react";
-import STGeneralError from "supertokens-web-js/lib/build/error";
+import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {

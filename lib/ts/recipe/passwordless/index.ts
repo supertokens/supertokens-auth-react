@@ -20,7 +20,7 @@ import PasswordlessAuth from "./passwordlessAuth";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInUpThemeWrapper from "./components/themes/signInUp";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/lib/build/recipe/passwordless/types";
+import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 import { getNormalisedUserContext } from "../../utils";
 import * as UtilFunctions from "./utils";
 

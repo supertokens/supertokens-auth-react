@@ -1,4 +1,4 @@
-import { UserInput as WebJSInputType } from "supertokens-web-js/lib/build/recipe/session/types";
+import { UserInput as WebJSInputType } from "supertokens-web-js/recipe/session/types";
 export declare type RecipeEvent =
     | {
           action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED";

@@ -21,7 +21,7 @@ import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultEmailValidator, defaultValidate } from "../../../../emailpassword/validators";
 import { useState } from "react";
-import STGeneralError from "supertokens-web-js/lib/build/error";
+import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 import { SignInUpFooter } from "./signInUpFooter";
 

@@ -20,7 +20,7 @@ import StyleContext from "../../../../../styles/styleContext";
 import { SignInAndUpThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { redirectToThirdPartyLogin } from "../../../utils";
-import STGeneralError from "supertokens-web-js/lib/build/error";
+import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 
 export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {

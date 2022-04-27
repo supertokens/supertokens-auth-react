@@ -31,7 +31,7 @@ import { VerifyEmailLinkClickedThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
-import STGeneralError from "supertokens-web-js/lib/build/error";
+import STGeneralError from "supertokens-web-js/utils/error";
 
 /*
  * Component.

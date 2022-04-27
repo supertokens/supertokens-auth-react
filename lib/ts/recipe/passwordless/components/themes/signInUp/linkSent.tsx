@@ -30,7 +30,7 @@ import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
 import { useTranslation } from "../../../../../translation/translationContext";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { useUserContext } from "../../../../../usercontext";
-import STGeneralError from "supertokens-web-js/lib/build/error";
+import STGeneralError from "supertokens-web-js/utils/error";
 
 const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
     const styles = useContext(StyleContext);

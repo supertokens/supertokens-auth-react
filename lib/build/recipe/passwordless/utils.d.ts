@@ -1,7 +1,7 @@
 import { CountryCode, NumberType } from "libphonenumber-js";
 import { Config, LoginAttemptInfo, NormalisedConfig } from "./types";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
-import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/lib/build/recipe/passwordless/types";
+import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 export declare function normalisePasswordlessConfig(config: Config): NormalisedConfig;
 export declare function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
     value: string,
