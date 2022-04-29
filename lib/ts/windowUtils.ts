@@ -14,6 +14,4 @@
  */
 import { WindowUtilities as STWebsiteWindowUtils } from "supertokens-website/utils/webUtils";
 
-export const WindowUtilities = {
-    ...STWebsiteWindowUtils,
-};
+export const WindowUtilities = STWebsiteWindowUtils;

@@ -1,5 +1,5 @@
 export declare const WindowUtilities: {
-    fetch: ((input: RequestInfo, init?: RequestInit | undefined) => Promise<Response>) & typeof fetch;
+    readonly fetch: (input: RequestInfo, init?: RequestInit | undefined) => Promise<Response>;
     history: {
         replaceState: (data: any, unused: string, url?: string | null | undefined) => void;
         readonly state: any;
@@ -13,7 +13,7 @@ export declare const WindowUtilities: {
         readonly origin: string;
         readonly hostname: string;
     };
-    document: Document;
-    sessionStorage: Storage;
-    localStorage: Storage;
+    readonly document: Document;
+    readonly sessionStorage: Storage;
+    readonly localStorage: Storage;
 };
