@@ -196,6 +196,23 @@ function getWindowOrThrow(): any {
     }
 
     // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
+    const userAgent = window.navigator.userAgent.toLowerCase();
+
+    // Check if the app is running in Electron
+    if (userAgent.indexOf(" electron/") > -1) {
+        return {
+            // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
+            ...window,
+            location: {
+                // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
+                ...window.location,
+                origin: "http://localhost:3000",
+                hostname: "localhost",
+            },
+        };
+    }
+
+    // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
     return window;
 }
 /*
