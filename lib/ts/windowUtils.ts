@@ -1,4 +1,4 @@
-/* Copyright (c) 2021, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2022, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -12,17 +12,8 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+import { WindowUtilities as STWebsiteWindowUtils } from "supertokens-website/utils/webUtils";
 
-/*
- * Consts.
- */
-export const RECIPE_ID_QUERY_PARAM = "rid";
-
-export const DEFAULT_API_BASE_PATH = "/auth";
-
-export const DEFAULT_WEBSITE_BASE_PATH = "/auth";
-
-export const ST_ROOT_ID = "supertokens-root";
-
-export const SSR_ERROR =
-    "\nIf you are trying to use this method doing server-side-rendering, please make sure you move this method inside a componentDidMount method or useEffect hook.";
+export const WindowUtilities = {
+    ...STWebsiteWindowUtils,
+};

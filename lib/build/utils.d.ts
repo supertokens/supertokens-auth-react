@@ -20,7 +20,7 @@ export declare function redirectWithFullPageReload(to: string): void;
 export declare function redirectWithHistory(to: string, history: any): void;
 export declare function isIE(): boolean;
 export declare function setSessionStorage(key: string, value: string): void;
-export declare function getSessionStorage(key: string): string;
+export declare function getSessionStorage(key: string): string | null;
 export declare function getOriginOfPage(): NormalisedURLDomain;
 export declare function getLocalStorage(key: string): string | null;
 export declare function setLocalStorage(key: string, value: string): void;

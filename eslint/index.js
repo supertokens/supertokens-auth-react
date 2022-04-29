@@ -30,7 +30,22 @@ module.exports = {
                         if (node.name === "window") {
                             context.report(
                                 node,
-                                "Do not access window object directly. Please use getWindowObject() instead"
+                                "Do not access window object directly. Please use WindowUtilities instead"
+                            );
+                        }
+                    },
+                };
+            },
+        },
+
+        "no-direct-getwindoworthrow-object": {
+            create: function (context) {
+                return {
+                    Identifier(node) {
+                        if (node.name === "getWindowOrThrow") {
+                            context.report(
+                                node,
+                                "Do not access window object directly. Please use WindowUtilities instead"
                             );
                         }
                     },
