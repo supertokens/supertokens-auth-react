@@ -229,7 +229,7 @@ export function redirectWithFullPageReload(to: string): void {
     if (to.trim() === "") {
         to = "/";
     }
-    getWindowOrThrow().location.href = to;
+    getWindowOrThrow().location.assign(to);
 }
 
 export function redirectWithHistory(to: string, history: any): void {
