@@ -45,7 +45,7 @@ module.exports = {
                         if (node.name === "getWindowOrThrow") {
                             context.report(
                                 node,
-                                "Do not access window object directly. Please use WindowUtilities instead"
+                                "Do not access getWindowOrThrow directly. Please use WindowUtilities instead"
                             );
                         }
                     },
