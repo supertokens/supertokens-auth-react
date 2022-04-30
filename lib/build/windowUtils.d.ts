@@ -1,19 +1,18 @@
 export declare const WindowUtilities: {
-    readonly fetch: (input: RequestInfo, init?: RequestInit | undefined) => Promise<Response>;
+    location: {
+        search: string;
+        href: string;
+        hash: string;
+        pathname: string;
+        assign: (url: string) => void;
+        origin: string;
+        hostname: string;
+    };
     history: {
         replaceState: (data: any, unused: string, url?: string | null | undefined) => void;
         readonly state: any;
     };
-    location: {
-        href: string;
-        readonly search: string;
-        readonly hash: string;
-        readonly pathname: string;
-        assign: (url: string) => void;
-        readonly origin: string;
-        readonly hostname: string;
-    };
-    readonly document: Document;
-    readonly sessionStorage: Storage;
-    readonly localStorage: Storage;
+    document: Document;
+    sessionStorage: Storage;
+    localStorage: Storage;
 };
