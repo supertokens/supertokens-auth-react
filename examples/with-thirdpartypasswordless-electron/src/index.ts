@@ -34,10 +34,10 @@ app.on("ready", () => {
             responseHeaders: {
                 ...details.responseHeaders,
                 "Content-Security-Policy": [
-                    "style-src-elem 'self' 'unsafe-inline'",
-                    "style-src 'self' 'unsafe-inline'",
-                    `default-src 'self' http://localhost:3001 'unsafe-eval'`,
-                    `connect-src 'self' http://localhost:3001 'unsafe-eval'`,
+                    "style-src-elem 'unsafe-inline' *",
+                    "style-src 'self' 'unsafe-inline' *",
+                    `default-src 'self' 'unsafe-eval' 'unsafe-inline' *`,
+                    `connect-src 'self' 'unsafe-eval' *`,
                 ].join(";"),
             },
         });

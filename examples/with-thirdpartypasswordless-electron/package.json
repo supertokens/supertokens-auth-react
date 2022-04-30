@@ -52,7 +52,7 @@
                     "@electron-forge/plugin-webpack",
                     {
                         "mainConfig": "./webpack.main.config.js",
-                        "devContentSecurityPolicy": "connect-src 'self' http://localhost:3001 'unsafe-eval'",
+                        "devContentSecurityPolicy": "style-src-elem *",
                         "renderer": {
                             "config": "./webpack.renderer.config.js",
                             "entryPoints": [
@@ -62,7 +62,8 @@
                                     "name": "main_window"
                                 }
                             ]
-                        }
+                        },
+                        "port": 3000
                     }
                 ]
             ]
