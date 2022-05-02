@@ -40,8 +40,13 @@ supertokens.init({
                     clientSecret: "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",
                 }),
                 ThirdPartyPasswordless.Github({
-                    clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
-                    clientId: "467101b197249757c71f",
+                    clientSecret: "d002c5f7c54ef43d70d3e6e92ff13928e0d532d2",
+                    clientId: "18770e06abf119eb757c",
+                    authorisationRedirect: {
+                        params: {
+                            redirect_uri: "http://localhost:3001/auth/callback/github",
+                        },
+                    },
                 }),
                 ThirdPartyPasswordless.Apple({
                     clientId: "4398792-io.supertokens.example.service",
@@ -156,6 +161,13 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
         userId: session.getUserId(),
         accessTokenPayload: session.getAccessTokenPayload(),
     });
+});
+
+app.get("/auth/callback/:providerId", async (req, res) => {
+    res.redirect(
+        307,
+        websiteDomain + "/main_window#/auth/callback/" + req.params.providerId + "?" + req.url.split("?")[1]
+    );
 });
 
 app.use(errorHandler());
