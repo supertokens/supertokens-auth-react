@@ -61,10 +61,20 @@ supertokens.init({
             contactMethod: "EMAIL_OR_PHONE",
             flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
             createAndSendCustomEmail: async function (input) {
+                let finalUrlWithLinkCode;
+
+                if (input.urlWithLinkCode !== undefined) {
+                    let currentUrlWithLinkCode = new URL(input.urlWithLinkCode);
+                    finalUrlWithLinkCode = input.urlWithLinkCode.replace(
+                        currentUrlWithLinkCode.protocol,
+                        "suertokens-demo:"
+                    );
+                }
+
                 let htmlBody = getEmailBody(
                     APP_NAME,
                     Math.ceil(input.codeLifetime / 1000),
-                    input.urlWithLinkCode,
+                    finalUrlWithLinkCode,
                     input.userInputCode,
                     input.email
                 );
@@ -130,7 +140,10 @@ supertokens.init({
                 }
             },
         }),
-        Session.init(),
+        Session.init({
+            cookieSameSite: "none",
+            cookieSecure: true,
+        }),
     ],
 });
 
@@ -151,6 +164,7 @@ app.use(
         contentSecurityPolicy: false,
     })
 );
+
 app.use(middleware());
 
 // custom API that requires session verification
@@ -164,10 +178,7 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
 });
 
 app.get("/auth/callback/:providerId", async (req, res) => {
-    res.redirect(
-        307,
-        websiteDomain + "/main_window#/auth/callback/" + req.params.providerId + "?" + req.url.split("?")[1]
-    );
+    res.redirect(307, "supertokens-demo://" + "auth/callback/" + req.params.providerId + "?" + req.url.split("?")[1]);
 });
 
 app.use(errorHandler());
