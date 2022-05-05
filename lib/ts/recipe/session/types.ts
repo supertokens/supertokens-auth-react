@@ -15,7 +15,6 @@
 
 import { RecipeInterface } from "supertokens-website";
 import OverrideableBuilder from "supertokens-js-override";
-import { CookieHandlerInput } from "supertokens-website/utils/cookieHandling/types";
 
 export type RecipeEvent =
     | {
@@ -36,7 +35,6 @@ export type InputType = {
     autoAddCredentials?: boolean;
     isInIframe?: boolean;
     cookieDomain?: string;
-    cookieHandler?: CookieHandlerInput;
     preAPIHook?: (context: {
         action: "SIGN_OUT" | "REFRESH_SESSION";
         requestInit: RequestInit;

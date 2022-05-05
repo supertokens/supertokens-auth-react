@@ -21,6 +21,7 @@ import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } fr
 import { isTest } from "../../utils";
 import { InputType, RecipeEvent, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import sessionSdk from "supertokens-website";
+import SuperTokensCookieHandler from "../../cookieHandler";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
 
@@ -35,6 +36,9 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
 
         sessionSdk.init({
             ...config,
+            cookieHandler: () => {
+                return SuperTokensCookieHandler.getInstanceOrThrow().cookieHandler;
+            },
             onHandleEvent: (event) => {
                 if (config.onHandleEvent !== undefined) {
                     config.onHandleEvent(event);
