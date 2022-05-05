@@ -12,6 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { WindowUtilities as STWebsiteWindowUtils } from "supertokens-website/utils/webUtils";
+import { WindowUtilities as STWebsiteWindowUtils } from "supertokens-website/utils/windowUtils";
 
 export const WindowUtilities = STWebsiteWindowUtils;
