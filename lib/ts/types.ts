@@ -19,6 +19,7 @@ import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
+import { CookieHandlerInput } from "supertokens-website/utils/cookieHandling/types";
 
 /*
  * Recipe Module Manager Config Types.
@@ -34,6 +35,8 @@ export type SuperTokensConfig = {
      * List of recipes for authentication and session management.
      */
     recipeList: CreateRecipeFunction<any, any, any, any>[];
+
+    cookieHandler?: CookieHandlerInput;
 
     languageTranslations?: {
         /*

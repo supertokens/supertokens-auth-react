@@ -14,6 +14,7 @@
  */
 
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
+import SuperTokensCookieHandler from "./cookieHandler";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
@@ -319,7 +320,7 @@ export function getDefaultCookieScope(): string | undefined {
 }
 
 export function getCookieValue(name: string): string | null {
-    const value = "; " + WindowUtilities.document.cookie;
+    const value = "; " + SuperTokensCookieHandler.getInstanceOrThrow().cookieHandler.getCookieSync();
     const parts = value.split("; " + name + "=");
     if (parts.length >= 2) {
         const last = parts.pop();
@@ -346,15 +347,23 @@ export function setFrontendCookie(name: string, value: string | undefined, scope
         // since some browsers ignore cookies with domain set to localhost
         // see https://github.com/supertokens/supertokens-website/issues/25
         if (expires !== undefined) {
-            WindowUtilities.document.cookie = `${name}=${cookieVal};expires=${expires};path=/;samesite=lax`;
+            SuperTokensCookieHandler.getInstanceOrThrow().cookieHandler.setCookieSync(
+                `${name}=${cookieVal};expires=${expires};path=/;samesite=lax`
+            );
         } else {
-            WindowUtilities.document.cookie = `${name}=${cookieVal};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`;
+            SuperTokensCookieHandler.getInstanceOrThrow().cookieHandler.setCookieSync(
+                `${name}=${cookieVal};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`
+            );
         }
     } else {
         if (expires !== undefined) {
-            WindowUtilities.document.cookie = `${name}=${cookieVal};expires=${expires};domain=${scope};path=/;samesite=lax`;
+            SuperTokensCookieHandler.getInstanceOrThrow().cookieHandler.setCookieSync(
+                `${name}=${cookieVal};expires=${expires};domain=${scope};path=/;samesite=lax`
+            );
         } else {
-            WindowUtilities.document.cookie = `${name}=${cookieVal};domain=${scope};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`;
+            SuperTokensCookieHandler.getInstanceOrThrow().cookieHandler.setCookieSync(
+                `${name}=${cookieVal};domain=${scope};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`
+            );
         }
     }
 }
