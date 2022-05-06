@@ -1,4 +1,4 @@
-import { CookieHandler } from "supertokens-auth-react/utils/cookieHandling";
+import { CookieHandlerInterface } from "supertokens-auth-react/utils/cookieHandler";
 
 const frontendCookiesKey = "frontendCookies";
 
@@ -49,7 +49,7 @@ function setCookieToStorage(cookieString: string) {
     window.localStorage.setItem(frontendCookiesKey, JSON.stringify(cookiesArray));
 }
 
-export default function getCookieHandler(original: CookieHandler): CookieHandler {
+export default function getCookieHandler(original: CookieHandlerInterface): CookieHandlerInterface {
     return {
         ...original,
         getCookie: async function () {
