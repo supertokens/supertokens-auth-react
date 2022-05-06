@@ -12,9 +12,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { WindowHandlerInterfaceReference } from "supertokens-website/utils/windowHandler";
+import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
 import { WindowHandlerInterface, WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
 
-export default WindowHandlerInterfaceReference;
+export default WindowHandlerReference;
 
-export { WindowHandlerInterfaceReference, WindowHandlerInterface, WindowHandlerInput };
+export { WindowHandlerReference, WindowHandlerInterface, WindowHandlerInput };

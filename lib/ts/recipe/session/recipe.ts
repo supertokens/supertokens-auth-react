@@ -21,8 +21,8 @@ import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } fr
 import { isTest } from "../../utils";
 import { InputType, RecipeEvent, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import sessionSdk from "supertokens-website";
-import CookieHandlerInterfaceReference from "../../common/cookieHandler";
-import WindowHandlerInterfaceReference from "../../common/windowHandler";
+import CookieHandlerReference from "../../common/cookieHandler";
+import WindowHandlerReference from "../../common/windowHandler";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
 
@@ -38,10 +38,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         sessionSdk.init({
             ...config,
             cookieHandler: () => {
-                return CookieHandlerInterfaceReference.getReferenceOrThrow().cookieHandler;
+                return CookieHandlerReference.getReferenceOrThrow().cookieHandler;
             },
             windowHandler: () => {
-                return WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler;
+                return WindowHandlerReference.getReferenceOrThrow().windowHandler;
             },
             onHandleEvent: (event) => {
                 if (config.onHandleEvent !== undefined) {

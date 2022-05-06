@@ -14,12 +14,12 @@
  */
 
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
-import CookieHandlerInterfaceReference from "./common/cookieHandler";
+import CookieHandlerReference from "./common/cookieHandler";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
-import WindowHandlerInterfaceReference from "./common/windowHandler";
+import WindowHandlerReference from "./common/windowHandler";
 
 /*
  * getRecipeIdFromPath
@@ -32,26 +32,26 @@ export function getRecipeIdFromSearch(search: string): string | null {
 }
 
 export function clearErrorQueryParam(): void {
-    const newURL = new URL(WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.location.getHref());
+    const newURL = new URL(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHref());
     newURL.searchParams.delete("error");
     newURL.searchParams.delete("message");
-    WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.history.replaceState(
-        WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.history.getState(),
+    WindowHandlerReference.getReferenceOrThrow().windowHandler.history.replaceState(
+        WindowHandlerReference.getReferenceOrThrow().windowHandler.history.getState(),
         "",
-        WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.location.getHref()
+        WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHref()
     );
 }
 
 export function getQueryParams(param: string): string | null {
     const urlParams = new URLSearchParams(
-        WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.location.getSearch()
+        WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getSearch()
     );
     return urlParams.get(param);
 }
 
 export function getURLHash(): string {
     // By default it is returined with the "#" at the beginning, we cut that off here.
-    return WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.location.getHash().substr(1);
+    return WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHash().substr(1);
 }
 
 export function getRedirectToPathFromURL(): string | undefined {
@@ -167,9 +167,7 @@ export async function validateForm(
  * getCurrentNormalisedUrlPath
  */
 export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
-    return new NormalisedURLPath(
-        WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.location.getPathName()
-    );
+    return new NormalisedURLPath(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getPathName());
 }
 
 export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string {
@@ -199,7 +197,7 @@ export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<s
 export function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean {
     return () => {
         const recipeIdFromSearch = getRecipeIdFromSearch(
-            WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.location.getSearch()
+            WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getSearch()
         );
         return recipeIdFromSearch === recipeId;
     };
@@ -209,7 +207,7 @@ export function redirectWithFullPageReload(to: string): void {
     if (to.trim() === "") {
         to = "/";
     }
-    WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.location.setHref(to);
+    WindowHandlerReference.getReferenceOrThrow().windowHandler.location.setHref(to);
 }
 
 export function redirectWithHistory(to: string, history: any): void {
@@ -228,25 +226,23 @@ export function redirectWithHistory(to: string, history: any): void {
 }
 
 export function isIE(): boolean {
-    return WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.getDocument().documentMode !== undefined;
+    return WindowHandlerReference.getReferenceOrThrow().windowHandler.getDocument().documentMode !== undefined;
 }
 
 export function setSessionStorage(key: string, value: string): void {
-    WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.getSessionStorage().setItem(key, value);
+    WindowHandlerReference.getReferenceOrThrow().windowHandler.getSessionStorage().setItem(key, value);
 }
 
 export function getSessionStorage(key: string): string | null {
-    return WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.getSessionStorage().getItem(key);
+    return WindowHandlerReference.getReferenceOrThrow().windowHandler.getSessionStorage().getItem(key);
 }
 
 export function getOriginOfPage(): NormalisedURLDomain {
-    return new NormalisedURLDomain(
-        WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.location.getOrigin()
-    );
+    return new NormalisedURLDomain(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getOrigin());
 }
 
 export function getLocalStorage(key: string): string | null {
-    const res = WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.getLocalStorage().getItem(key);
+    const res = WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().getItem(key);
     if (res === null || res === undefined) {
         return null;
     }
@@ -254,11 +250,11 @@ export function getLocalStorage(key: string): string | null {
 }
 
 export function setLocalStorage(key: string, value: string): void {
-    WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.getLocalStorage().setItem(key, value);
+    WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().setItem(key, value);
 }
 
 export function removeFromLocalStorage(key: string): void {
-    WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.getLocalStorage().removeItem(key);
+    WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().removeItem(key);
 }
 
 export function mergeObjects<T>(obj1: T, obj2: T): T {
@@ -326,7 +322,7 @@ export function normaliseCookieScopeOrThrowError(cookieScope: string): string {
 export function getDefaultCookieScope(): string | undefined {
     try {
         return normaliseCookieScopeOrThrowError(
-            WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.location.getHostName()
+            WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHostName()
         );
     } catch {
         return undefined;
@@ -334,7 +330,7 @@ export function getDefaultCookieScope(): string | undefined {
 }
 
 export function getCookieValue(name: string): string | null {
-    const value = "; " + CookieHandlerInterfaceReference.getReferenceOrThrow().cookieHandler.getCookieSync();
+    const value = "; " + CookieHandlerReference.getReferenceOrThrow().cookieHandler.getCookieSync();
     const parts = value.split("; " + name + "=");
     if (parts.length >= 2) {
         const last = parts.pop();
@@ -359,27 +355,27 @@ export function setFrontendCookie(name: string, value: string | undefined, scope
     }
     if (
         scope === "localhost" ||
-        scope === WindowHandlerInterfaceReference.getReferenceOrThrow().windowHandler.location.getHostName() ||
+        scope === WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHostName() ||
         scope === undefined
     ) {
         // since some browsers ignore cookies with domain set to localhost
         // see https://github.com/supertokens/supertokens-website/issues/25
         if (expires !== undefined) {
-            CookieHandlerInterfaceReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
                 `${name}=${cookieVal};expires=${expires};path=/;samesite=lax`
             );
         } else {
-            CookieHandlerInterfaceReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
                 `${name}=${cookieVal};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`
             );
         }
     } else {
         if (expires !== undefined) {
-            CookieHandlerInterfaceReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
                 `${name}=${cookieVal};expires=${expires};domain=${scope};path=/;samesite=lax`
             );
         } else {
-            CookieHandlerInterfaceReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
                 `${name}=${cookieVal};domain=${scope};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`
             );
         }

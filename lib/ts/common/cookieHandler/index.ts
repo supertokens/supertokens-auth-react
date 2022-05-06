@@ -12,9 +12,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { CookieHandlerInterfaceReference } from "supertokens-website/utils/cookieHandler";
+import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
 import { CookieHandlerInterface, CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
 
-export default CookieHandlerInterfaceReference;
+export default CookieHandlerReference;
 
-export { CookieHandlerInterfaceReference, CookieHandlerInterface, CookieHandlerInput };
+export { CookieHandlerReference, CookieHandlerInterface, CookieHandlerInput };
