@@ -1,4 +1,4 @@
-/* Copyright (c) 2022, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2020, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -12,13 +12,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export * from "../../lib/build/cookieHandler";
-/**
- * 'export *' does not re-export a default.
- * import SuperTokens from "supertokens-website";
- * the above import statement won't be possible unless either
- * - user add "esModuleInterop": true in their tsconfig.json file
- * - we do the following change:
- */
-import * as _default from "../../lib/build/cookieHandler";
-export default _default;
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+exports.__esModule = true;
+__export(require("../../lib/build/common/cookieHandler"));

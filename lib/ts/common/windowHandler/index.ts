@@ -1,4 +1,4 @@
-/* Copyright (c) 2020, VRAI Labs and/or its affiliates. All rights reserved.
+/* Copyright (c) 2022, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
  * "License") as published by the Apache Software Foundation.
@@ -12,9 +12,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-"use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-exports.__esModule = true;
-__export(require("../../lib/build/windowHandler"));
+import { WindowHandlerInterfaceReference } from "supertokens-website/utils/windowHandler";
+import { WindowHandlerInterface, WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
+
+export default WindowHandlerInterfaceReference;
+
+export { WindowHandlerInterfaceReference, WindowHandlerInterface, WindowHandlerInput };
