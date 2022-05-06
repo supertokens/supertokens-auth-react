@@ -1,6 +1,6 @@
 <script lang="ts">
     import Navbar from "./Navbar.svelte";
-    import { beforeUpdate } from "svelte";
+    import { afterUpdate, onDestroy } from "svelte";
     import React from "react";
     import ReactDOM from "react-dom";
     import SuperTokens from "supertokens-auth-react";
@@ -8,7 +8,7 @@
     import Session from "supertokens-auth-react/recipe/session";
     import { Router, Route } from "svelte-navigator";
 
-    let container: ReactDOM.Container;
+    export let container: ReactDOM.Container;
 
     SuperTokens.init({
         appInfo: {
@@ -25,7 +25,8 @@
             Session.init(),
         ],
     });
-    beforeUpdate(() => {
+
+    afterUpdate(() => {
         class Sp extends React.Component {
             render() {
                 if (SuperTokens.canHandleRoute()) {
@@ -35,6 +36,11 @@
         }
         container = document.getElementById("root");
         ReactDOM.render(React.createElement(Sp), container);
+    });
+
+    onDestroy(() => {
+        container = document.getElementById("root");
+        ReactDOM.unmountComponentAtNode(container);
     });
 
     export let name: string;
@@ -53,8 +59,8 @@
             </p>
         </div>
     </Route>
-    <Route path="/auth">
-        <div bind:this={container} />
+    <Route path="/auth" primary={false}>
+        <main bind:this={container} />
     </Route>
 </Router>
 

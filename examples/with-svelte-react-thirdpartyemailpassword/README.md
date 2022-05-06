@@ -26,8 +26,7 @@ npm install
 This compiles and serves the Svelte App on port 8080 and starts up a server on port 4000.
 
 ```bash
-npm run start:server:dev #runs the server in development mode
-npm run dev #runs the client in development mode
+npm run dev
 ```
 
 The app will start on `http://localhost:8080`
