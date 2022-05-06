@@ -18,10 +18,6 @@ This also showcases how you can use the supertokens-auth-react SDK and any gener
 Use `npm` to install the project dependencies:
 
 ```bash
-cd client
-npm install
-
-cd ../server
 npm install
 ```
 
@@ -30,26 +26,23 @@ npm install
 This compiles and serves the Svelte App on port 8080 and starts up a server on port 4000.
 
 ```bash
-cd client
-npm run dev
-
-cd ../server
-npm run dev
+npm run start:server:dev #runs the server in development mode
+npm run dev #runs the client in development mode
 ```
 
 The app will start on `http://localhost:8080`
 
 If you would like to modify the website (http://localhost:8080) or the API server (http://localhost:4000) URL:
 
--   Change the `apiPort` or `apiDomain` values in `server/index.js`
--   Change the `apiPort` or `apiUrl` values in `client/src/App.svelte`
--   Change the `websitePort` or `websiteDomain` values in `server/index.js`
--   Change the `websitePort` or `websiteUrl` values in `client/src/App.svelte`
+-   Change the `apiPort` or `apiDomain` values in `server.js`
+-   Change the `apiPort` or `apiUrl` values in `src/App.svelte`
+-   Change the `websitePort` or `websiteDomain` values in `server.js`
+-   Change the `websitePort` or `websiteUrl` values in `src/App.svelte`
 
 ## Project structure & Parameters
 
--   The frontend code is located in the `client/src` folder.
--   The backend API is in the `server/index.js` file.
+-   The frontend code is located in the `/src` folder.
+-   The backend API is in the `index.js` file.
 
 ## Author
 

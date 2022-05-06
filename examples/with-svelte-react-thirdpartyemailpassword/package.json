@@ -7,7 +7,8 @@
         "dev": "rollup -c -w",
         "check": "svelte-check --tsconfig ./tsconfig.json",
         "start": "sirv public -s",
-        "start:dev": "sirv public --dev -s"
+        "start:server:dev": "nodemon server.js",
+        "start:server": "node server.js"
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^17.0.0",
@@ -18,6 +19,7 @@
         "@types/react": "^18.0.8",
         "@types/react-dom": "^18.0.3",
         "dotenv": "^16.0.0",
+        "nodemon": "^2.0.16",
         "rollup": "^2.3.4",
         "rollup-plugin-css-only": "^3.1.0",
         "rollup-plugin-livereload": "^2.0.0",
@@ -30,11 +32,14 @@
         "typescript": "^4.0.0"
     },
     "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.18.1",
         "react": "^18.1.0",
         "react-dom": "^18.1.0",
         "react-router-dom": "^6.3.0",
         "sirv-cli": "^2.0.0",
         "supertokens-auth-react": "^0.20.4",
+        "supertokens-node": "^9.2.0",
         "svelte-navigator": "^3.1.5"
     }
 }
