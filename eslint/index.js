@@ -38,21 +38,6 @@ module.exports = {
             },
         },
 
-        "no-direct-getwindoworthrow-object": {
-            create: function (context) {
-                return {
-                    Identifier(node) {
-                        if (node.name === "getWindowOrThrow") {
-                            context.report(
-                                node,
-                                "Do not access getWindowOrThrow directly. Please use WindowUtilities instead"
-                            );
-                        }
-                    },
-                };
-            },
-        },
-
         "no-css-without-data-supertokens": {
             create: function (context) {
                 return {
