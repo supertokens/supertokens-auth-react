@@ -95,3 +95,12 @@ export declare type PostAPIHookFunction = (context: {
     url: string;
     response: Response;
 }) => Promise<Response>;
+export declare type Awaited<T> = T extends null | undefined
+    ? T
+    : T extends object & {
+          then(onfulfilled: infer F): any;
+      }
+    ? F extends (value: infer V, ...args: any) => any
+        ? V
+        : never
+    : T;

@@ -19,146 +19,138 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 import * as React from "react";
-import { PureComponent, Fragment } from "react";
+import { useContext, useState, useMemo, useCallback, Fragment } from "react";
 import { RecipeInterface } from "../../../types";
-import { getQueryParams } from "../../../../../utils";
+import { clearQueryParams, getQueryParams, useOnMountAPICall } from "../../../../../utils";
 import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
-import { SessionContextType, SessionContext } from "../../../../session";
+import { SessionContext } from "../../../../session";
 import { defaultTranslationsEmailVerification } from "../../themes/translations";
 
 type Prop = FeatureBaseProps & { recipe: Recipe };
 
-class EmailVerification extends PureComponent<Prop, { status: "READY" | "LOADING"; token: string | undefined }> {
-    static contextType = SessionContext;
+export const EmailVerification: React.FC<Prop> = (props) => {
+    const sessionContext = useContext(SessionContext);
+    const [status, setStatus] = useState("LOADING");
 
-    constructor(props: Prop) {
-        super(props);
+    const modifiedRecipeImplementation = useMemo<RecipeInterface>(
+        () => ({
+            ...props.recipe.recipeImpl,
+            sendVerificationEmail: async (input) => {
+                const response = await props.recipe.recipeImpl.sendVerificationEmail(input);
+                clearQueryParams(["token"]);
+                return response;
+            },
+        }),
+        [props.recipe]
+    );
 
-        const token = getQueryParams("token");
-        if (token === null) {
-            this.state = {
-                status: "LOADING",
-                token: undefined,
-            };
-        } else {
-            this.state = {
-                status: "LOADING",
-                token,
-            };
-        }
-    }
-
-    signOut = async (): Promise<void> => {
-        try {
-            await this.props.recipe.config.signOut();
-            return await this.props.recipe.config.redirectToSignIn(this.props.history);
-        } catch (e) {}
-    };
-
-    onTokenInvalidRedirect = () => this.props.recipe.config.redirectToSignIn(this.props.history);
-    onEmailAlreadyVerified = () => this.props.recipe.config.postVerificationRedirect(this.props.history);
-    onContinueClicked = () => this.props.recipe.config.postVerificationRedirect(this.props.history);
-
-    modifiedRecipeImplementation: RecipeInterface = {
-        ...this.props.recipe.recipeImpl,
-        sendVerificationEmail: async (input) => {
-            const response = await this.props.recipe.recipeImpl.sendVerificationEmail(input);
-            this.setState(() => ({
-                token: undefined,
-            }));
-            return response;
-        },
-    };
-
-    async componentDidMount(): Promise<void> {
-        const sessionContext: SessionContextType = this.context;
-        // Redirect to login if no existing session and no token.
-        // We don't redirect if a token exists because the user might
-        // be verifying their token on another browser
-        if (this.state.token === undefined) {
+    const fetchIsEmailVerified = useCallback(async () => {
+        const token = getQueryParams("token") ?? undefined;
+        if (token === undefined) {
             if (!sessionContext.doesSessionExist) {
-                return await this.props.recipe.config.redirectToSignIn(this.props.history);
-            }
-
-            // we check if the email is already verified, and if it is, then we redirect the user
-            const isVerified = await this.props.recipe.recipeImpl.isEmailVerified({ config: this.props.recipe.config });
-            if (isVerified) {
-                return this.props.recipe.config.postVerificationRedirect(this.props.history);
+                await props.recipe.config.redirectToSignIn(props.history);
+            } else {
+                // we check if the email is already verified, and if it is, then we redirect the user
+                return props.recipe.recipeImpl.isEmailVerified({ config: props.recipe.config });
             }
         }
+        return false;
+    }, [props.recipe]);
 
-        this.setState((oldState) => {
-            return {
-                ...oldState,
-                status: "READY",
-            };
-        });
+    const checkIsEmailVerified = useCallback(
+        async (isVerified: boolean): Promise<void> => {
+            if (isVerified) {
+                return props.recipe.config.postVerificationRedirect(props.history);
+            }
+            setStatus("READY");
+        },
+        [props.recipe, setStatus]
+    );
+    useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified);
+
+    const signOut = useCallback(async (): Promise<void> => {
+        try {
+            await props.recipe.config.signOut();
+            return await props.recipe.config.redirectToSignIn(props.history);
+        } catch (e) {}
+    }, [props.recipe]);
+
+    const onTokenInvalidRedirect = useCallback(
+        () => props.recipe.config.redirectToSignIn(props.history),
+        [props.recipe, props.history]
+    );
+    const onEmailAlreadyVerified = useCallback(
+        () => props.recipe.config.postVerificationRedirect(props.history),
+        [props.recipe, props.history]
+    );
+    const onContinueClicked = useCallback(
+        () => props.recipe.config.postVerificationRedirect(props.history),
+        [props.recipe, props.history]
+    );
+
+    if (status === "LOADING") {
+        return <Fragment />;
     }
 
-    render = (): JSX.Element => {
-        if (this.state.status === "LOADING") {
-            return <Fragment />;
-        }
+    const componentOverrides = props.recipe.config.override.components;
 
-        const componentOverrides = this.props.recipe.config.override.components;
+    const sendVerifyEmailScreenFeature = props.recipe.config.sendVerifyEmailScreen;
 
-        const sendVerifyEmailScreenFeature = this.props.recipe.config.sendVerifyEmailScreen;
-
-        const sendVerifyEmailScreen = {
-            styleFromInit: sendVerifyEmailScreenFeature.style,
-            recipeImplementation: this.modifiedRecipeImplementation,
-            config: this.props.recipe.config,
-            signOut: this.signOut,
-            onEmailAlreadyVerified: this.onEmailAlreadyVerified,
-        };
-
-        const verifyEmailLinkClickedScreenFeature = this.props.recipe.config.verifyEmailLinkClickedScreen;
-
-        const verifyEmailLinkClickedScreen =
-            this.state.token === undefined
-                ? undefined
-                : {
-                      styleFromInit: verifyEmailLinkClickedScreenFeature.style,
-                      onTokenInvalidRedirect: this.onTokenInvalidRedirect,
-                      onContinueClicked: this.onContinueClicked,
-                      recipeImplementation: this.modifiedRecipeImplementation,
-                      config: this.props.recipe.config,
-                      token: this.state.token,
-                  };
-
-        const props = {
-            config: this.props.recipe.config,
-            sendVerifyEmailScreen: sendVerifyEmailScreen,
-            verifyEmailLinkClickedScreen,
-            hasToken: this.state.token !== undefined,
-        };
-
-        return (
-            <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper
-                    useShadowDom={this.props.recipe.config.useShadowDom}
-                    defaultStore={defaultTranslationsEmailVerification}>
-                    <Fragment>
-                        {/* No custom theme, use default. */}
-                        {this.props.children === undefined && <EmailVerificationTheme {...props} />}
-                        {/* Otherwise, custom theme is provided, propagate props. */}
-                        {this.props.children &&
-                            React.Children.map(this.props.children, (child) => {
-                                if (React.isValidElement(child)) {
-                                    return React.cloneElement(child, props);
-                                }
-
-                                return child;
-                            })}
-                    </Fragment>
-                </FeatureWrapper>
-            </ComponentOverrideContext.Provider>
-        );
+    const sendVerifyEmailScreen = {
+        styleFromInit: sendVerifyEmailScreenFeature.style,
+        recipeImplementation: modifiedRecipeImplementation,
+        config: props.recipe.config,
+        signOut: signOut,
+        onEmailAlreadyVerified: onEmailAlreadyVerified,
     };
-}
+
+    const verifyEmailLinkClickedScreenFeature = props.recipe.config.verifyEmailLinkClickedScreen;
+    const token = getQueryParams("token") ?? undefined;
+
+    const verifyEmailLinkClickedScreen =
+        token === undefined
+            ? undefined
+            : {
+                  styleFromInit: verifyEmailLinkClickedScreenFeature.style,
+                  onTokenInvalidRedirect: onTokenInvalidRedirect,
+                  onContinueClicked: onContinueClicked,
+                  recipeImplementation: modifiedRecipeImplementation,
+                  config: props.recipe.config,
+                  token,
+              };
+
+    const childProps = {
+        config: props.recipe.config,
+        sendVerifyEmailScreen: sendVerifyEmailScreen,
+        verifyEmailLinkClickedScreen,
+        hasToken: token !== undefined,
+    };
+
+    return (
+        <ComponentOverrideContext.Provider value={componentOverrides}>
+            <FeatureWrapper
+                useShadowDom={props.recipe.config.useShadowDom}
+                defaultStore={defaultTranslationsEmailVerification}>
+                <Fragment>
+                    {/* No custom theme, use default. */}
+                    {props.children === undefined && <EmailVerificationTheme {...childProps} />}
+                    {/* Otherwise, custom theme is provided, propagate props. */}
+                    {props.children &&
+                        React.Children.map(props.children, (child) => {
+                            if (React.isValidElement(child)) {
+                                return React.cloneElement(child, childProps);
+                            }
+
+                            return child;
+                        })}
+                </Fragment>
+            </FeatureWrapper>
+        </ComponentOverrideContext.Provider>
+    );
+};
 
 export default EmailVerification;

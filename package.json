@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.20.4",
+    "version": "0.20.5",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -47,8 +47,8 @@
         "pretty-quick": "^3.1.1",
         "prop-types": "^15.7.2",
         "puppeteer": "^11.0.0",
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0",
         "react-router-dom": "^6.2.1",
         "regenerator-runtime": "0.13.7",
         "size-limit": "^6.0.3",
@@ -65,7 +65,7 @@
         "mocha-multi": "1.1.6",
         "prop-types": "*",
         "react-phone-number-input": "3.1.41",
-        "react-select": "5.2.1",
+        "react-select": "5.3.0",
         "react-shadow": "19.0.2",
         "supertokens-js-override": "^0.0.4",
         "supertokens-website": "^10.0.8"
