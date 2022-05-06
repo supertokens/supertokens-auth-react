@@ -39,8 +39,6 @@ import {
     TranslationFunc,
     TranslationStore,
 } from "./translation/translationHelpers";
-import SuperTokensCookieHandler from "./cookieHandler";
-import SuperTokensWindowHandler from "./windowHandler";
 
 /*
  * Class.
@@ -74,8 +72,6 @@ export default class SuperTokens {
      */
     constructor(config: SuperTokensConfig) {
         this.appInfo = normaliseInputAppInfoOrThrowError(config.appInfo);
-        SuperTokensCookieHandler.init(config.cookieHandler);
-        SuperTokensWindowHandler.init(config.windowHandler);
 
         if (config.recipeList === undefined || config.recipeList.length === 0) {
             throw new Error(

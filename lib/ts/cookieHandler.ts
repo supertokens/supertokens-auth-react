@@ -12,37 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { defaultCookieHandler } from "supertokens-website/utils/cookieHandling";
-import { CookieHandler, CookieHandlerInput } from "supertokens-website/utils/cookieHandling/types";
+import { SuperTokensCookieHandler } from "supertokens-website/utils/cookieHandling/handler";
 
-export default class SuperTokensCookieHandler {
-    private static instance?: SuperTokensCookieHandler;
-
-    cookieHandler: CookieHandler;
-
-    constructor(cookieHandlerInput?: CookieHandlerInput) {
-        let cookieHandlerFunc: CookieHandlerInput = (original) => original;
-        if (cookieHandlerInput !== undefined) {
-            cookieHandlerFunc = cookieHandlerInput;
-        }
-
-        this.cookieHandler = cookieHandlerFunc(defaultCookieHandler);
-    }
-
-    static init(cookieHandlerInput?: CookieHandlerInput): void {
-        if (SuperTokensCookieHandler.instance !== undefined) {
-            console.warn("SuperTokensCookieHandler was already initialized");
-            return;
-        }
-
-        SuperTokensCookieHandler.instance = new SuperTokensCookieHandler(cookieHandlerInput);
-    }
-
-    static getInstanceOrThrow(): SuperTokensCookieHandler {
-        if (SuperTokensCookieHandler.instance === undefined) {
-            throw new Error("SuperTokensCookieHandler must be initialized before calling this method.");
-        }
-
-        return SuperTokensCookieHandler.instance;
-    }
-}
+export default SuperTokensCookieHandler;

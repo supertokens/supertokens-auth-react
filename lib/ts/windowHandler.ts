@@ -12,37 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { defaultWindowHandler } from "supertokens-website/utils/windowHandling";
-import { WindowHandler, WindowHandlerInput } from "supertokens-website/utils/windowHandling/types";
+import { SuperTokensWindowHandler } from "supertokens-website/utils/windowHandling/handler";
 
-export default class SuperTokensWindowHandler {
-    private static instance?: SuperTokensWindowHandler;
-
-    windowHandler: WindowHandler;
-
-    constructor(windowHandlerInput?: WindowHandlerInput) {
-        let windowHandlerFunc: WindowHandlerInput = (original) => original;
-        if (windowHandlerInput !== undefined) {
-            windowHandlerFunc = windowHandlerInput;
-        }
-
-        this.windowHandler = windowHandlerFunc(defaultWindowHandler);
-    }
-
-    static init(windowHandlerInput?: WindowHandlerInput): void {
-        if (SuperTokensWindowHandler.instance !== undefined) {
-            console.warn("SuperTokensWindowHandler was already initialized");
-            return;
-        }
-
-        SuperTokensWindowHandler.instance = new SuperTokensWindowHandler(windowHandlerInput);
-    }
-
-    static getInstanceOrThrow(): SuperTokensWindowHandler {
-        if (SuperTokensWindowHandler.instance === undefined) {
-            throw new Error("SuperTokensWindowHandler must be initialized before calling this method.");
-        }
-
-        return SuperTokensWindowHandler.instance;
-    }
-}
+export default SuperTokensWindowHandler;
