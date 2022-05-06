@@ -75,10 +75,7 @@ supertokens.init({
 
                 if (input.urlWithLinkCode !== undefined) {
                     let currentUrlWithLinkCode = new URL(input.urlWithLinkCode);
-                    finalUrlWithLinkCode = input.urlWithLinkCode.replace(
-                        currentUrlWithLinkCode.protocol,
-                        "suertokens-demo:"
-                    );
+                    finalUrlWithLinkCode = input.urlWithLinkCode.replace(currentUrlWithLinkCode.origin, apiDomain);
                 }
 
                 let htmlBody = getEmailBody(
@@ -191,9 +188,14 @@ app.get("/auth/callback/:providerId", async (req, res) => {
     res.redirect(307, "supertokens-demo://" + "auth/callback/" + req.params.providerId + "?" + req.url.split("?")[1]);
 });
 
+app.get("/auth/verify", async (req, res) => {
+    res.redirect(307, "supertokens-demo://auth/verify" + "?" + req.url.split("?")[1]);
+});
+
 app.use(errorHandler());
 
 app.use((err, req, res, next) => {
+    console.log(err);
     res.status(500).send("Internal error: " + err.message);
 });
 
