@@ -39,6 +39,8 @@ import {
     TranslationFunc,
     TranslationStore,
 } from "./translation/translationHelpers";
+import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
+import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
 
 /*
  * Class.
@@ -100,6 +102,9 @@ export default class SuperTokens {
      * Static Methods.
      */
     static init(config: SuperTokensConfig): void {
+        CookieHandlerReference.init(config.cookieHandler);
+        WindowHandlerReference.init(config.windowHandler);
+
         if (SuperTokens.instance !== undefined) {
             console.warn("SuperTokens was already initialized");
             return;

@@ -20,8 +20,6 @@ import { useTranslation } from "./translation/translationContext";
 import SuperTokens from "./superTokens";
 import { TranslationStore } from "./translation/translationHelpers";
 import { SuperTokensConfig } from "./types";
-import CookieHandlerReference from "./utils/cookieHandler";
-import WindowHandlerReference from "./utils/windowHandler";
 
 /*
  * API Wrapper exposed to user.
@@ -29,8 +27,6 @@ import WindowHandlerReference from "./utils/windowHandler";
 
 export default class SuperTokensAPIWrapper {
     static init(config: SuperTokensConfig): void {
-        CookieHandlerReference.init(config.cookieHandler);
-        WindowHandlerReference.init(config.windowHandler);
         SuperTokens.init(config);
     }
 
