@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /* Copyright (c) 2022, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
@@ -14,6 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-var handler_1 = require("supertokens-website/utils/windowHandling/handler");
-exports.SuperTokensWindowHandler = handler_1.SuperTokensWindowHandler;
-exports.default = handler_1.SuperTokensWindowHandler;
+import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
+import { WindowHandlerInterface, WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
+
+export default WindowHandlerReference;
+
+export { WindowHandlerReference, WindowHandlerInterface, WindowHandlerInput };

@@ -12,9 +12,13 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import { SuperTokensCookieHandler } from "supertokens-website/utils/cookieHandling/handler";
-import { CookieHandler, CookieHandlerInput } from "supertokens-website/utils/cookieHandling/types";
-
-export default SuperTokensCookieHandler;
-
-export { SuperTokensCookieHandler, CookieHandler, CookieHandlerInput };
+export * from "../../lib/build/common/cookieHandler";
+/**
+ * 'export *' does not re-export a default.
+ * import SuperTokens from "supertokens-website";
+ * the above import statement won't be possible unless either
+ * - user add "esModuleInterop": true in their tsconfig.json file
+ * - we do the following change:
+ */
+import * as _default from "../../lib/build/common/cookieHandler";
+export default _default;
