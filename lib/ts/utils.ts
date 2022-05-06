@@ -19,7 +19,7 @@ import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
-import { WindowUtilities } from "./windowUtils";
+import SuperTokensWindowHandler from "./windowHandler";
 
 /*
  * getRecipeIdFromPath
@@ -32,20 +32,26 @@ export function getRecipeIdFromSearch(search: string): string | null {
 }
 
 export function clearErrorQueryParam(): void {
-    const newURL = new URL(WindowUtilities.location.href);
+    const newURL = new URL(SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.location.getHref());
     newURL.searchParams.delete("error");
     newURL.searchParams.delete("message");
-    WindowUtilities.history.replaceState(WindowUtilities.history.state, "", WindowUtilities.location.href);
+    SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.history.replaceState(
+        SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.history.getState(),
+        "",
+        SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.location.getHref()
+    );
 }
 
 export function getQueryParams(param: string): string | null {
-    const urlParams = new URLSearchParams(WindowUtilities.location.search);
+    const urlParams = new URLSearchParams(
+        SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.location.getSearch()
+    );
     return urlParams.get(param);
 }
 
 export function getURLHash(): string {
     // By default it is returined with the "#" at the beginning, we cut that off here.
-    return WindowUtilities.location.hash.substr(1);
+    return SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.location.getHash().substr(1);
 }
 
 export function getRedirectToPathFromURL(): string | undefined {
@@ -161,7 +167,7 @@ export async function validateForm(
  * getCurrentNormalisedUrlPath
  */
 export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
-    return new NormalisedURLPath(WindowUtilities.location.pathname);
+    return new NormalisedURLPath(SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.location.getPathName());
 }
 
 export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string {
@@ -190,7 +196,9 @@ export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<s
  */
 export function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean {
     return () => {
-        const recipeIdFromSearch = getRecipeIdFromSearch(WindowUtilities.location.search);
+        const recipeIdFromSearch = getRecipeIdFromSearch(
+            SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.location.getSearch()
+        );
         return recipeIdFromSearch === recipeId;
     };
 }
@@ -199,7 +207,7 @@ export function redirectWithFullPageReload(to: string): void {
     if (to.trim() === "") {
         to = "/";
     }
-    WindowUtilities.location.href = to;
+    SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.location.setHref(to);
 }
 
 export function redirectWithHistory(to: string, history: any): void {
@@ -218,23 +226,23 @@ export function redirectWithHistory(to: string, history: any): void {
 }
 
 export function isIE(): boolean {
-    return WindowUtilities.document.documentMode !== undefined;
+    return SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.getDocument().documentMode !== undefined;
 }
 
 export function setSessionStorage(key: string, value: string): void {
-    WindowUtilities.sessionStorage.setItem(key, value);
+    SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.getSessionStorage().setItem(key, value);
 }
 
 export function getSessionStorage(key: string): string | null {
-    return WindowUtilities.sessionStorage.getItem(key);
+    return SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.getSessionStorage().getItem(key);
 }
 
 export function getOriginOfPage(): NormalisedURLDomain {
-    return new NormalisedURLDomain(WindowUtilities.location.origin);
+    return new NormalisedURLDomain(SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.location.getOrigin());
 }
 
 export function getLocalStorage(key: string): string | null {
-    const res = WindowUtilities.localStorage.getItem(key);
+    const res = SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.getLocalStorage().getItem(key);
     if (res === null || res === undefined) {
         return null;
     }
@@ -242,11 +250,11 @@ export function getLocalStorage(key: string): string | null {
 }
 
 export function setLocalStorage(key: string, value: string): void {
-    WindowUtilities.localStorage.setItem(key, value);
+    SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.getLocalStorage().setItem(key, value);
 }
 
 export function removeFromLocalStorage(key: string): void {
-    WindowUtilities.localStorage.removeItem(key);
+    SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.getLocalStorage().removeItem(key);
 }
 
 export function mergeObjects<T>(obj1: T, obj2: T): T {
@@ -313,7 +321,9 @@ export function normaliseCookieScopeOrThrowError(cookieScope: string): string {
 
 export function getDefaultCookieScope(): string | undefined {
     try {
-        return normaliseCookieScopeOrThrowError(WindowUtilities.location.hostname);
+        return normaliseCookieScopeOrThrowError(
+            SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.location.getHostName()
+        );
     } catch {
         return undefined;
     }
@@ -343,7 +353,11 @@ export function setFrontendCookie(name: string, value: string | undefined, scope
         cookieVal = value;
         expires = undefined; // set cookie without expiry
     }
-    if (scope === "localhost" || scope === WindowUtilities.location.hostname || scope === undefined) {
+    if (
+        scope === "localhost" ||
+        scope === SuperTokensWindowHandler.getInstanceOrThrow().windowHandler.location.getHostName() ||
+        scope === undefined
+    ) {
         // since some browsers ignore cookies with domain set to localhost
         // see https://github.com/supertokens/supertokens-website/issues/25
         if (expires !== undefined) {
