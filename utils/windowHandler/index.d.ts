@@ -12,7 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-export * from "../../lib/build/common/windowHandler";
+export * from "../../lib/build/utils/windowHandler";
 /**
  * 'export *' does not re-export a default.
  * import SuperTokens from "supertokens-website";
@@ -20,5 +20,5 @@ export * from "../../lib/build/common/windowHandler";
  * - user add "esModuleInterop": true in their tsconfig.json file
  * - we do the following change:
  */
-import * as _default from "../../lib/build/common/windowHandler";
+import * as _default from "../../lib/build/utils/windowHandler";
 export default _default;

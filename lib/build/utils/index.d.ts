@@ -1,7 +1,7 @@
-import NormalisedURLDomain from "./normalisedURLDomain";
-import NormalisedURLPath from "./normalisedURLPath";
-import { FormFieldError } from "./recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
+import NormalisedURLDomain from "../normalisedURLDomain";
+import NormalisedURLPath from "../normalisedURLPath";
+import { FormFieldError } from "../recipe/emailpassword/types";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "../types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
 export declare function clearErrorQueryParam(): void;
 export declare function getQueryParams(param: string): string | null;

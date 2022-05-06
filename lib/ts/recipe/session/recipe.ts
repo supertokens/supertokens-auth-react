@@ -21,8 +21,8 @@ import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } fr
 import { isTest } from "../../utils";
 import { InputType, RecipeEvent, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import sessionSdk from "supertokens-website";
-import CookieHandlerReference from "../../common/cookieHandler";
-import WindowHandlerReference from "../../common/windowHandler";
+import CookieHandlerReference from "../../utils/cookieHandler";
+import WindowHandlerReference from "../../utils/windowHandler";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
 
