@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 -   Adds an example app with emailpassword + vercel
+-   Adds an example app with svelte
 
 ## [0.20.4] - 2022-04-11
 
