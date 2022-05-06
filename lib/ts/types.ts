@@ -20,6 +20,7 @@ import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 import { CookieHandlerInput } from "supertokens-website/utils/cookieHandling/types";
+import { WindowHandlerInput } from "supertokens-website/utils/windowHandling/types";
 
 /*
  * Recipe Module Manager Config Types.
@@ -37,6 +38,8 @@ export type SuperTokensConfig = {
     recipeList: CreateRecipeFunction<any, any, any, any>[];
 
     cookieHandler?: CookieHandlerInput;
+
+    windowHandler?: WindowHandlerInput;
 
     languageTranslations?: {
         /*

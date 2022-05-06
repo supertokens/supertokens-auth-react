@@ -22,6 +22,7 @@ import { isTest } from "../../utils";
 import { InputType, RecipeEvent, RecipeEventWithSessionContext, SessionContextType } from "./types";
 import sessionSdk from "supertokens-website";
 import SuperTokensCookieHandler from "../../cookieHandler";
+import SuperTokensWindowHandler from "../../windowHandler";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
 
@@ -38,6 +39,9 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
             ...config,
             cookieHandler: () => {
                 return SuperTokensCookieHandler.getInstanceOrThrow().cookieHandler;
+            },
+            windowHandler: () => {
+                return SuperTokensWindowHandler.getInstanceOrThrow().windowHandler;
             },
             onHandleEvent: (event) => {
                 if (config.onHandleEvent !== undefined) {
