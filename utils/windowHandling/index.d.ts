@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /* Copyright (c) 2022, VRAI Labs and/or its affiliates. All rights reserved.
  *
  * This software is licensed under the Apache License, Version 2.0 (the
@@ -14,6 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-var handler_1 = require("supertokens-website/utils/cookieHandling/handler");
-exports.SuperTokensCookieHandler = handler_1.SuperTokensCookieHandler;
-exports.default = handler_1.SuperTokensCookieHandler;
+export * from "../../lib/build/windowHandler";
+/**
+ * 'export *' does not re-export a default.
+ * import SuperTokens from "supertokens-website";
+ * the above import statement won't be possible unless either
+ * - user add "esModuleInterop": true in their tsconfig.json file
+ * - we do the following change:
+ */
+import * as _default from "../../lib/build/windowHandler";
+export default _default;
