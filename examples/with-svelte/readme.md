@@ -8,7 +8,7 @@ This demo app demonstrates the following use cases:
 -   Sign up (on /signup) with email password
 -   Logout
 -   Forgot password flow
--   Session management 
+-   Session management
 -   ThirdParty Auth with google and github
 
 This also showcases how you can use the supertokens-auth-react SDK and any general react components inside a svelte app without any additional libraries.
@@ -54,5 +54,3 @@ If you would like to modify the website (http://localhost:8080) or the API serve
 ## Author
 
 Created with :heart: by the folks at supertokens.com.
-
-
