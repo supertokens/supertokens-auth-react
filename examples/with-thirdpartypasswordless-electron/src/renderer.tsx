@@ -59,6 +59,8 @@ function getCookiesFromStorage(): string {
         return "";
     }
 
+    // Check for expiry
+
     const cookieArray: string[] = JSON.parse(cookiesFromStorage);
 
     return cookieArray.join("; ");
@@ -90,6 +92,8 @@ function setCookieToStorage(cookieString: string) {
     } else {
         cookiesArray.push(cookieString);
     }
+
+    // Check for expiry
 
     window.localStorage.setItem(frontendCookiesKey, JSON.stringify(cookiesArray));
 }
