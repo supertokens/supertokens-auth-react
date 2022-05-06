@@ -61,7 +61,7 @@ import { EMAIL_EXISTS_API, SIGN_IN_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_U
 /*
  * Tests.
  */
-describe("SuperTokens SignIn with react router dom v5", function () {
+describe.skip("SuperTokens SignIn with react router dom v5", function () {
     let browser;
     let page;
     let consoleLogs = [];
