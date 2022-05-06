@@ -1,5 +1,5 @@
 import React from "react";
-import { websiteDomain } from "../config/supertokensConfig";
+import { websiteDomain } from "../config/appInfo";
 
 export default function iframe() {
     return (

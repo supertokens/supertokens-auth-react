@@ -1,10 +1,10 @@
 import { superTokensNextWrapper } from "supertokens-node/nextjs";
 import { verifySession } from "supertokens-node/recipe/session/framework/express";
 import supertokens from "supertokens-node";
-import * as SuperTokensConfig from "../../config/supertokensConfig";
 import NextCors from "nextjs-cors";
+import { backendConfig } from "../../config/backendConfig";
 
-supertokens.init(SuperTokensConfig.backendConfig());
+supertokens.init(backendConfig());
 
 export default async function user(req, res) {
     await NextCors(req, res, {

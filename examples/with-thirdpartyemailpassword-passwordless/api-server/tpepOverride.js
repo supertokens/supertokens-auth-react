@@ -1,5 +1,5 @@
 let {
-    getSuperTokensIdFromPrimaryId,
+    getTPEPSuperTokensIdFromPrimaryId,
     createPrimaryUserFromSuperTokensUser,
     getPrimaryUserFromSuperTokensId,
 } = require("./accountLinkingMap");
@@ -69,7 +69,7 @@ const tpepOverride = (ogImpl) => {
             //
             // Since the primary userId maps to multiple supertokens users,
             // we can use any one of them, but it has to be the same one each time.
-            input.userId = getSuperTokensIdFromPrimaryId(input.userId);
+            input.userId = getTPEPSuperTokensIdFromPrimaryId(input.userId);
             let user = await ogImpl.getUserById(input);
             if (user === undefined) {
                 return undefined;
@@ -105,7 +105,7 @@ const tpepOverride = (ogImpl) => {
             };
         },
         updateEmailOrPassword: async function (input) {
-            input.userId = getSuperTokensIdFromPrimaryId(input.userId);
+            input.userId = getTPEPSuperTokensIdFromPrimaryId(input.userId);
             return ogImpl.updateEmailOrPassword(input);
         },
     };
