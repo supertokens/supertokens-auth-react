@@ -20,8 +20,8 @@ import { useTranslation } from "./translation/translationContext";
 import SuperTokens from "./superTokens";
 import { TranslationStore } from "./translation/translationHelpers";
 import { SuperTokensConfig } from "./types";
-import CookieHandlerReference from "./common/cookieHandler";
-import WindowHandlerReference from "./common/windowHandler";
+import CookieHandlerReference from "./utils/cookieHandler";
+import WindowHandlerReference from "./utils/windowHandler";
 
 /*
  * API Wrapper exposed to user.
