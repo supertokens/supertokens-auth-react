@@ -29,7 +29,7 @@ npm install
 ngrok http 3001
 ```
 
-2. Set the resulting `ngrok` URL on Hasura dashboard as the `env` variable:
+2. Set the resulting `ngrok` URL on Hasura dashboard as the `env` variable `HASURA_GRAPHQL_JWT_SECRET`:
 
 ```
 {
@@ -39,7 +39,9 @@ ngrok http 3001
 
 3. Set `https://....ngrok.io/auth` in the `.env` file as the value for `JWT_ISSUER_URL` key.
 
-4. Start the app
+4. Replace the URL and query in `src/homeHome/CallAPIView.js` to match your Hasura config.
+
+5. Start the app
 
 ```bash
 npm run dev

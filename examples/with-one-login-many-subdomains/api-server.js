@@ -13,7 +13,7 @@ const apiDomain = process.env.REACT_APP_API_URL || `http://example.com:${apiPort
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://auth.example.com:${websitePort}`;
 
-const domainWhiteList = /^(http?:\/\/([a-z0-9]+[.])example[.]com(?::\d{1,5})?)$/;
+const domainWhiteList = /^(https?:\/\/([a-z0-9]+[.])example[.]com(?::\d{1,5})?)$/;
 
 function getUserDomain(email) {
     // extracts the userDomain from the email used to sign up
@@ -46,6 +46,8 @@ app.use(
         credentials: true,
     })
 );
+
+app.use(express.json());
 
 app.use(morgan("dev"));
 app.use(
