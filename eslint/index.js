@@ -30,7 +30,7 @@ module.exports = {
                         if (node.name === "window") {
                             context.report(
                                 node,
-                                "Do not access window object directly. Please use WindowUtilities instead"
+                                "Do not access window object directly. Please use WindowHandlerReference instead"
                             );
                         }
                     },
