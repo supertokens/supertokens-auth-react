@@ -13,13 +13,13 @@
  * under the License.
  */
 
-import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "../constants";
-import CookieHandlerReference from "../utils/cookieHandler";
-import NormalisedURLDomain from "../normalisedURLDomain";
-import NormalisedURLPath from "../normalisedURLPath";
-import { FormFieldError } from "../recipe/emailpassword/types";
-import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "../types";
-import WindowHandlerReference from "../utils/windowHandler";
+import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
+import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
+import NormalisedURLDomain from "./normalisedURLDomain";
+import NormalisedURLPath from "./normalisedURLPath";
+import { FormFieldError } from "./recipe/emailpassword/types";
+import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
+import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
 
 /*
  * getRecipeIdFromPath
