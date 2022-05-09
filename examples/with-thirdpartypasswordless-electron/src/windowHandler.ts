@@ -1,4 +1,4 @@
-import { WindowHandlerInterface } from "supertokens-auth-react/utils/windowHandler";
+import { WindowHandlerInterface } from "supertokens-website/utils/windowHandler/types";
 
 export default function getWindowHandler(original: WindowHandlerInterface): WindowHandlerInterface {
     return {

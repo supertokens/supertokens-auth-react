@@ -1,4 +1,4 @@
-import { CookieHandlerInterface } from "supertokens-auth-react/utils/cookieHandler";
+import { CookieHandlerInterface } from "supertokens-website/utils/cookieHandler/types";
 
 const frontendCookiesKey = "frontendCookies";
 
