@@ -11,9 +11,11 @@ if (require("electron-squirrel-startup")) {
     app.quit();
 }
 
+let mainWindow: BrowserWindow | undefined;
+
 const createWindow = (): void => {
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         height: 600,
         width: 800,
     });
@@ -36,6 +38,7 @@ if (process.defaultApp) {
 }
 
 app.on("open-url", (event, url) => {
+    mainWindow?.focus();
     if (app.isPackaged) {
         // Production mode
         const finalUrl = url.replace(
