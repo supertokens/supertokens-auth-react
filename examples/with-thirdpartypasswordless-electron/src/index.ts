@@ -5,6 +5,12 @@ import { app, BrowserWindow, session, dialog } from "electron";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 import path from "path";
 
+/**
+ * Change this to match the protocol you want to use. Make sure to change the same
+ * variable inside api-server/index.js as well
+ */
+const deeplinkProtocol = "supertokens-demo";
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
     // eslint-disable-line global-require
@@ -31,24 +37,33 @@ const createWindow = (): void => {
 
 if (process.defaultApp) {
     if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient("supertokens-demo", process.execPath, [path.resolve(process.argv[1])]);
+        app.setAsDefaultProtocolClient(deeplinkProtocol, process.execPath, [path.resolve(process.argv[1])]);
     }
 } else {
-    app.setAsDefaultProtocolClient("supertokens-demo");
+    app.setAsDefaultProtocolClient(deeplinkProtocol);
 }
 
 app.on("open-url", (event, url) => {
     mainWindow?.focus();
+    /**
+     * Depending on whether or not the application is running in production mode,
+     * we modify the incoming URL.
+     */
     if (app.isPackaged) {
-        // Production mode
+        /**
+         * In production mode we get the full path of where the app is running and replace
+         * the deeplink protocol with a file protocol
+         */
         const finalUrl = url.replace(
-            "supertokens-demo://",
+            `${deeplinkProtocol}://`,
             "file://" + __dirname + "/../renderer/main_window/index.html#/"
         );
         BrowserWindow.getFocusedWindow().loadURL(finalUrl);
     } else {
-        // Redirect to the main process
-        const finalUrl = url.replace("supertokens-demo://", "http://localhost:3000/main_window#/");
+        /**
+         * In development the app uses a webpack server on localhost
+         */
+        const finalUrl = url.replace(`${deeplinkProtocol}://`, "http://localhost:3000/main_window#/");
         BrowserWindow.getFocusedWindow().loadURL(finalUrl);
     }
 });

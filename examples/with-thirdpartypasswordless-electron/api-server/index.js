@@ -16,6 +16,7 @@ const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
+const deeplinkProtocol = "supertokens-demo";
 
 const APP_NAME = "SuperTokens Demo App"; // TODO: Your app name
 supertokens.init({
@@ -38,6 +39,9 @@ supertokens.init({
                 ThirdPartyPasswordless.Google({
                     clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
                     clientSecret: "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",
+                    /**
+                     * We want the social provider to redirect to a specifc API route.
+                     */
                     authorisationRedirect: {
                         params: {
                             redirect_uri: `${apiDomain}/auth/callback/google`,
@@ -47,6 +51,9 @@ supertokens.init({
                 ThirdPartyPasswordless.Github({
                     clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
                     clientId: "467101b197249757c71f",
+                    /**
+                     * We want the social provider to redirect to a specifc API route.
+                     */
                     authorisationRedirect: {
                         params: {
                             redirect_uri: `${apiDomain}/auth/callback/github`,
@@ -61,6 +68,9 @@ supertokens.init({
                             "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
                         teamId: "YWQCXGJRJL",
                     },
+                    /**
+                     * We want the social provider to redirect to a specifc API route.
+                     */
                     authorisationRedirect: {
                         params: {
                             redirect_uri: `${apiDomain}/auth/callback/apple`,
@@ -74,6 +84,13 @@ supertokens.init({
                 let finalUrlWithLinkCode;
 
                 if (input.urlWithLinkCode !== undefined) {
+                    /**
+                     * Electron uses file protocol for production builds. SuperTokens does not currently support
+                     * file protocol URLs, as a workaround we add a `/auth/verify` route that redirects to the
+                     * eletron app using deeplinking.
+                     *
+                     * Here we modify the magic link to use the apiDomain instead of the websiteDomain
+                     */
                     let currentUrlWithLinkCode = new URL(input.urlWithLinkCode);
                     finalUrlWithLinkCode = input.urlWithLinkCode.replace(currentUrlWithLinkCode.origin, apiDomain);
                 }
@@ -85,6 +102,11 @@ supertokens.init({
                     input.userInputCode,
                     input.email
                 );
+
+                /**
+                 * This will not work if you have not set up your email credentials in the .env file. Refer to .env.example
+                 * in this example app to know which environment variables you need to set.
+                 */
                 await mailTransporter.sendMail({
                     html: htmlBody,
                     to: input.email,
@@ -147,6 +169,10 @@ supertokens.init({
                 }
             },
         }),
+        /**
+         * Electron does not work well with same site and secure cookies. This makes cookies set by
+         * SuperTokens use SameSite: None and Secure: false
+         */
         Session.init({
             cookieSameSite: "none",
             cookieSecure: true,
@@ -184,12 +210,26 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
     });
 });
 
+/**
+ * Social providers do not support HashRouter compatible links and because electron uses file protocol
+ * in production mode, routing on the frontend app will fail. To get around this we use the apiDomain
+ * when configuring a redirect url for the social provider.
+ *
+ * This route redirects to the app using deeplinking
+ */
 app.get("/auth/callback/:providerId", async (req, res) => {
-    res.redirect(307, "supertokens-demo://" + "auth/callback/" + req.params.providerId + "?" + req.url.split("?")[1]);
+    res.redirect(
+        307,
+        `${deeplinkProtocol}://` + "auth/callback/" + req.params.providerId + "?" + req.url.split("?")[1]
+    );
 });
 
+/**
+ * Electron uses file protocol in production mode. SuperTokens does not currently support file protocol URLs,
+ * as a workaround the magic link uses the apiDomain and this route redirects to the app using deeplinks.
+ */
 app.get("/auth/verify", async (req, res) => {
-    res.redirect(307, "supertokens-demo://auth/verify" + "?" + req.url.split("?")[1]);
+    res.redirect(307, `${deeplinkProtocol}://auth/verify` + "?" + req.url.split("?")[1]);
 });
 
 app.use(errorHandler());

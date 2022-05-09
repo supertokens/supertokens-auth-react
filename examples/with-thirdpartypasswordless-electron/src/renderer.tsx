@@ -46,6 +46,11 @@ export function getApiDomain() {
 }
 
 export function getWebsiteDomain() {
+    /**
+     * In production mode, Electron uses file protocol. Supertokens
+     * does not currently support file protocol URLs for websiteDomain
+     * but using localhost does not cause any problems
+     */
     const websitePort = 3000;
     const websiteUrl = `http://localhost:${websitePort}`;
     return websiteUrl;
@@ -57,8 +62,12 @@ SuperTokens.init({
         apiDomain: getApiDomain(), // TODO: Change to your app's API domain
         websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
     },
-    cookieHandler: getCookieHandler,
-    windowHandler: getWindowHandler,
+    /**
+     * Electron handles cookies and Window API calls differently. We use custom handlers
+     * here to make sure SuperTokens can access the information correctly
+     */
+    cookieHandler: getCookieHandler, // Refer to src/cookieHandler.ts
+    windowHandler: getWindowHandler, // Refer to src/windowHandler.ts
     recipeList: [
         ThirdPartyPasswordless.init({
             signInUpFeature: {
