@@ -13,16 +13,13 @@
  * under the License.
  */
 
-import {
-    DEFAULT_API_BASE_PATH,
-    DEFAULT_WEBSITE_BASE_PATH,
-    RECIPE_ID_QUERY_PARAM,
-    WINDOW_UNDEFINED_ERROR,
-} from "./constants";
+import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
+import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import NormalisedURLPath from "./normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
+import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
 
 /*
  * getRecipeIdFromPath
@@ -35,21 +32,26 @@ export function getRecipeIdFromSearch(search: string): string | null {
 }
 
 export function clearErrorQueryParam(): void {
-    const myWindow = getWindowOrThrow();
-    const newURL = new URL(myWindow.location.href);
+    const newURL = new URL(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHref());
     newURL.searchParams.delete("error");
     newURL.searchParams.delete("message");
-    myWindow.history.replaceState(myWindow.history.state, undefined, newURL);
+    WindowHandlerReference.getReferenceOrThrow().windowHandler.history.replaceState(
+        WindowHandlerReference.getReferenceOrThrow().windowHandler.history.getState(),
+        "",
+        WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHref()
+    );
 }
 
 export function getQueryParams(param: string): string | null {
-    const urlParams = new URLSearchParams(getWindowOrThrow().location.search);
+    const urlParams = new URLSearchParams(
+        WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getSearch()
+    );
     return urlParams.get(param);
 }
 
 export function getURLHash(): string {
     // By default it is returined with the "#" at the beginning, we cut that off here.
-    return getWindowOrThrow().location.hash.substr(1);
+    return WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHash().substr(1);
 }
 
 export function getRedirectToPathFromURL(): string | undefined {
@@ -165,7 +167,7 @@ export async function validateForm(
  * getCurrentNormalisedUrlPath
  */
 export function getCurrentNormalisedUrlPath(): NormalisedURLPath {
-    return new NormalisedURLPath(getWindowOrThrow().location.pathname);
+    return new NormalisedURLPath(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getPathName());
 }
 
 export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<string, string>): string {
@@ -189,21 +191,14 @@ export function appendQueryParamsToURL(stringUrl: string, queryParams?: Record<s
     }
 }
 
-function getWindowOrThrow(): any {
-    // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
-    if (typeof window === "undefined") {
-        throw new Error(WINDOW_UNDEFINED_ERROR);
-    }
-
-    // eslint-disable-next-line supertokens-auth-react/no-direct-window-object
-    return window;
-}
 /*
  * Default method for matching recipe route based on query params.
  */
 export function matchRecipeIdUsingQueryParams(recipeId: string): () => boolean {
     return () => {
-        const recipeIdFromSearch = getRecipeIdFromSearch(getWindowOrThrow().location.search);
+        const recipeIdFromSearch = getRecipeIdFromSearch(
+            WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getSearch()
+        );
         return recipeIdFromSearch === recipeId;
     };
 }
@@ -212,7 +207,7 @@ export function redirectWithFullPageReload(to: string): void {
     if (to.trim() === "") {
         to = "/";
     }
-    getWindowOrThrow().location.href = to;
+    WindowHandlerReference.getReferenceOrThrow().windowHandler.location.setHref(to);
 }
 
 export function redirectWithHistory(to: string, history: any): void {
@@ -231,23 +226,23 @@ export function redirectWithHistory(to: string, history: any): void {
 }
 
 export function isIE(): boolean {
-    return getWindowOrThrow().document.documentMode !== undefined;
+    return WindowHandlerReference.getReferenceOrThrow().windowHandler.getDocument().documentMode !== undefined;
 }
 
 export function setSessionStorage(key: string, value: string): void {
-    getWindowOrThrow().sessionStorage.setItem(key, value);
+    WindowHandlerReference.getReferenceOrThrow().windowHandler.getSessionStorage().setItem(key, value);
 }
 
-export function getSessionStorage(key: string): string {
-    return getWindowOrThrow().sessionStorage.getItem(key);
+export function getSessionStorage(key: string): string | null {
+    return WindowHandlerReference.getReferenceOrThrow().windowHandler.getSessionStorage().getItem(key);
 }
 
 export function getOriginOfPage(): NormalisedURLDomain {
-    return new NormalisedURLDomain(getWindowOrThrow().location.origin);
+    return new NormalisedURLDomain(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getOrigin());
 }
 
 export function getLocalStorage(key: string): string | null {
-    const res = getWindowOrThrow().localStorage.getItem(key);
+    const res = WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().getItem(key);
     if (res === null || res === undefined) {
         return null;
     }
@@ -255,11 +250,11 @@ export function getLocalStorage(key: string): string | null {
 }
 
 export function setLocalStorage(key: string, value: string): void {
-    getWindowOrThrow().localStorage.setItem(key, value);
+    WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().setItem(key, value);
 }
 
 export function removeFromLocalStorage(key: string): void {
-    getWindowOrThrow().localStorage.removeItem(key);
+    WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().removeItem(key);
 }
 
 export function mergeObjects<T>(obj1: T, obj2: T): T {
@@ -326,14 +321,16 @@ export function normaliseCookieScopeOrThrowError(cookieScope: string): string {
 
 export function getDefaultCookieScope(): string | undefined {
     try {
-        return normaliseCookieScopeOrThrowError(getWindowOrThrow().location.hostname);
+        return normaliseCookieScopeOrThrowError(
+            WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHostName()
+        );
     } catch {
         return undefined;
     }
 }
 
 export function getCookieValue(name: string): string | null {
-    const value = "; " + getWindowOrThrow().document.cookie;
+    const value = "; " + CookieHandlerReference.getReferenceOrThrow().cookieHandler.getCookieSync();
     const parts = value.split("; " + name + "=");
     if (parts.length >= 2) {
         const last = parts.pop();
@@ -356,19 +353,31 @@ export function setFrontendCookie(name: string, value: string | undefined, scope
         cookieVal = value;
         expires = undefined; // set cookie without expiry
     }
-    if (scope === "localhost" || scope === getWindowOrThrow().location.hostname || scope === undefined) {
+    if (
+        scope === "localhost" ||
+        scope === WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getHostName() ||
+        scope === undefined
+    ) {
         // since some browsers ignore cookies with domain set to localhost
         // see https://github.com/supertokens/supertokens-website/issues/25
         if (expires !== undefined) {
-            getWindowOrThrow().document.cookie = `${name}=${cookieVal};expires=${expires};path=/;samesite=lax`;
+            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+                `${name}=${cookieVal};expires=${expires};path=/;samesite=lax`
+            );
         } else {
-            getWindowOrThrow().document.cookie = `${name}=${cookieVal};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`;
+            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+                `${name}=${cookieVal};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`
+            );
         }
     } else {
         if (expires !== undefined) {
-            getWindowOrThrow().document.cookie = `${name}=${cookieVal};expires=${expires};domain=${scope};path=/;samesite=lax`;
+            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+                `${name}=${cookieVal};expires=${expires};domain=${scope};path=/;samesite=lax`
+            );
         } else {
-            getWindowOrThrow().document.cookie = `${name}=${cookieVal};domain=${scope};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`;
+            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+                `${name}=${cookieVal};domain=${scope};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`
+            );
         }
     }
 }
