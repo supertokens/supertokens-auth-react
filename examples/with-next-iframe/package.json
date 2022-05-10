@@ -11,11 +11,11 @@
     "dependencies": {
         "cors": "^2.8.5",
         "next": "latest",
-        "nextjs-cors": "^1.0.5",
-        "react": "17.0.1",
-        "react-dom": "17.0.1",
-        "supertokens-auth-react": "^0.19.0",
-        "supertokens-node": "^9.0.0"
+        "nextjs-cors": "^2.1.1",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0",
+        "supertokens-auth-react": "^0.20.0",
+        "supertokens-node": "^9.2.0"
     },
     "license": "MIT"
 }

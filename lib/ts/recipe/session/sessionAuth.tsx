@@ -16,10 +16,12 @@
 /*
  * Imports.
  */
-import React, { useEffect, useState, useContext, useRef, PropsWithChildren } from "react";
+import React, { useEffect, useState, useContext, useRef, PropsWithChildren, useCallback } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEventWithSessionContext, SessionContextType } from "./types";
+import { useOnMountAPICall } from "../../utils";
+import { toNamespacedPath } from "path";
 
 // if it's not the default context, it means SessionAuth from top has
 // given us a sessionContext.
@@ -60,41 +62,36 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
 
     const session = useRef(Session.getInstanceOrThrow());
 
-    // on mount
-    useEffect(() => {
-        let cancelUseEffect = false;
+    const buildContext = useCallback(async (): Promise<SessionContextType> => {
+        if (hasParentProvider(parentSessionContext)) {
+            return parentSessionContext;
+        }
 
-        const buildContext = async (): Promise<SessionContextType> => {
-            if (hasParentProvider(parentSessionContext)) {
-                return parentSessionContext;
-            }
+        if (context) {
+            return context;
+        }
 
-            const sessionExists = await session.current.doesSessionExist();
+        const sessionExists = await session.current.doesSessionExist();
 
-            if (sessionExists === false) {
-                return {
-                    doesSessionExist: false,
-                    accessTokenPayload: {},
-                    userId: "",
-                };
-            }
-
+        if (sessionExists === false) {
             return {
-                doesSessionExist: true,
-                accessTokenPayload: await session.current.getAccessTokenPayloadSecurely(),
-                userId: await session.current.getUserId(),
+                doesSessionExist: false,
+                accessTokenPayload: {},
+                userId: "",
             };
+        }
+
+        return {
+            doesSessionExist: true,
+            accessTokenPayload: await session.current.getAccessTokenPayloadSecurely(),
+            userId: await session.current.getUserId(),
         };
+    }, []);
 
-        async function setInitialContextAndMaybeRedirect() {
-            const toSetContext = await buildContext();
-
+    const setInitialContextAndMaybeRedirect = useCallback(
+        async (toSetContext: SessionContextType) => {
             // if this component is unmounting, or the context has already
             // been set, then we don't need to proceed...
-            if (cancelUseEffect) {
-                return;
-            }
-
             if (!toSetContext.doesSessionExist && props.requireAuth === true) {
                 props.redirectToLogin();
             } else {
@@ -102,19 +99,11 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
                     setContext(toSetContext);
                 }
             }
-        }
-        if (context === undefined) {
-            void setInitialContextAndMaybeRedirect();
-            return () => {
-                cancelUseEffect = true;
-            };
-        } else {
-            if (!context.doesSessionExist && props.requireAuth === true) {
-                props.redirectToLogin();
-            }
-            return;
-        }
-    }, []);
+        },
+        [toNamespacedPath, props]
+    );
+
+    useOnMountAPICall(buildContext, setInitialContextAndMaybeRedirect);
 
     // subscribe to events on mount
     useEffect(() => {

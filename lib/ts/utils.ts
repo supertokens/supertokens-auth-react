@@ -13,6 +13,7 @@
  * under the License.
  */
 
+import { useEffect, useRef } from "react";
 import {
     DEFAULT_API_BASE_PATH,
     DEFAULT_WEBSITE_BASE_PATH,
@@ -34,12 +35,19 @@ export function getRecipeIdFromSearch(search: string): string | null {
     return urlParams.get(RECIPE_ID_QUERY_PARAM);
 }
 
-export function clearErrorQueryParam(): void {
+export function clearQueryParams(paramNames: string[]): void {
     const myWindow = getWindowOrThrow();
     const newURL = new URL(myWindow.location.href);
-    newURL.searchParams.delete("error");
-    newURL.searchParams.delete("message");
+
+    for (const param of paramNames) {
+        newURL.searchParams.delete(param);
+    }
+
     myWindow.history.replaceState(myWindow.history.state, undefined, newURL);
+}
+
+export function clearErrorQueryParam(): void {
+    clearQueryParams(["error", "message"]);
 }
 
 export function getQueryParams(param: string): string | null {
@@ -372,3 +380,38 @@ export function setFrontendCookie(name: string, value: string | undefined, scope
         }
     }
 }
+
+export const useOnMountAPICall = <T>(
+    fetch: () => Promise<T>,
+    handleResponse: (consumeResp: T) => Promise<void>,
+    handleError?: (err: unknown, consumeResp: T | undefined) => void
+) => {
+    const consumeReq = useRef<Promise<T>>();
+
+    useEffect(() => {
+        const effect = async (signal: AbortSignal) => {
+            let resp;
+            try {
+                if (consumeReq.current === undefined) {
+                    consumeReq.current = fetch();
+                }
+
+                resp = await consumeReq.current;
+
+                if (!signal.aborted) {
+                    void handleResponse(resp);
+                }
+            } catch (err) {
+                if (!signal.aborted && handleError) {
+                    handleError(err, resp);
+                }
+            }
+        };
+        const ctrl = new AbortController();
+
+        void effect(ctrl.signal);
+        return () => {
+            ctrl.abort();
+        };
+    }, [consumeReq, fetch, handleResponse, handleError]);
+};
