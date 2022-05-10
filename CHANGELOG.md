@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
--   Adds an example app with emailpassword + vercel
+## [0.20.5] - 2022-05-10
+
+### Adds
+
+-   An example app with emailpassword + vercel
+-   A new config property `cookieHandler` that allows for custom handling when the SDK reads/writes cookies
+-   A new config property `windowHandler` that allows for custom handling when the SDK uses any functions from the Window API.
+-   An example app with thirdpartypasswordless + Electron
 
 ## [0.20.4] - 2022-04-11
 
