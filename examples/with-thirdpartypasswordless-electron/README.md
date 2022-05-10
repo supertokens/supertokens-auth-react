@@ -1,6 +1,6 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-# SuperTokens Passwordless (email or phone number) + Social login Demo app
+# SuperTokens Passwordless (email or phone number) + Social login Demo app with Electron client
 
 This demo app demonstrates the following use cases:
 
