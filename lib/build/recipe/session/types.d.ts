@@ -2,7 +2,7 @@ import { RecipeInterface } from "supertokens-website";
 import OverrideableBuilder from "supertokens-js-override";
 export declare type RecipeEvent =
     | {
-          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED";
+          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED" | "ACCESS_TOKEN_PAYLOAD_UPDATED";
       }
     | {
           action: "UNAUTHORISED";
