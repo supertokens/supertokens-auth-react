@@ -126,6 +126,9 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
                 case "REFRESH_SESSION":
                     setContext(event.sessionContext);
                     return;
+                case "ACCESS_TOKEN_PAYLOAD_UPDATED":
+                    setContext(event.sessionContext);
+                    return;
                 case "SIGN_OUT":
                     if (props.requireAuth !== true) {
                         setContext(event.sessionContext);

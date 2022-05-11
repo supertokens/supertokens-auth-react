@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.20.5",
+    "version": "0.21.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -68,7 +68,7 @@
         "react-select": "5.2.1",
         "react-shadow": "19.0.2",
         "supertokens-js-override": "^0.0.4",
-        "supertokens-website": "^10.1.0"
+        "supertokens-website": "^11.0.0"
     },
     "peerDependencies": {
         "react": ">=16.8.0"
@@ -105,7 +105,7 @@
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "15kb"
+            "limit": "17kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
