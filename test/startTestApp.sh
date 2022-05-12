@@ -15,6 +15,7 @@ function startFrontEnd () {
         echo "Starting test example app"
         # go to test app.
         cd ./examples/for-tests$1/
+        npm run link
         # Run static react app on PORT 3031.
         BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start
     )

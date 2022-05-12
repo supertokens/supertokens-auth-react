@@ -83,7 +83,7 @@
         "test-e2e": "./test/startTestApp.sh 8082",
         "test-e2e-with-non-node": "./test/startTestApp.sh 8083",
         "test-unit": "jest -c jest.config.js",
-        "link-dependencies": "./test/linkDependencies.sh $SRC",
+        "prep-test-app": "./test/prepTestApp.sh $SRC",
         "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit && cd ../test/with-typescript && npx tsc -p tsconfig.json",
         "tsc": "cd lib && npx tsc -p tsconfig.json",
         "build": "cd lib && rm -rf build && npx tsc -p tsconfig.json",

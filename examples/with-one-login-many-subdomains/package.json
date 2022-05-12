@@ -9,7 +9,7 @@
         "api-server": "node api-server.js",
         "api-server:dev": "nodemon api-server.js",
         "dev": "npm-run-all --parallel spa api-server:dev",
-        "link": "(cd ../.. && npm link) && cd frontend && npm link supertokens-auth-react && cd ../ && (cd ../.. && SRC=./examples/with-one-login-many-subdomains/frontend npm run link-dependencies)"
+        "link": "cd ../.. && SRC=./examples/with-one-login-many-subdomains/frontend npm run prep-test-app"
     },
     "author": "",
     "license": "ISC",

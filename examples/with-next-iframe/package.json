@@ -6,7 +6,7 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "link": "(cd ../../ && npm link) && npm link supertokens-auth-react && (cd ../../ && SRC=./examples/with-next-iframe npm run link-dependencies)"
+        "link": "cd ../../ && SRC=./examples/with-next-iframe npm run prep-test-app"
     },
     "dependencies": {
         "cors": "^2.8.5",
