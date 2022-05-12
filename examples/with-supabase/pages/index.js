@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
@@ -6,6 +6,8 @@ import dynamic from "next/dynamic";
 import supertokensNode from "supertokens-node";
 import { backendConfig } from "../config/backendConfig";
 import Session from "supertokens-node/recipe/session";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { getSupabase } from "../utils/supabase";
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
     new Promise((res) => res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)),
@@ -42,6 +44,25 @@ export default function Home(props) {
 }
 
 function ProtectedPage({ userId }) {
+    // retrieve the accessTokenPayload using sessionContext on the frontend
+    const { accessTokenPayload } = useSessionContext();
+
+    const [userName, setUserName] = useState(null);
+    useEffect(() => {
+        async function getUserName() {
+            // retrieves the supabase client who's JWT contains users userId, this will be
+            // used by supabase to check that the user can only access table entries which contain their own userId
+
+            const supabase = getSupabase(userId, accessTokenPayload.supabase_secret);
+            // retrieve the user name from the user_name table whose  user_id matches the input userId
+            const { data } = await supabase.from("user_name").select("user_name").eq("user_id", userId);
+            if (data[0] !== undefined) {
+                setUserName(data[0].user_name);
+            }
+        }
+        getUserName();
+    }, []);
+
     async function logoutClicked() {
         await ThirdPartyEmailPassword.signOut();
         ThirdPartyEmailPassword.redirectToAuth();
@@ -66,7 +87,11 @@ function ProtectedPage({ userId }) {
                 <h1 className={styles.title}>
                     Welcome to <a href="https://nextjs.org">Next.js!</a>
                 </h1>
-                <p className={styles.description}>You are authenticated with SuperTokens! (UserID: {userId})</p>
+                <p className={styles.description}>
+                    You are authenticated with SuperTokens! (UserID: {userId})
+                    <br />
+                    Your user-name retrieved from Supabase: (UserName: {userName})
+                </p>
 
                 <div
                     style={{

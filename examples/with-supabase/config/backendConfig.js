@@ -32,7 +32,29 @@ export let backendConfig = () => {
                     }),
                 ],
             }),
-            SessionNode.init(),
+            SessionNode.init({
+                override: {
+                    functions: (originalImplementation) => {
+                        return {
+                            ...originalImplementation,
+                            // We override the createNewSession function so we can store supabase's JWT secret signing key
+                            // so it can be used on the frontend
+                            createNewSession: async function (input) {
+                                let response = await originalImplementation.createNewSession(input);
+                                let currentAccessTokenPayload = await response.getAccessTokenPayload();
+
+                                // update the accessTokenPayload to include the supabase secret
+                                await response.updateAccessTokenPayload({
+                                    ...currentAccessTokenPayload,
+                                    supabase_secret: process.env.SUPABASE_SIGNING_SECRET,
+                                });
+
+                                return response;
+                            },
+                        };
+                    },
+                },
+            }),
         ],
         isInServerlessEnv: true,
     };
