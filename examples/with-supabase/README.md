@@ -1,20 +1,14 @@
-# SuperTokens Example
+# Supabase Intergration with SuperTokens Example
 
-This is a simple set up for applications protected by SuperTokens.
+This Nextjs App contains EmailPassword and Social Login based Authentication through SuperTokens with an intergration with Supabase
 
 ## How to use
 
--   Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
-
-```bash
-npx create-next-app --example with-supertokens with-supertokens-app
-# or
-yarn create next-app --example with-supertokens with-supertokens-app
-# or
-pnpm create next-app -- --example with-supertokens with-supertokens-app
 ```
 
 -   Run `yarn install`
+
+-   Add your Supbase apps's url, key and signing secret to the .env file
 
 -   Run `npm run dev` to start the application on `http://localhost:3000`.
 
@@ -22,3 +16,4 @@ pnpm create next-app -- --example with-supertokens with-supertokens-app
 
 -   Take a look at [SuperTokens documentation](https://supertokens.io/docs/community/introduction).
 -   We have provided development OAuth keys for the various in build third party providers in the `.env` file. Feel free to use them for development purposes, but **please create your own keys for production use**.
+```
