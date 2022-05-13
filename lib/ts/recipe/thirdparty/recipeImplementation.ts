@@ -97,7 +97,19 @@ export default function getRecipeImplementation(recipeId: string, appInfo: Norma
         },
         getOAuthState: function (): StateObject | undefined {
             try {
-                const state = JSON.parse(getSessionStorage("supertokens-oauth-state"));
+                let stateFromStorage = getSessionStorage("supertokens-oauth-state");
+
+                if (stateFromStorage === null) {
+                    /**
+                     * JSON.parse casts any input to string. null gets cast as "null"
+                     * which is a valid JSON string representation of null. This
+                     * conversion is to avoid type errors during compilation as reading
+                     * from storage can result in a null result
+                     */
+                    stateFromStorage = "null";
+                }
+
+                const state = JSON.parse(stateFromStorage);
                 if (state === null) {
                     return undefined;
                 }

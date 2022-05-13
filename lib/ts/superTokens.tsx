@@ -39,6 +39,8 @@ import {
     TranslationFunc,
     TranslationStore,
 } from "./translation/translationHelpers";
+import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
+import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
 
 /*
  * Class.
@@ -91,8 +93,13 @@ export default class SuperTokens {
             userTranslationFunc: translationConfig.translationFunc,
         };
 
+        let enableDebugLogs = false;
+        if (config.enableDebugLogs !== undefined) {
+            enableDebugLogs = config.enableDebugLogs;
+        }
+
         this.recipeList = config.recipeList.map((recipe) => {
-            return recipe(this.appInfo);
+            return recipe(this.appInfo, enableDebugLogs);
         });
     }
 
@@ -100,6 +107,9 @@ export default class SuperTokens {
      * Static Methods.
      */
     static init(config: SuperTokensConfig): void {
+        CookieHandlerReference.init(config.cookieHandler);
+        WindowHandlerReference.init(config.windowHandler);
+
         if (SuperTokens.instance !== undefined) {
             console.warn("SuperTokens was already initialized");
             return;
