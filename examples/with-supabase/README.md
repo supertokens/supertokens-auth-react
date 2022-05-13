@@ -1,3 +1,5 @@
+![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
+
 # Supabase Intergration with SuperTokens Example
 
 This Nextjs App contains EmailPassword and Social Login based Authentication through SuperTokens with an intergration with Supabase.
