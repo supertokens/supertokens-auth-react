@@ -22,8 +22,7 @@
         "server": "node api-server.js",
         "build": "react-scripts build",
         "test": "react-scripts test",
-        "eject": "react-scripts eject",
-        "link": "(cd ../.. && npm link) && npm link supertokens-auth-react && (cd ../.. && SRC=./examples/with-one-login-per-subdomain npm run link-dependencies)"
+        "eject": "react-scripts eject"
     },
     "browserslist": {
         "production": [

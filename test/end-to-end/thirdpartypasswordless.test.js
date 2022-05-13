@@ -36,6 +36,7 @@ import {
     getPasswordlessDevice,
     setPasswordlessFlowType,
     getFeatureFlags,
+    isReact16,
 } from "../helpers";
 import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
 import { getThirdPartyTestCases } from "./thirdparty.test";
@@ -53,6 +54,13 @@ describe("SuperTokens Third Party Passwordless", function () {
     let consoleLogs;
 
     const email = "bradparishdoh@gmail.com";
+
+    const signInUpPageLoadLogs = isReact16()
+        ? ["ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO"]
+        : [
+              "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+              "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+          ];
 
     before(async function () {
         const features = await getFeatureFlags();
@@ -180,10 +188,10 @@ describe("SuperTokens Third Party Passwordless", function () {
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                ...signInUpPageLoadLogs,
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO",
+                ...signInUpPageLoadLogs,
                 "ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE CREATE_CODE",
                 "ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS PASSWORDLESS_CREATE_CODE",
                 "ST_LOGS THIRDPARTYPASSWORDLESS ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT",
@@ -209,7 +217,7 @@ describe("SuperTokens Third Party Passwordless", function () {
             authRecipe: "thirdpartypasswordless",
             rid: "thirdpartypasswordless",
             logId: "THIRDPARTYPASSWORDLESS",
-            signInUpPageLoadLogs: ["ST_LOGS THIRDPARTYPASSWORDLESS OVERRIDE GET_LOGIN_ATTEMPT_INFO"],
+            signInUpPageLoadLogs,
             thirdPartySignInUpLog: "THIRD_PARTY_SIGN_IN_AND_UP",
         });
     });
