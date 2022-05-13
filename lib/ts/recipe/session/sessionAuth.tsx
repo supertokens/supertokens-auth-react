@@ -21,7 +21,6 @@ import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useOnMountAPICall } from "../../utils";
-import { toNamespacedPath } from "path";
 
 // if it's not the default context, it means SessionAuth from top has
 // given us a sessionContext.
@@ -100,7 +99,7 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
                 }
             }
         },
-        [toNamespacedPath, props]
+        [props]
     );
 
     useOnMountAPICall(buildContext, setInitialContextAndMaybeRedirect);
