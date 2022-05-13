@@ -18,9 +18,11 @@ export declare type SuperTokensConfig = {
         translations?: TranslationStore;
         translationFunc?: TranslationFunc;
     };
+    enableDebugLogs?: boolean;
 };
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
-    appInfo: NormalisedAppInfo
+    appInfo: NormalisedAppInfo,
+    enableDebugLogs: boolean
 ) => RecipeModule<T, S, R, N>;
 export declare type AppInfoUserInput = {
     appName: string;
