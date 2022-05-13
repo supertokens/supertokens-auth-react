@@ -14,16 +14,5 @@ export default function Auth() {
         }
     }, []);
 
-    return (
-        <div className={styles.container}>
-            <Head>
-                <title>SuperTokens 💫</title>
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-
-            <main className={styles.main}>
-                <SuperTokensComponentNoSSR />
-            </main>
-        </div>
-    );
+    return <SuperTokensComponentNoSSR />;
 }

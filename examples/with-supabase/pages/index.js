@@ -47,15 +47,15 @@ function ProtectedPage({ userId }) {
     // retrieve the accessTokenPayload using sessionContext on the frontend
     const { accessTokenPayload } = useSessionContext();
 
-    const [userName, setUserName] = useState(null);
+    const [userName, setUserName] = useState("");
     useEffect(() => {
         async function getUserName() {
             // retrieves the supabase client who's JWT contains users userId, this will be
             // used by supabase to check that the user can only access table entries which contain their own userId
-
-            const supabase = getSupabase(userId, accessTokenPayload.supabase_secret);
+            const supabase = getSupabase(accessTokenPayload.supabase_token);
             // retrieve the user name from the user_name table whose  user_id matches the input userId
             const { data } = await supabase.from("user_name").select("user_name").eq("user_id", userId);
+
             if (data[0] !== undefined) {
                 setUserName(data[0].user_name);
             }

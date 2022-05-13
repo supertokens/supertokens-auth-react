@@ -1,6 +1,7 @@
 import ThirdPartyEmailPasswordNode from "supertokens-node/recipe/thirdpartyemailpassword";
 import SessionNode from "supertokens-node/recipe/session";
 import { appInfo } from "./appInfo";
+import jwt from "jsonwebtoken";
 
 export let backendConfig = () => {
     return {
@@ -37,19 +38,24 @@ export let backendConfig = () => {
                     functions: (originalImplementation) => {
                         return {
                             ...originalImplementation,
-                            // We override the createNewSession function so we can store supabase's JWT secret signing key
+                            // We override the createNewSession function so we can store supabase's JWT
                             // so it can be used on the frontend
                             createNewSession: async function (input) {
-                                let response = await originalImplementation.createNewSession(input);
-                                let currentAccessTokenPayload = await response.getAccessTokenPayload();
+                                // set the supabase token in the users accessTokenPayload so that it can be used in the frontend
 
-                                // update the accessTokenPayload to include the supabase secret
-                                await response.updateAccessTokenPayload({
-                                    ...currentAccessTokenPayload,
-                                    supabase_secret: process.env.SUPABASE_SIGNING_SECRET,
-                                });
+                                const payload = {
+                                    userId: input.userId,
+                                    exp: Math.floor(Date.now() / 1000) + 60 * 60,
+                                };
 
-                                return response;
+                                const supabase_jwt_token = jwt.sign(payload, process.env.SUPABASE_SIGNING_SECRET);
+
+                                input.accessTokenPayload = {
+                                    ...input.accessTokenPayload,
+                                    supabase_token: supabase_jwt_token,
+                                };
+
+                                return await originalImplementation.createNewSession(input);
                             },
                         };
                     },
