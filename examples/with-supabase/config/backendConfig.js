@@ -38,11 +38,10 @@ export let backendConfig = () => {
                     functions: (originalImplementation) => {
                         return {
                             ...originalImplementation,
-                            // We override the createNewSession function so we can store supabase's JWT
-                            // so it can be used on the frontend
+                            // We want to create a JWT which contains the users SuperTokens UserId signed with Supabase's secret so
+                            // it can be used by Supabase to validate the user when retrieving user data from their service.
+                            // We store this token in the accessTokenPayload so it can be accessed on the frontend.
                             createNewSession: async function (input) {
-                                // set the supabase token in the users accessTokenPayload so that it can be used in the frontend
-
                                 const payload = {
                                     userId: input.userId,
                                     exp: Math.floor(Date.now() / 1000) + 60 * 60,
