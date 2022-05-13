@@ -70,10 +70,12 @@ export type SuperTokensConfig = {
          */
         translationFunc?: TranslationFunc;
     };
+    enableDebugLogs?: boolean;
 };
 
 export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
-    appInfo: NormalisedAppInfo
+    appInfo: NormalisedAppInfo,
+    enableDebugLogs: boolean
 ) => RecipeModule<T, S, R, N>;
 
 export type AppInfoUserInput = {

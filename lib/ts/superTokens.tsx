@@ -93,8 +93,13 @@ export default class SuperTokens {
             userTranslationFunc: translationConfig.translationFunc,
         };
 
+        let enableDebugLogs = false;
+        if (config.enableDebugLogs !== undefined) {
+            enableDebugLogs = config.enableDebugLogs;
+        }
+
         this.recipeList = config.recipeList.map((recipe) => {
-            return recipe(this.appInfo);
+            return recipe(this.appInfo, enableDebugLogs);
         });
     }
 
