@@ -5,8 +5,7 @@
     "scripts": {
         "dev": "next dev",
         "build": "next build",
-        "start": "next start",
-        "link": "cd ../../ && SRC=./examples/with-next-iframe npm run prep-test-app"
+        "start": "next start"
     },
     "dependencies": {
         "cors": "^2.8.5",
