@@ -20,9 +20,9 @@ This demo app demonstrates the following:
 -   Use `yarn` to install the project dependencies
     Install the apps dependencies
 
-        ```bash
-        yarn install
-        ```
+    ```bash
+    yarn install
+    ```
 
 -   Set your Supabase apps's URL, Key and JWT Signing Secret in the .env file. You can retrieve these config values from your Supabase Dashboard.
 
