@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   adds SuperTokens + Supabase example app
 
+## [0.21.1] - 2022-05-13
+
+-   Adds debug logging
+
 ## [0.21.0] - 2022-05-11
 
 ### Changes
