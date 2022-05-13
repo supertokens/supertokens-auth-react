@@ -10,11 +10,10 @@ This demo app demonstrates the following:
 -   Social Login with SuperTokens
 -   Retrieving user_name data, for the authenticated user from Supabase
 
-## [TODO] Supabase setup
+## Supabase setup
 
 -   You will need to setup a Supabase app and create a table which will contain a mapping between a user's SuperTokens user_id to their user_name.
 -   You will also need to create a policy for this table to ensure that only the authenticated user is allowed to retrieve this information
--   link to the supabase blog post
 
 ## Setup
 

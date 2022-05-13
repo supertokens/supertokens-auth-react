@@ -23,16 +23,16 @@ export default async function user(req, res) {
     // retrieve user name from supabase
     const { data } = await supabase.from("user_name").select("user_name").eq("user_id", userId);
 
-    let user_name = "";
+    let userName = "";
 
     if (data[0] !== undefined) {
-        user_name = data[0].user_name;
+        userName = data[0].user_name;
     }
 
     return res.json({
         note: "Fetch any data from your application for authenticated user after using verifySession middleware",
         userId,
-        user_name,
+        userName,
         sessionHandle: req.session.getHandle(),
         accessTokenPayload,
     });
