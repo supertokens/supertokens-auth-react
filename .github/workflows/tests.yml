@@ -29,7 +29,7 @@ on:
 jobs:
     test_job:
         name: Run tests
-        timeout-minutes: 60
+        timeout-minutes: 120
         runs-on: ubuntu-latest
         container: rishabhpoddar/supertokens_website_sdk_testing
         steps:

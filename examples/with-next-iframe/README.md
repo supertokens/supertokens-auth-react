@@ -16,7 +16,7 @@ ngrok http 3000
 
 ## Run the demo app
 
--   Put the https domain of ngrok in `config/supertokensConfig.js`
+-   Put the https domain of ngrok in `config/appInfo.js`
 
 -   Build and serve the Next app.
 

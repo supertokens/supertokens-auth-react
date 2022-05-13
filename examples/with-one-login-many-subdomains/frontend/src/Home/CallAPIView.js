@@ -1,12 +1,9 @@
 import axios from "axios";
 import Session from "supertokens-auth-react/recipe/session";
-import { useHistory } from "react-router-dom";
 import { getApiDomain } from "../utils";
 Session.addAxiosInterceptors(axios);
 
 export default function CallAPIView() {
-    const history = useHistory();
-
     async function callAPIClicked() {
         // this will also automatically refresh the session if needed
         let response = await axios.get(getApiDomain() + "/sessioninfo");

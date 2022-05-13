@@ -63,7 +63,7 @@ module.exports.cleanST = async function () {
     try {
         await module.exports.executeCommand("cd " + installationPath + " && rm licenseKey");
     } catch (ignored) {}
-    await module.exports.executeCommand("cd " + installationPath + " && rm config.yaml");
+    await module.exports.executeCommand("cd " + installationPath + " && rm -f config.yaml");
     await module.exports.executeCommand("cd " + installationPath + " && rm -rf .webserver-temp-*");
     await module.exports.executeCommand("cd " + installationPath + " && rm -rf .started");
 };

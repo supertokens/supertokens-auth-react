@@ -13,11 +13,12 @@
  * under the License.
  */
 
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState, useContext, useCallback } from "react";
 
 import { FeatureBaseProps } from "../../types";
 import Recipe from "./recipe";
 import { SessionContext } from "../session";
+import { useOnMountAPICall } from "../../utils";
 
 type Props = FeatureBaseProps & { recipe: Recipe };
 
@@ -34,42 +35,26 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     const emailVerificationMode = props.recipe.config.mode;
     const propsRef = React.useRef(props);
 
-    useEffect(() => {
-        let thisUseEffectMustReturnImmediately = false;
-        async function doTask() {
+    const checkIsEmailVerified = useCallback(async () => {
+        if (doesSessionExist && emailVerificationMode === "REQUIRED") {
+            return propsRef.current.recipe.isEmailVerified();
+        }
+        return undefined;
+    }, [doesSessionExist, emailVerificationMode]);
+    const useIsEmailVerified = useCallback(
+        async (isEmailVerified: boolean | undefined) => {
             if (doesSessionExist && emailVerificationMode === "REQUIRED") {
-                let isEmailVerified;
-                try {
-                    isEmailVerified = await propsRef.current.recipe.isEmailVerified();
-                } catch (_) {
-                    /* if there is an error, we assume that the email is verified
-                     * so that the user can see the content on the page...
-                     *
-                     * This is not a security issue since the backend should check
-                     * for email verification on each request anyway (via sessions...)
-                     */
-                    isEmailVerified = true;
-                }
-
-                if (thisUseEffectMustReturnImmediately) {
-                    return;
-                }
-
                 if (isEmailVerified === false) {
                     await propsRef.current.recipe.redirect({ action: "VERIFY_EMAIL" }, propsRef.current.history);
                 } else {
                     setIsEmailVerified(true);
                 }
             }
-        }
-        void doTask();
-        return () => {
-            // this means that the sessionContext or props have changed..
-            // so we should not update state or do anything anymore in this useEffect.
-            // We need this cause we are doing an async task in this.
-            thisUseEffectMustReturnImmediately = true;
-        };
-    }, [doesSessionExist, emailVerificationMode]);
+        },
+        [doesSessionExist, emailVerificationMode]
+    );
+
+    useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified);
 
     if (sessionContext.doesSessionExist === false) {
         return <>{children}</>;
