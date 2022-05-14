@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 -   Updated react dependency to react 18
+-   Added tests for react 18 and 16.
+-   Changed how linking is done for tests apps
+-   Changed e2e tests to not query test oauth provider when fetching profile info - since they are rate limited.
 
 ## [0.21.1] - 2022-05-13
 

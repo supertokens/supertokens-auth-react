@@ -53,7 +53,7 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 2. Start the testing environment
 
     ```
-    ./startTestingEnv --wait
+    ./startTestEnv --wait
     ```
 
 3. In a new terminal, navigate to the `supertokens-auth-react` repository.
