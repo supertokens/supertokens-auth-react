@@ -14,7 +14,7 @@ function startFrontEnd () {
     (
         echo "Starting test example app"
         # go to test app.
-        cd ./examples/for-tests/
+        cd ./examples/for-tests$1/
         # Run static react app on PORT 3031.
         BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start
     )
@@ -79,4 +79,12 @@ mkdir -p test_report/logs
 # Start front end test app and run tests.
 startEndToEnd &
 startFrontEnd >> test_report/logs/frontend.log 2>&1
+
+if ! [[ -z "${CI}" ]]; then
+    (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend-react16.log 2>&1 &)
+
+    IS_REACT_16=true RUN_RRD5=true startEndToEnd &
+    startFrontEnd -react-16 >> test_report/logs/frontend-react-16.log 2>&1
+    echo "React 16 tests passed"
+fi
 exit 0

@@ -1,0 +1,37 @@
+{
+    "name": "react-test-app",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "axios": "^0.21.0",
+        "react": "^16.14.0",
+        "react-dom": "^16.14.0",
+        "react-router-dom": "^6.2.1",
+        "react-router-domv5": "npm:react-router-dom@^5.2.0",
+        "react-scripts": "3.4.3"
+    },
+    "scripts": {
+        "prep": "cd ../../ && SRC=./examples/for-tests-react-16 npm run prep-test-app",
+        "start": "npm run prep && PORT=3031 react-scripts start",
+        "dev": "npx npm-run-all --parallel start server",
+        "server": "cd ../../ && npm run server",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}

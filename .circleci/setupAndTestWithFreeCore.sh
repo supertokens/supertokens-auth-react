@@ -39,7 +39,7 @@ cd ../supertokens-plugin-interface
 git checkout $pluginInterfaceTag
 cd ../
 echo $SUPERTOKENS_API_KEY > apiPassword
-./utils/setupTestEnvLocal
+./utils/setupTestEnv --local
 cd ../project/test/server/
 npm i -d
 npm i git+https://github.com:supertokens/supertokens-node.git#$2

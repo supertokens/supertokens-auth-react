@@ -686,3 +686,7 @@ export function setPasswordlessFlowType(contactMethod, flowType) {
         }),
     });
 }
+
+export function isReact16() {
+    return process.env.IS_REACT_16 === "true";
+}

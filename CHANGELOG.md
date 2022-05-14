@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   adds SuperTokens + Supabase example app
 
+## [0.21.3] - 2022-05-14
+
+-   Reverts version of react-select dependency
+
+## [0.21.2] - 2022-05-13
+
+### Fixes
+
+-   Fixed support for react 18 strict mode
+
+### Changes
+
+-   Updated react dependency to react 18
+-   Added tests for react 18 and 16.
+-   Changed how linking is done for tests apps
+-   Changed e2e tests to not query test oauth provider when fetching profile info - since they are rate limited.
+
 ## [0.21.1] - 2022-05-13
 
 -   Adds debug logging

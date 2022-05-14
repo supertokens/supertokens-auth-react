@@ -125,7 +125,11 @@ export const UserInputCodeForm = withOverride(
                             config: props.config,
                         });
 
-                        if (response.status === "OK" || response.status === "GENERAL_ERROR") {
+                        if (
+                            response.status === "OK" ||
+                            response.status === "GENERAL_ERROR" ||
+                            response.status === "RESTART_FLOW_ERROR"
+                        ) {
                             return response;
                         }
 
