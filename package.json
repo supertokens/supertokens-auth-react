@@ -65,15 +65,10 @@
         "mocha-multi": "1.1.6",
         "prop-types": "*",
         "react-phone-number-input": "3.1.41",
-        "react-select": "5.3.0",
+        "react-select": "5.2.1",
         "react-shadow": "19.0.2",
         "supertokens-js-override": "^0.0.4",
         "supertokens-website": "^11.0.1"
-    },
-    "overrides": {
-        "react-select": {
-            "@emotion/react": "$@emotion/react"
-        }
     },
     "peerDependencies": {
         "react": ">=16.8.0"
