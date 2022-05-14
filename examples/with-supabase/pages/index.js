@@ -4,6 +4,7 @@ import styles from "../styles/Home.module.css";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import dynamic from "next/dynamic";
 import supertokensNode from "supertokens-node";
+import ThirdPartyEmailPasswordNode from "supertokens-node/recipe/thirdpartyemailpassword";
 import { backendConfig } from "../config/backendConfig";
 import Session from "supertokens-node/recipe/session";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -30,34 +31,39 @@ export async function getServerSideProps(context) {
         }
     }
 
+    let email = (await ThirdPartyEmailPasswordNode.getUserById(session.getUserId())).email;
+
     return {
-        props: { userId: session.getUserId() },
+        props: { email },
     };
 }
 
 export default function Home(props) {
     return (
         <ThirdPartyEmailPasswordAuthNoSSR>
-            <ProtectedPage userId={props.userId} />
+            <ProtectedPage email={props.email} />
         </ThirdPartyEmailPasswordAuthNoSSR>
     );
 }
 
-function ProtectedPage({ userId }) {
+function ProtectedPage({ email }) {
     // retrieve the accessTokenPayload using sessionContext on the frontend
     const { accessTokenPayload } = useSessionContext();
 
     const [userName, setUserName] = useState("");
     useEffect(() => {
         async function getUserName() {
-            // retrieves the supabase client who's JWT contains users userId, this will be
-            // used by supabase to check that the user can only access table entries which contain their own userId
+            // retrieves the supabase client who's JWT contains users email, this will be
+            // used by supabase to check that the user can only access table entries which contain their own email
             const supabase = getSupabase(accessTokenPayload.supabase_token);
-            // retrieve the user name from the user_name table whose  user_id matches the input userId
-            const { data } = await supabase.from("user_name").select("user_name").eq("user_id", userId);
+            // retrieve the user's name from the users table whose email matches the email in the JWT
+            const { data } = await supabase.from("users").select("name").eq("email", email);
 
-            if (data[0] !== undefined) {
-                setUserName(data[0].user_name);
+            if (data.length == 0) {
+                console.log("You need to add a user in supabase with the email: " + email);
+                setUserName("Unknown user");
+            } else {
+                setUserName(data[0].name);
             }
         }
         getUserName();
@@ -88,9 +94,9 @@ function ProtectedPage({ userId }) {
                     Welcome to <a href="https://nextjs.org">Next.js!</a>
                 </h1>
                 <p className={styles.description}>
-                    You are authenticated with SuperTokens! (UserID: {userId})
+                    You are authenticated with SuperTokens! (Email: {email})
                     <br />
-                    Your user-name retrieved from Supabase: (UserName: {userName})
+                    Your user name retrieved from Supabase: {userName}
                 </p>
 
                 <div

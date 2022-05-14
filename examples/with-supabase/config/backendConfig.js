@@ -38,12 +38,13 @@ export let backendConfig = () => {
                     functions: (originalImplementation) => {
                         return {
                             ...originalImplementation,
-                            // We want to create a JWT which contains the users SuperTokens UserId signed with Supabase's secret so
+                            // We want to create a JWT which contains the users email signed with Supabase's secret so
                             // it can be used by Supabase to validate the user when retrieving user data from their service.
-                            // We store this token in the accessTokenPayload so it can be accessed on the frontend.
+                            // We store this token in the accessTokenPayload so it can be accessed on the frontend and on the backend.
                             createNewSession: async function (input) {
+                                let email = (await ThirdPartyEmailPasswordNode.getUserById(input.userId)).email;
                                 const payload = {
-                                    userId: input.userId,
+                                    email,
                                     exp: Math.floor(Date.now() / 1000) + 60 * 60,
                                 };
 
