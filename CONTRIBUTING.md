@@ -53,7 +53,7 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 2. Start the testing environment
 
     ```
-    ./startTestingEnv --wait
+    ./startTestEnv --wait
     ```
 
 3. In a new terminal, navigate to the `supertokens-auth-react` repository.
@@ -89,6 +89,8 @@ You can set the `SCREENSHOT_ROOT` env var to a path to automatically save screen
 1. `npm run start`
 
 Note: To test different recipes you need to update the value of `authRecipe` in local storage. For example `thirdpartyemailpassword` would result in that recipe being used. If there is no value for `authRecipe` set, the Email Password recipe is used by default
+
+Note: You need to restart the test app after code changes in the library to see their effects.
 
 ## Pull Request
 

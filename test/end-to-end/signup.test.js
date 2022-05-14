@@ -38,6 +38,7 @@ import {
     getAuthPageHeaderText,
     getLoginWithRedirectToSignUp,
     screenshotOnFailure,
+    isReact16,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -252,8 +253,17 @@ describe("SuperTokens SignUp", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
-                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                ...(isReact16()
+                    ? [
+                          "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
+                          "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                      ]
+                    : [
+                          "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
+                          "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                          "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
+                          "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                      ]),
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",

@@ -3,7 +3,7 @@ import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-
 import EmailPassword, { EmailPasswordAuth } from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
-import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
+import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 
 export function getDomain() {
@@ -34,14 +34,17 @@ function App() {
         <Router>
             <div className="App">
                 <div className="fill">
-                    <Switch>
+                    <Routes>
                         {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-                        <Route path="/">
-                            <EmailPasswordAuth>
-                                <Home />
-                            </EmailPasswordAuth>
-                        </Route>
-                    </Switch>
+                        <Route
+                            path="/"
+                            element={
+                                <EmailPasswordAuth>
+                                    <Home />
+                                </EmailPasswordAuth>
+                            }
+                        />
+                    </Routes>
                 </div>
                 <div className="footer">
                     <Footer />

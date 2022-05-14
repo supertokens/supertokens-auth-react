@@ -63,7 +63,7 @@ module.exports.cleanST = async function () {
     try {
         await module.exports.executeCommand("cd " + installationPath + " && rm licenseKey");
     } catch (ignored) {}
-    await module.exports.executeCommand("cd " + installationPath + " && rm config.yaml");
+    await module.exports.executeCommand("cd " + installationPath + " && rm -f config.yaml");
     await module.exports.executeCommand("cd " + installationPath + " && rm -rf .webserver-temp-*");
     await module.exports.executeCommand("cd " + installationPath + " && rm -rf .started");
 };
@@ -172,19 +172,22 @@ module.exports.customAuth0Provider = () => {
                 },
                 getProfileInfo: async (accessTokenAPIResponse) => {
                     let accessToken = accessTokenAPIResponse.access_token;
-                    let authHeader = `Bearer ${accessToken}`;
-                    let response = await axios({
-                        method: "get",
-                        url: `https://${process.env.AUTH0_DOMAIN}/userinfo`,
-                        headers: {
-                            Authorization: authHeader,
-                        },
-                    });
-                    let userInfo = response.data;
+                    if (accessToken === undefined) {
+                        throw new Error("access token is undefined");
+                    }
+                    // let authHeader = `Bearer ${accessToken}`;
+                    // let response = await axios({
+                    //     method: "get",
+                    //     url: `https://${process.env.AUTH0_DOMAIN}/userinfo`,
+                    //     headers: {
+                    //         Authorization: authHeader,
+                    //     },
+                    // });
+                    // let userInfo = response.data;
                     return {
-                        id: userInfo.sub,
+                        id: "someId",
                         email: {
-                            id: userInfo.name,
+                            id: "test@example.com",
                             isVerified: true,
                         },
                     };

@@ -166,6 +166,7 @@ function getRecipeList() {
                 } else if (context.action === "UNAUTHORISED") {
                     if (context.sessionExpiredOrRevoked) {
                     }
+                } else if (context.action === "ACCESS_TOKEN_PAYLOAD_UPDATED") {
                 }
             },
             preAPIHook: async (context) => {
