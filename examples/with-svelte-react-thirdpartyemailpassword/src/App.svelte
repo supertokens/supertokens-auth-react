@@ -1,14 +1,11 @@
 <script lang="ts">
     import Navbar from "./Navbar.svelte";
-    import { afterUpdate, onDestroy } from "svelte";
     import React from "react";
     import ReactDOM from "react-dom";
     import SuperTokens from "supertokens-auth-react";
     import ThirdPartyEmailPassword, { Github, Google } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
     import Session from "supertokens-auth-react/recipe/session";
     import { Router, Route } from "svelte-navigator";
-
-    export let container: ReactDOM.Container;
 
     SuperTokens.init({
         appInfo: {
@@ -26,31 +23,25 @@
         ],
     });
 
-    afterUpdate(() => {
-        class Sp extends React.Component {
-            render() {
-                if (SuperTokens.canHandleRoute()) {
-                    return SuperTokens.getRoutingComponent();
-                }
+    class SuperTokensComponent extends React.Component {
+        render() {
+            if (SuperTokens.canHandleRoute()) {
+                return SuperTokens.getRoutingComponent();
             }
+            return "Route not found";
         }
-        container = document.getElementById("root");
-        ReactDOM.render(React.createElement(Sp), container);
-    });
+    }
 
-    onDestroy(() => {
-        container = document.getElementById("root");
-        ReactDOM.unmountComponentAtNode(container);
-    });
-
-    export let name: string;
+    function onLoadSuperTokens(element: any) {
+        ReactDOM.render(React.createElement(SuperTokensComponent), element);
+    }
 </script>
 
 <Router>
     <Route path="/">
         <Navbar />
         <div>
-            <h1>Hello {name}!</h1>
+            <h1>Hello!</h1>
             <p>
                 Visit the <a href="https://supertokens.com">SuperTokens tutorial</a> to learn how to build Auth under a day.
             </p>
@@ -59,8 +50,8 @@
             </p>
         </div>
     </Route>
-    <Route path="/auth" primary={false}>
-        <main bind:this={container} />
+    <Route path="/auth/*" primary={false}>
+        <div id="supertokens-root" use:onLoadSuperTokens />
     </Route>
 </Router>
 

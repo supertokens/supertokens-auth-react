@@ -5,19 +5,13 @@
     import { onMount } from "svelte";
 
     let sess;
-
-    const getUserInfo = async () => {
-        sess = await Session.doesSessionExist();
-    };
-
     async function onLogout() {
         await signOut();
-        window.location.href = "/";
-        getUserInfo();
+        window.location.href = "/auth";
     }
 
-    onMount(() => {
-        getUserInfo();
+    onMount(async () => {
+        sess = await Session.doesSessionExist();
     });
 </script>
 
