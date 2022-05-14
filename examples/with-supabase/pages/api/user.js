@@ -28,7 +28,7 @@ export default async function user(req, res) {
 
     let userName = "Unknown user";
 
-    if (data[0] !== undefined) {
+    if (data.length > 0) {
         userName = data[0].name;
     }
 

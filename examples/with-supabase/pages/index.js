@@ -60,8 +60,8 @@ function ProtectedPage({ email }) {
             const { data } = await supabase.from("users").select("name").eq("email", email);
 
             if (data.length == 0) {
-                console.log("You need to add a user in supabase with the email: " + email);
-                setUserName("Unknown user");
+                console.warn("You need to add a user in supabase with the email: " + email);
+                setUserName("Unknown user (open browser console)");
             } else {
                 setUserName(data[0].name);
             }
