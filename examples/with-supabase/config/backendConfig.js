@@ -44,22 +44,24 @@ export let backendConfig = () => {
 
                                 let response = await originalImplementation.thirdPartySignInUpPOST(input);
 
-                                // retrieve the supabase_token from the accessTokenPayload
-                                const accessTokenPayload = await response.session.getAccessTokenPayload();
+                                if (response.status === "OK") {
+                                    // retrieve the supabase_token from the accessTokenPayload
+                                    const accessTokenPayload = await response.session.getAccessTokenPayload();
 
-                                // create a supabase client whose JWT contains the user's id
-                                const supabase = getSupabase(accessTokenPayload.supabase_token);
+                                    // create a supabase client whose JWT contains the user's id
+                                    const supabase = getSupabase(accessTokenPayload.supabase_token);
 
-                                // store the user's email mapped to their userId in Supabase
-                                const { error } = await supabase
-                                    .from("users")
-                                    .insert({ email: response.user.email, user_id: response.user.id });
+                                    // store the user's email mapped to their userId in Supabase
+                                    const { error } = await supabase
+                                        .from("users")
+                                        .insert({ email: response.user.email, user_id: response.user.id });
 
-                                if (error !== null) {
-                                    if (error.message.includes("duplicate key value violates unique constraint")) {
-                                        // ignore duplicate key error
-                                    } else {
-                                        throw new Error(error);
+                                    if (error !== null) {
+                                        if (error.message.includes("duplicate key value violates unique constraint")) {
+                                            // ignore duplicate key error
+                                        } else {
+                                            throw new Error(error);
+                                        }
                                     }
                                 }
 
@@ -73,22 +75,24 @@ export let backendConfig = () => {
 
                                 let response = await originalImplementation.emailPasswordSignUpPOST(input);
 
-                                // retrieve the supabase_token from the accessTokenPayload
-                                const accessTokenPayload = await response.session.getAccessTokenPayload();
+                                if (response.status === "OK") {
+                                    // retrieve the supabase_token from the accessTokenPayload
+                                    const accessTokenPayload = await response.session.getAccessTokenPayload();
 
-                                // create a supabase client whose JWT contains the user's id
-                                const supabase = getSupabase(accessTokenPayload.supabase_token);
+                                    // create a supabase client whose JWT contains the user's id
+                                    const supabase = getSupabase(accessTokenPayload.supabase_token);
 
-                                // store the user's email mapped to their userId in Supabase
-                                const { error } = await supabase
-                                    .from("users")
-                                    .insert({ email: response.user.email, user_id: response.user.id });
+                                    // store the user's email mapped to their userId in Supabase
+                                    const { error } = await supabase
+                                        .from("users")
+                                        .insert({ email: response.user.email, user_id: response.user.id });
 
-                                if (error !== null) {
-                                    if (error.message.includes("duplicate key value violates unique constraint")) {
-                                        // ignore duplicate key error
-                                    } else {
-                                        throw new Error(error);
+                                    if (error !== null) {
+                                        if (error.message.includes("duplicate key value violates unique constraint")) {
+                                            // ignore duplicate key error
+                                        } else {
+                                            throw new Error(error);
+                                        }
                                     }
                                 }
 
