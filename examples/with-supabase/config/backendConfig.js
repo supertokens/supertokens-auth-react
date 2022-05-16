@@ -2,6 +2,7 @@ import ThirdPartyEmailPasswordNode from "supertokens-node/recipe/thirdpartyemail
 import SessionNode from "supertokens-node/recipe/session";
 import { appInfo } from "./appInfo";
 import jwt from "jsonwebtoken";
+import { getSupabase } from "../utils/supabase";
 
 export let backendConfig = () => {
     return {
@@ -32,6 +33,70 @@ export let backendConfig = () => {
                         },
                     }),
                 ],
+                override: {
+                    apis: (originalImplementation) => {
+                        return {
+                            ...originalImplementation,
+                            thirdPartySignInUpPOST: async function (input) {
+                                if (originalImplementation.thirdPartySignInUpPOST === undefined) {
+                                    throw Error("Should never come here");
+                                }
+
+                                let response = await originalImplementation.thirdPartySignInUpPOST(input);
+
+                                // add the jwt to the accessTokenPayload so it can be used on the frontend
+                                const accessTokenPayload = await response.session.getAccessTokenPayload();
+
+                                // create a supabase client whose JWT contains the user's id
+                                const supabase = getSupabase(accessTokenPayload.supabase_token);
+
+                                // store the user's email mapped to their userId in Supabase
+                                const { error } = await supabase
+                                    .from("users")
+                                    .insert({ email: response.user.email, user_id: response.user.id });
+
+                                if (error !== null) {
+                                    if (error.message.includes("duplicate key value violates unique constraint")) {
+                                        // ignore duplicate key error
+                                    } else {
+                                        throw new Error(error);
+                                    }
+                                }
+
+                                return response;
+                            },
+
+                            emailPasswordSignUpPOST: async function (input) {
+                                if (originalImplementation.emailPasswordSignUpPOST === undefined) {
+                                    throw Error("Should never come here");
+                                }
+
+                                let response = await originalImplementation.emailPasswordSignUpPOST(input);
+
+                                // add the jwt to the accessTokenPayload so it can be used on the frontend
+                                const accessTokenPayload = await response.session.getAccessTokenPayload();
+
+                                // create a supabase client whose JWT contains the user's id
+                                const supabase = getSupabase(accessTokenPayload.supabase_token);
+
+                                // store the user's email mapped to their userId in Supabase
+                                const { error } = await supabase
+                                    .from("users")
+                                    .insert({ email: response.user.email, user_id: response.user.id });
+
+                                if (error !== null) {
+                                    if (error.message.includes("duplicate key value violates unique constraint")) {
+                                        // ignore duplicate key error
+                                    } else {
+                                        throw new Error(error);
+                                    }
+                                }
+
+                                return response;
+                            },
+                        };
+                    },
+                },
             }),
             SessionNode.init({
                 override: {
@@ -42,9 +107,8 @@ export let backendConfig = () => {
                             // it can be used by Supabase to validate the user when retrieving user data from their service.
                             // We store this token in the accessTokenPayload so it can be accessed on the frontend and on the backend.
                             createNewSession: async function (input) {
-                                let email = (await ThirdPartyEmailPasswordNode.getUserById(input.userId)).email;
                                 const payload = {
-                                    email,
+                                    userId: input.userId,
                                     exp: Math.floor(Date.now() / 1000) + 60 * 60,
                                 };
 

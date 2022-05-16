@@ -3,7 +3,6 @@ import { verifySession } from "supertokens-node/recipe/session/framework/express
 import supertokens from "supertokens-node";
 import { backendConfig } from "../../config/backendConfig";
 import { getSupabase } from "../../utils/supabase";
-import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
 
 supertokens.init(backendConfig());
 
@@ -19,23 +18,17 @@ export default async function user(req, res) {
     const accessTokenPayload = req.session.getAccessTokenPayload();
     const userId = req.session.getUserId();
 
-    const email = (await ThirdPartyEmailPassword.getUserById(userId)).email;
-
     const supabase = getSupabase(accessTokenPayload.supabase_token);
 
-    // retrieve user name from supabase
-    const { data } = await supabase.from("users").select("name").eq("email", email);
+    // retrieve user's email from supabase
+    const { data } = await supabase.from("users").select("email").eq("user_id", userId);
 
-    let userName = "Unknown user";
-
-    if (data.length > 0) {
-        userName = data[0].name;
-    }
+    let email = data[0].email;
 
     return res.json({
         note: "Fetch any data from your application for authenticated user after using verifySession middleware",
         userId,
-        userName,
+        email,
         sessionHandle: req.session.getHandle(),
         accessTokenPayload,
     });
