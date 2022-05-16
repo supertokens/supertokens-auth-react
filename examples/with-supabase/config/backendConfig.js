@@ -44,7 +44,7 @@ export let backendConfig = () => {
 
                                 let response = await originalImplementation.thirdPartySignInUpPOST(input);
 
-                                // add the jwt to the accessTokenPayload so it can be used on the frontend
+                                // retrieve the supabase_token from the accessTokenPayload
                                 const accessTokenPayload = await response.session.getAccessTokenPayload();
 
                                 // create a supabase client whose JWT contains the user's id
@@ -73,7 +73,7 @@ export let backendConfig = () => {
 
                                 let response = await originalImplementation.emailPasswordSignUpPOST(input);
 
-                                // add the jwt to the accessTokenPayload so it can be used on the frontend
+                                // retrieve the supabase_token from the accessTokenPayload
                                 const accessTokenPayload = await response.session.getAccessTokenPayload();
 
                                 // create a supabase client whose JWT contains the user's id
@@ -103,7 +103,7 @@ export let backendConfig = () => {
                     functions: (originalImplementation) => {
                         return {
                             ...originalImplementation,
-                            // We want to create a JWT which contains the users email signed with Supabase's secret so
+                            // We want to create a JWT which contains the users userId signed with Supabase's secret so
                             // it can be used by Supabase to validate the user when retrieving user data from their service.
                             // We store this token in the accessTokenPayload so it can be accessed on the frontend and on the backend.
                             createNewSession: async function (input) {
