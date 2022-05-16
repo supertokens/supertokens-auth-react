@@ -12,7 +12,7 @@ This demo app demonstrates the following:
 
 ## Supabase setup
 
--   You will need to setup a Supabase app and create a table which will contain a mapping between a user's email (retrieved from SuperTokens) to their name.
+-   You will need to setup a Supabase app and create a table which will contain a mapping between a user's email (retrieved from SuperTokens) to their userId.
 -   You will also need to create a policy for this table to ensure that only the authenticated user is allowed to retrieve this information
 
 ## Setup
