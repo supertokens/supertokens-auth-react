@@ -44,23 +44,21 @@ export let backendConfig = (): TypeInput => {
                                 }
                                 let response = await originalImplementation.thirdPartySignInUpPOST(input);
 
-                                if (response.status === "OK") {
-                                    if (response.createdNewUser) {
-                                        // retrieve the supabase_token from the accessTokenPayload
-                                        const accessTokenPayload = response.session.getAccessTokenPayload();
+                                if (response.status === "OK" && response.createdNewUser) {
+                                    // retrieve the supabase_token from the accessTokenPayload
+                                    const accessTokenPayload = response.session.getAccessTokenPayload();
 
-                                        // create a supabase client whose JWT contains the user's id
-                                        const supabase = getSupabase(accessTokenPayload.supabase_token);
-                                        // store the user's email mapped to their userId in Supabase
-                                        const { error } = await supabase
-                                            .from("users")
-                                            .insert({ email: response.user.email, user_id: response.user.id });
+                                    // create a supabase client whose JWT contains the user's id
+                                    const supabase = getSupabase(accessTokenPayload.supabase_token);
+                                    // store the user's email mapped to their userId in Supabase
+                                    const { error } = await supabase
+                                        .from("users")
+                                        .insert({ email: response.user.email, user_id: response.user.id });
 
-                                        if (error !== null) {
-                                            // Since Row Level Security is enabled in our Supabase tables, if a policy for inserting
-                                            // rows to a table has not been defined, insertion will throw an error.
-                                            throw error;
-                                        }
+                                    if (error !== null) {
+                                        // Since Row Level Security is enabled in our Supabase tables, if a policy for inserting
+                                        // rows to a table has not been defined, insertion will throw an error.
+                                        throw error;
                                     }
                                 }
 
