@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
--   adds SuperTokens + Supabase example app
+-   Adds a SuperTokens + Supabase example app
+-   Adds an example app with svelte
 
 ## [0.21.3] - 2022-05-14
 
+-   Adds an example app with emailpassword + vercel
 -   Reverts version of react-select dependency
 
 ## [0.21.2] - 2022-05-13
