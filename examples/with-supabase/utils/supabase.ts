@@ -5,6 +5,8 @@ const getSupabase = (access_token) => {
 
     supabase.auth.session = () => ({
         access_token,
+        token_type: "",
+        user: null,
     });
 
     return supabase;

@@ -7,7 +7,9 @@ import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { getSupabase } from "../utils/supabase";
 
 const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
-    new Promise((res) => res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)),
+    new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>((res) =>
+        res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)
+    ),
     { ssr: false }
 );
 

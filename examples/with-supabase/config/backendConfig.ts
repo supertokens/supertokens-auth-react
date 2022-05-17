@@ -3,8 +3,9 @@ import SessionNode from "supertokens-node/recipe/session";
 import { appInfo } from "./appInfo";
 import jwt from "jsonwebtoken";
 import { getSupabase } from "../utils/supabase";
+import { TypeInput } from "supertokens-node/lib/build/types";
 
-export let backendConfig = () => {
+export let backendConfig = (): TypeInput => {
     return {
         framework: "express",
         supertokens: {
@@ -41,7 +42,6 @@ export let backendConfig = () => {
                                 if (originalImplementation.thirdPartySignInUpPOST === undefined) {
                                     throw Error("Should never come here");
                                 }
-
                                 let response = await originalImplementation.thirdPartySignInUpPOST(input);
 
                                 if (response.status === "OK") {
@@ -63,7 +63,7 @@ export let backendConfig = () => {
                                         } else {
                                             // Since Row Level Security is enabled in our Supabase tables, if a policy for inserting
                                             // rows to a table has not been defined, insertion will throw an error.
-                                            throw new Error(error);
+                                            throw new Error(error.message);
                                         }
                                     }
                                 }
@@ -97,7 +97,7 @@ export let backendConfig = () => {
                                         } else {
                                             // Since Row Level Security is enabled in our Supabase tables, if a policy for inserting
                                             // rows to a table has not been defined, insertion will throw an error.
-                                            throw new Error(error);
+                                            throw new Error(error.message);
                                         }
                                     }
                                 }
