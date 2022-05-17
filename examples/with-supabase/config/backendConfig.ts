@@ -51,12 +51,12 @@ export let backendConfig = (): TypeInput => {
                                     // create a supabase client whose JWT contains the user's id
                                     const supabase = getSupabase(accessTokenPayload.supabase_token);
 
-                                    // store the user's email mapped to their userId in Supabase
-                                    const { error } = await supabase
-                                        .from("users")
-                                        .insert({ email: response.user.email, user_id: response.user.id });
-
                                     if (response.createdNewUser) {
+                                        // store the user's email mapped to their userId in Supabase
+                                        const { error } = await supabase
+                                            .from("users")
+                                            .insert({ email: response.user.email, user_id: response.user.id });
+
                                         if (error !== null) {
                                             // Since Row Level Security is enabled in our Supabase tables, if a policy for inserting
                                             // rows to a table has not been defined, insertion will throw an error.
