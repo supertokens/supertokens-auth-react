@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Adds a SuperTokens + Supabase example app
 -   Adds an example app with svelte
 
 ## [0.21.3] - 2022-05-14
