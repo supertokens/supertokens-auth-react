@@ -45,13 +45,12 @@ export let backendConfig = (): TypeInput => {
                                 let response = await originalImplementation.thirdPartySignInUpPOST(input);
 
                                 if (response.status === "OK") {
-                                    // retrieve the supabase_token from the accessTokenPayload
-                                    const accessTokenPayload = response.session.getAccessTokenPayload();
-
-                                    // create a supabase client whose JWT contains the user's id
-                                    const supabase = getSupabase(accessTokenPayload.supabase_token);
-
                                     if (response.createdNewUser) {
+                                        // retrieve the supabase_token from the accessTokenPayload
+                                        const accessTokenPayload = response.session.getAccessTokenPayload();
+
+                                        // create a supabase client whose JWT contains the user's id
+                                        const supabase = getSupabase(accessTokenPayload.supabase_token);
                                         // store the user's email mapped to their userId in Supabase
                                         const { error } = await supabase
                                             .from("users")
