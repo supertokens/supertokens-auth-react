@@ -7,7 +7,7 @@
     let sess;
     async function onLogout() {
         await signOut();
-        window.location.href = "/auth";
+        window.location.reload();
     }
 
     onMount(async () => {
