@@ -46,7 +46,7 @@ export let backendConfig = () => {
 
                                 if (response.status === "OK") {
                                     // retrieve the supabase_token from the accessTokenPayload
-                                    const accessTokenPayload = await response.session.getAccessTokenPayload();
+                                    const accessTokenPayload = response.session.getAccessTokenPayload();
 
                                     // create a supabase client whose JWT contains the user's id
                                     const supabase = getSupabase(accessTokenPayload.supabase_token);
@@ -58,8 +58,11 @@ export let backendConfig = () => {
 
                                     if (error !== null) {
                                         if (error.message.includes("duplicate key value violates unique constraint")) {
-                                            // ignore duplicate key error
+                                            // if the user has already signed up and the email-userId mapping already exists in the
+                                            // supabase table, the insert will throw a duplicate key exception. We can ignore this error
                                         } else {
+                                            // Since Row Level Security is enabled in our Supabase tables, if a policy for inserting
+                                            // rows to a table has not been defined, insertion will throw an error.
                                             throw new Error(error);
                                         }
                                     }
@@ -77,7 +80,7 @@ export let backendConfig = () => {
 
                                 if (response.status === "OK") {
                                     // retrieve the supabase_token from the accessTokenPayload
-                                    const accessTokenPayload = await response.session.getAccessTokenPayload();
+                                    const accessTokenPayload = response.session.getAccessTokenPayload();
 
                                     // create a supabase client whose JWT contains the user's id
                                     const supabase = getSupabase(accessTokenPayload.supabase_token);
@@ -89,8 +92,11 @@ export let backendConfig = () => {
 
                                     if (error !== null) {
                                         if (error.message.includes("duplicate key value violates unique constraint")) {
-                                            // ignore duplicate key error
+                                            // if the email-userId mapping already exists in the supabase table, the insert will throw a
+                                            // duplicate key exception. We can ignore this error
                                         } else {
+                                            // Since Row Level Security is enabled in our Supabase tables, if a policy for inserting
+                                            // rows to a table has not been defined, insertion will throw an error.
                                             throw new Error(error);
                                         }
                                     }
