@@ -17,81 +17,84 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { Fragment } from "react";
+import { Fragment, useCallback } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
-import { getQueryParams, getURLHash } from "../../../../../utils";
+import { getQueryParams, getURLHash, useOnMountAPICall } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
-import {} from "../../../types";
+import { Awaited } from "../../../../../types";
 import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkClickedScreen";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
-import { useEffect } from "react";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
-    useEffect(() => {
-        const abortController = new AbortController();
-        async function onLoad() {
-            try {
-                const preAuthSessionId = getQueryParams("preAuthSessionId");
-                const linkCode = getURLHash();
+    const consumeCode = useCallback(async () => {
+        const preAuthSessionId = getQueryParams("preAuthSessionId");
+        const linkCode = getURLHash();
 
-                if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
-                    return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                        error: "signin",
-                    });
-                }
+        if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
+            return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                error: "signin",
+            });
+        }
 
-                const response = await props.recipe.recipeImpl.consumeCode({
-                    preAuthSessionId,
-                    linkCode,
-                    config: props.recipe.config,
-                });
-                if (abortController.signal.aborted) {
-                    return;
-                }
+        return props.recipe.recipeImpl.consumeCode({
+            preAuthSessionId,
+            linkCode,
+            config: props.recipe.config,
+        });
+    }, [props.recipe, props.history]);
 
-                if (response.status === "GENERAL_ERROR") {
-                    return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                        error: "custom",
-                        message: response.message,
-                    });
-                }
+    const handleConsumeResp = useCallback(
+        async (response: Awaited<ReturnType<typeof consumeCode>>): Promise<void> => {
+            if (!response) {
+                // In this case we are already redirecting
+                return;
+            }
 
-                if (response.status === "RESTART_FLOW_ERROR") {
-                    return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                        error: "restart_link",
-                    });
-                }
-                if (response.status === "OK") {
-                    const loginAttemptInfo = await props.recipe.recipeImpl.getLoginAttemptInfo();
-                    await props.recipe.recipeImpl.clearLoginAttemptInfo();
-                    return props.recipe.redirect(
-                        {
-                            action: "SUCCESS",
-                            isNewUser: response.createdUser,
-                            redirectToPath: loginAttemptInfo?.redirectToPath,
-                        },
-                        props.history
-                    );
-                }
-            } catch (err) {
+            if (response.status === "GENERAL_ERROR") {
                 return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "signin",
+                    error: "custom",
+                    message: response.message,
                 });
             }
-        }
-        void onLoad();
-        return () => {
-            abortController.abort();
-        };
-    }, [props.recipe]);
+
+            if (response.status === "RESTART_FLOW_ERROR") {
+                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                    error: "restart_link",
+                });
+            }
+
+            if (response.status === "OK") {
+                const loginAttemptInfo = await props.recipe.recipeImpl.getLoginAttemptInfo();
+                await props.recipe.recipeImpl.clearLoginAttemptInfo();
+                return props.recipe.redirect(
+                    {
+                        action: "SUCCESS",
+                        isNewUser: response.createdUser,
+                        redirectToPath: loginAttemptInfo?.redirectToPath,
+                    },
+                    props.history
+                );
+            }
+        },
+        [props.history, props.recipe]
+    );
+
+    const handleConsumeError = useCallback(
+        () =>
+            props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                error: "signin",
+            }),
+        [props.recipe, props.history]
+    );
+    useOnMountAPICall(consumeCode, handleConsumeResp, handleConsumeError);
 
     const componentOverrides = props.recipe.config.override.components;
 

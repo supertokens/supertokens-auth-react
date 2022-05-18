@@ -26,6 +26,7 @@ import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
 import { SessionClaimValidator } from "../session/types";
+import { PropsWithChildren } from "react";
 
 type Props = FeatureBaseProps & {
     recipe: Recipe;
@@ -64,17 +65,13 @@ function EmailPasswordAuth(props: Props) {
 
 const EmailPasswordAuthMemo = memo(EmailPasswordAuth);
 
-export default function EmailPasswordAuthWrapper({
-    children,
-    requireAuth,
-    onSessionExpired,
-    requiredClaims,
-}: {
-    children: React.ReactNode;
-    requireAuth?: boolean;
-    onSessionExpired?: () => void;
-    requiredClaims?: SessionClaimValidator<any>[];
-}) {
+const EmailPasswordAuthWrapper: React.FC<
+    PropsWithChildren<{
+        requireAuth?: boolean;
+        onSessionExpired?: () => void;
+        requiredClaims?: SessionClaimValidator<any>[];
+    }>
+> = ({ children, requireAuth, onSessionExpired, requiredClaims }) => {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
 
@@ -88,4 +85,6 @@ export default function EmailPasswordAuthWrapper({
             {children}
         </EmailPasswordAuthMemo>
     );
-}
+};
+
+export default EmailPasswordAuthWrapper;

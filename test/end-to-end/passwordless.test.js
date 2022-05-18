@@ -21,6 +21,7 @@
 import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
+import fetch from "isomorphic-fetch";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     getPasswordlessDevice,
@@ -29,7 +30,9 @@ import {
     waitFor,
     getFeatureFlags,
     waitForText,
+    screenshotOnFailure,
     setPasswordlessFlowType,
+    isReact16,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -50,9 +53,16 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
     let browser;
     let page;
     let consoleLogs = [];
+    const signInUpPageLoadLogs = isReact16()
+        ? [`ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`]
+        : [`ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`, `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`];
 
     const examplePhoneNumber = "+36701231212";
     const exampleEmail = "test@example.com";
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
+    });
 
     describe("with EMAIL", () => {
         getTestCases("EMAIL", "email", exampleEmail);
@@ -124,7 +134,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -474,7 +484,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -517,7 +527,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -610,7 +620,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     [
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        ...signInUpPageLoadLogs,
                         `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                         `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                         `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -672,7 +682,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     [
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        ...signInUpPageLoadLogs,
                         `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                         `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                         `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -869,7 +879,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -912,7 +922,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -1070,7 +1080,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                 ]);
             });
 
@@ -1089,7 +1099,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                 ]);
             });
 
@@ -1110,7 +1120,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                 ]);
             });
 
@@ -1132,7 +1142,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                 ]);
             });
 
@@ -1151,7 +1161,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                 ]);
             });
 
@@ -1170,7 +1180,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                 ]);
             });
         });
@@ -1220,7 +1230,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -1269,7 +1279,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -1278,8 +1288,17 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
-                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                    ...(isReact16()
+                        ? [
+                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                          ]
+                        : [
+                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                          ]),
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1309,7 +1328,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -1352,7 +1371,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -1401,7 +1420,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -1410,8 +1429,18 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
-                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+
+                    ...(isReact16()
+                        ? [
+                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                          ]
+                        : [
+                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                          ]),
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1444,7 +1473,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     [
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        ...signInUpPageLoadLogs,
                         `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                         `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                         `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -1463,7 +1492,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                         `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                         `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
                         `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
-                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                        ...signInUpPageLoadLogs,
                     ],
                     consoleLogs
                 );
@@ -1510,7 +1539,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
@@ -1520,7 +1549,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
-                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    ...signInUpPageLoadLogs,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",

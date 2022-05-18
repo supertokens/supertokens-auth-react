@@ -22,7 +22,7 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 
 ### Project Setup
 
-1. Please setup supertokens-core by following this guide. If you are not contributing to supertokens-core, please skip steps 1 & 4 under "Project Setup" section.
+1. Please setup `supertokens-core` by following [this guide](https://github.com/supertokens/supertokens-core/blob/master/CONTRIBUTING.md#development-setup). If you are not contributing to `supertokens-core`, please skip steps 1 & 4 under "Project Setup" section.
 2. `git clone https://github.com/supertokens/supertokens-auth-react.git`, `supertokens-auth-react` and `supertokens-root` should exist side by side within the same parent directory.
 3. `cd supertokens-auth-react`
 4. Install the project dependencies
@@ -53,7 +53,7 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
 2. Start the testing environment
 
     ```
-    ./startTestingEnv --wait
+    ./startTestEnv --wait
     ```
 
 3. In a new terminal, navigate to the `supertokens-auth-react` repository.
@@ -78,11 +78,19 @@ We're so excited you're interested in helping with SuperTokens! We are happy to 
     npm run test
     ```
 
+### Screenshots
+
+You can set the `SCREENSHOT_ROOT` env var to a path to automatically save screenshots of failing e2e tests. This will save screenshots of failing test into subdirectories of `SCREENSHOT_ROOT` where the subdirectory identifies the test file and the file names of the screenshots identifying the test title and the
+
+`SCREENSHOT_ROOT=test_report npm run test`
+
 ## Run the test application.
 
 1. `npm run start`
 
 Note: To test different recipes you need to update the value of `authRecipe` in local storage. For example `thirdpartyemailpassword` would result in that recipe being used. If there is no value for `authRecipe` set, the Email Password recipe is used by default
+
+Note: You need to restart the test app after code changes in the library to see their effects.
 
 ## Pull Request
 

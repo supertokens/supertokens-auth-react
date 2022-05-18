@@ -7,6 +7,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Adds a SuperTokens + Supabase example app
+-   Adds an example app with svelte
+
+## [0.21.3] - 2022-05-14
+
+-   Adds an example app with emailpassword + vercel
+-   Reverts version of react-select dependency
+
+## [0.21.2] - 2022-05-13
+
+### Fixes
+
+-   Fixed support for react 18 strict mode
+
+### Changes
+
+-   Updated react dependency to react 18
+-   Added tests for react 18 and 16.
+-   Changed how linking is done for tests apps
+-   Changed e2e tests to not query test oauth provider when fetching profile info - since they are rate limited.
+
+## [0.21.1] - 2022-05-13
+
+-   Adds debug logging
+
+## [0.21.0] - 2022-05-11
+
+### Changes
+
+-   Now updating the session context when the access token payload is updated
+-   Updated supertokens-webiste dependency to ^11.0.0
+
+### Added
+
+## [0.20.5] - 2022-05-10
+
+### Adds
+
+-   An example app with emailpassword + vercel
+-   A new config property `cookieHandler` that allows for custom handling when the SDK reads/writes cookies
+-   A new config property `windowHandler` that allows for custom handling when the SDK uses any functions from the Window API.
+-   An example app with thirdpartypasswordless + Electron
+
+## [0.20.4] - 2022-04-11
+
+-   Makes error message for changing of props in `SessionAuth` more clear.
+-   Freezes dependency lib versions since sometimes there can be unexpected changes in those that break our UI.
+
+## [0.20.3] - 2022-04-08
+
+### Refactor
+
+-   Uses PropsWithChildren to define the type of the children props
+
+## [0.20.2] - 2022-04-07
+
+### Fixes
+
+-   Fixed FormBase behavior when mounted multiple times (NextJS issue)
+
+### CI changes
+
+-   Now using parallel builds
+-   Screenshotting failed tests
+-   Exporting test results
+
 ## [0.20.1] - 2022-03-31
 
 ### Changed

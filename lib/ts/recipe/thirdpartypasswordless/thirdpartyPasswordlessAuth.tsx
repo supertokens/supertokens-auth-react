@@ -26,6 +26,7 @@ import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
 import { SessionClaimValidator } from "../session/types";
+import { PropsWithChildren } from "react";
 
 type Props = FeatureBaseProps & {
     recipe: Recipe;
@@ -67,17 +68,13 @@ function ThirdPartyPasswordlessAuth(props: Props) {
 
 const ThirdPartyPasswordlessAuthMemo = memo(ThirdPartyPasswordlessAuth);
 
-export default function ThirdPartyPasswordlessAuthWrapper({
-    children,
-    requireAuth,
-    onSessionExpired,
-    requiredClaims,
-}: {
-    children: React.ReactNode;
-    requireAuth?: boolean;
-    onSessionExpired?: () => void;
-    requiredClaims?: SessionClaimValidator<any>[];
-}) {
+const ThirdPartyPasswordlessAuthWrapper: React.FC<
+    PropsWithChildren<{
+        requireAuth?: boolean;
+        onSessionExpired?: () => void;
+        requiredClaims?: SessionClaimValidator<any>[];
+    }>
+> = ({ children, requireAuth, onSessionExpired, requiredClaims }) => {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
     return (
@@ -90,4 +87,5 @@ export default function ThirdPartyPasswordlessAuthWrapper({
             {children}
         </ThirdPartyPasswordlessAuthMemo>
     );
-}
+};
+export default ThirdPartyPasswordlessAuthWrapper;

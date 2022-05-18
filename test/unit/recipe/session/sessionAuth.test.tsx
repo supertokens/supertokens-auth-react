@@ -249,6 +249,46 @@ describe("SessionAuth", () => {
         });
     });
 
+    test("update context on ACCESS_TOKEN_PAYLOAD_UPDATED", async () => {
+        // given
+        let listenerFn: (event: any) => void;
+        MockSession.addEventListener.mockImplementationOnce((fn) => {
+            listenerFn = fn;
+
+            return () => {};
+        });
+
+        const result = render(
+            <SessionAuth>
+                <MockSessionConsumer />
+            </SessionAuth>
+        );
+
+        expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
+            `accessTokenPayload: ${JSON.stringify({})}`
+        );
+
+        const mockAccessTokenPayload = {
+            afterRefreshKey: "afterRefreshValue",
+        };
+
+        // when
+        act(() =>
+            listenerFn({
+                action: "ACCESS_TOKEN_PAYLOAD_UPDATED",
+                sessionContext: {
+                    doesSessionExist: true,
+                    userId: "mock-user-id",
+                    accessTokenPayload: mockAccessTokenPayload,
+                },
+            })
+        );
+        // then
+        expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
+            `accessTokenPayload: ${JSON.stringify(mockAccessTokenPayload)}`
+        );
+    });
+
     describe("onSessionExpired", () => {
         test("not update context when prop is passed", async () => {
             // given

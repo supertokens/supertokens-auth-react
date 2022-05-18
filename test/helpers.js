@@ -24,7 +24,9 @@ import {
     TEST_CLIENT_BASE_URL,
 } from "./constants";
 
+import path from "path";
 import assert from "assert";
+import mkdirp from "mkdirp";
 
 const SESSION_STORAGE_STATE_KEY = "supertokens-oauth-state";
 
@@ -550,7 +552,6 @@ export async function defaultSignUp(page, rid = "emailpassword") {
 export async function signUp(page, values, postValues, rid = "emailpassword") {
     // Set values.
     await setInputValues(page, values);
-
     const successAdornments = await getInputAdornmentsSuccess(page);
     assert.strictEqual(successAdornments.length, 4);
 
@@ -619,6 +620,50 @@ export async function getTextInDashboardNoAuth(page) {
     return await page.evaluate(() => document.querySelector("#root > div > div.fill > div.not-logged-in").innerText);
 }
 
+/**
+ * @param {import("mocha").Context} ctx
+ * @param {import("puppeteer").Browser} browser
+ */
+export async function screenshotOnFailure(ctx, browser) {
+    if (ctx.currentTest?.isFailed()) {
+        const pages = await browser.pages();
+
+        let screenshotRoot;
+
+        if (process.env.SCREENSHOT_ROOT !== undefined) {
+            screenshotRoot = process.env.SCREENSHOT_ROOT;
+        } else if (process.env.MOCHA_FILE !== undefined) {
+            const reportFile = path.parse(process.env.MOCHA_FILE);
+            screenshotRoot = path.join(reportFile.dir, "screenshots", reportFile.name.replace(".xml", ""));
+        } else {
+            return;
+        }
+
+        const testFileName = ctx.currentTest.file
+            .substring(ctx.currentTest.file.lastIndexOf("/") + 1)
+            .replace(".test.js", "");
+        await mkdirp(path.join(screenshotRoot, testFileName));
+        for (let i = 0; i < pages.length; ++i) {
+            if (pages[i].url() === "about:blank") {
+                continue;
+            }
+
+            const title = ctx.currentTest
+                .fullTitle()
+                .split(/\W/)
+                .filter((a) => a.length !== 0)
+                .join("_");
+            await pages[i].screenshot({
+                path: path.join(screenshotRoot, testFileName, `${title}-tab_${i}-${Date.now()}.png`),
+            });
+            await new Promise((r) => setTimeout(r, 500));
+            await pages[i].screenshot({
+                path: path.join(screenshotRoot, testFileName, `${title}-tab_${i}-delayed-${Date.now()}.png`),
+            });
+        }
+    }
+}
+
 export async function getPasswordlessDevice(loginAttemptInfo) {
     const deviceResp = await fetch(
         `${TEST_APPLICATION_SERVER_BASE_URL}/test/getDevice?preAuthSessionId=${encodeURIComponent(
@@ -640,4 +685,8 @@ export function setPasswordlessFlowType(contactMethod, flowType) {
             flowType,
         }),
     });
+}
+
+export function isReact16() {
+    return process.env.IS_REACT_16 === "true";
 }

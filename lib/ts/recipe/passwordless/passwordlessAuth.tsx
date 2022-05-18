@@ -17,6 +17,7 @@
  * Imports.
  */
 import * as React from "react";
+import { PropsWithChildren } from "react";
 import { memo } from "react";
 import SuperTokens from "../../superTokens";
 
@@ -61,12 +62,11 @@ export default function PasswordlessAuthWrapper({
     requireAuth,
     onSessionExpired,
     requiredClaims,
-}: {
-    children: React.ReactNode;
+}: PropsWithChildren<{
     requireAuth?: boolean;
     onSessionExpired?: () => void;
     requiredClaims?: SessionClaimValidator<any>[];
-}) {
+}>) {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
 

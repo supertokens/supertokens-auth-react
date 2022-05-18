@@ -48,6 +48,7 @@ import {
     defaultSignUp,
     getUserIdFromSessionContext,
     getTextInDashboardNoAuth,
+    screenshotOnFailure,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -90,6 +91,10 @@ describe("SuperTokens SignIn with react router dom v6", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
             method: "POST",
         }).catch(console.error);
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
     });
 
     beforeEach(async function () {

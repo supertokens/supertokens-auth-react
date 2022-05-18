@@ -1,10 +1,11 @@
 import assert from "assert";
 import puppeteer from "puppeteer";
+import fetch from "isomorphic-fetch";
 import { TEST_SERVER_BASE_URL } from "../constants";
 import { AuthPage } from "./pages/AuthPage";
 import { EmailVerificationPage } from "./pages/EmailVerificationPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
-import { clearBrowserCookiesWithoutAffectingConsole } from "../helpers";
+import { clearBrowserCookiesWithoutAffectingConsole, screenshotOnFailure } from "../helpers";
 
 describe("Embed components", async () => {
     let browser;
@@ -39,6 +40,10 @@ describe("Embed components", async () => {
         }).catch(console.error);
 
         await browser.close();
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
     });
 
     describe("EmailPassword SignInAndUp feature", () => {

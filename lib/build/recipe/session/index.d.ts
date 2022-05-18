@@ -6,6 +6,33 @@ import SessionContext from "./sessionContext";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
     static SessionAuth: import("react").FC<
+        import("react").PropsWithChildren<
+            | ({
+                  requireAuth?: false | undefined;
+              } & {
+                  onSessionExpired?: (() => void) | undefined;
+                  claimValidators?: import("./types").SessionClaimValidator<any>[] | undefined;
+              })
+            | ({
+                  requireAuth: true;
+                  redirectToLogin: () => void;
+              } & {
+                  onSessionExpired?: (() => void) | undefined;
+                  claimValidators?: import("./types").SessionClaimValidator<any>[] | undefined;
+              })
+        >
+    >;
+    static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
+    static getUserId(): Promise<string>;
+    static getAccessTokenPayloadSecurely(): Promise<any>;
+    static attemptRefreshingSession(): Promise<boolean>;
+    static doesSessionExist(): Promise<boolean>;
+    static addAxiosInterceptors(axiosInstance: any): void;
+    static signOut(): Promise<void>;
+}
+declare const useSessionContext: () => SessionContextType;
+declare const SessionAuth: import("react").FC<
+    import("react").PropsWithChildren<
         | ({
               requireAuth?: false | undefined;
           } & {
@@ -19,30 +46,7 @@ export default class SessionAPIWrapper {
               onSessionExpired?: (() => void) | undefined;
               claimValidators?: import("./types").SessionClaimValidator<any>[] | undefined;
           })
-    >;
-    static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
-    static getUserId(): Promise<string>;
-    static getAccessTokenPayloadSecurely(): Promise<any>;
-    static attemptRefreshingSession(): Promise<boolean>;
-    static doesSessionExist(): Promise<boolean>;
-    static addAxiosInterceptors(axiosInstance: any): void;
-    static signOut(): Promise<void>;
-}
-declare const useSessionContext: () => SessionContextType;
-declare const SessionAuth: import("react").FC<
-    | ({
-          requireAuth?: false | undefined;
-      } & {
-          onSessionExpired?: (() => void) | undefined;
-          claimValidators?: import("./types").SessionClaimValidator<any>[] | undefined;
-      })
-    | ({
-          requireAuth: true;
-          redirectToLogin: () => void;
-      } & {
-          onSessionExpired?: (() => void) | undefined;
-          claimValidators?: import("./types").SessionClaimValidator<any>[] | undefined;
-      })
+    >
 >;
 declare const init: typeof SessionAPIWrapper.init;
 declare const getUserId: typeof SessionAPIWrapper.getUserId;

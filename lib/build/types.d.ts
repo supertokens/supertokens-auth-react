@@ -2,21 +2,27 @@ import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "./normalisedURLPath";
 import NormalisedURLDomain from "./normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
-import { ComponentClass } from "react";
+import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
+import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
+import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
 export declare type SuperTokensConfig = {
     appInfo: AppInfoUserInput;
     recipeList: CreateRecipeFunction<any, any, any, any>[];
+    cookieHandler?: CookieHandlerInput;
+    windowHandler?: WindowHandlerInput;
     languageTranslations?: {
         defaultLanguage?: string;
         currentLanguageCookieScope?: string;
         translations?: TranslationStore;
         translationFunc?: TranslationFunc;
     };
+    enableDebugLogs?: boolean;
 };
 export declare type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
-    appInfo: NormalisedAppInfo
+    appInfo: NormalisedAppInfo,
+    enableDebugLogs: boolean
 ) => RecipeModule<T, S, R, N>;
 export declare type AppInfoUserInput = {
     appName: string;
@@ -83,10 +89,9 @@ export declare type NormalisedDefaultStyles = Record<string, CSSObject>;
 export declare type ThemeBaseProps = {
     styleFromInit?: Styles;
 };
-export declare type FeatureBaseProps = {
-    children?: React.ReactNode;
+export declare type FeatureBaseProps = PropsWithChildren<{
     history?: any;
-};
+}>;
 export declare type PreAPIHookFunction = (context: { requestInit: RequestInit; url: string }) => Promise<{
     url: string;
     requestInit: RequestInit;
@@ -97,3 +102,12 @@ export declare type PostAPIHookFunction = (context: {
     response: Response;
 }) => Promise<Response>;
 export declare type Awaitable<T> = Promise<T> | T;
+export declare type Awaited<T> = T extends null | undefined
+    ? T
+    : T extends object & {
+          then(onfulfilled: infer F): any;
+      }
+    ? F extends (value: infer V, ...args: any) => any
+        ? V
+        : never
+    : T;

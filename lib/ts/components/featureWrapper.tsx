@@ -27,6 +27,7 @@ import SuperTokens from "../superTokens";
 import { TranslationContextProvider } from "../translation/translationContext";
 import { TranslationStore } from "../translation/translationHelpers";
 import { mergeObjects } from "../utils";
+import { PropsWithChildren } from "react";
 
 const superTokensEmotionCache = createCache({
     key: "supertokens",
@@ -37,7 +38,6 @@ const superTokensEmotionCache = createCache({
  */
 
 type FeatureWrapperProps = {
-    children: JSX.Element;
     useShadowDom?: boolean;
     defaultStore: TranslationStore;
 };
@@ -46,7 +46,11 @@ type FeatureWrapperProps = {
  * Component.
  */
 
-export default function FeatureWrapper({ children, useShadowDom, defaultStore }: FeatureWrapperProps): JSX.Element {
+export default function FeatureWrapper({
+    children,
+    useShadowDom,
+    defaultStore,
+}: PropsWithChildren<FeatureWrapperProps>): JSX.Element {
     const st = SuperTokens.getInstanceOrThrow();
     return (
         <ErrorBoundary>
@@ -62,11 +66,13 @@ export default function FeatureWrapper({ children, useShadowDom, defaultStore }:
 }
 
 type WithOrWithoutShadowDomProps = {
-    children: JSX.Element;
     useShadowDom?: boolean;
 };
 
-function WithOrWithoutShadowDom({ children, useShadowDom }: WithOrWithoutShadowDomProps): JSX.Element {
+function WithOrWithoutShadowDom({
+    children,
+    useShadowDom,
+}: PropsWithChildren<WithOrWithoutShadowDomProps>): JSX.Element {
     // If explicitely specified to not use shadow dom.
     if (useShadowDom === false) {
         return (

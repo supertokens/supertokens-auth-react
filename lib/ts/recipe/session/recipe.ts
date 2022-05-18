@@ -29,7 +29,7 @@ import {
 } from "./types";
 import sessionSdk from "supertokens-website";
 
-type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
+type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
 export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
     static instance?: Session;
@@ -180,11 +180,12 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     }
 
     static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any> {
-        return (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown, any> => {
+        return (appInfo: NormalisedAppInfo, enableDebugLogs: boolean): RecipeModule<unknown, unknown, unknown, any> => {
             Session.instance = new Session({
                 ...config,
                 appInfo,
                 recipeId: Session.RECIPE_ID,
+                enableDebugLogs,
             });
             return Session.instance;
         };

@@ -19,7 +19,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
 
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
 import CheckedRoundIcon from "../../../../../components/assets/checkedRoundIcon";
 import ErrorLargeIcon from "../../../../../components/assets/errorLargeIcon";
@@ -30,6 +30,8 @@ import { Button } from "../../../../emailpassword/components/library";
 import { VerifyEmailLinkClickedThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import { useOnMountAPICall } from "../../../../../utils";
+import { Awaited } from "../../../../../types";
 
 /*
  * Component.
@@ -40,32 +42,28 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
     const t = useTranslation();
     const [status, setStatus] = useState<"LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL">("LOADING");
 
-    useEffect(() => {
-        const abortController = new AbortController();
-        void (async () => {
-            try {
-                const response = await props.recipeImplementation.verifyEmail({
-                    config: props.config,
-                    token: props.token,
-                });
-                if (abortController.signal.aborted) {
-                    return;
-                }
-
-                if (response.status === "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR") {
-                    setStatus("INVALID");
-                } else {
-                    setStatus("SUCCESSFUL");
-                }
-            } catch (e) {
-                setStatus("GENERAL_ERROR");
+    const verifyEmail = useCallback(
+        () =>
+            props.recipeImplementation.verifyEmail({
+                config: props.config,
+                token: props.token,
+            }),
+        [props.token, props.config]
+    );
+    const handleVerifyResp = useCallback(
+        async (response: Awaited<ReturnType<typeof verifyEmail>>): Promise<void> => {
+            if (response.status === "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR") {
+                setStatus("INVALID");
+            } else {
+                setStatus("SUCCESSFUL");
             }
-        })();
-
-        return () => {
-            abortController.abort();
-        };
-    }, [props.recipeImplementation, props.config, props.token]);
+        },
+        [setStatus]
+    );
+    const handleError = useCallback(() => {
+        setStatus("GENERAL_ERROR");
+    }, [setStatus]);
+    useOnMountAPICall(verifyEmail, handleVerifyResp, handleError);
 
     const { onTokenInvalidRedirect, onContinueClicked } = props;
 

@@ -48,6 +48,7 @@ import {
     defaultSignUp,
     getUserIdFromSessionContext,
     getTextInDashboardNoAuth,
+    screenshotOnFailure,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -66,6 +67,10 @@ describe("SuperTokens SignIn with react router dom v5", function () {
     let consoleLogs = [];
 
     before(async function () {
+        if (process.env.RUN_RRD5 !== "true") {
+            this.skip();
+        }
+
         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
             method: "POST",
         }).catch(console.error);
@@ -81,7 +86,9 @@ describe("SuperTokens SignIn with react router dom v5", function () {
     });
 
     after(async function () {
-        await browser.close();
+        if (browser) {
+            await browser.close();
+        }
 
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST",
@@ -90,6 +97,10 @@ describe("SuperTokens SignIn with react router dom v5", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
             method: "POST",
         }).catch(console.error);
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
     });
 
     beforeEach(async function () {

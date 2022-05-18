@@ -5,6 +5,7 @@ import { ClaimValidationError, InputType, RecipeEventWithSessionContext, Session
 declare type ConfigType = InputType & {
     recipeId: string;
     appInfo: NormalisedAppInfo;
+    enableDebugLogs: boolean;
 };
 export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
     static instance?: Session;

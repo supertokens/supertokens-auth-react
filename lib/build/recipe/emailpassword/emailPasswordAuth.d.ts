@@ -1,13 +1,11 @@
 import * as React from "react";
 import { SessionClaimValidator } from "../session/types";
-export default function EmailPasswordAuthWrapper({
-    children,
-    requireAuth,
-    onSessionExpired,
-    requiredClaims,
-}: {
-    children: React.ReactNode;
-    requireAuth?: boolean;
-    onSessionExpired?: () => void;
-    requiredClaims?: SessionClaimValidator<any>[];
-}): JSX.Element;
+import { PropsWithChildren } from "react";
+declare const EmailPasswordAuthWrapper: React.FC<
+    PropsWithChildren<{
+        requireAuth?: boolean;
+        onSessionExpired?: () => void;
+        requiredClaims?: SessionClaimValidator<any>[];
+    }>
+>;
+export default EmailPasswordAuthWrapper;
