@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Adds a SuperTokens + Supabase example app
 -   Adds an example app with svelte
+-   Updates example app that has account linking to be as per https://github.com/supertokens/supertokens-core/issues/447
 
 ## [0.21.3] - 2022-05-14
 
