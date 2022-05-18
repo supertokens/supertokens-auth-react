@@ -1,10 +1,11 @@
-let {
+import {
     createPrimaryUserFromSuperTokensUser,
     getPwlessSuperTokensIdFromPrimaryId,
     getPrimaryUserFromSuperTokensId,
-} = require("./accountLinkingMap");
+} from "./accountLinkingMap";
+import { RecipeInterface } from "supertokens-node/recipe/passwordless/types";
 
-const plessOverride = (ogImpl) => {
+export const plessOverride = (ogImpl: RecipeInterface): RecipeInterface => {
     return {
         ...ogImpl,
         consumeCode: async function (input) {
@@ -14,7 +15,7 @@ const plessOverride = (ogImpl) => {
                 return result;
             }
 
-            let createdNewUser = createPrimaryUserFromSuperTokensUser(result.user);
+            let createdNewUser = createPrimaryUserFromSuperTokensUser(result.user, true);
 
             return {
                 ...result,
@@ -32,7 +33,7 @@ const plessOverride = (ogImpl) => {
             //
             // Since the primary userId maps to multiple supertokens users,
             // we can use any one of them, but it has to be the same one each time.
-            input.userId = getPwlessSuperTokensIdFromPrimaryId(input.userId);
+            input.userId = getPwlessSuperTokensIdFromPrimaryId(input.userId)!;
             let user = await ogImpl.getUserById(input);
             if (user === undefined) {
                 return undefined;
@@ -69,10 +70,8 @@ const plessOverride = (ogImpl) => {
         },
 
         updateUser: async function (input) {
-            input.userId = getPwlessSuperTokensIdFromPrimaryId(input.userId);
+            input.userId = getPwlessSuperTokensIdFromPrimaryId(input.userId)!;
             return ogImpl.updateUser(input);
         },
     };
 };
-
-module.exports = { plessOverride };

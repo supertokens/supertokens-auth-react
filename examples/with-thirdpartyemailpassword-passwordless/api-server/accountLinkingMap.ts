@@ -6,7 +6,19 @@
  * This will map an email or phone number to a primary user. That primary user will then be used
  * for all users that have the same contact info, regardless of which login method they used.
  */
-const primaryUserStore = new Map();
+
+import { User as TPUser } from "supertokens-node/recipe/thirdpartyemailpassword/types";
+import { User as PlessUser } from "supertokens-node/recipe/passwordless/types";
+
+const primaryUserStore = new Map<string, PrimaryUser>();
+
+type PrimaryUser = {
+    contactInfo: string;
+    id: string;
+    timeJoined: number;
+    pwlessUserId: string | undefined;
+    tpepUserIds: string[];
+};
 
 /**
  * This function takes a supertokens thirdpartyemailpassword or passwordless user
@@ -17,12 +29,14 @@ const primaryUserStore = new Map();
  * user with this new supertokens user.
  *
  */
-function createPrimaryUserFromSuperTokensUser(user) {
-    const contactInfo = user.email || user.phoneNumber;
+export function createPrimaryUserFromSuperTokensUser(user: TPUser | PlessUser, isPasswordless: boolean) {
+    const contactInfo: string | undefined = user.email || ("phoneNumber" in user ? user.phoneNumber : undefined);
+    if (contactInfo === undefined) {
+        throw new Error("Should never come here");
+    }
     const stId = user.id;
     let primaryId;
     let timeJoined = user.timeJoined;
-    const isPasswordless = user.thirdParty === undefined;
 
     let createdNewUser = false;
     let storedPrimaryUser = Array.from(primaryUserStore.values()).find((u) => u.contactInfo === contactInfo);
@@ -32,14 +46,15 @@ function createPrimaryUserFromSuperTokensUser(user) {
         // new primary user that will be associated with it.
         primaryId = getNewPrimaryUserId();
         createdNewUser = true;
-        primaryUserStore.set(primaryId, {
+        let primaryUser: PrimaryUser = {
             id: primaryId,
             contactInfo,
             pwlessUserId: undefined,
             tpepUserIds: [],
             timeJoined,
-        });
-        storedPrimaryUser = primaryUserStore.get(primaryId);
+        };
+        primaryUserStore.set(primaryId, primaryUser);
+        storedPrimaryUser = primaryUser;
     } else {
         // this email was already used to sign up from another method,
         // so we do not create a new primary user.
@@ -56,21 +71,21 @@ function createPrimaryUserFromSuperTokensUser(user) {
     return createdNewUser;
 }
 
-function getTPEPSuperTokensIdFromPrimaryId(primaryId) {
+export function getTPEPSuperTokensIdFromPrimaryId(primaryId: string): string | undefined {
     const storedPrimaryUser = primaryUserStore.get(primaryId);
 
-    return storedPrimaryUser !== undefined && storedPrimaryUser.tpepUserIds !== undefined
+    return storedPrimaryUser !== undefined && storedPrimaryUser.tpepUserIds.length > 0
         ? storedPrimaryUser.tpepUserIds[0]
         : undefined;
 }
 
-function getPwlessSuperTokensIdFromPrimaryId(primaryId) {
+export function getPwlessSuperTokensIdFromPrimaryId(primaryId: string): string | undefined {
     const storedPrimaryUser = primaryUserStore.get(primaryId);
 
     return storedPrimaryUser !== undefined ? storedPrimaryUser.pwlessUserId : undefined;
 }
 
-function getPrimaryUserFromSuperTokensId(stId) {
+export function getPrimaryUserFromSuperTokensId(stId: string): PrimaryUser | undefined {
     return Array.from(primaryUserStore.values()).find((u) => u.pwlessUserId === stId || u.tpepUserIds.includes(stId));
 }
 
@@ -84,10 +99,3 @@ function getNewPrimaryUserId() {
 }
 
 let userCount = 0;
-
-module.exports = {
-    getTPEPSuperTokensIdFromPrimaryId,
-    getPwlessSuperTokensIdFromPrimaryId,
-    createPrimaryUserFromSuperTokensUser,
-    getPrimaryUserFromSuperTokensId,
-};

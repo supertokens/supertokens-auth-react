@@ -1,10 +1,11 @@
-let {
+import {
     getTPEPSuperTokensIdFromPrimaryId,
     createPrimaryUserFromSuperTokensUser,
     getPrimaryUserFromSuperTokensId,
-} = require("./accountLinkingMap");
+} from "./accountLinkingMap";
+import { RecipeInterface } from "supertokens-node/recipe/thirdpartyemailpassword/types";
 
-const tpepOverride = (ogImpl) => {
+export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
     return {
         ...ogImpl,
 
@@ -16,7 +17,7 @@ const tpepOverride = (ogImpl) => {
                 return result;
             }
 
-            let createdNewUser = createPrimaryUserFromSuperTokensUser(result.user);
+            let createdNewUser = createPrimaryUserFromSuperTokensUser(result.user, false);
 
             return {
                 ...result,
@@ -34,7 +35,7 @@ const tpepOverride = (ogImpl) => {
                 return result;
             }
 
-            createPrimaryUserFromSuperTokensUser(result.user);
+            createPrimaryUserFromSuperTokensUser(result.user, false);
 
             return {
                 ...result,
@@ -52,7 +53,7 @@ const tpepOverride = (ogImpl) => {
                 return result;
             }
 
-            createPrimaryUserFromSuperTokensUser(result.user);
+            createPrimaryUserFromSuperTokensUser(result.user, false);
 
             return {
                 ...result,
@@ -69,7 +70,7 @@ const tpepOverride = (ogImpl) => {
             //
             // Since the primary userId maps to multiple supertokens users,
             // we can use any one of them, but it has to be the same one each time.
-            input.userId = getTPEPSuperTokensIdFromPrimaryId(input.userId);
+            input.userId = getTPEPSuperTokensIdFromPrimaryId(input.userId)!;
             let user = await ogImpl.getUserById(input);
             if (user === undefined) {
                 return undefined;
@@ -93,22 +94,17 @@ const tpepOverride = (ogImpl) => {
                 ...getPrimaryUserFromSuperTokensId(user.id),
             };
         },
-        getUserByEmail: async function (input) {
-            let user = await ogImpl.getUserByEmail(input);
-            if (user === undefined) {
-                return undefined;
-            }
+        getUsersByEmail: async function (input) {
+            let users = await ogImpl.getUsersByEmail(input);
 
-            return {
-                ...user,
-                ...getPrimaryUserFromSuperTokensId(user.id),
-            };
+            for (let i = 0; i < users.length; i++) {
+                users[i].id = getPrimaryUserFromSuperTokensId(users[i].id)!.id;
+            }
+            return users;
         },
         updateEmailOrPassword: async function (input) {
-            input.userId = getTPEPSuperTokensIdFromPrimaryId(input.userId);
+            input.userId = getTPEPSuperTokensIdFromPrimaryId(input.userId)!;
             return ogImpl.updateEmailOrPassword(input);
         },
     };
 };
-
-module.exports = { tpepOverride };
