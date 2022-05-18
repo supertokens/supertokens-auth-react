@@ -44,7 +44,6 @@ SuperTokens.init({
             },
         }),
         Session.init({
-            defaultRequiredClaims: [],
             onHandleEvent: (ev) => {
                 api.addLogItem("Session Event: " + JSON.stringify(ev));
             },
@@ -88,7 +87,6 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
         []
     );
     const route2Claims = useMemo(() => [EmailVerifiedClaim.isVerified], []);
-    const nav = useNavigate();
     return (
         <div className="fill">
             <Routes>
