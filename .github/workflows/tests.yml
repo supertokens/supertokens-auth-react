@@ -62,7 +62,7 @@ jobs:
             - name: Running loadModules in supertokens-root
               run: cd ../supertokens-root && ./loadModules
             - name: Installing supertokens-node
-              run: cd test/server/ && npm i -d && npm i github:${{ github.event.inputs.nodeRepoOwnerName }}/supertokens-node#${{ github.event.inputs.nodeBranchName }}
+              run: cd test/server/ && npm i -d --force && npm i --force github:${{ github.event.inputs.nodeRepoOwnerName }}/supertokens-node#${{ github.event.inputs.nodeBranchName }}
             - name: Setting up supertokens-root test environment
               run: cd ../supertokens-root && bash ./utils/setupTestEnv --local
             - name: Run tests
