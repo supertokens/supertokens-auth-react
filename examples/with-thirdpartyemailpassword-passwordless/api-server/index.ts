@@ -15,6 +15,8 @@ const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
 
+export const emailVerificationOn = true;
+
 supertokens.init({
     framework: "express",
     supertokens: {
