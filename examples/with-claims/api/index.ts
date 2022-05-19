@@ -10,7 +10,7 @@ import { middleware, errorHandler } from "supertokens-node/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import { RolesClaim } from "./claims/RolesClaim";
 import { EmailVerifiedClaim } from "./claims/EmailVerifiedClaim";
-import { SecondFactorCheckers, SecondFactorOTPClaim } from "./claims/MFAClaim";
+import { SecondFactorClaimValidators, SecondFactorOTPClaim } from "./claims/MFAClaim";
 import { roleDB } from "./mockRoleDb";
 
 // Change these values if you want to run the server on another adress
@@ -50,7 +50,11 @@ supertokens.init({
             },
         }),
         Session.init({
-            claimsToAddOnCreation: [RolesClaim, EmailVerifiedClaim],
+            claimsToAddOnCreation: [
+                RolesClaim,
+                EmailVerifiedClaim,
+                ({ userId }) => ({ "app-custom-claim": { userId, why: "Info" } }),
+            ],
             defaultValidatorsForVerification: [EmailVerifiedClaim.isVerified],
         }),
     ],
@@ -82,13 +86,13 @@ app.get(
         overwriteDefaultValidators: [
             RolesClaim.hasRole.including("admin"),
             EmailVerifiedClaim.isVerified, // Maybe this could be just EmailVerifiedClaim
-            SecondFactorCheckers.any2Factors,
+            SecondFactorClaimValidators.any2Factors,
         ],
     }),
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
 
-        const roles = RolesClaim.getValueFromPayload(session.getAccessTokenPayload(), {});
+        const roles = RolesClaim.getRolesFromSession(session);
         res.send({
             status: "OK",
             roles,
@@ -103,7 +107,7 @@ app.get(
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
 
-        const roles = RolesClaim.getValueFromPayload(session.getAccessTokenPayload(), {});
+        const roles = RolesClaim.getRolesFromSession(session);
         res.send({
             status: "OK",
             roles,
@@ -125,7 +129,7 @@ app.post(
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
 
-        await RolesClaim.updateRoles(session);
+        await RolesClaim.refreshRolesFromDb(session);
 
         res.send({
             status: "OK",
@@ -135,11 +139,11 @@ app.post(
 
 app.post(
     "/refresh-email-verified",
-    verifySession({ overwriteDefaultValidators: [] }), // This only requires the default EmailVerifiedClaim
+    verifySession({ overwriteDefaultValidators: [] }), // This requires no claims
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
         console.log("refresh email", new Date());
-        await EmailVerifiedClaim.addToSession(session, true);
+        await EmailVerifiedClaim.addToSession(session, await EmailPassword.isEmailVerified(session.getUserId()));
         console.log("refresh email2", new Date());
         res.send({
             status: "OK",

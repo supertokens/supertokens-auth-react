@@ -13,18 +13,20 @@ class RolesClaimClass {
         await api.refreshRolesInToken();
     }
 
-    hasRole(role) {
-        return {
-            id: this.key + "-" + role,
-            refresh: (ctx) => this.refresh(ctx),
-            shouldRefresh: (payload, ctx) => this.getValueFromPayload(payload, ctx) === undefined,
-            validate: (payload, ctx) => {
-                return this.getValueFromPayload(payload, ctx).includes(role)
-                    ? { isValid: true }
-                    : { isValid: false, reason: { missingRole: role } };
-            },
-        };
-    }
+    hasRole = {
+        including(role) {
+            return {
+                id: this.key + "-" + role,
+                refresh: (ctx) => this.refresh(ctx),
+                shouldRefresh: (payload, ctx) => this.getValueFromPayload(payload, ctx) === undefined,
+                validate: (payload, ctx) => {
+                    return this.getValueFromPayload(payload, ctx).includes(role)
+                        ? { isValid: true }
+                        : { isValid: false, reason: { missingRole: role } };
+                },
+            };
+        },
+    };
 }
 
 export const RolesClaim = new RolesClaimClass();

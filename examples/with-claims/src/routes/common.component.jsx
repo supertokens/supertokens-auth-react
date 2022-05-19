@@ -1,7 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, Card, CardActions, CardContent, CardHeader, Container, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { signOut, useSessionContext } from "supertokens-auth-react/recipe/session";
 import { EmailVerifiedClaim } from "../claims/emailVerifiedClaim";
@@ -20,13 +20,10 @@ export const Common = () => {
     const session = useSessionContext();
 
     if (session.invalidClaim) {
-        if (session.invalidClaim.validatorId === RolesClaim.hasRole.id) {
-            // Update rolesclaim like this
-            RolesClaim.hasRole.withValue("admin");
-        }
         console.log("redirect", session.invalidClaim);
         return <Navigate to="/" />;
     }
+
     let myRoles = [];
     let isVerified = undefined;
     let hasMFA = undefined;

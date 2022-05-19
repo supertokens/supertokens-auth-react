@@ -13,10 +13,13 @@ class RolesClaimClass extends SessionClaim<string[]> {
                     return this.getValueFromPayload(payload, ctx) === undefined;
                 },
                 validate: async (payload, ctx) => {
-                    return {
-                        isValid: this.getValueFromPayload(payload, ctx).includes(role),
-                        reason: { missingRole: role },
-                    };
+                    const isValid = this.getValueFromPayload(payload, ctx).includes(role);
+                    return isValid
+                        ? { isValid }
+                        : {
+                              isValid,
+                              reason: { missingRole: role },
+                          };
                 },
             }),
         };
@@ -37,7 +40,7 @@ class RolesClaimClass extends SessionClaim<string[]> {
         return session.mergeIntoAccessTokenPayload(this.addToPayload_internal({}, roles, userContext));
     }
 
-    updateRoles(session: SessionContainer, userContext?: any) {
+    refreshRolesFromDb(session: SessionContainer, userContext?: any) {
         const roles = this.fetch(session.getUserId(userContext), userContext);
         return session.mergeIntoAccessTokenPayload(this.addToPayload_internal({}, roles, userContext));
     }
@@ -50,6 +53,10 @@ class RolesClaimClass extends SessionClaim<string[]> {
             sessionHandle,
             this.addToPayload_internal({}, newRoles, userContext)
         );
+    }
+
+    getRolesFromSession(session: SessionContainer, userContext?: any) {
+        return this.getValueFromPayload(session.getAccessTokenPayload(), userContext);
     }
 
     setRolesUsingSessionHandle(sessionHandle: string, roles: string[], userContext: any) {

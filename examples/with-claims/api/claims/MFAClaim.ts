@@ -11,7 +11,7 @@ export const SecondFactorTOTPClaim = new BooleanClaim({
     key: "st-mfa-totp",
 });
 
-export const SecondFactorCheckers = {
+export const SecondFactorClaimValidators = {
     any2Factors: {
         validatorTypeId: "st-mfa",
         validate: (payload, ctx) =>
@@ -23,14 +23,6 @@ export const SecondFactorCheckers = {
             validatorTypeId: "st-mfa",
             validate: (payload, ctx) =>
                 SecondFactorOTPClaim.validators.hasFreshValue(true, maxAgeInSeconds).validate(payload, ctx) ||
-                SecondFactorTOTPClaim.validators.hasFreshValue(true, maxAgeInSeconds).validate(payload, ctx),
-        };
-    },
-    any3FreshFactors(maxAgeInSeconds: number) {
-        return {
-            validatorTypeId: "st-mfa",
-            validate: (payload, ctx) =>
-                SecondFactorOTPClaim.validators.hasFreshValue(true, maxAgeInSeconds).validate(payload, ctx) &&
                 SecondFactorTOTPClaim.validators.hasFreshValue(true, maxAgeInSeconds).validate(payload, ctx),
         };
     },

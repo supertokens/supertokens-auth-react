@@ -14,7 +14,6 @@ import { api, TestContextProvider, useTestLogger } from "./test.context";
 import { TestScreen } from "./routes/testScreen.component";
 import { MFAClaim } from "./claims/mfaClaim";
 import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -83,7 +82,7 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
     // This is not normally the case, the claim refreshing shouldn't rerender the auth component,
     // it's just a weird test setup because of logging.
     const route1Claims = useMemo(
-        () => [EmailVerifiedClaim.isVerified, RolesClaim.hasRole("admin"), MFAClaim.completed2FA()],
+        () => [EmailVerifiedClaim.isVerified, RolesClaim.hasRole.including("admin"), MFAClaim.completed2FA()],
         []
     );
     const route2Claims = useMemo(() => [EmailVerifiedClaim.isVerified], []);
