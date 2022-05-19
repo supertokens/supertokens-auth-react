@@ -3,10 +3,9 @@ import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
-import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
+import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import axios from "axios";
-import { useEffect } from "react";
 import { getApiDomain, getAuthDomain, getRedirectionUrlForUser } from "./utils";
 
 Session.addAxiosInterceptors(axios);
@@ -39,20 +38,23 @@ function App() {
         <div className="App">
             <Router>
                 <div className="fill">
-                    <Switch>
+                    <Routes>
                         {/* Present users with login/signup when they are on auth.example.com. 
             If not try rendering our protected route. In case the user is unauthenticated 
             the auth wrapper will simply redirect them to the login page */}
                         {window.location.origin === getAuthDomain() ? (
                             getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))
                         ) : (
-                            <Route path="/">
-                                <EmailPassword.EmailPasswordAuth>
-                                    <Home />
-                                </EmailPassword.EmailPasswordAuth>
-                            </Route>
+                            <Route
+                                path="/"
+                                element={
+                                    <EmailPassword.EmailPasswordAuth>
+                                        <Home />
+                                    </EmailPassword.EmailPasswordAuth>
+                                }
+                            />
                         )}
-                    </Switch>
+                    </Routes>
                 </div>
                 <Footer />
             </Router>

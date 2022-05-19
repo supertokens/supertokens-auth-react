@@ -26,9 +26,7 @@ export default function Footer() {
                 countryCode="HU"
                 svg={true}
                 onClick={() => {
-                    console.log("a");
                     i18next.changeLanguage("hu");
-                    console.log("b");
                 }}
             />
             <ReactCountryFlag

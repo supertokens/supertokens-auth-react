@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "jsx": "react"
+    },
+    "extends": "@tsconfig/svelte/tsconfig.json",
+
+    "include": ["src/**/*"],
+    "exclude": ["node_modules/*", "__sapper__/*", "public/*"]
+}

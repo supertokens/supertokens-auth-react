@@ -3,6 +3,7 @@ import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
+export declare function clearQueryParams(paramNames: string[]): void;
 export declare function clearErrorQueryParam(): void;
 export declare function getQueryParams(param: string): string | null;
 export declare function getURLHash(): string;
@@ -29,3 +30,8 @@ export declare function getDefaultCookieScope(): string | undefined;
 export declare function getCookieValue(name: string): string | null;
 export declare function setFrontendCookie(name: string, value: string | undefined, scope: string | undefined): void;
 export declare function getNormalisedUserContext(userContext?: any): any;
+export declare const useOnMountAPICall: <T>(
+    fetch: () => Promise<T>,
+    handleResponse: (consumeResp: T) => Promise<void>,
+    handleError?: ((err: unknown, consumeResp: T | undefined) => void) | undefined
+) => void;

@@ -35,16 +35,39 @@ jobs:
             - slack/status
 
     update-demo-apps:
-        machine:
-            image: ubuntu-1604:201903-01
+        circleci_ip_ranges: true
+        docker:
+            - image: ubuntu:20.04
         steps:
-            - add_ssh_keys:
-                  fingerprints:
-                      - "35:1e:5e:0a:95:ec:f3:3e:79:7b:b4:39:ac:00:5f:b2"
+            - run:
+                  name: Install SSH and curl
+                  command: |
+                      apt update
+                      apt-get install openssh-client curl -y
+            - run:
+                  name: storing ssh keys
+                  command: |
+                      echo "-----BEGIN RSA PRIVATE KEY-----" > /tmp/dev_ssh
+                      echo $DEV_SERVER_SSH_KEY | sed 's/\s\+/\n/g' >> /tmp/dev_ssh
+                      echo "-----END RSA PRIVATE KEY-----" >> /tmp/dev_ssh
+                      chmod 400 /tmp/dev_ssh
+            - run:
+                  name: updating thirdpartypasswordless
+                  command: |
+                      ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -i /tmp/dev_ssh  ubuntu@ssh.supertokens.com '\
+                          cd supertokens-auth-react/examples/with-thirdpartypasswordless/ && \
+                          git reset --hard && \
+                          git pull && \
+                          (rm -f package-lock.json || true) && \
+                          (rm -rf node_modules || true) && \
+                          npm i && \
+                          REACT_APP_API_PORT=10001 REACT_APP_API_URL=https://api-thirdpartypasswordless.demo.supertokens.com REACT_APP_WEBSITE_PORT=10000 REACT_APP_WEBSITE_URL=https://thirdpartypasswordless.demo.supertokens.com npm run build && \
+                          docker rm demo-app-thirdpartypasswordless -f || true && \
+                          bash /home/ubuntu/supertokens-auth-react/examples/with-thirdpartypasswordless/scripts/start_container.sh'
             - run:
                   name: updating emailpassword
                   command: |
-                      ssh ubuntu@ssh.supertokens.com '\
+                      ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -i /tmp/dev_ssh  ubuntu@ssh.supertokens.com '\
                           cd supertokens-auth-react/examples/with-emailpassword/ && \
                           git reset --hard && \
                           git pull && \
@@ -57,7 +80,7 @@ jobs:
             - run:
                   name: updating thirdparty
                   command: |
-                      ssh ubuntu@ssh.supertokens.com '\
+                      ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -i /tmp/dev_ssh  ubuntu@ssh.supertokens.com '\
                           cd supertokens-auth-react/examples/with-thirdparty/ && \
                           git reset --hard && \
                           git pull && \
@@ -70,7 +93,7 @@ jobs:
             - run:
                   name: updating thirdpartyemailpassword
                   command: |
-                      ssh ubuntu@ssh.supertokens.com '\
+                      ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -i /tmp/dev_ssh  ubuntu@ssh.supertokens.com '\
                           cd supertokens-auth-react/examples/with-thirdpartyemailpassword/ && \
                           git reset --hard && \
                           git pull && \
@@ -83,7 +106,7 @@ jobs:
             - run:
                   name: updating passwordless
                   command: |
-                      ssh ubuntu@ssh.supertokens.com '\
+                      ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -i /tmp/dev_ssh  ubuntu@ssh.supertokens.com '\
                           cd supertokens-auth-react/examples/with-passwordless/ && \
                           git reset --hard && \
                           git pull && \
@@ -127,6 +150,7 @@ workflows:
             - update-demo-apps:
                   context:
                       - slack-notification
+                      - saas-backend-production
                   filters:
                       branches:
                           only:

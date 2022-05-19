@@ -23,7 +23,7 @@ import { RecipeEventWithSessionContext, SessionContextType, InputType } from "./
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 
-type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo };
+type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
 export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
     static instance?: Session;
@@ -117,7 +117,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     };
 
     private async getSessionContext({ action, userContext }: RecipeEvent): Promise<SessionContextType> {
-        if (action === "SESSION_CREATED" || action === "REFRESH_SESSION") {
+        if (action === "SESSION_CREATED" || action === "REFRESH_SESSION" || action === "ACCESS_TOKEN_PAYLOAD_UPDATED") {
             const [userId, accessTokenPayload] = await Promise.all([
                 this.getUserId({
                     userContext,
@@ -151,12 +151,13 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     }
 
     static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any> {
-        return (appInfo: NormalisedAppInfo): RecipeModule<unknown, unknown, unknown, any> => {
+        return (appInfo: NormalisedAppInfo, enableDebugLogs: boolean): RecipeModule<unknown, unknown, unknown, any> => {
             Session.instance = new Session({
                 ...config,
                 appInfo,
                 recipeId: Session.RECIPE_ID,
                 apiDomain: appInfo.apiDomain.getAsStringDangerous(),
+                enableDebugLogs,
             });
             return Session.instance;
         };

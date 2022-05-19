@@ -13,7 +13,7 @@
  * under the License.
  */
 import { CSSObject } from "@emotion/react";
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { NormalisedDefaultStyles, NormalisedPalette, Styles } from "../types";
 import { getMergedStyles } from "./styles";
 
@@ -31,21 +31,15 @@ const StyleContext = React.createContext<NormalisedStyle>({
     },
 });
 
-export function StyleProvider({
-    children,
-    styleFromInit,
-    rootStyleFromInit,
-    getDefaultStyles,
-    defaultPalette,
-    rawPalette,
-}: {
-    children: JSX.Element;
-    styleFromInit?: Styles;
-    rootStyleFromInit: Styles;
-    getDefaultStyles: (palette: NormalisedPalette) => NormalisedDefaultStyles;
-    defaultPalette: NormalisedPalette;
-    rawPalette: Record<string, string>;
-}): JSX.Element {
+export const StyleProvider: React.FC<
+    PropsWithChildren<{
+        styleFromInit?: Styles;
+        rootStyleFromInit: Styles;
+        getDefaultStyles: (palette: NormalisedPalette) => NormalisedDefaultStyles;
+        defaultPalette: NormalisedPalette;
+        rawPalette: Record<string, string>;
+    }>
+> = ({ children, styleFromInit, rootStyleFromInit, getDefaultStyles, defaultPalette, rawPalette }) => {
     const palette = getMergedPalette(defaultPalette, rawPalette);
 
     let mergedStyles = getDefaultStyles(palette);
@@ -71,7 +65,7 @@ export function StyleProvider({
     value = addNameToAllStylesRecursively(value, "");
 
     return <StyleContext.Provider value={value}>{children}</StyleContext.Provider>;
-}
+};
 
 /*
  * Helpers

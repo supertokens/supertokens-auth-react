@@ -16,12 +16,13 @@
 /*
  * Imports.
  */
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, { useEffect, useState, useContext, useRef, PropsWithChildren, useCallback } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { useOnMountAPICall } from "../../utils";
 
 // if it's not the default context, it means SessionAuth from top has
 // given us a sessionContext.
@@ -40,14 +41,17 @@ type Props = (PropsWithoutAuth | PropsWithAuth) & {
     onSessionExpired?: () => void;
 };
 
-const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
+const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props }) => {
     if (props.requireAuth === true && props.redirectToLogin === undefined) {
         throw new Error("You have to provide redirectToLogin or onSessionExpired function when requireAuth is true");
     }
     const requireAuth = useRef(props.requireAuth);
 
     if (props.requireAuth !== requireAuth.current) {
-        throw new Error("requireAuth prop should not change.");
+        throw new Error(
+            // eslint-disable-next-line @typescript-eslint/quotes
+            'requireAuth prop should not change. If you are seeing this, it probably means that you are using SessionAuth in multiple routes with different values for requireAuth. To solve this, try adding the "key" prop to all uses of SessionAuth like <SessionAuth key="someUniqueKeyPerRoute" requireAuth={...}>'
+        );
     }
 
     const parentSessionContext = useContext(SessionContext);
@@ -58,50 +62,44 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
     );
 
     const session = useRef(Session.getInstanceOrThrow());
-
     const userContext = useUserContext();
 
-    // on mount
-    useEffect(() => {
-        let cancelUseEffect = false;
+    const buildContext = useCallback(async (): Promise<SessionContextType> => {
+        if (hasParentProvider(parentSessionContext)) {
+            return parentSessionContext;
+        }
 
-        const buildContext = async (): Promise<SessionContextType> => {
-            if (hasParentProvider(parentSessionContext)) {
-                return parentSessionContext;
-            }
+        if (context) {
+            return context;
+        }
 
-            const sessionExists = await session.current.doesSessionExist({
-                userContext,
-            });
+        const sessionExists = await session.current.doesSessionExist({
+            userContext,
+        });
 
-            if (sessionExists === false) {
-                return {
-                    doesSessionExist: false,
-                    accessTokenPayload: {},
-                    userId: "",
-                };
-            }
-
+        if (sessionExists === false) {
             return {
-                doesSessionExist: true,
-                accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
-                    userContext,
-                }),
-                userId: await session.current.getUserId({
-                    userContext,
-                }),
+                doesSessionExist: false,
+                accessTokenPayload: {},
+                userId: "",
             };
+        }
+
+        return {
+            doesSessionExist: true,
+            accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
+                userContext,
+            }),
+            userId: await session.current.getUserId({
+                userContext,
+            }),
         };
+    }, []);
 
-        async function setInitialContextAndMaybeRedirect() {
-            const toSetContext = await buildContext();
-
+    const setInitialContextAndMaybeRedirect = useCallback(
+        async (toSetContext: SessionContextType) => {
             // if this component is unmounting, or the context has already
             // been set, then we don't need to proceed...
-            if (cancelUseEffect) {
-                return;
-            }
-
             if (!toSetContext.doesSessionExist && props.requireAuth === true) {
                 props.redirectToLogin();
             } else {
@@ -109,19 +107,11 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                     setContext(toSetContext);
                 }
             }
-        }
-        if (context === undefined) {
-            void setInitialContextAndMaybeRedirect();
-            return () => {
-                cancelUseEffect = true;
-            };
-        } else {
-            if (!context.doesSessionExist && props.requireAuth === true) {
-                props.redirectToLogin();
-            }
-            return;
-        }
-    }, []);
+        },
+        [props]
+    );
+
+    useOnMountAPICall(buildContext, setInitialContextAndMaybeRedirect);
 
     // subscribe to events on mount
     useEffect(() => {
@@ -131,6 +121,9 @@ const SessionAuth: React.FC<Props> = ({ children, ...props }) => {
                     setContext(event.sessionContext);
                     return;
                 case "REFRESH_SESSION":
+                    setContext(event.sessionContext);
+                    return;
+                case "ACCESS_TOKEN_PAYLOAD_UPDATED":
                     setContext(event.sessionContext);
                     return;
                 case "SIGN_OUT":

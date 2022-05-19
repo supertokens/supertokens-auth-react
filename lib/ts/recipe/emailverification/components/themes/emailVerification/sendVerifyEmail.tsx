@@ -18,7 +18,7 @@
 
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 
 import StyleContext from "../../../../../styles/styleContext";
 import ArrowRightIcon from "../../../../../components/assets/arrowRightIcon";
@@ -29,6 +29,8 @@ import { useTranslation } from "../../../../../translation/translationContext";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
 import { useUserContext } from "../../../../../usercontext";
 import STGeneralError from "supertokens-web-js/utils/error";
+import { useOnMountAPICall } from "../../../../../utils";
+import { Awaited } from "../../../../../types";
 
 export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -57,34 +59,24 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
         }
     };
 
-    useEffect(() => {
-        const abort = new AbortController();
-        void (async function () {
-            try {
-                // we send an email on load...
-                const response = await props.recipeImplementation.sendVerificationEmail({
-                    userContext,
-                });
-                if (abort.signal.aborted) {
-                    return;
-                }
-                if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
-                    await props.onEmailAlreadyVerified();
-                }
-            } catch (_) {
-                /**
-                 * In this case it would be strange for the user to land on a screen and see
-                 * an error state. So we ignore the error here, if there is an error the user
-                 * can use the resend button to trigger another email (resend has an error state
-                 * if it fails)
-                 */
-            }
-        })();
+    const sendVerificationEmail = useCallback(
+        () =>
+            props.recipeImplementation.sendVerificationEmail({
+                userContext,
+            }),
+        [props.config, props.recipeImplementation]
+    );
 
-        return () => {
-            abort.abort();
-        };
-    }, [props.recipeImplementation, props.onEmailAlreadyVerified, props.config, userContext]);
+    const checkSendResponse = useCallback(
+        async (response: Awaited<ReturnType<typeof sendVerificationEmail>>): Promise<void> => {
+            if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
+                await props.onEmailAlreadyVerified();
+            }
+        },
+        [props.config, props.recipeImplementation, props.onEmailAlreadyVerified]
+    );
+
+    useOnMountAPICall(sendVerificationEmail, checkSendResponse);
 
     const { signOut } = props;
 

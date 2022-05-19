@@ -16,7 +16,7 @@
 /*
  * Imports.
  */
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, PropsWithChildren } from "react";
 import { SessionAuth, SessionContext } from "../session";
 import AuthRecipe from ".";
 import { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
@@ -38,7 +38,7 @@ const AuthWidgetWrapper = <
     R,
     N extends NormalisedConfig<T | GetRedirectionURLContext, Action, R | OnHandleEventContext>
 >(
-    props: Props<T, Action, R, N> & { children?: React.ReactNode }
+    props: PropsWithChildren<Props<T, Action, R, N>>
 ): React.ReactElement | null => {
     return (
         <SessionAuth requireAuth={false}>
@@ -48,7 +48,7 @@ const AuthWidgetWrapper = <
 };
 
 const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>>(
-    props: Props<T, S, R, N> & { children?: React.ReactNode }
+    props: PropsWithChildren<Props<T, S, R, N>>
 ): React.ReactElement | null => {
     const sessionContext = useContext(SessionContext);
 

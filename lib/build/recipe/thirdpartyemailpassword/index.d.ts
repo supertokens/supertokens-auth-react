@@ -150,7 +150,13 @@ export default class Wrapper {
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
-    static ThirdPartyEmailPasswordAuth: typeof ThirdPartyEmailPasswordAuth;
+    static ThirdPartyEmailPasswordAuth: import("react").FC<
+        import("react").PropsWithChildren<{
+            requireAuth?: boolean | undefined;
+            onSessionExpired?: (() => void) | undefined;
+            userContext?: any;
+        }>
+    >;
     static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;

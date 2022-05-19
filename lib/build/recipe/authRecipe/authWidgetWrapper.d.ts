@@ -28,9 +28,7 @@ declare const AuthWidgetWrapper: <
         OnHandleEventContext | R
     >
 >(
-    props: Props<T, Action, R, N> & {
-        children?: React.ReactNode;
-    }
+    props: React.PropsWithChildren<Props<T, Action, R, N>>
 ) => React.ReactElement<
     any,
     | string

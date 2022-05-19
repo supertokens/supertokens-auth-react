@@ -3,7 +3,6 @@ import "./App.css";
 
 import AppWithoutRouter from "./AppWithoutRouter";
 import AppWithReactDomRouter from "./AppWithReactDomRouter";
-import AppWithReactDomRouterV5 from "./AppWithReactDomRouterV5";
 import Footer from "./Footer";
 /* SuperTokens imports */
 import SuperTokens from "supertokens-auth-react";
@@ -22,22 +21,20 @@ import DarkTheme from "./Themes/Dark";
 import HeliumTheme from "./Themes/Helium";
 import HydrogenTheme from "./Themes/Hydrogen";
 import { logWithPrefix } from "./logWithPrefix";
-let { useNavigate } = require("react-router-dom");
-let withRouter = undefined;
+import { useNavigate } from "react-router-dom";
+
 const loadv5RRD = window.localStorage.getItem("react-router-dom-is-v5") === "true";
 if (loadv5RRD) {
-    withRouter = require("react-router-domv5").withRouter;
+    throw new Error("RRDV5 is not compatible with this React version");
 }
 
-if (withRouter === undefined) {
-    withRouter = function (Child) {
-        return (props) => {
-            const navigate = useNavigate();
-            // we make navigate to history because we use history in the code everywhere.
-            return <Child {...props} history={navigate} />;
-        };
+const withRouter = function (Child) {
+    return (props) => {
+        const navigate = useNavigate();
+        // we make navigate to history because we use history in the code everywhere.
+        return <Child {...props} history={navigate} />;
     };
-}
+};
 
 Session.addAxiosInterceptors(axios);
 
@@ -264,11 +261,7 @@ function App() {
         return <AppWithoutRouter />;
     }
 
-    if (loadv5RRD) {
-        return <AppWithReactDomRouterV5 authRecipe={authRecipe} />;
-    } else {
-        return <AppWithReactDomRouter authRecipe={authRecipe} />;
-    }
+    return <AppWithReactDomRouter authRecipe={authRecipe} />;
 }
 
 function getQueryParams(param) {

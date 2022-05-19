@@ -17,7 +17,7 @@ import { UserInput as WebJSInputType } from "supertokens-web-js/recipe/session/t
 
 export type RecipeEvent =
     | {
-          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED";
+          action: "SIGN_OUT" | "REFRESH_SESSION" | "SESSION_CREATED" | "ACCESS_TOKEN_PAYLOAD_UPDATED";
           userContext: any;
       }
     | {
