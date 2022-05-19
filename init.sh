@@ -6,4 +6,4 @@
 # export PUPPETEER_EXECUTABLE_PATH=`which chromium`
 # And run brew install chromium --no-quarantine
 
-npm i -d --force && (cd ./test/server && npm i ) && (cd ./examples/for-tests && npm i -d --force && npm run prep) && (cd ./examples/for-tests-react-16 && npm i -d --force --legacy-peer-deps && npm run prep) && (cd ./test/with-typescript && npm i -d)
+npm i -d --force && (cd ./test/server && npm i ) && (cd ./examples/for-tests && npm i -d --force && npm run prep) && (cd ./examples/for-tests-react-16 && npm i -d --force --legacy-peer-deps && npm run prep) && (cd ./test/with-typescript && npm i -d --force)
