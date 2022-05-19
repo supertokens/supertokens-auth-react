@@ -20,7 +20,7 @@ jobs:
               with:
                   node-version: "16"
             - run: git init && git add --all && git -c user.name='test' -c user.email='test@example.com' commit -m 'init for pr action'
-            - run: npm i && cd test/with-typescript && npm i
+            - run: npm i --force && cd test/with-typescript && npm i --force
 
             # the below command is there cause otherwise running npm run check-circular-dependencies gives an error like:
             #   Your cache folder contains root-owned files, due to a bug in
