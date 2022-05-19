@@ -110,23 +110,23 @@
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
-            "limit": "120kb"
+            "limit": "123kb"
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "110kb"
+            "limit": "111kb"
         },
         {
             "path": "recipe/emailpassword/index.js",
-            "limit": "110kb"
+            "limit": "112kb"
         },
         {
             "path": "recipe/passwordless/index.js",
-            "limit": "200kb"
+            "limit": "204kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/index.js",
-            "limit": "216kb"
+            "limit": "221kb"
         }
     ],
     "repository": {
