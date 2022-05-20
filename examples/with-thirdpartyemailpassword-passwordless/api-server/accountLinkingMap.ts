@@ -7,13 +7,13 @@
  * for all users that have the same contact info, regardless of which login method they used.
  */
 
-const primaryUserStore = new Map<string, PrimaryUser[]>();
+const primaryUserStore: { [key: string]: PrimaryUser[] } = {};
 
 type PrimaryUser = {
     recipeId: string;
     recipeUserId: string;
-    verifiedIdentifyingIds: Set<string>;
-    unverifiedIdentifyingIds: Set<string>;
+    verifiedIdentifyingIds: string[];
+    unverifiedIdentifyingIds: string[];
     isAccountFullyLinked: boolean; // TODO: perhaps a better name??
 };
 
@@ -28,13 +28,13 @@ export function linkNewAccountAndGetPrimaryUserId(
         recipeId,
         recipeUserId: userId,
         isAccountFullyLinked: isVerified,
-        verifiedIdentifyingIds: new Set<string>(),
-        unverifiedIdentifyingIds: new Set<string>(),
+        verifiedIdentifyingIds: [],
+        unverifiedIdentifyingIds: [],
     };
     if (isVerified) {
-        primaryUser.verifiedIdentifyingIds.add(identifyingInfo);
+        primaryUser.verifiedIdentifyingIds = [identifyingInfo];
     } else {
-        primaryUser.unverifiedIdentifyingIds.add(identifyingInfo);
+        primaryUser.unverifiedIdentifyingIds = [identifyingInfo];
     }
 
     let existingPrimaryUserId = findPrimaryUserIdIdentifyingInfo(identifyingInfo, true);
@@ -42,20 +42,24 @@ export function linkNewAccountAndGetPrimaryUserId(
     if (existingPrimaryUserId === undefined) {
         existingPrimaryUserId = getNewPrimaryUserId();
         // this is a new primary user
-        primaryUserStore.set(existingPrimaryUserId, [primaryUser]);
+        primaryUserStore[existingPrimaryUserId] = [primaryUser];
     } else {
         // user used another login method to sign up
-        let existingPrimaryUserInfo = primaryUserStore.get(existingPrimaryUserId)!;
+        let existingPrimaryUserInfo = primaryUserStore[existingPrimaryUserId]!;
         // we loop through all the linked accounts to see if any of them have a userId match (with its recipeUserId)
         let added = false;
         existingPrimaryUserInfo.forEach((linkedAccount) => {
             if (linkedAccount.recipeUserId === userId && linkedAccount.recipeId === recipeId) {
                 added = true;
                 if (isVerified) {
-                    linkedAccount.verifiedIdentifyingIds.add(identifyingInfo);
+                    if (!linkedAccount.verifiedIdentifyingIds.includes(identifyingInfo)) {
+                        linkedAccount.verifiedIdentifyingIds.push(identifyingInfo);
+                    }
                     linkedAccount.isAccountFullyLinked = true;
                 } else {
-                    linkedAccount.unverifiedIdentifyingIds.add(identifyingInfo);
+                    if (!linkedAccount.unverifiedIdentifyingIds.includes(identifyingInfo)) {
+                        linkedAccount.unverifiedIdentifyingIds.push(identifyingInfo);
+                    }
                 }
             }
         });
@@ -63,7 +67,7 @@ export function linkNewAccountAndGetPrimaryUserId(
             // this means this is a new recipe sign up
             existingPrimaryUserInfo.push(primaryUser);
         }
-        primaryUserStore.set(existingPrimaryUserId, existingPrimaryUserInfo);
+        primaryUserStore[existingPrimaryUserId] = existingPrimaryUserInfo;
     }
     return existingPrimaryUserId + "|" + userId;
 }
@@ -74,7 +78,7 @@ export function shouldAllowSignUp(identifyingInfo: string): boolean {
         return true;
     }
     let result = true;
-    let existingPrimaryUserInfo = primaryUserStore.get(existingPrimaryUserId)!;
+    let existingPrimaryUserInfo = primaryUserStore[existingPrimaryUserId]!;
 
     // we see if this primary user has a linked account
     // that has the input identifyingInfo in their unverifiedIdentifyingIds
@@ -101,7 +105,8 @@ export function findPrimaryUserIdIdentifyingInfo(identifyingInfo: string, should
     let result: string | undefined = undefined;
 
     // we loop through all primary users
-    primaryUserStore.forEach((linkedAccount, userId) => {
+    Object.keys(primaryUserStore).forEach((userId) => {
+        let linkedAccount = primaryUserStore[userId];
         let resultTemp: string | undefined = undefined;
 
         // we loop through all linked accounts for this primary user
@@ -129,7 +134,8 @@ export function findPrimaryUserIdIdentifyingInfo(identifyingInfo: string, should
 
 export function getPrimaryUserIdFromRecipeUserId(recipeUserId: string): string {
     let result: string | undefined = undefined;
-    primaryUserStore.forEach((primaryUserInfo, primaryUserId) => {
+    Object.keys(primaryUserStore).forEach((primaryUserId) => {
+        let primaryUserInfo = primaryUserStore[primaryUserId];
         primaryUserInfo.forEach((linkedAccount) => {
             if (linkedAccount.recipeUserId === recipeUserId && linkedAccount.isAccountFullyLinked) {
                 if (result !== undefined) {
@@ -158,7 +164,7 @@ export function getAllLinkedAccounts(primaryUserId: string): PrimaryUser[] | und
     if (primaryUserId.includes("|")) {
         primaryUserId = primaryUserId.split("|")[1];
     }
-    return primaryUserStore.get(primaryUserId);
+    return primaryUserStore[primaryUserId];
 }
 
 // this generates new userIds.
