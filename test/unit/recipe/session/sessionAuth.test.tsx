@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import "@testing-library/jest-dom";
-import { act, render } from "@testing-library/react";
+import { act, render, waitFor } from "@testing-library/react";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import SessionAuth from "../../../../lib/ts/recipe/session/sessionAuth";
 import SessionContext from "../../../../lib/ts/recipe/session/sessionContext";
@@ -51,12 +51,13 @@ describe("SessionAuth", () => {
         });
     });
 
-    test("setup event listener when no parent provider", () => {
+    test("setup event listener when no parent provider", async () => {
         // when
         const result = render(<SessionAuth />);
 
         // then
-        expect(MockSession.addEventListener).toHaveBeenCalledTimes(1);
+        // This should be called twice with react 18 strict mode
+        await waitFor(() => expect(MockSession.addEventListener).toHaveBeenCalledTimes(2));
     });
 
     test("unsubscribe event listener on unmount", async () => {
@@ -157,14 +158,17 @@ describe("SessionAuth", () => {
     });
 
     describe("handle events", () => {
-        test("call onSessionExpired on UNAUTHORISED", () => {
+        test("call onSessionExpired on UNAUTHORISED", async () => {
             // given
             const mockOnSessionExpired = jest.fn();
 
             MockSession.addEventListener.mockImplementationOnce((fn) => fn({ action: "UNAUTHORISED" }));
 
             // when
-            const result = render(<SessionAuth onSessionExpired={mockOnSessionExpired} />);
+            const result = render(<SessionAuth onSessionExpired={mockOnSessionExpired}>mockRenderedText</SessionAuth>);
+
+            // Wait for full rendering
+            expect(await result.findByText(`mockRenderedText`)).toBeInTheDocument();
 
             // then
             expect(mockOnSessionExpired).toHaveBeenCalledTimes(1);
