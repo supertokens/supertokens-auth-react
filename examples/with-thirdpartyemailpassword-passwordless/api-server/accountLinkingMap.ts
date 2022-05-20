@@ -7,7 +7,7 @@
  * for all users that have the same contact info, regardless of which login method they used.
  */
 import fs from "fs";
-let primaryUserStoreJSON = require("./primaryUserStore.json");
+let primaryUserStoreJSON = JSON.parse(fs.readFileSync("./api-server/primaryUserStore.json", "utf8"));
 
 function saveStoreToFile() {
     fs.writeFileSync(
@@ -35,8 +35,6 @@ function getNewPrimaryUserId() {
 let userCount = primaryUserStoreJSON["count"] === undefined ? 0 : primaryUserStoreJSON["count"];
 console.log("Loaded store: ", primaryUserStore);
 console.log("Loaded count: ", userCount);
-
-saveStoreToFile();
 
 type PrimaryUser = {
     recipeId: string;
