@@ -93,7 +93,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     const handleConsumeError = useCallback(
         (err) => {
             if (STGeneralError.isThisError(err)) {
-                return props.recipe.redirectToAuthWithRedirectToPath(undefined, props.history, {
+                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
                     error: "custom",
                     message: err.message,
                 });
