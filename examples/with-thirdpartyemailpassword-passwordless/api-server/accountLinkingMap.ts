@@ -146,6 +146,30 @@ export function getPrimaryUserIdFromRecipeUserId(recipeId: string, recipeUserId:
     return result === undefined ? recipeUserId : result;
 }
 
+/**
+ * This function should return the input userID in case we can't find this in the primary
+ * user store. This is cause it may actually be a recipeId which is not linked.
+ */
+export function getRecipeUserIdFromPrimaryUserId(recipeId: string, primaryUserId: string) {
+    let primaryUserInfo = primaryUserStore.get(primaryUserId);
+    if (primaryUserInfo === undefined) {
+        return primaryUserId;
+    }
+
+    let result: string | undefined = undefined;
+    primaryUserInfo.forEach((linkedAccount) => {
+        if (linkedAccount.recipeId === recipeId) {
+            result = linkedAccount.recipeUserId;
+        }
+    });
+
+    if (result === undefined) {
+        // TODO: I think the code should never come here.. but not sure
+        throw new Error("Linked account with recipeId doesn't exist, but primary user found...");
+    }
+    return result;
+}
+
 // this generates new userIds.
 // Note that this is just for the demo's purpose.
 // In production, you would want to use a globally unique

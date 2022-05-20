@@ -2,6 +2,7 @@ import {
     shouldAllowSignUp,
     linkNewAccountAndGetPrimaryUserId,
     getPrimaryUserIdFromRecipeUserId,
+    getRecipeUserIdFromPrimaryUserId,
 } from "./accountLinkingMap";
 import { RecipeInterface } from "supertokens-node/recipe/thirdpartyemailpassword/types";
 
