@@ -33,7 +33,7 @@ import { useTranslation } from "../../../../../translation/translationContext";
 import { useUserContext } from "../../../../../usercontext";
 import { useOnMountAPICall } from "../../../../../utils";
 import { Awaited } from "../../../../../types";
-import STGeneralError from "supertokens-web-js/lib/build/error";
+import STGeneralError from "supertokens-web-js/utils/error";
 
 /*
  * Component.

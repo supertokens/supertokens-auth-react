@@ -32,7 +32,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { defaultTranslationsPasswordless } from "../../themes/translations";
 import { useUserContext } from "../../../../../usercontext";
 import { getLoginAttemptInfo } from "../../../utils";
-import STGeneralError from "supertokens-web-js/lib/build/error";
+import STGeneralError from "supertokens-web-js/utils/error";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
