@@ -38,26 +38,29 @@ export let backendConfig = (): TypeInput => {
                     apis: (originalImplementation) => {
                         return {
                             ...originalImplementation,
+                            // the thirdPartySignInUpPost function handles sign up/in via Social login
                             thirdPartySignInUpPOST: async function (input) {
                                 if (originalImplementation.thirdPartySignInUpPOST === undefined) {
                                     throw Error("Should never come here");
                                 }
+
+                                // call the sign up/in api for social login
                                 let response = await originalImplementation.thirdPartySignInUpPOST(input);
 
+                                // check that there is no issue with sign up and that a new user is created
                                 if (response.status === "OK" && response.createdNewUser) {
                                     // retrieve the supabase_token from the accessTokenPayload
                                     const accessTokenPayload = response.session.getAccessTokenPayload();
 
-                                    // create a supabase client whose JWT contains the user's id
+                                    // create a supabase client with the supabase_token from the accessTokenPayload
                                     const supabase = getSupabase(accessTokenPayload.supabase_token);
+
                                     // store the user's email mapped to their userId in Supabase
                                     const { error } = await supabase
                                         .from("users")
                                         .insert({ email: response.user.email, user_id: response.user.id });
 
                                     if (error !== null) {
-                                        // Since Row Level Security is enabled in our Supabase tables, if a policy for inserting
-                                        // rows to a table has not been defined, insertion will throw an error.
                                         throw error;
                                     }
                                 }
@@ -65,6 +68,7 @@ export let backendConfig = (): TypeInput => {
                                 return response;
                             },
 
+                            // the emailPasswordSignUpPOST function handles sign up via Email-Password
                             emailPasswordSignUpPOST: async function (input) {
                                 if (originalImplementation.emailPasswordSignUpPOST === undefined) {
                                     throw Error("Should never come here");
@@ -73,10 +77,10 @@ export let backendConfig = (): TypeInput => {
                                 let response = await originalImplementation.emailPasswordSignUpPOST(input);
 
                                 if (response.status === "OK") {
-                                    // retrieve the supabase_token from the accessTokenPayload
+                                    // retrieve the accessTokenPayload from the user's session
                                     const accessTokenPayload = response.session.getAccessTokenPayload();
 
-                                    // create a supabase client whose JWT contains the user's id
+                                    // create a supabase client with the supabase_token from the accessTokenPayload
                                     const supabase = getSupabase(accessTokenPayload.supabase_token);
 
                                     // store the user's email mapped to their userId in Supabase
@@ -85,8 +89,6 @@ export let backendConfig = (): TypeInput => {
                                         .insert({ email: response.user.email, user_id: response.user.id });
 
                                     if (error !== null) {
-                                        // Since Row Level Security is enabled in our Supabase tables, if a policy for inserting
-                                        // rows to a table has not been defined, insertion will throw an error.
                                         throw error;
                                     }
                                 }
