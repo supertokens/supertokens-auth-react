@@ -2,6 +2,8 @@ import {
     linkNewAccountAndGetPrimaryUserId,
     getPrimaryUserIdFromRecipeUserId,
     shouldAllowSignUp,
+    getRecipeUserIdFromPrimaryUserId,
+    findPrimaryUserIdIdentifyingInfo,
 } from "./accountLinkingMap";
 import { RecipeInterface } from "supertokens-node/recipe/passwordless/types";
 
@@ -65,52 +67,80 @@ export const plessOverride = (ogImpl: RecipeInterface): RecipeInterface => {
 
             return result;
         },
-        // getUserById: async function (input) {
-        //     // The input would be a primary userId. We can't give the primary userId
-        //     // to supertokens' function because it won't recognize it. So we need to
-        //     // find the associated supertokens' userId.
-        //     //
-        //     // Since the primary userId maps to multiple supertokens users,
-        //     // we can use any one of them, but it has to be the same one each time.
-        //     input.userId = getPwlessSuperTokensIdFromPrimaryId(input.userId)!;
-        //     let user = await ogImpl.getUserById(input);
-        //     if (user === undefined) {
-        //         return undefined;
-        //     }
+        getUserById: async function (input) {
+            // The input would be a primary userId. We can't give the primary userId
+            // to supertokens' function because it won't recognize it. So we need to
+            // find the associated recipe userId.
+            input.userId = getRecipeUserIdFromPrimaryUserId("passwordless", input.userId);
+            let user = await ogImpl.getUserById(input);
+            if (user === undefined) {
+                return undefined;
+            }
 
-        //     // once we have the supertokens' user object from the function call above,
-        //     // we need to fetch the associated primary user object.
-        //     return {
-        //         ...user,
-        //         ...getPrimaryUserFromSuperTokensId(user.id),
-        //     };
-        // },
-        // getUserByEmail: async function (input) {
-        //     let user = await ogImpl.getUserByEmail(input);
-        //     if (user === undefined) {
-        //         return undefined;
-        //     }
+            user.id = getPrimaryUserIdFromRecipeUserId("passwordless", user.id);
 
-        //     return {
-        //         ...user,
-        //         ...getPrimaryUserFromSuperTokensId(user.id),
-        //     };
-        // },
-        // getUserByPhoneNumber: async function (input) {
-        //     let user = await ogImpl.getUserByPhoneNumber(input);
-        //     if (user === undefined) {
-        //         return undefined;
-        //     }
+            return user;
+        },
+        getUserByEmail: async function (input) {
+            let user = await ogImpl.getUserByEmail(input);
+            if (user === undefined) {
+                return undefined;
+            }
 
-        //     return {
-        //         ...user,
-        //         ...getPrimaryUserFromSuperTokensId(user.id),
-        //     };
-        // },
+            user.id = getPrimaryUserIdFromRecipeUserId("passwordless", user.id);
 
-        // updateUser: async function (input) {
-        //     input.userId = getPwlessSuperTokensIdFromPrimaryId(input.userId)!;
-        //     return ogImpl.updateUser(input);
-        // },
+            return user;
+        },
+        getUserByPhoneNumber: async function (input) {
+            let user = await ogImpl.getUserByPhoneNumber(input);
+            if (user === undefined) {
+                return undefined;
+            }
+
+            user.id = getPrimaryUserIdFromRecipeUserId("passwordless", user.id);
+
+            return user;
+        },
+
+        updateUser: async function (input) {
+            // We need to make sure that another primary user doesn't already have
+            // this new email / phone number in their identifying info.
+            if (input.email !== null && input.email !== undefined) {
+                let fromVerifiedList = findPrimaryUserIdIdentifyingInfo(input.email, true);
+                let fromUnverifiedList = findPrimaryUserIdIdentifyingInfo(input.email, false);
+                if (fromUnverifiedList !== undefined && fromUnverifiedList !== input.userId) {
+                    return {
+                        status: "EMAIL_ALREADY_EXISTS_ERROR",
+                    };
+                }
+                if (fromVerifiedList !== undefined && fromVerifiedList !== input.userId) {
+                    return {
+                        status: "EMAIL_ALREADY_EXISTS_ERROR",
+                    };
+                }
+            }
+
+            if (input.phoneNumber !== null && input.phoneNumber !== undefined) {
+                let fromVerifiedList = findPrimaryUserIdIdentifyingInfo(input.phoneNumber, true);
+                let fromUnverifiedList = findPrimaryUserIdIdentifyingInfo(input.phoneNumber, false);
+                if (fromUnverifiedList !== undefined && fromUnverifiedList !== input.userId) {
+                    return {
+                        status: "PHONE_NUMBER_ALREADY_EXISTS_ERROR",
+                    };
+                }
+                if (fromVerifiedList !== undefined && fromVerifiedList !== input.userId) {
+                    return {
+                        status: "PHONE_NUMBER_ALREADY_EXISTS_ERROR",
+                    };
+                }
+            }
+
+            input.userId = getRecipeUserIdFromPrimaryUserId("passwordless", input.userId);
+            let response = await ogImpl.updateUser(input);
+            if (response.status === "OK") {
+                // TODO: we need to update the verified mapping associated with this primary user.
+            }
+            return response;
+        },
     };
 };

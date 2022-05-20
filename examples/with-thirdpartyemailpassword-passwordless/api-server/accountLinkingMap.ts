@@ -98,7 +98,7 @@ export function shouldAllowSignUp(identifyingInfo: string): boolean {
     return result;
 }
 
-function findPrimaryUserIdIdentifyingInfo(identifyingInfo: string, shouldVerified: boolean): string | undefined {
+export function findPrimaryUserIdIdentifyingInfo(identifyingInfo: string, shouldVerified: boolean): string | undefined {
     let result: string | undefined = undefined;
 
     // we loop through all primary users
@@ -164,10 +164,15 @@ export function getRecipeUserIdFromPrimaryUserId(recipeId: string, primaryUserId
     });
 
     if (result === undefined) {
-        // TODO: I think the code should never come here.. but not sure
-        throw new Error("Linked account with recipeId doesn't exist, but primary user found...");
+        // it can come here if a combined recipe (like thirdpartyemailpassword) is
+        // trying to get a recipe userID and it tries emailpassword recipeID but only thirdparty exists (or vice versa)
+        return primaryUserId;
     }
     return result;
+}
+
+export function getAllLinkedAccounts(primaryUserId: string): PrimaryUser[] | undefined {
+    return primaryUserStore.get(primaryUserId);
 }
 
 // this generates new userIds.
