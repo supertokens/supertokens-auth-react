@@ -8,6 +8,7 @@ import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpass
 import Passwordless from "supertokens-node/recipe/passwordless";
 import { tpepOverride } from "./tpepOverride";
 import { plessOverride } from "./plessOverride";
+import { evOverride } from "./evOverride";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -55,6 +56,11 @@ supertokens.init({
             override: {
                 functions: (originalImpl) => {
                     return tpepOverride(originalImpl);
+                },
+                emailVerificationFeature: {
+                    functions: (originalImpl) => {
+                        return evOverride(originalImpl);
+                    },
                 },
             },
         }),

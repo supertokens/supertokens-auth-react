@@ -99,7 +99,7 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
             } else {
                 // TODO: user's email may have changed, so we need to update their identifying info in this case.
 
-                result.user.id = getPrimaryUserIdFromRecipeUserId("thirdparty", result.user.id);
+                result.user.id = getPrimaryUserIdFromRecipeUserId(result.user.id);
             }
 
             return result;
@@ -135,7 +135,7 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
                 return result;
             }
 
-            result.user.id = getPrimaryUserIdFromRecipeUserId("emailpassword", result.user.id);
+            result.user.id = getPrimaryUserIdFromRecipeUserId(result.user.id);
 
             return result;
         },
@@ -144,22 +144,13 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
             // to supertokens' function because it won't recognize it. So we need to
             // find the associated recips userId.
 
-            // first we try emailpassword recipe
-            let recipeUserId = getRecipeUserIdFromPrimaryUserId("emailpassword", input.userId);
-            if (recipeUserId === input.userId) {
-                // this means either an emailpassword user doesn't exist, or it's primary userId is the same as the recipe ID. Either way, we try thirdparty in case that exists
-                recipeUserId = getRecipeUserIdFromPrimaryUserId("thirdparty", input.userId);
-            }
-            input.userId = recipeUserId;
+            input.userId = getRecipeUserIdFromPrimaryUserId(input.userId);
             let user = await ogImpl.getUserById(input);
             if (user === undefined) {
                 return undefined;
             }
 
-            user.id = getPrimaryUserIdFromRecipeUserId(
-                user.thirdParty === undefined ? "emailpassword" : "thirdparty",
-                user.id
-            );
+            user.id = getPrimaryUserIdFromRecipeUserId(user.id);
 
             return user;
         },
@@ -169,7 +160,7 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
                 return undefined;
             }
 
-            user.id = getPrimaryUserIdFromRecipeUserId("thirdparty", user.id);
+            user.id = getPrimaryUserIdFromRecipeUserId(user.id);
 
             return user;
         },
@@ -177,10 +168,7 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
             let users = await ogImpl.getUsersByEmail(input);
 
             for (let i = 0; i < users.length; i++) {
-                users[i].id = getPrimaryUserIdFromRecipeUserId(
-                    users[i].thirdParty === undefined ? "emailpassword" : "thirdparty",
-                    users[i].id
-                );
+                users[i].id = getPrimaryUserIdFromRecipeUserId(users[i].id);
             }
             return users;
         },
@@ -200,7 +188,7 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
                     };
                 }
             }
-            input.userId = getRecipeUserIdFromPrimaryUserId("emailpassword", input.userId);
+            input.userId = getRecipeUserIdFromPrimaryUserId(input.userId);
             let response = await ogImpl.updateEmailOrPassword(input);
             if (response.status === "OK") {
                 // TODO: we need to update the mapping in primary key user store

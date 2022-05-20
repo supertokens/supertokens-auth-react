@@ -62,7 +62,7 @@ export const plessOverride = (ogImpl: RecipeInterface): RecipeInterface => {
                     true
                 );
             } else {
-                result.user.id = getPrimaryUserIdFromRecipeUserId("passwordless", result.user.id);
+                result.user.id = getPrimaryUserIdFromRecipeUserId(result.user.id);
             }
 
             return result;
@@ -71,13 +71,13 @@ export const plessOverride = (ogImpl: RecipeInterface): RecipeInterface => {
             // The input would be a primary userId. We can't give the primary userId
             // to supertokens' function because it won't recognize it. So we need to
             // find the associated recipe userId.
-            input.userId = getRecipeUserIdFromPrimaryUserId("passwordless", input.userId);
+            input.userId = getRecipeUserIdFromPrimaryUserId(input.userId);
             let user = await ogImpl.getUserById(input);
             if (user === undefined) {
                 return undefined;
             }
 
-            user.id = getPrimaryUserIdFromRecipeUserId("passwordless", user.id);
+            user.id = getPrimaryUserIdFromRecipeUserId(user.id);
 
             return user;
         },
@@ -87,7 +87,7 @@ export const plessOverride = (ogImpl: RecipeInterface): RecipeInterface => {
                 return undefined;
             }
 
-            user.id = getPrimaryUserIdFromRecipeUserId("passwordless", user.id);
+            user.id = getPrimaryUserIdFromRecipeUserId(user.id);
 
             return user;
         },
@@ -97,7 +97,7 @@ export const plessOverride = (ogImpl: RecipeInterface): RecipeInterface => {
                 return undefined;
             }
 
-            user.id = getPrimaryUserIdFromRecipeUserId("passwordless", user.id);
+            user.id = getPrimaryUserIdFromRecipeUserId(user.id);
 
             return user;
         },
@@ -135,7 +135,7 @@ export const plessOverride = (ogImpl: RecipeInterface): RecipeInterface => {
                 }
             }
 
-            input.userId = getRecipeUserIdFromPrimaryUserId("passwordless", input.userId);
+            input.userId = getRecipeUserIdFromPrimaryUserId(input.userId);
             let response = await ogImpl.updateUser(input);
             if (response.status === "OK") {
                 // TODO: we need to update the verified mapping associated with this primary user.

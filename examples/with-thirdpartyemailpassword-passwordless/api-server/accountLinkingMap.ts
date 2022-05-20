@@ -65,7 +65,7 @@ export function linkNewAccountAndGetPrimaryUserId(
         }
         primaryUserStore.set(existingPrimaryUserId, existingPrimaryUserInfo);
     }
-    return existingPrimaryUserId;
+    return existingPrimaryUserId + "|" + userId;
 }
 
 export function shouldAllowSignUp(identifyingInfo: string): boolean {
@@ -102,7 +102,7 @@ export function findPrimaryUserIdIdentifyingInfo(identifyingInfo: string, should
 
     // we loop through all primary users
     primaryUserStore.forEach((linkedAccount, userId) => {
-        let resultTemp = undefined;
+        let resultTemp: string | undefined = undefined;
 
         // we loop through all linked accounts for this primary user
         linkedAccount.forEach((element) => {
@@ -115,10 +115,11 @@ export function findPrimaryUserIdIdentifyingInfo(identifyingInfo: string, should
                         // it should never come here.. it's there only to catch bugs in the code.
                         throw new Error("Seems like multiple primary users have the same identifying info..");
                     }
-                    resultTemp = userId;
+                    resultTemp = userId + "|" + element.recipeUserId;
                 }
             });
         });
+
         if (resultTemp !== undefined) {
             result = resultTemp;
         }
@@ -126,15 +127,11 @@ export function findPrimaryUserIdIdentifyingInfo(identifyingInfo: string, should
     return result;
 }
 
-export function getPrimaryUserIdFromRecipeUserId(recipeId: string, recipeUserId: string): string {
+export function getPrimaryUserIdFromRecipeUserId(recipeUserId: string): string {
     let result: string | undefined = undefined;
     primaryUserStore.forEach((primaryUserInfo, primaryUserId) => {
         primaryUserInfo.forEach((linkedAccount) => {
-            if (
-                linkedAccount.recipeId === recipeId &&
-                linkedAccount.recipeUserId === recipeUserId &&
-                linkedAccount.isAccountFullyLinked
-            ) {
+            if (linkedAccount.recipeUserId === recipeUserId && linkedAccount.isAccountFullyLinked) {
                 if (result !== undefined) {
                     throw new Error("Seems like multiple primary users have the same recipe user ID and recipe ID");
                 }
@@ -142,35 +139,25 @@ export function getPrimaryUserIdFromRecipeUserId(recipeId: string, recipeUserId:
             }
         });
     });
-    return result === undefined ? recipeUserId : result;
+    return result === undefined ? recipeUserId : result + "|" + recipeUserId;
 }
 
 /**
  * This function should return the input userID in case we can't find this in the primary
  * user store. This is cause it may actually be a recipeId which is not linked.
  */
-export function getRecipeUserIdFromPrimaryUserId(recipeId: string, primaryUserId: string) {
-    let primaryUserInfo = primaryUserStore.get(primaryUserId);
-    if (primaryUserInfo === undefined) {
+export function getRecipeUserIdFromPrimaryUserId(primaryUserId: string) {
+    if (primaryUserId.includes("|")) {
+        return primaryUserId.split("|")[1];
+    } else {
         return primaryUserId;
     }
-
-    let result: string | undefined = undefined;
-    primaryUserInfo.forEach((linkedAccount) => {
-        if (linkedAccount.recipeId === recipeId) {
-            result = linkedAccount.recipeUserId;
-        }
-    });
-
-    if (result === undefined) {
-        // it can come here if a combined recipe (like thirdpartyemailpassword) is
-        // trying to get a recipe userID and it tries emailpassword recipeID but only thirdparty exists (or vice versa)
-        return primaryUserId;
-    }
-    return result;
 }
 
 export function getAllLinkedAccounts(primaryUserId: string): PrimaryUser[] | undefined {
+    if (primaryUserId.includes("|")) {
+        primaryUserId = primaryUserId.split("|")[1];
+    }
     return primaryUserStore.get(primaryUserId);
 }
 
