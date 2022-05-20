@@ -75,7 +75,7 @@ supertokens.init({
                             const session = await origImpl.refreshSession(input);
 
                             // We need to copy the Set-Cookies header into the custom header in the response.
-                            updateHeaders(session.res);
+                            updateHeaders(input.res);
 
                             return session;
                         },
