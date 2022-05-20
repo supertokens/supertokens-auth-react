@@ -78,7 +78,6 @@ export function shouldAllowSignUp(identifyingInfo: string): boolean {
 
     // we see if this primary user has a linked account
     // that has the input identifyingInfo in their unverifiedIdentifyingIds
-    // and that that account has the same recipeID as the input one.
     existingPrimaryUserInfo.forEach((linkedAccount) => {
         linkedAccount.unverifiedIdentifyingIds.forEach((i) => {
             if (i === identifyingInfo) {
