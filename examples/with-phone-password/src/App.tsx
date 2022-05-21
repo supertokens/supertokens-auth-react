@@ -30,7 +30,40 @@ SuperTokens.init({
         apiBasePath: "/auth",
         websiteBasePath: "/auth",
     },
-    recipeList: [EmailPassword.init(), Session.init()],
+    languageTranslations: {
+        translations: {
+            en: {
+                EMAIL_PASSWORD_RESET_HEADER_SUBTITLE: "We will send you an SMS to reset your password",
+                EMAIL_PASSWORD_EMAIL_LABEL: "Phone number",
+                EMAIL_PASSWORD_RESET_SEND_BTN: "Send SMS",
+                EMAIL_PASSWORD_RESET_SEND_SUCCESS: "Please check your SMS for the password recovery link. ",
+                EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR: "Incorrect phone and password combination",
+                EMAIL_PASSWORD_EMAIL_ALREADY_EXISTS: "This phone number already exists. Please sign in instead.",
+                "This email already exists. Please sign in instead.":
+                    "This phone number already exists. Please sign in instead",
+            },
+        },
+    },
+    recipeList: [
+        EmailPassword.init({
+            signInAndUpFeature: {
+                signUpForm: {
+                    formFields: [
+                        {
+                            id: "email",
+                            label: "Phone number",
+                            placeholder: "Phone number",
+                            validate: async (value) => {
+                                // TODO: we need to validate the phone number
+                                return undefined;
+                            },
+                        },
+                    ],
+                },
+            },
+        }),
+        Session.init(),
+    ],
 });
 
 function App() {
@@ -48,8 +81,8 @@ function App() {
                             path="/"
                             element={
                                 /* This protects the "/" route so that it shows 
-                <Home /> only if the user is logged in.
-                Else it redirects the user to "/auth" */
+<Home /> only if the user is logged in.
+Else it redirects the user to "/auth" */
                                 <EmailPassword.EmailPasswordAuth
                                     onSessionExpired={() => {
                                         updateShowSessionExpiredPopup(true);

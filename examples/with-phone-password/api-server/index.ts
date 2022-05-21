@@ -31,7 +31,25 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
-        EmailPassword.init({}),
+        EmailPassword.init({
+            resetPasswordUsingTokenFeature: {
+                createAndSendCustomEmail: async (user, link, userContext) => {
+                    // TODO: send SMS to user.email (it is actually a phone number)
+                    console.log("Send password reset link to: ", user.email);
+                    console.log("Password reset  link:", link);
+                },
+            },
+            signUpFeature: {
+                formFields: [
+                    {
+                        id: "email",
+                        validate: async (value) => {
+                            return undefined;
+                        },
+                    },
+                ],
+            },
+        }),
         Passwordless.init({
             contactMethod: "EMAIL_OR_PHONE",
             flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
