@@ -10,6 +10,8 @@
 
 -   Change email validation logic on the backend (in emailpassword recipe) to validate phone number syntax.
 -   Provide an impl for resetPasswordUsingTokenFeature.createAndSendCustomEmail on the backend to send an SMS with the password reset link
+-   We modify the createNewSession function to add phoneNumberVerified: false when the first login (phone and password) is done. Then when the second challenge is done too, we mark the session to have phoneNumberVerified: true
+-   Adds a middleware that runs after verifySession which will allow access to the API only if the access token payload has phoneNumberVerified: true
 
 ## TODO (for me):
 

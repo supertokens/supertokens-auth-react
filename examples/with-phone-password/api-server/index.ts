@@ -6,6 +6,7 @@ import { verifySession } from "supertokens-node/recipe/session/framework/express
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
+import e from "express";
 // import { tpepOverride } from "./tpepOverride";
 // import { plessOverride } from "./plessOverride";
 // import { evOverride } from "./evOverride";
@@ -51,21 +52,50 @@ supertokens.init({
             },
         }),
         Passwordless.init({
-            contactMethod: "EMAIL_OR_PHONE",
-            flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
-            createAndSendCustomEmail: async function (input) {
-                // TODO: implement sending of email
-                console.log(input);
-            },
+            contactMethod: "PHONE",
+            flowType: "USER_INPUT_CODE",
             createAndSendCustomTextMessage: async function (input) {
-                // TODO: implement sending of text message
-                console.log(input);
+                // TODO: implement sending of text message with OTP
+                console.log("SMS OTP:", input);
             },
-            // override: {
-            //     functions: (originalImplementation) => {
-            //         return plessOverride(originalImplementation);
-            //     },
-            // },
+            override: {
+                apis: (oI) => {
+                    return {
+                        ...oI,
+                        consumeCodePOST: async function (input) {
+                            if (oI.consumeCodePOST === undefined) {
+                                throw new Error("Should never come here");
+                            }
+                            // we should already have a session here since this is called
+                            // after phone password login
+                            let session = await Session.getSession(
+                                input.options.recipeImplementation,
+                                input.options.res
+                            );
+                            if (session === undefined) {
+                                throw new Error("Should never come here");
+                            }
+
+                            // we add the session to the user context so that the createNewSession
+                            // function doesn't create a new session
+                            input.userContext.session = session;
+                            let resp = await oI.consumeCodePOST(input);
+
+                            if (resp.status === "OK") {
+                                // OTP verification was successful. We can now mark the
+                                // session's payload as phoneNumberVerified: true so that
+                                // the user has access to API routes and the frontend UI
+                                await resp.session.updateAccessTokenPayload({
+                                    ...resp.session.getAccessTokenPayload(),
+                                    phoneNumberVerified: true,
+                                });
+                            }
+
+                            return resp;
+                        },
+                    };
+                },
+            },
         }),
         Session.init({
             override: {
@@ -73,13 +103,21 @@ supertokens.init({
                     return {
                         ...originalImplementation,
                         createNewSession: async function (input) {
-                            return originalImplementation.createNewSession({
-                                ...input,
-                                accessTokenPayload: {
-                                    ...input.accessTokenPayload,
-                                    isPasswordless: input.userContext.isPasswordless === true,
-                                },
-                            });
+                            if (input.userContext.session !== undefined) {
+                                // if it comes here, it means that we already have an
+                                // existing session
+                                return input.userContext.session;
+                            } else {
+                                // this is via phone number and password login. The user
+                                // still needs to verify the phone number via an OTP
+                                return originalImplementation.createNewSession({
+                                    ...input,
+                                    accessTokenPayload: {
+                                        ...input.accessTokenPayload,
+                                        phoneNumberVerified: false,
+                                    },
+                                });
+                            }
                         },
                     };
                 },
@@ -102,14 +140,31 @@ app.use(
 app.use(middleware());
 
 // custom API that requires session verification
-app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
-    let session = req.session!;
-    res.send({
-        sessionHandle: session.getHandle(),
-        userId: session.getUserId(),
-        accessTokenPayload: session.getAccessTokenPayload(),
-    });
-});
+app.get(
+    "/sessioninfo",
+    verifySession(),
+    (req: SessionRequest, res, next) => {
+        // this is a custom middleware which will make sure that the user
+        // has access to the APIs only when they have finished both the login
+        // challenges
+        let accessTokenPayload = req.session?.getAccessTokenPayload();
+        if (accessTokenPayload.phoneNumberVerified !== true) {
+            // we do not use 401 cause that is a reserved status code for supertokens in case
+            // the session doesn't exist
+            res.status(403).send("You need to verify your phone number via an OTP");
+        } else {
+            next();
+        }
+    },
+    async (req: SessionRequest, res) => {
+        let session = req.session!;
+        res.send({
+            sessionHandle: session.getHandle(),
+            userId: session.getUserId(),
+            accessTokenPayload: session.getAccessTokenPayload(),
+        });
+    }
+);
 
 app.use(errorHandler());
 
