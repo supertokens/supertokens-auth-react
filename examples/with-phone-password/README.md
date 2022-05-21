@@ -5,6 +5,8 @@
 -   We modify the sign up and in forms to replace the "Email" label and place holder with "Phon number" (using formFields config).
 -   We add a custom validator for phone number in which we add logic to check for the input phone number syntax.
 -   Added text translation to password reset forms and sign in / up forms
+-   Change the doesSessionExist function on the frontend to return true only when the access token payload has phoneNumberVerified === true. This allows users to see the application only when both the login challenges are complete
+-   Provide `getRedirectionURL` to the EmailPassword.init function to redirect the user to the second login challenge in case the first challenge is complete.
 
 ### Backend
 

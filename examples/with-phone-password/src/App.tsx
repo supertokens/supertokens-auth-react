@@ -46,6 +46,18 @@ SuperTokens.init({
     },
     recipeList: [
         EmailPassword.init({
+            getRedirectionURL: async (context) => {
+                if (context.action === "SUCCESS") {
+                    // this means that the first login challenge is done. Now we should
+                    // redirect the user to the second login challenge
+                    if (context.redirectToPath !== undefined) {
+                        return "/auth/verify-phone?redirectToPath=" + context.redirectToPath;
+                    } else {
+                        return "/auth/verify-phone";
+                    }
+                }
+                return undefined;
+            },
             signInAndUpFeature: {
                 signUpForm: {
                     formFields: [
@@ -62,7 +74,31 @@ SuperTokens.init({
                 },
             },
         }),
-        Session.init(),
+        Session.init({
+            override: {
+                functions: (oI) => {
+                    return {
+                        ...oI,
+                        doesSessionExist: async function (config) {
+                            let sessionExists = await oI.doesSessionExist(config);
+                            if (!sessionExists) {
+                                // none of the login challenges are complete. So we do not give access
+                                return false;
+                            }
+
+                            if (window.location.pathname.startsWith("/auth")) {
+                                return sessionExists;
+                            } else {
+                                // these are routes on which the user's app pages exist. So we must allow
+                                // access to them only when they also have their phone number verified
+                                let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
+                                return accessTokenPayload.phoneNumberVerified === true;
+                            }
+                        },
+                    };
+                },
+            },
+        }),
     ],
 });
 
@@ -74,6 +110,7 @@ function App() {
             <Router>
                 <div className="fill">
                     <Routes>
+                        <Route path="/auth/verify-phone" element={<div>haha</div>} />
                         {/* This shows the login UI on "/auth" route */}
                         {getSuperTokensRoutesForReactRouterDom(reactRouterDom)}
 
