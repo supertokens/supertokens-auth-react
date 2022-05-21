@@ -6,6 +6,7 @@ import { verifySession } from "supertokens-node/recipe/session/framework/express
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
+import parsePhoneNumber from "libphonenumber-js/max";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -23,9 +24,9 @@ supertokens.init({
         apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
-        appName: "SuperTokens Demo App", // TODO: Your app name
-        apiDomain, // TODO: Change to your app's API domain
-        websiteDomain, // TODO: Change to your app's website domain
+        appName: "SuperTokens Demo App",
+        apiDomain,
+        websiteDomain,
     },
     recipeList: [
         EmailPassword.init({
@@ -41,6 +42,14 @@ supertokens.init({
                     {
                         id: "email",
                         validate: async (value) => {
+                            if (typeof value !== "string") {
+                                return "Phone number is invalid";
+                            }
+
+                            let parsedPhoneNumber = parsePhoneNumber(value);
+                            if (parsedPhoneNumber === undefined || !parsedPhoneNumber.isValid()) {
+                                return "Phone number is invalid";
+                            }
                             return undefined;
                         },
                     },

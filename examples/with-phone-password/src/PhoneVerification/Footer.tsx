@@ -9,6 +9,12 @@ export default function Footer() {
         <div
             onClick={async () => {
                 /**
+                 * This removes the saved phone number from localstorage so that
+                 * next time, when the user logs in, their new phone number is sent the OTP
+                 */
+                localStorage.removeItem("supertokens-passwordless-loginAttemptInfo");
+
+                /**
                  * We call the API manually here because if we use EmailPassword.signOut,
                  * if first checks if a session exists. And if it doesn't we don't call the API.
                  *

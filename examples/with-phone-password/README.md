@@ -10,7 +10,7 @@
 -   Provide `getRedirectionURL` to the EmailPassword.init function to redirect the user to the second login challenge in case the first challenge is complete.
 -   We disable the default UI of passwordless recipe so that we can render what we want on the /verify-phone route
 -   We override the enter phone number component for passwordless recipe to send the OTP to the phone number directly - as opposed to it asking the user to enter it again.
--   We override the "Change phone number button" in the enter OTP screen with a custom button which will logout the user and take them back to the first login challenge
+-   We override the "Change phone number button" in the enter OTP screen with a custom button which will logout the user and take them back to the first login challenge.
 
 ### Backend
 
@@ -21,7 +21,6 @@
 
 ## TODO (for me):
 
--   Add phone number validation logic (on frontend and backend)
 -   Change style of input field for phone number to use libphonenumber lib on the frontend (sign in, sign up and reset password form)
 
 ## TODO (for user):

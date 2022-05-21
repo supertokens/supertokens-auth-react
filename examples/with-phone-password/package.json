@@ -13,6 +13,7 @@
         "@types/react-dom": "^18.0.4",
         "cors": "^2.8.5",
         "express": "^4.18.1",
+        "libphonenumber-js": "^1.10.4",
         "react": "^18.1.0",
         "react-dom": "^18.1.0",
         "react-router-dom": "^6.3.0",

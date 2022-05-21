@@ -73,8 +73,6 @@ SuperTokens.init({
                             Session.getAccessTokenPayloadSecurely().then(async (accessTokenPayload) => {
                                 let phoneNumber = accessTokenPayload.phoneNumber;
 
-                                await props.recipeImplementation.clearLoginAttemptInfo();
-
                                 // This will send the user an OTP and also display the enter OTP screen.
                                 await props.recipeImplementation.createCode({
                                     phoneNumber: phoneNumber,
@@ -104,7 +102,8 @@ SuperTokens.init({
                             label: "Phone number",
                             placeholder: "Phone number",
                             validate: async (value) => {
-                                // TODO: we need to validate the phone number
+                                // We can provide validation logic here.. but the backend
+                                // checks for a valid phone number anyway
                                 return undefined;
                             },
                         },
