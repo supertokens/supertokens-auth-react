@@ -10,6 +10,7 @@ import Home from "./Home";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 import PhoneVerification from "./PhoneVerification";
+import PhoneNumberVerificationFooter from "./PhoneVerification/Footer";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -52,6 +53,38 @@ SuperTokens.init({
             signInUpFeature: {
                 // this will not show the passwordless UI unless we render it ourselves.
                 disableDefaultImplementation: true,
+            },
+            override: {
+                components: {
+                    PasswordlessUserInputCodeFormFooter_Override: ({ DefaultComponent, ...props }) => {
+                        return <PhoneNumberVerificationFooter />;
+                    },
+                    PasswordlessSignInUpHeader_Override: () => {
+                        return null;
+                    },
+                    PasswordlessPhoneForm_Override: ({ DefaultComponent, ...props }) => {
+                        React.useEffect(() => {
+                            /**
+                             * When the backend creates a session after the first login challenge,
+                             * it also adds the user's phone number in the access token payload.
+                             *
+                             * We can use that to send it an OTP.
+                             */
+                            Session.getAccessTokenPayloadSecurely().then(async (accessTokenPayload) => {
+                                let phoneNumber = accessTokenPayload.phoneNumber;
+
+                                await props.recipeImplementation.clearLoginAttemptInfo();
+
+                                // This will send the user an OTP and also display the enter OTP screen.
+                                await props.recipeImplementation.createCode({
+                                    phoneNumber: phoneNumber,
+                                    config: props.config,
+                                });
+                            });
+                        }, []);
+                        return null;
+                    },
+                },
             },
         }),
         EmailPassword.init({

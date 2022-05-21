@@ -6,10 +6,6 @@ import { verifySession } from "supertokens-node/recipe/session/framework/express
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
-import e from "express";
-// import { tpepOverride } from "./tpepOverride";
-// import { plessOverride } from "./plessOverride";
-// import { evOverride } from "./evOverride";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -107,11 +103,16 @@ supertokens.init({
                             } else {
                                 // this is via phone number and password login. The user
                                 // still needs to verify the phone number via an OTP
+
+                                // we also get the phone number of the user and save it in the
+                                // session so that the OTP can be sent to it directly
+                                let userInfo = await EmailPassword.getUserById(input.userId, input.userContext);
                                 return originalImplementation.createNewSession({
                                     ...input,
                                     accessTokenPayload: {
                                         ...input.accessTokenPayload,
                                         phoneNumberVerified: false,
+                                        phoneNumber: userInfo?.email,
                                     },
                                 });
                             }
@@ -127,7 +128,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: websiteDomain, // TODO: Change to your app's website domain
+        origin: websiteDomain,
         allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
         methods: ["GET", "PUT", "POST", "DELETE"],
         credentials: true,
