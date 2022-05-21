@@ -68,10 +68,7 @@ supertokens.init({
                             }
                             // we should already have a session here since this is called
                             // after phone password login
-                            let session = await Session.getSession(
-                                input.options.recipeImplementation,
-                                input.options.res
-                            );
+                            let session = await Session.getSession(input.options.req, input.options.res);
                             if (session === undefined) {
                                 throw new Error("Should never come here");
                             }

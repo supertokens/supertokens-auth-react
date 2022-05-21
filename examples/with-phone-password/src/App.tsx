@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import "./App.css";
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Session from "supertokens-auth-react/recipe/session";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import * as reactRouterDom from "react-router-dom";
 import Home from "./Home";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
+import PhoneVerification from "./PhoneVerification";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -45,16 +47,19 @@ SuperTokens.init({
         },
     },
     recipeList: [
+        Passwordless.init({
+            contactMethod: "PHONE",
+            signInUpFeature: {
+                // this will not show the passwordless UI unless we render it ourselves.
+                disableDefaultImplementation: true,
+            },
+        }),
         EmailPassword.init({
             getRedirectionURL: async (context) => {
                 if (context.action === "SUCCESS") {
                     // this means that the first login challenge is done. Now we should
                     // redirect the user to the second login challenge
-                    if (context.redirectToPath !== undefined) {
-                        return "/auth/verify-phone?redirectToPath=" + context.redirectToPath;
-                    } else {
-                        return "/auth/verify-phone";
-                    }
+                    return "/auth/verify-phone";
                 }
                 return undefined;
             },
@@ -87,7 +92,13 @@ SuperTokens.init({
                             }
 
                             if (window.location.pathname.startsWith("/auth")) {
-                                return sessionExists;
+                                if (window.location.pathname === "/auth/verify-phone") {
+                                    // this is a special case route where even if a session exists,
+                                    // we say it doesn't exist unless the second login challenge is solved
+                                    let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
+                                    return accessTokenPayload.phoneNumberVerified === true;
+                                }
+                                return true;
                             } else {
                                 // these are routes on which the user's app pages exist. So we must allow
                                 // access to them only when they also have their phone number verified
@@ -110,7 +121,7 @@ function App() {
             <Router>
                 <div className="fill">
                     <Routes>
-                        <Route path="/auth/verify-phone" element={<div>haha</div>} />
+                        <Route path="/auth/verify-phone" element={<PhoneVerification />} />
                         {/* This shows the login UI on "/auth" route */}
                         {getSuperTokensRoutesForReactRouterDom(reactRouterDom)}
 
