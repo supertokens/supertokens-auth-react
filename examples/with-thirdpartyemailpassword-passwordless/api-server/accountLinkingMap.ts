@@ -7,6 +7,9 @@
  * for all users that have the same contact info, regardless of which login method they used.
  */
 import fs from "fs";
+if (!fs.existsSync("./api-server/primaryUserStore.json")) {
+    fs.writeFileSync("./api-server/primaryUserStore.json", JSON.stringify({}), { encoding: "utf8", flag: "w" });
+}
 let primaryUserStoreJSON = JSON.parse(fs.readFileSync("./api-server/primaryUserStore.json", "utf8"));
 
 function saveStoreToFile() {
