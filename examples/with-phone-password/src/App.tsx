@@ -57,7 +57,7 @@ SuperTokens.init({
             override: {
                 components: {
                     PasswordlessUserInputCodeFormFooter_Override: ({ DefaultComponent, ...props }) => {
-                        return <PhoneNumberVerificationFooter />;
+                        return <PhoneNumberVerificationFooter recipeImplementation={props.recipeImplementation} />;
                     },
                     PasswordlessSignInUpHeader_Override: () => {
                         return null;
@@ -70,15 +70,24 @@ SuperTokens.init({
                              *
                              * We can use that to send it an OTP.
                              */
-                            Session.getAccessTokenPayloadSecurely().then(async (accessTokenPayload) => {
-                                let phoneNumber = accessTokenPayload.phoneNumber;
+                            Session.getAccessTokenPayloadSecurely()
+                                .then(async (accessTokenPayload) => {
+                                    let phoneNumber = accessTokenPayload.phoneNumber;
 
-                                // This will send the user an OTP and also display the enter OTP screen.
-                                await props.recipeImplementation.createCode({
-                                    phoneNumber: phoneNumber,
-                                    config: props.config,
+                                    // This will send the user an OTP and also display the enter OTP screen.
+                                    await props.recipeImplementation.createCode({
+                                        phoneNumber: phoneNumber,
+                                        config: props.config,
+                                    });
+                                })
+                                .catch((err) => {
+                                    // it can come here if a session doesn't exist.
+                                    // in this case, the screen we will should redirect to the
+                                    // first login challenge
+                                    EmailPassword.redirectToAuth({
+                                        redirectBack: false,
+                                    });
                                 });
-                            });
                         }, []);
                         return null;
                     },
