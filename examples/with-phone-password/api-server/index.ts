@@ -67,6 +67,31 @@ supertokens.init({
                 apis: (oI) => {
                     return {
                         ...oI,
+                        createCodePOST: async function (input) {
+                            if (oI.createCodePOST === undefined) {
+                                throw new Error("Should never come here");
+                            }
+                            /**
+                             *
+                             * We want to make sure that the OTP being generated is for the
+                             * same number that was used in the first login challenge. Otherwise
+                             * someone could "hack" the frontend to change the phone number
+                             * being sent for the second login challenge.
+                             */
+
+                            let session = await Session.getSession(input.options.req, input.options.res);
+                            if (session === undefined) {
+                                throw new Error("Should never come here");
+                            }
+
+                            let phoneNumber: string = session.getAccessTokenPayload().phoneNumber;
+
+                            if (!("phoneNumber" in input) || input.phoneNumber !== phoneNumber) {
+                                throw new Error("Should never come here");
+                            }
+
+                            return oI.createCodePOST(input);
+                        },
                         consumeCodePOST: async function (input) {
                             if (oI.consumeCodePOST === undefined) {
                                 throw new Error("Should never come here");

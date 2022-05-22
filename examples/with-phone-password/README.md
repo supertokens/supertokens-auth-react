@@ -63,6 +63,7 @@ This demo app uses the EmailPassword and Passwordless recipes to achieve the aut
 -   Provide an impl for resetPasswordUsingTokenFeature.createAndSendCustomEmail on the backend to send an SMS with the password reset link
 -   We modify the createNewSession function to add phoneNumberVerified: false when the first login (phone and password) is done. Then when the second challenge is done too, we mark the session to have phoneNumberVerified: true. We also add the phone number of the user in the session so that the frontend can access it to send the OTP without asking the user for it.
 -   Adds a middleware that runs after verifySession which will allow access to the API only if the access token payload has phoneNumberVerified: true
+-   Overrides OTP creation API in Passwordless recipe to allow creation for OTP for only the phone number that was used in the first login challenge
 
 ## Future work:
 
