@@ -5,6 +5,7 @@ import {
     getRecipeUserIdFromPrimaryUserId,
     findPrimaryUserIdIdentifyingInfo,
     getAllLinkedAccounts,
+    markIdentifierAsVerified,
 } from "./accountLinkingMap";
 import { RecipeInterface } from "supertokens-node/recipe/thirdpartyemailpassword/types";
 
@@ -194,6 +195,20 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
                 // TODO: we need to update the mapping in primary key user store
             }
             return response;
+        },
+        resetPasswordUsingToken: async function (input) {
+            let resp = await ogImpl.resetPasswordUsingToken(input);
+            if (resp.status !== "OK") {
+                return resp;
+            }
+            let email = (await this.getUserById({
+                userContext: input.userContext,
+                userId: resp.userId!,
+            }))!.email;
+            markIdentifierAsVerified(getRecipeUserIdFromPrimaryUserId(resp.userId!), email);
+            // TODO: we need to change the session's userId if it exists.
+            resp.userId = getPrimaryUserIdFromRecipeUserId(resp.userId!);
+            return resp;
         },
     };
 };

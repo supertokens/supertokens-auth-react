@@ -22,7 +22,7 @@ supertokens.init({
     framework: "express",
     supertokens: {
         // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
-        connectionURI: "https://try.supertokens.com",
+        connectionURI: "http://localhost:3567",
         apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
@@ -32,6 +32,11 @@ supertokens.init({
     },
     recipeList: [
         ThirdPartyEmailPassword.init({
+            emailVerificationFeature: {
+                createAndSendCustomEmail: async function (user, link, userContext) {
+                    console.log(link);
+                },
+            },
             providers: [
                 // We have provided you with development keys which you can use for testing.
                 // IMPORTANT: Please replace them with your own OAuth keys for production use.
@@ -60,6 +65,31 @@ supertokens.init({
                 emailVerificationFeature: {
                     functions: (originalImpl) => {
                         return evOverride(originalImpl);
+                    },
+                    apis: (originalImpl) => {
+                        return {
+                            ...originalImpl,
+                            verifyEmailPOST: async function (input) {
+                                if (originalImpl.verifyEmailPOST === undefined) {
+                                    throw new Error("Should never come here");
+                                }
+                                let session = (await Session.getSession(input.options.req, input.options.res))!;
+                                let resp = await originalImpl.verifyEmailPOST(input);
+                                if (resp.status === "OK") {
+                                    /**
+                                     * We want to do this only if session.getUserId() is not a pimary
+                                     * user ID.. but for this demo, we do this anyway
+                                     */
+                                    await Session.createNewSession(
+                                        input.options.res,
+                                        resp.user.id,
+                                        session.getAccessTokenPayload(),
+                                        await session.getSessionData()
+                                    );
+                                }
+                                return resp;
+                            },
+                        };
                     },
                 },
             },

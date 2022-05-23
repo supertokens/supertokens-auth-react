@@ -100,7 +100,7 @@ export function linkNewAccountAndGetPrimaryUserId(
             }
             primaryUserStore[existingPrimaryUserId] = existingPrimaryUserInfo;
         }
-        return existingPrimaryUserId + "|" + userId;
+        return getPrimaryUserIdFromRecipeUserId(userId);
     } finally {
         saveStoreToFile();
     }
@@ -141,7 +141,7 @@ export function shouldAllowSignUp(identifyingInfo: string): boolean {
 
 export function findPrimaryUserIdIdentifyingInfo(identifyingInfo: string, shouldVerified: boolean): string | undefined {
     try {
-        let result: string | undefined = undefined;
+        let recipeUserId: string | undefined = undefined;
 
         // we loop through all primary users
         Object.keys(primaryUserStore).forEach((userId) => {
@@ -155,20 +155,20 @@ export function findPrimaryUserIdIdentifyingInfo(identifyingInfo: string, should
                 // we loop through all identifyingInfo for this linked account
                 arrToLoop.forEach((i) => {
                     if (i === identifyingInfo) {
-                        if (result !== undefined) {
+                        if (recipeUserId !== undefined) {
                             // it should never come here.. it's there only to catch bugs in the code.
                             throw new Error("Seems like multiple primary users have the same identifying info..");
                         }
-                        resultTemp = userId + "|" + element.recipeUserId;
+                        resultTemp = element.recipeUserId;
                     }
                 });
             });
 
             if (resultTemp !== undefined) {
-                result = resultTemp;
+                recipeUserId = resultTemp;
             }
         });
-        return result;
+        return recipeUserId === undefined ? undefined : getPrimaryUserIdFromRecipeUserId(recipeUserId);
     } finally {
         saveStoreToFile();
     }
@@ -206,9 +206,34 @@ export function getRecipeUserIdFromPrimaryUserId(primaryUserId: string) {
     }
 }
 
-export function getAllLinkedAccounts(primaryUserId: string): PrimaryUser[] | undefined {
-    if (primaryUserId.includes("|")) {
-        primaryUserId = primaryUserId.split("|")[1];
+export function getPrimaryUserIdFromString(str: string) {
+    if (str.includes("|")) {
+        return str.split("|")[0];
     }
-    return primaryUserStore[primaryUserId];
+    return str;
+}
+
+export function getAllLinkedAccounts(primaryUserId: string): PrimaryUser[] | undefined {
+    return primaryUserStore[getPrimaryUserIdFromString(primaryUserId)];
+}
+
+export function markIdentifierAsVerified(recipeUserId: string, identifier: string) {
+    try {
+        Object.keys(primaryUserStore).forEach((primaryUserId) => {
+            let allLinkedAccounts = primaryUserStore[primaryUserId];
+            allLinkedAccounts.forEach((linkedAccount) => {
+                if (linkedAccount.recipeUserId === recipeUserId) {
+                    linkedAccount.isAccountFullyLinked = true;
+                    linkedAccount.unverifiedIdentifyingIds = linkedAccount.unverifiedIdentifyingIds.filter(
+                        (i) => i !== identifier
+                    );
+                    if (!linkedAccount.verifiedIdentifyingIds.includes(identifier)) {
+                        linkedAccount.verifiedIdentifyingIds.push(identifier);
+                    }
+                }
+            });
+        });
+    } finally {
+        saveStoreToFile();
+    }
 }
