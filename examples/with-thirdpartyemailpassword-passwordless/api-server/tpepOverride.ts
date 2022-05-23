@@ -5,7 +5,7 @@ import {
     getRecipeUserIdFromPrimaryUserId,
     findPrimaryUserIdIdentifyingInfo,
     getAllLinkedAccounts,
-    markIdentifierAsVerified,
+    updateIdentifierArraysForRecipeUserId,
 } from "./accountLinkingMap";
 import { RecipeInterface } from "supertokens-node/recipe/thirdpartyemailpassword/types";
 
@@ -98,8 +98,7 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
                     input.email.isVerified
                 );
             } else {
-                // TODO: user's email may have changed, so we need to update their identifying info in this case.
-
+                await updateIdentifierArraysForRecipeUserId(result.user.id);
                 result.user.id = getPrimaryUserIdFromRecipeUserId(result.user.id);
             }
 
@@ -192,7 +191,7 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
             input.userId = getRecipeUserIdFromPrimaryUserId(input.userId);
             let response = await ogImpl.updateEmailOrPassword(input);
             if (response.status === "OK") {
-                // TODO: we need to update the mapping in primary key user store
+                await updateIdentifierArraysForRecipeUserId(input.userId);
             }
             return response;
         },
@@ -201,11 +200,7 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
             if (resp.status !== "OK") {
                 return resp;
             }
-            let email = (await this.getUserById({
-                userContext: input.userContext,
-                userId: resp.userId!,
-            }))!.email;
-            markIdentifierAsVerified(getRecipeUserIdFromPrimaryUserId(resp.userId!), email);
+            await updateIdentifierArraysForRecipeUserId(getRecipeUserIdFromPrimaryUserId(resp.userId!));
             resp.userId = getPrimaryUserIdFromRecipeUserId(resp.userId!);
             return resp;
         },

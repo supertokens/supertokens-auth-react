@@ -7,6 +7,8 @@
  * for all users that have the same contact info, regardless of which login method they used.
  */
 import fs from "fs";
+import Passwordless from "supertokens-node/recipe/passwordless";
+import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
 if (!fs.existsSync("./api-server/primaryUserStore.json")) {
     fs.writeFileSync("./api-server/primaryUserStore.json", JSON.stringify({}), { encoding: "utf8", flag: "w" });
 }
@@ -225,22 +227,54 @@ export function getAllLinkedAccounts(primaryUserId: string): PrimaryUser[] | und
     return primaryUserStore[getPrimaryUserIdFromString(primaryUserId)];
 }
 
-export function markIdentifierAsVerified(recipeUserId: string, identifier: string) {
+/**
+ * This should also be run in a cronjob for all the primary user IDs and their recipeIDs
+ */
+export async function updateIdentifierArraysForRecipeUserId(recipeUserId: string) {
     try {
-        Object.keys(primaryUserStore).forEach((primaryUserId) => {
+        let keys = Object.keys(primaryUserStore);
+        for (let i = 0; i < keys.length; i++) {
+            let primaryUserId = keys[i];
             let allLinkedAccounts = getAllLinkedAccounts(primaryUserId)!;
-            allLinkedAccounts.forEach((linkedAccount) => {
-                if (linkedAccount.recipeUserId === recipeUserId) {
-                    linkedAccount.isAccountFullyLinked = true;
-                    linkedAccount.unverifiedIdentifyingIds = linkedAccount.unverifiedIdentifyingIds.filter(
-                        (i) => i !== identifier
-                    );
-                    if (!linkedAccount.verifiedIdentifyingIds.includes(identifier)) {
-                        linkedAccount.verifiedIdentifyingIds.push(identifier);
-                    }
+            for (let y = 0; y < allLinkedAccounts.length; y++) {
+                let linkedAccount = allLinkedAccounts[y];
+                if (linkedAccount.recipeUserId !== recipeUserId) {
+                    continue;
                 }
-            });
-        });
+                if (linkedAccount.recipeId === "passwordless") {
+                    let user = await Passwordless.getUserById({
+                        userId: recipeUserId,
+                    });
+                    if (user !== undefined) {
+                        linkedAccount.unverifiedIdentifyingIds = [];
+                        linkedAccount.verifiedIdentifyingIds = [];
+                        if (user.email !== undefined) {
+                            linkedAccount.isAccountFullyLinked = true;
+                            linkedAccount.verifiedIdentifyingIds.push(user.email);
+                        }
+                        if (user.phoneNumber !== undefined) {
+                            linkedAccount.isAccountFullyLinked = true;
+                            linkedAccount.verifiedIdentifyingIds.push(user.phoneNumber);
+                        }
+                    }
+                } else if (linkedAccount.recipeId === "emailpassword" || linkedAccount.recipeId === "thirdparty") {
+                    let user = await ThirdPartyEmailPassword.getUserById(recipeUserId);
+                    if (user !== undefined) {
+                        let isEmailVerified = await ThirdPartyEmailPassword.isEmailVerified(recipeUserId);
+                        linkedAccount.unverifiedIdentifyingIds = [];
+                        linkedAccount.verifiedIdentifyingIds = [];
+                        if (isEmailVerified) {
+                            linkedAccount.isAccountFullyLinked = true;
+                            linkedAccount.verifiedIdentifyingIds = [user.email];
+                        } else {
+                            linkedAccount.unverifiedIdentifyingIds = [user.email];
+                        }
+                    }
+                } else {
+                    throw new Error("Should never come here");
+                }
+            }
+        }
     } finally {
         saveStoreToFile();
     }

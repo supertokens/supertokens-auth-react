@@ -4,6 +4,7 @@ import {
     shouldAllowSignUp,
     getRecipeUserIdFromPrimaryUserId,
     findPrimaryUserIdIdentifyingInfo,
+    updateIdentifierArraysForRecipeUserId,
 } from "./accountLinkingMap";
 import { RecipeInterface } from "supertokens-node/recipe/passwordless/types";
 
@@ -11,6 +12,7 @@ export const plessOverride = (ogImpl: RecipeInterface): RecipeInterface => {
     return {
         ...ogImpl,
         consumeCode: async function (input) {
+            input.userContext.isPasswordless = true;
             // if this is a sign up, we need to check if the contact info is
             // in a primary user's unverified ID. If it is, we need to stop this sign up
             let info = await this.listCodesByPreAuthSessionId({
@@ -138,7 +140,7 @@ export const plessOverride = (ogImpl: RecipeInterface): RecipeInterface => {
             input.userId = getRecipeUserIdFromPrimaryUserId(input.userId);
             let response = await ogImpl.updateUser(input);
             if (response.status === "OK") {
-                // TODO: we need to update the verified mapping associated with this primary user.
+                await updateIdentifierArraysForRecipeUserId(input.userId);
             }
             return response;
         },

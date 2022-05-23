@@ -1,7 +1,7 @@
 import {
     getPrimaryUserIdFromRecipeUserId,
     getRecipeUserIdFromPrimaryUserId,
-    markIdentifierAsVerified,
+    updateIdentifierArraysForRecipeUserId,
 } from "./accountLinkingMap";
 import { RecipeInterface } from "supertokens-node/recipe/emailverification/types";
 
@@ -22,7 +22,7 @@ export const evOverride = (ogImpl: RecipeInterface): RecipeInterface => {
         },
         unverifyEmail: async function (input) {
             input.userId = getRecipeUserIdFromPrimaryUserId(input.userId);
-            // TODO: mark email as unverified in account linking.
+            await updateIdentifierArraysForRecipeUserId(input.userId);
             return ogImpl.unverifyEmail(input);
         },
         verifyEmailUsingToken: async function (input) {
@@ -30,7 +30,7 @@ export const evOverride = (ogImpl: RecipeInterface): RecipeInterface => {
             if (result.status !== "OK") {
                 return result;
             }
-            markIdentifierAsVerified(result.user.id, result.user.email);
+            await updateIdentifierArraysForRecipeUserId(result.user.id);
             result.user.id = getPrimaryUserIdFromRecipeUserId(result.user.id);
             return result;
         },
