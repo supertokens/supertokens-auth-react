@@ -47,7 +47,7 @@ export default abstract class AuthRecipeWithEmailVerification<
                       postVerificationRedirect: async (history: any) => {
                           try {
                               // if there is a SUCCESS context saved in localstorage, we use that in the redirect.
-                              const successContextStr = getLocalStorage("supertokens-post-email-verification");
+                              const successContextStr = await getLocalStorage("supertokens-post-email-verification");
                               if (successContextStr !== null) {
                                   await this.redirect(JSON.parse(successContextStr), history);
                               } else {
@@ -58,7 +58,7 @@ export default abstract class AuthRecipeWithEmailVerification<
                                   });
                               }
                           } finally {
-                              removeFromLocalStorage("supertokens-post-email-verification");
+                              await removeFromLocalStorage("supertokens-post-email-verification");
                           }
                       },
                       redirectToSignIn: async (history: any) =>
@@ -79,7 +79,7 @@ export default abstract class AuthRecipeWithEmailVerification<
     // the user is redirected to the correct place.
     savePostEmailVerificationSuccessRedirectState = async (context: T): Promise<void> => {
         const jsonContext = JSON.stringify(context);
-        setLocalStorage("supertokens-post-email-verification", jsonContext);
+        await setLocalStorage("supertokens-post-email-verification", jsonContext);
     };
 
     getAuthRecipeWithEmailVerificationDefaultRedirectionURL = async (

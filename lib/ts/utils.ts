@@ -241,20 +241,20 @@ export function getOriginOfPage(): NormalisedURLDomain {
     return new NormalisedURLDomain(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getOrigin());
 }
 
-export function getLocalStorage(key: string): string | null {
-    const res = WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().getItem(key);
+export async function getLocalStorage(key: string): Promise<string | null> {
+    const res = WindowHandlerReference.getReferenceOrThrow().windowHandler.localStorage.getItem(key);
     if (res === null || res === undefined) {
         return null;
     }
     return res;
 }
 
-export function setLocalStorage(key: string, value: string): void {
-    WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().setItem(key, value);
+export async function setLocalStorage(key: string, value: string): Promise<void> {
+    await WindowHandlerReference.getReferenceOrThrow().windowHandler.localStorage.setItem(key, value);
 }
 
-export function removeFromLocalStorage(key: string): void {
-    WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().removeItem(key);
+export async function removeFromLocalStorage(key: string): Promise<void> {
+    await WindowHandlerReference.getReferenceOrThrow().windowHandler.localStorage.removeItem(key);
 }
 
 export function mergeObjects<T>(obj1: T, obj2: T): T {
