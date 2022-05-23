@@ -6,7 +6,11 @@ import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventCo
 import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
-import { RecipeInterface, UserType } from "supertokens-web-js/recipe/thirdpartyemailpassword";
+import {
+    RecipeInterface,
+    EmailPasswordUserType as UserType,
+    ThirdPartyUserType,
+} from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
 export default class Wrapper {
     static init(
@@ -137,7 +141,7 @@ export default class Wrapper {
     static thirdPartySignInAndUp(input?: { userContext?: any }): Promise<
         | {
               status: "OK";
-              user: UserType;
+              user: ThirdPartyUserType;
               createdNewUser: boolean;
               fetchResponse: Response;
           }
@@ -215,4 +219,6 @@ export {
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
+    UserType,
+    ThirdPartyUserType,
 };

@@ -11,7 +11,7 @@ import {
     RecipeFunctionOptions,
     RecipeInterface,
 } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { UserType } from "supertokens-web-js/recipe/thirdparty";
+import { ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 export default class Wrapper {
     static init(
         config: UserInput

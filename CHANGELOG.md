@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Screenshotting failed tests
 -   Exporting test results
 
+### Changed
+
+-   The return type of `user` in the following functions to include information returned by the third party provider
+    -   `signInAndUp` function for ThirdParty recipe
+    -   `thirdPartySignInAndUp` function for the ThirdPartyEmailPassword recipe
+    -   `thirdPartySignInAndUp` function for the ThirdPartyPasswordless recipe
+
 ### Added
 
 -   All recipe functions now accept an additional parameter `userContext`, learn more about this by visiting the advanced cusotmisations section in the documentation

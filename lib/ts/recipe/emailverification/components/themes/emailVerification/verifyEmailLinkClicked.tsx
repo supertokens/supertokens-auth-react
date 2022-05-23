@@ -51,7 +51,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
             props.recipeImplementation.verifyEmail({
                 userContext,
             }),
-        [props.token, props.config]
+        [props.recipeImplementation]
     );
     const handleVerifyResp = useCallback(
         async (response: Awaited<ReturnType<typeof verifyEmail>>): Promise<void> => {
@@ -71,7 +71,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
 
             setStatus("GENERAL_ERROR");
         },
-        [setStatus]
+        [setStatus, setErrorMessage]
     );
     useOnMountAPICall(verifyEmail, handleVerifyResp, handleError);
 

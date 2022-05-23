@@ -9,8 +9,7 @@ import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-import { User } from "../authRecipeWithEmailVerification/types";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
 export default class Wrapper {
     static init(
         config: UserInput
