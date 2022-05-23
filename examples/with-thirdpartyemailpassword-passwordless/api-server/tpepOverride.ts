@@ -206,7 +206,6 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
                 userId: resp.userId!,
             }))!.email;
             markIdentifierAsVerified(getRecipeUserIdFromPrimaryUserId(resp.userId!), email);
-            // TODO: we need to change the session's userId if it exists.
             resp.userId = getPrimaryUserIdFromRecipeUserId(resp.userId!);
             return resp;
         },
