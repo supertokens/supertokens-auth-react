@@ -8,23 +8,16 @@ import { signOut } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
     templateUrl: "./home.component.html",
     styleUrls: ["./home.component.css"],
 })
-export class HomeComponent implements OnChanges, AfterViewInit, OnDestroy {
+export class HomeComponent implements AfterViewInit {
     title = "angularreactapp";
 
     public rootId = "rootId";
     public userId = "";
     public session = false;
 
-    ngOnChanges(changes: SimpleChanges) {
-        this.render();
-    }
-
     ngAfterViewInit() {
         this.getUserInfo();
-        this.render();
     }
-
-    ngOnDestroy() {}
 
     async getUserInfo() {
         this.session = await Session.doesSessionExist();
@@ -40,9 +33,5 @@ export class HomeComponent implements OnChanges, AfterViewInit, OnDestroy {
 
     redirectToLogin() {
         window.location.href = "auth";
-    }
-
-    private render() {
-        ("");
     }
 }
