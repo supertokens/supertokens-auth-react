@@ -1,4 +1,15 @@
-# WithAngularThirdpartyemailpassword
+# Angular Example app using SuperTokens React library
+
+# SuperTokens ThirdpartyEmailPassword demo app with Angular
+
+This demo app demonstrates the following use cases:
+
+-   Login / sign up with SuperTokens
+-   Logout
+-   Forgot password flow
+-   Session management
+
+This also showcases how you can use the supertokens-auth-react SDK inside a svelte app.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.6.
 
