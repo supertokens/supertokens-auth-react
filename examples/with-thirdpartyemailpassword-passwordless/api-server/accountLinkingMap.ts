@@ -9,6 +9,9 @@
 import fs from "fs";
 import Passwordless from "supertokens-node/recipe/passwordless";
 import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
+import Session from "supertokens-node/recipe/session";
+import { SessionContainerInterface } from "supertokens-node/recipe/session/types";
+
 if (!fs.existsSync("./api-server/primaryUserStore.json")) {
     fs.writeFileSync("./api-server/primaryUserStore.json", JSON.stringify({}), { encoding: "utf8", flag: "w" });
 }
@@ -230,7 +233,10 @@ export function getAllLinkedAccounts(primaryUserId: string): PrimaryUser[] | und
 /**
  * This should also be run in a cronjob for all the primary user IDs and their recipeIDs
  */
-export async function updateIdentifierArraysForRecipeUserId(recipeUserId: string) {
+export async function updateIdentifierArraysForRecipeUserId(
+    recipeUserId: string,
+    session?: SessionContainerInterface
+): Promise<SessionContainerInterface | undefined> {
     try {
         let keys = Object.keys(primaryUserStore);
         for (let i = 0; i < keys.length; i++) {
@@ -275,6 +281,19 @@ export async function updateIdentifierArraysForRecipeUserId(recipeUserId: string
                 }
             }
         }
+        if (session !== undefined) {
+            let primaryUserId = getPrimaryUserIdFromRecipeUserId(recipeUserId);
+            if (primaryUserId !== recipeUserId) {
+                // this means we have just linked accounts, so we must upgrade the session
+                return await Session.createNewSession(
+                    (session as any).res,
+                    primaryUserId,
+                    session.getAccessTokenPayload(),
+                    await session.getSessionData()
+                );
+            }
+        }
+        return undefined;
     } finally {
         saveStoreToFile();
     }

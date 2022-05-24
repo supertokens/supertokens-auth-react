@@ -200,7 +200,6 @@ export const tpepOverride = (ogImpl: RecipeInterface): RecipeInterface => {
             if (resp.status !== "OK") {
                 return resp;
             }
-            await updateIdentifierArraysForRecipeUserId(getRecipeUserIdFromPrimaryUserId(resp.userId!));
             resp.userId = getPrimaryUserIdFromRecipeUserId(resp.userId!);
             return resp;
         },

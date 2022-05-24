@@ -9,6 +9,7 @@ import Passwordless from "supertokens-node/recipe/passwordless";
 import { tpepOverride } from "./tpepOverride";
 import { plessOverride } from "./plessOverride";
 import { evOverride } from "./evOverride";
+import { getPrimaryUserIdFromRecipeUserId } from "./accountLinkingMap";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -73,21 +74,11 @@ supertokens.init({
                                 if (originalImpl.verifyEmailPOST === undefined) {
                                     throw new Error("Should never come here");
                                 }
+                                // The would not be required after the recipe
+                                // function for verify email starts to accept a session
                                 let session = (await Session.getSession(input.options.req, input.options.res))!;
-                                let resp = await originalImpl.verifyEmailPOST(input);
-                                if (resp.status === "OK") {
-                                    /**
-                                     * We want to do this only if session.getUserId() is not a pimary
-                                     * user ID.. but for this demo, we do this anyway
-                                     */
-                                    await Session.createNewSession(
-                                        input.options.res,
-                                        resp.user.id,
-                                        session.getAccessTokenPayload(),
-                                        await session.getSessionData()
-                                    );
-                                }
-                                return resp;
+                                input.userContext.session = session;
+                                return await originalImpl.verifyEmailPOST(input);
                             },
                         };
                     },
@@ -116,12 +107,30 @@ supertokens.init({
                 functions: (originalImplementation) => {
                     return {
                         ...originalImplementation,
+                        refreshSession: async function (input) {
+                            let session = await originalImplementation.refreshSession(input);
+                            let recipeUserId = session.getUserId();
+                            let primaryUserId = getPrimaryUserIdFromRecipeUserId(recipeUserId);
+                            if (primaryUserId !== recipeUserId) {
+                                // this means we have just linked accounts, so we must upgrade the session
+                                session = await Session.createNewSession(
+                                    (session as any).res,
+                                    primaryUserId,
+                                    session.getAccessTokenPayload(),
+                                    await session.getSessionData()
+                                );
+                            }
+                            return session;
+                        },
                         createNewSession: async function (input) {
                             return originalImplementation.createNewSession({
                                 ...input,
                                 accessTokenPayload: {
                                     ...input.accessTokenPayload,
-                                    isPasswordless: input.userContext.isPasswordless === true,
+                                    isPasswordless:
+                                        input.accessTokenPayload.isPasswordless === undefined
+                                            ? input.userContext.isPasswordless === true
+                                            : input.accessTokenPayload.isPasswordless,
                                 },
                             });
                         },

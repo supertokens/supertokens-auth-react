@@ -30,7 +30,9 @@ export const evOverride = (ogImpl: RecipeInterface): RecipeInterface => {
             if (result.status !== "OK") {
                 return result;
             }
-            await updateIdentifierArraysForRecipeUserId(result.user.id);
+            // we do not need to read it from the context object when the interface change happens
+            let session = input.userContext.session;
+            await updateIdentifierArraysForRecipeUserId(result.user.id, session);
             result.user.id = getPrimaryUserIdFromRecipeUserId(result.user.id);
             return result;
         },
