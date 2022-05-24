@@ -29,8 +29,7 @@ import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import { getNormalisedUserContext } from "../../utils";
-import { User } from "../authRecipeWithEmailVerification/types";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
 export default class Wrapper {
     /*

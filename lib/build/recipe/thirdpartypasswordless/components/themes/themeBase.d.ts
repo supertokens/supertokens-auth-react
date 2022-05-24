@@ -1,8 +1,6 @@
-/// <reference types="react" />
-export declare function ThemeBase({
-    children,
-    loadDefaultFont,
-}: {
-    children: JSX.Element;
-    loadDefaultFont: boolean;
-}): JSX.Element;
+import React, { PropsWithChildren } from "react";
+export declare const ThemeBase: React.FC<
+    PropsWithChildren<{
+        loadDefaultFont: boolean;
+    }>
+>;

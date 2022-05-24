@@ -73,7 +73,6 @@ export default class EmailPassword extends AuthRecipeWithEmailVerification<
                 onHandleEvent: this.config.onHandleEvent,
                 preAPIHook: this.config.preAPIHook,
                 postAPIHook: this.config.postAPIHook,
-                storageHandlers: this.config.storageHandlers,
             })
         );
         this.recipeImpl = builder.override(this.config.override.functions).build();

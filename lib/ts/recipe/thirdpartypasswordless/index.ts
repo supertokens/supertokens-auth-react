@@ -27,7 +27,7 @@ import {
     RecipeFunctionOptions,
     RecipeInterface,
 } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { UserType } from "supertokens-web-js/recipe/thirdparty";
+import { ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 import * as PasswordlessUtilFunctions from "../passwordless/utils";
 

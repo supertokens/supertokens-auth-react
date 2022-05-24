@@ -4,16 +4,14 @@
     "private": true,
     "dependencies": {
         "axios": "^0.21.0",
-        "react": "^16.14.0",
-        "react-dom": "^16.14.0",
-        "react-router-domv5": "npm:react-router-dom@^5.2.0",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0",
         "react-router-dom": "^6.2.1",
         "react-scripts": "3.4.3"
     },
     "scripts": {
-        "link": "(cd ../../ && npm link) && npm link supertokens-auth-react && (cd ../../ && SRC=./examples/for-tests npm run link-dependencies)",
-        "link-node-16": "(cd ../../ && npm link) && npm link supertokens-auth-react && rm -rf node_modules/react && rm -rf node_modules/react-router-dom",
-        "start": "PORT=3031 react-scripts start",
+        "prep": "cd ../../ && SRC=./examples/for-tests npm run prep-test-app",
+        "start": "npm run prep && PORT=3031 react-scripts start",
         "dev": "npx npm-run-all --parallel start server",
         "server": "cd ../../ && npm run server",
         "build": "react-scripts build",

@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.20.1",
+    "version": "0.21.3",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -19,7 +19,7 @@
         "@size-limit/preset-small-lib": "^6.0.3",
         "@testing-library/dom": "^8.11.1",
         "@testing-library/jest-dom": "^5.14.1",
-        "@testing-library/react": "^11.2.7",
+        "@testing-library/react": "^13.2.0",
         "@testing-library/user-event": "^13.2.1",
         "@types/chroma-js": "2.1.3",
         "@types/jest": "^26.0.24",
@@ -47,8 +47,8 @@
         "pretty-quick": "^3.1.1",
         "prop-types": "^15.7.2",
         "puppeteer": "^11.0.0",
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0",
         "react-router-dom": "^6.2.1",
         "regenerator-runtime": "0.13.7",
         "size-limit": "^6.0.3",
@@ -60,13 +60,13 @@
     },
     "dependencies": {
         "@emotion/react": "^11.4.1",
-        "chroma-js": "^2.1.2",
-        "libphonenumber-js": "^1.9.43",
-        "mocha-multi": "^1.1.6",
+        "chroma-js": "2.1.2",
+        "libphonenumber-js": "1.9.43",
+        "mocha-multi": "1.1.6",
         "prop-types": "*",
-        "react-phone-number-input": "^3.1.41",
-        "react-select": "^5.2.1",
-        "react-shadow": "^19.0.2",
+        "react-phone-number-input": "3.1.41",
+        "react-select": "5.2.1",
+        "react-shadow": "19.0.2",
         "supertokens-js-override": "^0.0.4",
         "supertokens-web-js": "github:supertokens/supertokens-web-js#0.0"
     },
@@ -76,14 +76,16 @@
     "scripts": {
         "init": "bash ./init.sh",
         "start": "npm-run-all --parallel front server watch",
+        "start-react-16": "npm-run-all --parallel front-react-16 server watch",
         "front": "(cd ./examples/for-tests/ && BROWSER=none PORT=3031 npm run start)",
+        "front-react-16": "(cd ./examples/for-tests-react-16/ && BROWSER=none PORT=3031 npm run start)",
         "server": "cd test/server/ && START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
         "test": "npm run test-unit && npm run test-e2e",
         "test-with-non-node": "npm run test-unit && npm run test-e2e-with-non-node",
         "test-e2e": "./test/startTestApp.sh 8082",
         "test-e2e-with-non-node": "./test/startTestApp.sh 8083",
         "test-unit": "jest -c jest.config.js",
-        "link-dependencies": "./test/linkDependencies.sh $SRC",
+        "prep-test-app": "./test/prepTestApp.sh $SRC",
         "build-check": "cd lib && npx tsc -p tsconfig.json --noEmit && cd ../test/with-typescript && npx tsc -p tsconfig.json",
         "tsc": "cd lib && npx tsc -p tsconfig.json",
         "build": "cd lib && rm -rf build && npx tsc -p tsconfig.json",
@@ -105,27 +107,27 @@
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "16kb"
+            "limit": "20kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
-            "limit": "117kb"
+            "limit": "123kb"
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "105kb"
+            "limit": "111kb"
         },
         {
             "path": "recipe/emailpassword/index.js",
-            "limit": "106kb"
+            "limit": "112kb"
         },
         {
             "path": "recipe/passwordless/index.js",
-            "limit": "200kb"
+            "limit": "204kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/index.js",
-            "limit": "216kb"
+            "limit": "221kb"
         }
     ],
     "repository": {

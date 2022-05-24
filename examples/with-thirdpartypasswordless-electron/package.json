@@ -1,0 +1,125 @@
+{
+    "name": "with-thirdpartypasswordless-electron",
+    "productName": "with-thirdpartypasswordless-electron",
+    "version": "1.0.0",
+    "description": "My Electron application description",
+    "main": ".webpack/main",
+    "scripts": {
+        "start:forge": "electron-forge start",
+        "start": "npm-run-all --parallel start:forge api-server",
+        "api-server": "node api-server",
+        "api-server:dev": "nodemon api-server",
+        "package": "electron-forge package",
+        "make": "electron-forge make",
+        "publish": "electron-forge publish",
+        "lint": "eslint --ext .ts,.tsx .",
+        "dev": "npm-run-all --parallel start:forge api-server:dev",
+        "prod": "npm-run-all --parallel server api-server"
+    },
+    "keywords": [],
+    "author": {
+        "name": "Nemi Shah",
+        "email": "nemishah1212@gmail.com"
+    },
+    "license": "MIT",
+    "config": {
+        "forge": {
+            "packagerConfig": {
+                "protocols": [
+                    {
+                        "name": "SuperTokens Demo",
+                        "schemes": [
+                            "supertokens-demo"
+                        ]
+                    }
+                ]
+            },
+            "makers": [
+                {
+                    "name": "@electron-forge/maker-squirrel",
+                    "config": {
+                        "name": "with_thirdpartypasswordless_electron"
+                    }
+                },
+                {
+                    "name": "@electron-forge/maker-zip",
+                    "platforms": [
+                        "darwin"
+                    ]
+                },
+                {
+                    "name": "@electron-forge/maker-deb",
+                    "config": {
+                        "mimeType": [
+                            "x-scheme-handler/electron-fiddle"
+                        ]
+                    }
+                },
+                {
+                    "name": "@electron-forge/maker-rpm",
+                    "config": {}
+                }
+            ],
+            "plugins": [
+                [
+                    "@electron-forge/plugin-webpack",
+                    {
+                        "mainConfig": "./webpack.main.config.js",
+                        "devContentSecurityPolicy": "style-src-elem *",
+                        "renderer": {
+                            "config": "./webpack.renderer.config.js",
+                            "entryPoints": [
+                                {
+                                    "html": "./src/index.html",
+                                    "js": "./src/renderer.tsx",
+                                    "name": "main_window"
+                                }
+                            ]
+                        },
+                        "port": 3000
+                    }
+                ]
+            ]
+        }
+    },
+    "devDependencies": {
+        "@electron-forge/cli": "^6.0.0-beta.63",
+        "@electron-forge/maker-deb": "^6.0.0-beta.63",
+        "@electron-forge/maker-rpm": "^6.0.0-beta.63",
+        "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
+        "@electron-forge/maker-zip": "^6.0.0-beta.63",
+        "@electron-forge/plugin-webpack": "^6.0.0-beta.63",
+        "@types/react-dom": "^18.0.3",
+        "@typescript-eslint/eslint-plugin": "^5.21.0",
+        "@typescript-eslint/parser": "^5.21.0",
+        "@vercel/webpack-asset-relocator-loader": "^1.7.0",
+        "css-loader": "^6.7.1",
+        "electron": "18.2.0",
+        "eslint": "^8.14.0",
+        "eslint-plugin-import": "^2.26.0",
+        "fork-ts-checker-webpack-plugin": "^6.5.2",
+        "node-loader": "^2.0.0",
+        "nodemon": "^2.0.16",
+        "style-loader": "^3.3.1",
+        "ts-loader": "^9.2.9",
+        "typescript": "~4.5.4"
+    },
+    "dependencies": {
+        "axios": "^0.27.2",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.0",
+        "electron-squirrel-startup": "^1.0.0",
+        "express": "^4.18.0",
+        "helmet": "^5.0.2",
+        "morgan": "^1.10.0",
+        "nodemailer": "^6.7.4",
+        "npm-run-all": "^4.1.5",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-router-dom": "^6.3.0",
+        "supertokens-auth-react": "^0.21.2",
+        "supertokens-node": "^9.2.0",
+        "twilio": "^3.76.1",
+        "web-vitals": "^2.1.4"
+    }
+}

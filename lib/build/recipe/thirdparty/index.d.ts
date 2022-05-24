@@ -9,8 +9,7 @@ import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-import { User } from "../authRecipeWithEmailVerification/types";
-import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -61,7 +60,13 @@ export default class Wrapper {
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
-    static ThirdPartyAuth: typeof ThirdPartyAuth;
+    static ThirdPartyAuth: import("react").FC<
+        import("react").PropsWithChildren<{
+            requireAuth?: boolean | undefined;
+            onSessionExpired?: (() => void) | undefined;
+            userContext?: any;
+        }>
+    >;
     static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: import("react").FC<import("./types").SignInAndUpThemeProps>;
     static SignInAndUpCallback: (prop?: any) => JSX.Element;

@@ -1,13 +1,8 @@
-/// <reference types="@emotion/react/types/css-prop" />
-import { PureComponent } from "react";
+/// <reference types="react" />
 import { FeatureBaseProps } from "../../../../../types";
 import Recipe from "../../../recipe";
 declare type PropType = FeatureBaseProps & {
     recipe: Recipe;
 };
-declare class SignInAndUpCallback extends PureComponent<PropType, unknown> {
-    static contextType: import("react").Context<any>;
-    componentDidMount: () => Promise<void>;
-    render: () => JSX.Element;
-}
+declare const SignInAndUpCallback: React.FC<PropType>;
 export default SignInAndUpCallback;

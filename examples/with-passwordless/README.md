@@ -16,6 +16,20 @@ Use `npm` to install the project dependencies:
 npm install
 ```
 
+## Set environment variables
+
+The demo app contains code for seding emails to the user for passwordless auth. You need to set the following environment variables for the email user before running the demo app:
+
+```bash
+NODEMAILER_USER
+NODEMAILER_PASSWORD
+```
+
+You can do this by:
+
+-   Editing the `api-server/.env.example` file
+-   Rename the `api-server/.env.example` file to `.env`
+
 ## Run the demo app
 
 This compiles and serves the React app and starts the backend API server on port 3001.

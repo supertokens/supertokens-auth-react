@@ -142,7 +142,7 @@ export const UserInputCodeForm = withOverride(
                             userContext,
                         });
 
-                        if (response.status === "OK") {
+                        if (response.status === "OK" || response.status === "RESTART_FLOW_ERROR") {
                             return response;
                         }
 

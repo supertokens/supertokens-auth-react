@@ -17,9 +17,10 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { Fragment, PureComponent } from "react";
+import { Fragment, useCallback } from "react";
 
-import { FeatureBaseProps } from "../../../../../types";
+import { Awaited, FeatureBaseProps } from "../../../../../types";
+import { useOnMountAPICall } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
@@ -30,128 +31,110 @@ import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 import STGeneralError from "supertokens-web-js/utils/error";
-import { UserContextContext } from "../../../../../usercontext";
-import { UserType } from "supertokens-web-js/recipe/emailpassword";
+import { useUserContext } from "../../../../../usercontext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
-class SignInAndUpCallback extends PureComponent<PropType, unknown> {
-    static contextType = UserContextContext;
+const SignInAndUpCallback: React.FC<PropType> = (props) => {
+    const userContext = useUserContext();
 
-    componentDidMount = async (): Promise<void> => {
-        const userContext = this.context;
+    const verifyCode = useCallback(() => {
+        return props.recipe.recipeImpl.signInAndUp({
+            userContext,
+        });
+    }, [props.recipe, props.history]);
 
-        try {
-            let response:
-                | {
-                      status: "OK";
-                      user: UserType;
-                      createdNewUser: boolean;
-                      fetchResponse: Response;
-                  }
-                | {
-                      status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-                      fetchResponse: Response;
-                  }
-                | undefined;
-            let generalError: STGeneralError | undefined;
-
-            try {
-                response = await this.props.recipe.recipeImpl.signInAndUp({
-                    userContext,
-                });
-            } catch (e) {
-                if (STGeneralError.isThisError(e)) {
-                    generalError = e;
-                } else {
-                    throw e;
-                }
-            }
-
-            if (generalError !== undefined) {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
-                    error: "custom",
-                    message: generalError.message,
-                });
-            }
-
-            if (response === undefined) {
-                throw new Error("Should never come here");
-            }
-
+    const handleVerifyResponse = useCallback(
+        async (response: Awaited<ReturnType<typeof verifyCode>>): Promise<void> => {
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
-                return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
                     error: "no_email_present",
                 });
             }
 
             if (response.status === "OK") {
-                const stateResponse =
-                    this.props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
-                        userContext,
-                    });
+                const stateResponse = props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
+                    userContext,
+                });
+
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
-                if (this.props.recipe.emailVerification.config.mode === "REQUIRED") {
+                if (props.recipe.emailVerification.config.mode === "REQUIRED") {
                     let isEmailVerified = true;
                     try {
-                        isEmailVerified = (await this.props.recipe.emailVerification.isEmailVerified(userContext))
-                            .isVerified;
+                        isEmailVerified = (
+                            await props.recipe.emailVerification.isEmailVerified({
+                                userContext,
+                            })
+                        ).isVerified;
                     } catch (ignored) {}
                     if (!isEmailVerified) {
-                        await this.props.recipe.savePostEmailVerificationSuccessRedirectState({
+                        await props.recipe.savePostEmailVerificationSuccessRedirectState({
                             redirectToPath: redirectToPath,
                             isNewUser: true,
                             action: "SUCCESS",
                         });
-                        return this.props.recipe.emailVerification.redirect(
+                        return props.recipe.emailVerification.redirect(
                             {
                                 action: "VERIFY_EMAIL",
                             },
-                            this.props.history
+                            props.history
                         );
                     }
                 }
-                return this.props.recipe.redirect(
+                return props.recipe.redirect(
                     { action: "SUCCESS", isNewUser: response.createdNewUser, redirectToPath },
-                    this.props.history
+                    props.history
                 );
             }
-        } catch (err) {
-            return this.props.recipe.redirectToAuthWithoutRedirectToPath(undefined, this.props.history, {
+        },
+        [props.recipe, props.history]
+    );
+
+    const handleError = useCallback(
+        (err) => {
+            if (STGeneralError.isThisError(err)) {
+                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                    error: "custom",
+                    message: err.message,
+                });
+            }
+
+            return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
                 error: "signin",
             });
-        }
-    };
+        },
+        [props.recipe, props.history]
+    );
 
-    render = (): JSX.Element => {
-        const componentOverrides = this.props.recipe.config.override.components;
+    useOnMountAPICall(verifyCode, handleVerifyResponse, handleError);
 
-        const oAuthCallbackScreen = this.props.recipe.config.oAuthCallbackScreen;
+    const componentOverrides = props.recipe.config.override.components;
 
-        return (
-            <ComponentOverrideContext.Provider value={componentOverrides}>
-                <FeatureWrapper
-                    useShadowDom={this.props.recipe.config.useShadowDom}
-                    defaultStore={defaultTranslationsThirdParty}>
-                    <StyleProvider
-                        rawPalette={this.props.recipe.config.palette}
-                        defaultPalette={defaultPalette}
-                        styleFromInit={oAuthCallbackScreen.style}
-                        rootStyleFromInit={this.props.recipe.config.rootStyle}
-                        getDefaultStyles={getStyles}>
-                        <Fragment>
-                            {/* No custom theme, use default. */}
-                            {this.props.children === undefined && <SignInAndUpCallbackTheme />}
+    const oAuthCallbackScreen = props.recipe.config.oAuthCallbackScreen;
 
-                            {/* Otherwise, custom theme is provided, propagate props. */}
-                            {this.props.children}
-                        </Fragment>
-                    </StyleProvider>
-                </FeatureWrapper>
-            </ComponentOverrideContext.Provider>
-        );
-    };
-}
+    return (
+        <ComponentOverrideContext.Provider value={componentOverrides}>
+            <FeatureWrapper
+                useShadowDom={props.recipe.config.useShadowDom}
+                defaultStore={defaultTranslationsThirdParty}>
+                <StyleProvider
+                    rawPalette={props.recipe.config.palette}
+                    defaultPalette={defaultPalette}
+                    styleFromInit={oAuthCallbackScreen.style}
+                    rootStyleFromInit={props.recipe.config.rootStyle}
+                    getDefaultStyles={getStyles}>
+                    <Fragment>
+                        {/* No custom theme, use default. */}
+                        {props.children === undefined && <SignInAndUpCallbackTheme />}
+
+                        {/* Otherwise, custom theme is provided, propagate props. */}
+                        {props.children}
+                    </Fragment>
+                </StyleProvider>
+            </FeatureWrapper>
+        </ComponentOverrideContext.Provider>
+    );
+};
 
 export default SignInAndUpCallback;

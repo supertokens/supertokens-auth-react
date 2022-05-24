@@ -13,3 +13,4 @@ screenshot.jpeg
 /examples/**/yarn.lock
 /eslint/node_modules
 /test_report/
+supertokens-auth-react-*.tgz

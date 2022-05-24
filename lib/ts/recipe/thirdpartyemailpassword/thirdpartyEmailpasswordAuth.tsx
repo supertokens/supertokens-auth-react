@@ -26,6 +26,7 @@ import EmailVerificationAuthWrapper from "../emailverification/emailVerification
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
+import { PropsWithChildren } from "react";
 
 type Props = FeatureBaseProps & {
     recipe: Recipe;
@@ -61,17 +62,13 @@ function ThirdPartyEmailPasswordAuth(props: Props) {
 
 const ThirdPartyEmailPasswordAuthMemo = memo(ThirdPartyEmailPasswordAuth);
 
-export default function ThirdPartyAuthWrapper({
-    children,
-    requireAuth,
-    onSessionExpired,
-    userContext,
-}: {
-    children: React.ReactNode;
-    requireAuth?: boolean;
-    onSessionExpired?: () => void;
-    userContext?: any;
-}) {
+const ThirdPartyEmailPasswordAuthWrapper: React.FC<
+    PropsWithChildren<{
+        requireAuth?: boolean;
+        onSessionExpired?: () => void;
+        userContext?: any;
+    }>
+> = ({ children, requireAuth, onSessionExpired, userContext }) => {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
     return (
@@ -85,4 +82,6 @@ export default function ThirdPartyAuthWrapper({
             </ThirdPartyEmailPasswordAuthMemo>
         </UserContextWrapper>
     );
-}
+};
+
+export default ThirdPartyEmailPasswordAuthWrapper;

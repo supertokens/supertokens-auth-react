@@ -29,7 +29,7 @@ on:
 jobs:
     test_job:
         name: Run tests
-        timeout-minutes: 60
+        timeout-minutes: 120
         runs-on: ubuntu-latest
         container: rishabhpoddar/supertokens_website_sdk_testing
         steps:
@@ -62,8 +62,8 @@ jobs:
             - name: Running loadModules in supertokens-root
               run: cd ../supertokens-root && ./loadModules
             - name: Installing supertokens-node
-              run: cd test/server/ && npm i -d && npm i github:${{ github.event.inputs.nodeRepoOwnerName }}/supertokens-node#${{ github.event.inputs.nodeBranchName }}
+              run: cd test/server/ && npm i -d --force && npm i --force github:${{ github.event.inputs.nodeRepoOwnerName }}/supertokens-node#${{ github.event.inputs.nodeBranchName }}
             - name: Setting up supertokens-root test environment
-              run: cd ../supertokens-root && bash ./utils/setupTestEnvLocal
+              run: cd ../supertokens-root && bash ./utils/setupTestEnv --local
             - name: Run tests
               run: npm run test

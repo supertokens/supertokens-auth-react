@@ -16,9 +16,11 @@ import RecipeModule from "./recipe/recipeModule";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
-import { ComponentClass } from "react";
+import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationFunc, TranslationStore } from "./translation/translationHelpers";
+import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
+import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
 
 /*
  * Recipe Module Manager Config Types.
@@ -34,6 +36,10 @@ export type SuperTokensConfig = {
      * List of recipes for authentication and session management.
      */
     recipeList: CreateRecipeFunction<any, any, any, any>[];
+
+    cookieHandler?: CookieHandlerInput;
+
+    windowHandler?: WindowHandlerInput;
 
     languageTranslations?: {
         /*
@@ -64,10 +70,12 @@ export type SuperTokensConfig = {
          */
         translationFunc?: TranslationFunc;
     };
+    enableDebugLogs?: boolean;
 };
 
 export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (
-    appInfo: NormalisedAppInfo
+    appInfo: NormalisedAppInfo,
+    enableDebugLogs: boolean
 ) => RecipeModule<T, S, R, N>;
 
 export type AppInfoUserInput = {
@@ -266,14 +274,19 @@ export type ThemeBaseProps = {
     styleFromInit?: Styles;
 };
 
-export type FeatureBaseProps = {
-    /*
-     * Children element
-     */
-    children?: React.ReactNode;
-
+export type FeatureBaseProps = PropsWithChildren<{
     /*
      * History provided by react-router
      */
     history?: any;
-};
+}>;
+
+// Built-in in later versions of TS
+export type Awaited<T> = T extends null | undefined
+    ? T // special case for `null | undefined` when not in `--strictNullChecks` mode
+    : // eslint-disable-next-line @typescript-eslint/ban-types
+    T extends object & { then(onfulfilled: infer F): any } // `await` only unwraps object types with a callable `then`. Non-object types are not unwrapped
+    ? F extends (value: infer V, ...args: any) => any // if the argument to `then` is callable, extracts the first argument
+        ? V // unwrap the value (this is recursive in the built-in version, but that needs features from a later version to work)
+        : never // the argument to `then` was not callable
+    : T;

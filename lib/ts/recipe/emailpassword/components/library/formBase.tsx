@@ -41,6 +41,8 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
 
     const unmounting = useRef(new AbortController());
     useEffect(() => {
+        // We need this because in some cases this gets called multiple times
+        unmounting.current = new AbortController();
         return () => {
             unmounting.current.abort();
         };

@@ -14,7 +14,7 @@ function startFrontEnd () {
     (
         echo "Starting test example app"
         # go to test app.
-        cd ./examples/for-tests/
+        cd ./examples/for-tests$1/
         # Run static react app on PORT 3031.
         BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start
     )
@@ -42,6 +42,8 @@ function startEndToEnd () {
         if ! [[ -z "${CIRCLE_NODE_TOTAL}" ]]; then
             export SPEC_FILES=$(npx mocha-split-tests -r ./runtime.log -t $CIRCLE_NODE_TOTAL -g $CIRCLE_NODE_INDEX -f 'test/end-to-end/**/*.test.js' -f 'test/unit/**/*.test.js')
             echo "Running files: $SPEC_FILES, $CIRCLE_NODE_TOTAL/$CIRCLE_NODE_INDEX"
+        else
+            export SPEC_FILES="test/unit/**/*.test.js test/end-to-end/**/*.test.js"
         fi
         APP_SERVER=$apiPort TEST_MODE=testing multi="spec=- mocha-junit-reporter=/dev/null" mocha --reporter mocha-multi --require @babel/register --require test/test.mocha.env --timeout 40000 --no-config $SPEC_FILES
     fi
@@ -77,4 +79,12 @@ mkdir -p test_report/logs
 # Start front end test app and run tests.
 startEndToEnd &
 startFrontEnd >> test_report/logs/frontend.log 2>&1
+
+if ! [[ -z "${CI}" ]]; then
+    (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend-react16.log 2>&1 &)
+
+    IS_REACT_16=true RUN_RRD5=true startEndToEnd &
+    startFrontEnd -react-16 >> test_report/logs/frontend-react-16.log 2>&1
+    echo "React 16 tests passed"
+fi
 exit 0

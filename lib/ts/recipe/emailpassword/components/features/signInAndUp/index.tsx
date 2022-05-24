@@ -140,7 +140,7 @@ export function useChildProps(
             },
             history
         );
-    }, [recipe, userContext]);
+    }, [recipe]);
 
     const onSignUpSuccess = useCallback(async (): Promise<void> => {
         if (!recipe) {
@@ -206,7 +206,7 @@ export function useChildProps(
             signInForm: signInForm,
             signUpForm: signUpForm,
         };
-    }, [recipe, state, dispatch, userContext]);
+    }, [recipe, state, dispatch]);
 }
 
 export const SignInAndUpFeature: React.FC<

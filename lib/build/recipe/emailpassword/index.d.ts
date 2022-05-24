@@ -1,4 +1,5 @@
 /// <reference types="react" />
+/// <reference types="@emotion/react/types/css-prop" />
 import { UserInput } from "./types";
 import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
@@ -129,7 +130,13 @@ export default class Wrapper {
         doesExist: boolean;
         fetchResponse: Response;
     }>;
-    static EmailPasswordAuth: typeof EmailPasswordAuth;
+    static EmailPasswordAuth: import("react").FC<
+        import("react").PropsWithChildren<{
+            requireAuth?: boolean | undefined;
+            onSessionExpired?: (() => void) | undefined;
+            userContext?: any;
+        }>
+    >;
     static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
