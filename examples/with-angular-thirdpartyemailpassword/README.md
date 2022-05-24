@@ -1,3 +1,5 @@
+![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
+
 # Angular Example app using SuperTokens React library
 
 # SuperTokens ThirdpartyEmailPassword demo app with Angular
