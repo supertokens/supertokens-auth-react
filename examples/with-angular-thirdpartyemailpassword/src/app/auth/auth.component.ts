@@ -7,8 +7,7 @@ import SuperTokensReactComponent from "./supertokens";
 
 @Component({
     selector: "app-auth",
-    templateUrl: "./auth.component.html",
-    styleUrls: ["./auth.component.css"],
+    template: '<div [id]="rootId"></div>',
 })
 export class AuthComponent implements AfterViewInit {
     title = "angularreactapp";
