@@ -7,10 +7,10 @@ const cors = require("cors");
 
 let { Google, Github } = ThirdPartyEmailPassword;
 
-const apiPort = process.env.API_PORT || 3001;
-const apiDomain = process.env.API_URL || `http://localhost:${apiPort}`;
-const websitePort = process.env.WEBSITE_PORT || 4200;
-const websiteDomain = process.env.WEBSITE_URL || `http://localhost:${websitePort}`;
+const apiPort = 3001;
+const apiDomain = `http://localhost:${apiPort}`;
+const websitePort = 4200;
+const websiteDomain = `http://localhost:${websitePort}`;
 
 supertokens.init({
     framework: "express",
@@ -55,10 +55,6 @@ app.use(
 );
 
 app.use(middleware());
-
-app.get("/", function (req, res) {
-    res.send("Hello World");
-});
 
 // Add this AFTER all your routes
 app.use(errorHandler());

@@ -1,8 +1,6 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-# Angular Example app using SuperTokens React library
-
-# SuperTokens ThirdpartyEmailPassword demo app with Angular
+# SuperTokens ThirdpartyEmailPassword demo app with Angular and React
 
 This demo app demonstrates the following use cases:
 
@@ -11,7 +9,7 @@ This demo app demonstrates the following use cases:
 -   Forgot password flow
 -   Session management
 
-This also showcases how you can use the supertokens-auth-react SDK inside a svelte app.
+In this example app, whenver we visit an auth related route (`/auth/*` in this case), we will load a React component which will initialize SuperTokens and handle the authentication flow. All other routes will use Angular Components.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.6.
 
@@ -25,10 +23,10 @@ npm install
 
 ## Run the demo app
 
-This compiles and serves the Angular App on port 4200 and starts up a server on port 3001
+This compiles and serves the Angular App on port `4200` and starts up a server on port `3001`
 
 ```bash
-npm run dev
+npm run start
 ```
 
 The app will start on `http://localhost:4200`
@@ -36,7 +34,7 @@ The app will start on `http://localhost:4200`
 ## Project structure & Parameters
 
 -   The frontend code is located in the `/src` folder.
--   The backend API is in the `server.js` file.
+-   The backend API is in the `server.ts` file.
 
 ## Author
 
