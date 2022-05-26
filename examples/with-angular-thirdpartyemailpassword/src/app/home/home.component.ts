@@ -1,7 +1,6 @@
-import { AfterViewInit, Component, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
+import { AfterViewInit, Component } from "@angular/core";
 
-import * as Session from "supertokens-auth-react/recipe/session";
-import { signOut } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import * as SuperTokens from "supertokens-website";
 
 @Component({
     selector: "app-home",
@@ -20,14 +19,14 @@ export class HomeComponent implements AfterViewInit {
     }
 
     async getUserInfo() {
-        this.session = await Session.doesSessionExist();
-        if (await Session.doesSessionExist()) {
-            this.userId = await Session.getUserId();
+        this.session = await SuperTokens.doesSessionExist();
+        if (this.session) {
+            this.userId = await SuperTokens.getUserId();
         }
     }
 
     async onLogout() {
-        await signOut();
+        await SuperTokens.signOut();
         window.location.reload();
     }
 
