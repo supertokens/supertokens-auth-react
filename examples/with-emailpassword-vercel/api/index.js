@@ -48,7 +48,7 @@ app.use(
 );
 app.use(middleware());
 
-// custom API that requires session verification
+// An example API that requires session verification
 app.get("/api/sessioninfo", verifySession(), async (req, res) => {
     let session = req.session;
     res.send({
