@@ -3,6 +3,10 @@
 // declare all characters
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+enum mapping_responses {
+    OTP_EXISTS,
+}
+
 function generateString(length: number) {
     let result = " ";
     const charactersLength = characters.length;
@@ -13,4 +17,13 @@ function generateString(length: number) {
     return result;
 }
 
-export { generateString };
+let otpToTokenMapping = new Map<String, String>();
+
+function storeOtpToTokenMappingIfNotExsits(otp: string, token: string) {
+    // check if the otp already exists:
+    if (otpToTokenMapping.has(otp)) {
+        return;
+    }
+}
+
+export { generateString, otpToTokenMapping, storeOtpToTokenMappingIfNotExsits };

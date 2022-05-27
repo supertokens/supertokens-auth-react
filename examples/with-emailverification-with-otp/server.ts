@@ -1,5 +1,5 @@
 import express from "express";
-import supertokens from "supertokens-node";
+import supertokens, { deleteUser } from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
 import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
 import { middleware, errorHandler } from "supertokens-node/framework/express";
@@ -12,8 +12,6 @@ const apiPort = 3001;
 const apiDomain = `http://localhost:${apiPort}`;
 const websitePort = 3000;
 const websiteDomain = `http://localhost:${websitePort}`;
-
-let otpToTokenMapping = new Map<String, String>();
 
 supertokens.init({
     framework: "express",
@@ -44,14 +42,7 @@ supertokens.init({
             ],
             emailVerificationFeature: {
                 createAndSendCustomEmail: async (user, url) => {
-                    const testUrl = new URL(url);
-                    console.log(url);
-                    console.log(testUrl.searchParams.get("token"));
-
-                    const urlSearchParams = new URLSearchParams(url);
-                    const params = Object.fromEntries(urlSearchParams.entries());
-                    // console.log(params.token)
-
+                    const token = new URL(url).searchParams.get("token");
                     let otp = generateString(5);
 
                     // console.log(url);
@@ -73,6 +64,11 @@ app.use(
 );
 
 app.use(middleware());
+
+app.get("/remove-user", async (req, res) => {
+    let response = await deleteUser("f6d6d593-7ec1-4599-a894-9ad48dd3d333");
+    res.send(response);
+});
 
 // Add this AFTER all your routes
 app.use(errorHandler());
