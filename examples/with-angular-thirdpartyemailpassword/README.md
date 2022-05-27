@@ -64,7 +64,7 @@ Using the source map explorer the main bundle will result in the following outpu
 
 ![main bundle](./images/main_bundle_source_map.png)
 
-We can see that the main bundle does not contain the home and auth components and their dependencies. This makes sense since those components are now bundles separately.
+We can see that the main bundle does not contain the home and auth components and their dependencies. This makes sense since those components are now bundled separately.
 
 #### Auth bundles
 
@@ -104,13 +104,15 @@ We can actually see this behavior by looking at the network traffic when visitin
 
 ## Analyzing Network traffic for routes
 
-When visiting the auth component related route:
+We will be using Google Chrome's dev tools to inspect network traffic:
+
+When visiting the auth component related route the network tab will have the following output:
 
 ![auth related route](./images/auth_component_network_log.png)
 
 -   We can see the `supertokens-website` related chunk and the `auth` bundle containing `supertokens-auth-react` being retrieved.
 
-When visiting the home component related route:
+When visiting the home component related route the network tab will have the following output:
 
 ![home related route](./images/hom_component_network_log.png)
 
