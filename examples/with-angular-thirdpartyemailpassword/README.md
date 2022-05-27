@@ -78,15 +78,15 @@ Chunk 1
 
 ![auth react module](./images/auth_component_supertokens-auth_react_sourcemap.png)
 
-We can see that most of size of the first bundle is occupied by the `supertokens-auth-react`, its dependencies and `react-router-dom`.
+-   We can see that most of size of the first bundle is occupied by the `supertokens-auth-react`, its dependencies and `react-dom`.
 
 Chunk 2
 
 ![auth website module](./images/auth_component_supertokens_website_sourcemap.png)
 
-Most of size of the second bundle is occupied by the `supertokens-website`.
+-   Most of size of the second bundle is occupied by the `supertokens-website`.
 
-It makes sense that the `supertokens-website` package is in the auth bundle since `supertokens-auth-react` has a dependency on `supertokens-auth-react`, but the question which arises is that, why is it bundled separately?
+-   It makes sense that the `supertokens-website` package is in the auth bundle since `supertokens-auth-react` has a dependency on `supertokens-auth-react`, but the question which arises is **Why is it bundled separately?**
 
 To answer this question we will need to take a look at the home bundle.
 
@@ -96,9 +96,9 @@ The source map for the home bundle will have the following output:
 
 ![home module bundle](./images/home_component_build.png)
 
-We can see the source map does not contain the `supertokens-website` SDK even though it is used in the home component.
+-   We can see the source map does not contain the `supertokens-website` SDK even though it is used in the home component.
 
-So to answer the previously raised question since both the home component and the auth component have a dependency on the `supertokens-website` library Angular will bundle the libary into its own chunk which will be served on both the home and auth related routes. This is done to prevent duplication of the `supertokens-website` library in both chunks.
+-   So lets answer the previously raised question. Since both the `home` component and the `auth` component have dependencies on `supertokens-website`, Angular will bundle the libary into its own chunk which will be served for both the home and auth related routes. This is done to prevent duplication of the `supertokens-website` library in both bundles.
 
 We can actually see this behavior by looking at the network traffic when visiting the routes
 
@@ -108,13 +108,13 @@ When visiting the auth component related route:
 
 ![auth related route](./images/auth_component_network_log.png)
 
--   We can see the `supertokens-website` related chunk and the auth bundle being retrieved
+-   We can see the `supertokens-website` related chunk and the `auth` bundle containing `supertokens-auth-react` being retrieved.
 
 When visiting the home component related route:
 
 ![home related route](./images/hom_component_network_log.png)
 
--   We can see the `supertokens-website` related chunk and home bundle being retrieved
+-   We can see the `supertokens-website` related chunk and the `home` bundle being retrieved
 
 ## Author
 
