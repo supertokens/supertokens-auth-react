@@ -36,6 +36,82 @@ The app will start on `http://localhost:4200`
 -   The frontend code is located in the `/src` folder.
 -   The backend API is in the `server.ts` file.
 
+## Code splitting and bundle analysis
+
+This example project uses 3 Angular components:
+
+-   A root component which contains the routing for our auth and home components.
+-   A home component which will contain our home screen which uses SuperTokens `supertokens-website` SDK to handle session management.
+-   An auth component which uses SuperTokens `supertokens-auth-react` SDK to handle Authentication flows and Login UI
+
+We will not be directly importing our home and auth components to the root component, but the routing in the root component will use references to the home and auth component modules. This will tell Angular to create separate bundles for the auth and home components during the build process.
+
+This will decrease the main bundle size and allow us to lazy-load the home and auth component chunks depending on which route we visit.
+
+### Bundle analysis
+
+If we take a look at the output of the build we will see the following:
+
+![Bundle log](./images/bundle_file_sizes.png)
+
+The files we are interested in are the main bundle and the lazy chunk files.
+
+We can use Angular's source map explorer to take a look at the contents of these files
+
+#### Main bundle
+
+Using the source map explorer the main bundle will result in the following output
+
+![main bundle](./images/main_bundle_source_map.png)
+
+We can see that the main bundle does not contain the home and auth components.
+
+#### Auth bundles
+
+If we take a look at the build output we can see that there are two bundles related to the auth module.
+
+![auth related bundles](./images/auth_module_build.png)
+
+To understand why this is the case we need to take a look at the source maps of the two chunks
+
+Chunk 1
+
+![auth react module](./images/auth_component_supertokens-auth_react_sourcemap.png)
+
+Chunk 2
+
+![auth website module](./images/auth_component_supertokens_website_sourcemap.png)
+
+We can see that most of size of the first bundle is taken by the `supertokens-auth-react`, its dependencies and `react-router-dom`.
+
+The size of the second bundle is occupied by the `supertokens-website`.
+
+It makes sense that the `supertokens-website` package is in the auth bundle but the question which arises is that, why is it bundled separately?
+
+To answer this question we will need to take a look at the home component.
+
+#### Home bundle
+
+The source map for the home bundle will have the following output:
+
+![home module bundle](./images/home_component_build.png)
+
+When taking a look at the source map of the bundle we can see the home component does not contain the `supertokens-website` SDK even though it is imported in the home component.
+
+So to answer the previously raised question since both the home component and the auth component have a dependency on the `supertokens-website` library. Angular will bundle the libary into its own chunk which will be served on both the home and auth related routes. This was done to prevent duplication of the `supertokens-website` library in both chunks.
+
+We can actually see this behavior by looking at the network traffic when visiting the routes
+
+When visiting the auth component related route:
+
+![auth related route](./images/auth_component_network_log.png)
+
+-   We can see the `supertokens-website` related chunk and the other auth chunk being loaded
+
+When visiting the home component related route:
+
+![home related route](./images/hom_component_network_log.png)
+
 ## Author
 
 Created with :heart: by the folks at supertokens.com.
