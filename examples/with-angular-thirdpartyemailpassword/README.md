@@ -104,7 +104,7 @@ We can actually see this behavior by looking at the network traffic when visitin
 
 ## Analyzing Network traffic for routes
 
-We will be using Google Chrome's dev tools to inspect network traffic:
+We will be using Google Chrome's dev tools to inspect network traffic
 
 When visiting the auth component related route the network tab will have the following output:
 
