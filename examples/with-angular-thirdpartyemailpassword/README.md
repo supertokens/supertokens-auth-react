@@ -9,7 +9,7 @@ This demo app demonstrates the following use cases:
 -   Forgot password flow
 -   Session management
 
-In this example app, whenver we visit an auth related route (`/auth/*` in this case), we will load a React component which will initialize SuperTokens and handle the authentication flow. All other routes will use Angular Components.
+In this demo, whenver we visit an auth related route (`/auth/*` in this case), we will load a React component which will initialize SuperTokens and handle the authentication flow. All other routes will use Angular Components.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.6.
 
