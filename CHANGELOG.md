@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Adds a SuperTokens + Supabase example app
 -   Adds an example app with svelte
 -   Adds phone number and password demo app
+-   Adds an example app with Angular + React
 
 ## [0.21.3] - 2022-05-14
 
