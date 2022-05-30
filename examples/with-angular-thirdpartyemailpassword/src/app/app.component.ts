@@ -1,5 +1,12 @@
 import { Component } from "@angular/core";
 
+import * as SuperTokens from "supertokens-website";
+
+SuperTokens.init({
+    apiDomain: "http://localhost:3001",
+    apiBasePath: "/auth",
+});
+
 @Component({
     selector: "app-root",
     template: "<router-outlet></router-outlet>",
