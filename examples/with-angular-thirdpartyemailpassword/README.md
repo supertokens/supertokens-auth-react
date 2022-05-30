@@ -47,7 +47,7 @@ The app will start on `http://localhost:4200`
 
 ## Code splitting and bundle analysis
 
-Since we use refrences to the `home` and `auth` components in our routing logic, code splitting will be enabled. During the build process Angular will create seperate bundles for the `auth` and `home` components.
+Since we use references to the `home` and `auth` components in our routing logic, code splitting will be enabled. During the build process Angular will create separate bundles for the `auth` and `home` components.
 
 This will decrease the main bundle size and allow us to lazy-load the `home` and `auth` component chunks depending on which route we visit.
 

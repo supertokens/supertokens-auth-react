@@ -4,7 +4,6 @@ import * as SuperTokens from "supertokens-website";
 
 SuperTokens.init({
     apiDomain: "http://localhost:3001",
-    apiBasePath: "/auth",
 });
 
 @Component({
