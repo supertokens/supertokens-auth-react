@@ -31,7 +31,7 @@ jobs:
         name: Run tests
         timeout-minutes: 120
         runs-on: ubuntu-latest
-        container: rishabhpoddar/supertokens_website_sdk_testing
+        container: rishabhpoddar/supertokens_website_sdk_testing_node_16
         steps:
             - name: Environment variables
               run: |
