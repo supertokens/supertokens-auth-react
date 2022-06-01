@@ -9,7 +9,7 @@ jobs:
         docker:
             - image: rishabhpoddar/supertokens_website_sdk_testing
         steps:
-            - nvm use 16
+            - run: nvm use 16
             - checkout
             - run: apt-get install lsof
             - run: npm run init
@@ -34,7 +34,7 @@ jobs:
                 type: string
         parallelism: 4
         steps:
-            - nvm use 16
+            - run: nvm use 16
             - checkout
             - attach_workspace:
                   at: /
@@ -53,7 +53,7 @@ jobs:
         docker:
             - image: rishabhpoddar/supertokens_website_sdk_testing
         steps:
-            - nvm use 16
+            - run: nvm use 16
             - checkout
             - run: (cd .circleci && ./markPassed.sh)
             - slack/status
