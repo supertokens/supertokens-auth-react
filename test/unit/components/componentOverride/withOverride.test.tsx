@@ -31,11 +31,17 @@ const OverridenComponent: ComponentOverride<any> = ({ foo, DefaultComponent }) =
 
 describe("withOverride", () => {
     test("throw an error if no parent provider is set", async () => {
+        const consoleErrorFn = jest.spyOn(console, "error").mockImplementation(() => {
+            // We intentionally surpress console.error here: there is no way to avoid logging if the render fn throws
+            // This is known and just produces noise in the console
+            // https://stackoverflow.com/questions/66328549/testing-an-error-thrown-by-a-react-component-using-testing-library-and-jest
+        });
         // when
         const doRender = () => render(<DefaultComponent foo="bar" />);
 
         // then
         expect(doRender).toThrowError();
+        consoleErrorFn.mockRestore();
     });
 
     test("display overriden component if context key matches override key", async () => {

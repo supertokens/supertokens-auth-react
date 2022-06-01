@@ -289,4 +289,4 @@ export type Awaited<T> = T extends null | undefined
     ? F extends (value: infer V, ...args: any) => any // if the argument to `then` is callable, extracts the first argument
         ? V // unwrap the value (this is recursive in the built-in version, but that needs features from a later version to work)
         : never // the argument to `then` was not callable
-    : T;
+    : T; // non-object or non-thenable

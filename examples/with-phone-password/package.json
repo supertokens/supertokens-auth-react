@@ -1,0 +1,52 @@
+{
+    "name": "with-phone-password",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@testing-library/jest-dom": "^5.16.4",
+        "@testing-library/react": "^13.2.0",
+        "@testing-library/user-event": "^13.5.0",
+        "@types/cors": "^2.8.12",
+        "@types/jest": "^27.5.1",
+        "@types/node": "^16.11.36",
+        "@types/react": "^18.0.9",
+        "@types/react-dom": "^18.0.4",
+        "cors": "^2.8.5",
+        "express": "^4.18.1",
+        "libphonenumber-js": "^1.10.4",
+        "react": "^18.1.0",
+        "react-dom": "^18.1.0",
+        "react-router-dom": "^6.3.0",
+        "react-scripts": "5.0.1",
+        "supertokens-auth-react": "^0.21.3",
+        "supertokens-node": "^9.2.1",
+        "typescript": "^4.6.4",
+        "web-vitals": "^2.1.4"
+    },
+    "scripts": {
+        "start": "npm-run-all --parallel spa api-server",
+        "api-server": "npx ts-node-dev --project api-server/tsconfig.json api-server/index.ts",
+        "spa": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}

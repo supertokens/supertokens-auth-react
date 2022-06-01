@@ -99,7 +99,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 });
             } else {
                 return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "signin",
+                    error: "restart_link",
                 });
             }
         },
