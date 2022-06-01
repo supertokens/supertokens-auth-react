@@ -24,29 +24,29 @@ import {
     Config,
     GetRedirectionURLContext,
     NormalisedConfig,
-    PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
+    PreAndPostAPIHookAction,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyEmailPasswordConfig } from "./utils";
-import NormalisedURLPath from "../../normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import RecipeImplementation from "./recipeImplementation";
-import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
-import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import OverrideableBuilder from "supertokens-js-override";
+import getEmailPasswordImpl from "./recipeImplementation/emailPasswordImplementation";
+import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
-    PreAPIHookContext,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -71,10 +71,16 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
             emailVerificationInstance: recipes.emailVerificationInstance,
         });
 
-        {
-            const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
-            this.recipeImpl = builder.override(this.config.override.functions).build();
-        }
+        const builder = new OverrideableBuilder(
+            RecipeImplementation({
+                appInfo: this.config.appInfo,
+                recipeId: this.config.recipeId,
+                onHandleEvent: this.config.onHandleEvent,
+                preAPIHook: this.config.preAPIHook,
+                postAPIHook: this.config.postAPIHook,
+            })
+        );
+        this.recipeImpl = builder.override(this.config.override.functions).build();
 
         this.emailPasswordRecipe =
             recipes.emailPasswordInstance !== undefined
@@ -96,7 +102,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
                           useShadowDom: this.config.useShadowDom,
                           override: {
                               // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                              functions: (_) => {
+                              functions: (_: any) => {
                                   return getEmailPasswordImpl(this.recipeImpl);
                               },
                               components: this.config.override.components,
@@ -130,7 +136,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
                           useShadowDom: this.config.useShadowDom,
                           override: {
                               // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                              functions: (_) => {
+                              functions: (_: any) => {
                                   return getThirdPartyImpl(this.recipeImpl);
                               },
                               components: this.config.override.components,
@@ -159,7 +165,7 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
             };
         }
 
-        if (this.config.signInAndUpFeature.disableDefaultImplementation !== true) {
+        if (this.config.signInAndUpFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
@@ -190,11 +196,18 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
     ): JSX.Element => {
         if (componentName === "signinup") {
             return (
-                <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
-                    authRecipe={this}
-                    history={props.history}>
-                    <SignInAndUp recipe={this} {...props} />
-                </AuthWidgetWrapper>
+                <UserContextWrapper userContext={props.userContext}>
+                    <AuthWidgetWrapper<
+                        GetRedirectionURLContext,
+                        PreAndPostAPIHookAction,
+                        OnHandleEventContext,
+                        NormalisedConfig
+                    >
+                        authRecipe={this}
+                        history={props.history}>
+                        <SignInAndUp recipe={this} {...props} />
+                    </AuthWidgetWrapper>
+                </UserContextWrapper>
             );
         } else if (componentName === "resetpassword") {
             if (this.emailPasswordRecipe === undefined) {
@@ -219,10 +232,10 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
+        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
             ThirdPartyEmailPassword.instance = new ThirdPartyEmailPassword(
                 {
                     ...config,

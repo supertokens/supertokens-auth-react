@@ -30,13 +30,16 @@ import SignInAndUpTheme from "../../themes/signInAndUp";
 import { FeatureBaseProps, NormalisedFormField } from "../../../../../types";
 import { getQueryParams, getRedirectToPathFromURL } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
-import { SignInAndUpState, RecipeInterface } from "../../../types";
+import { SignInAndUpState } from "../../../types";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsEmailPassword } from "../../themes/translations";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { useMemo } from "react";
 import { useCallback } from "react";
 import { Dispatch } from "react";
+import STGeneralError from "supertokens-web-js/utils/error";
+import { useUserContext } from "../../../../../usercontext";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(
@@ -103,6 +106,7 @@ export function useChildProps(
     history: any
 ): EmailPasswordSignInAndUpChildProps | undefined {
     const recipeImplementation = useMemo(() => recipe && getModifiedRecipeImplementation(recipe.recipeImpl), [recipe]);
+    const userContext = useUserContext();
 
     const onSignInSuccess = useCallback(async (): Promise<void> => {
         if (!recipe) {
@@ -111,7 +115,7 @@ export function useChildProps(
         if (recipe.emailVerification.config.mode === "REQUIRED") {
             let isEmailVerified = true;
             try {
-                isEmailVerified = await recipe.emailVerification.isEmailVerified();
+                isEmailVerified = (await recipe.emailVerification.isEmailVerified(userContext)).isVerified;
             } catch (ignored) {}
             if (!isEmailVerified) {
                 await recipe.savePostEmailVerificationSuccessRedirectState({
@@ -175,7 +179,7 @@ export function useChildProps(
         const signInFeature = signInAndUpFeature.signInForm;
 
         const signInForm = {
-            recipeImplementation: recipeImplementation,
+            recipeImplementation,
             config: recipe.config,
             styleFromInit: signInFeature.style,
             formFields: signInFeature.formFields,
@@ -187,10 +191,10 @@ export function useChildProps(
         };
 
         const signUpForm = {
-            recipeImplementation: recipeImplementation,
+            recipeImplementation,
             config: recipe.config,
             styleFromInit: signUpFeature.style,
-            formFields: getThemeSignUpFeatureFormFields(signUpFeature.formFields, recipe),
+            formFields: getThemeSignUpFeatureFormFields(signUpFeature.formFields, recipe, userContext),
             error: state.error,
             clearError: () => dispatch({ type: "setError", error: undefined }),
             onError: (error: string) => dispatch({ type: "setError", error }),
@@ -250,7 +254,11 @@ const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInter
     };
 };
 
-function getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[], recipe: Recipe): FormFieldThemeProps[] {
+function getThemeSignUpFeatureFormFields(
+    formFields: NormalisedFormField[],
+    recipe: Recipe,
+    userContext: any
+): FormFieldThemeProps[] {
     const emailPasswordOnly = formFields.length === 2;
     return formFields.map((field) => ({
         ...field,
@@ -279,14 +287,21 @@ function getThemeSignUpFeatureFormFields(formFields: NormalisedFormField[], reci
                     return "GENERAL_ERROR_EMAIL_NON_STRING";
                 }
                 try {
-                    const emailExists = await recipe.recipeImpl.doesEmailExist({
-                        email: value,
-                        config: recipe.config,
-                    });
+                    const emailExists = (
+                        await recipe.recipeImpl.doesEmailExist({
+                            email: value,
+                            userContext,
+                        })
+                    ).doesExist;
+
                     if (emailExists) {
                         return "EMAIL_PASSWORD_EMAIL_ALREADY_EXISTS";
                     }
-                } catch (_) {}
+                } catch (err) {
+                    if (STGeneralError.isThisError(err)) {
+                        return err.message;
+                    }
+                }
                 return undefined;
             };
         })(),

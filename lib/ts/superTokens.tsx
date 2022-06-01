@@ -26,7 +26,7 @@ import {
     normaliseCookieScopeOrThrowError,
     normaliseInputAppInfoOrThrowError,
 } from "./utils";
-import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { getSuperTokensRoutesForReactRouterDom } from "./components/superTokensRoute";
 import { getSuperTokensRoutesForReactRouterDomV6 } from "./components/superTokensRouteV6";
 import { BaseFeatureComponentMap } from "./types";

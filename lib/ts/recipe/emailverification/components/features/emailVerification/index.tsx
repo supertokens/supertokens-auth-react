@@ -20,7 +20,6 @@
 import { jsx } from "@emotion/react";
 import * as React from "react";
 import { useContext, useState, useMemo, useCallback, Fragment } from "react";
-import { RecipeInterface } from "../../../types";
 import { clearQueryParams, getQueryParams, useOnMountAPICall } from "../../../../../utils";
 import { EmailVerificationTheme } from "../../themes/emailVerification";
 import { FeatureBaseProps } from "../../../../../types";
@@ -29,12 +28,15 @@ import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { SessionContext } from "../../../../session";
 import { defaultTranslationsEmailVerification } from "../../themes/translations";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
+import { useUserContext } from "../../../../../usercontext";
 
-type Prop = FeatureBaseProps & { recipe: Recipe };
+type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
 
 export const EmailVerification: React.FC<Prop> = (props) => {
     const sessionContext = useContext(SessionContext);
     const [status, setStatus] = useState("LOADING");
+    const userContext = useUserContext();
 
     const modifiedRecipeImplementation = useMemo<RecipeInterface>(
         () => ({
@@ -55,7 +57,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
                 await props.recipe.config.redirectToSignIn(props.history);
             } else {
                 // we check if the email is already verified, and if it is, then we redirect the user
-                return props.recipe.recipeImpl.isEmailVerified({ config: props.recipe.config });
+                return (await props.recipe.recipeImpl.isEmailVerified({ userContext })).isVerified;
             }
         }
         return false;

@@ -16,9 +16,9 @@
 /*
  * Imports.
  */
-import { Config, NormalisedConfig, TPPWlessRecipeInterface } from "./types";
-
+import { Config, NormalisedConfig } from "./types";
 import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
+import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 export function normaliseThirdPartyPasswordlessConfig(config: Config): NormalisedConfig {
     const disablePasswordless = config.disablePasswordless === true;

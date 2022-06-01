@@ -27,17 +27,23 @@ import { SendVerifyEmailThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { useUserContext } from "../../../../../usercontext";
+import STGeneralError from "supertokens-web-js/utils/error";
 import { useOnMountAPICall } from "../../../../../utils";
 import { Awaited } from "../../../../../types";
 
 export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
+    const userContext = useUserContext();
     const [status, setStatus] = useState("READY");
+    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
     const resendEmail = async (): Promise<void> => {
         try {
-            const response = await sendVerificationEmail();
+            const response = await props.recipeImplementation.sendVerificationEmail({
+                userContext,
+            });
 
             if (response.status === "EMAIL_ALREADY_VERIFIED_ERROR") {
                 await props.onEmailAlreadyVerified();
@@ -45,6 +51,10 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
                 setStatus("EMAIL_RESENT");
             }
         } catch (e) {
+            if (STGeneralError.isThisError(e)) {
+                setErrorMessage(e.message);
+            }
+
             setStatus("ERROR");
         }
     };
@@ -52,7 +62,7 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
     const sendVerificationEmail = useCallback(
         () =>
             props.recipeImplementation.sendVerificationEmail({
-                config: props.config,
+                userContext,
             }),
         [props.config, props.recipeImplementation]
     );
@@ -73,7 +83,9 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
-                {status === "ERROR" && <GeneralError error="SOMETHING_WENT_WRONG_ERROR" />}
+                {status === "ERROR" && (
+                    <GeneralError error={errorMessage === undefined ? "SOMETHING_WENT_WRONG_ERROR" : errorMessage} />
+                )}
                 {status === "EMAIL_RESENT" && (
                     <div data-supertokens="generalSuccess" css={styles.generalSuccess}>
                         {t("EMAIL_VERIFICATION_RESEND_SUCCESS")}

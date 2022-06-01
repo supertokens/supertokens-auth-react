@@ -25,11 +25,11 @@ export type User = {
     timeJoined: number;
 };
 
-export type UserInput<T, S, R> = UserInputRecipeModule<T, S, R>;
+export type UserInput<T, Action, R> = UserInputRecipeModule<T, Action, R>;
 
 export type Config<T, S, R> = UserInput<T, S, R> & RecipeModuleConfig<T, S, R>;
 
-export type NormalisedConfig<T, S, R> = NormalisedRecipeModuleConfig<T, S, R>;
+export type NormalisedConfig<T, Action, R> = NormalisedRecipeModuleConfig<T, Action, R>;
 
 export type GetRedirectionURLContext =
     | {

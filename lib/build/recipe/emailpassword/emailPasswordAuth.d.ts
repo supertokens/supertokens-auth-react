@@ -4,6 +4,7 @@ declare const EmailPasswordAuthWrapper: React.FC<
     PropsWithChildren<{
         requireAuth?: boolean;
         onSessionExpired?: () => void;
+        userContext?: any;
     }>
 >;
 export default EmailPasswordAuthWrapper;

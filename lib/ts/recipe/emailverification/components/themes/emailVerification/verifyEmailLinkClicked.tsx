@@ -30,8 +30,10 @@ import { Button } from "../../../../emailpassword/components/library";
 import { VerifyEmailLinkClickedThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import { useUserContext } from "../../../../../usercontext";
 import { useOnMountAPICall } from "../../../../../utils";
 import { Awaited } from "../../../../../types";
+import STGeneralError from "supertokens-web-js/utils/error";
 
 /*
  * Component.
@@ -40,15 +42,16 @@ import { Awaited } from "../../../../../types";
 export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkClickedThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
+    const userContext = useUserContext();
     const [status, setStatus] = useState<"LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL">("LOADING");
+    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
     const verifyEmail = useCallback(
         () =>
             props.recipeImplementation.verifyEmail({
-                config: props.config,
-                token: props.token,
+                userContext,
             }),
-        [props.token, props.config]
+        [props.recipeImplementation]
     );
     const handleVerifyResp = useCallback(
         async (response: Awaited<ReturnType<typeof verifyEmail>>): Promise<void> => {
@@ -60,9 +63,16 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
         },
         [setStatus]
     );
-    const handleError = useCallback(() => {
-        setStatus("GENERAL_ERROR");
-    }, [setStatus]);
+    const handleError = useCallback(
+        (err) => {
+            if (STGeneralError.isThisError(err)) {
+                setErrorMessage(err.message);
+            }
+
+            setStatus("GENERAL_ERROR");
+        },
+        [setStatus, setErrorMessage]
+    );
     useOnMountAPICall(verifyEmail, handleVerifyResp, handleError);
 
     const { onTokenInvalidRedirect, onContinueClicked } = props;
@@ -131,7 +141,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
                     {t("EMAIL_VERIFICATION_ERROR_TITLE")}
                 </div>
                 <div data-supertokens="primaryText" css={styles.primaryText}>
-                    {t("EMAIL_VERIFICATION_ERROR_DESC")}
+                    {t(errorMessage === undefined ? "EMAIL_VERIFICATION_ERROR_DESC" : errorMessage)}
                 </div>
             </div>
         </div>

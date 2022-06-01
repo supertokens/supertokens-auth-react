@@ -23,6 +23,7 @@ import ThirdParty from "../../../../lib/build/recipe/thirdparty/recipe";
 import { Google, Github, Facebook } from "../../../../lib/build/recipe/thirdparty";
 import assert from "assert";
 import SuperTokens from "../../../../lib/build/superTokens";
+import ThirdPartyIndex from "../../../../lib/build/recipe/thirdparty";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -343,5 +344,109 @@ describe("ThirdParty", function () {
             () => ThirdParty.getInstanceOrThrow().config.getRedirectionURL(),
             new Error("GET REDIRECTION HOOK THROWS")
         );
+    });
+
+    it("Test that when calling redirectToThirdPartyLogin, userContext is passed to other functions", async function () {
+        ThirdParty.init({
+            signInAndUpFeature: {
+                providers: [Google.init(), Github.init(), Facebook.init()],
+            },
+            override: {
+                functions: (oI) => {
+                    return {
+                        ...oI,
+                        getAuthorizationURLWithQueryParamsAndSetState: async function (input) {
+                            assert(input.userContext["key"] !== undefined);
+                            return oI.getAuthorizationURLWithQueryParamsAndSetState(input);
+                        },
+                        generateStateToSendToOAuthProvider: function (input) {
+                            assert(input.userContext["key"] !== undefined);
+                            /**
+                             * generateStateToSendToOAuthProvider internally uses crypto,
+                             * which is not defined for mocha and jest
+                             *
+                             * Since we dont need to actually make a network call,
+                             * this is easier than defining crypto for the tests
+                             */
+                            return "";
+                        },
+                        setStateAndOtherInfoToStorage: function (input) {
+                            /**
+                             * Similar to generateStateToSendToOAuthProvider, this is
+                             * easier than defining sessionStorage for tests
+                             */
+                            assert(input.userContext["key"] !== undefined);
+                            return;
+                        },
+                        getAuthorisationURLFromBackend: async function (input) {
+                            assert(input.userContext["key"] !== undefined);
+                            throw new Error("Expected Test Error");
+                        },
+                    };
+                },
+            },
+        })(SuperTokens.getInstanceOrThrow().appInfo);
+
+        try {
+            await ThirdPartyIndex.redirectToThirdPartyLogin({
+                thirdPartyId: "google",
+                userContext: {
+                    key: "value",
+                },
+            });
+            throw new Error("redirectToThirdPartyLogin should have failed but didnt");
+        } catch (e) {
+            if (e.message !== "Expected Test Error") {
+                throw e;
+            }
+        }
+    });
+
+    it("Test that when calling signInAndUp, userContext is passed to other functions", async function () {
+        ThirdParty.init({
+            signInAndUpFeature: {
+                providers: [Google.init(), Github.init(), Facebook.init()],
+            },
+            override: {
+                functions: (oI) => {
+                    return {
+                        ...oI,
+                        getStateAndOtherInfoFromStorage: function (input) {
+                            assert(input.userContext["key"] !== undefined);
+                            return {};
+                        },
+                        getAuthStateFromURL: function (input) {
+                            assert(input.userContext["key"] !== undefined);
+                            return "";
+                        },
+                        verifyAndGetStateOrThrowError: async function (input) {
+                            assert(input.userContext["key"] !== undefined);
+                            return true;
+                        },
+                        getAuthCodeFromURL: function (input) {
+                            assert(input.userContext["key"] !== undefined);
+                            return "";
+                        },
+                        getAuthErrorFromURL: function (input) {
+                            assert(input.userContext["key"] !== undefined);
+                            throw new Error("Expected Test Error");
+                        },
+                    };
+                },
+            },
+        })(SuperTokens.getInstanceOrThrow().appInfo);
+
+        try {
+            await ThirdPartyIndex.signInAndUp({
+                userContext: {
+                    key: "value",
+                },
+            });
+            throw new Error("signInAndUp should have failed but didnt");
+        } catch (e) {
+            if (e.message !== "Expected Test Error") {
+                throw e;
+            }
+        }
     });
 });

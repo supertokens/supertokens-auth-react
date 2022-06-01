@@ -19,18 +19,47 @@ import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { SignInAndUpThemeProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { redirectToThirdPartyLogin } from "../../../utils";
+import STGeneralError from "supertokens-web-js/utils/error";
+import { useUserContext } from "../../../../../usercontext";
 
 export const ThirdPartySignInAndUpProvidersForm: React.FC<SignInAndUpThemeProps> = (props) => {
     const styles = useContext(StyleContext);
+    const userContext = useUserContext();
 
     const signInClick = async (providerId: string): Promise<void> => {
         try {
-            const response = await props.recipeImplementation.redirectToThirdPartyLogin({
-                thirdPartyId: providerId,
-                config: props.config,
-            });
-            if (response.status === "ERROR") {
-                props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+            let response;
+            let generalError: STGeneralError | undefined;
+
+            try {
+                response = await redirectToThirdPartyLogin({
+                    recipeImplementation: props.recipeImplementation,
+                    thirdPartyId: providerId,
+                    config: props.config,
+                    userContext,
+                });
+            } catch (e) {
+                if (STGeneralError.isThisError(e)) {
+                    generalError = e;
+                } else {
+                    throw e;
+                }
+            }
+
+            if (generalError !== undefined) {
+                props.dispatch({
+                    type: "setError",
+                    error: generalError.message,
+                });
+            } else {
+                if (response === undefined) {
+                    throw new Error("Should not come here");
+                }
+
+                if (response.status === "ERROR") {
+                    props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
+                }
             }
         } catch (err) {
             props.dispatch({ type: "setError", error: "SOMETHING_WENT_WRONG_ERROR" });
