@@ -1,12 +1,15 @@
 import express from "express";
-import supertokens, { deleteUser } from "supertokens-node";
+import supertokens from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
-import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPassword, { Google, Github } from "supertokens-node/recipe/thirdpartyemailpassword";
 import { middleware, errorHandler } from "supertokens-node/framework/express";
 import cors from "cors";
-import { generateString } from "./utils";
+import { generateOtpAndMapToToken, mailTransporter, getTokenFromOtp } from "./utils";
 
-let { Google, Github } = ThirdPartyEmailPassword;
+import dotenv from "dotenv";
+dotenv.config();
+
+let otpToTokenMapping = new Map<string, string>();
 
 const apiPort = 3001;
 const apiDomain = `http://localhost:${apiPort}`;
@@ -29,7 +32,7 @@ supertokens.init({
     recipeList: [
         ThirdPartyEmailPassword.init({
             providers: [
-                // We have provided you with development keys which you can use for testsing.
+                // We have provided you with development keys which you can use for testing.
                 // IMPORTANT: Please replace them with your own OAuth keys for production use.
                 Google({
                     clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
@@ -42,10 +45,43 @@ supertokens.init({
             ],
             emailVerificationFeature: {
                 createAndSendCustomEmail: async (user, url) => {
+                    // retrieve the token from the url
                     const token = new URL(url).searchParams.get("token");
-                    let otp = generateString(5);
 
-                    // console.log(url);
+                    if (token !== null) {
+                        // generate a 6 digit otp
+                        let otp = generateOtpAndMapToToken(token, otpToTokenMapping);
+
+                        // send a mail to the user
+                        await mailTransporter.sendMail({
+                            from: process.env.NODEMAILER_USER, // sender address
+                            to: user.email,
+                            subject: "SuperTokens Demo OTP",
+                            text: `${otp}`, // plain text body
+                        });
+                    }
+                },
+            },
+            override: {
+                emailVerificationFeature: {
+                    apis: (oI) => {
+                        return {
+                            ...oI,
+                            verifyEmailPOST: async (input) => {
+                                if (oI.verifyEmailPOST === undefined) {
+                                    throw Error("should not come here");
+                                }
+                                let superTokensToken = getTokenFromOtp(input.token, otpToTokenMapping);
+
+                                if (superTokensToken !== undefined) {
+                                    input.token = superTokensToken;
+                                }
+
+                                let response = await oI.verifyEmailPOST(input);
+                                return response;
+                            },
+                        };
+                    },
                 },
             },
         }),
@@ -57,7 +93,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: websiteDomain, // TODO: Change to your app's website domain
+        origin: websiteDomain,
         allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
         credentials: true,
     })
@@ -65,12 +101,6 @@ app.use(
 
 app.use(middleware());
 
-app.get("/remove-user", async (req, res) => {
-    let response = await deleteUser("f6d6d593-7ec1-4599-a894-9ad48dd3d333");
-    res.send(response);
-});
-
-// Add this AFTER all your routes
 app.use(errorHandler());
 
 app.listen(apiPort, () => console.log(`API Server listening on port ${apiPort}`));

@@ -7,7 +7,11 @@ import ThirdPartyEmailpassword, {
 import Session from "supertokens-auth-react/recipe/session";
 import "./App.css";
 import Home from "./Home";
+import { useState, ChangeEvent } from "react";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
+import axios from "axios";
+
+Session.addAxiosInterceptors(axios);
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -40,14 +44,43 @@ SuperTokens.init({
                 emailVerification: {
                     components: {
                         EmailVerificationSendVerifyEmail_Override: ({ DefaultComponent, ...props }) => {
-                            function sendCode() {
-                                // call api to send code to the backend
-                                console.log("comes here");
+                            const [otp, setOtp] = useState("");
+                            const [message, setMessage] = useState("");
+
+                            const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+                                setOtp(event.target.value);
+                            };
+
+                            async function sendCode() {
+                                // send a request to verify the user
+                                var data = JSON.stringify({
+                                    method: "token",
+                                    token: otp,
+                                });
+
+                                let config = {
+                                    method: "post",
+                                    url: `http://localhost:3001/auth/user/email/verify`,
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    data: data,
+                                };
+
+                                let response = await axios(config);
+                                if (response.data.status === "OK") {
+                                    window.location.reload();
+                                } else {
+                                    setMessage("Invalid OTP");
+                                }
                             }
                             return (
                                 <div>
-                                    <input></input>
+                                    Enter Emailverification OTP
+                                    <br />
+                                    <input type="text" id="otp" name="otp" onChange={handleChange} value={otp} />
                                     <button onClick={sendCode}>Submit</button>
+                                    <div>{message}</div>
                                     <DefaultComponent {...props} />
                                 </div>
                             );
