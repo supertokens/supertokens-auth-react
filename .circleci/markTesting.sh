@@ -22,7 +22,7 @@ FILENAME=$(mktemp)
 responseStatus=`curl -o $FILENAME -w "%{http_code}" -X PUT \
     https://api.supertokens.io/0/frontend \
     -H 'Content-Type: application/json' \
-    -H 'api-version: 0' \
+    -H 'api-version: 1' \
     -d "{
         \"password\": \"$SUPERTOKENS_API_KEY\",
         \"version\":\"$version\",
