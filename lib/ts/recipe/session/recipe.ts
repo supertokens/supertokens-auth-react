@@ -19,8 +19,9 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
-import { RecipeEventWithSessionContext, SessionContextType, InputType, RecipeEvent } from "./types";
+import { RecipeEventWithSessionContext, SessionContextType, InputType } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
+import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
@@ -61,8 +62,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                     return config.preAPIHook(context);
                 }
             },
-            apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),
-            apiBasePath: config.appInfo.apiBasePath.getAsStringDangerous(),
         });
     }
 
@@ -155,7 +154,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 ...config,
                 appInfo,
                 recipeId: Session.RECIPE_ID,
-                apiDomain: appInfo.apiDomain.getAsStringDangerous(),
                 enableDebugLogs,
             });
             return Session.instance;

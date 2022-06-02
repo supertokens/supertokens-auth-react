@@ -157,8 +157,6 @@ function getRecipeList() {
             isInIframe: true,
             sessionExpiredStatusCode: 401,
             sessionScope: "",
-            apiBasePath: "",
-            apiDomain: "",
             cookieDomain: "",
             onHandleEvent: (context) => {
                 if (context.action === "REFRESH_SESSION") {
