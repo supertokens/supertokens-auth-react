@@ -62,8 +62,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                     return config.preAPIHook(context);
                 }
             },
-            apiDomain: config.appInfo.apiDomain.getAsStringDangerous(),
-            apiBasePath: config.appInfo.apiBasePath.getAsStringDangerous(),
         });
     }
 
@@ -156,7 +154,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 ...config,
                 appInfo,
                 recipeId: Session.RECIPE_ID,
-                apiDomain: appInfo.apiDomain.getAsStringDangerous(),
                 enableDebugLogs,
             });
             return Session.instance;
