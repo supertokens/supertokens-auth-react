@@ -9,7 +9,7 @@ jobs:
         docker:
             - image: rishabhpoddar/supertokens_website_sdk_testing_node_16
         steps:
-            - git config --global url."https://github.com/".insteadOf ssh://git@github.com/ # This makes npm use http instead of ssh (required for node 16)
+            - run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/ # This makes npm use http instead of ssh (required for node 16)
             - checkout
             - run: apt-get install lsof
             - run: npm run init
@@ -34,7 +34,7 @@ jobs:
                 type: string
         parallelism: 4
         steps:
-            - - git config --global url."https://github.com/".insteadOf ssh://git@github.com/ # This makes npm use http instead of ssh (required for node 16)
+            - run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/ # This makes npm use http instead of ssh (required for node 16)
             - checkout
             - attach_workspace:
                   at: /
@@ -53,7 +53,7 @@ jobs:
         docker:
             - image: rishabhpoddar/supertokens_website_sdk_testing_node_16
         steps:
-            - - git config --global url."https://github.com/".insteadOf ssh://git@github.com/ # This makes npm use http instead of ssh (required for node 16)
+            - run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/ # This makes npm use http instead of ssh (required for node 16)
             - checkout
             - run: (cd .circleci && ./markPassed.sh)
             - slack/status
