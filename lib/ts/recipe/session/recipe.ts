@@ -19,9 +19,8 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { isTest } from "../../utils";
-import { RecipeEventWithSessionContext, SessionContextType, InputType } from "./types";
+import { RecipeEventWithSessionContext, SessionContextType, InputType, RecipeEvent } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
-import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
