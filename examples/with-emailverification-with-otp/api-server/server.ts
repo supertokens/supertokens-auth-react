@@ -4,7 +4,7 @@ import Session from "supertokens-node/recipe/session";
 import ThirdPartyEmailPassword, { Google, Github } from "supertokens-node/recipe/thirdpartyemailpassword";
 import { middleware, errorHandler } from "supertokens-node/framework/express";
 import cors from "cors";
-import { generateOtpAndMapToToken, mailTransporter, getTokenFromOtp } from "./utils";
+import { generateOtpAndMapToToken, mailTransporter, getTokenFromOtp, getMessageBody } from "./utils";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -57,7 +57,7 @@ supertokens.init({
                             from: process.env.NODEMAILER_USER, // sender address
                             to: user.email,
                             subject: "SuperTokens Demo OTP",
-                            text: `${otp}`, // plain text body
+                            html: getMessageBody(otp, user.email),
                         });
                     }
                 },

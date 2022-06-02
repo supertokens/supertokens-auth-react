@@ -4,7 +4,7 @@ export default function Home() {
     const { userId } = useSessionContext();
 
     async function signOutUser() {
-        signOut();
+        await signOut();
         window.location.reload();
     }
     return (
@@ -16,8 +16,9 @@ export default function Home() {
                 justifyContent: "center",
                 textAlign: "center",
                 fontWeight: "bold",
+                fontSize: "30px",
                 color: "#333333",
-                paddingTop: "10px",
+                paddingTop: "15%",
                 paddingBottom: "40px",
             }}>
             <div style={{ height: "10px" }} />
