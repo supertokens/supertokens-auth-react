@@ -1,15 +1,13 @@
 import React, { PropsWithChildren } from "react";
 import { SessionClaimValidator } from "./types";
-declare type PropsWithoutAuth = {
-    requireAuth?: false;
-};
-declare type PropsWithAuth = {
-    requireAuth: true;
-    redirectToLogin: () => void;
-};
-declare type Props = (PropsWithoutAuth | PropsWithAuth) & {
+import { FeatureBaseProps } from "../../types";
+declare type Props = FeatureBaseProps & {
+    requireAuth?: boolean;
+    redirectToLogin?: () => void;
     onSessionExpired?: () => void;
-    claimValidators?: SessionClaimValidator<any>[];
+    overwriteDefaultClaimValidators?: (
+        defaultClaimValidators: SessionClaimValidator<any>[]
+    ) => SessionClaimValidator<any>[];
 };
 declare const SessionAuth: React.FC<PropsWithChildren<Props>>;
 export default SessionAuth;

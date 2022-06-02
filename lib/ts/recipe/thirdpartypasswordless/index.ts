@@ -22,7 +22,6 @@ import {
     OnHandleEventContext,
     TPPWlessRecipeInterface,
 } from "./types";
-import ThirdPartyPasswordlessAuth from "./thirdpartyPasswordlessAuth";
 import SignInUpTheme from "./components/themes/signInUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 import { LinkClickedScreen } from "../passwordless/components/themes/linkClickedScreen";
@@ -64,7 +63,6 @@ export default class Wrapper {
     static Apple = Apple;
     static Facebook = Facebook;
     static Github = Github;
-    static ThirdPartyPasswordlessAuth = ThirdPartyPasswordlessAuth;
     static SignInAndUp = (prop?: any) =>
         ThirdPartyPasswordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
     static SignInAndUpTheme = SignInUpTheme;
@@ -89,7 +87,6 @@ const EmailVerification = Wrapper.EmailVerification;
 const PasswordlessLinkClicked = Wrapper.PasswordlessLinkClicked;
 
 export {
-    ThirdPartyPasswordlessAuth,
     init,
     Apple,
     Google,

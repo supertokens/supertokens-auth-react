@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import "./App.css";
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
@@ -13,7 +13,6 @@ import { EmailVerifiedClaim } from "./claims/emailVerifiedClaim";
 import { api, TestContextProvider, useTestLogger } from "./test.context";
 import { TestScreen } from "./routes/testScreen.component";
 import { MFAClaim } from "./claims/mfaClaim";
-import { useMemo } from "react";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -81,11 +80,12 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
     // 5. since the check (and the refresh) didn't complete the first time, it calls refresh again...
     // This is not normally the case, the claim refreshing shouldn't rerender the auth component,
     // it's just a weird test setup because of logging.
-    const route1Claims = useMemo(
-        () => [EmailVerifiedClaim.isVerified, RolesClaim.hasRole.including("admin"), MFAClaim.completed2FA()],
+    const route1ClaimOverride = useCallback(
+        (defaultClaims) => [...defaultClaims, RolesClaim.hasRole.includes("admin"), MFAClaim.completed2FA()],
         []
     );
-    const route2Claims = useMemo(() => [EmailVerifiedClaim.isVerified], []);
+    const route2ClaimsOverride = useCallback((defaultClaims) => [...defaultClaims, EmailVerifiedClaim.isVerified], []);
+
     return (
         <div className="fill">
             <Routes>
@@ -102,7 +102,7 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
                             onSessionExpired={() => {
                                 updateShowSessionExpiredPopup(true);
                             }}
-                            claimValidators={route1Claims}>
+                            overwriteDefaultClaimValidators={route1ClaimOverride}>
                             <TestScreen title="Route1" subTitle={"Required: Role(admin), Email.isVerified"} />
                             {showSessionExpiredPopup && <SessionExpiredPopup />}
                         </SessionAuth>
@@ -118,7 +118,7 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
                             onSessionExpired={() => {
                                 updateShowSessionExpiredPopup(true);
                             }}
-                            claimValidators={route2Claims}>
+                            claimValidators={route2ClaimsOverride}>
                             <TestScreen title="Route2" subTitle={"Required: Email.isVerified"} />
                             {showSessionExpiredPopup && <SessionExpiredPopup />}
                         </SessionAuth>

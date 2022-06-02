@@ -2,8 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword";
+import { SessionAuth } from "../../../recipe/session";
 import { BaseComponent, Home, Contact, Dashboard, DashboardNoAuthRequired } from "./App";
-import Auth from "./Auth";
 
 function AppWithReactDomRouter(props) {
     return (
@@ -16,18 +16,18 @@ function AppWithReactDomRouter(props) {
                         <Route
                             path="/CasE/Case-SensItive1-PAth"
                             element={
-                                <Auth {...props}>
+                                <SessionAuth {...props}>
                                     <Dashboard />
-                                </Auth>
+                                </SessionAuth>
                             }
                         />
 
                         <Route
                             path="/dashboard-no-auth"
                             element={
-                                <Auth requireAuth={false} {...props}>
+                                <SessionAuth requireAuth={false} {...props}>
                                     <DashboardNoAuthRequired />
-                                </Auth>
+                                </SessionAuth>
                             }
                         />
 
@@ -35,17 +35,17 @@ function AppWithReactDomRouter(props) {
                         <Route
                             path="/dashboard"
                             element={
-                                <Auth {...props}>
+                                <SessionAuth {...props}>
                                     <Dashboard />
-                                </Auth>
+                                </SessionAuth>
                             }
                         />
                         <Route
                             path="/redirect-to-this-custom-path"
                             element={
-                                <Auth {...props}>
+                                <SessionAuth {...props}>
                                     <Dashboard />
-                                </Auth>
+                                </SessionAuth>
                             }
                         />
 

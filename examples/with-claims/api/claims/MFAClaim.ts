@@ -1,4 +1,4 @@
-import { BooleanClaim } from "supertokens-node/lib/build/recipe/session/claimBaseClasses/booleanClaim";
+import { BooleanClaim } from "supertokens-node/recipe/session";
 
 // All of these claims/checkers are exported by us and added by endpoints of an MFA recipe
 export const SecondFactorOTPClaim = new BooleanClaim({

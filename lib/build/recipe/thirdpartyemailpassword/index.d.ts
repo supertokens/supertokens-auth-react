@@ -1,9 +1,7 @@
 /// <reference types="react" />
-/// <reference types="@emotion/react/types/css-prop" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
-import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 export default class Wrapper {
@@ -29,13 +27,6 @@ export default class Wrapper {
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
-    static ThirdPartyEmailPasswordAuth: import("react").FC<
-        import("react").PropsWithChildren<{
-            requireAuth?: boolean | undefined;
-            onSessionExpired?: (() => void) | undefined;
-            requiredClaims?: import("../session/types").SessionClaimValidator<any>[] | undefined;
-        }>
-    >;
     static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
@@ -53,7 +44,6 @@ declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 export {
-    ThirdPartyEmailPasswordAuth,
     init,
     Apple,
     Google,

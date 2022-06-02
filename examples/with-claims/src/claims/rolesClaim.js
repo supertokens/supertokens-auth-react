@@ -14,7 +14,7 @@ class RolesClaimClass {
     }
 
     hasRole = {
-        including(role) {
+        includes: (role) => {
             return {
                 id: this.key + "-" + role,
                 refresh: (ctx) => this.refresh(ctx),

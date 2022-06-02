@@ -1,6 +1,5 @@
 /// <reference types="react" />
 import { UserInput } from "./types";
-import PasswordlessAuth from "./passwordlessAuth";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
 import SignInUpThemeWrapper from "./components/themes/signInUp";
 export default class Wrapper {
@@ -21,7 +20,6 @@ export default class Wrapper {
                   redirectBack?: boolean;
               }
     ): Promise<void>;
-    static PasswordlessAuth: typeof PasswordlessAuth;
     static SignInUp: (prop?: any) => JSX.Element;
     static SignInUpTheme: typeof SignInUpThemeWrapper;
     static LinkClicked: (prop?: any) => JSX.Element;
@@ -33,7 +31,6 @@ declare const SignInUp: (prop?: any) => JSX.Element;
 declare const SignInUpTheme: typeof SignInUpThemeWrapper;
 declare const LinkClicked: (prop?: any) => JSX.Element;
 export {
-    PasswordlessAuth,
     SignInUp,
     SignInUpTheme,
     LinkClicked,

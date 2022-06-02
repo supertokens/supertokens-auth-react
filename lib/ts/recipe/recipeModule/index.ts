@@ -35,6 +35,10 @@ export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T
         let redirectUrl = await this.getRedirectUrl(context);
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
 
+        return this.redirectToUrl(redirectUrl, history);
+    };
+
+    redirectToUrl = async (redirectUrl: string, history?: any): Promise<void> => {
         try {
             new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
         } catch (e) {

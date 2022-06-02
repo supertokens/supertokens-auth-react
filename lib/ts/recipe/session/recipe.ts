@@ -18,7 +18,7 @@
  */
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
-import { isTest } from "../../utils";
+import { appendQueryParamsToURL, getCurrentNormalisedUrlPath, isTest } from "../../utils";
 import {
     ClaimValidationError,
     InputType,
@@ -36,6 +36,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static RECIPE_ID = "session";
 
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
+    private readonly defaultClaimValidators: SessionClaimValidator<any>[] = [];
 
     constructor(config: ConfigType) {
         super(config);
@@ -100,6 +101,23 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return sessionSdk.attemptRefreshingSession();
     };
 
+    redirectToAuthWithRedirectToPath(history?: any, queryParams?: Record<string, string>) {
+        const redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
+        if (queryParams === undefined) {
+            queryParams = {};
+        }
+        queryParams = {
+            ...queryParams,
+            redirectToPath,
+        };
+        return this.redirectToAuthWithoutRedirectToPath(history, queryParams);
+    }
+
+    redirectToAuthWithoutRedirectToPath(history?: any, queryParams?: Record<string, string>) {
+        const redirectUrl = appendQueryParamsToURL(this.config.appInfo.websiteBasePath, queryParams);
+        return this.redirectToUrl(redirectUrl, history);
+    }
+
     validateClaims = async (
         claimValidators: SessionClaimValidator<any>[],
         userContext?: any
@@ -122,6 +140,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
             }
         }
         return undefined;
+    };
+
+    addDefaultClaimValidator = (claimValidator: SessionClaimValidator<any>) => {
+        this.defaultClaimValidators.push(claimValidator);
+    };
+
+    getDefaultClaimValidators = () => {
+        return this.defaultClaimValidators;
     };
 
     /**

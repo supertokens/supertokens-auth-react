@@ -21,7 +21,6 @@
 import ThirdParty from "./recipe";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
-import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import Apple from "./providers/apple";
 import Google from "./providers/google";
@@ -72,7 +71,6 @@ export default class Wrapper {
     static Apple = Apple;
     static Facebook = Facebook;
     static Github = Github;
-    static ThirdPartyAuth = ThirdPartyAuth;
     static SignInAndUp = (prop?: any) => ThirdParty.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static SignInAndUpCallback = (prop?: any) =>
@@ -91,7 +89,6 @@ const SignInAndUpCallback = Wrapper.SignInAndUpCallback;
 const EmailVerification = Wrapper.EmailVerification;
 
 export {
-    ThirdPartyAuth,
     init,
     Apple,
     Google,

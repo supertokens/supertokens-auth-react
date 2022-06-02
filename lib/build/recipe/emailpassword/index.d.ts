@@ -1,7 +1,5 @@
 /// <reference types="react" />
-/// <reference types="@emotion/react/types/css-prop" />
 import { UserInput } from "./types";
-import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
@@ -25,13 +23,6 @@ export default class Wrapper {
                   redirectBack?: boolean;
               }
     ): Promise<void>;
-    static EmailPasswordAuth: import("react").FC<
-        import("react").PropsWithChildren<{
-            requireAuth?: boolean | undefined;
-            onSessionExpired?: (() => void) | undefined;
-            requiredClaims?: import("../session/types").SessionClaimValidator<any>[] | undefined;
-        }>
-    >;
     static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
@@ -47,7 +38,6 @@ declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 export {
-    EmailPasswordAuth,
     init,
     isEmailVerified,
     SignInAndUp,

@@ -17,7 +17,7 @@ import Session from "./recipe";
 import { RecipeInterface } from "supertokens-website";
 import SessionAuthWrapper from "./sessionAuth";
 import useSessionContextFunc from "./useSessionContext";
-import { InputType, SessionContextType } from "./types";
+import { ClaimValidationError, InputType, SessionClaimValidator, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 
 export default class SessionAPIWrapper {
@@ -53,6 +53,19 @@ export default class SessionAPIWrapper {
     static signOut(): Promise<void> {
         return Session.getInstanceOrThrow().signOut();
     }
+
+    static validateClaims(claimValidators: SessionClaimValidator<any>[]): Promise<ClaimValidationError | undefined> {
+        return Session.getInstanceOrThrow().validateClaims(claimValidators);
+    }
+
+    // have backwards compatibility to allow input as "signin" | "signup"
+    static redirectToAuth(input?: { redirectBack?: boolean }): Promise<void> {
+        if (input?.redirectBack !== true) {
+            return Session.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath();
+        } else {
+            return Session.getInstanceOrThrow().redirectToAuthWithRedirectToPath();
+        }
+    }
 }
 
 const useSessionContext = SessionAPIWrapper.useSessionContext;
@@ -64,6 +77,7 @@ const attemptRefreshingSession = SessionAPIWrapper.attemptRefreshingSession;
 const doesSessionExist = SessionAPIWrapper.doesSessionExist;
 const addAxiosInterceptors = SessionAPIWrapper.addAxiosInterceptors;
 const signOut = SessionAPIWrapper.signOut;
+const validateClaims = SessionAPIWrapper.validateClaims;
 
 export {
     useSessionContext,
@@ -75,6 +89,7 @@ export {
     doesSessionExist,
     addAxiosInterceptors,
     signOut,
+    validateClaims,
     RecipeInterface,
     InputType,
     SessionContext,

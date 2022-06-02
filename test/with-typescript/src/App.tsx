@@ -6,7 +6,7 @@ import EmailPassword, {
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
     PreAPIHookContext as EmailPasswordPreAPIHookContext,
 } from "../../../recipe/emailpassword";
-import Session from "../../../recipe/session";
+import Session, { SessionAuth } from "../../../recipe/session";
 import ThirdParty, {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
@@ -85,17 +85,17 @@ function App() {
                         <Route
                             path="/"
                             element={
-                                <Auth>
+                                <SessionAuth>
                                     <Home />
-                                </Auth>
+                                </SessionAuth>
                             }
                         />
                         <Route
                             path="/redirect-to-this-custom-path"
                             element={
-                                <Auth>
+                                <SessionAuth>
                                     <Home />
-                                </Auth>
+                                </SessionAuth>
                             }
                         />
                     </Routes>
@@ -476,20 +476,6 @@ function getThirdPartyEmailPasswordConfigs() {
     });
 }
 
-function Auth(props: any) {
-    if (rid === "thirdparty") {
-        return <ThirdParty.ThirdPartyAuth>{props.children}</ThirdParty.ThirdPartyAuth>;
-    } else if (rid === "thirdpartyemailpassword") {
-        return (
-            <ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>
-                {props.children}
-            </ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>
-        );
-    }
-
-    return <EmailPassword.EmailPasswordAuth>{props.children}</EmailPassword.EmailPasswordAuth>;
-}
-
 Passwordless.init({
     contactMethod: "EMAIL",
     preAPIHook: async (context) => {
@@ -553,9 +539,9 @@ Passwordless.init({
 
 function SomeComponent(props: any) {
     return (
-        <ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>
+        <SessionAuth>
             <div></div>
             <div></div>
-        </ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>
+        </SessionAuth>
     );
 }

@@ -11,6 +11,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static instance?: Session;
     static RECIPE_ID: string;
     private eventListeners;
+    private readonly defaultClaimValidators;
     constructor(config: ConfigType);
     getFeatureComponent: (_: string) => JSX.Element;
     getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
@@ -19,10 +20,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     doesSessionExist: () => Promise<boolean>;
     signOut: () => Promise<void>;
     attemptRefreshingSession: () => Promise<boolean>;
+    redirectToAuthWithRedirectToPath(history?: any, queryParams?: Record<string, string>): Promise<void>;
+    redirectToAuthWithoutRedirectToPath(history?: any, queryParams?: Record<string, string>): Promise<void>;
     validateClaims: (
         claimValidators: SessionClaimValidator<any>[],
         userContext?: any
     ) => Promise<ClaimValidationError | undefined>;
+    addDefaultClaimValidator: (claimValidator: SessionClaimValidator<any>) => void;
+    getDefaultClaimValidators: () => SessionClaimValidator<any>[];
     /**
      * @returns Function to remove event listener
      */

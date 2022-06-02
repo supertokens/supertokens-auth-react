@@ -27,30 +27,23 @@ import {
     ClaimValidationError,
 } from "./types";
 import { useOnMountAPICall } from "../../utils";
+import { FeatureBaseProps } from "../../types";
 
 // if it's not the default context, it means SessionAuth from top has
 // given us a sessionContext.
 const hasParentProvider = (ctx: SessionContextType) => !isDefaultContext(ctx);
 
-type PropsWithoutAuth = {
-    requireAuth?: false;
-};
-
-type PropsWithAuth = {
-    requireAuth: true;
-    redirectToLogin: () => void;
-};
-
-type Props = (PropsWithoutAuth | PropsWithAuth) & {
+type Props = FeatureBaseProps & {
+    requireAuth?: boolean;
+    redirectToLogin?: () => void;
     onSessionExpired?: () => void;
-    claimValidators?: SessionClaimValidator<any>[];
+    overwriteDefaultClaimValidators?: (
+        defaultClaimValidators: SessionClaimValidator<any>[]
+    ) => SessionClaimValidator<any>[];
 };
 
 const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props }) => {
-    if (props.requireAuth === true && props.redirectToLogin === undefined) {
-        throw new Error("You have to provide redirectToLogin or onSessionExpired function when requireAuth is true");
-    }
-    const requireAuth = useRef(props.requireAuth);
+    const requireAuth = useRef(props.requireAuth ?? true);
 
     if (props.requireAuth !== requireAuth.current) {
         throw new Error(
@@ -74,13 +67,20 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
             if (contextUpdate === undefined) {
                 return;
             }
-            if (contextUpdate.doesSessionExist && props.claimValidators !== undefined) {
+            if (contextUpdate.doesSessionExist && props.overwriteDefaultClaimValidators !== undefined) {
                 const userContext = {};
                 // TODO: user proper userContext
                 // TODO: only one of these should be running at any time, but refreshing a claim could start this again.
                 let accessTokenPayload = contextUpdate.accessTokenPayload;
+                const defaultValidators = session.current.getDefaultClaimValidators();
+
+                const requiredClaims =
+                    props.overwriteDefaultClaimValidators !== undefined
+                        ? props.overwriteDefaultClaimValidators(defaultValidators)
+                        : defaultValidators;
+
                 // We first refresh all claims that needs this, so we avoid ha
-                for (const validator of props.claimValidators) {
+                for (const validator of requiredClaims) {
                     if (await validator.shouldRefresh(accessTokenPayload, userContext)) {
                         await validator.refresh(userContext);
                         accessTokenPayload = await session.current.getAccessTokenPayloadSecurely();
@@ -112,7 +112,7 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
         }
         void effect();
         return () => abortController.abort();
-    }, [contextUpdate, props.claimValidators]);
+    }, [contextUpdate, props.overwriteDefaultClaimValidators]);
 
     const buildContext = useCallback(async (): Promise<SessionContextType> => {
         if (hasParentProvider(parentSessionContext)) {
@@ -147,7 +147,11 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
             // if this component is unmounting, or the context has already
             // been set, then we don't need to proceed...
             if (!toSetContext.doesSessionExist && props.requireAuth === true) {
-                props.redirectToLogin();
+                if (props.redirectToLogin !== undefined) {
+                    props.redirectToLogin();
+                } else {
+                    void session.current.redirectToAuthWithRedirectToPath(props.history);
+                }
             } else {
                 if (context === undefined) {
                     setContextUpdate(toSetContext);
@@ -186,8 +190,10 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
                     if (props.requireAuth === true) {
                         if (props.onSessionExpired !== undefined) {
                             props.onSessionExpired();
-                        } else {
+                        } else if (props.redirectToLogin !== undefined) {
                             props.redirectToLogin();
+                        } else {
+                            void session.current.redirectToAuthWithRedirectToPath(props.history);
                         }
                     } else {
                         setContextUpdate(event.sessionContext);

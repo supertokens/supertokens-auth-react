@@ -78,7 +78,7 @@ class RolesClaimClass extends SessionClaim<string[]> {
         };
     }
 
-    removeFromPayload_internal(payload: any, _userContext: any): any {
+    removeFromPayload(payload: any, _userContext: any): any {
         const res = {
             ...payload,
         };

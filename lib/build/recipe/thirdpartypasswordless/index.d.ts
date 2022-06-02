@@ -8,7 +8,6 @@ import {
     OnHandleEventContext,
     TPPWlessRecipeInterface,
 } from "./types";
-import ThirdPartyPasswordlessAuth from "./thirdpartyPasswordlessAuth";
 import SignInUpTheme from "./components/themes/signInUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 export default class Wrapper {
@@ -34,13 +33,6 @@ export default class Wrapper {
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
     static Github: typeof Github;
-    static ThirdPartyPasswordlessAuth: import("react").FC<
-        import("react").PropsWithChildren<{
-            requireAuth?: boolean | undefined;
-            onSessionExpired?: (() => void) | undefined;
-            requiredClaims?: import("../session/types").SessionClaimValidator<any>[] | undefined;
-        }>
-    >;
     static SignInAndUp: (prop?: any) => JSX.Element;
     static SignInAndUpTheme: typeof SignInUpTheme;
     static ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
@@ -60,7 +52,6 @@ declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const PasswordlessLinkClicked: (prop?: any) => JSX.Element;
 export {
-    ThirdPartyPasswordlessAuth,
     init,
     Apple,
     Google,

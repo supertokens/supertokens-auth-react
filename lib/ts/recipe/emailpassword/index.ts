@@ -16,7 +16,6 @@
 import { UserInput } from "./types";
 
 import EmailPassword from "./recipe";
-import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
@@ -55,7 +54,6 @@ export default class Wrapper {
         }
     }
 
-    static EmailPasswordAuth = EmailPasswordAuth;
     static SignInAndUp = (prop?: any) => EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static ResetPasswordUsingToken = (prop?: any) =>
@@ -75,7 +73,6 @@ const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 const EmailVerification = Wrapper.EmailVerification;
 
 export {
-    EmailPasswordAuth,
     init,
     isEmailVerified,
     SignInAndUp,

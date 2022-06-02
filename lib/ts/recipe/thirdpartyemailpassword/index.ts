@@ -17,7 +17,6 @@ import EmailVerificationTheme from "../emailverification/components/themes/email
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
-import ThirdPartyEmailPasswordAuth from "./thirdpartyEmailpasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import { Apple, Google, Facebook, Github } from "../thirdparty/";
 
@@ -58,7 +57,6 @@ export default class Wrapper {
     static Apple = Apple;
     static Facebook = Facebook;
     static Github = Github;
-    static ThirdPartyEmailPasswordAuth = ThirdPartyEmailPasswordAuth;
     static SignInAndUp = (prop?: any) =>
         ThirdPartyEmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
@@ -82,7 +80,6 @@ const EmailVerification = Wrapper.EmailVerification;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 
 export {
-    ThirdPartyEmailPasswordAuth,
     init,
     Apple,
     Google,

@@ -31,6 +31,35 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
+        Session.init({
+            override: {
+                functions: (oI) => ({
+                    ...oI,
+                    getGlobalClaimValidators: (input) => {
+                        console.log(
+                            "Default validators: ",
+                            input.defaultClaimValidators.map((a) => a.validatorTypeId).join(", ")
+                        );
+                        return [...input.defaultClaimValidators, EmailVerifiedClaim.isVerified];
+                    },
+                    createNewSession: async (input) => {
+                        input.accessTokenPayload = await RolesClaim.applyToPayload(
+                            input.userId,
+                            input.accessTokenPayload
+                        );
+                        input.accessTokenPayload = await EmailVerifiedClaim.applyToPayload(
+                            input.userId,
+                            input.accessTokenPayload
+                        );
+                        input.accessTokenPayload = {
+                            ...input.accessTokenPayload,
+                            "app-custom-claim": { userId: input.userId, why: "Info" },
+                        };
+                        return oI.createNewSession(input);
+                    },
+                }),
+            },
+        }),
         EmailPassword.init({
             override: {
                 functions: (oI) => ({
@@ -48,14 +77,6 @@ supertokens.init({
                     },
                 }),
             },
-        }),
-        Session.init({
-            claimsToAddOnCreation: [
-                RolesClaim,
-                EmailVerifiedClaim,
-                ({ userId }) => ({ "app-custom-claim": { userId, why: "Info" } }),
-            ],
-            defaultValidatorsForVerification: [EmailVerifiedClaim.isVerified],
         }),
     ],
 });
@@ -83,9 +104,9 @@ app.use(middleware());
 app.get(
     "/api1",
     verifySession({
-        overwriteDefaultValidators: [
+        overwriteDefaultValidators: (_, defaultValidators) => [
+            ...defaultValidators,
             RolesClaim.hasRole.including("admin"),
-            EmailVerifiedClaim.isVerified, // Maybe this could be just EmailVerifiedClaim
             SecondFactorClaimValidators.any2Factors,
         ],
     }),
@@ -117,7 +138,7 @@ app.get(
 
 app.post("/second-factor", verifySession(), async (req, res) => {
     const session: SessionContainer = (req as any).session;
-    await SecondFactorOTPClaim.addToSession(session, true);
+    await session.setClaimValue(SecondFactorOTPClaim, true);
     res.send({
         status: "OK",
     });
@@ -139,12 +160,12 @@ app.post(
 
 app.post(
     "/refresh-email-verified",
-    verifySession({ overwriteDefaultValidators: [] }), // This requires no claims
+    verifySession({ overwriteDefaultValidators: () => [] }), // This requires no claims
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
-        console.log("refresh email", new Date());
-        await EmailVerifiedClaim.addToSession(session, await EmailPassword.isEmailVerified(session.getUserId()));
-        console.log("refresh email2", new Date());
+
+        await session.applyClaimBuilder(EmailVerifiedClaim);
+
         res.send({
             status: "OK",
         });
