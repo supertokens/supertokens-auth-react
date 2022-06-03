@@ -21,10 +21,11 @@ import { memo } from "react";
 
 import ThirdPartyEmailPassword from "./recipe";
 import { FeatureBaseProps } from "../../types";
-import SessionAuth from "../session/sessionAuth";
-import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
+import SessionAuthWrapper from "../session/sessionAuth";
+import EmailVerificationAuthWrapper from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
 import Recipe from "./recipe";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { PropsWithChildren } from "react";
 
 type Props = FeatureBaseProps & {
@@ -35,17 +36,17 @@ type Props = FeatureBaseProps & {
 
 function ThirdPartyEmailPasswordAuth(props: Props) {
     const emailVerification = (
-        <EmailVerificationAuth recipe={props.recipe.emailVerification} history={props.history}>
+        <EmailVerificationAuthWrapper recipe={props.recipe.emailVerification} history={props.history}>
             {props.children}
-        </EmailVerificationAuth>
+        </EmailVerificationAuthWrapper>
     );
 
     if (props.requireAuth === false) {
-        return <SessionAuth onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuth>;
+        return <SessionAuthWrapper onSessionExpired={props.onSessionExpired}>{emailVerification}</SessionAuthWrapper>;
     }
 
     return (
-        <SessionAuth
+        <SessionAuthWrapper
             redirectToLogin={() => {
                 void ThirdPartyEmailPassword.getInstanceOrThrow().redirectToAuthWithRedirectToPath(
                     undefined,
@@ -55,7 +56,7 @@ function ThirdPartyEmailPasswordAuth(props: Props) {
             requireAuth={true}
             onSessionExpired={props.onSessionExpired}>
             {emailVerification}
-        </SessionAuth>
+        </SessionAuthWrapper>
     );
 }
 
@@ -65,18 +66,21 @@ const ThirdPartyEmailPasswordAuthWrapper: React.FC<
     PropsWithChildren<{
         requireAuth?: boolean;
         onSessionExpired?: () => void;
+        userContext?: any;
     }>
-> = ({ children, requireAuth, onSessionExpired }) => {
+> = ({ children, requireAuth, onSessionExpired, userContext }) => {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
     return (
-        <ThirdPartyEmailPasswordAuthMemo
-            history={history}
-            onSessionExpired={onSessionExpired}
-            requireAuth={requireAuth}
-            recipe={ThirdPartyEmailPassword.getInstanceOrThrow()}>
-            {children}
-        </ThirdPartyEmailPasswordAuthMemo>
+        <UserContextWrapper userContext={userContext}>
+            <ThirdPartyEmailPasswordAuthMemo
+                history={history}
+                onSessionExpired={onSessionExpired}
+                requireAuth={requireAuth}
+                recipe={ThirdPartyEmailPassword.getInstanceOrThrow()}>
+                {children}
+            </ThirdPartyEmailPasswordAuthMemo>
+        </UserContextWrapper>
     );
 };
 

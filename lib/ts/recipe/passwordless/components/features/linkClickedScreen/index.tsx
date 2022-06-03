@@ -30,10 +30,15 @@ import { LinkClickedScreen as LinkClickedScreenTheme } from "../../themes/linkCl
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsPasswordless } from "../../themes/translations";
+import { useUserContext } from "../../../../../usercontext";
+import { getLoginAttemptInfo } from "../../../utils";
+import STGeneralError from "supertokens-web-js/utils/error";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
+    const userContext = useUserContext();
+
     const consumeCode = useCallback(async () => {
         const preAuthSessionId = getQueryParams("preAuthSessionId");
         const linkCode = getURLHash();
@@ -47,7 +52,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         return props.recipe.recipeImpl.consumeCode({
             preAuthSessionId,
             linkCode,
-            config: props.recipe.config,
+            userContext,
         });
     }, [props.recipe, props.history]);
 
@@ -58,13 +63,6 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 return;
             }
 
-            if (response.status === "GENERAL_ERROR") {
-                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "custom",
-                    message: response.message,
-                });
-            }
-
             if (response.status === "RESTART_FLOW_ERROR") {
                 return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
                     error: "restart_link",
@@ -72,8 +70,13 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
             }
 
             if (response.status === "OK") {
-                const loginAttemptInfo = await props.recipe.recipeImpl.getLoginAttemptInfo();
-                await props.recipe.recipeImpl.clearLoginAttemptInfo();
+                const loginAttemptInfo = await getLoginAttemptInfo({
+                    recipeImplementation: props.recipe.recipeImpl,
+                    userContext,
+                });
+                await props.recipe.recipeImpl.clearLoginAttemptInfo({
+                    userContext,
+                });
                 return props.recipe.redirect(
                     {
                         action: "SUCCESS",
@@ -88,10 +91,18 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     );
 
     const handleConsumeError = useCallback(
-        () =>
-            props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                error: "signin",
-            }),
+        (err) => {
+            if (STGeneralError.isThisError(err)) {
+                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                    error: "custom",
+                    message: err.message,
+                });
+            } else {
+                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                    error: "restart_link",
+                });
+            }
+        },
         [props.recipe, props.history]
     );
     useOnMountAPICall(consumeCode, handleConsumeResp, handleConsumeError);

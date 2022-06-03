@@ -13,6 +13,183 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Adds an example app with Angular + React
 -   Adds an example app with Email Verification with OTP
 
+### CI changes
+
+-   Now using parallel builds
+-   Screenshotting failed tests
+-   Exporting test results
+
+### Changed
+
+-   The return type of `user` in the following functions to include information returned by the third party provider
+    -   `signInAndUp` function for ThirdParty recipe
+    -   `thirdPartySignInAndUp` function for the ThirdPartyEmailPassword recipe
+    -   `thirdPartySignInAndUp` function for the ThirdPartyPasswordless recipe
+
+### Added
+
+-   All recipe functions now accept an additional parameter `userContext`, learn more about this by visiting the advanced cusotmisations section in the documentation
+-   All UI components exported by the SDK now accept an additional `userContext` prop, learn more about this by visiting the advanced cusotmisations section in the documentation
+-   Exports more recipe functions for emailverification recipe to allow them to be called without using the pre-built UI. Newly exported functions: `verifyEmail`, `sendVerificationEmail`
+-   Exports all emailverification recipe functions from emailpassword, thirdparty, thirdpartyemailpassword and thirdpartypasswordless recipes.
+-   Exports more recipe functions for emailpassword recipe to allow them to be called without using the pre-built UI. Newly exported functions: `submitNewPassword`, `sendPasswordResetEmail`, `signUp`, `signIn`, `doesEmailExist`.
+-   Exports more recipe functions for thirdparty recipe to allow them to be called without using the pre-built UI. Newly exported functions: `getAuthorisationURLWithQueryParamsAndSetState`, `signInAndUp`.
+-   Exports emailpassword and thidparty recipe functions from thirdpartyemailpassword recipe to allow them to be called without using the pre-built UI. Also exports `redirectToThirdPartyLogin` from thirdpartyemailpassword recipe.
+-   Exports more recipe functions for passwordless recipe to allow them to be called without using the pre-built UI. Newly exported functions: `createCode`, `resendCode`, `consumeCode`, `doesEmailExist`, `doesPhoneNumberExist`
+-   Exports more recipe functions for thirdpartypasswordless recipe to allow them to be called without using the pre-built UI. Newly exported functions: `redirectToThirdPartyLogin`, `thirdPartySignInAndUp`, `createCode`, `resendCode`, `consumeCode`, `doesPasswordlessUserEmailExist`, `doesPasswordlessUserPhoneNumberExist`
+-   Changes recipe functions for email verification recipe **(this is breaking change if you use the override feature)**:
+    -   `verifyEmail` -> No longer accepts `token` as a parameter, instead it calls `getEmailVerificationTokenFromURL`
+    -   `getEmailVerificationTokenFromURL` -> NEW FUNCTION
+-   Changes recipe functions for email password recipe **(this is breaking change if you use the override feature)**:
+    -   `submitNewPassword` -> No longer accepts `token` as a parameter, instead calls `getResetPasswordTokenFromURL`
+    -   `getResetPasswordTokenFromURL` -> NEW FUNCTION
+-   Changes recipe functions for third party recipe (this is breaking change if you use the override feature):
+    -   `getOAuthState` -> RENAMED TO `getStateAndOtherInfoFromStorage`
+    -   `setOAuthState` -> RENAMED TO `setStateAndOtherInfoToStorage`
+    -   `getOAuthAuthorisationURL` -> RENAMED TO `getAuthorisationURLFromBackend`
+    -   `getAuthorisationURLWithQueryParamsAndSetState` -> NEW FUNCTION
+    -   `generateStateToSendToOAuthProvider` -> NEW FUNCTION
+    -   `verifyAndGetStateOrThrowError` -> NEW FUNCTION
+    -   `getAuthCodeFromURL` -> NEW FUNCTION
+    -   `getAuthErrorFromURL` -> NEW FUNCTION
+    -   `getAuthStateFromURL` -> NEW FUNCTION
+    -   `redirectToThirdPartyLogin` -> REMOVED (use `getAuthorisationURLWithQueryParamsAndSetState` instead). NOTE: If you call this function yourself the SDK will no longer auto-redirect, you will need to redirect to the result url manually.
+-   Changes recipe funtions for third party email password recipe **(this is breaking change if you use the override feature)**:
+    -   Changes for email password functions explained above
+    -   Changes for third party functions explained above
+    -   `signInAndUp` -> REMOVED, this function has been split into 3 new functions for simplicity (explained below)
+    -   `emailPasswordSignUp` -> NEW FUNCTION
+    -   `emailPasswordSignIn` -> NEW FUNCTION
+    -   `thirdPartySignInAndUp` -> NEW FUNCTION
+-   Changes recipe functions for passwordless recipe **(this is breaking change if you use the override feature)**:
+    -   `getLinkCodeFromURL` -> NEW FUNCTION
+    -   `getPreAuthSessionIdFromURL` -> NEW FUNCTION
+-   Changes recipe functions for thirdpartpasswordless recipe : **(this is breaking change if you use the override feature)**:
+    -   Changes for third party functions explained above
+    -   Changes for passwordless recipe explained above
+    -   `clearLoginAttemptInfo` -> RENAMED TO `clearPasswordlessLoginAttemptInfo`
+-   Session recipe now uses supertokens-web-js internally (previously used supertokens-website)
+-   All recipes now include a `postAPIHook` configuration parameter that can be used to respond to network actions.
+-   General error handling for email verification components
+
+### Breaking changes
+
+1.  Updates function return types for all recipes to allow for custom API response handling when calling recipe functions manually
+2.  All recipe functions now return an object which contains a `status` field along with other properties (instead of returning a boolean directly for example), to make function return types more consistent across recipes
+3.  Updates signatures for functions exported from recipe/index to accept objects instead of params directly, to make function signatures consistent across all recipes
+4.  Recipe config parameter `disableDefaultImplementation` has been renamed to `disableDefaultUI` to make the name more accurate to the effect the property has. This is applicable only if you are using the SDK with custom UI and disabling the pre-built UI that SuperTokens provides.
+
+### Migration
+
+1. Function return types now include a `fetchResponse` field for any function that makes a network request. If you override functions and return a custom object you will need to update your code to include a `fetchResponse` field that should be a clone of the original response object ([Refer to this page](https://developer.mozilla.org/en-US/docs/Web/API/Response/clone))
+
+For example if your override looks like this:
+
+```ts
+import SuperTokens from "supertokens-auth-react";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "..."
+    },
+    recipeList: [
+        EmailPassword.init({
+            override: {
+                functions: (originalImplementation) => {
+                    return {
+                        ...originalImplementation,
+                        signIn: async function (input) {
+                            let response = makeNetworkRequest();
+                            // TODO: some custom logic
+
+                            return {
+                                status: "OK",
+                                user: {...},
+                            };
+                        },
+                    }
+                },
+            }
+        })
+    ]
+});
+```
+
+You will need to modify the function like this:
+
+```ts
+...
+signIn: async function (input) {
+    let response = makeNetworkRequest();
+    // TODO: some custom logic
+
+    return {
+        status: "OK",
+        user: {...},
+        fetchResponse: response.clone()
+    };
+},
+...
+```
+
+NOTE: If you use the originalImplementation in your overrides, you can access `fetchResponse` from the returned object
+
+```ts
+import SuperTokens from "supertokens-auth-react";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "..."
+    },
+    recipeList: [
+        EmailPassword.init({
+            override: {
+                functions: (originalImplementation) => {
+                    return {
+                        ...originalImplementation,
+                        signIn: async function (input) {
+                            let response = await originalImplementation.signIn(input);
+                            // TODO: some custom logic
+
+                            return {
+                                status: "OK",
+                                user: {...},
+                                fetchResponse: response.fetchResponse;
+                            };
+
+                            // OR return the default implementation
+                            // return await originalImplementation.signIn(input)
+                        },
+                    }
+                },
+            }
+        })
+    ]
+});
+```
+
+2. All recipe functions now return an object instead of returning properties directly. For example:
+
+```ts
+async function isEmailVerified(input): Promise<boolean> {...}
+```
+
+Now returns
+
+```ts
+async function isEmailVerified(input): Promise<{
+    status: "OK",
+    isVerified: boolean,
+    fetchResponse: Response, // Refer to point above
+}> {...}
+```
+
 ## [0.21.3] - 2022-05-14
 
 -   Adds an example app with emailpassword + vercel

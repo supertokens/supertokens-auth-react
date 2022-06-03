@@ -59,10 +59,10 @@ describe("Embed components", async () => {
             assert.strictEqual(isFeatureMounted, true);
         });
 
-        it("don't mount SignInAndUp on /auth route if disableDefaultImplementation = true", async () => {
+        it("don't mount SignInAndUp on /auth route if disableDefaultUI = true", async () => {
             const authPage = await AuthPage.navigate(page, {
                 ...testContext,
-                disableDefaultImplementation: true,
+                disableDefaultUI: true,
             });
 
             const isFeatureMounted = await authPage.isFeatureMounted();
@@ -82,10 +82,10 @@ describe("Embed components", async () => {
             assert.strictEqual(isFeatureMounted, true);
         });
 
-        it("don't mount ResetPassword on /auth/reset-password if disableDefaultImplementation = true", async () => {
+        it("don't mount ResetPassword on /auth/reset-password if disableDefaultUI = true", async () => {
             const resetPasswordPage = await ResetPasswordPage.navigate(page, {
                 ...testContext,
-                disableDefaultImplementation: true,
+                disableDefaultUI: true,
             });
 
             const isFeatureMounted = await resetPasswordPage.isFeatureMounted();
@@ -111,7 +111,7 @@ describe("Embed components", async () => {
             assert.strictEqual(isFeatureMounted, true);
         });
 
-        it("don't mount EmailVerification on /auth/verify-email if disableDefaultImplementation = true", async () => {
+        it("don't mount EmailVerification on /auth/verify-email if disableDefaultUI = true", async () => {
             // First, sign in, as we signed up previously
             const authPage = await AuthPage.navigate(page, {
                 ...testContext,
@@ -121,7 +121,7 @@ describe("Embed components", async () => {
 
             const emailVerificationPage = await EmailVerificationPage.navigate(page, {
                 ...testContext,
-                disableDefaultImplementation: true,
+                disableDefaultUI: true,
             });
 
             const isFeatureMounted = await emailVerificationPage.isFeatureMounted();
@@ -143,10 +143,10 @@ describe("Embed components", async () => {
             assert.strictEqual(isFeatureMounted, true);
         });
 
-        it("don't mount supertokens on /auth route if disableDefaultImplementation = true", async () => {
+        it("don't mount supertokens on /auth route if disableDefaultUI = true", async () => {
             const authPage = await AuthPage.navigate(page, {
                 ...testContext,
-                disableDefaultImplementation: true,
+                disableDefaultUI: true,
             });
 
             const isFeatureMounted = await authPage.isFeatureMounted();
@@ -168,10 +168,10 @@ describe("Embed components", async () => {
             assert.strictEqual(isFeatureMounted, true);
         });
 
-        it("don't mount supertokens on /auth route if disableDefaultImplementation = true", async () => {
+        it("don't mount supertokens on /auth route if disableDefaultUI = true", async () => {
             const authPage = await AuthPage.navigate(page, {
                 ...testContext,
-                disableDefaultImplementation: true,
+                disableDefaultUI: true,
             });
 
             const isFeatureMounted = await authPage.isFeatureMounted();

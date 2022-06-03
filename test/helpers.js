@@ -346,6 +346,10 @@ export async function getVerificationEmailErrorTitle(page) {
     return getTextByDataSupertokens(page, "error");
 }
 
+export async function getVerificationEmailErrorMessage(page) {
+    return getTextByDataSupertokens(page, "primaryText");
+}
+
 export async function setInputValues(page, fields) {
     for (const field of fields) {
         await waitForSTElement(page, `input[name=${field.name}]`);

@@ -22,11 +22,10 @@ import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } fr
 import {
     GetRedirectionURLContext,
     OnHandleEventContext,
-    PreAPIHookContext,
+    PreAndPostAPIHookAction,
     Config,
     NormalisedConfig,
     UserInput,
-    RecipeInterface,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normalisePasswordlessConfig } from "./utils";
@@ -38,14 +37,16 @@ import { SSR_ERROR } from "../../constants";
 import SignInUp from "./components/features/signInAndUp";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import LinkClickedScreen from "./components/features/linkClickedScreen";
-import NormalisedURLPath from "../../normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 /*
  * Class.
  */
 export default class Passwordless extends AuthRecipe<
     GetRedirectionURLContext,
-    PreAPIHookContext,
+    PreAndPostAPIHookAction,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -57,20 +58,28 @@ export default class Passwordless extends AuthRecipe<
     constructor(config: Config) {
         super(normalisePasswordlessConfig(config));
 
-        const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
+        const builder = new OverrideableBuilder(
+            RecipeImplementation({
+                appInfo: this.config.appInfo,
+                recipeId: this.config.recipeId,
+                onHandleEvent: this.config.onHandleEvent,
+                preAPIHook: this.config.preAPIHook,
+                postAPIHook: this.config.postAPIHook,
+            })
+        );
         this.recipeImpl = builder.override(this.config.override.functions).build();
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
-        if (this.config.signInUpFeature.disableDefaultImplementation !== true) {
+        if (this.config.signInUpFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
                 component: (props) => this.getFeatureComponent("signInUp", props),
             };
         }
-        if (this.config.linkClickedScreenFeature.disableDefaultImplementation !== true) {
+        if (this.config.linkClickedScreenFeature.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/verify"));
             features[normalisedFullPath.getAsStringDangerous()] = {
                 matches: matchRecipeIdUsingQueryParams(this.config.recipeId),
@@ -88,25 +97,36 @@ export default class Passwordless extends AuthRecipe<
     getFeatureComponent = (componentName: "signInUp" | "linkClickedScreen", props: any | undefined): JSX.Element => {
         if (componentName === "signInUp") {
             return (
-                <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
-                    authRecipe={this}
-                    history={props.history}>
-                    <SignInUp recipe={this} {...props} />
-                </AuthWidgetWrapper>
+                <UserContextWrapper userContext={props.userContext}>
+                    <AuthWidgetWrapper<
+                        GetRedirectionURLContext,
+                        PreAndPostAPIHookAction,
+                        OnHandleEventContext,
+                        NormalisedConfig
+                    >
+                        authRecipe={this}
+                        history={props.history}>
+                        <SignInUp recipe={this} {...props} />
+                    </AuthWidgetWrapper>
+                </UserContextWrapper>
             );
         }
         if (componentName === "linkClickedScreen") {
-            return <LinkClickedScreen recipe={this} {...props} />;
+            return (
+                <UserContextWrapper userContext={props.userContext}>
+                    <LinkClickedScreen recipe={this} {...props} />
+                </UserContextWrapper>
+            );
         }
         return <div>Not implemented</div>;
     };
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
+        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
             Passwordless.instance = new Passwordless({
                 ...config,
                 appInfo,

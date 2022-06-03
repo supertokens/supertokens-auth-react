@@ -157,8 +157,6 @@ function getRecipeList() {
             isInIframe: true,
             sessionExpiredStatusCode: 401,
             sessionScope: "",
-            apiBasePath: "",
-            apiDomain: "",
             cookieDomain: "",
             onHandleEvent: (context) => {
                 if (context.action === "REFRESH_SESSION") {
@@ -178,11 +176,11 @@ function getRecipeList() {
             override: {
                 functions: (oI) => {
                     return {
-                        addAxiosInterceptors: (instance, config) => {
-                            return oI.addAxiosInterceptors(instance, config);
+                        addAxiosInterceptors: (instance) => {
+                            return oI.addAxiosInterceptors(instance);
                         },
-                        addFetchInterceptorsAndReturnModifiedFetch: (f, c) => {
-                            return oI.addFetchInterceptorsAndReturnModifiedFetch(f, c);
+                        addFetchInterceptorsAndReturnModifiedFetch: (f) => {
+                            return oI.addFetchInterceptorsAndReturnModifiedFetch(f);
                         },
                         doesSessionExist: (input) => {
                             return oI.doesSessionExist(input);
@@ -328,6 +326,9 @@ function getEmailPasswordConfigs() {
                         },
                         verifyEmail: (input) => {
                             return oI.verifyEmail(input);
+                        },
+                        getEmailVerificationTokenFromURL: (input) => {
+                            return oI.getEmailVerificationTokenFromURL(input);
                         },
                     };
                 },

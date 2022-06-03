@@ -16,8 +16,8 @@
 import { useEffect, useRef } from "react";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
 import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
-import NormalisedURLDomain from "./normalisedURLDomain";
-import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
@@ -237,32 +237,24 @@ export function isIE(): boolean {
     return WindowHandlerReference.getReferenceOrThrow().windowHandler.getDocument().documentMode !== undefined;
 }
 
-export function setSessionStorage(key: string, value: string): void {
-    WindowHandlerReference.getReferenceOrThrow().windowHandler.getSessionStorage().setItem(key, value);
-}
-
-export function getSessionStorage(key: string): string | null {
-    return WindowHandlerReference.getReferenceOrThrow().windowHandler.getSessionStorage().getItem(key);
-}
-
 export function getOriginOfPage(): NormalisedURLDomain {
     return new NormalisedURLDomain(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getOrigin());
 }
 
-export function getLocalStorage(key: string): string | null {
-    const res = WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().getItem(key);
+export async function getLocalStorage(key: string): Promise<string | null> {
+    const res = WindowHandlerReference.getReferenceOrThrow().windowHandler.localStorage.getItem(key);
     if (res === null || res === undefined) {
         return null;
     }
     return res;
 }
 
-export function setLocalStorage(key: string, value: string): void {
-    WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().setItem(key, value);
+export async function setLocalStorage(key: string, value: string): Promise<void> {
+    await WindowHandlerReference.getReferenceOrThrow().windowHandler.localStorage.setItem(key, value);
 }
 
-export function removeFromLocalStorage(key: string): void {
-    WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().removeItem(key);
+export async function removeFromLocalStorage(key: string): Promise<void> {
+    await WindowHandlerReference.getReferenceOrThrow().windowHandler.localStorage.removeItem(key);
 }
 
 export function mergeObjects<T>(obj1: T, obj2: T): T {
@@ -388,6 +380,10 @@ export function setFrontendCookie(name: string, value: string | undefined, scope
             );
         }
     }
+}
+
+export function getNormalisedUserContext(userContext?: any): any {
+    return userContext === undefined ? {} : userContext;
 }
 
 export const useOnMountAPICall = <T>(

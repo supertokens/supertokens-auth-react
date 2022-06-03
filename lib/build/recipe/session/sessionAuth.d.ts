@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import React from "react";
 declare type PropsWithoutAuth = {
     requireAuth?: false;
 };
@@ -9,5 +9,9 @@ declare type PropsWithAuth = {
 declare type Props = (PropsWithoutAuth | PropsWithAuth) & {
     onSessionExpired?: () => void;
 };
-declare const SessionAuth: React.FC<PropsWithChildren<Props>>;
-export default SessionAuth;
+declare const SessionAuthWrapper: React.FC<
+    Props & {
+        userContext?: any;
+    }
+>;
+export default SessionAuthWrapper;

@@ -1,12 +1,25 @@
-import { RecipeInterface } from "../../thirdparty/types";
-import { RecipeInterface as TPEPRecipeInterface } from "..";
+import { RecipeInterface as WebJSThirdPartyRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
+import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
-export default function getImpl(oI: TPEPRecipeInterface): RecipeInterface {
+export default function getRecipeImplementation(
+    originalImplementation: TPPWlessRecipeInterface
+): WebJSThirdPartyRecipeInterface {
     return {
-        getOAuthAuthorisationURL: oI.getOAuthAuthorisationURL.bind(oI),
-        getOAuthState: oI.getOAuthState.bind(oI),
-        redirectToThirdPartyLogin: oI.redirectToThirdPartyLogin.bind(oI),
-        setOAuthState: oI.setOAuthState.bind(oI),
-        signInAndUp: oI.thirdPartySignInAndUp.bind(oI),
+        generateStateToSendToOAuthProvider:
+            originalImplementation.generateThirdPartyStateToSendToOAuthProvider.bind(originalImplementation),
+        getAuthCodeFromURL: originalImplementation.getThirdPartyAuthCodeFromURL.bind(originalImplementation),
+        getAuthErrorFromURL: originalImplementation.getThirdPartyAuthErrorFromURL.bind(originalImplementation),
+        getAuthStateFromURL: originalImplementation.getThirdPartyAuthStateFromURL.bind(originalImplementation),
+        getAuthorisationURLFromBackend:
+            originalImplementation.getAuthorisationURLFromBackend.bind(originalImplementation),
+        getAuthorisationURLWithQueryParamsAndSetState:
+            originalImplementation.getThirdPartyAuthorisationURLWithQueryParamsAndSetState.bind(originalImplementation),
+        getStateAndOtherInfoFromStorage:
+            originalImplementation.getThirdPartyStateAndOtherInfoFromStorage.bind(originalImplementation),
+        setStateAndOtherInfoToStorage:
+            originalImplementation.setThirdPartyStateAndOtherInfoToStorage.bind(originalImplementation),
+        signInAndUp: originalImplementation.thirdPartySignInAndUp.bind(originalImplementation),
+        verifyAndGetStateOrThrowError:
+            originalImplementation.verifyAndGetThirdPartyStateOrThrowError.bind(originalImplementation),
     };
 }

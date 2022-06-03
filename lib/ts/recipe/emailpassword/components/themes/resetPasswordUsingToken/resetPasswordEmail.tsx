@@ -22,11 +22,14 @@ import { EnterEmailProps, EnterEmailStatus } from "../../../types";
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { useTranslation } from "../../../../../translation/translationContext";
+import { validateForm } from "../../../../../utils";
 import GeneralError from "../../library/generalError";
+import { useUserContext } from "../../../../../usercontext";
 
 const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
+    const userContext = useUserContext();
     const [status, setStatus] = useState<EnterEmailStatus>("READY");
 
     const onSuccess = (): void => {
@@ -74,12 +77,24 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                     formFields={formFields}
                     buttonLabel={"EMAIL_PASSWORD_RESET_SEND_BTN"}
                     onSuccess={onSuccess}
-                    callAPI={async (formFields) =>
-                        await props.recipeImplementation.sendPasswordResetEmail({
+                    callAPI={async (formFields) => {
+                        const validationErrors = await validateForm(
                             formFields,
-                            config: props.config,
-                        })
-                    }
+                            props.config.resetPasswordUsingTokenFeature.enterEmailForm.formFields
+                        );
+
+                        if (validationErrors.length > 0) {
+                            return {
+                                status: "FIELD_ERROR",
+                                formFields: validationErrors,
+                            };
+                        }
+
+                        return await props.recipeImplementation.sendPasswordResetEmail({
+                            formFields,
+                            userContext,
+                        });
+                    }}
                     showLabels={true}
                     validateOnBlur={true}
                 />

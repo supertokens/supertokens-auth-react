@@ -28,3 +28,4 @@ jest.config.js
 docs/
 init.sh
 supertokens-auth-react-*.tgz
+runExample.sh

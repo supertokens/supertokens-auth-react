@@ -205,8 +205,15 @@ describe("SuperTokens SignIn with react router dom v5", function () {
             assert.deepStrictEqual(formFieldsErrors, []);
             const generalError = await getGeneralError(page);
             assert.strictEqual(generalError, "Incorrect email and password combination");
+            /**
+             * We only expect OVERRIDE SIGN_IN to log once even though we try to submit twice
+             *
+             * This is because form validations now occur on the frontend side of things and not
+             * in the recipe implementation. Which means that the first time we try ot submit in
+             * this test recipeImplementation.signIn will not get called because form validations
+             * will return before that
+             */
             assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
             ]);
