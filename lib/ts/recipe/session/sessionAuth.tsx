@@ -169,9 +169,11 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
 };
 
 const SessionAuthWrapper: React.FC<
-    Props & {
-        userContext?: any;
-    }
+    PropsWithChildren<
+        Props & {
+            userContext?: any;
+        }
+    >
 > = (props) => {
     return (
         <UserContextWrapper userContext={props.userContext}>
