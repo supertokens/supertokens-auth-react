@@ -45,7 +45,7 @@ We will need to override the component which handles this flow to use our own cu
 
 Our custom component will contain the UI to allow the user to enter an OTP. It will also have functions that will query our backend server's APIs to send the OTP email to the user and verify its email with the OTP.
 
-![EmailVerification with OTP UI](/images/emailverification-with-otp.png)
+![EmailVerification with OTP UI](./images/emailverification-with-otp.png)
 
 ### Backend Changes:
 
