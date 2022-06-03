@@ -56,13 +56,13 @@ Our backend will need to handle two main things:
 
 #### Generating the OTP and sending the email to the user
 
-In the regular email verification flow the url which is sent to the user for verification contains a token. This token will be used for verifying the user.
+In the regular email verification flow, the url which is sent to the user for verification contains a token. This token will be used for verifying the user.
 
 We will use the `createAndSendCustomEmail` function in our backend config where we will generate an OTP, map it to the token and send the OTP to the user via email using node mailer.
 
 #### Verifying the OTP
 
-The `verifyEmailPOST` api handles email verification on the backend. We will need to override the default behaviour and check that the OTP sent is mapped to a token. If a mapping exists we can retrieve the token and verify the users email otherwise we pass the otp as the token which will result in the email verification failing.
+The `verifyEmailPOST` api handles email verification on the backend. We will need to override the default behavior and check that the OTP sent is mapped to a token. If a mapping exists we can retrieve the token and verify the users email; otherwise we pass the otp as the token which will result in the email verification failing.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
