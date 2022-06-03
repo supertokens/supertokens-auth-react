@@ -41,9 +41,11 @@ You can take a look at our [quick setup](https://supertokens.com/docs/thirdparty
 
 Since Email Verification is enabled when a user signs up they will be redirected to a new screen which will prompt them to go to their email and click on the email verification link.
 
-We will need to override this component to use our own custom UI which will allow the user to enter an OTP. We can do so by overriding the `EmailVerificationSendVerifyEmail_Override` component in our frontend.
+We will need to override the component which handles this flow to use our own custom UI which will allow the user to enter an OTP. We can do so by overriding the `EmailVerificationSendVerifyEmail_Override` component in our frontend.
 
-Our custom component will contain the UI to allow the user to enter an OTP. It will contain functions which will send requests to our backend server to send the email containing the OTP to the user and requests to verify the email with the OTP.
+Our custom component will contain the UI to allow the user to enter an OTP. It will also have functions that will query our backend server's APIs to send the OTP email to the user and verify its email with the OTP.
+
+![EmailVerification with OTP UI](/images/emailverification-with-otp.png)
 
 ### Backend Changes:
 
@@ -54,13 +56,13 @@ Our backend will need to handle two main things:
 
 #### Generating the OTP and sending the email to the user
 
-In the regular email verification flow the url which is sent to the user for verification contains a token. This token will be used for actually verifying the user.
+In the regular email verification flow the url which is sent to the user for verification contains a token. This token will be used for verifying the user.
 
-We will use `createAndSendCustomEmail` in our backend config where we will generate an OTP and map it to the token. We will then send the OTP to the user via email.
+We will use the `createAndSendCustomEmail` function in our backend config where we will generate an OTP, map it to the token and send the OTP to the user via email using node mailer.
 
-#### Checking that the OTP
+#### Verifying the OTP
 
-The `verifyEmailPOST` api handles email verification on the backend. We will need to override the default behaviour and check that the OTP sent is mapped to a token and use that token for email verification.
+The `verifyEmailPOST` api handles email verification on the backend. We will need to override the default behaviour and check that the OTP sent is mapped to a token. If a mapping exists we can retrieve the token and verify the users email otherwise we pass the otp as the token which will result in the email verification failing.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
