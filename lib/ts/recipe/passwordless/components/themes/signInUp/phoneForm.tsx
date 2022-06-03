@@ -21,10 +21,14 @@ import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultValidate } from "../../../../emailpassword/validators";
 import { SignInUpFooter } from "./signInUpFooter";
+import STGeneralError from "supertokens-web-js/utils/error";
+import { useUserContext } from "../../../../../usercontext";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",
     function PasswordlessPhoneForm(props: SignInUpPhoneFormProps): JSX.Element {
+        const userContext = useUserContext();
+
         return (
             <FormBase
                 clearError={props.clearError}
@@ -47,21 +51,17 @@ export const PhoneForm = withOverride(
                 callAPI={async (formFields) => {
                     const phoneNumber = formFields.find((field) => field.id === "phoneNumber")?.value;
                     if (phoneNumber === undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "GENERAL_ERROR_PHONE_UNDEFINED",
-                        };
+                        throw new STGeneralError("GENERAL_ERROR_PHONE_UNDEFINED");
                     }
+
                     const validationRes = await props.config.validatePhoneNumber(phoneNumber);
                     if (validationRes !== undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: validationRes,
-                        };
+                        throw new STGeneralError(validationRes);
                     }
+
                     const response = await props.recipeImplementation.createCode({
                         phoneNumber,
-                        config: props.config,
+                        userContext,
                     });
 
                     return response;

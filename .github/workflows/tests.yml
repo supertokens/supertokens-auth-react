@@ -31,7 +31,7 @@ jobs:
         name: Run tests
         timeout-minutes: 120
         runs-on: ubuntu-latest
-        container: rishabhpoddar/supertokens_website_sdk_testing
+        container: rishabhpoddar/supertokens_website_sdk_testing_node_16
         steps:
             - name: Environment variables
               run: |
@@ -44,6 +44,8 @@ jobs:
             - uses: actions/checkout@v2
               with:
                   persist-credentials: false
+            - name: Replacing Auth0 credentials in .env.js
+              run: sed -i 's/AUTH0_EMAIL = "bradparishdoh@gmail.com"/AUTH0_EMAIL = "${{ secrets.AUTH0_EMAIL }}"/g' test/.env.js && sed -i 's/AUTH0_PASSWORD = "ow93jduDSje00asd"/AUTH0_PASSWORD = "${{ secrets.AUTH0_PASSWORD }}"/g' test/.env.js
             - name: Make git use https instead of ssh
               run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/
             - run: npm run init
@@ -60,7 +62,7 @@ jobs:
             - name: Running loadModules in supertokens-root
               run: cd ../supertokens-root && ./loadModules
             - name: Installing supertokens-node
-              run: cd test/server/ && npm i -d && npm i github:${{ github.event.inputs.nodeRepoOwnerName }}/supertokens-node#${{ github.event.inputs.nodeBranchName }}
+              run: cd test/server/ && npm i -d --force && npm i --force github:${{ github.event.inputs.nodeRepoOwnerName }}/supertokens-node#${{ github.event.inputs.nodeBranchName }}
             - name: Setting up supertokens-root test environment
               run: cd ../supertokens-root && bash ./utils/setupTestEnv --local
             - name: Run tests

@@ -20,14 +20,17 @@
 // /!\ ThirdParty must be imported before any of the providers to prevent circular dependencies.
 import ThirdParty from "./recipe";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyAuth from "./thirdpartyAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
+import { SignInAndUpCallbackTheme } from "./components/themes/signInAndUpCallback";
 import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-
+import { getNormalisedUserContext } from "../../utils";
+import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
+import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
 export default class Wrapper {
     /*
      * Static attributes.
@@ -41,8 +44,32 @@ export default class Wrapper {
         return ThirdParty.getInstanceOrThrow().signOut();
     }
 
-    static async isEmailVerified(): Promise<boolean> {
-        return ThirdParty.getInstanceOrThrow().emailVerification.isEmailVerified();
+    static async isEmailVerified(input?: { userContext?: any }): Promise<{
+        status: "OK";
+        isVerified: boolean;
+        fetchResponse: Response;
+    }> {
+        return ThirdParty.getInstanceOrThrow().emailVerification.isEmailVerified(
+            getNormalisedUserContext(input?.userContext)
+        );
+    }
+
+    static async verifyEmail(input?: { userContext?: any }): Promise<{
+        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+        fetchResponse: Response;
+    }> {
+        return ThirdParty.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+        fetchResponse: Response;
+    }> {
+        return ThirdParty.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"
@@ -65,6 +92,37 @@ export default class Wrapper {
         }
     }
 
+    static async redirectToThirdPartyLogin(input: {
+        thirdPartyId: string;
+        userContext?: any;
+    }): Promise<{ status: "OK" | "ERROR" }> {
+        const recipeInstance: ThirdParty = ThirdParty.getInstanceOrThrow();
+
+        return UtilsRedirectToThirdPartyLogin({
+            thirdPartyId: input.thirdPartyId,
+            config: recipeInstance.config,
+            userContext: getNormalisedUserContext(input.userContext),
+            recipeImplementation: recipeInstance.recipeImpl,
+        });
+    }
+
+    static signInAndUp(input?: { userContext?: any }): Promise<
+        | {
+              status: "OK";
+              user: User;
+              createdNewUser: boolean;
+              fetchResponse: Response;
+          }
+        | {
+              status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+              fetchResponse: Response;
+          }
+    > {
+        return ThirdParty.getInstanceOrThrow().recipeImpl.signInAndUp({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
     /*
      * Providers
      */
@@ -77,6 +135,7 @@ export default class Wrapper {
     static SignInAndUpTheme = SignInAndUpTheme;
     static SignInAndUpCallback = (prop?: any) =>
         ThirdParty.getInstanceOrThrow().getFeatureComponent("signinupcallback", prop);
+    static SignInAndUpCallbackTheme = SignInAndUpCallbackTheme;
     static EmailVerification = (prop?: any) =>
         ThirdParty.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
@@ -85,6 +144,10 @@ export default class Wrapper {
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
+const verifyEmail = Wrapper.verifyEmail;
+const sendVerificationEmail = Wrapper.sendVerificationEmail;
+const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
+const signInAndUp = Wrapper.signInAndUp;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const SignInAndUpCallback = Wrapper.SignInAndUpCallback;
@@ -98,13 +161,19 @@ export {
     Facebook,
     Github,
     isEmailVerified,
+    verifyEmail,
+    sendVerificationEmail,
+    signInAndUp,
+    redirectToThirdPartyLogin,
     SignInAndUp,
     SignInAndUpTheme,
     SignInAndUpCallback,
+    SignInAndUpCallbackTheme,
     signOut,
     redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
+    User,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

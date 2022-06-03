@@ -11,7 +11,7 @@ import React, { Dispatch } from "react";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
-    PreAPIHookContext as AuthRecipeModulePreAPIHookContext,
+    PreAndPostAPIHookAction as AuthRecipeModulePreAPIHookAction,
     User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
@@ -31,6 +31,7 @@ import { SignUpHeader } from "./components/themes/signInAndUp/signUpHeader";
 import { ResetPasswordEmail } from "./components/themes/resetPasswordUsingToken/resetPasswordEmail";
 import { SubmitNewPassword } from "./components/themes/resetPasswordUsingToken/submitNewPassword";
 import { InputProps } from "./components/library/input";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 export declare type ComponentOverrideMap = {
     EmailPasswordSignIn_Override?: ComponentOverride<typeof SignIn>;
     EmailPasswordSignInFooter_Override?: ComponentOverride<typeof SignInFooter>;
@@ -53,9 +54,9 @@ export declare type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature: NormalisedResetPasswordUsingTokenFeatureConfig;
@@ -66,15 +67,15 @@ export declare type NormalisedConfig = {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     defaultToSignUp?: boolean;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;
 };
 export declare type NormalisedSignInAndUpFeatureConfig = {
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
     defaultToSignUp: boolean;
     signUpForm: NormalisedSignUpFormFeatureConfig;
     signInForm: NormalisedSignInFormFeatureConfig;
@@ -98,12 +99,12 @@ export declare type NormalisedSignInFormFeatureConfig = NormalisedBaseConfig & {
 export declare type FormFieldSignInConfig = FormFieldBaseConfig;
 export declare type FormFieldSignUpConfig = FormField;
 export declare type ResetPasswordUsingTokenUserInput = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     submitNewPasswordForm?: FeatureBaseConfig;
     enterEmailForm?: FeatureBaseConfig;
 };
 export declare type NormalisedResetPasswordUsingTokenFeatureConfig = {
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
     submitNewPasswordForm: NormalisedSubmitNewPasswordForm;
     enterEmailForm: NormalisedEnterEmailForm;
 };
@@ -118,18 +119,18 @@ declare type FormThemeBaseProps = ThemeBaseProps & {
     error: string | undefined;
 };
 export declare type SignInThemeProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
-    recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signUpClicked?: () => void;
     forgotPasswordClick: () => void;
     onSuccess: () => void;
 };
 export declare type SignUpThemeProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
     clearError: () => void;
     onError: (error: string) => void;
-    recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signInClicked?: () => void;
     onSuccess: () => void;
@@ -142,6 +143,7 @@ export declare type SignInAndUpThemeProps = {
     };
     dispatch: Dispatch<EmailPasswordSignInAndUpAction>;
     config: NormalisedConfig;
+    userContext?: any;
 };
 export declare type FormFieldThemeProps = NormalisedFormField & {
     labelComponent?: JSX.Element;
@@ -153,18 +155,19 @@ export declare type FormFieldError = {
     id: string;
     error: string;
 };
-export declare type PreAPIHookContext =
-    | AuthRecipeModulePreAPIHookContext
-    | {
-          action:
-              | "EMAIL_PASSWORD_SIGN_UP"
-              | "EMAIL_PASSWORD_SIGN_IN"
-              | "SEND_RESET_PASSWORD_EMAIL"
-              | "SUBMIT_NEW_PASSWORD"
-              | "EMAIL_EXISTS";
-          requestInit: RequestInit;
-          url: string;
-      };
+export declare type PreAndPostAPIHookAction =
+    | AuthRecipeModulePreAPIHookAction
+    | "EMAIL_PASSWORD_SIGN_UP"
+    | "EMAIL_PASSWORD_SIGN_IN"
+    | "SEND_RESET_PASSWORD_EMAIL"
+    | "SUBMIT_NEW_PASSWORD"
+    | "EMAIL_EXISTS";
+export declare type PreAPIHookContext = {
+    action: PreAndPostAPIHookAction;
+    requestInit: RequestInit;
+    url: string;
+    userContext: any;
+};
 export declare type GetRedirectionURLContext =
     | AuthRecipeModuleGetRedirectionURLContext
     | {
@@ -174,6 +177,7 @@ export declare type OnHandleEventContext =
     | AuthRecipeModuleOnHandleEventContext
     | {
           action: "RESET_PASSWORD_EMAIL_SENT" | "PASSWORD_RESET_SUCCESSFUL";
+          userContext: any;
       }
     | {
           action: "SUCCESS";
@@ -182,24 +186,26 @@ export declare type OnHandleEventContext =
               id: string;
               email: string;
           };
+          userContext: any;
       };
 export declare type ResetPasswordUsingTokenThemeProps = {
     enterEmailForm: EnterEmailProps;
     submitNewPasswordForm: SubmitNewPasswordProps | undefined;
     config: NormalisedConfig;
+    userContext?: any;
 };
 export declare type EnterEmailProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
     onError: (error: string) => void;
-    recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
 };
 export declare type SubmitNewPasswordProps = FormThemeBaseProps & {
+    recipeImplementation: RecipeInterface;
     error: string | undefined;
     clearError: () => void;
     onError: (error: string) => void;
-    recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     onSignInClicked: () => void;
     token: string;
@@ -226,10 +232,6 @@ export declare type FormBaseAPIResponse<T> =
           status: "OK";
       } & T)
     | {
-          status: "GENERAL_ERROR";
-          message: string;
-      }
-    | {
           status: "FIELD_ERROR";
           formFields: FormFieldError[];
       };
@@ -255,85 +257,4 @@ export declare type EmailPasswordSignInAndUpAction =
           type: "setSignIn";
       };
 export declare type EmailPasswordSignInAndUpChildProps = Omit<SignInAndUpThemeProps, "featureState" | "dispatch">;
-export declare type RecipeInterface = {
-    submitNewPassword: (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        token: string;
-        config: NormalisedConfig;
-    }) => Promise<
-        | {
-              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
-          }
-        | {
-              status: "FIELD_ERROR";
-              formFields: {
-                  id: string;
-                  error: string;
-              }[];
-          }
-    >;
-    sendPasswordResetEmail: (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        config: NormalisedConfig;
-    }) => Promise<
-        | {
-              status: "OK";
-          }
-        | {
-              status: "FIELD_ERROR";
-              formFields: {
-                  id: string;
-                  error: string;
-              }[];
-          }
-    >;
-    signUp: (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        config: NormalisedConfig;
-    }) => Promise<
-        | {
-              status: "OK";
-              user: User;
-          }
-        | {
-              status: "FIELD_ERROR";
-              formFields: {
-                  id: string;
-                  error: string;
-              }[];
-          }
-    >;
-    signIn: (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        config: NormalisedConfig;
-    }) => Promise<
-        | {
-              status: "OK";
-              user: User;
-          }
-        | {
-              status: "FIELD_ERROR";
-              formFields: {
-                  id: string;
-                  error: string;
-              }[];
-          }
-        | {
-              status: "WRONG_CREDENTIALS_ERROR";
-          }
-    >;
-    doesEmailExist: (input: { email: string; config: NormalisedConfig }) => Promise<boolean>;
-};
 export {};

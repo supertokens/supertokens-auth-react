@@ -1,7 +1,7 @@
 /// <reference types="react" />
 import RecipeModule from "./recipe/recipeModule";
 import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensConfig } from "./types";
-import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationController, TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 export default class SuperTokens {

@@ -199,7 +199,6 @@ describe("SuperTokens SignIn with react router dom v6", function () {
             assert.strictEqual(generalError, "Incorrect email and password combination");
             assert.deepStrictEqual(consoleLogs, [
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
-                "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
             ]);
         });

@@ -18,9 +18,10 @@ import {
     GetRedirectionURLContext as EmailVerificationGetRedirectionURLContext,
     OnHandleEventContext as EmailVerificationOnHandleEventContext,
     PreAPIHookContext as EmailVerificationPreAPIHookContext,
+    PreAndPostAPIHookAction as EmailVerificationPreAndPostAPIHookAction,
     ComponentOverrideMap as EmailVerificationComponentOverrideMap,
-    RecipeInterface,
 } from "../emailverification/types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import * as AuthRecipeType from "../authRecipe/types";
 
 export type User = AuthRecipeType.User;
@@ -32,13 +33,14 @@ export type UserInputOverride = {
     };
 };
 
-export type UserInput<T, S, R> = {
+export type UserInput<T, PreAndPostAPIHookAction, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
-} & AuthRecipeType.UserInput<T, S, R>;
+} & AuthRecipeType.UserInput<T, PreAndPostAPIHookAction, R>;
 
-export type Config<T, S, R> = UserInput<T, S, R> & AuthRecipeType.Config<T, S, R>;
+export type Config<T, PreAndPostAPIHookAction, R> = UserInput<T, PreAndPostAPIHookAction, R> &
+    AuthRecipeType.Config<T, PreAndPostAPIHookAction, R>;
 
-export type NormalisedConfig<T, S, R> = {
+export type NormalisedConfig<T, PreAndPostAPIHookAction, R> = {
     emailVerificationFeature?: EmailVerificationUserInput;
     override?: {
         emailVerification?: {
@@ -46,11 +48,13 @@ export type NormalisedConfig<T, S, R> = {
             components?: EmailVerificationComponentOverrideMap;
         };
     };
-} & AuthRecipeType.NormalisedConfig<T, S, R>;
+} & AuthRecipeType.NormalisedConfig<T, PreAndPostAPIHookAction, R>;
 
 export type GetRedirectionURLContext =
     | AuthRecipeType.GetRedirectionURLContext
     | EmailVerificationGetRedirectionURLContext;
+
+export type PreAndPostAPIHookAction = EmailVerificationPreAndPostAPIHookAction;
 
 export type PreAPIHookContext = EmailVerificationPreAPIHookContext;
 

@@ -20,10 +20,14 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { defaultValidate } from "../../../../emailpassword/validators";
 import { SignInUpFooter } from "./signInUpFooter";
+import STGeneralError from "supertokens-web-js/utils/error";
+import { useUserContext } from "../../../../../usercontext";
 
 export const EmailForm = withOverride(
     "PasswordlessEmailForm",
     function PasswordlessEmailForm(props: SignInUpEmailFormProps): JSX.Element {
+        const userContext = useUserContext();
+
         return (
             <FormBase
                 clearError={props.clearError}
@@ -44,21 +48,16 @@ export const EmailForm = withOverride(
                 callAPI={async (formFields) => {
                     const email = formFields.find((field) => field.id === "email")?.value;
                     if (email === undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "GENERAL_ERROR_EMAIL_UNDEFINED",
-                        };
+                        throw new STGeneralError("GENERAL_ERROR_EMAIL_UNDEFINED");
                     }
                     const validationRes = await props.config.validateEmailAddress(email);
                     if (validationRes !== undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: validationRes,
-                        };
+                        throw new STGeneralError(validationRes);
                     }
+
                     const response = await props.recipeImplementation.createCode({
                         email,
-                        config: props.config,
+                        userContext,
                     });
 
                     return response;

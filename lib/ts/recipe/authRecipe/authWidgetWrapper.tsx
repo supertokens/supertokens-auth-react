@@ -34,11 +34,11 @@ type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, 
  */
 const AuthWidgetWrapper = <
     T,
-    S,
+    Action,
     R,
-    N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>
+    N extends NormalisedConfig<T | GetRedirectionURLContext, Action, R | OnHandleEventContext>
 >(
-    props: PropsWithChildren<Props<T, S, R, N>>
+    props: PropsWithChildren<Props<T, Action, R, N>>
 ): React.ReactElement | null => {
     return (
         <SessionAuth requireAuth={false}>

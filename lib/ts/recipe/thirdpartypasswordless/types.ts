@@ -24,13 +24,12 @@ import {
 } from "../passwordless";
 import {
     UserInput as PwlessUserInput,
-    NormalisedConfig as PasswordlessConfig,
     PasswordlessFeatureBaseConfig,
     PasswordlessSignInUpAction,
-    PasswordlessUser,
     SignInUpFeatureConfigInput as PwlessSignInUpFeatureConfigInput,
     SignInUpChildProps as PwlessChildProps,
     SignInUpState as PWlessSignInUpState,
+    PreAndPostAPIHookAction as PasswordlessPreAndPostAPIHookAction,
 } from "../passwordless/types";
 import {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
@@ -38,12 +37,11 @@ import {
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
 import {
-    NormalisedConfig as TPConfig,
-    StateObject,
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
     UserInput as TPUserInput,
+    PreAndPostAPIHookAction as ThirdPartyPreAndPostAPIHookAction,
 } from "../thirdparty/types";
 import Provider from "../thirdparty/providers";
 import { CustomProviderConfig } from "../thirdparty/providers/types";
@@ -64,7 +62,7 @@ import { Header } from "./components/themes/signInUp/header";
 import { CountryCode } from "libphonenumber-js";
 import { Dispatch } from "react";
 import { SignInUpScreens } from "../passwordless/components/themes/signInUp";
-import { User } from "../authRecipe/types";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 // This defines a new type by renaming a single K property to L and as optional
 // If we upgrade to typescript 4.1> this could just keep the optionality of the original (with the as keyword)
@@ -122,18 +120,18 @@ export type UserInput = (
 ) & {
     override?: {
         functions?: (
-            originalImplementation: TPPWlessRecipeInterface,
-            builder?: OverrideableBuilder<TPPWlessRecipeInterface>
-        ) => TPPWlessRecipeInterface;
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
     oAuthCallbackScreen?: FeatureBaseConfig;
     disablePasswordless?: boolean;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
     passwordlessUserInput: PwlessUserInput | undefined;
@@ -143,14 +141,16 @@ export type NormalisedConfig = {
 
     override: {
         functions: (
-            originalImplementation: TPPWlessRecipeInterface,
-            builder?: OverrideableBuilder<TPPWlessRecipeInterface>
-        ) => TPPWlessRecipeInterface;
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type GetRedirectionURLContext = PasswordlessGetRedirectionURLContext | ThirdPartyGetRedirectionURLContext;
+
+export type PreAndPostAPIHookAction = ThirdPartyPreAndPostAPIHookAction | PasswordlessPreAndPostAPIHookAction;
 
 export type PreAPIHookContext = PasswordlessPreAPIHookContext | ThirdPartyPreAPIHookContext;
 
@@ -200,125 +200,3 @@ export type ThirdPartyPasswordlessSignInAndUpThemePropsWithActiveScreen = {
           pwlessChildProps: PwlessChildProps;
       }
 );
-
-export type TPPWlessRecipeInterface = {
-    createCode: (
-        input: ({ email: string } | { phoneNumber: string }) & {
-            config: PasswordlessConfig;
-        }
-    ) => Promise<
-        | {
-              status: "OK";
-              deviceId: string;
-              preAuthSessionId: string;
-              flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
-          }
-        | { status: "GENERAL_ERROR"; message: string }
-    >;
-    resendCode: (
-        input: { deviceId: string; preAuthSessionId: string } & {
-            config: PasswordlessConfig;
-        }
-    ) => Promise<
-        | {
-              status: "OK" | "RESTART_FLOW_ERROR";
-          }
-        | { status: "GENERAL_ERROR"; message: string }
-    >;
-
-    consumeCode: (
-        input: (
-            | {
-                  userInputCode: string;
-                  deviceId: string;
-                  preAuthSessionId: string;
-              }
-            | {
-                  preAuthSessionId: string;
-                  linkCode: string;
-              }
-        ) & {
-            config: PasswordlessConfig;
-        }
-    ) => Promise<
-        | {
-              status: "OK";
-              createdUser: boolean;
-              user: PasswordlessUser;
-          }
-        | {
-              status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
-              failedCodeInputAttemptCount: number;
-              maximumCodeInputAttempts: number;
-          }
-        | { status: "GENERAL_ERROR"; message: string }
-        | { status: "RESTART_FLOW_ERROR" }
-    >;
-
-    doesPasswordlessUserEmailExist: (input: { email: string; config: PasswordlessConfig }) => Promise<boolean>;
-    doesPasswordlessUserPhoneNumberExist: (input: {
-        phoneNumber: string;
-        config: PasswordlessConfig;
-    }) => Promise<boolean>;
-
-    getPasswordlessLoginAttemptInfo: () =>
-        | Promise<
-              | undefined
-              | {
-                    deviceId: string;
-                    preAuthSessionId: string;
-                    contactInfo: string;
-                    contactMethod: "EMAIL" | "PHONE";
-                    flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
-                    lastResend: number;
-                    redirectToPath?: string;
-                }
-          >
-        | {
-              deviceId: string;
-              preAuthSessionId: string;
-              contactInfo: string;
-              contactMethod: "EMAIL" | "PHONE";
-              flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
-              lastResend: number;
-              redirectToPath?: string;
-          }
-        | undefined;
-    setPasswordlessLoginAttemptInfo: (input: {
-        deviceId: string;
-        preAuthSessionId: string;
-        contactInfo: string;
-        contactMethod: "EMAIL" | "PHONE";
-        flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
-        lastResend: number;
-        redirectToPath?: string;
-    }) => Promise<void> | void;
-    clearLoginAttemptInfo: () => Promise<void> | void;
-
-    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig }) => Promise<string>;
-
-    thirdPartySignInAndUp: (input: { thirdPartyId: string; config: TPConfig }) => Promise<
-        | {
-              status: "OK";
-              user: User;
-              createdNewUser: boolean;
-          }
-        | {
-              status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
-          }
-        | {
-              status: "FIELD_ERROR";
-              error: string;
-          }
-    >;
-
-    getOAuthState(): StateObject | undefined;
-
-    setOAuthState(state: StateObject): void;
-
-    redirectToThirdPartyLogin: (input: {
-        thirdPartyId: string;
-        config: TPConfig;
-        state?: StateObject;
-    }) => Promise<{ status: "OK" | "ERROR" }>;
-};

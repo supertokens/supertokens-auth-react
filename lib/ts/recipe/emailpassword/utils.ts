@@ -15,6 +15,9 @@
 
 import { FormField, FormFieldBaseConfig, NormalisedFormField } from "../../types";
 import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "./constants";
+import OverrideableBuilder from "supertokens-js-override";
+import { ComponentOverrideMap } from "./types";
+
 import {
     Config,
     NormalisedConfig,
@@ -36,7 +39,7 @@ import {
     defaultValidate,
 } from "./validators";
 import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
-import { RecipeInterface } from "./types";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
     const signInAndUpFeature: NormalisedSignInAndUpFeatureConfig = normaliseSignInAndUpFeature(
@@ -62,7 +65,13 @@ export function normaliseEmailPasswordConfig(config: Config): NormalisedConfig {
             config.resetPasswordUsingTokenFeature
         );
 
-    const override: any = {
+    const override: {
+        functions: (
+            originalImplementation: RecipeInterface,
+            builder?: OverrideableBuilder<RecipeInterface>
+        ) => RecipeInterface;
+        components: ComponentOverrideMap;
+    } = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
         components: {},
         ...config.override,
@@ -81,7 +90,7 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
         config = {};
     }
 
-    const disableDefaultImplementation = config.disableDefaultImplementation === true;
+    const disableDefaultUI = config.disableDefaultUI === true;
     const signUpForm: NormalisedSignUpFormFeatureConfig = normaliseSignUpFormFeatureConfig(config.signUpForm);
     const defaultToSignUp = config.defaultToSignUp !== undefined ? config.defaultToSignUp : false;
 
@@ -117,7 +126,7 @@ export function normaliseSignInAndUpFeature(config?: SignInAndUpFeatureUserInput
         config.signInForm
     );
     return {
-        disableDefaultImplementation,
+        disableDefaultUI,
         defaultToSignUp,
         signUpForm,
         signInForm,
@@ -214,7 +223,7 @@ export function normaliseResetPasswordUsingTokenFeature(
         config = {};
     }
 
-    const disableDefaultImplementation = config.disableDefaultImplementation === true;
+    const disableDefaultUI = config.disableDefaultUI === true;
 
     const submitNewPasswordFormStyle =
         config.submitNewPasswordForm !== undefined && config.submitNewPasswordForm.style !== undefined
@@ -261,7 +270,7 @@ export function normaliseResetPasswordUsingTokenFeature(
     };
 
     return {
-        disableDefaultImplementation,
+        disableDefaultUI,
         submitNewPasswordForm,
         enterEmailForm,
     };
