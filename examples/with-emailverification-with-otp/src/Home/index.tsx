@@ -33,7 +33,18 @@ export default function Home() {
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />
-            <button onClick={signOutUser}>Sign Out</button>
+            <button
+                style={{
+                    marginTop: "32px",
+                    padding: "8px 12px",
+                    fontSize: "18px",
+                    fontWeight: "700",
+                    borderRadius: "8px",
+                    border: "1px solid ",
+                }}
+                onClick={signOutUser}>
+                Sign Out
+            </button>
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />

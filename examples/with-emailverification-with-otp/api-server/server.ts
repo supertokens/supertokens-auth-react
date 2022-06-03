@@ -52,9 +52,9 @@ supertokens.init({
                         // generate a 6 digit otp
                         let otp = generateOtpAndMapToToken(token, otpToTokenMapping);
 
-                        // send a mail to the user
+                        // send a mail to the user with the otp
                         await mailTransporter.sendMail({
-                            from: process.env.NODEMAILER_USER, // sender address
+                            from: process.env.NODEMAILER_USER,
                             to: user.email,
                             subject: "SuperTokens Demo OTP",
                             html: getMessageBody(otp, user.email),
@@ -71,12 +71,16 @@ supertokens.init({
                                 if (oI.verifyEmailPOST === undefined) {
                                     throw Error("should not come here");
                                 }
+
+                                // retrieve the token mapped to the otp if it exists
                                 let superTokensToken = getTokenFromOtp(input.token, otpToTokenMapping);
 
                                 if (superTokensToken !== undefined) {
                                     input.token = superTokensToken;
                                 }
 
+                                // use the token to verify the user's email, if a token could not be retrieved
+                                // it will use the otp sent in the query which result in failure
                                 let response = await oI.verifyEmailPOST(input);
                                 return response;
                             },

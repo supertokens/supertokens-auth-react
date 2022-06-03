@@ -43,47 +43,57 @@ SuperTokens.init({
             override: {
                 emailVerification: {
                     components: {
-                        EmailVerificationSendVerifyEmail_Override: ({ DefaultComponent, ...props }) => {
-                            const [otp, setOtp] = useState("");
-                            const [invalidOtpMessage, setInvalidOtpMessage] = useState("");
-                            const [sentEmailState, setSentEmailState] = useState("");
+                        EmailVerificationSendVerifyEmail_Override: () => {
+                            const [state, setState] = useState({
+                                otp: "",
+                                invalidOtpMessage: "",
+                                sentEmailState: "",
+                            });
 
+                            // send email verification otp email on initial load
                             useEffect(() => {
-                                // send email on initial load
                                 sendEmail();
                             }, []);
 
                             const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-                                setOtp(event.target.value);
+                                setState({
+                                    ...state,
+                                    otp: event.target.value,
+                                });
                             };
 
+                            // function to send email verification otp email
                             async function sendEmail() {
                                 let config = {
                                     method: "post",
-                                    url: "http://localhost:3001/auth/user/email/verify/token",
+                                    url: `${getApiDomain()}/auth/user/email/verify/token`,
                                 };
 
                                 return await axios(config);
                             }
 
+                            // this function is called when resend email button is clicked
                             async function resendEmail() {
                                 let response = await sendEmail();
 
                                 if (response.data.status === "OK") {
-                                    setSentEmailState("Email Sent");
+                                    setState({
+                                        ...state,
+                                        sentEmailState: "Email sent",
+                                    });
                                 }
                             }
 
+                            // function handles sending the otp to be verified on the backend
                             async function sendCode() {
-                                // send a request to verify the user
                                 var data = JSON.stringify({
                                     method: "token",
-                                    token: otp,
+                                    token: state.otp,
                                 });
 
                                 let config = {
                                     method: "post",
-                                    url: `http://localhost:3001/auth/user/email/verify`,
+                                    url: `${getApiDomain()}/auth/user/email/verify`,
                                     headers: {
                                         "Content-Type": "application/json",
                                     },
@@ -91,10 +101,16 @@ SuperTokens.init({
                                 };
 
                                 let response = await axios(config);
+
                                 if (response.data.status === "OK") {
+                                    // if correct correct otp is entered, we refresh the page and user can access the protected route
                                     window.location.reload();
                                 } else {
-                                    setInvalidOtpMessage("Invalid OTP");
+                                    // if invalid otp is entered Invalid OTP message is displayed
+                                    setState({
+                                        ...state,
+                                        invalidOtpMessage: "Invalid OTP",
+                                    });
                                 }
                             }
 
@@ -123,14 +139,14 @@ SuperTokens.init({
                                         Enter OTP
                                     </p>
                                     <br />
-                                    <div style={{ color: "#FF1717" }}>{invalidOtpMessage}</div>
+                                    <div style={{ color: "#FF1717" }}>{state.invalidOtpMessage}</div>
                                     <br />
                                     <input
                                         type="text"
                                         id="otp"
                                         name="otp"
                                         onChange={handleChange}
-                                        value={otp}
+                                        value={state.otp}
                                         style={{
                                             fontFamily: "Helvetica",
                                             fontSize: "18px",
@@ -159,7 +175,12 @@ SuperTokens.init({
                                         </button>
                                     </div>
                                     <br />
-                                    <div>{sentEmailState}</div>
+                                    <div
+                                        style={{
+                                            color: "#50C878",
+                                        }}>
+                                        {state.sentEmailState}
+                                    </div>
                                     <br />
                                     <button
                                         onClick={resendEmail}
