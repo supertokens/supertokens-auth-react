@@ -48,7 +48,7 @@ jobs:
               run: sed -i 's/AUTH0_EMAIL = "bradparishdoh@gmail.com"/AUTH0_EMAIL = "${{ secrets.AUTH0_EMAIL }}"/g' test/.env.js && sed -i 's/AUTH0_PASSWORD = "ow93jduDSje00asd"/AUTH0_PASSWORD = "${{ secrets.AUTH0_PASSWORD }}"/g' test/.env.js
             - name: Make git use https instead of ssh
               run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/
-            - run: sudo npm run init
+            - run: npm run init
             - name: Cloning supertokens-root
               run: cd ../ && git clone https://github.com/supertokens/supertokens-root.git
             - name: Update Java 1
