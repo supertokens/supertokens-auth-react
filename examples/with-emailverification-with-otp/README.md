@@ -33,6 +33,10 @@ The app will start on `http://localhost:3000`
 -   The frontend code is located in the `src` folder.
 -   The backend API is in the `api-server` folder.
 
+## Node Mailer setup
+
+We will be using node mailer to send the verification mails. You can use the `.env.example` file as a template and create a `.env` file which will contain your email credentials.
+
 ## Modifications for Email Verification with OTP:
 
 You can take a look at our [quick setup](https://supertokens.com/docs/thirdpartyemailpassword/introduction) guide on how to setup EmailPassword and Social Login. Once setup we can now start making changes to our frontend and backend to enable the Email Verification with OTP flow.
