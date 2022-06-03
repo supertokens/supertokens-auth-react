@@ -4,7 +4,7 @@ import Session from "supertokens-node/recipe/session";
 import ThirdPartyEmailPassword, { Google, Github } from "supertokens-node/recipe/thirdpartyemailpassword";
 import { middleware, errorHandler } from "supertokens-node/framework/express";
 import cors from "cors";
-import { generateOtpAndMapToToken, mailTransporter, getTokenFromOtp, getMessageBody } from "./utils";
+import { generateOtpAndMapToToken, mailTransporter, getMessageBody } from "./utils";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -73,7 +73,7 @@ supertokens.init({
                                 }
 
                                 // retrieve the token mapped to the otp if it exists
-                                let superTokensToken = getTokenFromOtp(input.token, otpToTokenMapping);
+                                let superTokensToken = otpToTokenMapping.get(input.token);
 
                                 if (superTokensToken !== undefined) {
                                     input.token = superTokensToken;

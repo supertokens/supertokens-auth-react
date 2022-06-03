@@ -4,6 +4,7 @@ dotenv.config();
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+// function to generate the otp
 function generateString(length: number) {
     let result = "";
     const charactersLength = characters.length;
@@ -14,10 +15,11 @@ function generateString(length: number) {
     return result;
 }
 
+// generate an otp, if it is a duplicate, retry otp generation until a unique otp is created
+// and map it to the input token
 function generateOtpAndMapToToken(token: string, otpToTokenMapping: Map<string, string>): string {
     let otp;
 
-    // generate an otp, if it is a duplicate retry otp generation until a unique otp is created
     while (true) {
         // generate 6 digit otp
         otp = generateString(6);
@@ -32,11 +34,7 @@ function generateOtpAndMapToToken(token: string, otpToTokenMapping: Map<string, 
     return otp;
 }
 
-function getTokenFromOtp(otp: string, otpToTokenMapping: Map<string, string>): string | undefined {
-    let token = otpToTokenMapping.get(otp);
-    return token;
-}
-
+// initialize nodemailer with our gmail credentials
 let mailTransporter = nodeMailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
@@ -47,6 +45,7 @@ let mailTransporter = nodeMailer.createTransport({
     },
 });
 
+// message body for email verification with otp mail
 let getMessageBody = (otp: string, email: string) => {
     return `<!doctype html>
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -645,4 +644,4 @@ let getMessageBody = (otp: string, email: string) => {
     `;
 };
 
-export { generateString, generateOtpAndMapToToken, mailTransporter, getTokenFromOtp, getMessageBody };
+export { generateOtpAndMapToToken, mailTransporter, getMessageBody };
