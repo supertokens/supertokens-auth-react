@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### CI changes
+
+-   Only running React 16 tests on CircleCI (when an explicit envvar is set)
+
 ## [0.22.0] - 2022-06-03
 
 -   Adds a SuperTokens + Supabase example app

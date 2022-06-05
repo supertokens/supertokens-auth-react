@@ -29,6 +29,7 @@ jobs:
             - image: rishabhpoddar/supertokens_website_sdk_testing_node_16
         environment:
             MOCHA_FILE: test_report/report_node-<< parameters.fdi-version >>.xml
+            RUN_REACT_16_TESTS: true
         parameters:
             fdi-version:
                 type: string
