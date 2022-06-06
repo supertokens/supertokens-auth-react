@@ -39,6 +39,9 @@ export declare const defaultTranslationsPasswordless: {
         PWLESS_LINK_SENT_RESEND_DESC_END_PHONE: string;
         PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL: string;
         PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE: string;
+        PWLESS_LINK_CLICKED_CONTINUE_HEADER: string;
+        PWLESS_LINK_CLICKED_CONTINUE_DESC: string;
+        PWLESS_LINK_CLICKED_CONTINUE_BUTTON: string;
         PWLESS_RESEND_SUCCESS_EMAIL: string;
         PWLESS_RESEND_SUCCESS_PHONE: string;
         PWLESS_RESEND_BTN_DISABLED_START: string;

@@ -886,6 +886,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
@@ -929,6 +930,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
@@ -1090,11 +1092,15 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
+                const btn = await waitForSTElement(page, "[data-supertokens='button']");
+                await btn.click();
+                await waitForSTElement(page, "[data-supertokens='generalError']");
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/auth");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
@@ -1112,11 +1118,16 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
+                const btn = await waitForSTElement(page, "[data-supertokens='button']");
+                await btn.click();
+                await waitForSTElement(page, "[data-supertokens='generalError']");
+
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/auth");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,
@@ -1133,11 +1144,16 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
+                const btn = await waitForSTElement(page, "[data-supertokens='button']");
+                await btn.click();
+                await waitForSTElement(page, "[data-supertokens='generalError']");
+
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/auth");
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
@@ -1237,6 +1253,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
@@ -1466,6 +1483,10 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
+                const btn = await waitForSTElement(page, "[data-supertokens='button']");
+                await btn.click();
+                await waitForSTElement(page, "[data-supertokens='generalError']");
+
                 const pathname = await page.evaluate(() => window.location.pathname);
                 assert.deepStrictEqual(pathname, "/auth");
 
@@ -1488,6 +1509,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                         `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
                         "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                         "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                        `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                         `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                         `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                         `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_RESTART_FLOW`,
@@ -1546,6 +1568,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SIGN_IN_AND_UP`,

@@ -174,6 +174,10 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         phoneInputCountryDropdownIndicator: {
             padding: "0 12px 0 6px",
         },
+        continueButtonWrapper: {
+            marginTop: "10px",
+            marginBottom: "30px",
+        },
     };
     const recipeStyles = getMergedStyles(emailPasswordStyles, passwordlessStyles);
     return getMergedStyles(baseStyles, recipeStyles);

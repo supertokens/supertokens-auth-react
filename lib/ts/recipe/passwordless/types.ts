@@ -264,6 +264,8 @@ export type SignInUpUserInputCodeFormProps = {
 export type LinkClickedScreenProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
+    showButton: boolean;
+    consumeCode: () => void;
     onSuccess?: () => void;
 };
 

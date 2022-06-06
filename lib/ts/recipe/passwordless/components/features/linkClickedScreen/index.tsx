@@ -17,7 +17,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import { Fragment, useCallback } from "react";
+import { Fragment, useCallback, useState } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";
 import { getQueryParams, getURLHash, useOnMountAPICall } from "../../../../../utils";
@@ -38,15 +38,22 @@ type PropType = FeatureBaseProps & { recipe: Recipe };
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
     const userContext = useUserContext();
+    const [showButton, setRequiresInteraction] = useState<boolean>(false);
 
     const consumeCode = useCallback(async () => {
         const preAuthSessionId = getQueryParams("preAuthSessionId");
         const linkCode = getURLHash();
 
         if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
-            return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+            await props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
                 error: "signin",
             });
+            return "REDIRECTING";
+        }
+        const loginAttemptInfo = await props.recipe.recipeImpl.getLoginAttemptInfo({ userContext });
+
+        if (loginAttemptInfo?.preAuthSessionId !== preAuthSessionId) {
+            return "REQUIRES_INTERACTION";
         }
 
         return props.recipe.recipeImpl.consumeCode({
@@ -58,8 +65,13 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
 
     const handleConsumeResp = useCallback(
         async (response: Awaited<ReturnType<typeof consumeCode>>): Promise<void> => {
-            if (!response) {
-                // In this case we are already redirecting
+            if (response === "REQUIRES_INTERACTION") {
+                // We set this here, to make sure it's set after a possible remount
+                setRequiresInteraction(true);
+            }
+
+            if (typeof response === "string") {
+                // In this case we are already redirecting or showing the continue button
                 return;
             }
 
@@ -114,6 +126,27 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     const childProps = {
         recipeImplementation: props.recipe.recipeImpl,
         config: props.recipe.config,
+        showButton,
+        consumeCode: async () => {
+            const preAuthSessionId = getQueryParams("preAuthSessionId");
+            const linkCode = getURLHash();
+
+            if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
+                // This should never happen, and even if it does the we should be already redirecting
+                throw new Error("Called consumeCode withouth link info");
+            }
+
+            try {
+                const consumeResp = await props.recipe.recipeImpl.consumeCode({
+                    preAuthSessionId,
+                    linkCode,
+                    userContext,
+                });
+                await handleConsumeResp(consumeResp);
+            } catch (err) {
+                void handleConsumeError(err);
+            }
+        },
     };
 
     return (
