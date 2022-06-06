@@ -60,21 +60,18 @@ Our backend will need to handle two main things:
 
 #### Generating the OTP and sending the email to the user
 
-improvements
 In the regular email verification flow, the url which is sent to the user for verification contains a token. This token will be used for verifying the user.
 
 We will use the `createAndSendCustomEmail` function in our backend config where we will generate an OTP, map it to the token and send the OTP to the user via email using node mailer.
 
 #### Verifying the OTP
 
-The `verifyEmailPOST` api handles email verification on the backend. We will need to override the default behavior and check that the OTP sent is mapped to a token. If a mapping exists we can retrieve the token and verify the users email; if no mapping exists we return an invalid token error.
+The `verifyEmailPOST` api handles email verification on the backend. We will need to override the default behavior and check that the OTP sent is mapped to a token. If a mapping exists we can retrieve the token and verify the users email, we will also remove the otp and token from the mapping; if no mapping exists we return an invalid token error.
 
 ## Future improvements
 
 -   In our example app we are storing the OTP to token mapping in memory. Ideally you would store this mapping in a database for persistant storage.
--   Currently OTPs will continue to remain in the mapping even after use. An additional improvement could be to create a cronjob which would periodically remove old OTPs.
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+-   Currently OTPs which havent been used will continue to remain in the mapping. An additional improvement could be to create a cronjob which would periodically remove old OTPs.
 
 ## Author
 

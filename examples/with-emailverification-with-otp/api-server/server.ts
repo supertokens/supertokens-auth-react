@@ -72,14 +72,20 @@ supertokens.init({
                                     throw Error("should not come here");
                                 }
 
-                                // retrieve the token mapped to the otp if it exists
-                                let superTokensToken = otpToTokenMapping.get(input.token);
+                                // retrieve the otp from input
+                                let otp = input.token;
 
-                                // if the mapping exists set the token value in the input object to the retrieved token.
-                                // If the mapping does return an invalid token error
+                                // retrieve the token mapped to the otp if it exists
+                                let superTokensToken = otpToTokenMapping.get(otp);
+
                                 if (superTokensToken !== undefined) {
+                                    // if the mapping exists set the token value in the input object to the retrieved token.
                                     input.token = superTokensToken;
+
+                                    // remove the otp and token from the mapping
+                                    otpToTokenMapping.delete(otp);
                                 } else {
+                                    // If the mapping does not exist return an invalid token error
                                     return {
                                         status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR",
                                     };
