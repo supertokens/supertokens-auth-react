@@ -7,13 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Adds an example app with Email Verification with OTP
+
 ## [0.22.0] - 2022-06-03
 
 -   Adds a SuperTokens + Supabase example app
 -   Adds an example app with svelte
 -   Adds phone number and password demo app
 -   Adds an example app with Angular + React
--   Adds an example app with Email Verification with OTP
 
 ### CI changes
 

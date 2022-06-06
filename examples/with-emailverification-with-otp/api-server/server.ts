@@ -75,12 +75,16 @@ supertokens.init({
                                 // retrieve the token mapped to the otp if it exists
                                 let superTokensToken = otpToTokenMapping.get(input.token);
 
+                                // if the mapping exists set the token value in the input object to the retrieved token.
+                                // If the mapping does return an invalid token error
                                 if (superTokensToken !== undefined) {
                                     input.token = superTokensToken;
+                                } else {
+                                    return {
+                                        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR",
+                                    };
                                 }
 
-                                // use the token to verify the user's email, if a token could not be retrieved
-                                // it will use the otp sent in the query which result in failure
                                 let response = await oI.verifyEmailPOST(input);
                                 return response;
                             },
