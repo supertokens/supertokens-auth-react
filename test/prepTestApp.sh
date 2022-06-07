@@ -4,7 +4,8 @@
 npm pack
 cd $1
 
-rm -rf node_modules/supertokens-auth-react || true
+rm -rf node_modules/supertokens-auth-react/lib || true
+rm -rf node_modules/supertokens-auth-react/recipe || true
 mkdir -p node_modules/supertokens-auth-react
 tar -xf ../../supertokens-auth-react-*.tgz --strip-components=1 -C node_modules/supertokens-auth-react
 rm ../../supertokens-auth-react-*.tgz
