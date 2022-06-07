@@ -268,6 +268,23 @@ function initST({ passwordlessConfig } = {}) {
 
     const recipeList = [
         EmailPassword.init({
+            override: {
+                apis: (oI) => {
+                    return {
+                        ...oI,
+                        signUpPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API",
+                                };
+                            }
+                            return oI.signUpPOST(input);
+                        },
+                    };
+                },
+            },
             signUpFeature: {
                 formFields,
             },

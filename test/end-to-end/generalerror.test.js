@@ -16,40 +16,28 @@
 /*
  * Imports
  */
-
-/* https://github.com/babel/babel/issues/9849#issuecomment-487040428 */
-import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
-    getPasswordlessDevice,
-    setInputValues,
-    waitForSTElement,
-    waitFor,
     getFeatureFlags,
-    waitForText,
     screenshotOnFailure,
-    setPasswordlessFlowType,
+    toggleSignInSignUp,
     isReact16,
-    getInputNames,
-    getLabelsText,
-    getPlaceholders,
-    getInputAdornmentsSuccess,
+    setInputValues,
+    submitFormReturnRequestAndResponse,
+    getGeneralError,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, TEST_APPLICATION_SERVER_BASE_URL } from "../constants";
+import { TEST_SERVER_BASE_URL, SIGN_UP_API } from "../constants";
 
-/*
- * Tests.
- */
 describe("General error rendering", function () {
     before(async function () {
         const features = await getFeatureFlags();
-        if (!features.includes("generalerror")) {
+        if (!features.includes("generalerror") || isReact16()) {
             this.skip();
         }
     });
@@ -57,7 +45,6 @@ describe("General error rendering", function () {
     describe("EmailPassword", function () {
         let browser;
         let page;
-        let consoleLogs = [];
         before(async function () {
             await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
                 method: "POST",
@@ -79,13 +66,29 @@ describe("General error rendering", function () {
 
         beforeEach(async function () {
             page = await browser.newPage();
-            page.on("console", (consoleObj) => {
-                const log = consoleObj.text();
-                if (log.startsWith("ST_LOGS")) {
-                    consoleLogs.push(log);
-                }
-            });
-            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
+            await clearBrowserCookiesWithoutAffectingConsole(page, []);
+            await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+        });
+
+        it("Sign up error", async function () {
+            await toggleSignInSignUp(page);
+            await page.evaluate(() =>
+                localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD EMAIL_PASSWORD_SIGN_UP")
+            );
+            // Set values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "20" },
+            ]);
+
+            let [{ response }] = await Promise.all([submitFormReturnRequestAndResponse(page, SIGN_UP_API)]);
+
+            assert(response.status === "GENERAL_ERROR" && response.message === "general error from API");
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response.message);
         });
     });
 
