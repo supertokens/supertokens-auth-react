@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--   Consuming codes on a device different from the
+-   Consuming codes on a device different from the one that created it
 
 ## [0.22.0] - 2022-06-03
 
