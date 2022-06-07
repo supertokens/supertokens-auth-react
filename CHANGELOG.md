@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### CI changes
 
 -   Only running React 16 tests on CircleCI (when an explicit envvar is set)
+-   Adds an example app with Email Verification with OTP
 
 ## [0.22.0] - 2022-06-03
 
