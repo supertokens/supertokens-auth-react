@@ -80,11 +80,14 @@ mkdir -p test_report/logs
 startEndToEnd &
 startFrontEnd >> test_report/logs/frontend.log 2>&1
 
-if ! [[ -z "${CI}" ]]; then
+if ! [[ -z "${RUN_REACT_16_TESTS}" ]]; then
     (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend-react16.log 2>&1 &)
 
     IS_REACT_16=true RUN_RRD5=true startEndToEnd &
     startFrontEnd -react-16 >> test_report/logs/frontend-react-16.log 2>&1
     echo "React 16 tests passed"
+else
+    echo "Skipped React 16 tests"
 fi
+
 exit 0
