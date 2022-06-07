@@ -207,6 +207,9 @@ app.get("/test/featureFlags", (req, res) => {
         available.push("thirdpartypasswordless");
     }
 
+    // TODO: only if above certain node version
+    available.push("generalerror");
+
     res.send({
         available,
     });
