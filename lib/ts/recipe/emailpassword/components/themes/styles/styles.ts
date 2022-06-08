@@ -181,6 +181,25 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             maxWidth: "96px",
             margin: "0 auto",
         },
+
+        headerTitle: {
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+
+        backButton: {
+            cursor: "pointer",
+            display: "inline-block",
+            border: "none",
+            backgroundColor: "transparent",
+            width: "15.7px",
+            height: "13.1px",
+            padding: "0px",
+            position: "absolute",
+            left: "0px",
+        },
     } as NormalisedDefaultStyles;
     return getMergedStyles(baseStyles, recipeStyles);
 }

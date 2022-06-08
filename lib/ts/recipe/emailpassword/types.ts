@@ -363,6 +363,7 @@ export type EnterEmailProps = FormThemeBaseProps & {
     onError: (error: string) => void;
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
+    handleBackButtonClick: () => void;
 };
 
 export type SubmitNewPasswordProps = FormThemeBaseProps & {
