@@ -50,6 +50,9 @@ import {
     toggleSignInSignUp,
     defaultSignUp,
     screenshotOnFailure,
+    getAuthPageHeaderText,
+    getResetPasswordFormBackButton,
+    waitForSTElement,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -116,6 +119,25 @@ describe("SuperTokens Reset password", function () {
                 }
             });
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
+        });
+
+        it("Should redirect to Sign In screen when back button is clicked", async function () {
+            const backButton = await getResetPasswordFormBackButton(page);
+
+            // assert that the back button exists
+            assert.notEqual(backButton, null);
+            assert.notEqual(backButton, undefined);
+
+            await backButton.click();
+
+            await waitForSTElement(page);
+            const pathAfterBackButtonClick = await page.evaluate(() => window.location.pathname);
+
+            assert.equal(pathAfterBackButtonClick, "/auth");
+
+            const pageTitle = await getAuthPageHeaderText(page);
+
+            assert.equal(pageTitle, "Sign In");
         });
 
         it("Should send reset password for valid email", async function () {
