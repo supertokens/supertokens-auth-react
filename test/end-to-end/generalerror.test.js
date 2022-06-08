@@ -34,6 +34,8 @@ import {
     submitForm,
     defaultSignUp,
     sendVerifyEmail,
+    signUp,
+    logoutFromEmailVerification,
 } from "../helpers";
 
 // Run the tests in a DOM environment.

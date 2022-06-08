@@ -209,6 +209,17 @@ let recipeList = [
                 console.log(`ST_LOGS SESSION PRE_API_HOOKS ${ctx.action}`);
             }
 
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `SESSION ${ctx.action}`) {
+                let requestBody = ctx.requestInit.body === undefined ? "{}" : ctx.requestInit.body;
+                let jsonBody = JSON.parse(requestBody);
+                jsonBody = {
+                    ...jsonBody,
+                    generalError: true,
+                };
+
+                ctx.requestInit.body = JSON.stringify(jsonBody);
+            }
+
             return ctx;
         },
         onHandleEvent: (ctx) => {

@@ -303,6 +303,17 @@ export async function sendVerifyEmail(page) {
     );
 }
 
+export async function logoutFromEmailVerification(page) {
+    return await page.evaluate(
+        ({ ST_ROOT_SELECTOR }) =>
+            document
+                .querySelector(ST_ROOT_SELECTOR)
+                .shadowRoot.querySelector("[data-supertokens~='secondaryLinkWithArrow']")
+                .click(),
+        { ST_ROOT_SELECTOR }
+    );
+}
+
 export async function clickLinkWithRightArrow(page) {
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>

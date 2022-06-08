@@ -403,7 +403,27 @@ function initST({ passwordlessConfig } = {}) {
                 customAuth0Provider(),
             ],
         }),
-        Session.init({}),
+        Session.init({
+            override: {
+                apis: function (originalImplementation) {
+                    return {
+                        ...originalImplementation,
+                        signOutPOST: async (input) => {
+                            console.log(input.options.req);
+                            let body = await input.options.req.getJSONBody();
+                            console.log("BODY", body);
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API",
+                                };
+                            }
+                            // return originalImplementation.signOutPOST(input);
+                        },
+                    };
+                },
+            },
+        }),
     ];
 
     passwordlessConfig = {
