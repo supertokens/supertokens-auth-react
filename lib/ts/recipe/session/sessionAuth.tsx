@@ -20,6 +20,8 @@ import React, { useEffect, useState, useContext, useRef, PropsWithChildren, useC
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEventWithSessionContext, SessionContextType } from "./types";
+import { useUserContext } from "../../usercontext";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { useOnMountAPICall } from "../../utils";
 
 // if it's not the default context, it means SessionAuth from top has
@@ -60,6 +62,7 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
     );
 
     const session = useRef(Session.getInstanceOrThrow());
+    const userContext = useUserContext();
 
     const buildContext = useCallback(async (): Promise<SessionContextType> => {
         if (hasParentProvider(parentSessionContext)) {
@@ -70,7 +73,9 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
             return context;
         }
 
-        const sessionExists = await session.current.doesSessionExist();
+        const sessionExists = await session.current.doesSessionExist({
+            userContext,
+        });
 
         if (sessionExists === false) {
             return {
@@ -82,8 +87,12 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
 
         return {
             doesSessionExist: true,
-            accessTokenPayload: await session.current.getAccessTokenPayloadSecurely(),
-            userId: await session.current.getUserId(),
+            accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
+                userContext,
+            }),
+            userId: await session.current.getUserId({
+                userContext,
+            }),
         };
     }, []);
 
@@ -159,4 +168,18 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
     return <SessionContext.Provider value={context}>{children}</SessionContext.Provider>;
 };
 
-export default SessionAuth;
+const SessionAuthWrapper: React.FC<
+    PropsWithChildren<
+        Props & {
+            userContext?: any;
+        }
+    >
+> = (props) => {
+    return (
+        <UserContextWrapper userContext={props.userContext}>
+            <SessionAuth {...props} />
+        </UserContextWrapper>
+    );
+};
+
+export default SessionAuthWrapper;

@@ -14,8 +14,8 @@
  */
 import { getRecipeIdFromSearch, validateForm, appendQueryParamsToURL } from "../../lib/build/utils";
 
-import NormalisedURLPath from "../../lib/build/normalisedURLPath";
-import NormalisedURLDomain from "../../lib/build/normalisedURLDomain";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 
 const assert = require("assert");
 import { mockWindowLocation } from "../helpers";

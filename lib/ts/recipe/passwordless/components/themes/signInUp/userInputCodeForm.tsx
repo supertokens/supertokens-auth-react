@@ -24,6 +24,8 @@ import React, { useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { ResendButton } from "./resendButton";
 import { useTranslation } from "../../../../../translation/translationContext";
+import STGeneralError from "supertokens-web-js/utils/error";
+import { useUserContext } from "../../../../../usercontext";
 import { UserInputCodeFormFooter } from "./userInputCodeFormFooter";
 
 export const UserInputCodeForm = withOverride(
@@ -36,6 +38,7 @@ export const UserInputCodeForm = withOverride(
     ): JSX.Element {
         const styles = useContext(StyleContext);
         const t = useTranslation();
+        const userContext = useUserContext();
 
         // We need this any because the node types are also loaded
         const [clearResendNotifTimeout, setClearResendNotifTimeout] = useState<any | undefined>();
@@ -49,20 +52,37 @@ export const UserInputCodeForm = withOverride(
 
         async function resend() {
             try {
-                const response = await props.recipeImplementation.resendCode({
-                    deviceId: props.loginAttemptInfo.deviceId,
-                    preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
-                    config: props.config,
-                });
+                let response;
+                let generalError: STGeneralError | undefined;
 
-                if (response.status === "OK") {
-                    setClearResendNotifTimeout(
-                        setTimeout(() => {
-                            setClearResendNotifTimeout(undefined);
-                        }, 2000)
-                    );
-                } else if (response.status === "GENERAL_ERROR") {
-                    props.onError(response.message);
+                try {
+                    response = await props.recipeImplementation.resendCode({
+                        deviceId: props.loginAttemptInfo.deviceId,
+                        preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
+                        userContext,
+                    });
+                } catch (e) {
+                    if (STGeneralError.isThisError(e)) {
+                        generalError = e;
+                    } else {
+                        throw e;
+                    }
+                }
+
+                if (generalError !== undefined) {
+                    props.onError(generalError.message);
+                } else {
+                    if (response === undefined) {
+                        throw new Error("Should not come here");
+                    }
+
+                    if (response.status === "OK") {
+                        setClearResendNotifTimeout(
+                            setTimeout(() => {
+                                setClearResendNotifTimeout(undefined);
+                            }, 2000)
+                        );
+                    }
                 }
             } catch (e) {
                 props.onError("SOMETHING_WENT_WRONG_ERROR");
@@ -113,44 +133,28 @@ export const UserInputCodeForm = withOverride(
                     callAPI={async (formFields) => {
                         const userInputCode = formFields.find((field) => field.id === "userInputCode")?.value;
                         if (userInputCode === undefined || userInputCode.length === 0) {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: "GENERAL_ERROR_OTP_UNDEFINED",
-                            };
+                            throw new STGeneralError("GENERAL_ERROR_OTP_UNDEFINED");
                         }
                         const response = await props.recipeImplementation.consumeCode({
                             deviceId: props.loginAttemptInfo.deviceId,
                             preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
                             userInputCode,
-                            config: props.config,
+                            userContext,
                         });
 
-                        if (
-                            response.status === "OK" ||
-                            response.status === "GENERAL_ERROR" ||
-                            response.status === "RESTART_FLOW_ERROR"
-                        ) {
+                        if (response.status === "OK" || response.status === "RESTART_FLOW_ERROR") {
                             return response;
                         }
 
                         if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: "GENERAL_ERROR_OTP_INVALID",
-                            };
+                            throw new STGeneralError("GENERAL_ERROR_OTP_INVALID");
                         }
 
                         if (response.status === "EXPIRED_USER_INPUT_CODE_ERROR") {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: "GENERAL_ERROR_OTP_EXPIRED",
-                            };
+                            throw new STGeneralError("GENERAL_ERROR_OTP_EXPIRED");
                         }
 
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "SOMETHING_WENT_WRONG_ERROR",
-                        };
+                        throw new STGeneralError("SOMETHING_WENT_WRONG_ERROR");
                     }}
                     validateOnBlur={false}
                     showLabels={true}

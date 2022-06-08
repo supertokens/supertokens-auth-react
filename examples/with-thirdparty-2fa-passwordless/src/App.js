@@ -43,6 +43,7 @@ SuperTokens.init({
                 }
             },
             signInAndUpFeature: {
+                disableDefaultUI: true,
                 providers: [
                     {
                         id: "google-workspaces",
@@ -54,7 +55,7 @@ SuperTokens.init({
         }),
         Passwordless.init({
             signInUpFeature: {
-                disableDefaultImplementation: true,
+                disableDefaultUI: true,
                 emailOrPhoneFormStyle: {
                     headerTitle: {
                         display: "none",
@@ -93,6 +94,9 @@ SuperTokens.init({
                         doesSessionExist: async function (input) {
                             if (!(await oI.doesSessionExist(input))) {
                                 return false;
+                            }
+                            if (input.userContext.forceOriginalCheck) {
+                                return true;
                             }
                             let accessTokenPayload = await this.getAccessTokenPayloadSecurely(input);
                             if (accessTokenPayload["auth"].length !== 2) {
@@ -135,6 +139,16 @@ function App() {
                                     <Home />
                                     {showSessionExpiredPopup && <SessionExpiredPopup />}
                                 </ThirdPartyAuth>
+                            }
+                        />
+                        <Route
+                            path="/auth"
+                            element={
+                                <ThirdParty.SignInAndUp
+                                    userContext={{
+                                        forceOriginalCheck: true,
+                                    }}
+                                />
                             }
                         />
                         <Route path="/second-factor" element={<SecondFactor />} />

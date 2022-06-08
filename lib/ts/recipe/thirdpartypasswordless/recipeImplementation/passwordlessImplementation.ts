@@ -1,15 +1,20 @@
-import { RecipeInterface as TPPWlessRecipeInterface } from "..";
-import { RecipeInterface as PasswordlessRecipeInterface } from "../../passwordless/types";
+import { RecipeInterface as WebJSPasswordlessRecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
-export default function getImpl(oI: TPPWlessRecipeInterface): PasswordlessRecipeInterface {
+export default function getRecipeImplementation(
+    originalImplementation: TPPWlessRecipeInterface
+): WebJSPasswordlessRecipeInterface {
     return {
-        clearLoginAttemptInfo: oI.clearLoginAttemptInfo.bind(oI),
-        consumeCode: oI.consumeCode.bind(oI),
-        createCode: oI.createCode.bind(oI),
-        doesEmailExist: oI.doesPasswordlessUserEmailExist.bind(oI),
-        doesPhoneNumberExist: oI.doesPasswordlessUserPhoneNumberExist.bind(oI),
-        getLoginAttemptInfo: oI.getPasswordlessLoginAttemptInfo.bind(oI),
-        resendCode: oI.resendCode.bind(oI),
-        setLoginAttemptInfo: oI.setPasswordlessLoginAttemptInfo.bind(oI),
+        clearLoginAttemptInfo: originalImplementation.clearPasswordlessLoginAttemptInfo.bind(originalImplementation),
+        consumeCode: originalImplementation.consumePasswordlessCode.bind(originalImplementation),
+        createCode: originalImplementation.createPasswordlessCode.bind(originalImplementation),
+        doesEmailExist: originalImplementation.doesPasswordlessUserEmailExist.bind(originalImplementation),
+        doesPhoneNumberExist: originalImplementation.doesPasswordlessUserPhoneNumberExist.bind(originalImplementation),
+        getLoginAttemptInfo: originalImplementation.getPasswordlessLoginAttemptInfo.bind(originalImplementation),
+        resendCode: originalImplementation.resendPasswordlessCode.bind(originalImplementation),
+        setLoginAttemptInfo: originalImplementation.setPasswordlessLoginAttemptInfo.bind(originalImplementation),
+        getLinkCodeFromURL: originalImplementation.getPasswordlessLinkCodeFromURL.bind(originalImplementation),
+        getPreAuthSessionIdFromURL:
+            originalImplementation.getPasswordlessPreAuthSessionIdFromURL.bind(originalImplementation),
     };
 }

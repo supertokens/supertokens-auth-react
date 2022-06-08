@@ -12,13 +12,9 @@ jobs:
     pr-title:
         name: Pre commit hook check
         runs-on: ubuntu-latest
-        container: rishabhpoddar/supertokens_website_sdk_testing
+        container: rishabhpoddar/supertokens_website_sdk_testing_node_16
         steps:
             - uses: actions/checkout@v2
-            - name: Set up node
-              uses: actions/setup-node@v1
-              with:
-                  node-version: "16"
             - run: git init && git add --all && git -c user.name='test' -c user.email='test@example.com' commit -m 'init for pr action'
             - run: npm i --force || true
             # the below command is there cause otherwise running npm run check-circular-dependencies gives an error like:

@@ -18,6 +18,8 @@ import React, { useState, useContext, useCallback } from "react";
 import { FeatureBaseProps } from "../../types";
 import Recipe from "./recipe";
 import { SessionContext } from "../session";
+import { useUserContext } from "../../usercontext";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { useOnMountAPICall } from "../../utils";
 
 type Props = FeatureBaseProps & { recipe: Recipe };
@@ -34,10 +36,11 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     const doesSessionExist = sessionContext.doesSessionExist;
     const emailVerificationMode = props.recipe.config.mode;
     const propsRef = React.useRef(props);
+    const userContext = useUserContext();
 
     const checkIsEmailVerified = useCallback(async () => {
         if (doesSessionExist && emailVerificationMode === "REQUIRED") {
-            return propsRef.current.recipe.isEmailVerified();
+            return (await propsRef.current.recipe.isEmailVerified(userContext)).isVerified;
         }
         return undefined;
     }, [doesSessionExist, emailVerificationMode]);
@@ -67,4 +70,16 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     return isEmailVerified ? <>{children}</> : null;
 };
 
-export default EmailVerificationAuth;
+const EmailVerificationAuthWrapper: React.FC<
+    Props & {
+        userContext?: any;
+    }
+> = (props) => {
+    return (
+        <UserContextWrapper userContext={props.userContext}>
+            <EmailVerificationAuth {...props} />
+        </UserContextWrapper>
+    );
+};
+
+export default EmailVerificationAuthWrapper;

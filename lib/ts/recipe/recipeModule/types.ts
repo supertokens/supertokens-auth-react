@@ -1,26 +1,53 @@
 import { NormalisedAppInfo, Styles } from "../../types";
 
-export type UserInput<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
+export type RecipePreAPIHookContext<Action> = {
+    requestInit: RequestInit;
+    url: string;
+    action: Action;
+    userContext: any;
+};
+
+export type RecipePostAPIHookContext<Action> = {
+    action: Action;
+    requestInit: RequestInit;
+    url: string;
+    fetchResponse: Response;
+    userContext: any;
+};
+
+export type RecipePreAPIHookFunction<Action> = (
+    context: RecipePreAPIHookContext<Action>
+) => Promise<{ url: string; requestInit: RequestInit }>;
+
+export type RecipePostAPIHookFunction<Action> = (context: RecipePostAPIHookContext<Action>) => Promise<void>;
+
+export type RecipeOnHandleEventFunction<EventType> = (context: EventType) => void;
+
+export type UserInput<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
     getRedirectionURL?: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
-    preAPIHook?: (context: PreAPIHookContextType) => Promise<{ url: string; requestInit: RequestInit }>;
-    onHandleEvent?: (context: OnHandleEventContextType) => void;
+    preAPIHook?: RecipePreAPIHookFunction<Action>;
+    postAPIHook?: RecipePostAPIHookFunction<Action>;
+    onHandleEvent?: RecipeOnHandleEventFunction<OnHandleEventContextType>;
     useShadowDom?: boolean;
     palette?: Record<string, string>;
     style?: Styles;
 };
 
-export type Config<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
+export type Config<GetRedirectionURLContextType, Action, OnHandleEventContextType> = {
     recipeId: string;
     appInfo: NormalisedAppInfo;
-} & UserInput<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType>;
+} & UserInput<GetRedirectionURLContextType, Action, OnHandleEventContextType>;
 
-export type NormalisedConfig<GetRedirectionURLContextType, PreAPIHookContextType, OnHandleEventContextType> = {
-    recipeId: string;
-    appInfo: NormalisedAppInfo;
-    getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
-    preAPIHook: (context: PreAPIHookContextType) => Promise<{ url: string; requestInit: RequestInit }>;
-    onHandleEvent: (context: OnHandleEventContextType) => void;
-    useShadowDom: boolean;
-    palette: Record<string, string>;
-    rootStyle: Styles;
-};
+import { RecipeConfig as WebJSRecipeConfig } from "supertokens-web-js/recipe/recipeModule/types";
+
+export type NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType> =
+    WebJSRecipeConfig<Action> & {
+        appInfo: NormalisedAppInfo;
+        getRedirectionURL: (context: GetRedirectionURLContextType) => Promise<string | undefined>;
+        onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContextType>;
+        useShadowDom: boolean;
+        palette: Record<string, string>;
+        rootStyle: Styles;
+        preAPIHook: (context: RecipePreAPIHookContext<Action>) => Promise<{ url: string; requestInit: RequestInit }>;
+        postAPIHook: (context: RecipePostAPIHookContext<Action>) => Promise<void>;
+    };

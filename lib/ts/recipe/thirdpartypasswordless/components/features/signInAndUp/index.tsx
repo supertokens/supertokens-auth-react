@@ -37,6 +37,7 @@ import {
 
 import { ThirdPartySignInUpActions } from "../../../../thirdparty/types";
 import { PasswordlessSignInUpAction } from "../../../../passwordless/types";
+import { useUserContext } from "../../../../../usercontext";
 
 type PropType = FeatureBaseProps & {
     recipe: Recipe;
@@ -44,7 +45,11 @@ type PropType = FeatureBaseProps & {
 
 const SignInAndUp: React.FC<PropType> = (props) => {
     const [tpState, tpDispatch] = useThirdPartyFeatureReducer();
-    const [pwlessState, pwlessDispatch] = usePasswordlessFeatureReducer(props.recipe.passwordlessRecipe?.recipeImpl);
+    const userContext = useUserContext();
+    const [pwlessState, pwlessDispatch] = usePasswordlessFeatureReducer(
+        props.recipe.passwordlessRecipe?.recipeImpl,
+        userContext
+    );
 
     const [combinedState, dispatch] = React.useReducer(
         (state: { error: string | undefined }, action: ThirdPartySignInUpActions | PasswordlessSignInUpAction) => {

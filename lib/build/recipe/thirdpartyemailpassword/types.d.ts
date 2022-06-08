@@ -8,7 +8,7 @@ import {
     ResetPasswordUsingTokenUserInput,
     SignInFormFeatureUserInput,
     SignUpFormFeatureUserInput,
-    NormalisedConfig as EPConfig,
+    PreAndPostAPIHookAction as EmailPasswordPreAndPostAPIHookAction,
     SignInAndUpState as EmailPasswordSignInAndUpState,
     EmailPasswordSignInAndUpAction,
     EmailPasswordSignInAndUpChildProps,
@@ -19,8 +19,7 @@ import {
     PreAPIHookContext as ThirdPartyPreAPIHookContext,
 } from "../thirdparty";
 import {
-    NormalisedConfig as TPConfig,
-    StateObject,
+    PreAndPostAPIHookAction as ThirdPartyPreAndPostAPIHookAction,
     ThirdPartySignInAndUpState,
     ThirdPartySignInUpActions,
     ThirdPartySignInUpChildProps,
@@ -31,7 +30,6 @@ import {
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
-    User,
     UserInputOverride as AuthRecipeUserInputOverride,
 } from "../authRecipeWithEmailVerification/types";
 import EPRecipe from "../emailpassword/recipe";
@@ -42,6 +40,7 @@ import { ComponentOverrideMap as EmailPasswordOverrideMap } from "../emailpasswo
 import { ComponentOverrideMap as ThirdPartyOverrideMap } from "../thirdparty/types";
 import { Header } from "./components/themes/signInAndUp/header";
 import { Dispatch } from "react";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export declare type ComponentOverrideMap = EmailPasswordOverrideMap &
     ThirdPartyOverrideMap & {
         ThirdPartyEmailPasswordHeader_Override?: ComponentOverride<typeof Header>;
@@ -58,9 +57,9 @@ export declare type UserInput = {
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
     } & AuthRecipeUserInputOverride;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
     signInAndUpFeature: NormalisedSignInAndUpFeatureConfig;
     resetPasswordUsingTokenFeature?: ResetPasswordUsingTokenUserInput;
@@ -73,16 +72,16 @@ export declare type NormalisedConfig = {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInAndUpFeatureUserInput = FeatureBaseConfig & {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     defaultToSignUp?: boolean;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;
     providers?: (Provider | CustomProviderConfig)[];
 };
 export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & {
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
     defaultToSignUp: boolean;
     signUpForm?: SignUpFormFeatureUserInput;
     signInForm?: SignInFormFeatureUserInput;
@@ -91,6 +90,7 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
 export declare type GetRedirectionURLContext =
     | EmailPasswordGetRedirectionURLContext
     | ThirdPartyGetRedirectionURLContext;
+export declare type PreAndPostAPIHookAction = EmailPasswordPreAndPostAPIHookAction | ThirdPartyPreAndPostAPIHookAction;
 export declare type PreAPIHookContext = EmailPasswordPreAPIHookContext | ThirdPartyPreAPIHookContext;
 export declare type OnHandleEventContext = ThirdPartyOnHandleEventContext | EmailPasswordOnHandleEventContext;
 export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
@@ -107,94 +107,4 @@ export declare type ThirdPartyEmailPasswordSignInAndUpThemeProps = {
     tpState: ThirdPartySignInAndUpState;
     tpDispatch: Dispatch<ThirdPartySignInUpActions>;
     tpChildProps?: ThirdPartySignInUpChildProps;
-};
-export declare type SignInAndUpInput =
-    | {
-          type: "emailpassword";
-          isSignIn: boolean;
-          formFields: {
-              id: string;
-              value: string;
-          }[];
-          config: EPConfig;
-      }
-    | {
-          type: "thirdparty";
-          thirdPartyId: string;
-          config: TPConfig;
-      };
-export declare type SignInAndUpOutput =
-    | {
-          type: "emailpassword" | "thirdparty";
-          status: "OK";
-          user: User;
-          createdNewUser: boolean;
-      }
-    | {
-          type: "emailpassword";
-          status: "FIELD_ERROR";
-          formFields: {
-              id: string;
-              error: string;
-          }[];
-      }
-    | {
-          type: "emailpassword";
-          status: "WRONG_CREDENTIALS_ERROR";
-      }
-    | {
-          type: "thirdparty";
-          status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
-      }
-    | {
-          type: "thirdparty";
-          status: "FIELD_ERROR";
-          error: string;
-      };
-export declare type RecipeInterface = {
-    submitNewPassword: (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        token: string;
-        config: EPConfig;
-    }) => Promise<
-        | {
-              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
-          }
-        | {
-              status: "FIELD_ERROR";
-              formFields: {
-                  id: string;
-                  error: string;
-              }[];
-          }
-    >;
-    sendPasswordResetEmail: (input: {
-        formFields: {
-            id: string;
-            value: string;
-        }[];
-        config: EPConfig;
-    }) => Promise<
-        | {
-              status: "OK";
-          }
-        | {
-              status: "FIELD_ERROR";
-              formFields: {
-                  id: string;
-                  error: string;
-              }[];
-          }
-    >;
-    doesEmailExist: (input: { email: string; config: EPConfig }) => Promise<boolean>;
-    getOAuthAuthorisationURL: (input: { thirdPartyId: string; config: TPConfig }) => Promise<string>;
-    signInAndUp: (input: SignInAndUpInput) => Promise<SignInAndUpOutput>;
-    getOAuthState(): StateObject | undefined;
-    setOAuthState(state: StateObject): void;
-    redirectToThirdPartyLogin: (input: { thirdPartyId: string; config: TPConfig; state?: StateObject }) => Promise<{
-        status: "OK" | "ERROR";
-    }>;
 };

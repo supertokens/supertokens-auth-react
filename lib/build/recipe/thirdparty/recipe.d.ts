@@ -5,21 +5,20 @@ import {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
-    PreAPIHookContext,
+    PreAndPostAPIHookAction,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
 } from "./types";
 import EmailVerification from "../emailverification/recipe";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export default class ThirdParty extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
-    PreAPIHookContext,
     OnHandleEventContext,
     NormalisedConfig
 > {
     static instance?: ThirdParty;
     static RECIPE_ID: string;
-    recipeImpl: RecipeInterface;
+    recipeImpl: WebJSRecipeInterface;
     constructor(
         config: Config,
         recipes: {
@@ -36,7 +35,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
     ) => Promise<string>;
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>;
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): ThirdParty;
     static reset(): void;
 }

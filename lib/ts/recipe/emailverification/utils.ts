@@ -14,11 +14,12 @@
  */
 
 import { NormalisedBaseConfig } from "../../types";
-import { Config, NormalisedConfig, RecipeInterface } from "./types";
+import { Config, NormalisedConfig } from "./types";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 export function normaliseEmailVerificationFeature(config: Config): NormalisedConfig {
-    const disableDefaultImplementation = config.disableDefaultImplementation === true;
+    const disableDefaultUI = config.disableDefaultUI === true;
     const mode = config.mode === undefined ? "OFF" : config.mode;
 
     const sendVerifyEmailScreenStyle =
@@ -39,7 +40,7 @@ export function normaliseEmailVerificationFeature(config: Config): NormalisedCon
         style: verifyEmailLinkClickedScreenStyle,
     };
 
-    const override: any = {
+    const override = {
         functions: (originalImplementation: RecipeInterface) => originalImplementation,
         components: {},
         ...config.override,
@@ -47,7 +48,7 @@ export function normaliseEmailVerificationFeature(config: Config): NormalisedCon
 
     return {
         ...normaliseRecipeModuleConfig(config),
-        disableDefaultImplementation,
+        disableDefaultUI,
         mode,
         sendVerifyEmailScreen,
         verifyEmailLinkClickedScreen,

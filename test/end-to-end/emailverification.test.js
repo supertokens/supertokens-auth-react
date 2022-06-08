@@ -27,6 +27,7 @@ import {
     clearBrowserCookiesWithoutAffectingConsole,
     clickLinkWithRightArrow,
     getVerificationEmailErrorTitle,
+    getVerificationEmailErrorMessage,
     getVerificationEmailTitle,
     getTextByDataSupertokens,
     getLatestURLWithToken,
@@ -34,6 +35,7 @@ import {
     submitForm,
     sendVerifyEmail,
     getGeneralSuccess,
+    getGeneralError,
     toggleSignInSignUp,
     defaultSignUp,
     signUp,
@@ -360,6 +362,137 @@ describe("SuperTokens Email Verification server errors", function () {
                 "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION VERIFY_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS VERIFY_EMAIL",
             ]);
+        });
+    });
+});
+
+describe("SuperTokens Email Verification general errors", function () {
+    let browser;
+    let page;
+    let consoleLogs;
+    const generalErrorMessageString = "General Error";
+
+    before(async function () {
+        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+            method: "POST",
+        }).catch(console.error);
+        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+            method: "POST",
+        }).catch(console.error);
+        browser = await puppeteer.launch({
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            headless: true,
+        });
+        page = await browser.newPage();
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+    });
+
+    after(async function () {
+        await browser.close();
+        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+            method: "POST",
+        }).catch(console.error);
+        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+            method: "POST",
+        }).catch(console.error);
+    });
+
+    describe("Verify Email with token screen", function () {
+        beforeEach(async function () {
+            page = await browser.newPage();
+            await page.setRequestInterception(true);
+            page.on("request", (req) => {
+                if (req.url().includes("/auth/user/email/verify") && req.method() === "POST") {
+                    return req.respond({
+                        status: 200,
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "GENERAL_ERROR",
+                            message: generalErrorMessageString,
+                        }),
+                    });
+                }
+
+                req.continue();
+            });
+            consoleLogs = [];
+            page.on("console", (consoleObj) => {
+                const log = consoleObj.text();
+                if (log.startsWith("ST_LOGS")) {
+                    consoleLogs.push(log);
+                }
+            });
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
+        });
+
+        it('Should show "General Error" when API returns "GENERAL_ERROR"', async function () {
+            await page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200);
+            await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
+            const verificationEmailErrorTitle = await getVerificationEmailErrorTitle(page);
+            const verificationEmailErrorMessage = await getVerificationEmailErrorMessage(page);
+            assert.deepStrictEqual(verificationEmailErrorTitle, "!\nSomething went wrong");
+            assert.deepStrictEqual(verificationEmailErrorMessage, generalErrorMessageString);
+        });
+    });
+
+    describe("Send verification email screen", function () {
+        beforeEach(async function () {
+            page = await browser.newPage();
+            consoleLogs = [];
+            page.on("console", (consoleObj) => {
+                const log = consoleObj.text();
+                if (log.startsWith("ST_LOGS")) {
+                    consoleLogs.push(log);
+                }
+            });
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+        });
+
+        it('Should show "General Error" when API returns "GENERAL_ERROR"', async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await toggleSignInSignUp(page);
+            await defaultSignUp(page);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+            /**
+             * This adds interception mid test because adding it before conflicted with
+             * interceptors for defaultSignUp
+             */
+            await page.setRequestInterception(true);
+            page.on("request", (req) => {
+                if (req.url().includes("/auth/user/email/verify/token") && req.method() === "POST") {
+                    return req.respond({
+                        status: 200,
+                        headers: {
+                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                            "access-control-allow-credentials": "true",
+                        },
+                        body: JSON.stringify({
+                            status: "GENERAL_ERROR",
+                            message: generalErrorMessageString,
+                        }),
+                    });
+                }
+
+                req.continue();
+            });
+            await sendVerifyEmail(page);
+            await page.waitForResponse(
+                (response) => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
+            );
+            await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
+            const generalError = await getGeneralError(page);
+            assert.deepStrictEqual(generalError, generalErrorMessageString);
         });
     });
 });

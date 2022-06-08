@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.21.3",
+    "version": "0.22.0",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -68,7 +68,7 @@
         "react-select": "5.2.1",
         "react-shadow": "19.0.2",
         "supertokens-js-override": "^0.0.4",
-        "supertokens-website": "^11.0.1"
+        "supertokens-web-js": "^0.0.2"
     },
     "peerDependencies": {
         "react": ">=16.8.0"
@@ -76,7 +76,9 @@
     "scripts": {
         "init": "bash ./init.sh",
         "start": "npm-run-all --parallel front server watch",
+        "start-react-16": "npm-run-all --parallel front-react-16 server watch",
         "front": "(cd ./examples/for-tests/ && BROWSER=none PORT=3031 npm run start)",
+        "front-react-16": "(cd ./examples/for-tests-react-16/ && BROWSER=none PORT=3031 npm run start)",
         "server": "cd test/server/ && START=true INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node .",
         "test": "npm run test-unit && npm run test-e2e",
         "test-with-non-node": "npm run test-unit && npm run test-e2e-with-non-node",
@@ -89,7 +91,7 @@
         "build": "cd lib && rm -rf build && npx tsc -p tsconfig.json",
         "watch": "cd lib && npx tsc -w -p tsconfig_dev.json",
         "pretty": "npx pretty-quick .",
-        "build-pretty": "npm run build && npm run pretty",
+        "build-pretty": "npm run build && npm run pretty && npm run pretty",
         "lint": "node other/checkTranslationKeys.js && cd lib && eslint ./ts --ext .ts,.tsx",
         "prune": "cd lib && ts-prune | grep -vE 'used in module| - default$| - package_version$|getSuperTokensRoutesForReactRouterDom$' && exit 1 || exit 0",
         "pretty-check": "npx pretty-quick --check .",
@@ -109,23 +111,23 @@
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
-            "limit": "120kb"
+            "limit": "123kb"
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "110kb"
+            "limit": "111kb"
         },
         {
             "path": "recipe/emailpassword/index.js",
-            "limit": "110kb"
+            "limit": "112kb"
         },
         {
             "path": "recipe/passwordless/index.js",
-            "limit": "200kb"
+            "limit": "204kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/index.js",
-            "limit": "215kb"
+            "limit": "221kb"
         }
     ],
     "repository": {

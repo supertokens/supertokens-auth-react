@@ -22,7 +22,8 @@ import { memo } from "react";
 import SuperTokens from "../../superTokens";
 
 import { FeatureBaseProps } from "../../types";
-import SessionAuth from "../session/sessionAuth";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
+import SessionAuthWrapper from "../session/sessionAuth";
 import Passwordless from "./recipe";
 
 type Props = FeatureBaseProps & {
@@ -33,18 +34,18 @@ type Props = FeatureBaseProps & {
 
 function PasswordlessAuth(props: Props) {
     if (props.requireAuth === false) {
-        return <SessionAuth onSessionExpired={props.onSessionExpired}>{props.children}</SessionAuth>;
+        return <SessionAuthWrapper onSessionExpired={props.onSessionExpired}>{props.children}</SessionAuthWrapper>;
     }
 
     return (
-        <SessionAuth
+        <SessionAuthWrapper
             redirectToLogin={() =>
                 Passwordless.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, props.history)
             }
             requireAuth={true}
             onSessionExpired={props.onSessionExpired}>
             {props.children}
-        </SessionAuth>
+        </SessionAuthWrapper>
     );
 }
 
@@ -54,20 +55,24 @@ export default function PasswordlessAuthWrapper({
     children,
     requireAuth,
     onSessionExpired,
+    userContext,
 }: PropsWithChildren<{
     requireAuth?: boolean;
     onSessionExpired?: () => void;
+    userContext?: any;
 }>) {
     const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
 
     return (
-        <PasswordlessAuthMemo
-            history={history}
-            onSessionExpired={onSessionExpired}
-            requireAuth={requireAuth}
-            recipe={Passwordless.getInstanceOrThrow()}>
-            {children}
-        </PasswordlessAuthMemo>
+        <UserContextWrapper userContext={userContext}>
+            <PasswordlessAuthMemo
+                history={history}
+                onSessionExpired={onSessionExpired}
+                requireAuth={requireAuth}
+                recipe={Passwordless.getInstanceOrThrow()}>
+                {children}
+            </PasswordlessAuthMemo>
+        </UserContextWrapper>
     );
 }

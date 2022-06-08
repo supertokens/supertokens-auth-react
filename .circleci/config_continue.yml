@@ -7,8 +7,9 @@ orbs:
 jobs:
     build:
         docker:
-            - image: rishabhpoddar/supertokens_website_sdk_testing
+            - image: rishabhpoddar/supertokens_website_sdk_testing_node_16
         steps:
+            - run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/ # This makes npm use http instead of ssh (required for node 16)
             - checkout
             - run: apt-get install lsof
             - run: npm run init
@@ -25,14 +26,16 @@ jobs:
                       - root/project/examples/for-tests/node_modules
     test:
         docker:
-            - image: rishabhpoddar/supertokens_website_sdk_testing
+            - image: rishabhpoddar/supertokens_website_sdk_testing_node_16
         environment:
             MOCHA_FILE: test_report/report_node-<< parameters.fdi-version >>.xml
+            RUN_REACT_16_TESTS: true
         parameters:
             fdi-version:
                 type: string
         parallelism: 4
         steps:
+            - run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/ # This makes npm use http instead of ssh (required for node 16)
             - checkout
             - attach_workspace:
                   at: /
@@ -49,8 +52,9 @@ jobs:
 
     mark-passed:
         docker:
-            - image: rishabhpoddar/supertokens_website_sdk_testing
+            - image: rishabhpoddar/supertokens_website_sdk_testing_node_16
         steps:
+            - run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/ # This makes npm use http instead of ssh (required for node 16)
             - checkout
             - run: (cd .circleci && ./markPassed.sh)
             - slack/status
