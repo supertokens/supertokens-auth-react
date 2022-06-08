@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import "./App.css";
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
@@ -7,6 +8,7 @@ import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
+import jwt_decode from "jwt-decode";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -22,17 +24,66 @@ export function getWebsiteDomain() {
 
 SuperTokens.init({
     appInfo: {
-        appName: "SuperTokens Demo App", // TODO: Your app name
-        apiDomain: getApiDomain(), // TODO: Change to your app's API domain
-        websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
+        appName: "SuperTokens Demo App",
+        apiDomain: getApiDomain(),
+        websiteDomain: getWebsiteDomain(),
     },
     recipeList: [
         EmailPassword.init({
             emailVerificationFeature: {
                 mode: "REQUIRED",
             },
+            preAPIHook: async (context) => {
+                let jwt = localStorage.getItem("jwt");
+                if (jwt !== null) {
+                    (context.requestInit.headers as any)["Authorization"] = "Bearer " + jwt;
+                }
+                return context;
+            },
+            postAPIHook: async (context) => {
+                if (context.action === "EMAIL_PASSWORD_SIGN_IN" || context.action === "EMAIL_PASSWORD_SIGN_UP") {
+                    let responseBody = await context.fetchResponse.json();
+                    let jwt = responseBody.jwt;
+                    localStorage.setItem("jwt", jwt);
+                }
+            },
         }),
-        Session.init(),
+        Session.init({
+            preAPIHook: async (context) => {
+                let jwt = localStorage.getItem("jwt");
+                if (jwt !== null) {
+                    (context.requestInit.headers as any)["Authorization"] = "Bearer " + jwt;
+                }
+                return context;
+            },
+            override: {
+                functions: (oI) => {
+                    return {
+                        ...oI,
+                        addAxiosInterceptors: function () {
+                            throw new Error("Unsupported exception");
+                        },
+                        addFetchInterceptorsAndReturnModifiedFetch: function (input) {
+                            return input.originalFetch;
+                        },
+                        doesSessionExist: async function () {
+                            return localStorage.getItem("jwt") !== null;
+                        },
+                        getAccessTokenPayloadSecurely: async function () {
+                            let jwt = localStorage.getItem("jwt")!;
+                            return jwt_decode(jwt);
+                        },
+                        getUserId: async function (input) {
+                            let accessTokenPayload = await this.getAccessTokenPayloadSecurely(input);
+                            return accessTokenPayload.sub;
+                        },
+                        signOut: async function (input) {
+                            localStorage.removeItem("jwt");
+                        },
+                    };
+                },
+            },
+        }),
     ],
 });
 

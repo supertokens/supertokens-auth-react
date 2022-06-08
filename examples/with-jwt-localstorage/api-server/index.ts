@@ -5,6 +5,9 @@ import Session from "supertokens-node/recipe/session";
 import { verifySession } from "supertokens-node/recipe/session/framework/express";
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
+import { makeSessionContainerFromJWT } from "./sessionContainer";
+import JsonWebToken, { JwtHeader, SigningKeyCallback } from "jsonwebtoken";
+import jwksClient from "jwks-rsa";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -12,27 +15,176 @@ const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`
 const websitePort = process.env.REACT_APP_WEBSITE_PORT || 3000;
 const websiteDomain = process.env.REACT_APP_WEBSITE_URL || `http://localhost:${websitePort}`;
 
+let client = jwksClient({
+    jwksUri: apiDomain + "/auth/jwt/jwks.json",
+});
+
+function getJWTKey(header: JwtHeader, callback: SigningKeyCallback) {
+    client.getSigningKey(header.kid, function (err, key) {
+        var signingKey = key!.getPublicKey();
+        callback(err, signingKey);
+    });
+}
+
 supertokens.init({
     framework: "express",
     supertokens: {
-        // TODO: This is a core hosted for demo purposes. You can use this, but make sure to change it to your core instance URI eventually.
         connectionURI: "https://try.supertokens.com",
         apiKey: "<REQUIRED FOR MANAGED SERVICE, ELSE YOU CAN REMOVE THIS FIELD>",
     },
     appInfo: {
-        appName: "SuperTokens Demo App", // TODO: Your app name
-        apiDomain, // TODO: Change to your app's API domain
-        websiteDomain, // TODO: Change to your app's website domain
+        appName: "SuperTokens Demo App",
+        apiDomain,
+        websiteDomain,
     },
-    recipeList: [EmailPassword.init(), Session.init()],
+    recipeList: [
+        EmailPassword.init({
+            override: {
+                apis: (oI) => {
+                    return {
+                        ...oI,
+                        // We override these to inject our new JWT into the
+                        // response from these APIs
+                        signInPOST: async function (input) {
+                            let resp = await oI.signInPOST!(input);
+                            if (resp.status === "OK") {
+                                let session = resp.session;
+                                let jwt = session.getAccessToken();
+
+                                // we send a custom response with the JWT
+                                input.options.res.sendJSONResponse({
+                                    status: resp.status,
+                                    user: resp.user,
+                                    jwt,
+                                });
+                            }
+                            return resp;
+                        },
+                        signUpPOST: async function (input) {
+                            let resp = await oI.signUpPOST!(input);
+                            if (resp.status === "OK") {
+                                let session = resp.session;
+                                let jwt = session.getAccessToken();
+
+                                // we send a custom response with the JWT
+                                input.options.res.sendJSONResponse({
+                                    status: resp.status,
+                                    user: resp.user,
+                                    jwt,
+                                });
+                            }
+                            return resp;
+                        },
+                    };
+                },
+            },
+        }),
+        Session.init({
+            jwt: {
+                // this will enable the JWT recipe and JWKs endpoint
+                enable: true,
+            },
+            override: {
+                functions: (oI) => {
+                    return {
+                        getSession: async function (input) {
+                            // we get the JWT from the request header
+                            let jwt = input.req.getHeaderValue("authorization");
+                            jwt = jwt.split(" ")[1]; // the input is "Bearer JWT". So we get the JWT part
+                            if (jwt === undefined || jwt === null) {
+                                if (input.options?.sessionRequired === false) {
+                                    return undefined;
+                                }
+                                throw new Session.Error({
+                                    message: "JWT does not exist",
+                                    type: "UNAUTHORISED",
+                                });
+                            }
+
+                            // we verify the JWT
+                            let success = await new Promise((resolve) =>
+                                JsonWebToken.verify(jwt, getJWTKey, {}, function (err) {
+                                    if (err) {
+                                        resolve(false);
+                                    } else {
+                                        resolve(true);
+                                    }
+                                })
+                            );
+
+                            // if success, we return a session container object, else 401
+                            if (success) {
+                                return makeSessionContainerFromJWT(jwt);
+                            } else {
+                                if (input.options?.sessionRequired === false) {
+                                    return undefined;
+                                }
+                                throw new Session.Error({
+                                    message: "JWT is invalid",
+                                    type: "UNAUTHORISED",
+                                });
+                            }
+                        },
+                        createNewSession: async function (input) {
+                            let accessTokenResp = await Session.createJWT(
+                                {
+                                    ...input.accessTokenPayload,
+                                    sub: input.userId,
+                                },
+                                2630000
+                            ); // alive for 1 month
+
+                            if (accessTokenResp.status === "UNSUPPORTED_ALGORITHM_ERROR") {
+                                throw new Error("Should never come here");
+                            }
+                            return makeSessionContainerFromJWT(accessTokenResp.jwt);
+                        },
+                        getAccessTokenLifeTimeMS: async function (input) {
+                            return 2630000 * 1000;
+                        },
+                        getAllSessionHandlesForUser: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        getRefreshTokenLifeTimeMS: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        getSessionInformation: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        refreshSession: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        regenerateAccessToken: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        revokeAllSessionsForUser: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        updateAccessTokenPayload: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        revokeMultipleSessions: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        revokeSession: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                        updateSessionData: async function (input) {
+                            throw new Error("Unsupported operation");
+                        },
+                    };
+                },
+            },
+        }),
+    ],
 });
 
 const app = express();
 
 app.use(
     cors({
-        origin: websiteDomain, // TODO: Change to your app's website domain
-        allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
+        origin: websiteDomain,
+        allowedHeaders: ["content-type", "Authorization", ...supertokens.getAllCORSHeaders()],
         methods: ["GET", "PUT", "POST", "DELETE"],
         credentials: true,
     })
@@ -44,7 +196,6 @@ app.use(middleware());
 app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
     let session = req.session!;
     res.send({
-        sessionHandle: session.getHandle(),
         userId: session.getUserId(),
         accessTokenPayload: session.getAccessTokenPayload(),
     });

@@ -1,6 +1,7 @@
+import React from "react";
 import CallAPIView from "./CallAPIView";
 
-export default function SuccessView(props) {
+export default function SuccessView(props: { userId: string }) {
     let userId = props.userId;
 
     return (
