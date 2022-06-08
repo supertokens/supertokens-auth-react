@@ -33,7 +33,7 @@ const PasswordlessLinkClickedScreen: React.FC<LinkClickedScreenProps> = (props) 
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
-                {props.showButton === true ? (
+                {props.requireUserInteraction === true ? (
                     <React.Fragment>
                         <div data-supertokens="headerTitle" css={styles.headerTitle}>
                             {t("PWLESS_LINK_CLICKED_CONTINUE_HEADER")}

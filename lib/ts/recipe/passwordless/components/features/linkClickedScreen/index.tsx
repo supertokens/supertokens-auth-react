@@ -38,7 +38,7 @@ type PropType = FeatureBaseProps & { recipe: Recipe };
 
 const LinkClickedScreen: React.FC<PropType> = (props) => {
     const userContext = useUserContext();
-    const [showButton, setRequiresInteraction] = useState<boolean>(false);
+    const [requireUserInteraction, setRequireUserInteraction] = useState<boolean>(false);
 
     const consumeCodeAtMount = useCallback(async () => {
         const preAuthSessionId = getQueryParams("preAuthSessionId");
@@ -67,7 +67,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         async (response: Awaited<ReturnType<typeof consumeCodeAtMount>>): Promise<void> => {
             if (response === "REQUIRES_INTERACTION") {
                 // We set this here, to make sure it's set after a possible remount
-                setRequiresInteraction(true);
+                setRequireUserInteraction(true);
             }
 
             if (typeof response === "string") {
@@ -126,7 +126,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     const childProps = {
         recipeImplementation: props.recipe.recipeImpl,
         config: props.recipe.config,
-        showButton,
+        requireUserInteraction,
         consumeCode: async () => {
             const preAuthSessionId = getQueryParams("preAuthSessionId");
             const linkCode = getURLHash();
