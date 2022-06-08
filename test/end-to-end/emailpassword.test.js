@@ -24,24 +24,13 @@ import fetch from "isomorphic-fetch";
 import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
-    assertProviders,
-    clickOnProviderButton,
-    defaultSignUp,
-    getUserIdWithFetch,
-    getLogoutButton,
-    signUp,
-    toggleSignInSignUp,
-    loginWithAuth0,
-    getLoginWithRedirectToSignIn,
-    getLoginWithRedirectToSignUp,
     getAuthPageHeaderText,
     screenshotOnFailure,
     clickForgotPasswordLink,
     getResetPasswordFormBackButton,
-    getResetPasswordFormBackButtonDelete,
     waitForSTElement,
 } from "../helpers";
-import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL, SIGN_IN_UP_API } from "../constants";
+import { TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -100,8 +89,8 @@ describe("SuperTokens Email Password", function () {
         ]);
     });
 
-    describe("Email Password Reset Password form back button tests", function () {
-        it("successfully redirects to Sign In screen when back button is clicked", async function () {
+    describe("Reset Password form back button", function () {
+        it("Successfully redirects to Sign In screen when back button is clicked", async function () {
             await clickForgotPasswordLink(page);
 
             await waitForSTElement(page);
