@@ -272,6 +272,36 @@ function initST({ passwordlessConfig } = {}) {
                 apis: (oI) => {
                     return {
                         ...oI,
+                        passwordResetPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API reset password consume",
+                                };
+                            }
+                            return oI.passwordResetPOST(input);
+                        },
+                        generatePasswordResetTokenPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API reset password",
+                                };
+                            }
+                            return oI.generatePasswordResetTokenPOST(input);
+                        },
+                        emailExistsGET: async function (input) {
+                            let generalError = input.options.req.getKeyValueFromQuery("generalError");
+                            if (generalError === "true") {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API email exists",
+                                };
+                            }
+                            return oI.emailExistsGET(input);
+                        },
                         signUpPOST: async function (input) {
                             let body = await input.options.req.getJSONBody();
                             if (body.generalError === true) {
@@ -281,6 +311,16 @@ function initST({ passwordlessConfig } = {}) {
                                 };
                             }
                             return oI.signUpPOST(input);
+                        },
+                        signInPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API sign in",
+                                };
+                            }
+                            return oI.signInPOST(input);
                         },
                     };
                 },

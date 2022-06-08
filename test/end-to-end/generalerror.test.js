@@ -28,11 +28,21 @@ import {
     setInputValues,
     submitFormReturnRequestAndResponse,
     getGeneralError,
+    getInputAdornmentsSuccess,
+    getInputAdornmentsError,
+    getFieldErrors,
+    submitForm,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { TEST_SERVER_BASE_URL, SIGN_UP_API } from "../constants";
+import {
+    TEST_SERVER_BASE_URL,
+    SIGN_UP_API,
+    SIGN_IN_API,
+    TEST_CLIENT_BASE_URL,
+    RESET_PASSWORD_TOKEN_API,
+} from "../constants";
 
 describe("General error rendering", function () {
     before(async function () {
@@ -90,7 +100,91 @@ describe("General error rendering", function () {
             const generalError = await getGeneralError(page);
             assert.strictEqual(generalError, response.message);
         });
+
+        it("Sign in error", async function () {
+            await page.evaluate(() =>
+                localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD EMAIL_PASSWORD_SIGN_IN")
+            );
+            // Set values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            let [{ response }] = await Promise.all([submitFormReturnRequestAndResponse(page, SIGN_IN_API)]);
+
+            assert(response.status === "GENERAL_ERROR" && response.message === "general error from API sign in");
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response.message);
+        });
+
+        it("Email exists error", async function () {
+            await toggleSignInSignUp(page);
+            await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD EMAIL_EXISTS"));
+            // Set values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "20" },
+            ]);
+
+            const successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 3);
+
+            const errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 1);
+            let fieldErrors = await getFieldErrors(page);
+
+            assert.deepStrictEqual(fieldErrors, ["general error from API email exists"]);
+        });
+
+        it("Generate password reset token error", async function () {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
+
+            await page.evaluate(() =>
+                localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD SEND_RESET_PASSWORD_EMAIL")
+            );
+
+            await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
+
+            // Submit.
+            const [{ response }] = await Promise.all([
+                submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API),
+            ]);
+
+            assert.deepStrictEqual(response, {
+                status: "GENERAL_ERROR",
+                message: "general error from API reset password",
+            });
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response.message);
+        });
+
+        it("Consume reset password token error", async function () {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?token=TOKEN`);
+
+            await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD SUBMIT_NEW_PASSWORD"));
+
+            // Set password mismatch
+            await setInputValues(page, [
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "confirm-password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            // Submit.
+            await submitForm(page);
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, "general error from API reset password consume");
+        });
     });
+
+    describe("Email verification", function () {});
+
+    describe("Session", function () {});
 
     describe("ThirdParty", function () {});
 

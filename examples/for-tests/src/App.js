@@ -504,12 +504,16 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
         palette: theme.colors,
         preAPIHook: async (context) => {
             if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `EMAIL_PASSWORD ${context.action}`) {
-                let jsonBody = JSON.parse(context.requestInit.body);
-                jsonBody = {
-                    ...jsonBody,
-                    generalError: true,
-                };
-                context.requestInit.body = JSON.stringify(jsonBody);
+                if (context.action === "EMAIL_EXISTS") {
+                    context.url += "&generalError=true";
+                } else {
+                    let jsonBody = JSON.parse(context.requestInit.body);
+                    jsonBody = {
+                        ...jsonBody,
+                        generalError: true,
+                    };
+                    context.requestInit.body = JSON.stringify(jsonBody);
+                }
             }
             console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
             return context;
