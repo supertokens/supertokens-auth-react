@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Added new tests for checking general error handling
+
 ### CI changes
 
 -   Only running React 16 tests on CircleCI (when an explicit envvar is set)
