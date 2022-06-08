@@ -12,11 +12,15 @@ This demo app demonstrates the following use cases:
 
 ## When to refer to this demo app?
 
-TODO
+The SuperTokens in built session management requires use of frontend SDKs provided by us (for automatic session refreshing). If we do not support a frontend client, then you have to modify the session recipe to be simpler.
 
-## Tradeoffs between JWT based sessions and SuperTokens' default session
+The modified flow would issue a JWT as a session token which can be sent to the frontend in the sign in or sign up response body. The frontend would save this locally and inject this as an authorization bearer token in each API request.
 
-TODO
+In this demo app, we achieve this by overriding all the functions of the session recipe on the backend. We issue a new JWT using SuperTokens on `createNewSession` function, and send this in the response body from the sign in and sign up API response (again, we override the default APIs to achieve this).
+
+For session verification, we override the `getSession` function on the backend to fetch this JWT from the request header and then verify it.
+
+On the frontend, since we are using our supertokens-auth-react SDK, we save the JWT from the sign in / up response using `postAPIHooks`, and inject the JWT in the request using `preAPIHooks`. We also override the Session recipe functions to run based on if the JWT is present in localstorage or not.
 
 ## Project setup
 
