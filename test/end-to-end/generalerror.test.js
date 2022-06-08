@@ -32,6 +32,8 @@ import {
     getInputAdornmentsError,
     getFieldErrors,
     submitForm,
+    defaultSignUp,
+    sendVerifyEmail,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -42,6 +44,7 @@ import {
     SIGN_IN_API,
     TEST_CLIENT_BASE_URL,
     RESET_PASSWORD_TOKEN_API,
+    SEND_VERIFY_EMAIL_API,
 } from "../constants";
 
 describe("General error rendering", function () {
@@ -182,7 +185,91 @@ describe("General error rendering", function () {
         });
     });
 
-    describe("Email verification", function () {});
+    describe("Email verification", function () {
+        let browser;
+        let page;
+        before(async function () {
+            await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+                method: "POST",
+            }).catch(console.error);
+
+            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+                method: "POST",
+            }).catch(console.error);
+
+            browser = await puppeteer.launch({
+                args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                headless: true,
+            });
+        });
+
+        afterEach(function () {
+            return screenshotOnFailure(this, browser);
+        });
+
+        beforeEach(async function () {
+            page = await browser.newPage();
+            await clearBrowserCookiesWithoutAffectingConsole(page, []);
+            await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+        });
+
+        it("Sending email verification error", async function () {
+            await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD SEND_VERIFY_EMAIL"));
+
+            // first we sign up so that we have a session are on the email verification page
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await toggleSignInSignUp(page);
+            let [, response] = await Promise.all([
+                defaultSignUp(page),
+                page.waitForResponse(
+                    (response) => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
+                ),
+            ]);
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+
+            response = await response.json();
+
+            // even though the API returns a general error on mount, we do not show that
+            // in the UI
+            assert.deepStrictEqual(response, {
+                status: "GENERAL_ERROR",
+                message: "general error from API email verification code",
+            });
+
+            let generalError = await page.evaluate(
+                (value) =>
+                    document
+                        .querySelector("#supertokens-root")
+                        .shadowRoot.querySelector(`[data-supertokens~='${value}']`),
+                "generalError"
+            );
+            assert.deepStrictEqual(generalError, null);
+
+            // now we click the resend button, which should show in the UI:
+            await sendVerifyEmail(page);
+            let response1 = await page.waitForResponse(
+                (response) => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
+            );
+
+            response1 = await response1.json();
+
+            assert.deepStrictEqual(response1, {
+                status: "GENERAL_ERROR",
+                message: "general error from API email verification code",
+            });
+
+            generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response1.message);
+        });
+    });
 
     describe("Session", function () {});
 

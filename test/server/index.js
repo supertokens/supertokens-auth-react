@@ -269,6 +269,23 @@ function initST({ passwordlessConfig } = {}) {
     const recipeList = [
         EmailPassword.init({
             override: {
+                emailVerificationFeature: {
+                    apis: (oI) => {
+                        return {
+                            ...oI,
+                            generateEmailVerifyTokenPOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API email verification code",
+                                    };
+                                }
+                                return oI.generateEmailVerifyTokenPOST(input);
+                            },
+                        };
+                    },
+                },
                 apis: (oI) => {
                     return {
                         ...oI,
