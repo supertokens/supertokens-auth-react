@@ -61,9 +61,6 @@
     "dependencies": {
         "@emotion/react": "^11.4.1",
         "chroma-js": "2.1.2",
-        "jsonwebtoken": "^8.5.1",
-        "jwks-rsa": "^2.1.4",
-        "jwt-decode": "^3.1.2",
         "libphonenumber-js": "1.9.43",
         "mocha-multi": "1.1.6",
         "prop-types": "*",
