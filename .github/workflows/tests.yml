@@ -31,7 +31,9 @@ jobs:
         name: Run tests
         timeout-minutes: 120
         runs-on: ubuntu-latest
-        container: rishabhpoddar/supertokens_website_sdk_testing_node_16
+        container:
+            image: rishabhpoddar/supertokens_website_sdk_testing_node_16
+            options: "-u 1001"
         steps:
             - name: Environment variables
               run: |
@@ -51,10 +53,6 @@ jobs:
             - run: npm run init
             - name: Cloning supertokens-root
               run: cd ../ && git clone https://github.com/supertokens/supertokens-root.git
-            - name: Update Java 1
-              run: update-alternatives --install "/usr/bin/java" "java" "/usr/java/jdk-15.0.1/bin/java" 2
-            - name: Update Java 2
-              run: update-alternatives --install "/usr/bin/javac" "javac" "/usr/java/jdk-15.0.1/bin/javac" 2
             - name: Modifying modules.txt in supertokens-root
               run: cd ../supertokens-root && echo "core,${{ github.event.inputs.coreBranchName }},${{ github.event.inputs.coreRepoOwnerName }}\nplugin-interface,${{ github.event.inputs.pluginInterfaceBranchName }},${{ github.event.inputs.pluginInterfaceRepoOwnerName }}" > modules.txt
             - name: Contents of modules.txt
