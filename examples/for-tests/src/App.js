@@ -217,6 +217,7 @@ let recipeList = [
                     generalError: true,
                 };
 
+                ctx.requestInit.headers["Content-Type"] = "application/json";
                 ctx.requestInit.body = JSON.stringify(jsonBody);
             }
 

@@ -47,6 +47,7 @@ import {
     TEST_CLIENT_BASE_URL,
     RESET_PASSWORD_TOKEN_API,
     SEND_VERIFY_EMAIL_API,
+    SIGN_OUT_API,
 } from "../constants";
 
 describe("General error rendering", function () {
@@ -269,6 +270,43 @@ describe("General error rendering", function () {
             });
 
             generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response1.message);
+        });
+
+        it("Test general error during sign out", async function () {
+            await toggleSignInSignUp(page);
+            await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "SESSION SIGN_OUT"));
+
+            const rid = "emailpassword";
+            await signUp(
+                page,
+                [
+                    { name: "email", value: "john.doe2@supertokens.io" },
+                    { name: "password", value: "Str0ngP@ssw0rd" },
+                    { name: "name", value: "John Doe" },
+                    { name: "age", value: "20" },
+                ],
+                '{"formFields":[{"id":"email","value":"john.doe2@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+                rid
+            );
+
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+
+            await logoutFromEmailVerification(page);
+
+            let response1 = await page.waitForResponse(
+                (response) => response.url() === SIGN_OUT_API && response.status() === 200
+            );
+
+            response1 = await response1.json();
+
+            assert.deepStrictEqual(response1, {
+                status: "GENERAL_ERROR",
+                message: "general error from signout API",
+            });
+
+            const generalError = await getGeneralError(page);
             assert.strictEqual(generalError, response1.message);
         });
     });

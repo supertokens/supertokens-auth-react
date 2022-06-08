@@ -409,16 +409,14 @@ function initST({ passwordlessConfig } = {}) {
                     return {
                         ...originalImplementation,
                         signOutPOST: async (input) => {
-                            console.log(input.options.req);
                             let body = await input.options.req.getJSONBody();
-                            console.log("BODY", body);
                             if (body.generalError === true) {
                                 return {
                                     status: "GENERAL_ERROR",
-                                    message: "general error from API",
+                                    message: "general error from signout API",
                                 };
                             }
-                            // return originalImplementation.signOutPOST(input);
+                            return originalImplementation.signOutPOST(input);
                         },
                     };
                 },
