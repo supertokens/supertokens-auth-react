@@ -40,7 +40,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     const userContext = useUserContext();
     const [showButton, setRequiresInteraction] = useState<boolean>(false);
 
-    const consumeCode = useCallback(async () => {
+    const consumeCodeAtMount = useCallback(async () => {
         const preAuthSessionId = getQueryParams("preAuthSessionId");
         const linkCode = getURLHash();
 
@@ -64,7 +64,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     }, [props.recipe, props.history]);
 
     const handleConsumeResp = useCallback(
-        async (response: Awaited<ReturnType<typeof consumeCode>>): Promise<void> => {
+        async (response: Awaited<ReturnType<typeof consumeCodeAtMount>>): Promise<void> => {
             if (response === "REQUIRES_INTERACTION") {
                 // We set this here, to make sure it's set after a possible remount
                 setRequiresInteraction(true);
@@ -117,7 +117,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         },
         [props.recipe, props.history]
     );
-    useOnMountAPICall(consumeCode, handleConsumeResp, handleConsumeError);
+    useOnMountAPICall(consumeCodeAtMount, handleConsumeResp, handleConsumeError);
 
     const componentOverrides = props.recipe.config.override.components;
 

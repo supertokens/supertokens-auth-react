@@ -17,7 +17,7 @@
  */
 /** @jsx jsx */
 import { jsx } from "@emotion/react";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
@@ -28,6 +28,7 @@ import { Button } from "../../../../emailpassword/components/library";
 const PasswordlessLinkClickedScreen: React.FC<LinkClickedScreenProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
+    const [loading, setLoading] = useState(false);
 
     return (
         <div data-supertokens="container" css={styles.container}>
@@ -44,8 +45,11 @@ const PasswordlessLinkClickedScreen: React.FC<LinkClickedScreenProps> = (props) 
                         </div>
                         <div data-supertokens="continueButtonWrapper" css={styles.continueButtonWrapper}>
                             <Button
-                                isLoading={false}
-                                onClick={props.consumeCode}
+                                isLoading={loading}
+                                onClick={() => {
+                                    setLoading(true);
+                                    props.consumeCode();
+                                }}
                                 type="button"
                                 label={"PWLESS_LINK_CLICKED_CONTINUE_BUTTON"}
                             />

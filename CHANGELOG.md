@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--   Consuming codes on a device different from the one that created it
+-   Showing a confirmation button before consuming a passwordless link if there is no stored login attempt info or if it doesn't match the link
 -   Adds an example app with Email Verification with OTP
 
 ## [0.22.0] - 2022-06-03
