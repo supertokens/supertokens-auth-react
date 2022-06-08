@@ -75,10 +75,11 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified);
 
     const signOut = useCallback(async (): Promise<void> => {
-        try {
-            await props.recipe.config.signOut();
-            return await props.recipe.config.redirectToSignIn(props.history);
-        } catch (e) {}
+        await props.recipe.config.signOut();
+    }, [props.recipe]);
+
+    const navigateAfterSignOut = useCallback(async (): Promise<void> => {
+        return await props.recipe.config.redirectToSignIn(props.history);
     }, [props.recipe]);
 
     const onTokenInvalidRedirect = useCallback(
@@ -107,6 +108,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         recipeImplementation: modifiedRecipeImplementation,
         config: props.recipe.config,
         signOut: signOut,
+        navigateAfterSignOut: navigateAfterSignOut,
         onEmailAlreadyVerified: onEmailAlreadyVerified,
     };
 

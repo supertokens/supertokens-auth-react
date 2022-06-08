@@ -69,6 +69,7 @@ export declare type SendVerifyEmailThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signOut: () => Promise<void>;
+    navigateAfterSignOut: () => Promise<void>;
     onEmailAlreadyVerified: () => Promise<void>;
 };
 export declare type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {

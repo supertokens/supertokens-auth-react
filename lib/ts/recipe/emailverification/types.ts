@@ -100,6 +100,7 @@ export type SendVerifyEmailThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     signOut: () => Promise<void>;
+    navigateAfterSignOut: () => Promise<void>;
     onEmailAlreadyVerified: () => Promise<void>;
 };
 
