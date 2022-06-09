@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Updates the example app for ThirdPartyEmailPassword + Passwordless login with SuperTokens
+
 ### CI changes
 
 -   Only running React 16 tests on CircleCI (when an explicit envvar is set)
