@@ -182,14 +182,14 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             margin: "0 auto",
         },
 
+        backButtonContainer: {
+            paddingBottom: "30px",
+        },
+
         backButtonWithLeftArrow: {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            position: "absolute",
-            bottom: "-52px",
-            left: "50%",
-            transform: "translateX(-50%)",
             padding: "0px 3px",
             cursor: "pointer",
             lineHeight: "26px",
@@ -198,7 +198,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             letterSpacing: "0.4px",
             backgroundColor: "transparent",
             border: "none",
-            margin: "26px auto 0px",
+            margin: "0px auto",
             fontFamily: "inherit",
             "& svg": {
                 transform: "translateX(0px)",
@@ -210,11 +210,6 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             "& span": {
                 marginLeft: "4px",
             },
-        },
-
-        relativeContainer: {
-            position: "relative",
-            marginBottom: "78px",
         },
     } as NormalisedDefaultStyles;
     return getMergedStyles(baseStyles, recipeStyles);

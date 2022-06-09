@@ -41,9 +41,11 @@ export default function BackToSignInButton({ onClick }: ButtonProps): JSX.Elemen
     const styles = useContext(StyleContext);
 
     return (
-        <button data-supertokens="backButtonWithLeftArrow" css={styles.backButtonWithLeftArrow} onClick={onClick}>
-            <ArrowLeftIcon color={styles.palette.colors.secondaryText} />
-            <span>{t("EMAIL_PASSWORD_RESET_SIGN_IN_LINK")}</span>
-        </button>
+        <div data-supertokens="backButtonContainer" css={styles.backButtonContainer}>
+            <button data-supertokens="backButtonWithLeftArrow" css={styles.backButtonWithLeftArrow} onClick={onClick}>
+                <ArrowLeftIcon color={styles.palette.colors.secondaryText} />
+                <span>{t("EMAIL_PASSWORD_RESET_SIGN_IN_LINK")}</span>
+            </button>
+        </div>
     );
 }

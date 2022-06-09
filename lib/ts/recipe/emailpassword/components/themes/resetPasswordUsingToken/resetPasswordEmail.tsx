@@ -45,7 +45,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
 
     if (status === "SENT") {
         return (
-            <div data-supertokens="container relativeContainer" css={[styles.container, styles.relativeContainer]}>
+            <div data-supertokens="container" css={styles.container}>
                 <div data-supertokens="row" css={styles.row}>
                     <div
                         data-supertokens="primaryText enterEmailSuccessMessage"
