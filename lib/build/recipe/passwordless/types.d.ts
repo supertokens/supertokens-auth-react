@@ -193,6 +193,8 @@ export declare type SignInUpUserInputCodeFormProps = {
 export declare type LinkClickedScreenProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
+    requireUserInteraction: boolean;
+    consumeCode: () => void;
     onSuccess?: () => void;
 };
 export declare type CloseTabScreenProps = {

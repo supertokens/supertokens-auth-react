@@ -1,4 +1,3 @@
-/// <reference types="react" />
-/// <reference types="@emotion/react/types/css-prop" />
+import React from "react";
 import { LinkClickedScreenProps } from "../../../types";
-export declare const LinkClickedScreen: import("react").ComponentType<LinkClickedScreenProps>;
+export declare const LinkClickedScreen: React.ComponentType<React.PropsWithChildren<LinkClickedScreenProps>>;
