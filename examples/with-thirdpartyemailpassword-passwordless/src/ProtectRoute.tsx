@@ -1,3 +1,4 @@
+import React from "react";
 import { SessionAuth, useSessionContext } from "supertokens-auth-react/recipe/session";
 import { PasswordlessAuth } from "supertokens-auth-react/recipe/passwordless";
 import { ThirdPartyEmailPasswordAuth } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
