@@ -26,6 +26,7 @@ import { validateForm } from "../../../../../utils";
 import GeneralError from "../../library/generalError";
 import { useUserContext } from "../../../../../usercontext";
 import BackToSignInButton from "../../library/backToSignInButton";
+import BackButton from "../../library/backButton";
 
 const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -79,6 +80,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
                 <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                    <BackButton onClick={props.handleBackButtonClick} />
                     {t("EMAIL_PASSWORD_RESET_HEADER_TITLE")}
                 </div>
                 <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>

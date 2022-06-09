@@ -370,6 +370,7 @@ export type EnterEmailProps = FormThemeBaseProps & {
     clearError: () => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
+    handleBackButtonClick: () => void;
 };
 
 export type SubmitNewPasswordProps = FormThemeBaseProps & {

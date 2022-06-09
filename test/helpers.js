@@ -694,3 +694,9 @@ export function setPasswordlessFlowType(contactMethod, flowType) {
 export function isReact16() {
     return process.env.IS_REACT_16 === "true";
 }
+
+export async function getResetPasswordFormBackButton(page) {
+    const backButtonSelector = "[data-supertokens='headerTitle'] > [data-supertokens='backButton']";
+
+    return await waitForSTElement(page, backButtonSelector);
+}
