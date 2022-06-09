@@ -1,4 +1,4 @@
-export default function Logout(props) {
+export default function Logout(props: { logoutClicked: () => Promise<void> }) {
     let logoutClicked = props.logoutClicked;
 
     return (

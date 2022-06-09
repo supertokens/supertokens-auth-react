@@ -10,7 +10,7 @@ import { ThirdPartyEmailPasswordAuth } from "supertokens-auth-react/recipe/third
  * during session creation.
  */
 
-export default function ProtectRoute(props) {
+export default function ProtectRoute(props: any) {
     return (
         <SessionAuth>
             <AuthWrapperSelector {...props} />
@@ -18,7 +18,7 @@ export default function ProtectRoute(props) {
     );
 }
 
-function AuthWrapperSelector(props) {
+function AuthWrapperSelector(props: any) {
     let sessionInfo = useSessionContext();
     if (sessionInfo.accessTokenPayload.isPasswordless === true) {
         return <PasswordlessAuth {...props}>{props.children}</PasswordlessAuth>;
