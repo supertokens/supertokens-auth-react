@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 -   Showing a confirmation button before consuming a passwordless link if there is no stored login attempt info or if it doesn't match the link
+-   Showing a confirmation button before consuming an email verification token if there is no active session to prevent mail scanners validating the email address
 -   Adds an example app with Email Verification with OTP
 
 ### CI changes
