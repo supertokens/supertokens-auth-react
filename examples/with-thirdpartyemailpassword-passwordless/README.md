@@ -10,7 +10,6 @@ This demo app demonstrates the following use cases:
 -   Forgot password flow
 -   Logout
 -   Session management & Calling APIs
--   Account linking across all login methods
 
 ## Project setup
 
@@ -32,15 +31,15 @@ The app will start on `http://localhost:3000`
 
 If you would like to modify the website (http://localhost:3000) or the API server (http://localhost:3001) URL:
 
--   Change the `apiPort` or `apiDomain` values in `api-server/index.js`
--   Change the `apiPort` or `apiUrl` values in `src/App.js`
--   Change the `websitePort` or `websiteDomain` values in `api-server/index.js`
--   Change the `websitePort` or `websiteUrl` values in `src/App.js`
+-   Change the `apiPort` or `apiDomain` values in `api-server/index.ts`
+-   Change the `apiPort` or `apiUrl` values in `src/App.tsx`
+-   Change the `websitePort` or `websiteDomain` values in `api-server/index.ts`
+-   Change the `websitePort` or `websiteUrl` values in `src/App.tsx`
 
 ## Project structure & Parameters
 
 -   The frontend code is located in the `src` folder.
--   The backend API is in the `api-server/index.js` file.
+-   The backend API is in the `api-server/index.ts` file.
 
 ## Production build
 
