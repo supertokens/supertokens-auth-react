@@ -36,8 +36,9 @@ export const defaultTranslationsEmailPassword = {
         EMAIL_PASSWORD_RESET_HEADER_TITLE: "Reset your password",
         EMAIL_PASSWORD_RESET_HEADER_SUBTITLE: "We will send you an email to reset your password",
         EMAIL_PASSWORD_RESET_SEND_SUCCESS: "Please check your email for the password recovery link. ",
-        EMAIL_PASSWORD_RESET_RESEND_LINK: "Resend",
+        EMAIL_PASSWORD_RESET_RESEND_LINK: "Resend or change email",
         EMAIL_PASSWORD_RESET_SEND_BTN: "Email me",
+        EMAIL_PASSWORD_RESET_SIGN_IN_LINK: "Sign In",
 
         EMAIL_PASSWORD_RESET_SUBMIT_PW_SUCCESS_HEADER_TITLE: "Success!",
         EMAIL_PASSWORD_RESET_SUBMIT_PW_SUCCESS_DESC: "Your password has been updated successfully",

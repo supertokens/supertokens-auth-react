@@ -181,6 +181,41 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             maxWidth: "96px",
             margin: "0 auto",
         },
+
+        backButtonWithLeftArrow: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            bottom: "-52px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            padding: "0px 3px",
+            cursor: "pointer",
+            lineHeight: "26px",
+            fontSize: "14px",
+            fontWeight: "300",
+            letterSpacing: "0.4px",
+            backgroundColor: "transparent",
+            border: "none",
+            margin: "26px auto 0px",
+            fontFamily: "inherit",
+            "& svg": {
+                transform: "translateX(0px)",
+                transition: "transform .25s ease-out",
+            },
+            "&:hover svg": {
+                transform: "translateX(-5px)",
+            },
+            "& span": {
+                marginLeft: "4px",
+            },
+        },
+
+        relativeContainer: {
+            position: "relative",
+            marginBottom: "78px",
+        },
     } as NormalisedDefaultStyles;
     return getMergedStyles(baseStyles, recipeStyles);
 }

@@ -25,12 +25,14 @@ import { useTranslation } from "../../../../../translation/translationContext";
 import { validateForm } from "../../../../../utils";
 import GeneralError from "../../library/generalError";
 import { useUserContext } from "../../../../../usercontext";
+import BackToSignInButton from "../../library/backToSignInButton";
 
 const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
     const userContext = useUserContext();
-    const [status, setStatus] = useState<EnterEmailStatus>("READY");
+    // TODO: change back to "READY"
+    const [status, setStatus] = useState<EnterEmailStatus>("SENT");
 
     const onSuccess = (): void => {
         setStatus("SENT");
@@ -43,7 +45,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
 
     if (status === "SENT") {
         return (
-            <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="container relativeContainer" css={[styles.container, styles.relativeContainer]}>
                 <div data-supertokens="row" css={styles.row}>
                     <div
                         data-supertokens="primaryText enterEmailSuccessMessage"
@@ -54,6 +56,8 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                         </span>
                     </div>
                 </div>
+
+                <BackToSignInButton onClick={() => false} />
             </div>
         );
     }
