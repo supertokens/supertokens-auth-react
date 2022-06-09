@@ -190,7 +190,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            padding: "0px 3px",
+            padding: "0px",
             cursor: "pointer",
             lineHeight: "26px",
             fontSize: "14px",

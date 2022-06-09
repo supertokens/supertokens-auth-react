@@ -31,8 +31,8 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
     const userContext = useUserContext();
-    // TODO: change back to "READY"
-    const [status, setStatus] = useState<EnterEmailStatus>("SENT");
+    const [status, setStatus] = useState<EnterEmailStatus>("READY");
+    const [emailFieldValue, setEmailFieldValue] = useState<string>("");
 
     const onSuccess = (): void => {
         setStatus("SENT");
@@ -43,6 +43,18 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     };
     const { formFields } = props;
 
+    const getEmailSuccessText = (): string => {
+        if (emailFieldValue.length > 0) {
+            return (
+                t("EMAIL_PASSWORD_RESET_SEND_SUCCESS_BEFORE_EMAIL") +
+                emailFieldValue +
+                t("EMAIL_PASSWORD_RESET_SEND_SUCCESS_AFTER_EMAIL")
+            );
+        }
+
+        return t("EMAIL_PASSWORD_RESET_SEND_SUCCESS_FALLBACK");
+    };
+
     if (status === "SENT") {
         return (
             <div data-supertokens="container" css={styles.container}>
@@ -50,7 +62,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                     <div
                         data-supertokens="primaryText enterEmailSuccessMessage"
                         css={[styles.primaryText, styles.enterEmailSuccessMessage]}>
-                        {t("EMAIL_PASSWORD_RESET_SEND_SUCCESS")}
+                        {getEmailSuccessText()}
                         <span data-supertokens="link" css={styles.link} onClick={resend}>
                             {t("EMAIL_PASSWORD_RESET_RESEND_LINK")}
                         </span>
@@ -92,6 +104,14 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                                 status: "FIELD_ERROR",
                                 formFields: validationErrors,
                             };
+                        }
+
+                        const emailField = formFields.find((field) => {
+                            return field.id === "email";
+                        });
+
+                        if (emailField !== null && emailField !== undefined) {
+                            setEmailFieldValue(emailField.value);
                         }
 
                         return await props.recipeImplementation.sendPasswordResetEmail({
