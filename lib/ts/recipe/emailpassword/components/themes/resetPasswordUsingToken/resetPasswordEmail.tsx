@@ -64,13 +64,16 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                         data-supertokens="primaryText enterEmailSuccessMessage"
                         css={[styles.primaryText, styles.enterEmailSuccessMessage]}>
                         {getEmailSuccessText()}
-                        <span data-supertokens="link" css={styles.link} onClick={resend}>
+                        <span
+                            data-supertokens="link resendEmailLink"
+                            css={[styles.link, styles.resendEmailLink]}
+                            onClick={resend}>
                             {t("EMAIL_PASSWORD_RESET_RESEND_LINK")}
                         </span>
                     </div>
                 </div>
 
-                <BackToSignInButton onClick={() => false} />
+                <BackToSignInButton onClick={props.handleBackButtonClick} />
             </div>
         );
     }

@@ -233,6 +233,10 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             width: "15.7px",
             height: "13.1px",
         },
+
+        resendEmailLink: {
+            display: "inline-block",
+        },
     } as NormalisedDefaultStyles;
     return getMergedStyles(baseStyles, recipeStyles);
 }
