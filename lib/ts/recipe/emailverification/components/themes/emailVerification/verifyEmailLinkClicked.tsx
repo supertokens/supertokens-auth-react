@@ -49,7 +49,8 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
 
     const verifyEmailOnMount = useCallback(async () => {
         // If there is no active session we know that the verification was started elsewhere, since it requires a session
-        // otherwise we assume it's the same session. The main purpose of this is to
+        // otherwise we assume it's the same session. The main purpose of this is to prevent mail scanners
+        // from accidentally validating an email address
         if (!doesSessionExist) {
             return "INTERACTION_REQUIRED";
         }
@@ -109,7 +110,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
                         css={[styles.headerSubtitle, styles.secondaryText]}>
                         {t("EMAIL_VERIFICATION_LINK_CLICKED_DESC")}
                     </div>
-                    {/* We are not adding a emailVerificationButtonWrapper because headerSubtitle already has a margin */}
+                    {/* We are not adding an emailVerificationButtonWrapper because headerSubtitle already has a margin */}
                     <Button
                         isLoading={verifyLoading}
                         onClick={async () => {
