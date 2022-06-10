@@ -66,6 +66,9 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                 <div data-supertokens="headerTitle" css={styles.headerTitle}>
                     <BackButton onClick={props.handleBackButtonClick} />
                     {t("EMAIL_PASSWORD_RESET_HEADER_TITLE")}
+                    <span data-supertokens="backButtonPlaceholder" css={styles.backButtonPlaceholder}>
+                        {/* empty span for spacing the back button */}
+                    </span>
                 </div>
                 <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
                     <div data-supertokens="secondaryText" css={styles.secondaryText}>
