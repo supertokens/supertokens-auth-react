@@ -346,7 +346,11 @@ export async function getCookieValue(name: string): Promise<string | null> {
 }
 
 // undefined value will remove the cookie
-export function setFrontendCookie(name: string, value: string | undefined, scope: string | undefined): void {
+export async function setFrontendCookie(
+    name: string,
+    value: string | undefined,
+    scope: string | undefined
+): Promise<void> {
     let expires: string | undefined = "Thu, 01 Jan 1970 00:00:01 GMT";
     let cookieVal = "";
     if (value !== undefined) {
@@ -361,21 +365,21 @@ export function setFrontendCookie(name: string, value: string | undefined, scope
         // since some browsers ignore cookies with domain set to localhost
         // see https://github.com/supertokens/supertokens-website/issues/25
         if (expires !== undefined) {
-            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            await CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookie(
                 `${name}=${cookieVal};expires=${expires};path=/;samesite=lax`
             );
         } else {
-            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            await CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookie(
                 `${name}=${cookieVal};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`
             );
         }
     } else {
         if (expires !== undefined) {
-            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            await CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookie(
                 `${name}=${cookieVal};expires=${expires};domain=${scope};path=/;samesite=lax`
             );
         } else {
-            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            await CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookie(
                 `${name}=${cookieVal};domain=${scope};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`
             );
         }

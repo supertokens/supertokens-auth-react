@@ -52,9 +52,9 @@ export class TranslationController implements TranslationControlEventSource {
 
 const CURRENT_LANGUAGE_COOKIE_NAME = "sCurrLanguage";
 
-export function saveCurrentLanguage(language: string, cookieDomain: string | undefined): void {
+export async function saveCurrentLanguage(language: string, cookieDomain: string | undefined): Promise<void> {
     try {
-        setFrontendCookie(CURRENT_LANGUAGE_COOKIE_NAME, language, cookieDomain);
+        await setFrontendCookie(CURRENT_LANGUAGE_COOKIE_NAME, language, cookieDomain);
     } catch {
         // This can throw if we are not in a browser
         // Since this is just saving a preference we can safely ignore the exception

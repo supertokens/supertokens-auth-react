@@ -6,7 +6,7 @@ export default class SuperTokensAPIWrapper {
     static init(config: SuperTokensConfig): void;
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
-    static changeLanguage(language: string): void;
+    static changeLanguage(language: string): Promise<void>;
     static loadTranslation(store: TranslationStore): void;
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[];
     static useTranslation: () => import("./translation/translationHelpers").TranslationFunc;

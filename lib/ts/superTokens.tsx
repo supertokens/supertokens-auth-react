@@ -257,10 +257,10 @@ export default class SuperTokens {
         return SuperTokens.reactRouterDom;
     };
 
-    changeLanguage(lang: string): void {
-        saveCurrentLanguage(lang, this.languageTranslations.currentLanguageCookieScope);
+    changeLanguage = async (lang: string): Promise<void> => {
+        await saveCurrentLanguage(lang, this.languageTranslations.currentLanguageCookieScope);
         this.languageTranslations.translationEventSource.emit("LanguageChange", lang);
-    }
+    };
 
     loadTranslation(store: TranslationStore): void {
         this.languageTranslations.translationEventSource.emit("TranslationLoaded", store);
