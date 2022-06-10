@@ -182,7 +182,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             margin: "0 auto",
         },
 
-        headerTitle: {
+        resetPasswordHeaderTitle: {
             position: "relative",
             display: "flex",
             justifyContent: "space-between",
