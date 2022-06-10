@@ -8,7 +8,6 @@ import {
     TranslationStore,
 } from "./translationHelpers";
 import { mergeObjects } from "../utils";
-import assert from "assert";
 
 const errCB = () => {
     throw new Error("Cannot use translation func outside TranslationContext provider.");
@@ -37,9 +36,9 @@ export const TranslationContextProvider: React.FC<
             let cookieLang = await getCurrentLanguageFromCookie();
             cookieLang = cookieLang === null ? defaultLanguage : cookieLang;
 
-            setCurrentLanguage(cookieLang);
+            setCurrentLanguage((current) => (current !== undefined ? current : (cookieLang as string)));
         },
-        [defaultLanguage]
+        [defaultLanguage, setCurrentLanguage]
     );
 
     useEffect(() => {
@@ -55,8 +54,7 @@ export const TranslationContextProvider: React.FC<
         translationControlEventSource.on("LanguageChange", changeHandler);
         translationControlEventSource.on("TranslationLoaded", loadHandler);
 
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        loadLanguageFromCookies();
+        void loadLanguageFromCookies();
 
         return () => {
             translationControlEventSource.off("LanguageChange", changeHandler);
@@ -70,19 +68,21 @@ export const TranslationContextProvider: React.FC<
                 return userTranslationFunc(key);
             }
 
-            assert(currentLanguage !== undefined);
+            if (currentLanguage !== undefined) {
+                const res = translationStore[currentLanguage] && translationStore[currentLanguage][key];
+                const fallback = translationStore[defaultLanguage] && translationStore[defaultLanguage][key];
 
-            const res = translationStore[currentLanguage!] && translationStore[currentLanguage!][key];
-            const fallback = translationStore[defaultLanguage] && translationStore[defaultLanguage][key];
-
-            if (res === undefined) {
-                if (fallback !== undefined) {
-                    return fallback;
+                if (res === undefined) {
+                    if (fallback !== undefined) {
+                        return fallback;
+                    }
+                    return key;
                 }
-                return key;
+
+                return res;
             }
 
-            return res;
+            throw new Error("Should never come here");
         },
         [translationStore, currentLanguage, defaultLanguage, userTranslationFunc]
     );
