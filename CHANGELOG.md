@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Showing a confirmation button before consuming a passwordless link if there is no stored login attempt info or if it doesn't match the link
 -   Adds an example app with Email Verification with OTP
+-   Updates the example app for ThirdPartyEmailPassword + Passwordless login with SuperTokens
 
 ### CI changes
 
