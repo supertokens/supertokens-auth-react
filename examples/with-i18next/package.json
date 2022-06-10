@@ -16,7 +16,7 @@
         "react-dom": "^18.0.0",
         "react-router-dom": "^6.2.1",
         "react-scripts": "4.0.0",
-        "supertokens-auth-react": "^0.21.2",
+        "supertokens-auth-react": "github:supertokens/supertokens-auth-react#storage-refactor",
         "supertokens-node": "^9.2.0",
         "web-vitals": "^0.2.4"
     },

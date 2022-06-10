@@ -330,7 +330,7 @@ export function getDefaultCookieScope(): string | undefined {
 }
 
 export async function getCookieValue(name: string): Promise<string | null> {
-    const value = "; " + CookieHandlerReference.getReferenceOrThrow().cookieHandler.getCookie();
+    const value = "; " + (await CookieHandlerReference.getReferenceOrThrow().cookieHandler.getCookie());
     const parts = value.split("; " + name + "=");
     if (parts.length >= 2) {
         const last = parts.pop();
