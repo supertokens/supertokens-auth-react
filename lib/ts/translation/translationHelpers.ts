@@ -61,9 +61,9 @@ export function saveCurrentLanguage(language: string, cookieDomain: string | und
     }
 }
 
-export function getCurrentLanguageFromCookie(): string | null {
+export async function getCurrentLanguageFromCookie(): Promise<string | null> {
     try {
-        return getCookieValue(CURRENT_LANGUAGE_COOKIE_NAME);
+        return await getCookieValue(CURRENT_LANGUAGE_COOKIE_NAME);
     } catch {
         // This can throw if we are not in a browser
         // Since this is just loading a preference we can safely ignore the exception

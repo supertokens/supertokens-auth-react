@@ -22,4 +22,4 @@ export declare class TranslationController implements TranslationControlEventSou
     off<K extends keyof TranslationEventMap>(event: K, handler: TranslationEventHandler<K>): void;
 }
 export declare function saveCurrentLanguage(language: string, cookieDomain: string | undefined): void;
-export declare function getCurrentLanguageFromCookie(): string | null;
+export declare function getCurrentLanguageFromCookie(): Promise<string | null>;

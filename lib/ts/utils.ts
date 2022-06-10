@@ -329,8 +329,8 @@ export function getDefaultCookieScope(): string | undefined {
     }
 }
 
-export function getCookieValue(name: string): string | null {
-    const value = "; " + CookieHandlerReference.getReferenceOrThrow().cookieHandler.getCookieSync();
+export async function getCookieValue(name: string): Promise<string | null> {
+    const value = "; " + CookieHandlerReference.getReferenceOrThrow().cookieHandler.getCookie();
     const parts = value.split("; " + name + "=");
     if (parts.length >= 2) {
         const last = parts.pop();
