@@ -48,11 +48,13 @@ export const useFeatureReducer = (recipe: Recipe | undefined) => {
                 case "setSignIn":
                     return {
                         ...oldState,
+                        error: undefined,
                         isSignUp: false,
                     };
                 case "setSignUp":
                     return {
                         ...oldState,
+                        error: undefined,
                         isSignUp: true,
                     };
                 case "setError":

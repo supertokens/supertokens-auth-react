@@ -39,11 +39,19 @@ import {
     getLoginWithRedirectToSignUp,
     screenshotOnFailure,
     isReact16,
+    getGeneralError,
+    waitForSTElement,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { EMAIL_EXISTS_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import {
+    EMAIL_EXISTS_API,
+    SIGN_UP_API,
+    SOMETHING_WENT_WRONG_ERROR,
+    TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
+} from "../constants";
 
 /*
  * Tests.
@@ -276,5 +284,76 @@ describe("SuperTokens SignUp", function () {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
             ]);
         });
+    });
+});
+
+describe("SuperTokens SignUp => Server Error", function () {
+    let browser;
+    let page;
+    let consoleLogs;
+
+    before(async function () {
+        browser = await puppeteer.launch({
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            headless: true,
+        });
+    });
+
+    after(async function () {
+        await browser.close();
+    });
+
+    beforeEach(async function () {
+        page = await browser.newPage();
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
+        page.on("console", (consoleObj) => {
+            const log = consoleObj.text();
+            if (log.startsWith("ST_LOGS")) {
+                consoleLogs.push(log);
+            }
+        });
+        await toggleSignInSignUp(page);
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
+    });
+
+    it("Server Error shows Something went wrong general error", async function () {
+        await setInputValues(page, [
+            { name: "email", value: "john.doe@supertokens.io" },
+            { name: "password", value: "Str0ngP@ssw0rd" },
+            { name: "name", value: "John Doe" },
+            { name: "age", value: "20" },
+        ]);
+        await submitForm(page);
+
+        await page.waitForResponse((response) => {
+            return response.url() === SIGN_UP_API && response.status() === 500;
+        });
+
+        // Assert server Error
+        const generalError = await getGeneralError(page);
+        assert.strictEqual(generalError, SOMETHING_WENT_WRONG_ERROR);
+    });
+
+    it("should clear errors when switching to sign in", async function () {
+        await setInputValues(page, [
+            { name: "email", value: "john.doe@supertokens.io" },
+            { name: "password", value: "Str0ngP@ssw0rd" },
+            { name: "name", value: "John Doe" },
+            { name: "age", value: "20" },
+        ]);
+        await submitForm(page);
+
+        await page.waitForResponse((response) => {
+            return response.url() === SIGN_UP_API && response.status() === 500;
+        });
+
+        // Assert server Error
+        const generalError = await getGeneralError(page);
+        assert.strictEqual(generalError, SOMETHING_WENT_WRONG_ERROR);
+        await toggleSignInSignUp(page);
+        await waitForSTElement(page, "[data-supertokens~=generalError]", true);
     });
 });
