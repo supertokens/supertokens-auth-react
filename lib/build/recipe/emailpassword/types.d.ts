@@ -200,6 +200,7 @@ export declare type EnterEmailProps = FormThemeBaseProps & {
     clearError: () => void;
     onError: (error: string) => void;
     config: NormalisedConfig;
+    handleBackButtonClick: () => void;
 };
 export declare type SubmitNewPasswordProps = FormThemeBaseProps & {
     recipeImplementation: RecipeInterface;
