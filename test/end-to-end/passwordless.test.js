@@ -33,6 +33,7 @@ import {
     screenshotOnFailure,
     setPasswordlessFlowType,
     isReact16,
+    clickOnPasswordlessResendButton,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -143,6 +144,67 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                     `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
                     `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                ]);
+            });
+
+            it("Successful signin when clicking on resend code", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: exampleEmail }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                const ogLoginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const ogDevice = await getPasswordlessDevice(ogLoginAttemptInfo);
+                assert.deepStrictEqual(ogDevice.codes.length, 1);
+
+                // we wait for the resend button to show
+                await new Promise((r) => setTimeout(r, 2500));
+                await clickOnPasswordlessResendButton(page);
+
+                // we wait for API to complete
+                await new Promise((r) => setTimeout(r, 1000));
+                const newLoginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const newDevice = await getPasswordlessDevice(newLoginAttemptInfo);
+                assert.deepStrictEqual(newDevice.codes.length, 2);
+                assert.notDeepEqual(newDevice.codes[0].userInputCode, newDevice.codes[1].userInputCode);
+
+                await setInputValues(page, [{ name: "userInputCode", value: newDevice.codes[1].userInputCode }]);
+                await submitForm(page);
+
+                await page.waitForSelector(".sessionInfo-user-id");
+
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    ...signInUpPageLoadLogs,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE RESEND_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_RESEND_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
                     `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
