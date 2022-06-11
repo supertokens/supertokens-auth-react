@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.22.2] - 2022-06-11
+
 ### Changes
 
 -   Clearing errors when switching between sign-in and up
