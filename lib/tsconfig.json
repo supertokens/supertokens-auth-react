@@ -17,6 +17,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noImplicitReturns": true,
+        "importHelpers": true,
         "noFallthroughCasesInSwitch": true,
         "types": ["node", "react", "@emotion/react/types/css-prop"]
     },
