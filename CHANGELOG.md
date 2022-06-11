@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Clearing errors when switching between sign-in and up
+
 ## [0.22.1] - 2022-06-11
 
 -   Updates the example app for ThirdPartyEmailPassword + Passwordless login with SuperTokens
