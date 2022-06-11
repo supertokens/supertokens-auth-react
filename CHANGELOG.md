@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Only running React 16 tests on CircleCI (when an explicit envvar is set)
 -   Adds an example app with Email Verification with OTP
 
+### Build changes
+
+-   Updated typescript to latest
+-   Using tsconfig to set jsx import source instead of pragma comments
+-   Updated react-shadow
+
 ## [0.22.0] - 2022-06-03
 
 -   Adds a SuperTokens + Supabase example app
