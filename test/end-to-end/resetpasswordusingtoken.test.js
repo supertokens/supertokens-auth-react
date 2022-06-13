@@ -124,10 +124,6 @@ describe("SuperTokens Reset password", function () {
         it("Should redirect to Sign In screen when back button is clicked", async function () {
             const backButton = await getResetPasswordFormBackButton(page);
 
-            // assert that the back button exists
-            assert.notEqual(backButton, null);
-            assert.notEqual(backButton, undefined);
-
             await backButton.click();
 
             await waitForSTElement(page);

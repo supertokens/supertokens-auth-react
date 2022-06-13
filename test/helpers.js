@@ -697,7 +697,7 @@ export function isReact16() {
 
 export async function getResetPasswordFormBackButton(page) {
     const backButtonSelector =
-        "[data-supertokens='headerTitle resetPasswordHeaderTitle'] > [data-supertokens='backButton']";
+        "[data-supertokens='headerTitle resetPasswordHeaderTitle'] > [data-supertokens='backButton backButtonCommon']";
 
     return await waitForSTElement(page, backButtonSelector);
 }
