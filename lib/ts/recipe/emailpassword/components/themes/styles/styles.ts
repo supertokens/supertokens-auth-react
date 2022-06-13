@@ -190,8 +190,8 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
 
         backButtonCommon: {
-            height: "13.1px",
-            width: "15.7px",
+            width: "16px",
+            height: "13px",
         },
 
         backButton: {
