@@ -189,19 +189,20 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             alignItems: "center",
         },
 
+        backButtonCommon: {
+            height: "13.1px",
+            width: "15.7px",
+        },
+
         backButton: {
             cursor: "pointer",
             border: "none",
             backgroundColor: "transparent",
-            width: "15.7px",
-            height: "13.1px",
             padding: "0px",
         },
 
         backButtonPlaceholder: {
             display: "block",
-            width: "15.7px",
-            height: "13.1px",
         },
     } as NormalisedDefaultStyles;
     return getMergedStyles(baseStyles, recipeStyles);

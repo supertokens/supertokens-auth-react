@@ -40,7 +40,10 @@ export default function BackButton({ onClick }: ButtonProps): JSX.Element {
     const styles = useContext(StyleContext);
 
     return (
-        <button onClick={onClick} css={styles.backButton} data-supertokens="backButton">
+        <button
+            onClick={onClick}
+            css={[styles.backButton, styles.backButtonCommon]}
+            data-supertokens="backButton backButtonCommon">
             <HeavyArrowLeftIcon color={styles.palette.colors.textTitle} />
         </button>
     );
