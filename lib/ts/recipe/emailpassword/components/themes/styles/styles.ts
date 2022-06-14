@@ -181,33 +181,16 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             margin: "0 auto",
         },
 
-        backButtonContainer: {
-            paddingBottom: "30px",
-        },
-
-        backButtonWithLeftArrow: {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "0px",
+        secondaryLinkWithLeftArrow: {
+            marginTop: "10px",
+            marginBottom: "40px",
             cursor: "pointer",
-            lineHeight: "26px",
-            fontSize: "14px",
-            fontWeight: "300",
-            letterSpacing: "0.4px",
-            backgroundColor: "transparent",
-            border: "none",
-            margin: "0px auto",
-            fontFamily: "inherit",
             "& svg": {
-                transform: "translateX(0px)",
-                transition: "transform .25s ease-out",
+                marginRight: "0.3em",
             },
             "&:hover svg": {
-                transform: "translateX(-5px)",
-            },
-            "& span": {
-                marginLeft: "4px",
+                position: "relative",
+                left: "-4px",
             },
         },
 

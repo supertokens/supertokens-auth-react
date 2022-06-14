@@ -62,9 +62,8 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                             {t("EMAIL_PASSWORD_RESET_RESEND_LINK")}
                         </span>
                     </div>
+                    <BackToSignInButton onClick={props.onBackButtonClicked} />
                 </div>
-
-                <BackToSignInButton onClick={props.onBackButtonClicked} />
             </div>
         );
     }
