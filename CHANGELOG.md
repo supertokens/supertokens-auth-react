@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Showing a confirmation button before consuming an email verification token if there is no active session to prevent mail scanners validating the email address
 -   Adds an example app with Email Verification with OTP
 
+### Added
+
+-   The reset password form has a back button which takes the user back to the 'Sign in' form in `emailpassword` and `thirdpartyemailpassword` recipes.
+
 ## [0.22.3] - 2022-06-14
 
 ### Build changes
@@ -107,7 +111,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Session recipe now uses supertokens-web-js internally (previously used supertokens-website)
 -   All recipes now include a `postAPIHook` configuration parameter that can be used to respond to network actions.
 -   General error handling for email verification components
--   The reset password form has a back button which takes the user back to the 'Sign in' form in `emailpassword` and `thirdpartyemailpassword` recipes.
 
 ### Breaking changes
 
