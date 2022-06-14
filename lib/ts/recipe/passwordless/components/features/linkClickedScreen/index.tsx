@@ -15,8 +15,6 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { Fragment, useCallback } from "react";
 
 import { FeatureBaseProps } from "../../../../../types";

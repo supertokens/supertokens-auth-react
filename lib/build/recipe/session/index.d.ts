@@ -1,5 +1,4 @@
 /// <reference types="react" />
-/// <reference types="@emotion/react/types/css-prop" />
 import { RecipeInterface } from "supertokens-web-js/recipe/session";
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
@@ -7,21 +6,19 @@ export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
     static SessionAuth: import("react").FC<
         import("react").PropsWithChildren<
-            | ({
-                  requireAuth?: false | undefined;
-              } & {
-                  onSessionExpired?: (() => void) | undefined;
-              } & {
-                  userContext?: any;
-              })
-            | ({
-                  requireAuth: true;
-                  redirectToLogin: () => void;
-              } & {
-                  onSessionExpired?: (() => void) | undefined;
-              } & {
-                  userContext?: any;
-              })
+            ((
+                | {
+                      requireAuth?: false | undefined;
+                  }
+                | {
+                      requireAuth: true;
+                      redirectToLogin: () => void;
+                  }
+            ) & {
+                onSessionExpired?: (() => void) | undefined;
+            }) & {
+                userContext?: any;
+            }
         >
     >;
     static init(config?: InputType): import("../../types").CreateRecipeFunction<unknown, unknown, unknown, any>;
@@ -35,21 +32,19 @@ export default class SessionAPIWrapper {
 declare const useSessionContext: () => SessionContextType;
 declare const SessionAuth: import("react").FC<
     import("react").PropsWithChildren<
-        | ({
-              requireAuth?: false | undefined;
-          } & {
-              onSessionExpired?: (() => void) | undefined;
-          } & {
-              userContext?: any;
-          })
-        | ({
-              requireAuth: true;
-              redirectToLogin: () => void;
-          } & {
-              onSessionExpired?: (() => void) | undefined;
-          } & {
-              userContext?: any;
-          })
+        ((
+            | {
+                  requireAuth?: false | undefined;
+              }
+            | {
+                  requireAuth: true;
+                  redirectToLogin: () => void;
+              }
+        ) & {
+            onSessionExpired?: (() => void) | undefined;
+        }) & {
+            userContext?: any;
+        }
     >
 >;
 declare const init: typeof SessionAPIWrapper.init;

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Build changes
+
+-   Updated typescript to latest
+-   Using tsconfig to set jsx import source instead of pragma comments
+-   Updated react-shadow
+
 ## [0.22.2] - 2022-06-11
 
 ### Changes

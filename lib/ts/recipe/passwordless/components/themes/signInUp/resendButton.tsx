@@ -16,8 +16,6 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";

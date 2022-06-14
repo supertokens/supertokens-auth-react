@@ -13,7 +13,6 @@
  * under the License.
  */
 
-/** @jsx jsx */
 import chroma from "chroma-js";
 import { getButtonStyle, getDefaultStyles, getMergedStyles } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";
