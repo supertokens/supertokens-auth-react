@@ -15,8 +15,6 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import * as React from "react";
 import { Fragment } from "react";
 import SignInAndUpTheme from "../../themes/signInAndUp";

@@ -1,4 +1,3 @@
-/** @jsx jsx */
 import { CSSObject } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
 import { NormalisedPalette, NormalisedDefaultStyles, Styles } from "../types";

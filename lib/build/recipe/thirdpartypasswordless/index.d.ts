@@ -1,5 +1,4 @@
 /// <reference types="react" />
-/// <reference types="@emotion/react/types/css-prop" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import ThirdPartyPasswordlessAuth from "./thirdpartyPasswordlessAuth";
@@ -16,7 +15,7 @@ export default class Wrapper {
     static init(
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
-        import("../authRecipeWithEmailVerification/types").GetRedirectionURLContext,
+        GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
@@ -145,7 +144,9 @@ export default class Wrapper {
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
     static PasswordlessLinkClickedTheme: import("react").ComponentType<
-        import("react").PropsWithChildren<import("../passwordless/types").LinkClickedScreenProps>
+        import("../passwordless/types").LinkClickedScreenProps & {
+            children?: import("react").ReactNode;
+        }
     >;
     static PasswordlessLinkClicked: (prop?: any) => JSX.Element;
 }
