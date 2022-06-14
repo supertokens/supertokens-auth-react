@@ -40,14 +40,11 @@ import {
     defaultSignUp,
     signUp,
     screenshotOnFailure,
+    waitForText,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-
-/*
- * Tests.
- */
 
 describe("SuperTokens Email Verification", function () {
     let browser;
@@ -82,8 +79,11 @@ describe("SuperTokens Email Verification", function () {
         }).catch(console.error);
     });
 
-    afterEach(function () {
-        return screenshotOnFailure(this, browser);
+    afterEach(async function () {
+        await screenshotOnFailure(this, browser);
+        if (page) {
+            await page.close();
+        }
     });
 
     describe("Email verification screen", function () {
@@ -243,13 +243,14 @@ describe("SuperTokens Email Verification", function () {
         });
 
         it("Should show invalid token screen when token is invalid or expired", async function () {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
+            await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`),
+                submitForm(page),
                 page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200),
             ]);
-            await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
-            const verificationEmailInvalidTokenText = await getVerificationEmailTitle(page);
-            assert.deepStrictEqual(verificationEmailInvalidTokenText, "The email verification link has expired");
+
+            await waitForText(page, "[data-supertokens~=headerTinyTitle]", "The email verification link has expired");
             // Click Continue should redirect to /auth when no session is present
             await Promise.all([clickLinkWithRightArrow(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
 
@@ -264,13 +265,15 @@ describe("SuperTokens Email Verification", function () {
             ]);
         });
 
-        it('Should show "Email Verification successful" screen when token is valid', async function () {
+        it("Should ask for user interaction when token is valid with no session", async function () {
             const latestURLWithToken = await getLatestURLWithToken();
-            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
-            const title = await getTextByDataSupertokens(page, "headerTitle");
-            assert.deepStrictEqual(title, "Email verification successful!");
+            await page.goto(latestURLWithToken);
+            await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
+            await submitForm(page);
+
+            await waitForText(page, "[data-supertokens~=headerTitle]", "Email verification successful!");
+
             await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" })]);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth");
             assert.deepStrictEqual(consoleLogs, [
@@ -284,10 +287,66 @@ describe("SuperTokens Email Verification", function () {
             ]);
         });
 
+        it('Should show "Email Verification successful" screen when token is valid with an active session', async function () {
+            await toggleSignInSignUp(page);
+            await signUp(
+                page,
+                [
+                    { name: "email", value: "john.doe3@supertokens.io" },
+                    { name: "password", value: "Str0ngP@ssw0rd" },
+                    { name: "name", value: "John Doe" },
+                    { name: "age", value: "20" },
+                ],
+                '{"formFields":[{"id":"email","value":"john.doe3@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+                "emailpassword"
+            );
+
+            const latestURLWithToken = await getLatestURLWithToken();
+            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
+            const title = await getTextByDataSupertokens(page, "headerTitle");
+            assert.deepStrictEqual(title, "Email verification successful!");
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            await page.waitForSelector(".sessionInfo-user-id");
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+            assert.deepStrictEqual(consoleLogs, [
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE DOES_EMAIL_EXIST",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_UP",
+                "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SUCCESS",
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL VERIFY_EMAIL",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION IS_EMAIL_VERIFIED",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION SEND_VERIFICATION_EMAIL",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_VERIFY_EMAIL",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT VERIFY_EMAIL_SENT",
+                "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION VERIFY_EMAIL",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS VERIFY_EMAIL",
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT EMAIL_VERIFIED_SUCCESSFUL",
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
+                "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                "ST_LOGS EMAIL_PASSWORD OVERRIDE EMAIL_VERIFICATION IS_EMAIL_VERIFIED",
+                "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED",
+            ]);
+        });
+
         it("Should allow to verify an email without a valid session", async function () {
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
+            await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
             await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`),
+                submitForm(page),
                 page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200),
             ]);
             const pathname = await page.evaluate(() => window.location.pathname);
@@ -341,6 +400,7 @@ describe("SuperTokens Email Verification server errors", function () {
         beforeEach(async function () {
             page = await browser.newPage();
             consoleLogs = [];
+            consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
                 if (log.startsWith("ST_LOGS")) {
@@ -348,11 +408,15 @@ describe("SuperTokens Email Verification server errors", function () {
                 }
             });
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
         });
 
         it('Should show "Something went wrong" screen when API failure', async function () {
-            await page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 500);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
+            await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
+            await Promise.all([
+                submitForm(page),
+                page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 500),
+            ]);
             await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
             const verificationEmailErrorTitle = await getVerificationEmailErrorTitle(page);
             assert.deepStrictEqual(verificationEmailErrorTitle, "!\nSomething went wrong");
@@ -429,11 +493,15 @@ describe("SuperTokens Email Verification general errors", function () {
                 }
             });
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
         });
 
         it('Should show "General Error" when API returns "GENERAL_ERROR"', async function () {
-            await page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
+            await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
+            await Promise.all([
+                submitForm(page),
+                page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200),
+            ]);
             await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
             const verificationEmailErrorTitle = await getVerificationEmailErrorTitle(page);
             const verificationEmailErrorMessage = await getVerificationEmailErrorMessage(page);

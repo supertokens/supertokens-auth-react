@@ -1,4 +1,6 @@
-export default function Logout(props) {
+import React from "react";
+
+export default function Logout(props: { logoutClicked: () => Promise<void> }) {
     let logoutClicked = props.logoutClicked;
 
     return (

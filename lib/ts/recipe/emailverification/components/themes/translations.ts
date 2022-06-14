@@ -16,5 +16,8 @@ export const defaultTranslationsEmailVerification = {
         EMAIL_VERIFICATION_EXPIRED: "The email verification link has expired",
         EMAIL_VERIFICATION_ERROR_TITLE: "Something went wrong",
         EMAIL_VERIFICATION_ERROR_DESC: "We encountered an unexpected error. Please contact support for assistance",
+        EMAIL_VERIFICATION_LINK_CLICKED_HEADER: "Verify your email address",
+        EMAIL_VERIFICATION_LINK_CLICKED_DESC: "Please click on the button below to verify your email address",
+        EMAIL_VERIFICATION_LINK_CLICKED_CONTINUE_BUTTON: "CONTINUE",
     },
 };
