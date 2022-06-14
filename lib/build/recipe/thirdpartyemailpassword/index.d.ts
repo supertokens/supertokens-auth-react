@@ -1,5 +1,4 @@
 /// <reference types="react" />
-/// <reference types="@emotion/react/types/css-prop" />
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import ResetPasswordUsingTokenTheme from "../emailpassword/components/themes/resetPasswordUsingToken";
 import { UserInput, GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
@@ -16,7 +15,7 @@ export default class Wrapper {
     static init(
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
-        import("../emailpassword").GetRedirectionURLContext,
+        GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig

@@ -16,8 +16,6 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import * as React from "react";
 import { useContext, useState, useMemo, useCallback, Fragment } from "react";
 import { clearQueryParams, getQueryParams, useOnMountAPICall } from "../../../../../utils";

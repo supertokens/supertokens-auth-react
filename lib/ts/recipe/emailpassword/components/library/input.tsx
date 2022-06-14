@@ -12,8 +12,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/** @jsx jsx */
-import { jsx, CSSObject } from "@emotion/react";
+import { CSSObject } from "@emotion/react";
 
 import { ChangeEvent, useContext } from "react";
 

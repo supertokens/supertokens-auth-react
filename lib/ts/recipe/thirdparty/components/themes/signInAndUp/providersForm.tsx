@@ -13,8 +13,6 @@
  * under the License.
  */
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { SignInAndUpThemeProps } from "../../../types";

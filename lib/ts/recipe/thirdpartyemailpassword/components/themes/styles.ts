@@ -13,7 +13,6 @@
  * under the License.
  */
 
-/** @jsx jsx */
 import { CSSObject } from "@emotion/react";
 import { getDefaultStyles, getMergedStyles } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";

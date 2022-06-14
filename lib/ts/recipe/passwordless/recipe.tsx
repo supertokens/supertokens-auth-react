@@ -17,7 +17,6 @@
  * Imports.
  */
 
-import React from "react";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     GetRedirectionURLContext,
