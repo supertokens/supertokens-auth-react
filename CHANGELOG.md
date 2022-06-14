@@ -53,8 +53,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `signInAndUp` function for ThirdParty recipe
     -   `thirdPartySignInAndUp` function for the ThirdPartyEmailPassword recipe
     -   `thirdPartySignInAndUp` function for the ThirdPartyPasswordless recipe
--   The message displayed in the Reset Password Email Sent screen
--   The text of 'Resend' button in the Reset Password Email Sent screen
+-   Changes in the Reset Password Email Sent success screen in `emailpassword` and `thirdpartyemailpassword` recipes
+    -   Updated text of the success message displayed
+    -   Updated text of the 'Resend' button which redirects user back to Reset Password form
 
 ### Added
 
@@ -102,6 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   All recipes now include a `postAPIHook` configuration parameter that can be used to respond to network actions.
 -   General error handling for email verification components
 -   The reset password form has a back button which takes the user back to the 'Sign in' form in `emailpassword` and `thirdpartyemailpassword` recipes.
+-   Back button in the reset password email sent success screen that redirects user to the 'Sign In' form in `emailpassword` and `thirdpartyemailpassword` recipe.
 
 ### Breaking changes
 
