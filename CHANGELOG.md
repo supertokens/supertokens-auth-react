@@ -53,6 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `signInAndUp` function for ThirdParty recipe
     -   `thirdPartySignInAndUp` function for the ThirdPartyEmailPassword recipe
     -   `thirdPartySignInAndUp` function for the ThirdPartyPasswordless recipe
+-   The message displayed in the Reset Password Email Sent screen
+-   The text of 'Resend' button in the Reset Password Email Sent screen
 
 ### Added
 
