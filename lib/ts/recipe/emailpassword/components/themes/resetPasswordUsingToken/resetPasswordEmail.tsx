@@ -42,17 +42,10 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     };
     const { formFields } = props;
 
-    const getEmailSuccessText = (): string => {
-        if (emailFieldValue.length > 0) {
-            return (
-                t("EMAIL_PASSWORD_RESET_SEND_SUCCESS_BEFORE_EMAIL") +
-                emailFieldValue +
-                t("EMAIL_PASSWORD_RESET_SEND_SUCCESS_AFTER_EMAIL")
-            );
-        }
-
-        return t("EMAIL_PASSWORD_RESET_SEND_SUCCESS_FALLBACK");
-    };
+    const emailSuccessText =
+        t("EMAIL_PASSWORD_RESET_SEND_BEFORE_EMAIL") +
+        (emailFieldValue || t("EMAIL_PASSWORD_RESET_SEND_FALLBACK_EMAIL")) +
+        t("EMAIL_PASSWORD_RESET_SEND_AFTER_EMAIL");
 
     if (status === "SENT") {
         return (
@@ -61,7 +54,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                     <div
                         data-supertokens="primaryText enterEmailSuccessMessage"
                         css={[styles.primaryText, styles.enterEmailSuccessMessage]}>
-                        {getEmailSuccessText()}
+                        {emailSuccessText}
                         <span
                             data-supertokens="link resendEmailLink"
                             css={[styles.link, styles.resendEmailLink]}
