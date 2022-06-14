@@ -116,11 +116,11 @@
         },
         {
             "path": "recipe/thirdparty/index.js",
-            "limit": "111kb"
+            "limit": "112kb"
         },
         {
             "path": "recipe/emailpassword/index.js",
-            "limit": "112kb"
+            "limit": "113kb"
         },
         {
             "path": "recipe/passwordless/index.js",
