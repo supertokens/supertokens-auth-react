@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Showing a confirmation button before consuming an email verification token if there is no active session to prevent mail scanners validating the email address
 -   Adds an example app with Email Verification with OTP
 
+### Breaking changes
+
+-   Removes `setCookieSync` and `getCookieSync` from the interface for `cookieHandler` when calling `SuperTokens.init`
+
 ## [0.22.2] - 2022-06-11
 
 ### Changes
