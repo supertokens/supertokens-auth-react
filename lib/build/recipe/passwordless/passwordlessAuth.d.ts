@@ -8,4 +8,4 @@ export default function PasswordlessAuthWrapper({
     requireAuth?: boolean;
     onSessionExpired?: () => void;
     userContext?: any;
-}>): JSX.Element;
+}>): import("@emotion/react/jsx-runtime").JSX.Element;

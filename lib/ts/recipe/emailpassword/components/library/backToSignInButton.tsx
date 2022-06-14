@@ -17,9 +17,6 @@
  * Imports.
  */
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
-
 import { useContext } from "react";
 import { useTranslation } from "../../../..";
 import ArrowLeftIcon from "../../../../components/assets/arrowLeftIcon";

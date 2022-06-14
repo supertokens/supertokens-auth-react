@@ -17,7 +17,6 @@
  * Imports.
  */
 
-import * as React from "react";
 import SuperTokens from "../superTokens";
 import { RoutingComponent } from "./routingComponent";
 
