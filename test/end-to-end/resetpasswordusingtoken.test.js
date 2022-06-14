@@ -125,19 +125,16 @@ describe("SuperTokens Reset password", function () {
         it("Should redirect to Sign In screen when back button is clicked", async function () {
             const backButton = await getResetPasswordFormBackButton(page);
 
-            // assert that the back button exists
-            assert.notEqual(backButton, null);
-            assert.notEqual(backButton, undefined);
-
             await backButton.click();
 
-            await waitForSTElement(page);
-            const pathAfterBackButtonClick = await page.evaluate(() => window.location.pathname);
+            const signInPageHeader = await waitForSTElement(page, "[data-supertokens='headerTitle']");
 
+            // checks if the window path has changed to '/auth'
+            const pathAfterBackButtonClick = await page.evaluate(() => window.location.pathname);
             assert.equal(pathAfterBackButtonClick, "/auth");
 
-            const pageTitle = await getAuthPageHeaderText(page);
-
+            // checks if the page title is 'Sign In'
+            const pageTitle = await signInPageHeader.evaluate((header) => header.innerText);
             assert.equal(pageTitle, "Sign In");
         });
 

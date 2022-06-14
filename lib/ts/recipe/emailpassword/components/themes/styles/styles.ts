@@ -219,19 +219,20 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             alignItems: "center",
         },
 
+        backButtonCommon: {
+            width: "16px",
+            height: "13px",
+        },
+
         backButton: {
             cursor: "pointer",
             border: "none",
             backgroundColor: "transparent",
-            width: "15.7px",
-            height: "13.1px",
             padding: "0px",
         },
 
         backButtonPlaceholder: {
             display: "block",
-            width: "15.7px",
-            height: "13.1px",
         },
 
         resendEmailLink: {

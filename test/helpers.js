@@ -147,6 +147,11 @@ export async function submitForm(page) {
     await submitButton.click();
 }
 
+export async function clickOnPasswordlessResendButton(page) {
+    const resendButton = await waitForSTElement(page, "[data-supertokens='link linkButton resendCodeBtn']");
+    resendButton.click();
+}
+
 export async function getLogoutButton(page) {
     return await page.waitForSelector(".logoutButton");
 }
@@ -697,7 +702,7 @@ export function isReact16() {
 
 export async function getResetPasswordFormBackButton(page) {
     const backButtonSelector =
-        "[data-supertokens='headerTitle resetPasswordHeaderTitle'] > [data-supertokens='backButton']";
+        "[data-supertokens='headerTitle resetPasswordHeaderTitle'] > [data-supertokens='backButton backButtonCommon']";
 
     return await waitForSTElement(page, backButtonSelector);
 }

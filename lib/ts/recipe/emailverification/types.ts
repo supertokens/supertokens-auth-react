@@ -106,7 +106,7 @@ export type SendVerifyEmailThemeProps = ThemeBaseProps & {
 export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    onContinueClicked: () => Promise<void>;
+    onSuccess: () => Promise<void>;
     onTokenInvalidRedirect: () => Promise<void>;
     token: string;
 };

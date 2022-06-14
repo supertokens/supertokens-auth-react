@@ -34,28 +34,37 @@ import { useUserContext } from "../../../../../usercontext";
 import { useOnMountAPICall } from "../../../../../utils";
 import { Awaited } from "../../../../../types";
 import STGeneralError from "supertokens-web-js/utils/error";
-
-/*
- * Component.
- */
+import useSessionContext from "../../../../session/useSessionContext";
 
 export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkClickedThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
+    const { doesSessionExist } = useSessionContext();
     const userContext = useUserContext();
-    const [status, setStatus] = useState<"LOADING" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL">("LOADING");
+    const [status, setStatus] = useState<
+        "LOADING" | "INTERACTION_REQUIRED" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL"
+    >("LOADING");
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+    const [verifyLoading, setVerifyLoading] = useState(false);
 
-    const verifyEmail = useCallback(
-        () =>
-            props.recipeImplementation.verifyEmail({
-                userContext,
-            }),
-        [props.recipeImplementation]
-    );
+    const verifyEmailOnMount = useCallback(async () => {
+        // If there is no active session we know that the verification was started elsewhere, since it requires a session
+        // otherwise we assume it's the same session. The main purpose of this is to prevent mail scanners
+        // from accidentally validating an email address
+        if (!doesSessionExist) {
+            return "INTERACTION_REQUIRED";
+        }
+
+        return props.recipeImplementation.verifyEmail({
+            userContext,
+        });
+    }, [props.recipeImplementation]);
+
     const handleVerifyResp = useCallback(
-        async (response: Awaited<ReturnType<typeof verifyEmail>>): Promise<void> => {
-            if (response.status === "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR") {
+        async (response: Awaited<ReturnType<typeof verifyEmailOnMount>>): Promise<void> => {
+            if (response === "INTERACTION_REQUIRED") {
+                setStatus("INTERACTION_REQUIRED");
+            } else if (response.status === "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR") {
                 setStatus("INVALID");
             } else {
                 setStatus("SUCCESSFUL");
@@ -73,9 +82,9 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
         },
         [setStatus, setErrorMessage]
     );
-    useOnMountAPICall(verifyEmail, handleVerifyResp, handleError);
+    useOnMountAPICall(verifyEmailOnMount, handleVerifyResp, handleError);
 
-    const { onTokenInvalidRedirect, onContinueClicked } = props;
+    const { onTokenInvalidRedirect, onSuccess } = props;
 
     if (status === "LOADING") {
         return (
@@ -84,6 +93,40 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
                     <div data-supertokens="spinner" css={styles.spinner}>
                         <SpinnerIcon color={styles.palette.colors.primary} />
                     </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (status === "INTERACTION_REQUIRED") {
+        return (
+            <div data-supertokens="container" css={styles.container}>
+                <div data-supertokens="row noFormRow" css={[styles.row, styles.noFormRow]}>
+                    <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                        {t("EMAIL_VERIFICATION_LINK_CLICKED_HEADER")}
+                    </div>
+                    <div
+                        data-supertokens="headerSubtitle secondaryText"
+                        css={[styles.headerSubtitle, styles.secondaryText]}>
+                        {t("EMAIL_VERIFICATION_LINK_CLICKED_DESC")}
+                    </div>
+                    {/* We are not adding an emailVerificationButtonWrapper because headerSubtitle already has a margin */}
+                    <Button
+                        isLoading={verifyLoading}
+                        onClick={async () => {
+                            setVerifyLoading(true);
+                            try {
+                                const resp = await props.recipeImplementation.verifyEmail({
+                                    userContext,
+                                });
+                                await handleVerifyResp(resp);
+                            } catch (err) {
+                                void handleError(err);
+                            }
+                        }}
+                        type="button"
+                        label={"EMAIL_VERIFICATION_LINK_CLICKED_CONTINUE_BUTTON"}
+                    />
                 </div>
             </div>
         );
@@ -102,7 +145,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
                     <div data-supertokens="emailVerificationButtonWrapper" css={styles.emailVerificationButtonWrapper}>
                         <Button
                             isLoading={false}
-                            onClick={onContinueClicked}
+                            onClick={onSuccess}
                             type="button"
                             label={"EMAIL_VERIFICATION_CONTINUE_BTN"}
                         />

@@ -197,6 +197,20 @@ describe("SuperTokens SignIn", function () {
             ]);
         });
 
+        it("should clear errors when switching to signup", async function () {
+            await setInputValues(page, [
+                { name: "email", value: "john@gmail.com" },
+                { name: "password", value: "********" },
+            ]);
+
+            await submitForm(page);
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, "Incorrect email and password combination");
+            await toggleSignInSignUp(page);
+            await waitForSTElement(page, "[data-supertokens~=generalError]", true);
+        });
+
         it("Successful Sign In with no required session page", async function () {
             await toggleSignInSignUp(page);
             await defaultSignUp(page);

@@ -79,12 +79,9 @@ class ResetPasswordUsingToken extends PureComponent<
                       token: this.state.token,
                   };
 
-        const handleBackButtonClick = (): void => {
-            void this.props.recipe.redirectToAuthWithoutRedirectToPath("signin", this.props.history);
-        };
-
         const enterEmailForm = {
-            handleBackButtonClick,
+            onBackButtonClicked: () =>
+                this.props.recipe.redirectToAuthWithoutRedirectToPath("signin", this.props.history),
             error: this.state.error,
             onError: (error: string) => this.setState((os) => ({ ...os, error })),
             clearError: () => this.setState((os) => ({ ...os, error: undefined })),

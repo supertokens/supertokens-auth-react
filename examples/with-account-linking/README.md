@@ -1,1 +1,1 @@
-# Please look at [this example](https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-thirdpartyemailpassword-passwordless) for how account linking is done.
+# Account linking is not supported yet, we are actively working on thie feature.
