@@ -181,19 +181,6 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             margin: "0 auto",
         },
 
-        secondaryLinkWithLeftArrow: {
-            marginTop: "10px",
-            marginBottom: "40px",
-            cursor: "pointer",
-            "& svg": {
-                marginRight: "0.3em",
-            },
-            "&:hover svg": {
-                position: "relative",
-                left: "-4px",
-            },
-        },
-
         resetPasswordHeaderTitle: {
             position: "relative",
             display: "flex",
