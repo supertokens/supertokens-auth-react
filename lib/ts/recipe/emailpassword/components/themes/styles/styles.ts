@@ -180,6 +180,29 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             maxWidth: "96px",
             margin: "0 auto",
         },
+
+        resetPasswordHeaderTitle: {
+            position: "relative",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+        },
+
+        backButtonCommon: {
+            width: "16px",
+            height: "13px",
+        },
+
+        backButton: {
+            cursor: "pointer",
+            border: "none",
+            backgroundColor: "transparent",
+            padding: "0px",
+        },
+
+        backButtonPlaceholder: {
+            display: "block",
+        },
     } as NormalisedDefaultStyles;
     return getMergedStyles(baseStyles, recipeStyles);
 }
