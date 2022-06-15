@@ -88,6 +88,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         enterEmailSuccessMessage: {
             marginTop: "15px",
             marginBottom: "15px",
+            wordBreak: "break-word",
         },
 
         submitNewPasswordSuccessMessage: {
@@ -202,6 +203,10 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
 
         backButtonPlaceholder: {
             display: "block",
+        },
+
+        resendEmailLink: {
+            display: "inline-block",
         },
     } as NormalisedDefaultStyles;
     return getMergedStyles(baseStyles, recipeStyles);
