@@ -44,7 +44,9 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
 
     const emailSuccessText =
         t("EMAIL_PASSWORD_RESET_SEND_BEFORE_EMAIL") +
-        (emailFieldValue || t("EMAIL_PASSWORD_RESET_SEND_FALLBACK_EMAIL")) +
+        (emailFieldValue !== undefined && emailFieldValue.length > 0
+            ? emailFieldValue
+            : t("EMAIL_PASSWORD_RESET_SEND_FALLBACK_EMAIL")) +
         t("EMAIL_PASSWORD_RESET_SEND_AFTER_EMAIL");
 
     if (status === "SENT") {
@@ -112,7 +114,7 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
                             return field.id === "email";
                         });
 
-                        if (emailField !== null && emailField !== undefined) {
+                        if (emailField !== undefined) {
                             setEmailFieldValue(emailField.value);
                         }
 
