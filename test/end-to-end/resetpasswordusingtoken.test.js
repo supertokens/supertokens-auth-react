@@ -50,6 +50,9 @@ import {
     toggleSignInSignUp,
     defaultSignUp,
     screenshotOnFailure,
+    getAuthPageHeaderText,
+    getResetPasswordFormBackButton,
+    waitForSTElement,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -116,6 +119,22 @@ describe("SuperTokens Reset password", function () {
                 }
             });
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
+        });
+
+        it("Should redirect to Sign In screen when back button is clicked", async function () {
+            const backButton = await getResetPasswordFormBackButton(page);
+
+            await backButton.click();
+
+            const signInPageHeader = await waitForSTElement(page, "[data-supertokens='headerTitle']");
+
+            // checks if the window path has changed to '/auth'
+            const pathAfterBackButtonClick = await page.evaluate(() => window.location.pathname);
+            assert.equal(pathAfterBackButtonClick, "/auth");
+
+            // checks if the page title is 'Sign In'
+            const pageTitle = await signInPageHeader.evaluate((header) => header.innerText);
+            assert.equal(pageTitle, "Sign In");
         });
 
         it("Should send reset password for valid email", async function () {

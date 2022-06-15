@@ -23,6 +23,7 @@ import { useTranslation } from "../../../../../translation/translationContext";
 import { validateForm } from "../../../../../utils";
 import GeneralError from "../../library/generalError";
 import { useUserContext } from "../../../../../usercontext";
+import BackButton from "../../library/backButton";
 
 const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     const styles = useContext(StyleContext);
@@ -60,8 +61,16 @@ const EmailPasswordResetPasswordEmail: React.FC<EnterEmailProps> = (props) => {
     return (
         <div data-supertokens="container" css={styles.container}>
             <div data-supertokens="row" css={styles.row}>
-                <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                <div
+                    data-supertokens="headerTitle resetPasswordHeaderTitle"
+                    css={[styles.headerTitle, styles.resetPasswordHeaderTitle]}>
+                    <BackButton onClick={props.onBackButtonClicked} />
                     {t("EMAIL_PASSWORD_RESET_HEADER_TITLE")}
+                    <span
+                        data-supertokens="backButtonPlaceholder backButtonCommon"
+                        css={[styles.backButtonPlaceholder, styles.backButtonCommon]}>
+                        {/* empty span for spacing the back button */}
+                    </span>
                 </div>
                 <div data-supertokens="headerSubtitle" css={styles.headerSubtitle}>
                     <div data-supertokens="secondaryText" css={styles.secondaryText}>
