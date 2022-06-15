@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   The reset password form has a back button which takes the user back to the 'Sign in' form in `emailpassword` and `thirdpartyemailpassword` recipes.
 -   Back button in the reset password email sent success screen that redirects user to the 'Sign In' form in `emailpassword` and `thirdpartyemailpassword` recipe.
 
+### Added
+
+-   The reset password form has a back button which takes the user back to the 'Sign in' form in `emailpassword` and `thirdpartyemailpassword` recipes.
+
 ## [0.22.3] - 2022-06-14
 
 ### Build changes
