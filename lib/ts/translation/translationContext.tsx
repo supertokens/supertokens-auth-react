@@ -33,13 +33,24 @@ export const TranslationContextProvider: React.FC<
 
     const loadLanguageFromCookies = useCallback(
         async function () {
-            let cookieLang = await getCurrentLanguageFromCookie();
-            cookieLang = cookieLang === null ? defaultLanguage : cookieLang;
+            const cookieLang = await getCurrentLanguageFromCookie();
+            const cookieLangTemp = cookieLang === null ? defaultLanguage : cookieLang;
 
-            setCurrentLanguage((current) => (current !== undefined ? current : (cookieLang as string)));
+            /**
+             * If current is not undefined, it means that something else has set the language.
+             * For example if the user calls SuperTokens.changeLanguage before this
+             *
+             * We want to use the language preference from cookies only if something else has
+             * not set language before this
+             */
+            setCurrentLanguage((current) => (current !== undefined ? current : cookieLangTemp));
         },
         [defaultLanguage, setCurrentLanguage]
     );
+
+    useEffect(() => {
+        void loadLanguageFromCookies();
+    }, []);
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -53,8 +64,6 @@ export const TranslationContextProvider: React.FC<
 
         translationControlEventSource.on("LanguageChange", changeHandler);
         translationControlEventSource.on("TranslationLoaded", loadHandler);
-
-        void loadLanguageFromCookies();
 
         return () => {
             translationControlEventSource.off("LanguageChange", changeHandler);
