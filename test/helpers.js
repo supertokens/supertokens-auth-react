@@ -709,7 +709,7 @@ export async function getResetPasswordFormBackButton(page) {
 
 export async function getResetPasswordSuccessBackToSignInButton(page) {
     const backToSignInSelector =
-        "[data-supertokens='container'] > [data-supertokens='backButtonContainer'] > [data-supertokens='backButtonWithLeftArrow']";
+        "[data-supertokens='container'] > [data-supertokens='row'] > [data-supertokens='secondaryText secondaryLinkWithLeftArrow']";
 
     return await waitForSTElement(page, backToSignInSelector);
 }
