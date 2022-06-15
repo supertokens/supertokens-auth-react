@@ -88,6 +88,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         enterEmailSuccessMessage: {
             marginTop: "15px",
             marginBottom: "15px",
+            wordBreak: "break-word",
         },
 
         submitNewPasswordSuccessMessage: {
