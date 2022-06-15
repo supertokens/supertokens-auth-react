@@ -17,7 +17,6 @@
  * Imports.
  */
 
-import React from "react";
 import RecipeModule from "../recipeModule";
 import { RecipeFeatureComponentMap } from "../../types";
 import {

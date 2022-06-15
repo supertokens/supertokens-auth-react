@@ -1,7 +1,5 @@
 import React from "react";
+import { ComponentOverride } from "./componentOverride";
 export declare const useComponentOverride: <TComponent extends React.ComponentType<any>>(
     overrideKey: string
-) =>
-    | React.ComponentClass<import("./componentOverride").ComponentOverrideProps<TComponent>, any>
-    | React.FunctionComponent<import("./componentOverride").ComponentOverrideProps<TComponent>>
-    | null;
+) => ComponentOverride<TComponent> | null;

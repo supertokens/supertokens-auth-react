@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
-import { CreateRecipeFunction } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap } from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
@@ -31,10 +31,10 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
             emailPasswordInstance: EmailPassword | undefined;
         }
     );
-    getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
-    getDefaultRedirectionURL: (context: import("../emailpassword").GetRedirectionURLContext) => Promise<string>;
+    getFeatures: () => RecipeFeatureComponentMap;
+    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
-        componentName: "emailverification" | "signinup" | "resetpassword" | "signinupcallback",
+        componentName: "signinup" | "signinupcallback" | "resetpassword" | "emailverification",
         props: any
     ) => JSX.Element;
     static init(

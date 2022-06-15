@@ -16,7 +16,6 @@
 /*
  * Imports.
  */
-import * as React from "react";
 import { PropsWithChildren } from "react";
 import { memo } from "react";
 import SuperTokens from "../../superTokens";

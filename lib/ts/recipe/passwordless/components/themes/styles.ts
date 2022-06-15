@@ -13,7 +13,6 @@
  * under the License.
  */
 
-/** @jsx jsx */
 import { getDefaultStyles, getMergedStyles, swingIn } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";
 import { getStyles as getEmailPasswordStyles } from "../../../emailpassword/components/themes/styles/styles";

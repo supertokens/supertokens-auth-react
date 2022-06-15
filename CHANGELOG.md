@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Removes `setCookieSync` and `getCookieSync` from the interface for `cookieHandler` when calling `SuperTokens.init`
 
+## [0.22.3] - 2022-06-14
+
+### Build changes
+
+-   Updated typescript to latest
+-   Using tsconfig to set jsx import source instead of pragma comments
+-   Updated react-shadow
+
 ## [0.22.2] - 2022-06-11
 
 ### Changes

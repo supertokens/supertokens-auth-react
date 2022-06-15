@@ -17,7 +17,6 @@
  * Imports.
  */
 
-import * as React from "react";
 import root from "react-shadow/emotion";
 import { ST_ROOT_ID } from "../constants";
 import ErrorBoundary from "./errorBoundary";

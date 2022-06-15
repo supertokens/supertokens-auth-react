@@ -16,7 +16,6 @@
 /*
  * Imports.
  */
-import * as React from "react";
 import { ResetPasswordUsingTokenThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 

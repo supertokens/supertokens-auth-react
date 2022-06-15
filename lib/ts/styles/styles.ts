@@ -13,7 +13,6 @@
  * under the License.
  */
 
-/** @jsx jsx */
 import { CSSObject, keyframes } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
 import chroma from "chroma-js";

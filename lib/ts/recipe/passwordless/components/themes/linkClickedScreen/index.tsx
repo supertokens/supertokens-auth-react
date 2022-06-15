@@ -15,8 +15,6 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import React, { useContext, useState } from "react";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import StyleContext from "../../../../../styles/styleContext";
