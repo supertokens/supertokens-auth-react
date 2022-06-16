@@ -16,8 +16,6 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import * as React from "react";
 import { Fragment } from "react";
 
@@ -48,11 +46,13 @@ export const useFeatureReducer = (recipe: Recipe | undefined) => {
                 case "setSignIn":
                     return {
                         ...oldState,
+                        error: undefined,
                         isSignUp: false,
                     };
                 case "setSignUp":
                     return {
                         ...oldState,
+                        error: undefined,
                         isSignUp: true,
                     };
                 case "setError":

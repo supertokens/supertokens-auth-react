@@ -16,7 +16,6 @@
 /*
  * Imports.
  */
-import * as React from "react";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
 import UserContextWrapper from "../../../../../usercontext/userContextWrapper";

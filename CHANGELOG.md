@@ -9,6 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Added new tests for checking general error handling
 
+## [0.22.3] - 2022-06-14
+
+### Build changes
+
+-   Updated typescript to latest
+-   Using tsconfig to set jsx import source instead of pragma comments
+-   Updated react-shadow
+
+## [0.22.2] - 2022-06-11
+
+### Changes
+
+-   Clearing errors when switching between sign-in and up
+
+### Build changes
+
+-   Updated typescript to latest
+-   Using tsconfig to set jsx import source instead of pragma comments
+-   Updated react-shadow
+
+## [0.22.1] - 2022-06-11
+
+-   Updates the example app for ThirdPartyEmailPassword + Passwordless login with SuperTokens
+-   Adds new tests for testing resend code button in passwordless recipe
+
 ### CI changes
 
 -   Only running React 16 tests on CircleCI (when an explicit envvar is set)

@@ -1,7 +1,14 @@
 /// <reference types="react" />
-/// <reference types="@emotion/react/types/css-prop" />
 import { SendVerifyEmailThemeProps } from "../../../types";
 export declare const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProps>;
 export declare const SendVerifyEmail: import("react").ComponentType<
-    import("react").PropsWithChildren<SendVerifyEmailThemeProps>
+    import("../../../../../types").ThemeBaseProps & {
+        recipeImplementation: import("supertokens-web-js/recipe/emailverification").RecipeInterface;
+        config: import("../../../types").NormalisedConfig;
+        signOut: () => Promise<void>;
+        navigateAfterSignOut: () => Promise<void>;
+        onEmailAlreadyVerified: () => Promise<void>;
+    } & {
+        children?: import("react").ReactNode;
+    }
 >;
