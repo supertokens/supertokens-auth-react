@@ -818,6 +818,19 @@ function getThirdPartyConfigs({ disableDefaultUI }) {
             },
         },
         preAPIHook: async (context) => {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY ${context.action}`) {
+                if (context.action === "GET_AUTHORISATION_URL") {
+                    context.url += "&generalError=true";
+                } else {
+                    let jsonBody = JSON.parse(context.requestInit.body);
+                    jsonBody = {
+                        ...jsonBody,
+                        generalError: true,
+                    };
+                    context.requestInit.body = JSON.stringify(jsonBody);
+                }
+            }
+
             console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
             return context;
         },

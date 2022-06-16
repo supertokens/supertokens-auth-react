@@ -38,6 +38,9 @@ import {
     logoutFromEmailVerification,
     getLatestURLWithToken,
     getVerificationEmailErrorMessage,
+    assertProviders,
+    clickOnProviderButton,
+    loginWithAuth0,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -51,6 +54,8 @@ import {
     SEND_VERIFY_EMAIL_API,
     SIGN_OUT_API,
     VERIFY_EMAIL_API,
+    GET_AUTH_URL_API,
+    SIGN_IN_UP_API,
 } from "../constants";
 
 describe("General error rendering", function () {
@@ -353,10 +358,92 @@ describe("General error rendering", function () {
     });
 
     // TODO: Add tests
-    describe("Session", function () {});
+    describe("ThirdParty", function () {
+        let browser;
+        let page;
+        before(async function () {
+            await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+                method: "POST",
+            }).catch(console.error);
+
+            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+                method: "POST",
+            }).catch(console.error);
+
+            browser = await puppeteer.launch({
+                args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                headless: true,
+            });
+        });
+
+        afterEach(function () {
+            return screenshotOnFailure(this, browser);
+        });
+
+        beforeEach(async function () {
+            page = await browser.newPage();
+            await clearBrowserCookiesWithoutAffectingConsole(page, []);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdparty`);
+            await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+        });
+
+        it("Test general errors when fetching authorization url", async function () {
+            await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "THIRD_PARTY GET_AUTHORISATION_URL"));
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+            clickOnProviderButton(page, "Auth0");
+
+            let response1 = await page.waitForResponse(
+                (response) =>
+                    response.url().includes(GET_AUTH_URL_API) &&
+                    response.request().method() === "GET" &&
+                    response.status() === 200
+            );
+
+            response1 = await response1.json();
+
+            assert.deepStrictEqual(response1, {
+                status: "GENERAL_ERROR",
+                message: "general error from API authorisation url get",
+            });
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response1.message);
+        });
+
+        it("Test general errors when calling signinup", async function () {
+            await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "THIRD_PARTY THIRD_PARTY_SIGN_IN_UP"));
+
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await assertProviders(page);
+            await clickOnProviderButton(page, "Auth0");
+            loginWithAuth0(page);
+
+            let response1 = await page.waitForResponse(
+                (response) => response.url() === SIGN_IN_UP_API && response.status() === 200
+            );
+
+            response1 = await response1.json();
+
+            assert.deepStrictEqual(response1, {
+                status: "GENERAL_ERROR",
+                message: "general error from API sign in up",
+            });
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response1.message);
+        });
+    });
 
     // TODO: Add tests
-    describe("ThirdParty", function () {});
+    describe("Session", function () {});
 
     // TODO: Add tests
     describe("ThirdPartyEmailPassword", function () {});
