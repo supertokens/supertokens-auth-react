@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Update supertokens-web-js dependency version
 -   Added new tests for checking general error handling
 
 ## [0.22.3] - 2022-06-14
