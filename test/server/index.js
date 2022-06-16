@@ -334,7 +334,7 @@ function initST({ passwordlessConfig } = {}) {
                             if (body.generalError === true) {
                                 return {
                                     status: "GENERAL_ERROR",
-                                    message: "general error from API",
+                                    message: "general error from API sign up",
                                 };
                             }
                             return oI.signUpPOST(input);
