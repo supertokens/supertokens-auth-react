@@ -12,7 +12,7 @@ export default abstract class RecipeModule<
     redirect: (
         context: GetRedirectionURLContextType,
         history?: any,
-        queryParams?: Record<string, string> | undefined
+        queryParams?: Record<string, string>
     ) => Promise<void>;
     getRedirectUrl: (context: GetRedirectionURLContextType) => Promise<string>;
     getDefaultRedirectionURL(_: GetRedirectionURLContextType): Promise<string>;

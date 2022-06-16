@@ -1,6 +1,7 @@
 /// <reference types="react" />
 import AuthRecipe from "../authRecipe";
 import { NormalisedConfig, GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext } from "./types";
+import { RecipeFeatureComponentMap } from "../../types";
 import EmailVerification from "../emailverification/recipe";
 export default abstract class AuthRecipeWithEmailVerification<
     T,
@@ -17,8 +18,5 @@ export default abstract class AuthRecipeWithEmailVerification<
     savePostEmailVerificationSuccessRedirectState: (context: T) => Promise<void>;
     getAuthRecipeWithEmailVerificationDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getAuthRecipeWithEmailVerificationFeatureComponent: (componentName: "emailverification", props: any) => JSX.Element;
-    getAuthRecipeWithEmailVerificationFeatures: () => Record<
-        string,
-        import("../../types").ComponentWithRecipeAndMatchingMethod
-    >;
+    getAuthRecipeWithEmailVerificationFeatures: () => RecipeFeatureComponentMap;
 }

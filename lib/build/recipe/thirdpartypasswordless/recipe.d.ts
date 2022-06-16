@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
-import { CreateRecipeFunction } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap } from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
@@ -31,10 +31,8 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
             passwordlessInstance: Passwordless | undefined;
         }
     );
-    getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
-    getDefaultRedirectionURL: (
-        context: import("../authRecipeWithEmailVerification/types").GetRedirectionURLContext
-    ) => Promise<string>;
+    getFeatures: () => RecipeFeatureComponentMap;
+    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
         componentName: "emailverification" | "signInUp" | "linkClickedScreen" | "signinupcallback",
         props: any

@@ -12,8 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { Fragment, useContext } from "react";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";

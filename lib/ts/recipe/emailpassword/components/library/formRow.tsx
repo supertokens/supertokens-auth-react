@@ -17,8 +17,6 @@
  * Imports.
  */
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { PropsWithChildren, useContext } from "react";
 import StyleContext from "../../../../styles/styleContext";
 

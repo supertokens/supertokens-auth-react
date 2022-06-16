@@ -1,5 +1,4 @@
 /// <reference types="react" />
-/// <reference types="@emotion/react/types/css-prop" />
 import { UserInput } from "./types";
 import EmailPasswordAuth from "./emailPasswordAuth";
 import SignInAndUpTheme from "./components/themes/signInAndUp";

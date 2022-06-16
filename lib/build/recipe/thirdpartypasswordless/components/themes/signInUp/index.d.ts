@@ -1,5 +1,5 @@
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { ThirdPartyPasswordlessSignInAndUpThemeProps } from "../../../types";
-declare function SignInUpThemeWrapper(props: ThirdPartyPasswordlessSignInAndUpThemeProps): jsx.JSX.Element;
+declare function SignInUpThemeWrapper(
+    props: ThirdPartyPasswordlessSignInAndUpThemeProps
+): import("@emotion/react/jsx-runtime").JSX.Element;
 export default SignInUpThemeWrapper;

@@ -9,6 +9,6 @@ jobs:
             CI_JOB_NUMBER: 1
         steps:
             - uses: actions/checkout@v1
-            - uses: porcellus/size-limit-action@feature/continue_on_base_branch_error
+            - uses: supertokens/size-limit-action@feature/continue_on_base_branch_error
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}

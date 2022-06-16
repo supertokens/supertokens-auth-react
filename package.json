@@ -1,6 +1,6 @@
 {
     "name": "supertokens-auth-react",
-    "version": "0.22.0",
+    "version": "0.22.3",
     "description": "ReactJS SDK that provides login functionality with SuperTokens.",
     "main": "./index.js",
     "engines": {
@@ -53,10 +53,11 @@
         "regenerator-runtime": "0.13.7",
         "size-limit": "^6.0.3",
         "ts-jest": "^27.0.5",
-        "ts-prune": "^0.8.9",
+        "ts-prune": "^0.10.3",
+        "tslib": "^2.4.0",
         "tslint": "6.1.3",
         "typedoc": "^0.22.5",
-        "typescript": "3.8.3"
+        "typescript": "4.7.3"
     },
     "dependencies": {
         "@emotion/react": "^11.4.1",
@@ -66,7 +67,7 @@
         "prop-types": "*",
         "react-phone-number-input": "3.1.41",
         "react-select": "5.2.1",
-        "react-shadow": "19.0.2",
+        "react-shadow": "19.0.3",
         "supertokens-js-override": "^0.0.4",
         "supertokens-web-js": "^0.0.2"
     },
@@ -103,11 +104,11 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "7kb"
+            "limit": "16kb"
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "20kb"
+            "limit": "28kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",

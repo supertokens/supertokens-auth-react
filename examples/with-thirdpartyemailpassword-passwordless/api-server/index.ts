@@ -1,15 +1,13 @@
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
+import express, { Request, Response, NextFunction } from "express";
+import cors from "cors";
+import helmet from "helmet";
 require("dotenv").config();
-let supertokens = require("supertokens-node");
-let Session = require("supertokens-node/recipe/session");
-let { verifySession } = require("supertokens-node/recipe/session/framework/express");
-let { middleware, errorHandler } = require("supertokens-node/framework/express");
-let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
-let Passwordless = require("supertokens-node/recipe/passwordless");
-let { tpepOverride } = require("./tpepOverride");
-let { plessOverride } = require("./plessOverride");
+import supertokens from "supertokens-node";
+import Session from "supertokens-node/recipe/session";
+import { verifySession } from "supertokens-node/recipe/session/framework/express";
+import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
+import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
+import Passwordless from "supertokens-node/recipe/passwordless";
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
@@ -51,11 +49,6 @@ supertokens.init({
                     },
                 }),
             ],
-            override: {
-                functions: (originalImpl) => {
-                    return tpepOverride(originalImpl);
-                },
-            },
         }),
         Passwordless.init({
             contactMethod: "EMAIL_OR_PHONE",
@@ -70,7 +63,13 @@ supertokens.init({
             },
             override: {
                 functions: (originalImplementation) => {
-                    return plessOverride(originalImplementation);
+                    return {
+                        ...originalImplementation,
+                        consumeCode: async function (input) {
+                            input.userContext.isPasswordless = true;
+                            return await originalImplementation.consumeCode(input);
+                        },
+                    };
                 },
             },
         }),
@@ -114,18 +113,18 @@ app.use(
 app.use(middleware());
 
 // An example API that requires session verification
-app.get("/sessioninfo", verifySession(), async (req, res) => {
+app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
     let session = req.session;
     res.send({
-        sessionHandle: session.getHandle(),
-        userId: session.getUserId(),
-        accessTokenPayload: session.getAccessTokenPayload(),
+        sessionHandle: session!.getHandle(),
+        userId: session!.getUserId(),
+        accessTokenPayload: session!.getAccessTokenPayload(),
     });
 });
 
 app.use(errorHandler());
 
-app.use((err, req, res, next) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     res.status(500).send("Internal error: " + err.message);
 });
 
