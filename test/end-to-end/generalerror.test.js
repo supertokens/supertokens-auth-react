@@ -36,6 +36,8 @@ import {
     sendVerifyEmail,
     signUp,
     logoutFromEmailVerification,
+    getLatestURLWithToken,
+    getVerificationEmailErrorMessage,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -48,6 +50,7 @@ import {
     RESET_PASSWORD_TOKEN_API,
     SEND_VERIFY_EMAIL_API,
     SIGN_OUT_API,
+    VERIFY_EMAIL_API,
 } from "../constants";
 
 describe("General error rendering", function () {
@@ -309,15 +312,58 @@ describe("General error rendering", function () {
             const generalError = await getGeneralError(page);
             assert.strictEqual(generalError, response1.message);
         });
+
+        it("Test general errors when verifying email", async function () {
+            await toggleSignInSignUp(page);
+            await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD VERIFY_EMAIL"));
+
+            const rid = "emailpassword";
+            await signUp(
+                page,
+                [
+                    { name: "email", value: "john.doe2@supertokens.io" },
+                    { name: "password", value: "Str0ngP@ssw0rd" },
+                    { name: "name", value: "John Doe" },
+                    { name: "age", value: "20" },
+                ],
+                '{"formFields":[{"id":"email","value":"john.doe2@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+                rid
+            );
+
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+
+            let urlWithToken = await getLatestURLWithToken();
+            page.goto(urlWithToken);
+
+            let response1 = await page.waitForResponse(
+                (response) => response.url() === VERIFY_EMAIL_API && response.status() === 200
+            );
+
+            response1 = await response1.json();
+
+            assert.deepStrictEqual(response1, {
+                status: "GENERAL_ERROR",
+                message: "general error from API email verify",
+            });
+
+            const verificationError = await getVerificationEmailErrorMessage(page);
+            assert.strictEqual(verificationError, response1.message);
+        });
     });
 
+    // TODO: Add tests
     describe("Session", function () {});
 
+    // TODO: Add tests
     describe("ThirdParty", function () {});
 
+    // TODO: Add tests
     describe("ThirdPartyEmailPassword", function () {});
 
+    // TODO: Add tests
     describe("Passwordless", function () {});
 
+    // TODO: Add tests
     describe("ThirdPartyPasswordless", function () {});
 });

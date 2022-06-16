@@ -283,6 +283,16 @@ function initST({ passwordlessConfig } = {}) {
                                 }
                                 return oI.generateEmailVerifyTokenPOST(input);
                             },
+                            verifyEmailPOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API email verify",
+                                    };
+                                }
+                                return oI.verifyEmailPOST(input);
+                            },
                         };
                     },
                 },
