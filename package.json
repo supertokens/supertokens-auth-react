@@ -69,7 +69,7 @@
         "react-select": "5.2.1",
         "react-shadow": "19.0.3",
         "supertokens-js-override": "^0.0.4",
-        "supertokens-web-js": "^0.0.2"
+        "supertokens-web-js": "github:supertokens/supertokens-web-js#session-general-error"
     },
     "peerDependencies": {
         "react": ">=16.8.0"

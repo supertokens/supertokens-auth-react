@@ -21,10 +21,8 @@ import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
-    getFeatureFlags,
     screenshotOnFailure,
     toggleSignInSignUp,
-    isReact16,
     setInputValues,
     submitFormReturnRequestAndResponse,
     getGeneralError,
@@ -34,6 +32,14 @@ import {
     submitForm,
     defaultSignUp,
     sendVerifyEmail,
+    signUp,
+    logoutFromEmailVerification,
+    assertProviders,
+    clickOnProviderButton,
+    clickOnProviderButtonWithoutWaiting,
+    loginWithAuth0,
+    isGeneralErrorSupported,
+    setGeneralErrorToLocalStorage,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -45,144 +51,21 @@ import {
     TEST_CLIENT_BASE_URL,
     RESET_PASSWORD_TOKEN_API,
     SEND_VERIFY_EMAIL_API,
+    SIGN_OUT_API,
+    GET_AUTH_URL_API,
+    SIGN_IN_UP_API,
 } from "../constants";
 
 describe("General error rendering", function () {
     before(async function () {
-        const features = await getFeatureFlags();
-        if (!features.includes("generalerror") || isReact16()) {
+        const _isGeneralErrorSupported = await isGeneralErrorSupported();
+        if (!_isGeneralErrorSupported) {
             this.skip();
         }
     });
 
     describe("EmailPassword", function () {
-        let browser;
-        let page;
-        before(async function () {
-            await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                method: "POST",
-            }).catch(console.error);
-
-            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                method: "POST",
-            }).catch(console.error);
-
-            browser = await puppeteer.launch({
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                headless: true,
-            });
-        });
-
-        afterEach(function () {
-            return screenshotOnFailure(this, browser);
-        });
-
-        beforeEach(async function () {
-            page = await browser.newPage();
-            await clearBrowserCookiesWithoutAffectingConsole(page, []);
-            await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
-        });
-
-        it("Sign up error", async function () {
-            await toggleSignInSignUp(page);
-            await page.evaluate(() =>
-                localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD EMAIL_PASSWORD_SIGN_UP")
-            );
-            // Set values.
-            await setInputValues(page, [
-                { name: "email", value: "john.doe@supertokens.io" },
-                { name: "password", value: "Str0ngP@ssw0rd" },
-                { name: "name", value: "John Doe" },
-                { name: "age", value: "20" },
-            ]);
-
-            let [{ response }] = await Promise.all([submitFormReturnRequestAndResponse(page, SIGN_UP_API)]);
-
-            assert(response.status === "GENERAL_ERROR" && response.message === "general error from API");
-
-            const generalError = await getGeneralError(page);
-            assert.strictEqual(generalError, response.message);
-        });
-
-        it("Sign in error", async function () {
-            await page.evaluate(() =>
-                localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD EMAIL_PASSWORD_SIGN_IN")
-            );
-            // Set values.
-            await setInputValues(page, [
-                { name: "email", value: "john.doe@supertokens.io" },
-                { name: "password", value: "Str0ngP@ssw0rd" },
-            ]);
-
-            let [{ response }] = await Promise.all([submitFormReturnRequestAndResponse(page, SIGN_IN_API)]);
-
-            assert(response.status === "GENERAL_ERROR" && response.message === "general error from API sign in");
-
-            const generalError = await getGeneralError(page);
-            assert.strictEqual(generalError, response.message);
-        });
-
-        it("Email exists error", async function () {
-            await toggleSignInSignUp(page);
-            await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD EMAIL_EXISTS"));
-            // Set values.
-            await setInputValues(page, [
-                { name: "email", value: "john.doe@supertokens.io" },
-                { name: "password", value: "Str0ngP@ssw0rd" },
-                { name: "name", value: "John Doe" },
-                { name: "age", value: "20" },
-            ]);
-
-            const successAdornments = await getInputAdornmentsSuccess(page);
-            assert.strictEqual(successAdornments.length, 3);
-
-            const errorAdornments = await getInputAdornmentsError(page);
-            assert.strictEqual(errorAdornments.length, 1);
-            let fieldErrors = await getFieldErrors(page);
-
-            assert.deepStrictEqual(fieldErrors, ["general error from API email exists"]);
-        });
-
-        it("Generate password reset token error", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
-
-            await page.evaluate(() =>
-                localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD SEND_RESET_PASSWORD_EMAIL")
-            );
-
-            await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
-
-            // Submit.
-            const [{ response }] = await Promise.all([
-                submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API),
-            ]);
-
-            assert.deepStrictEqual(response, {
-                status: "GENERAL_ERROR",
-                message: "general error from API reset password",
-            });
-
-            const generalError = await getGeneralError(page);
-            assert.strictEqual(generalError, response.message);
-        });
-
-        it("Consume reset password token error", async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?token=TOKEN`);
-
-            await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "EMAIL_PASSWORD SUBMIT_NEW_PASSWORD"));
-
-            // Set password mismatch
-            await setInputValues(page, [
-                { name: "password", value: "Str0ngP@ssw0rd" },
-                { name: "confirm-password", value: "Str0ngP@ssw0rd" },
-            ]);
-
-            // Submit.
-            await submitForm(page);
-
-            const generalError = await getGeneralError(page);
-            assert.strictEqual(generalError, "general error from API reset password consume");
-        });
+        getEmailPasswordTests("emailpassword", "EMAIL_PASSWORD");
     });
 
     describe("Email verification", function () {
@@ -269,15 +152,282 @@ describe("General error rendering", function () {
             generalError = await getGeneralError(page);
             assert.strictEqual(generalError, response1.message);
         });
+
+        it("Test general error during sign out", async function () {
+            await toggleSignInSignUp(page);
+            await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "SESSION SIGN_OUT"));
+
+            const rid = "emailpassword";
+            await signUp(
+                page,
+                [
+                    { name: "email", value: "john.doe2@supertokens.io" },
+                    { name: "password", value: "Str0ngP@ssw0rd" },
+                    { name: "name", value: "John Doe" },
+                    { name: "age", value: "20" },
+                ],
+                '{"formFields":[{"id":"email","value":"john.doe2@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+                rid
+            );
+
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+
+            await logoutFromEmailVerification(page);
+
+            let response1 = await page.waitForResponse(
+                (response) => response.url() === SIGN_OUT_API && response.status() === 200
+            );
+
+            response1 = await response1.json();
+
+            assert.deepStrictEqual(response1, {
+                status: "GENERAL_ERROR",
+                message: "general error from signout API",
+            });
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response1.message);
+        });
     });
 
-    describe("Session", function () {});
+    describe("ThirdParty", function () {
+        getThirdPartyTests("thirdparty", "THIRD_PARTY");
+    });
 
-    describe("ThirdParty", function () {});
+    describe("ThirdPartyEmailPassword", function () {
+        getEmailPasswordTests("thirdpartyemailpassword", "THIRD_PARTY_EMAIL_PASSWORD");
+        getThirdPartyTests("thirdpartyemailpassword", "THIRD_PARTY_EMAIL_PASSWORD");
+    });
 
-    describe("ThirdPartyEmailPassword", function () {});
+    describe("ThirdPartyPasswordless", function () {
+        getThirdPartyTests("thirdpartypasswordless", "THIRD_PARTY_PASSWORDLESS");
+    });
 
-    describe("Passwordless", function () {});
+    /**
+     * NOTE:
+     *
+     * This section is not needed because general error tests are already included for
+     * create, resend and consume code in passwordless.test.js
+     */
+    // describe("Passwordless", function () {});
 
-    describe("ThirdPartyPasswordless", function () {});
+    /**
+     * NOTE:
+     *
+     * This section is not needed because we already test for signOut throwing
+     * general error in the Email verification block
+     */
+    // describe("Session", function () {});
 });
+
+function getEmailPasswordTests(rid, ridForStorage) {
+    describe("Email Password Tests", function () {
+        let browser;
+        let page;
+        before(async function () {
+            await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+                method: "POST",
+            }).catch(console.error);
+
+            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+                method: "POST",
+            }).catch(console.error);
+
+            browser = await puppeteer.launch({
+                args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                headless: true,
+            });
+        });
+
+        afterEach(function () {
+            return screenshotOnFailure(this, browser);
+        });
+
+        beforeEach(async function () {
+            page = await browser.newPage();
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=${rid}`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+        });
+
+        it("Sign up error", async function () {
+            await toggleSignInSignUp(page);
+            await setGeneralErrorToLocalStorage(ridForStorage, "EMAIL_PASSWORD_SIGN_UP", page);
+
+            // Set values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "20" },
+            ]);
+
+            let [{ response }] = await Promise.all([submitFormReturnRequestAndResponse(page, SIGN_UP_API)]);
+
+            assert(response.status === "GENERAL_ERROR" && response.message === "general error from API sign up");
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response.message);
+        });
+
+        it("Sign in error", async function () {
+            await setGeneralErrorToLocalStorage(ridForStorage, "EMAIL_PASSWORD_SIGN_IN", page);
+
+            // Set values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            let [{ response }] = await Promise.all([submitFormReturnRequestAndResponse(page, SIGN_IN_API)]);
+
+            assert(response.status === "GENERAL_ERROR" && response.message === "general error from API sign in");
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response.message);
+        });
+
+        it("Email exists error", async function () {
+            await toggleSignInSignUp(page);
+            await setGeneralErrorToLocalStorage(ridForStorage, "EMAIL_EXISTS", page);
+
+            // Set values.
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "20" },
+            ]);
+
+            const successAdornments = await getInputAdornmentsSuccess(page);
+            assert.strictEqual(successAdornments.length, 3);
+
+            const errorAdornments = await getInputAdornmentsError(page);
+            assert.strictEqual(errorAdornments.length, 1);
+            let fieldErrors = await getFieldErrors(page);
+
+            assert.deepStrictEqual(fieldErrors, ["general error from API email exists"]);
+        });
+
+        it("Generate password reset token error", async function () {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
+            await setGeneralErrorToLocalStorage(ridForStorage, "SEND_RESET_PASSWORD_EMAIL", page);
+
+            await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
+
+            // Submit.
+            const [{ response }] = await Promise.all([
+                submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API),
+            ]);
+
+            assert.deepStrictEqual(response, {
+                status: "GENERAL_ERROR",
+                message: "general error from API reset password",
+            });
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response.message);
+        });
+
+        it("Consume reset password token error", async function () {
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password?token=TOKEN`);
+            await setGeneralErrorToLocalStorage(ridForStorage, "SUBMIT_NEW_PASSWORD", page);
+
+            // Set password mismatch
+            await setInputValues(page, [
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "confirm-password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            // Submit.
+            await submitForm(page);
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, "general error from API reset password consume");
+        });
+    });
+}
+
+function getThirdPartyTests(rid, ridForStorage) {
+    describe("Third Party Tests", function () {
+        let browser;
+        let page;
+        before(async function () {
+            await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+                method: "POST",
+            }).catch(console.error);
+
+            await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+                method: "POST",
+            }).catch(console.error);
+
+            browser = await puppeteer.launch({
+                args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                headless: true,
+            });
+        });
+
+        afterEach(function () {
+            return screenshotOnFailure(this, browser);
+        });
+
+        beforeEach(async function () {
+            page = await browser.newPage();
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=${rid}`);
+            await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+        });
+
+        it("Test general errors when fetching authorization url", async function () {
+            await setGeneralErrorToLocalStorage(ridForStorage, "GET_AUTHORISATION_URL", page);
+
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await assertProviders(page);
+
+            let [_, response1] = await Promise.all([
+                clickOnProviderButtonWithoutWaiting(page, "Auth0"),
+                page.waitForResponse(
+                    (response) =>
+                        response.url().includes(GET_AUTH_URL_API) &&
+                        response.request().method() === "GET" &&
+                        response.status() === 200
+                ),
+            ]);
+
+            response1 = await response1.json();
+
+            assert.deepStrictEqual(response1, {
+                status: "GENERAL_ERROR",
+                message: "general error from API authorisation url get",
+            });
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response1.message);
+        });
+
+        it("Test general errors when calling signinup", async function () {
+            await setGeneralErrorToLocalStorage(ridForStorage, "THIRD_PARTY_SIGN_IN_UP", page);
+
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
+            await assertProviders(page);
+            await clickOnProviderButton(page, "Auth0");
+
+            let [_, response1] = await Promise.all([
+                loginWithAuth0(page),
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+            ]);
+
+            response1 = await response1.json();
+
+            assert.deepStrictEqual(response1, {
+                status: "GENERAL_ERROR",
+                message: "general error from API sign in up",
+            });
+
+            const generalError = await getGeneralError(page);
+            assert.strictEqual(generalError, response1.message);
+        });
+    });
+}

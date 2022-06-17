@@ -23,12 +23,9 @@ import assert from "assert";
 import puppeteer from "puppeteer";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
-    assertProviders,
     clickOnProviderButton,
     getUserIdWithFetch,
     getLogoutButton,
-    signUp,
-    toggleSignInSignUp,
     loginWithAuth0,
     setInputValues,
     submitForm,
@@ -226,6 +223,7 @@ describe("SuperTokens Third Party Passwordless", function () {
         getPasswordlessTestCases({
             authRecipe: "thirdpartypasswordless",
             logId: "THIRDPARTYPASSWORDLESS",
+            generalErrorRecipeName: "THIRD_PARTY_PASSWORDLESS",
         });
     });
 });
