@@ -34,11 +34,13 @@ declare const isEmailVerified: typeof Wrapper.isEmailVerified;
 declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
 declare const EmailVerification: (prop?: any) => JSX.Element;
+declare const getEmailVerificationTokenFromURL: typeof Wrapper.getEmailVerificationTokenFromURL;
 export {
     init,
     isEmailVerified,
     verifyEmail,
     sendVerificationEmail,
+    getEmailVerificationTokenFromURL,
     EmailVerification,
     EmailVerificationTheme,
     GetRedirectionURLContext,

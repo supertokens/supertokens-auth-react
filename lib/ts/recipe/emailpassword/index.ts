@@ -23,7 +23,7 @@ import EmailVerificationTheme from "../emailverification/components/themes/email
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import { getNormalisedUserContext } from "../../utils";
 import { User } from "../authRecipeWithEmailVerification/types";
-import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
+import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 export default class Wrapper {
     static init(config?: UserInput) {
@@ -34,30 +34,40 @@ export default class Wrapper {
         return EmailPassword.getInstanceOrThrow().signOut();
     }
 
-    static async isEmailVerified(input?: { userContext?: any }): Promise<{
+    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
     }> {
-        return EmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified(
-            getNormalisedUserContext(input?.userContext)
-        );
-    }
-
-    static async verifyEmail(input?: { userContext?: any }): Promise<{
-        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
-        fetchResponse: Response;
-    }> {
-        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.isEmailVerified({
+            ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+    static async verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
+        fetchResponse: Response;
+    }> {
+        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
         return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
+        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.getEmailVerificationTokenFromURL({
+            ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -82,11 +92,12 @@ export default class Wrapper {
         }
     }
 
-    static submitNewPassword(input: {
+    static async submitNewPassword(input: {
         formFields: {
             id: string;
             value: string;
         }[];
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -108,11 +119,12 @@ export default class Wrapper {
         });
     }
 
-    static sendPasswordResetEmail(input: {
+    static async sendPasswordResetEmail(input: {
         formFields: {
             id: string;
             value: string;
         }[];
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -134,11 +146,12 @@ export default class Wrapper {
         });
     }
 
-    static signUp(input: {
+    static async signUp(input: {
         formFields: {
             id: string;
             value: string;
         }[];
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -161,11 +174,12 @@ export default class Wrapper {
         });
     }
 
-    static signIn(input: {
+    static async signIn(input: {
         formFields: {
             id: string;
             value: string;
         }[];
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -192,7 +206,7 @@ export default class Wrapper {
         });
     }
 
-    static doesEmailExist(input: { email: string; userContext?: any }): Promise<{
+    static async doesEmailExist(input: { email: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
@@ -200,6 +214,13 @@ export default class Wrapper {
         return EmailPassword.getInstanceOrThrow().recipeImpl.doesEmailExist({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static getResetPasswordTokenFromURL(input?: { userContext?: any }): string {
+        return EmailPassword.getInstanceOrThrow().recipeImpl.getResetPasswordTokenFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -219,6 +240,7 @@ const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
 const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
+const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
 const redirectToAuth = Wrapper.redirectToAuth;
 const submitNewPassword = Wrapper.submitNewPassword;
 const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
@@ -226,6 +248,7 @@ const signUp = Wrapper.signUp;
 const signIn = Wrapper.signIn;
 const doesEmailExist = Wrapper.doesEmailExist;
 const SignInAndUp = Wrapper.SignInAndUp;
+const getResetPasswordTokenFromURL = Wrapper.getResetPasswordTokenFromURL;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 const EmailVerification = Wrapper.EmailVerification;
 
@@ -235,6 +258,7 @@ export {
     isEmailVerified,
     verifyEmail,
     sendVerificationEmail,
+    getEmailVerificationTokenFromURL,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
@@ -244,6 +268,7 @@ export {
     signUp,
     signIn,
     doesEmailExist,
+    getResetPasswordTokenFromURL,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
     EmailVerification,

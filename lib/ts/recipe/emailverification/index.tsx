@@ -76,12 +76,14 @@ const isEmailVerified = Wrapper.isEmailVerified;
 const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
 const EmailVerification = Wrapper.EmailVerification;
+const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
 
 export {
     init,
     isEmailVerified,
     verifyEmail,
     sendVerificationEmail,
+    getEmailVerificationTokenFromURL,
     EmailVerification,
     EmailVerificationTheme,
     GetRedirectionURLContext,
