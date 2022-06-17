@@ -27,8 +27,12 @@ export declare function removeFromLocalStorage(key: string): Promise<void>;
 export declare function mergeObjects<T>(obj1: T, obj2: T): T;
 export declare function normaliseCookieScopeOrThrowError(cookieScope: string): string;
 export declare function getDefaultCookieScope(): string | undefined;
-export declare function getCookieValue(name: string): string | null;
-export declare function setFrontendCookie(name: string, value: string | undefined, scope: string | undefined): void;
+export declare function getCookieValue(name: string): Promise<string | null>;
+export declare function setFrontendCookie(
+    name: string,
+    value: string | undefined,
+    scope: string | undefined
+): Promise<void>;
 export declare function getNormalisedUserContext(userContext?: any): any;
 export declare const useOnMountAPICall: <T>(
     fetch: () => Promise<T>,

@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   The reset password form has a back button which takes the user back to the 'Sign in' form in `emailpassword` and `thirdpartyemailpassword` recipes.
 
+### Breaking changes
+
+-   Removes `setCookieSync` and `getCookieSync` from the interface for `cookieHandler` when calling `SuperTokens.init`
+
 ## [0.22.3] - 2022-06-14
 
 ### Build changes

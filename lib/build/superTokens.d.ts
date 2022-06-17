@@ -42,7 +42,7 @@ export default class SuperTokens {
               useHistoryCustom: () => any;
           }
         | undefined;
-    changeLanguage(lang: string): void;
+    changeLanguage: (lang: string) => Promise<void>;
     loadTranslation(store: TranslationStore): void;
     static reset(): void;
 }
