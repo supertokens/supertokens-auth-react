@@ -22,7 +22,13 @@ import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
-import { SEND_VERIFY_EMAIL_API, VERIFY_EMAIL_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import {
+    SEND_VERIFY_EMAIL_API,
+    VERIFY_EMAIL_API,
+    TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
+    SIGN_OUT_API,
+} from "../constants";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     clickLinkWithRightArrow,
@@ -40,6 +46,8 @@ import {
     defaultSignUp,
     signUp,
     screenshotOnFailure,
+    logoutFromEmailVerification,
+    waitForSTElement,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -580,5 +588,88 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
         //         "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED",
         //     ]);
         // });
+    });
+});
+
+describe("Email verification signOut errors", function () {
+    let browser;
+    let page;
+    before(async function () {
+        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+            method: "POST",
+        }).catch(console.error);
+
+        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+            method: "POST",
+        }).catch(console.error);
+
+        browser = await puppeteer.launch({
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            headless: true,
+        });
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
+    });
+
+    beforeEach(async function () {
+        page = await browser.newPage();
+        await clearBrowserCookiesWithoutAffectingConsole(page, []);
+        await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+    });
+
+    it("Test that Something Went Wrong is displayed when signOut throws an error", async function () {
+        await toggleSignInSignUp(page);
+        await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "SESSION SIGN_OUT"));
+
+        const rid = "emailpassword";
+        await signUp(
+            page,
+            [
+                { name: "email", value: "john.doe2@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "20" },
+            ],
+            '{"formFields":[{"id":"email","value":"john.doe2@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+            rid
+        );
+
+        let pathname = await page.evaluate(() => window.location.pathname);
+        assert.deepStrictEqual(pathname, "/auth/verify-email");
+
+        await page.setRequestInterception(true);
+        const requestHandler = (request) => {
+            if (request.url() === SIGN_OUT_API && request.method() === "POST") {
+                return request.respond({
+                    status: 400,
+                    headers: {
+                        "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                        "access-control-allow-credentials": "true",
+                    },
+                    body: JSON.stringify({
+                        status: "BAD_INPUT",
+                    }),
+                });
+            }
+
+            return request.continue();
+        };
+        page.on("request", requestHandler);
+
+        await logoutFromEmailVerification(page);
+
+        await page.waitForResponse((response) => response.url() === SIGN_OUT_API && response.status() === 400);
+
+        page.off("request", requestHandler);
+        await page.setRequestInterception(false);
+
+        const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+        assert.strictEqual(await error.evaluate((e) => e.textContent), "Something went wrong. Please try again");
     });
 });
