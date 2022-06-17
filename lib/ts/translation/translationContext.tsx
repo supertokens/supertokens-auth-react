@@ -31,8 +31,8 @@ export const TranslationContextProvider: React.FC<
     const [translationStore, setTranslationStore] = useState<TranslationStore>(defaultStore);
     const [currentLanguage, setCurrentLanguage] = useState<string | undefined>(undefined);
 
-    const loadLanguageFromCookies = useCallback(
-        async function () {
+    useEffect(() => {
+        async function loadLanguageFromCookies() {
             const cookieLang = await getCurrentLanguageFromCookie();
             const cookieLangTemp = cookieLang === null ? defaultLanguage : cookieLang;
 
@@ -44,11 +44,8 @@ export const TranslationContextProvider: React.FC<
              * not set language before this
              */
             setCurrentLanguage((current) => (current !== undefined ? current : cookieLangTemp));
-        },
-        [defaultLanguage, setCurrentLanguage]
-    );
+        }
 
-    useEffect(() => {
         void loadLanguageFromCookies();
     }, []);
 
@@ -97,7 +94,7 @@ export const TranslationContextProvider: React.FC<
     );
 
     if (currentLanguage === undefined) {
-        return <></>;
+        return null;
     }
 
     return <TranslationContext.Provider value={{ translate: translateFunc }}>{children}</TranslationContext.Provider>;
