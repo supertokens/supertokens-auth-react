@@ -551,7 +551,48 @@ function initST({ passwordlessConfig } = {}) {
         ...passwordlessConfig,
     };
     if (passwordlessSupported) {
-        recipeList.push(Passwordless.init(passwordlessConfig));
+        recipeList.push(
+            Passwordless.init({
+                ...passwordlessConfig,
+                override: {
+                    apis: (originalImplementation) => {
+                        return {
+                            ...originalImplementation,
+                            createCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API create code",
+                                    };
+                                }
+                                return originalImplementation.createCodePOST(input);
+                            },
+                            resendCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API resend code",
+                                    };
+                                }
+                                return originalImplementation.resendCodePOST(input);
+                            },
+                            consumeCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API consume code",
+                                    };
+                                }
+                                return originalImplementation.consumeCodePOST(input);
+                            },
+                        };
+                    },
+                },
+            })
+        );
     }
 
     if (thirdPartyPasswordlessSupported) {
@@ -598,6 +639,36 @@ function initST({ passwordlessConfig } = {}) {
                                 }
 
                                 return originalImplementation.thirdPartySignInUpPOST(input);
+                            },
+                            createCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API create code",
+                                    };
+                                }
+                                return originalImplementation.createCodePOST(input);
+                            },
+                            resendCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API resend code",
+                                    };
+                                }
+                                return originalImplementation.resendCodePOST(input);
+                            },
+                            consumeCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API consume code",
+                                    };
+                                }
+                                return originalImplementation.consumeCodePOST(input);
                             },
                         };
                     },

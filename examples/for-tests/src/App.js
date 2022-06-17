@@ -790,6 +790,15 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         },
         palette: theme.colors,
         preAPIHook: async (context) => {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `PASSWORDLESS ${context.action}`) {
+                let jsonBody = JSON.parse(context.requestInit.body);
+                jsonBody = {
+                    ...jsonBody,
+                    generalError: true,
+                };
+                context.requestInit.body = JSON.stringify(jsonBody);
+            }
+
             console.log(`ST_LOGS PASSWORDLESS PRE_API_HOOKS ${context.action}`);
             return context;
         },

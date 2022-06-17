@@ -21,10 +21,8 @@ import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
-    getFeatureFlags,
     screenshotOnFailure,
     toggleSignInSignUp,
-    isReact16,
     setInputValues,
     submitFormReturnRequestAndResponse,
     getGeneralError,
@@ -40,6 +38,8 @@ import {
     clickOnProviderButton,
     clickOnProviderButtonWithoutWaiting,
     loginWithAuth0,
+    isGeneralErrorSupported,
+    setGeneralErrorToLocalStorage,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -58,8 +58,8 @@ import {
 
 describe("General error rendering", function () {
     before(async function () {
-        const features = await getFeatureFlags();
-        if (!features.includes("generalerror") || isReact16()) {
+        const _isGeneralErrorSupported = await isGeneralErrorSupported();
+        if (!_isGeneralErrorSupported) {
             this.skip();
         }
     });
@@ -220,13 +220,6 @@ describe("General error rendering", function () {
      */
     // describe("Session", function () {});
 });
-
-async function setGeneralErrorToLocalStorage(recipeName, action, page) {
-    return page.evaluate((data) => localStorage.setItem("SHOW_GENERAL_ERROR", `${data.recipeName} ${data.action}`), {
-        recipeName,
-        action,
-    });
-}
 
 function getEmailPasswordTests(rid, ridForStorage) {
     describe("Email Password Tests", function () {

@@ -717,3 +717,23 @@ export function setPasswordlessFlowType(contactMethod, flowType) {
 export function isReact16() {
     return process.env.IS_REACT_16 === "true";
 }
+
+export async function isGeneralErrorSupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("generalerror") || isReact16()) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
+ * set for signUp in email password
+ */
+export async function setGeneralErrorToLocalStorage(recipeName, action, page) {
+    return page.evaluate((data) => localStorage.setItem("SHOW_GENERAL_ERROR", `${data.recipeName} ${data.action}`), {
+        recipeName,
+        action,
+    });
+}
