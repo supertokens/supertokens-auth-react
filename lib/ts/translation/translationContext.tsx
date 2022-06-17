@@ -47,7 +47,7 @@ export const TranslationContextProvider: React.FC<
         }
 
         void loadLanguageFromCookies();
-    }, []);
+    }, [defaultLanguage, setCurrentLanguage]);
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
