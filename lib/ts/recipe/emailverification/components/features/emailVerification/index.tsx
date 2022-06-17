@@ -74,9 +74,6 @@ export const EmailVerification: React.FC<Prop> = (props) => {
 
     const signOut = useCallback(async (): Promise<void> => {
         await props.recipe.config.signOut();
-    }, [props.recipe]);
-
-    const navigateAfterSignOut = useCallback(async (): Promise<void> => {
         return await props.recipe.config.redirectToSignIn(props.history);
     }, [props.recipe]);
 
@@ -106,7 +103,6 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         recipeImplementation: modifiedRecipeImplementation,
         config: props.recipe.config,
         signOut: signOut,
-        navigateAfterSignOut: navigateAfterSignOut,
         onEmailAlreadyVerified: onEmailAlreadyVerified,
     };
 

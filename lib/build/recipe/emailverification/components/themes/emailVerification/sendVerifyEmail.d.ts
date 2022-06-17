@@ -6,7 +6,6 @@ export declare const SendVerifyEmail: import("react").ComponentType<
         recipeImplementation: import("supertokens-web-js/recipe/emailverification").RecipeInterface;
         config: import("../../../types").NormalisedConfig;
         signOut: () => Promise<void>;
-        navigateAfterSignOut: () => Promise<void>;
         onEmailAlreadyVerified: () => Promise<void>;
     } & {
         children?: import("react").ReactNode;

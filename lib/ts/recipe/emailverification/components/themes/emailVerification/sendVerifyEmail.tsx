@@ -63,10 +63,9 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
         } catch (e) {
             if (STGeneralError.isThisError(e)) {
                 setErrorMessage(e.message);
-                setStatus("ERROR");
-            } else {
-                await props.navigateAfterSignOut();
             }
+
+            setStatus("ERROR");
         }
     };
 
