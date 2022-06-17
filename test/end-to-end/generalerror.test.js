@@ -36,10 +36,9 @@ import {
     sendVerifyEmail,
     signUp,
     logoutFromEmailVerification,
-    getLatestURLWithToken,
-    getVerificationEmailErrorMessage,
     assertProviders,
     clickOnProviderButton,
+    clickOnProviderButtonWithoutWaiting,
     loginWithAuth0,
 } from "../helpers";
 
@@ -53,7 +52,6 @@ import {
     RESET_PASSWORD_TOKEN_API,
     SEND_VERIFY_EMAIL_API,
     SIGN_OUT_API,
-    VERIFY_EMAIL_API,
     GET_AUTH_URL_API,
     SIGN_IN_UP_API,
 } from "../constants";
@@ -202,14 +200,25 @@ describe("General error rendering", function () {
         getThirdPartyTests("thirdpartyemailpassword", "THIRD_PARTY_EMAIL_PASSWORD");
     });
 
-    // TODO: Add tests
-    describe("Session", function () {});
+    describe("ThirdPartyPasswordless", function () {
+        getThirdPartyTests("thirdpartypasswordless", "THIRD_PARTY_PASSWORDLESS");
+    });
 
-    // TODO: Add tests
-    describe("Passwordless", function () {});
+    /**
+     * NOTE:
+     *
+     * This section is not needed because general error tests are already included for
+     * create, resend and consume code in passwordless.test.js
+     */
+    // describe("Passwordless", function () {});
 
-    // TODO: Add tests
-    describe("ThirdPartyPasswordless", function () {});
+    /**
+     * NOTE:
+     *
+     * This section is not needed because we already test for signOut throwing
+     * general error in the Email verification block
+     */
+    // describe("Session", function () {});
 });
 
 async function setGeneralErrorToLocalStorage(recipeName, action, page) {
@@ -244,7 +253,10 @@ function getEmailPasswordTests(rid, ridForStorage) {
 
         beforeEach(async function () {
             page = await browser.newPage();
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=${rid}`);
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=${rid}`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
             await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
         });
 
@@ -371,29 +383,25 @@ function getThirdPartyTests(rid, ridForStorage) {
 
         beforeEach(async function () {
             page = await browser.newPage();
-            await Promise.all([
-                await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=${rid}`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=${rid}`);
             await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
         });
 
         it("Test general errors when fetching authorization url", async function () {
             await setGeneralErrorToLocalStorage(ridForStorage, "GET_AUTHORISATION_URL", page);
 
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
-            clickOnProviderButton(page, "Auth0");
 
-            let response1 = await page.waitForResponse(
-                (response) =>
-                    response.url().includes(GET_AUTH_URL_API) &&
-                    response.request().method() === "GET" &&
-                    response.status() === 200
-            );
+            let [_, response1] = await Promise.all([
+                clickOnProviderButtonWithoutWaiting(page, "Auth0"),
+                page.waitForResponse(
+                    (response) =>
+                        response.url().includes(GET_AUTH_URL_API) &&
+                        response.request().method() === "GET" &&
+                        response.status() === 200
+                ),
+            ]);
 
             response1 = await response1.json();
 
@@ -409,19 +417,14 @@ function getThirdPartyTests(rid, ridForStorage) {
         it("Test general errors when calling signinup", async function () {
             await setGeneralErrorToLocalStorage(ridForStorage, "THIRD_PARTY_SIGN_IN_UP", page);
 
-            await Promise.all([
-                page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
-                page.waitForNavigation({ waitUntil: "networkidle0" }),
-            ]);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth`);
             await assertProviders(page);
             await clickOnProviderButton(page, "Auth0");
-            loginWithAuth0(page);
 
-            let response1 = await page.waitForResponse(
-                (response) => response.url() === SIGN_IN_UP_API && response.status() === 200
-            );
-
-            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            let [_, response1] = await Promise.all([
+                loginWithAuth0(page),
+                page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+            ]);
 
             response1 = await response1.json();
 

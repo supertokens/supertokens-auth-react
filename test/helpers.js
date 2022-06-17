@@ -500,22 +500,29 @@ export async function assertProviders(page) {
 export async function clickOnProviderButton(page, provider) {
     await waitForSTElement(page);
     return await Promise.all([
-        page.evaluate(
-            ({ ST_ROOT_SELECTOR, provider }) => {
-                Array.from(
-                    document
-                        .querySelector(ST_ROOT_SELECTOR)
-                        .shadowRoot.querySelectorAll("[data-supertokens~='providerButton']")
-                )
-                    .find((button) => {
-                        return button.innerText === `Continue with ${provider}`;
-                    })
-                    .click();
-            },
-            { ST_ROOT_SELECTOR, provider }
-        ),
+        clickOnProviderButtonWithoutWaiting(page, provider),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
+}
+
+// Clicks on the provider button but does not wait for navigation
+// This is useful if you want to listen to network requests after clicking
+export async function clickOnProviderButtonWithoutWaiting(page, provider) {
+    await waitForSTElement(page);
+    return page.evaluate(
+        ({ ST_ROOT_SELECTOR, provider }) => {
+            Array.from(
+                document
+                    .querySelector(ST_ROOT_SELECTOR)
+                    .shadowRoot.querySelectorAll("[data-supertokens~='providerButton']")
+            )
+                .find((button) => {
+                    return button.innerText === `Continue with ${provider}`;
+                })
+                .click();
+        },
+        { ST_ROOT_SELECTOR, provider }
+    );
 }
 
 export async function loginWithGoogle(page) {
