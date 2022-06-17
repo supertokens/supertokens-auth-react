@@ -342,9 +342,15 @@ function initST({ passwordlessConfig } = {}) {
                         signInPOST: async function (input) {
                             let body = await input.options.req.getJSONBody();
                             if (body.generalError === true) {
+                                let message = "general error from API sign in";
+
+                                if (body.generalErrorMessage !== undefined) {
+                                    message = body.generalErrorMessage;
+                                }
+
                                 return {
                                     status: "GENERAL_ERROR",
-                                    message: "general error from API sign in",
+                                    message,
                                 };
                             }
                             return oI.signInPOST(input);

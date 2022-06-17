@@ -516,6 +516,8 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
         palette: theme.colors,
         preAPIHook: async (context) => {
             if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `EMAIL_PASSWORD ${context.action}`) {
+                let errorFromStorage = localStorage.getItem("TRANSLATED_GENERAL_ERROR");
+
                 if (context.action === "EMAIL_EXISTS") {
                     context.url += "&generalError=true";
                 } else {
@@ -523,6 +525,7 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
                     jsonBody = {
                         ...jsonBody,
                         generalError: true,
+                        generalErrorMessage: errorFromStorage === null ? undefined : errorFromStorage,
                     };
                     context.requestInit.body = JSON.stringify(jsonBody);
                 }
