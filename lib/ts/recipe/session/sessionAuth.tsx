@@ -53,8 +53,8 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     const parentSessionContext = useContext(SessionContext);
 
     // assign the parent context here itself so that there is no flicker in the UI
-    const [context, setContext] = useState<SessionContextType | undefined>(
-        !isDefaultContext(parentSessionContext) ? parentSessionContext : undefined
+    const [context, setContext] = useState<SessionContextType>(
+        !isDefaultContext(parentSessionContext) ? parentSessionContext : { loading: true }
     );
 
     const session = useRef<Session>();
@@ -159,10 +159,6 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         // onHandleEvent changes or if the component is unmounting.
         return session.current!.addEventListener(onHandleEvent);
     }, [props]);
-
-    if (context === undefined) {
-        return null;
-    }
 
     // this will display null only if initially the below condition is true.
     // cause if the session goes from existing to non existing, then

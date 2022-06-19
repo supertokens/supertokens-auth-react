@@ -34,11 +34,15 @@ const MockSessionConsumer = () => {
 
 const setMockResolves = (ctx: SessionContextType) => {
     if (ctx.loading === true) {
-        throw new Error();
+        // We "simulate" loading by returning these promises that won't ever resolve
+        MockSession.getUserId.mockReturnValue(new Promise<any>(() => {}));
+        MockSession.getAccessTokenPayloadSecurely.mockReturnValue(new Promise<any>(() => {}));
+        MockSession.doesSessionExist.mockReturnValue(new Promise<any>(() => {}));
+    } else {
+        MockSession.getUserId.mockResolvedValue(ctx.userId);
+        MockSession.getAccessTokenPayloadSecurely.mockResolvedValue(ctx.accessTokenPayload);
+        MockSession.doesSessionExist.mockResolvedValue(ctx.doesSessionExist);
     }
-    MockSession.getUserId.mockResolvedValue(ctx.userId);
-    MockSession.getAccessTokenPayloadSecurely.mockResolvedValue(ctx.accessTokenPayload);
-    MockSession.doesSessionExist.mockResolvedValue(ctx.doesSessionExist);
 };
 
 jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession as any);
@@ -159,6 +163,47 @@ describe("SessionAuth", () => {
                     expect(child).not.toBeInTheDocument();
                 }
             });
+        });
+
+        test("don't render when requireAuth=true and session is loading", async () => {
+            // given
+            const noop = jest.fn();
+            setMockResolves({
+                loading: true,
+            });
+
+            // when
+            const result = render(
+                // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
+                <SessionAuth requireAuth={true} redirectToLogin={noop}>
+                    <h1>Children</h1>
+                </SessionAuth>
+            );
+
+            const child = await result.findByText(/Children/i).catch(() => null);
+
+            // then
+            expect(child).not.toBeInTheDocument();
+        });
+
+        test("do render when requireAuth=false and session is loading", async () => {
+            // given
+            setMockResolves({
+                loading: true,
+            });
+
+            // when
+            const result = render(
+                // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
+                <SessionAuth requireAuth={false}>
+                    <h1>Children</h1>
+                </SessionAuth>
+            );
+
+            const child = await result.findByText(/Children/i).catch(() => null);
+
+            // then
+            expect(child).toBeInTheDocument();
         });
     });
 
