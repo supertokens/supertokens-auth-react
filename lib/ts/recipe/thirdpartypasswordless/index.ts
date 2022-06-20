@@ -233,7 +233,7 @@ export default class Wrapper {
         });
     }
 
-    static async resendPasswordlessCode(input: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async resendPasswordlessCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }> {

@@ -101,7 +101,7 @@ export default class Wrapper {
         flowType: PasswordlessFlowType;
         fetchResponse: Response;
     }>;
-    static resendPasswordlessCode(input: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static resendPasswordlessCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }>;
