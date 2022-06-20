@@ -56,9 +56,15 @@ supertokens.init({
         Passwordless.init({
             contactMethod: "PHONE",
             flowType: "USER_INPUT_CODE",
-            createAndSendCustomTextMessage: async function (input) {
-                // TODO: implement sending of text message with OTP
-                console.log("SMS OTP:", input);
+            smsDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendSms: async function (input) {
+                            console.log(input);
+                        },
+                    };
+                },
             },
             override: {
                 apis: (oI) => {
