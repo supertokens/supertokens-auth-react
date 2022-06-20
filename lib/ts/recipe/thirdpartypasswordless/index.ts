@@ -36,36 +36,50 @@ export default class Wrapper {
         return ThirdPartyPasswordless.init(config);
     }
 
-    static async signOut(): Promise<void> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().signOut();
+    static signOut(input?: { userContext?: any }) {
+        return ThirdPartyPasswordless.getInstanceOrThrow().signOut({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
-    static async isEmailVerified(input?: { userContext?: any }): Promise<{
+    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
     }> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.isEmailVerified(
-            getNormalisedUserContext(input?.userContext)
-        );
-    }
-
-    static async verifyEmail(input?: { userContext?: any }): Promise<{
-        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.isEmailVerified({
+            ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+    static async verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
+        fetchResponse: Response;
+    }> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
         return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
+            ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
+    }
+
+    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
+        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.getEmailVerificationTokenFromURL(
+            {
+                ...input,
+                userContext: getNormalisedUserContext(input?.userContext),
+            }
+        );
     }
 
     static async redirectToThirdPartyLogin(input: {
@@ -88,7 +102,22 @@ export default class Wrapper {
         });
     }
 
-    static thirdPartySignInAndUp(input?: { userContext?: any }): Promise<
+    static getAuthorisationURLFromBackend(input: {
+        providerId: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        url: string;
+        fetchResponse: Response;
+    }> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.getAuthorisationURLFromBackend({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: UserType;
@@ -100,13 +129,7 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        /**
-         * We do it this way here because prettier behaves in a weird way without it.
-         * If you return directly, build-pretty will succeed but pretty-check will fail
-         * when you try to commit and you will have to run pretty manually every time
-         */
-        const recipeInstance: ThirdPartyPasswordless = ThirdPartyPasswordless.getInstanceOrThrow();
-        return recipeInstance.recipeImpl.thirdPartySignInAndUp({
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.thirdPartySignInAndUp({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -269,7 +292,9 @@ const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
 const verifyEmail = Wrapper.verifyEmail;
+const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
+const getAuthorisationURLFromBackend = Wrapper.getAuthorisationURLFromBackend;
 const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
 const createPasswordlessCode = Wrapper.createPasswordlessCode;
 const resendPasswordlessCode = Wrapper.resendPasswordlessCode;
@@ -292,7 +317,9 @@ export {
     isEmailVerified,
     sendVerificationEmail,
     verifyEmail,
+    getEmailVerificationTokenFromURL,
     redirectToThirdPartyLogin,
+    getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,
     createPasswordlessCode,
     resendPasswordlessCode,
