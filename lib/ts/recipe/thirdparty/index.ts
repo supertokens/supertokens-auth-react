@@ -41,8 +41,10 @@ export default class Wrapper {
         return ThirdParty.init(config);
     }
 
-    static async signOut(): Promise<void> {
-        return ThirdParty.getInstanceOrThrow().signOut();
+    static signOut(input?: { userContext?: any }) {
+        return ThirdParty.getInstanceOrThrow().signOut({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{

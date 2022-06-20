@@ -16,7 +16,7 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static signOut(): Promise<void>;
+    static signOut(input?: { userContext?: any }): Promise<void>;
     static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;

@@ -30,8 +30,10 @@ export default class Wrapper {
         return EmailPassword.init(config);
     }
 
-    static async signOut(): Promise<void> {
-        return EmailPassword.getInstanceOrThrow().signOut();
+    static signOut(input?: { userContext?: any }) {
+        return EmailPassword.getInstanceOrThrow().signOut({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
