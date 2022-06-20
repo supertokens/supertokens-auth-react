@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.22.4] - 2022-06-20
+
 ### Added
 
 -   Exposes more functions from each recipe.
