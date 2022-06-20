@@ -25,49 +25,65 @@ import {
     RecipeInterface,
     EmailPasswordUserType as UserType,
     ThirdPartyUserType,
+    RecipeFunctionOptions,
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
+import { StateObject } from "supertokens-web-js/recipe/thirdparty";
 
 export default class Wrapper {
     static init(config: UserInput) {
         return ThirdPartyEmailPassword.init(config);
     }
 
-    static async signOut(): Promise<void> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().signOut();
+    static async signOut(input?: { userContext?: any }): Promise<void> {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().signOut({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
-    static async isEmailVerified(input?: { userContext?: any }): Promise<{
+    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
     }> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified(
-            getNormalisedUserContext(input?.userContext)
-        );
-    }
-
-    static async verifyEmail(input?: { userContext?: any }): Promise<{
-        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.isEmailVerified({
+            ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+    static async verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
+        fetchResponse: Response;
+    }> {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
         return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
+            ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
+    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.getEmailVerificationTokenFromURL(
+            {
+                ...input,
+                userContext: getNormalisedUserContext(input?.userContext),
+            }
+        );
+    }
+
     // have backwards compatibility to allow input as "signin" | "signup"
-    static redirectToAuth(
+    static async redirectToAuth(
         input?:
             | ("signin" | "signup")
             | {
@@ -86,12 +102,12 @@ export default class Wrapper {
         }
     }
 
-    static submitNewPassword(input: {
+    static async submitNewPassword(input: {
         formFields: {
             id: string;
             value: string;
         }[];
-        token: string;
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -113,11 +129,12 @@ export default class Wrapper {
         });
     }
 
-    static sendPasswordResetEmail(input: {
+    static async sendPasswordResetEmail(input: {
         formFields: {
             id: string;
             value: string;
         }[];
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -139,11 +156,12 @@ export default class Wrapper {
         });
     }
 
-    static emailPasswordSignUp(input: {
+    static async emailPasswordSignUp(input: {
         formFields: {
             id: string;
             value: string;
         }[];
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -166,11 +184,12 @@ export default class Wrapper {
         });
     }
 
-    static emailPasswordSignIn(input: {
+    static async emailPasswordSignIn(input: {
         formFields: {
             id: string;
             value: string;
         }[];
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -197,7 +216,7 @@ export default class Wrapper {
         });
     }
 
-    static doesEmailExist(input: { email: string; userContext?: any }): Promise<{
+    static async doesEmailExist(input: { email: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
@@ -205,6 +224,13 @@ export default class Wrapper {
         return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.doesEmailExist({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static getResetPasswordTokenFromURL(input?: { userContext?: any }): string {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getResetPasswordTokenFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -228,7 +254,22 @@ export default class Wrapper {
         });
     }
 
-    static thirdPartySignInAndUp(input?: { userContext?: any }): Promise<
+    static async getAuthorisationURLFromBackend(input: {
+        providerId: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        url: string;
+        fetchResponse: Response;
+    }> {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getAuthorisationURLFromBackend({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: ThirdPartyUserType;
@@ -240,13 +281,78 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        /**
-         * We do it this way here because prettier behaves in a weird way without it.
-         * If you return directly, build-pretty will succeed but pretty-check will fail
-         * when you try to commit and you will have to run pretty manually every time
-         */
-        const recipeInstance: ThirdPartyEmailPassword = ThirdPartyEmailPassword.getInstanceOrThrow();
-        return recipeInstance.recipeImpl.thirdPartySignInAndUp({
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.thirdPartySignInAndUp({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
+        userContext?: any;
+    }): (StateObject & CustomStateProperties) | undefined {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getStateAndOtherInfoFromStorage({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async setStateAndOtherInfoToStorage<CustomStateProperties>(input: {
+        state: StateObject & CustomStateProperties;
+        userContext?: any;
+    }): Promise<void> {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.setStateAndOtherInfoToStorage({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async getAuthorisationURLWithQueryParamsAndSetState(input: {
+        providerId: string;
+        authorisationURL: string;
+        providerClientId?: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<string> {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getAuthorisationURLWithQueryParamsAndSetState({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static generateStateToSendToOAuthProvider(input?: { userContext?: any }): string {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.generateStateToSendToOAuthProvider({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async verifyAndGetStateOrThrowError<CustomStateProperties>(input: {
+        stateFromAuthProvider: string | undefined;
+        stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
+        userContext?: any;
+    }): Promise<StateObject & CustomStateProperties> {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.verifyAndGetStateOrThrowError({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static getAuthCodeFromURL(input?: { userContext?: any }): string {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getAuthCodeFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getAuthErrorFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getAuthStateFromURL(input?: { userContext?: any }): string {
+        return ThirdPartyEmailPassword.getInstanceOrThrow().recipeImpl.getAuthStateFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -276,6 +382,7 @@ const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
 const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
+const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
@@ -286,8 +393,18 @@ const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
 const emailPasswordSignIn = Wrapper.emailPasswordSignIn;
 const emailPasswordSignUp = Wrapper.emailPasswordSignUp;
 const doesEmailExist = Wrapper.doesEmailExist;
+const getResetPasswordTokenFromURL = Wrapper.getResetPasswordTokenFromURL;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
+const getAuthorisationURLFromBackend = Wrapper.getAuthorisationURLFromBackend;
 const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
+const getStateAndOtherInfoFromStorage = Wrapper.getStateAndOtherInfoFromStorage;
+const setStateAndOtherInfoToStorage = Wrapper.setStateAndOtherInfoToStorage;
+const getAuthorisationURLWithQueryParamsAndSetState = Wrapper.getAuthorisationURLWithQueryParamsAndSetState;
+const generateStateToSendToOAuthProvider = Wrapper.generateStateToSendToOAuthProvider;
+const verifyAndGetStateOrThrowError = Wrapper.verifyAndGetStateOrThrowError;
+const getAuthCodeFromURL = Wrapper.getAuthCodeFromURL;
+const getAuthErrorFromURL = Wrapper.getAuthErrorFromURL;
+const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 
 export {
     ThirdPartyEmailPasswordAuth,
@@ -299,6 +416,7 @@ export {
     isEmailVerified,
     verifyEmail,
     sendVerificationEmail,
+    getEmailVerificationTokenFromURL,
     SignInAndUp,
     SignInAndUpTheme,
     ThirdPartySignInAndUpCallback,
@@ -310,8 +428,18 @@ export {
     emailPasswordSignIn,
     emailPasswordSignUp,
     doesEmailExist,
+    getResetPasswordTokenFromURL,
     redirectToThirdPartyLogin,
+    getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,
+    getStateAndOtherInfoFromStorage,
+    setStateAndOtherInfoToStorage,
+    getAuthorisationURLWithQueryParamsAndSetState,
+    generateStateToSendToOAuthProvider,
+    verifyAndGetStateOrThrowError,
+    getAuthCodeFromURL,
+    getAuthErrorFromURL,
+    getAuthStateFromURL,
     EmailVerification,
     EmailVerificationTheme,
     ResetPasswordUsingToken,
