@@ -29,8 +29,9 @@ import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
 import { getNormalisedUserContext } from "../../utils";
-import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
+import { RecipeInterface, StateObject, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "./utils";
+import { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class Wrapper {
     /*
      * Static attributes.
@@ -44,30 +45,40 @@ export default class Wrapper {
         return ThirdParty.getInstanceOrThrow().signOut();
     }
 
-    static async isEmailVerified(input?: { userContext?: any }): Promise<{
+    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
     }> {
-        return ThirdParty.getInstanceOrThrow().emailVerification.isEmailVerified(
-            getNormalisedUserContext(input?.userContext)
-        );
-    }
-
-    static async verifyEmail(input?: { userContext?: any }): Promise<{
-        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
-        fetchResponse: Response;
-    }> {
-        return ThirdParty.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+        return ThirdParty.getInstanceOrThrow().emailVerification.recipeImpl.isEmailVerified({
+            ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+    static async verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
+        fetchResponse: Response;
+    }> {
+        return ThirdParty.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
         return ThirdParty.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
+        return ThirdParty.getInstanceOrThrow().emailVerification.recipeImpl.getEmailVerificationTokenFromURL({
+            ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -106,7 +117,54 @@ export default class Wrapper {
         });
     }
 
-    static signInAndUp(input?: { userContext?: any }): Promise<
+    static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
+        userContext?: any;
+    }): (StateObject & CustomStateProperties) | undefined {
+        return ThirdParty.getInstanceOrThrow().recipeImpl.getStateAndOtherInfoFromStorage({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static setStateAndOtherInfoToStorage<CustomStateProperties>(input: {
+        state: StateObject & CustomStateProperties;
+        userContext?: any;
+    }): Promise<void> {
+        return ThirdParty.getInstanceOrThrow().recipeImpl.setStateAndOtherInfoToStorage({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static getAuthorisationURLWithQueryParamsAndSetState(input: {
+        providerId: string;
+        authorisationURL: string;
+        providerClientId?: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<string> {
+        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthorisationURLWithQueryParamsAndSetState({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static getAuthorisationURLFromBackend(input: {
+        providerId: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        url: string;
+        fetchResponse: Response;
+    }> {
+        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthorisationURLFromBackend({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static signInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: User;
@@ -119,6 +177,46 @@ export default class Wrapper {
           }
     > {
         return ThirdParty.getInstanceOrThrow().recipeImpl.signInAndUp({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static generateStateToSendToOAuthProvider(input?: { userContext?: any }): string {
+        return ThirdParty.getInstanceOrThrow().recipeImpl.generateStateToSendToOAuthProvider({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static verifyAndGetStateOrThrowError<CustomStateProperties>(input: {
+        stateFromAuthProvider: string | undefined;
+        stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
+        userContext?: any;
+    }): Promise<StateObject & CustomStateProperties> {
+        return ThirdParty.getInstanceOrThrow().recipeImpl.verifyAndGetStateOrThrowError({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static getAuthCodeFromURL(input?: { userContext?: any }): string {
+        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthCodeFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined {
+        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthErrorFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getAuthStateFromURL(input?: { userContext?: any }): string {
+        return ThirdParty.getInstanceOrThrow().recipeImpl.getAuthStateFromURL({
+            ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
@@ -146,7 +244,17 @@ const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
 const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
+const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
+const getStateAndOtherInfoFromStorage = Wrapper.getStateAndOtherInfoFromStorage;
+const setStateAndOtherInfoToStorage = Wrapper.setStateAndOtherInfoToStorage;
+const getAuthorisationURLWithQueryParamsAndSetState = Wrapper.getAuthorisationURLWithQueryParamsAndSetState;
+const getAuthorisationURLFromBackend = Wrapper.getAuthorisationURLFromBackend;
+const generateStateToSendToOAuthProvider = Wrapper.generateStateToSendToOAuthProvider;
+const verifyAndGetStateOrThrowError = Wrapper.verifyAndGetStateOrThrowError;
+const getAuthCodeFromURL = Wrapper.getAuthCodeFromURL;
+const getAuthErrorFromURL = Wrapper.getAuthErrorFromURL;
+const getAuthStateFromURL = Wrapper.getAuthStateFromURL;
 const signInAndUp = Wrapper.signInAndUp;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
@@ -163,6 +271,16 @@ export {
     isEmailVerified,
     verifyEmail,
     sendVerificationEmail,
+    getEmailVerificationTokenFromURL,
+    getStateAndOtherInfoFromStorage,
+    setStateAndOtherInfoToStorage,
+    getAuthorisationURLWithQueryParamsAndSetState,
+    getAuthorisationURLFromBackend,
+    generateStateToSendToOAuthProvider,
+    verifyAndGetStateOrThrowError,
+    getAuthCodeFromURL,
+    getAuthErrorFromURL,
+    getAuthStateFromURL,
     signInAndUp,
     redirectToThirdPartyLogin,
     SignInAndUp,
