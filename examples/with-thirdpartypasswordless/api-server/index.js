@@ -7,9 +7,6 @@ let Session = require("supertokens-node/recipe/session");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
 let ThirdPartyPasswordless = require("supertokens-node/recipe/thirdpartypasswordless");
-// let Twilio = require("twilio");
-let axios = require("axios").default;
-let { mailTransporter, getEmailBody } = require("./mailer");
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -55,75 +52,6 @@ supertokens.init({
             ],
             contactMethod: "EMAIL_OR_PHONE",
             flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
-            createAndSendCustomEmail: async function (input) {
-                let htmlBody = getEmailBody(
-                    APP_NAME,
-                    Math.ceil(input.codeLifetime / 1000),
-                    input.urlWithLinkCode,
-                    input.userInputCode,
-                    input.email
-                );
-                await mailTransporter.sendMail({
-                    html: htmlBody,
-                    to: input.email,
-                    from: `Team Supertokens <${process.env.NODEMAILER_USER}>`,
-                    sender: process.env.NODEMAILER_USER,
-                    subject: `Login to ${APP_NAME}`,
-                });
-            },
-            createAndSendCustomTextMessage: async function (input) {
-                /*
-                 * Following is an example of how SMS sending setup can
-                 * be done using Twilio. The actual API that is being called
-                 * in this function is doing exactly the same thing.
-                 */
-
-                /*
-                const accountSid = process.env.TWILIO_ACCOUNT_SID;
-                const authToken = process.env.TWILIO_AUTH_TOKEN;
-                const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
-                let twilio = Twilio(accountSid, authToken);
-                let message = "";
-                if (input.urlWithLinkCode !== undefined && input.userInputCode !== undefined) {
-                    message = `Enter OTP: ${input.userInputCode} OR click this link: ${input.urlWithLinkCode} to login`;
-                } else if (input.urlWithLinkCode !== undefined) {
-                    message = `Click this link: ${input.urlWithLinkCode} to login`;
-                } else {
-                    message = `Enter OTP: ${input.userInputCode} to login`;
-                }
-                message += ` It will expire in ${input.codeLifetime} seconds.`;
-                console.log(input.urlWithLinkCode)
-                await twilio.messages.create({
-                    body: message,
-                    to: input.phoneNumber,
-                    from: twilioPhoneNumber
-                });
-                */
-                try {
-                    await axios({
-                        method: "post",
-                        baseURL: "https://api.supertokens.com",
-                        url: "/0/st/twilio/message",
-                        headers: {
-                            "api-version": "0",
-                        },
-                        data: {
-                            to: input.phoneNumber,
-                            appName: APP_NAME,
-                            codeLifetime: Math.ceil(input.codeLifetime / 1000),
-                            urlWithLinkCode: input.urlWithLinkCode,
-                            userInputCode: input.userInputCode,
-                        },
-                    });
-                } catch (err) {
-                    if (err.response.status !== 429) {
-                        throw err;
-                    }
-                    throw Error(
-                        "Too many requests made for passwordless sign-in/up with phone number. The number of requests are restricted for this demo app. Please try again after 24 hours."
-                    );
-                }
-            },
         }),
         Session.init(),
     ],

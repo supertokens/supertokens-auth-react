@@ -12,8 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { useContext } from "react";
 import { useTranslation } from "../../../../translation/translationContext";
 import StyleContext from "../../../../styles/styleContext";

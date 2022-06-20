@@ -1,6 +1,4 @@
 /// <reference types="react" />
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { InputProps } from "../../../../emailpassword/components/library/input";
 import { CountryCode } from "libphonenumber-js";
 declare type PhoneNumberInputProps = {
@@ -21,4 +19,4 @@ declare function PhoneNumberInput({
 export default PhoneNumberInput;
 export declare const phoneNumberInputWithInjectedProps: (
     injectedProps: Partial<PhoneNumberInputProps>
-) => (props: any) => jsx.JSX.Element;
+) => (props: any) => import("@emotion/react/jsx-runtime").JSX.Element;

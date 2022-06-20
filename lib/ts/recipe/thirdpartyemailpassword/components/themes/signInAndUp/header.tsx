@@ -15,8 +15,6 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { SignInHeader } from "../../../../emailpassword/components/themes/signInAndUp/signInHeader";
 import { SignUpHeader } from "../../../../emailpassword/components/themes/signInAndUp/signUpHeader";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";

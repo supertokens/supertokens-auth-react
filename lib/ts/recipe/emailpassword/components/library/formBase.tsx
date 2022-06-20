@@ -16,8 +16,6 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { FormEvent, Fragment, useState } from "react";
 import { Button, FormRow, Input, InputError, Label } from ".";
 

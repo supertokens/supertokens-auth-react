@@ -1,13 +1,13 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import helmet from "helmet";
-require("dotenv").config();
 import supertokens from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
 import { verifySession } from "supertokens-node/recipe/session/framework/express";
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
 import Passwordless from "supertokens-node/recipe/passwordless";
+require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
 const apiDomain = process.env.REACT_APP_API_URL || `http://localhost:${apiPort}`;
@@ -53,13 +53,25 @@ supertokens.init({
         Passwordless.init({
             contactMethod: "EMAIL_OR_PHONE",
             flowType: "USER_INPUT_CODE_AND_MAGIC_LINK",
-            createAndSendCustomEmail: async function (input) {
-                // TODO: implement sending of email
-                console.log(input);
+            smsDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendSms: async function (input) {
+                            console.log(input);
+                        },
+                    };
+                },
             },
-            createAndSendCustomTextMessage: async function (input) {
-                // TODO: implement sending of text message
-                console.log(input);
+            emailDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendEmail: async function (input) {
+                            console.log(input);
+                        },
+                    };
+                },
             },
             override: {
                 functions: (originalImplementation) => {

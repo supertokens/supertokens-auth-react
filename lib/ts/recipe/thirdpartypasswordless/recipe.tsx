@@ -17,7 +17,6 @@
  * Imports.
  */
 
-import React from "react";
 import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {

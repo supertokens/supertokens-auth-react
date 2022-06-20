@@ -30,11 +30,20 @@ supertokens.init({
     },
     recipeList: [
         EmailPassword.init({
-            resetPasswordUsingTokenFeature: {
-                createAndSendCustomEmail: async (user, link, userContext) => {
-                    // TODO: send SMS to user.email (it is actually a phone number)
-                    console.log("Send password reset link to: ", user.email);
-                    console.log("Password reset  link:", link);
+            emailDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendEmail: async function (input) {
+                            if (input.type === "PASSWORD_RESET") {
+                                // TODO: send SMS to user.email (it is actually a phone number)
+                                console.log("Send password reset link to: ", input.user.email);
+                                console.log("Password reset  link:", input.passwordResetLink);
+                            } else {
+                                return oI.sendEmail(input);
+                            }
+                        },
+                    };
                 },
             },
             signUpFeature: {
@@ -59,10 +68,6 @@ supertokens.init({
         Passwordless.init({
             contactMethod: "PHONE",
             flowType: "USER_INPUT_CODE",
-            createAndSendCustomTextMessage: async function (input) {
-                // TODO: implement sending of text message with OTP
-                console.log("SMS OTP:", input);
-            },
             override: {
                 apis: (oI) => {
                     return {

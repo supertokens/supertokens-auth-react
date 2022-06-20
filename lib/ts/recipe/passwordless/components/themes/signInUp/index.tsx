@@ -15,8 +15,6 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import React, { useContext } from "react";
 import { SuperTokensBranding } from "../../../../../components/SuperTokensBranding";
 import StyleContext, { StyleProvider } from "../../../../../styles/styleContext";

@@ -1,5 +1,6 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
+import { RecipeFeatureComponentMap } from "../../types";
 import {
     Config,
     NormalisedConfig,
@@ -24,7 +25,7 @@ export default class EmailVerification extends RecipeModule<
         config: UserInput
     ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): EmailVerification;
-    getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
+    getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (_: "emailverification", props: any) => JSX.Element;
     isEmailVerified(userContext: any): Promise<{
         status: "OK";

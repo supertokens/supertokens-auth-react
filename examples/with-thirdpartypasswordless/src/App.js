@@ -28,6 +28,9 @@ SuperTokens.init({
     },
     recipeList: [
         ThirdPartyPasswordless.init({
+            emailVerificationFeature: {
+                mode: "REQUIRED",
+            },
             signInUpFeature: {
                 providers: [
                     ThirdPartyPasswordless.Github.init(),

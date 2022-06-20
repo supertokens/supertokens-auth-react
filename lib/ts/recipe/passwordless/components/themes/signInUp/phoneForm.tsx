@@ -13,8 +13,6 @@
  * under the License.
  */
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { SignInUpPhoneFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
