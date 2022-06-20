@@ -36,13 +36,13 @@ export default class Wrapper {
         return ThirdPartyEmailPassword.init(config);
     }
 
-    static signOut(input?: { userContext?: any }) {
+    static async signOut(input?: { userContext?: any }): Promise<void> {
         return ThirdPartyEmailPassword.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
@@ -83,7 +83,7 @@ export default class Wrapper {
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"
-    static redirectToAuth(
+    static async redirectToAuth(
         input?:
             | ("signin" | "signup")
             | {
@@ -254,7 +254,7 @@ export default class Wrapper {
         });
     }
 
-    static getAuthorisationURLFromBackend(input: {
+    static async getAuthorisationURLFromBackend(input: {
         providerId: string;
         userContext?: any;
         options?: RecipeFunctionOptions;
@@ -269,7 +269,7 @@ export default class Wrapper {
         });
     }
 
-    static thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
+    static async thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: ThirdPartyUserType;
@@ -296,7 +296,7 @@ export default class Wrapper {
         });
     }
 
-    static setStateAndOtherInfoToStorage<CustomStateProperties>(input: {
+    static async setStateAndOtherInfoToStorage<CustomStateProperties>(input: {
         state: StateObject & CustomStateProperties;
         userContext?: any;
     }): Promise<void> {
@@ -306,7 +306,7 @@ export default class Wrapper {
         });
     }
 
-    static getAuthorisationURLWithQueryParamsAndSetState(input: {
+    static async getAuthorisationURLWithQueryParamsAndSetState(input: {
         providerId: string;
         authorisationURL: string;
         providerClientId?: string;
@@ -326,7 +326,7 @@ export default class Wrapper {
         });
     }
 
-    static verifyAndGetStateOrThrowError<CustomStateProperties>(input: {
+    static async verifyAndGetStateOrThrowError<CustomStateProperties>(input: {
         stateFromAuthProvider: string | undefined;
         stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
         userContext?: any;

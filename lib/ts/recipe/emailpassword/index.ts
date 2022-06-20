@@ -30,13 +30,13 @@ export default class Wrapper {
         return EmailPassword.init(config);
     }
 
-    static signOut(input?: { userContext?: any }) {
+    static async signOut(input?: { userContext?: any }): Promise<void> {
         return EmailPassword.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
@@ -75,7 +75,7 @@ export default class Wrapper {
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"
-    static redirectToAuth(
+    static async redirectToAuth(
         input?:
             | ("signin" | "signup")
             | {

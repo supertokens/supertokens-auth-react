@@ -29,14 +29,14 @@ export default class Wrapper {
         return Passwordless.init(config);
     }
 
-    static signOut(input?: { userContext?: any }) {
+    static async signOut(input?: { userContext?: any }): Promise<void> {
         return Passwordless.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"
-    static redirectToAuth(
+    static async redirectToAuth(
         input?:
             | ("signin" | "signup")
             | {
@@ -128,7 +128,7 @@ export default class Wrapper {
         });
     }
 
-    static doesEmailExist(input: { email: string; userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async doesEmailExist(input: { email: string; userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
@@ -139,7 +139,7 @@ export default class Wrapper {
         });
     }
 
-    static doesPhoneNumberExist(input: {
+    static async doesPhoneNumberExist(input: {
         phoneNumber: string;
         userContext?: any;
         options?: RecipeFunctionOptions;
@@ -154,7 +154,7 @@ export default class Wrapper {
         });
     }
 
-    static getLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: any }): Promise<
+    static async getLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: any }): Promise<
         | undefined
         | ({
               deviceId: string;
@@ -168,7 +168,7 @@ export default class Wrapper {
         });
     }
 
-    static setLoginAttemptInfo<CustomStateProperties>(input: {
+    static async setLoginAttemptInfo<CustomStateProperties>(input: {
         attemptInfo: {
             deviceId: string;
             preAuthSessionId: string;
@@ -182,7 +182,7 @@ export default class Wrapper {
         });
     }
 
-    static clearLoginAttemptInfo(input?: { userContext?: any }): Promise<void> {
+    static async clearLoginAttemptInfo(input?: { userContext?: any }): Promise<void> {
         return Passwordless.getInstanceOrThrow().recipeImpl.clearLoginAttemptInfo({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),

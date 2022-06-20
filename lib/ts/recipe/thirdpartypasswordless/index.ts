@@ -36,13 +36,13 @@ export default class Wrapper {
         return ThirdPartyPasswordless.init(config);
     }
 
-    static signOut(input?: { userContext?: any }) {
+    static async signOut(input?: { userContext?: any }): Promise<void> {
         return ThirdPartyPasswordless.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
@@ -102,7 +102,7 @@ export default class Wrapper {
         });
     }
 
-    static getAuthorisationURLFromBackend(input: {
+    static async getAuthorisationURLFromBackend(input: {
         providerId: string;
         userContext?: any;
         options?: RecipeFunctionOptions;
@@ -117,7 +117,7 @@ export default class Wrapper {
         });
     }
 
-    static thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
+    static async thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: UserType;
@@ -144,7 +144,7 @@ export default class Wrapper {
         });
     }
 
-    static setThirdPartyStateAndOtherInfoToStorage<CustomStateProperties>(input: {
+    static async setThirdPartyStateAndOtherInfoToStorage<CustomStateProperties>(input: {
         state: StateObject & CustomStateProperties;
         userContext?: any;
     }): Promise<void> {
@@ -154,7 +154,7 @@ export default class Wrapper {
         });
     }
 
-    static getThirdPartyAuthorisationURLWithQueryParamsAndSetState(input: {
+    static async getThirdPartyAuthorisationURLWithQueryParamsAndSetState(input: {
         providerId: string;
         authorisationURL: string;
         userContext?: any;
@@ -176,7 +176,7 @@ export default class Wrapper {
         });
     }
 
-    static verifyAndGetThirdPartyStateOrThrowError<CustomStateProperties>(input: {
+    static async verifyAndGetThirdPartyStateOrThrowError<CustomStateProperties>(input: {
         stateFromAuthProvider: string | undefined;
         stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
         userContext?: any;
@@ -305,7 +305,7 @@ export default class Wrapper {
         });
     }
 
-    static doesPasswordlessUserEmailExist(input: {
+    static async doesPasswordlessUserEmailExist(input: {
         email: string;
         userContext?: any;
         options?: RecipeFunctionOptions;
@@ -320,7 +320,7 @@ export default class Wrapper {
         });
     }
 
-    static doesPasswordlessUserPhoneNumberExist(input: {
+    static async doesPasswordlessUserPhoneNumberExist(input: {
         phoneNumber: string;
         userContext?: any;
         options?: RecipeFunctionOptions;
@@ -335,7 +335,9 @@ export default class Wrapper {
         });
     }
 
-    static getPasswordlessLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: any }): Promise<
+    static async getPasswordlessLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: {
+        userContext?: any;
+    }): Promise<
         | undefined
         | ({
               deviceId: string;
@@ -349,7 +351,7 @@ export default class Wrapper {
         });
     }
 
-    static setPasswordlessLoginAttemptInfo<CustomStateProperties>(input: {
+    static async setPasswordlessLoginAttemptInfo<CustomStateProperties>(input: {
         attemptInfo: {
             deviceId: string;
             preAuthSessionId: string;
@@ -363,7 +365,7 @@ export default class Wrapper {
         });
     }
 
-    static clearPasswordlessLoginAttemptInfo(input?: { userContext?: any }): Promise<void> {
+    static async clearPasswordlessLoginAttemptInfo(input?: { userContext?: any }): Promise<void> {
         return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.clearPasswordlessLoginAttemptInfo({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
@@ -371,7 +373,7 @@ export default class Wrapper {
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"
-    static redirectToAuth(
+    static async redirectToAuth(
         input?:
             | ("signin" | "signup")
             | {

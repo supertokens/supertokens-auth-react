@@ -32,7 +32,7 @@ export default class Wrapper {
         return EmailVerificationRecipe.init(config);
     }
 
-    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
@@ -53,7 +53,7 @@ export default class Wrapper {
         });
     }
 
-    static sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
