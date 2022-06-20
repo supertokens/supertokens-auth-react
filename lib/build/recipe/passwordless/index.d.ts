@@ -14,7 +14,7 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static signOut(): Promise<void>;
+    static signOut(input?: { userContext?: any }): Promise<void>;
     static redirectToAuth(
         input?:
             | ("signin" | "signup")
@@ -75,6 +75,8 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
+    static getLinkCodeFromURL(input?: { userContext?: any }): string;
+    static getPreAuthSessionIdFromURL(input?: { userContext?: any }): string;
     static doesEmailExist(input: { email: string; userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         doesExist: boolean;
@@ -89,6 +91,23 @@ export default class Wrapper {
         doesExist: boolean;
         fetchResponse: Response;
     }>;
+    static getLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: any }): Promise<
+        | undefined
+        | ({
+              deviceId: string;
+              preAuthSessionId: string;
+              flowType: PasswordlessFlowType;
+          } & CustomLoginAttemptInfoProperties)
+    >;
+    static setLoginAttemptInfo<CustomStateProperties>(input: {
+        attemptInfo: {
+            deviceId: string;
+            preAuthSessionId: string;
+            flowType: PasswordlessFlowType;
+        } & CustomStateProperties;
+        userContext?: any;
+    }): Promise<void>;
+    static clearLoginAttemptInfo(input?: { userContext?: any }): Promise<void>;
     static PasswordlessAuth: typeof PasswordlessAuth;
     static SignInUp: (prop?: any) => JSX.Element;
     static SignInUpTheme: typeof SignInUpThemeWrapper;
@@ -98,8 +117,13 @@ declare const init: typeof Wrapper.init;
 declare const createCode: typeof Wrapper.createCode;
 declare const resendCode: typeof Wrapper.resendCode;
 declare const consumeCode: typeof Wrapper.consumeCode;
+declare const getLinkCodeFromURL: typeof Wrapper.getLinkCodeFromURL;
+declare const getPreAuthSessionIdFromURL: typeof Wrapper.getPreAuthSessionIdFromURL;
 declare const doesEmailExist: typeof Wrapper.doesEmailExist;
 declare const doesPhoneNumberExist: typeof Wrapper.doesPhoneNumberExist;
+declare const getLoginAttemptInfo: typeof Wrapper.getLoginAttemptInfo;
+declare const setLoginAttemptInfo: typeof Wrapper.setLoginAttemptInfo;
+declare const clearLoginAttemptInfo: typeof Wrapper.clearLoginAttemptInfo;
 declare const signOut: typeof Wrapper.signOut;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInUp: (prop?: any) => JSX.Element;
@@ -114,8 +138,13 @@ export {
     createCode,
     resendCode,
     consumeCode,
+    getLinkCodeFromURL,
+    getPreAuthSessionIdFromURL,
     doesEmailExist,
     doesPhoneNumberExist,
+    getLoginAttemptInfo,
+    setLoginAttemptInfo,
+    clearLoginAttemptInfo,
     signOut,
     redirectToAuth,
     GetRedirectionURLContext,
