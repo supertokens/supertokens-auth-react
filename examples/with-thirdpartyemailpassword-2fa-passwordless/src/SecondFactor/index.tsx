@@ -1,7 +1,7 @@
 import React from "react";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Session from "supertokens-auth-react/recipe/session";
-import ThirdPartyEmailPassword from "supertokens-auth-react/lib/build/recipe/thirdpartyemailpassword";
+import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 
 export default function SecondFactor() {
     React.useEffect(() => {
