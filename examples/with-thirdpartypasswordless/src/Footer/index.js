@@ -1,11 +1,11 @@
 import React from "react";
-import ThirdPartyPasswordlessRecipe from "supertokens-auth-react/recipe/thirdpartypasswordless";
+import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 
 export default function Footer() {
     let [showSMSMessage, setShowSMSMessage] = React.useState(false);
     React.useEffect(() => {
         function checkLoginAttemptInfo() {
-            ThirdPartyPasswordlessRecipe.getPasswordlessLoginAttemptInfo().then((info) => {
+            ThirdPartyPasswordless.getPasswordlessLoginAttemptInfo().then((info) => {
                 if (info !== undefined && info.contactMethod === "PHONE") {
                     setShowSMSMessage(true);
                 } else {
