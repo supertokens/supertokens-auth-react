@@ -106,6 +106,13 @@ function PhoneNumberInput({
                     international={true}
                     placeholder={placeholder}
                     defaultCountry={defaultCountry}
+                    smartCaret={
+                        false
+                        /*
+                            This is set to false to avoid this bug: https://gitlab.com/catamphetamine/react-phone-number-input/-/issues/128
+                            We should monitor this and update it to true whenever it's fixed
+                        */
+                    }
                 />
                 {hasError === true && (
                     <div
