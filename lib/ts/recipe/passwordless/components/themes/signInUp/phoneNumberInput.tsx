@@ -20,9 +20,9 @@
 import { CSSObject } from "@emotion/react";
 import Select, { components as ReactSelectComps } from "react-select";
 
-import React, { useCallback, useContext, useMemo } from "react";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
 
-import PhoneInputWithCountrySelect, { getCountryCallingCode } from "react-phone-number-input/min";
+import PhoneInputWithCountrySelect, { getCountryCallingCode, getCountries } from "react-phone-number-input/min";
 
 import StyleContext from "../../../../../styles/styleContext";
 import { InputProps } from "../../../../emailpassword/components/library/input";
@@ -76,6 +76,13 @@ function PhoneNumberInput({
             });
         }
     }
+
+    useEffect(() => {
+        const countries = getCountries();
+        for (const code of countries) {
+            new Image().src = `http://purecatamphetamine.github.io/country-flag-icons/3x2/${code}.svg`;
+        }
+    }, []);
 
     const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
     /*
@@ -132,6 +139,17 @@ function CountrySelectWithIcon({
             menu: (provided: CSSObject) => ({
                 ...provided,
                 ...style.phoneInputCountryDropdown,
+                // These elements are added inside CustomOption below
+                // We are styling them here, to avoid emotion processing on each element (200+ countries)
+                "& [data-supertokens=phoneInputCountryOptionLabel]": {
+                    ...style.phoneInputCountryOptionLabel,
+                },
+                "& [data-supertokens=phoneInputCountryOption]": {
+                    ...style.phoneInputCountryOption,
+                },
+                "& [data-supertokens=phoneInputCountryOptionCallingCode]": {
+                    ...style.phoneInputCountryOptionCallingCode,
+                },
             }),
             control: (provided: CSSObject) => ({
                 ...provided,
@@ -164,16 +182,11 @@ function CountrySelectWithIcon({
                         // We need to stop propagation here, to prevent the menu closing before the click is fired
                         ev.stopPropagation();
                     }}
-                    css={style.phoneInputCountryOption}
                     aria-selected={isSelected}>
                     <Icon country={data.value} label={data.label} />
-                    <span data-supertokens="phoneInputCountryOptionLabel" css={style.phoneInputCountryOptionLabel}>
-                        {data.label}
-                    </span>
+                    <span data-supertokens="phoneInputCountryOptionLabel">{data.label}</span>
                     {data.value && (
-                        <span
-                            data-supertokens="phoneInputCountryOptionCallingCode"
-                            css={style.phoneInputCountryOptionCallingCode}>
+                        <span data-supertokens="phoneInputCountryOptionCallingCode">
                             +{getCountryCallingCode(data.value)}
                         </span>
                     )}
