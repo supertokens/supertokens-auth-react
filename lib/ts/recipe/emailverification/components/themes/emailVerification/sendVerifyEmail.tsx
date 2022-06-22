@@ -57,6 +57,18 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
         }
     };
 
+    const logout = async (): Promise<void> => {
+        try {
+            await props.signOut();
+        } catch (e) {
+            if (STGeneralError.isThisError(e)) {
+                setErrorMessage(e.message);
+            }
+
+            setStatus("ERROR");
+        }
+    };
+
     const sendVerificationEmail = useCallback(
         () =>
             props.recipeImplementation.sendVerificationEmail({
@@ -75,8 +87,6 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
     );
 
     useOnMountAPICall(sendVerificationEmail, checkSendResponse);
-
-    const { signOut } = props;
 
     return (
         <div data-supertokens="container" css={styles.container}>
@@ -114,7 +124,7 @@ export const EmailVerificationSendVerifyEmail: React.FC<SendVerifyEmailThemeProp
                     <div
                         data-supertokens="secondaryText secondaryLinkWithArrow"
                         css={[styles.secondaryText, styles.secondaryLinkWithArrow]}
-                        onClick={() => signOut()}>
+                        onClick={logout}>
                         {t("EMAIL_VERIFICATION_LOGOUT")}
                         <ArrowRightIcon color={styles.palette.colors.textPrimary} />
                     </div>

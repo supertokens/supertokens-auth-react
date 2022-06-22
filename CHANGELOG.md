@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Update supertokens-web-js dependency version
+-   Added new tests for checking general error handling
 -   Refactors example apps to not import from build directories
 
 ## [0.22.4] - 2022-06-20

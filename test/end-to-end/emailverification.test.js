@@ -22,7 +22,13 @@ import regeneratorRuntime from "regenerator-runtime";
 import assert from "assert";
 import puppeteer from "puppeteer";
 import fetch from "isomorphic-fetch";
-import { SEND_VERIFY_EMAIL_API, VERIFY_EMAIL_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import {
+    SEND_VERIFY_EMAIL_API,
+    VERIFY_EMAIL_API,
+    TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
+    SIGN_OUT_API,
+} from "../constants";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     clickLinkWithRightArrow,
@@ -40,6 +46,10 @@ import {
     defaultSignUp,
     signUp,
     screenshotOnFailure,
+    logoutFromEmailVerification,
+    waitForSTElement,
+    isGeneralErrorSupported,
+    setGeneralErrorToLocalStorage,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -402,25 +412,11 @@ describe("SuperTokens Email Verification general errors", function () {
 
     describe("Verify Email with token screen", function () {
         beforeEach(async function () {
-            page = await browser.newPage();
-            await page.setRequestInterception(true);
-            page.on("request", (req) => {
-                if (req.url().includes("/auth/user/email/verify") && req.method() === "POST") {
-                    return req.respond({
-                        status: 200,
-                        headers: {
-                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                            "access-control-allow-credentials": "true",
-                        },
-                        body: JSON.stringify({
-                            status: "GENERAL_ERROR",
-                            message: generalErrorMessageString,
-                        }),
-                    });
-                }
+            if (!isGeneralErrorSupported()) {
+                this.skip();
+            }
 
-                req.continue();
-            });
+            page = await browser.newPage();
             consoleLogs = [];
             page.on("console", (consoleObj) => {
                 const log = consoleObj.text();
@@ -430,20 +426,26 @@ describe("SuperTokens Email Verification general errors", function () {
             });
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
+            await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
         });
 
         it('Should show "General Error" when API returns "GENERAL_ERROR"', async function () {
+            await setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "VERIFY_EMAIL", page);
             await page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200);
             await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
             const verificationEmailErrorTitle = await getVerificationEmailErrorTitle(page);
             const verificationEmailErrorMessage = await getVerificationEmailErrorMessage(page);
             assert.deepStrictEqual(verificationEmailErrorTitle, "!\nSomething went wrong");
-            assert.deepStrictEqual(verificationEmailErrorMessage, generalErrorMessageString);
+            assert.deepStrictEqual(verificationEmailErrorMessage, "general error from API email verify");
         });
     });
 
     describe("Send verification email screen", function () {
         beforeEach(async function () {
+            if (!isGeneralErrorSupported()) {
+                this.skip();
+            }
+
             page = await browser.newPage();
             consoleLogs = [];
             page.on("console", (consoleObj) => {
@@ -453,9 +455,12 @@ describe("SuperTokens Email Verification general errors", function () {
                 }
             });
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+            await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
         });
 
         it('Should show "General Error" when API returns "GENERAL_ERROR"', async function () {
+            await setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "SEND_VERIFY_EMAIL", page);
+
             await Promise.all([
                 page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
                 page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -464,35 +469,13 @@ describe("SuperTokens Email Verification general errors", function () {
             await defaultSignUp(page);
             const pathname = await page.evaluate(() => window.location.pathname);
             assert.deepStrictEqual(pathname, "/auth/verify-email");
-            /**
-             * This adds interception mid test because adding it before conflicted with
-             * interceptors for defaultSignUp
-             */
-            await page.setRequestInterception(true);
-            page.on("request", (req) => {
-                if (req.url().includes("/auth/user/email/verify/token") && req.method() === "POST") {
-                    return req.respond({
-                        status: 200,
-                        headers: {
-                            "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                            "access-control-allow-credentials": "true",
-                        },
-                        body: JSON.stringify({
-                            status: "GENERAL_ERROR",
-                            message: generalErrorMessageString,
-                        }),
-                    });
-                }
-
-                req.continue();
-            });
             await sendVerifyEmail(page);
             await page.waitForResponse(
                 (response) => response.url() === SEND_VERIFY_EMAIL_API && response.status() === 200
             );
             await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
             const generalError = await getGeneralError(page);
-            assert.deepStrictEqual(generalError, generalErrorMessageString);
+            assert.deepStrictEqual(generalError, "general error from API email verification code");
         });
     });
 });
@@ -580,5 +563,88 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
         //         "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS IS_EMAIL_VERIFIED",
         //     ]);
         // });
+    });
+});
+
+describe("Email verification signOut errors", function () {
+    let browser;
+    let page;
+    before(async function () {
+        await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+            method: "POST",
+        }).catch(console.error);
+
+        await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+            method: "POST",
+        }).catch(console.error);
+
+        browser = await puppeteer.launch({
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            headless: true,
+        });
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
+    });
+
+    beforeEach(async function () {
+        page = await browser.newPage();
+        await clearBrowserCookiesWithoutAffectingConsole(page, []);
+        await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+        await Promise.all([
+            page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+            page.waitForNavigation({ waitUntil: "networkidle0" }),
+        ]);
+    });
+
+    it("Test that Something Went Wrong is displayed when signOut throws an error", async function () {
+        await toggleSignInSignUp(page);
+        await page.evaluate(() => localStorage.setItem("SHOW_GENERAL_ERROR", "SESSION SIGN_OUT"));
+
+        const rid = "emailpassword";
+        await signUp(
+            page,
+            [
+                { name: "email", value: "john.doe2@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+                { name: "name", value: "John Doe" },
+                { name: "age", value: "20" },
+            ],
+            '{"formFields":[{"id":"email","value":"john.doe2@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+            rid
+        );
+
+        let pathname = await page.evaluate(() => window.location.pathname);
+        assert.deepStrictEqual(pathname, "/auth/verify-email");
+
+        await page.setRequestInterception(true);
+        const requestHandler = (request) => {
+            if (request.url() === SIGN_OUT_API && request.method() === "POST") {
+                return request.respond({
+                    status: 400,
+                    headers: {
+                        "access-control-allow-origin": TEST_CLIENT_BASE_URL,
+                        "access-control-allow-credentials": "true",
+                    },
+                    body: JSON.stringify({
+                        status: "BAD_INPUT",
+                    }),
+                });
+            }
+
+            return request.continue();
+        };
+        page.on("request", requestHandler);
+
+        await logoutFromEmailVerification(page);
+
+        await page.waitForResponse((response) => response.url() === SIGN_OUT_API && response.status() === 400);
+
+        page.off("request", requestHandler);
+        await page.setRequestInterception(false);
+
+        const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
+        assert.strictEqual(await error.evaluate((e) => e.textContent), "Something went wrong. Please try again");
     });
 });
