@@ -489,9 +489,27 @@ describe("SuperTokens Email Verification general errors", function () {
                 }
             });
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
+            await page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`);
+            await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
         });
 
         it('Should show "General Error" when API returns "GENERAL_ERROR"', async function () {
+            await toggleSignInSignUp(page);
+            await signUp(
+                page,
+                [
+                    { name: "email", value: "john.doe3@supertokens.io" },
+                    { name: "password", value: "Str0ngP@ssw0rd" },
+                    { name: "name", value: "John Doe" },
+                    { name: "age", value: "20" },
+                ],
+                '{"formFields":[{"id":"email","value":"john.doe3@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+                "emailpassword"
+            );
+
+            const latestURLWithToken = await getLatestURLWithToken();
+            await page.goto(latestURLWithToken);
+
             await setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "VERIFY_EMAIL", page);
             await page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200);
             await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
