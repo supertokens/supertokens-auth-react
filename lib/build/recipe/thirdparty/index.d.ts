@@ -8,7 +8,8 @@ import Apple from "./providers/apple";
 import Google from "./providers/google";
 import Facebook from "./providers/facebook";
 import Github from "./providers/github";
-import { RecipeInterface, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
+import { RecipeInterface, StateObject, ThirdPartyUserType as User } from "supertokens-web-js/recipe/thirdparty";
+import { RecipeFunctionOptions } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -18,20 +19,21 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static signOut(): Promise<void>;
-    static isEmailVerified(input?: { userContext?: any }): Promise<{
+    static signOut(input?: { userContext?: any }): Promise<void>;
+    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    static verifyEmail(input?: { userContext?: any }): Promise<{
-        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+    static verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
         fetchResponse: Response;
     }>;
-    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+    static sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }>;
+    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string;
     static redirectToAuth(
         input?:
             | ("signin" | "signup")
@@ -43,7 +45,30 @@ export default class Wrapper {
     static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
         status: "OK" | "ERROR";
     }>;
-    static signInAndUp(input?: { userContext?: any }): Promise<
+    static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
+        userContext?: any;
+    }): (StateObject & CustomStateProperties) | undefined;
+    static setStateAndOtherInfoToStorage<CustomStateProperties>(input: {
+        state: StateObject & CustomStateProperties;
+        userContext?: any;
+    }): Promise<void>;
+    static getAuthorisationURLWithQueryParamsAndSetState(input: {
+        providerId: string;
+        authorisationURL: string;
+        providerClientId?: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<string>;
+    static getAuthorisationURLFromBackend(input: {
+        providerId: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        url: string;
+        fetchResponse: Response;
+    }>;
+    static signInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: User;
@@ -55,6 +80,15 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
+    static generateStateToSendToOAuthProvider(input?: { userContext?: any }): string;
+    static verifyAndGetStateOrThrowError<CustomStateProperties>(input: {
+        stateFromAuthProvider: string | undefined;
+        stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
+        userContext?: any;
+    }): Promise<StateObject & CustomStateProperties>;
+    static getAuthCodeFromURL(input?: { userContext?: any }): string;
+    static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined;
+    static getAuthStateFromURL(input?: { userContext?: any }): string;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
@@ -78,7 +112,17 @@ declare const signOut: typeof Wrapper.signOut;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
 declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
+declare const getEmailVerificationTokenFromURL: typeof Wrapper.getEmailVerificationTokenFromURL;
 declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
+declare const getStateAndOtherInfoFromStorage: typeof Wrapper.getStateAndOtherInfoFromStorage;
+declare const setStateAndOtherInfoToStorage: typeof Wrapper.setStateAndOtherInfoToStorage;
+declare const getAuthorisationURLWithQueryParamsAndSetState: typeof Wrapper.getAuthorisationURLWithQueryParamsAndSetState;
+declare const getAuthorisationURLFromBackend: typeof Wrapper.getAuthorisationURLFromBackend;
+declare const generateStateToSendToOAuthProvider: typeof Wrapper.generateStateToSendToOAuthProvider;
+declare const verifyAndGetStateOrThrowError: typeof Wrapper.verifyAndGetStateOrThrowError;
+declare const getAuthCodeFromURL: typeof Wrapper.getAuthCodeFromURL;
+declare const getAuthErrorFromURL: typeof Wrapper.getAuthErrorFromURL;
+declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 declare const signInAndUp: typeof Wrapper.signInAndUp;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
@@ -94,6 +138,16 @@ export {
     isEmailVerified,
     verifyEmail,
     sendVerificationEmail,
+    getEmailVerificationTokenFromURL,
+    getStateAndOtherInfoFromStorage,
+    setStateAndOtherInfoToStorage,
+    getAuthorisationURLWithQueryParamsAndSetState,
+    getAuthorisationURLFromBackend,
+    generateStateToSendToOAuthProvider,
+    verifyAndGetStateOrThrowError,
+    getAuthCodeFromURL,
+    getAuthErrorFromURL,
+    getAuthStateFromURL,
     signInAndUp,
     redirectToThirdPartyLogin,
     SignInAndUp,

@@ -29,6 +29,10 @@ If you would like to modify the website (http://localhost:3000) or the API serve
 -   Change the `websitePort` or `websiteDomain` values in `api-server/index.ts`
 -   Change the `websitePort` or `websiteUrl` values in `src/App.tsx`
 
+## Sending emails and SMS
+
+The demo app, by default sends email and SMS by contacting https://api.supertokens.com servers. The SMS sending via this service is rate limited. You can configure the demo app to use your own SMTP server and use your own Twilio account credentials. You can also override how the emails and SMS are sent to take full control of their design and how they are sent.
+
 ## Project structure & Parameters
 
 -   The frontend code is located in the `src` folder.

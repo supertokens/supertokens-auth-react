@@ -30,7 +30,7 @@ export default class SessionAPIWrapper {
         return Session.init(config);
     }
 
-    static getUserId(input?: { userContext?: any }): Promise<string> {
+    static async getUserId(input?: { userContext?: any }): Promise<string> {
         return Session.getInstanceOrThrow().getUserId({
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -46,7 +46,7 @@ export default class SessionAPIWrapper {
         return Session.getInstanceOrThrow().attemptRefreshingSession();
     }
 
-    static doesSessionExist(input?: { userContext?: any }): Promise<boolean> {
+    static async doesSessionExist(input?: { userContext?: any }): Promise<boolean> {
         return Session.getInstanceOrThrow().doesSessionExist({
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -56,7 +56,7 @@ export default class SessionAPIWrapper {
         return Session.addAxiosInterceptors(axiosInstance, getNormalisedUserContext(userContext));
     }
 
-    static signOut(input?: { userContext?: any }): Promise<void> {
+    static async signOut(input?: { userContext?: any }): Promise<void> {
         return Session.getInstanceOrThrow().signOut({
             userContext: getNormalisedUserContext(input?.userContext),
         });

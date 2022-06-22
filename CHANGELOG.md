@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Update supertokens-web-js dependency version
 -   Added new tests for checking general error handling
+-   Refactors example apps to not import from build directories
+
+## [0.22.4] - 2022-06-20
+
+### Added
+
+-   Exposes more functions from each recipe.
+-   Updates the dependency version of supertokens-auth-react for example apps
 
 ## [0.22.3] - 2022-06-14
 

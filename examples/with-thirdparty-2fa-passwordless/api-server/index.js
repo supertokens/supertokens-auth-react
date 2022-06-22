@@ -110,9 +110,15 @@ supertokens.init({
             },
             contactMethod: "PHONE",
             flowType: "USER_INPUT_CODE",
-            createAndSendCustomTextMessage: async function (input) {
-                // TODO: send SMS here
-                console.log(input);
+            smsDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendSms: async function (input) {
+                            console.log(input);
+                        },
+                    };
+                },
             },
         }),
         Session.init({
