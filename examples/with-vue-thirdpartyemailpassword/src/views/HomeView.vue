@@ -1,61 +1,59 @@
 <script lang="ts">
 import * as SuperTokens from "supertokens-website";
 
-  export default{
-    data(){
-      return{
-        session:false,
-        userId:""
-      }
+export default {
+    data() {
+        return {
+            session: false,
+            userId: "",
+        };
     },
-    mounted(){
-      this.getUserInfo()
+    mounted() {
+        this.getUserInfo();
     },
-    methods:{
-      redirectToLogin() {
-        console.log('redirectToLogin called with')
-        window.location.href='/auth'
+    methods: {
+        redirectToLogin() {
+            console.log("redirectToLogin called with");
+            window.location.href = "/auth";
+        },
+        async getUserInfo() {
+            this.session = await SuperTokens.doesSessionExist();
+            if (this.session) {
+                this.userId = await SuperTokens.getUserId();
+            }
+        },
+        async onLogout() {
+            await SuperTokens.signOut();
+            window.location.reload();
+        },
     },
-    async getUserInfo() {
-        this.session = await SuperTokens.doesSessionExist();
-        if (this.session) {
-            this.userId = await SuperTokens.getUserId();
-        }
-    },
-    async onLogout() {
-        await SuperTokens.signOut();
-        window.location.reload();
-    }
-  }
-  
-}
-  
-
+};
 </script>
 
 <template>
-  <main>
-    <div class="body">
-    <h1>Hello</h1>
+    <main>
+        <div class="body">
+            <h1>Hello</h1>
 
-    <div v-if="session">
-        <span>UserId:</span>
-        <h3>{{ userId }}</h3>
+            <div v-if="session">
+                <span>UserId:</span>
+                <h3>{{ userId }}</h3>
 
-        <button @click="onLogout">Sign Out</button>
-    </div>
-    <div v-else>
-        <p>Visit the <a href="https://supertokens.com">SuperTokens tutorial</a> to learn how to build Auth under a day.</p>
-        <button @click="redirectToLogin">Sign in</button>
-    </div>
-        
-    </div>
-
-  </main>
+                <button @click="onLogout">Sign Out</button>
+            </div>
+            <div v-else>
+                <p>
+                    Visit the <a href="https://supertokens.com">SuperTokens tutorial</a> to learn how to build Auth
+                    under a day.
+                </p>
+                <button @click="redirectToLogin">Sign in</button>
+            </div>
+        </div>
+    </main>
 </template>
 
 <style scoped>
-  .body {
+.body {
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -99,5 +97,4 @@ button:hover {
     background-color: #ff3e00;
     color: white;
 }
-
 </style>

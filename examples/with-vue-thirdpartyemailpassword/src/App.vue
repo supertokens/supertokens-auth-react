@@ -1,20 +1,15 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div id="app">
-    <header>
+    <div id="app">
+        <header>
+            <div class="wrapper"></div>
+        </header>
 
-      <div class="wrapper">
-
-      </div>
-    </header>
-
-    <router-view />
-  </div>
+        <router-view />
+    </div>
 </template>
 
 <style>
-@import '@/assets/base.css';
-
+@import "@/assets/base.css";
 </style>
