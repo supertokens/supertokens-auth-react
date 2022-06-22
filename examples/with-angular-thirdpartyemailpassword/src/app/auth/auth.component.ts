@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnChanges, OnDestroy } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import * as React from "react";
 
 import * as ReactDOM from "react-dom";
@@ -9,18 +9,14 @@ import SuperTokensReactComponent from "./supertokens";
     selector: "app-auth",
     template: '<div [id]="rootId"></div>',
 })
-export class AuthComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class AuthComponent implements OnDestroy, OnInit {
     title = "angularreactapp";
 
     public rootId = "rootId";
 
-    // We use ngOnChanges and ngAfterViewInit lifecycle hooks to render and re-render the React component
-    ngOnChanges() {
-        this.render();
-    }
-
-    ngAfterViewInit() {
-        this.render();
+    // We use the ngOnInit lifecycle hook to render the React component when the Angular component gets initialized
+    ngOnInit(){
+        this.render()
     }
 
     // We use the ngOnDestroy lifecycle hook to unmount the React component when the Angular wrapper component is destroyed.
