@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Update supertokens-web-js dependency version
 -   Added new tests for checking general error handling
 -   Refactors example apps to not import from build directories
--   fixs to angular example app
+-   fixes to angular example app
 
 ### Added
 
