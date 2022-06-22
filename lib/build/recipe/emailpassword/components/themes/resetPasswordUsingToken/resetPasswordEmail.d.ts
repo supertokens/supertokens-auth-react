@@ -9,6 +9,7 @@ export declare const ResetPasswordEmail: import("react").ComponentType<
         clearError: () => void;
         onError: (error: string) => void;
         config: import("../../../types").NormalisedConfig;
+        onBackButtonClicked: () => void;
     } & {
         children?: import("react").ReactNode;
     }

@@ -1,3 +1,7 @@
-/// <reference types="react" />
+import React from "react";
 import { LinkClickedScreenProps } from "../../../types";
-export declare const LinkClickedScreen: import("react").ComponentType<LinkClickedScreenProps>;
+export declare const LinkClickedScreen: React.ComponentType<
+    LinkClickedScreenProps & {
+        children?: React.ReactNode;
+    }
+>;

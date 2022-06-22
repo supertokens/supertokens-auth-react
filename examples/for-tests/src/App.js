@@ -209,6 +209,18 @@ let recipeList = [
                 console.log(`ST_LOGS SESSION PRE_API_HOOKS ${ctx.action}`);
             }
 
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `SESSION ${ctx.action}`) {
+                let requestBody = ctx.requestInit.body === undefined ? "{}" : ctx.requestInit.body;
+                let jsonBody = JSON.parse(requestBody);
+                jsonBody = {
+                    ...jsonBody,
+                    generalError: true,
+                };
+
+                ctx.requestInit.headers["Content-Type"] = "application/json";
+                ctx.requestInit.body = JSON.stringify(jsonBody);
+            }
+
             return ctx;
         },
         onHandleEvent: (ctx) => {
@@ -503,6 +515,21 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
         },
         palette: theme.colors,
         preAPIHook: async (context) => {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `EMAIL_PASSWORD ${context.action}`) {
+                let errorFromStorage = localStorage.getItem("TRANSLATED_GENERAL_ERROR");
+
+                if (context.action === "EMAIL_EXISTS") {
+                    context.url += "&generalError=true";
+                } else {
+                    let jsonBody = JSON.parse(context.requestInit.body);
+                    jsonBody = {
+                        ...jsonBody,
+                        generalError: true,
+                        generalErrorMessage: errorFromStorage === null ? undefined : errorFromStorage,
+                    };
+                    context.requestInit.body = JSON.stringify(jsonBody);
+                }
+            }
             console.log(`ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
             return context;
         },
@@ -651,6 +678,19 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI }) {
         },
         palette: theme.colors,
         preAPIHook: async (context) => {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY_PASSWORDLESS ${context.action}`) {
+                if (context.action === "GET_AUTHORISATION_URL") {
+                    context.url += "&generalError=true";
+                } else {
+                    let jsonBody = JSON.parse(context.requestInit.body);
+                    jsonBody = {
+                        ...jsonBody,
+                        generalError: true,
+                    };
+                    context.requestInit.body = JSON.stringify(jsonBody);
+                }
+            }
+
             console.log(`ST_LOGS THIRDPARTYPASSWORDLESS PRE_API_HOOKS ${context.action}`);
             return context;
         },
@@ -753,6 +793,15 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         },
         palette: theme.colors,
         preAPIHook: async (context) => {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `PASSWORDLESS ${context.action}`) {
+                let jsonBody = JSON.parse(context.requestInit.body);
+                jsonBody = {
+                    ...jsonBody,
+                    generalError: true,
+                };
+                context.requestInit.body = JSON.stringify(jsonBody);
+            }
+
             console.log(`ST_LOGS PASSWORDLESS PRE_API_HOOKS ${context.action}`);
             return context;
         },
@@ -794,6 +843,19 @@ function getThirdPartyConfigs({ disableDefaultUI }) {
             },
         },
         preAPIHook: async (context) => {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY ${context.action}`) {
+                if (context.action === "GET_AUTHORISATION_URL") {
+                    context.url += "&generalError=true";
+                } else {
+                    let jsonBody = JSON.parse(context.requestInit.body);
+                    jsonBody = {
+                        ...jsonBody,
+                        generalError: true,
+                    };
+                    context.requestInit.body = JSON.stringify(jsonBody);
+                }
+            }
+
             console.log(`ST_LOGS THIRD_PARTY PRE_API_HOOKS ${context.action}`);
             return context;
         },
@@ -892,6 +954,19 @@ function getThirdPartyConfigs({ disableDefaultUI }) {
 function getThirdPartyEmailPasswordConfigs({ disableDefaultUI }) {
     return ThirdPartyEmailPassword.init({
         preAPIHook: async (context) => {
+            if (localStorage.getItem(`SHOW_GENERAL_ERROR`) === `THIRD_PARTY_EMAIL_PASSWORD ${context.action}`) {
+                if (context.action === "GET_AUTHORISATION_URL" || context.action === "EMAIL_EXISTS") {
+                    context.url += "&generalError=true";
+                } else {
+                    let jsonBody = JSON.parse(context.requestInit.body);
+                    jsonBody = {
+                        ...jsonBody,
+                        generalError: true,
+                    };
+                    context.requestInit.body = JSON.stringify(jsonBody);
+                }
+            }
+
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD PRE_API_HOOKS ${context.action}`);
             return context;
         },

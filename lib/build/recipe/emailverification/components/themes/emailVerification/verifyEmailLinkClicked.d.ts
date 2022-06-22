@@ -5,7 +5,7 @@ export declare const VerifyEmailLinkClicked: import("react").ComponentType<
     import("../../../../../types").ThemeBaseProps & {
         recipeImplementation: import("supertokens-web-js/recipe/emailverification").RecipeInterface;
         config: import("../../../types").NormalisedConfig;
-        onContinueClicked: () => Promise<void>;
+        onSuccess: () => Promise<void>;
         onTokenInvalidRedirect: () => Promise<void>;
         token: string;
     } & {

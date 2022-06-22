@@ -52,18 +52,6 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
                 textOverflow: "ellipsis",
             },
         },
-        secondaryLinkWithLeftArrow: {
-            marginTop: "10px",
-            marginBottom: "40px",
-            cursor: "pointer",
-            "& svg": {
-                marginRight: "0.3em",
-            },
-            "&:hover svg": {
-                position: "relative",
-                left: "-4px",
-            },
-        },
         resendCodeBtn: {
             width: "auto",
             marginTop: 0,
@@ -172,6 +160,10 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
         phoneInputCountryDropdownIndicator: {
             padding: "0 12px 0 6px",
+        },
+        continueButtonWrapper: {
+            marginTop: "10px",
+            marginBottom: "30px",
         },
     };
     const recipeStyles = getMergedStyles(emailPasswordStyles, passwordlessStyles);
