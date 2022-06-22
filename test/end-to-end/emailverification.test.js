@@ -492,17 +492,6 @@ describe("SuperTokens Email Verification general errors", function () {
         });
 
         it('Should show "General Error" when API returns "GENERAL_ERROR"', async function () {
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
-            await waitForText(page, "[data-supertokens~=headerTitle]", "Verify your email address");
-            await Promise.all([
-                submitForm(page),
-                page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200),
-            ]);
-            await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN`);
-            await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
-        });
-
-        it('Should show "General Error" when API returns "GENERAL_ERROR"', async function () {
             await setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "VERIFY_EMAIL", page);
             await page.waitForResponse((response) => response.url() === VERIFY_EMAIL_API && response.status() === 200);
             await new Promise((r) => setTimeout(r, 50)); // Make sure to wait for status to update.
