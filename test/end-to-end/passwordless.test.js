@@ -34,6 +34,8 @@ import {
     setPasswordlessFlowType,
     isReact16,
     clickOnPasswordlessResendButton,
+    isGeneralErrorSupported,
+    setGeneralErrorToLocalStorage,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -47,10 +49,11 @@ describe("SuperTokens Passwordless", function () {
     getPasswordlessTestCases({
         authRecipe: "passwordless",
         logId: "PASSWORDLESS",
+        generalErrorRecipeName: "PASSWORDLESS",
     });
 });
 
-export function getPasswordlessTestCases({ authRecipe, logId }) {
+export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipeName }) {
     let browser;
     let page;
     let consoleLogs = [];
@@ -519,6 +522,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
 
                 consoleLogs.length = 0;
             });
@@ -771,41 +775,32 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
             });
 
             it("create code general error", async function () {
+                const _isGeneralErrorSupported = await isGeneralErrorSupported();
+                if (!_isGeneralErrorSupported) {
+                    this.skip();
+                }
+
+                await setGeneralErrorToLocalStorage(generalErrorRecipeName, "PASSWORDLESS_CREATE_CODE", page);
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
-                await page.setRequestInterception(true);
-                const requestHandler = (request) => {
-                    if (request.method() === "POST" && request.url().endsWith("signinup/code")) {
-                        request.respond({
-                            status: 200,
-                            contentType: "application/json",
-                            headers: {
-                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                                "access-control-allow-credentials": "true",
-                            },
-                            body: JSON.stringify({
-                                status: "GENERAL_ERROR",
-                                message: "Test Message!!!",
-                            }),
-                        });
-                    } else {
-                        request.continue();
-                    }
-                };
-                page.on("request", requestHandler);
-
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
-                page.off("request", requestHandler);
-                await page.setRequestInterception(false);
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "general error from API create code");
             });
 
             it("resend code general error", async function () {
+                const _isGeneralErrorSupported = await isGeneralErrorSupported();
+                if (!_isGeneralErrorSupported) {
+                    this.skip();
+                }
+
+                await setGeneralErrorToLocalStorage(generalErrorRecipeName, "PASSWORDLESS_RESEND_CODE", page);
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -815,40 +810,24 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 await submitForm(page);
 
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-                await page.setRequestInterception(true);
-                const requestHandler = (request) => {
-                    if (request.method() === "POST" && request.url().endsWith("signinup/code/resend")) {
-                        request.respond({
-                            status: 200,
-                            contentType: "application/json",
-                            headers: {
-                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                                "access-control-allow-credentials": "true",
-                            },
-                            body: JSON.stringify({
-                                status: "GENERAL_ERROR",
-                                message: "Test Message!!!",
-                            }),
-                        });
-                    } else {
-                        request.continue();
-                    }
-                };
-                page.on("request", requestHandler);
 
                 const resendBtn = await waitForSTElement(page, "[data-supertokens~=resendCodeBtn]:not(:disabled)");
                 await resendBtn.click();
 
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "general error from API resend code");
                 // We also check that we remained on the OTP screen
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-                page.off("request", requestHandler);
-                await page.setRequestInterception(false);
             });
 
             it("consume code general error", async function () {
+                const _isGeneralErrorSupported = await isGeneralErrorSupported();
+                if (!_isGeneralErrorSupported) {
+                    this.skip();
+                }
+
+                await setGeneralErrorToLocalStorage(generalErrorRecipeName, "PASSWORDLESS_CONSUME_CODE", page);
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -858,27 +837,6 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 await submitForm(page);
 
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-
-                await page.setRequestInterception(true);
-                const requestHandler = (request) => {
-                    if (request.method() === "POST" && request.url().endsWith("signinup/code/consume")) {
-                        request.respond({
-                            status: 200,
-                            contentType: "application/json",
-                            headers: {
-                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                                "access-control-allow-credentials": "true",
-                            },
-                            body: JSON.stringify({
-                                status: "GENERAL_ERROR",
-                                message: "Test Message!!!",
-                            }),
-                        });
-                    } else {
-                        request.continue();
-                    }
-                };
-                page.on("request", requestHandler);
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -888,11 +846,9 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 await submitForm(page);
 
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "general error from API consume code");
                 // We also check that we remained on the OTP screen
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-                page.off("request", requestHandler);
-                await page.setRequestInterception(false);
             });
         });
 
@@ -916,6 +872,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
 
                 consoleLogs.length = 0;
             });
@@ -1060,41 +1017,32 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
             });
 
             it("create code general error", async function () {
+                const _isGeneralErrorSupported = await isGeneralErrorSupported();
+                if (!_isGeneralErrorSupported) {
+                    this.skip();
+                }
+
+                await setGeneralErrorToLocalStorage(generalErrorRecipeName, "PASSWORDLESS_CREATE_CODE", page);
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
-                await page.setRequestInterception(true);
-                const requestHandler = (request) => {
-                    if (request.method() === "POST" && request.url().endsWith("signinup/code")) {
-                        request.respond({
-                            status: 200,
-                            contentType: "application/json",
-                            headers: {
-                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                                "access-control-allow-credentials": "true",
-                            },
-                            body: JSON.stringify({
-                                status: "GENERAL_ERROR",
-                                message: "Test Message!!!",
-                            }),
-                        });
-                    } else {
-                        request.continue();
-                    }
-                };
-                page.on("request", requestHandler);
-
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
-                page.off("request", requestHandler);
-                await page.setRequestInterception(false);
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "general error from API create code");
             });
 
             it("resend code general error", async function () {
+                const _isGeneralErrorSupported = await isGeneralErrorSupported();
+                if (!_isGeneralErrorSupported) {
+                    this.skip();
+                }
+
+                await setGeneralErrorToLocalStorage(generalErrorRecipeName, "PASSWORDLESS_RESEND_CODE", page);
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -1104,40 +1052,24 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 await submitForm(page);
 
                 await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
-
-                await page.setRequestInterception(true);
-                const requestHandler = (request) => {
-                    if (request.method() === "POST" && request.url().endsWith("signinup/code/resend")) {
-                        request.respond({
-                            status: 200,
-                            contentType: "application/json",
-                            headers: {
-                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                                "access-control-allow-credentials": "true",
-                            },
-                            body: JSON.stringify({
-                                status: "GENERAL_ERROR",
-                                message: "Test Message!!!",
-                            }),
-                        });
-                    } else {
-                        request.continue();
-                    }
-                };
-                page.on("request", requestHandler);
 
                 const resendBtn = await waitForSTElement(page, "[data-supertokens~=resendCodeBtn]:not(:disabled)");
                 await resendBtn.click();
 
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "general error from API resend code");
                 // We also check that we remained on the link sent screen
                 await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
-                page.off("request", requestHandler);
-                await page.setRequestInterception(false);
             });
 
             it("consume code general error", async function () {
+                const _isGeneralErrorSupported = await isGeneralErrorSupported();
+                if (!_isGeneralErrorSupported) {
+                    this.skip();
+                }
+
+                await setGeneralErrorToLocalStorage(generalErrorRecipeName, "PASSWORDLESS_CONSUME_CODE", page);
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -1147,27 +1079,6 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 await submitForm(page);
 
                 await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
-
-                await page.setRequestInterception(true);
-                const requestHandler = (request) => {
-                    if (request.method() === "POST" && request.url().endsWith("signinup/code/consume")) {
-                        request.respond({
-                            status: 200,
-                            contentType: "application/json",
-                            headers: {
-                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                                "access-control-allow-credentials": "true",
-                            },
-                            body: JSON.stringify({
-                                status: "GENERAL_ERROR",
-                                message: "Test Message!!!",
-                            }),
-                        });
-                    } else {
-                        request.continue();
-                    }
-                };
-                page.on("request", requestHandler);
 
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
@@ -1181,9 +1092,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 assert.deepStrictEqual(pathname, "/auth");
 
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
-                page.off("request", requestHandler);
-                await page.setRequestInterception(false);
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "general error from API consume code");
             });
 
             it("No linkCode", async function () {
@@ -1337,6 +1246,7 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
             beforeEach(async function () {
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
+                await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
 
                 consoleLogs.length = 0;
             });
@@ -1726,38 +1636,22 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
             });
 
             it("create code general error", async function () {
+                const _isGeneralErrorSupported = await isGeneralErrorSupported();
+                if (!_isGeneralErrorSupported) {
+                    this.skip();
+                }
+
+                await setGeneralErrorToLocalStorage(generalErrorRecipeName, "PASSWORDLESS_CREATE_CODE", page);
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
                 ]);
 
-                await page.setRequestInterception(true);
-                const requestHandler = (request) => {
-                    if (request.method() === "POST" && request.url().endsWith("signinup/code")) {
-                        request.respond({
-                            status: 200,
-                            contentType: "application/json",
-                            headers: {
-                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                                "access-control-allow-credentials": "true",
-                            },
-                            body: JSON.stringify({
-                                status: "GENERAL_ERROR",
-                                message: "Test Message!!!",
-                            }),
-                        });
-                    } else {
-                        request.continue();
-                    }
-                };
-                page.on("request", requestHandler);
-
                 await setInputValues(page, [{ name: inputName, value: contactInfo }]);
                 await submitForm(page);
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
-                page.off("request", requestHandler);
-                await page.setRequestInterception(false);
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "general error from API create code");
             });
 
             it("consume code network error", async function () {
@@ -1792,6 +1686,13 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
             });
 
             it("consume code general error", async function () {
+                const _isGeneralErrorSupported = await isGeneralErrorSupported();
+                if (!_isGeneralErrorSupported) {
+                    this.skip();
+                }
+
+                await setGeneralErrorToLocalStorage(generalErrorRecipeName, "PASSWORDLESS_CONSUME_CODE", page);
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -1802,27 +1703,6 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
 
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
-                await page.setRequestInterception(true);
-                const requestHandler = (request) => {
-                    if (request.method() === "POST" && request.url().endsWith("signinup/code/consume")) {
-                        request.respond({
-                            status: 200,
-                            contentType: "application/json",
-                            headers: {
-                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                                "access-control-allow-credentials": "true",
-                            },
-                            body: JSON.stringify({
-                                status: "GENERAL_ERROR",
-                                message: "Test Message!!!",
-                            }),
-                        });
-                    } else {
-                        request.continue();
-                    }
-                };
-                page.on("request", requestHandler);
-
                 const loginAttemptInfo = JSON.parse(
                     await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
                 );
@@ -1831,11 +1711,9 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
                 await submitForm(page);
 
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "general error from API consume code");
                 // We also check that we remained on the OTP screen
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-                page.off("request", requestHandler);
-                await page.setRequestInterception(false);
             });
 
             it("resend code network error", async function () {
@@ -1866,6 +1744,13 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
             });
 
             it("resend code general error", async function () {
+                const _isGeneralErrorSupported = await isGeneralErrorSupported();
+                if (!_isGeneralErrorSupported) {
+                    this.skip();
+                }
+
+                await setGeneralErrorToLocalStorage(generalErrorRecipeName, "PASSWORDLESS_RESEND_CODE", page);
+
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
                     page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -1876,36 +1761,13 @@ export function getPasswordlessTestCases({ authRecipe, logId }) {
 
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
-                await page.setRequestInterception(true);
-                const requestHandler = (request) => {
-                    if (request.method() === "POST" && request.url().endsWith("signinup/code/resend")) {
-                        request.respond({
-                            status: 200,
-                            contentType: "application/json",
-                            headers: {
-                                "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                                "access-control-allow-credentials": "true",
-                            },
-                            body: JSON.stringify({
-                                status: "GENERAL_ERROR",
-                                message: "Test Message!!!",
-                            }),
-                        });
-                    } else {
-                        request.continue();
-                    }
-                };
-                page.on("request", requestHandler);
-
                 const resendBtn = await waitForSTElement(page, "[data-supertokens~=resendCodeBtn]:not(:disabled)");
                 await resendBtn.click();
 
                 const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-                assert.strictEqual(await error.evaluate((e) => e.textContent), "Test Message!!!");
+                assert.strictEqual(await error.evaluate((e) => e.textContent), "general error from API resend code");
                 // We also check that we remained on the OTP screen
                 await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
-                page.off("request", requestHandler);
-                await page.setRequestInterception(false);
             });
         });
     }

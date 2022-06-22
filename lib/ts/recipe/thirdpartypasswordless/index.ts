@@ -27,7 +27,7 @@ import {
     RecipeFunctionOptions,
     RecipeInterface,
 } from "supertokens-web-js/recipe/thirdpartypasswordless";
-import { ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
+import { StateObject, ThirdPartyUserType as UserType } from "supertokens-web-js/recipe/thirdparty";
 import { redirectToThirdPartyLogin as UtilsRedirectToThirdPartyLogin } from "../thirdparty/utils";
 import * as PasswordlessUtilFunctions from "../passwordless/utils";
 
@@ -36,36 +36,50 @@ export default class Wrapper {
         return ThirdPartyPasswordless.init(config);
     }
 
-    static async signOut(): Promise<void> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().signOut();
+    static async signOut(input?: { userContext?: any }): Promise<void> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().signOut({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
-    static async isEmailVerified(input?: { userContext?: any }): Promise<{
+    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
     }> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.isEmailVerified(
-            getNormalisedUserContext(input?.userContext)
-        );
-    }
-
-    static async verifyEmail(input?: { userContext?: any }): Promise<{
-        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.isEmailVerified({
+            ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
-    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+    static async verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
+        fetchResponse: Response;
+    }> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }> {
         return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
+            ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
+    }
+
+    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
+        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.getEmailVerificationTokenFromURL(
+            {
+                ...input,
+                userContext: getNormalisedUserContext(input?.userContext),
+            }
+        );
     }
 
     static async redirectToThirdPartyLogin(input: {
@@ -88,7 +102,22 @@ export default class Wrapper {
         });
     }
 
-    static thirdPartySignInAndUp(input?: { userContext?: any }): Promise<
+    static async getAuthorisationURLFromBackend(input: {
+        providerId: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        url: string;
+        fetchResponse: Response;
+    }> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.getAuthorisationURLFromBackend({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: UserType;
@@ -100,13 +129,80 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     > {
-        /**
-         * We do it this way here because prettier behaves in a weird way without it.
-         * If you return directly, build-pretty will succeed but pretty-check will fail
-         * when you try to commit and you will have to run pretty manually every time
-         */
-        const recipeInstance: ThirdPartyPasswordless = ThirdPartyPasswordless.getInstanceOrThrow();
-        return recipeInstance.recipeImpl.thirdPartySignInAndUp({
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.thirdPartySignInAndUp({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getThirdPartyStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
+        userContext?: any;
+    }): (StateObject & CustomStateProperties) | undefined {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.getThirdPartyStateAndOtherInfoFromStorage({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async setThirdPartyStateAndOtherInfoToStorage<CustomStateProperties>(input: {
+        state: StateObject & CustomStateProperties;
+        userContext?: any;
+    }): Promise<void> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.setThirdPartyStateAndOtherInfoToStorage({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async getThirdPartyAuthorisationURLWithQueryParamsAndSetState(input: {
+        providerId: string;
+        authorisationURL: string;
+        userContext?: any;
+        providerClientId?: string;
+        options?: RecipeFunctionOptions;
+    }): Promise<string> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.getThirdPartyAuthorisationURLWithQueryParamsAndSetState(
+            {
+                ...input,
+                userContext: getNormalisedUserContext(input.userContext),
+            }
+        );
+    }
+
+    static generateThirdPartyStateToSendToOAuthProvider(input?: { userContext?: any }): string {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.generateThirdPartyStateToSendToOAuthProvider({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async verifyAndGetThirdPartyStateOrThrowError<CustomStateProperties>(input: {
+        stateFromAuthProvider: string | undefined;
+        stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
+        userContext?: any;
+    }): Promise<StateObject & CustomStateProperties> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.verifyAndGetThirdPartyStateOrThrowError({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static getThirdPartyAuthCodeFromURL(input?: { userContext?: any }): string {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.getThirdPartyAuthCodeFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getThirdPartyAuthErrorFromURL(input?: { userContext?: any }): string | undefined {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.getThirdPartyAuthErrorFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getThirdPartyAuthStateFromURL(input?: { userContext?: any }): string {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.getThirdPartyAuthStateFromURL({
             ...input,
             userContext: getNormalisedUserContext(input?.userContext),
         });
@@ -137,7 +233,7 @@ export default class Wrapper {
         });
     }
 
-    static async resendPasswordlessCode(input: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async resendPasswordlessCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }> {
@@ -195,7 +291,21 @@ export default class Wrapper {
         });
     }
 
-    static doesPasswordlessUserEmailExist(input: {
+    static getPasswordlessLinkCodeFromURL(input?: { userContext?: any }): string {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.getPasswordlessLinkCodeFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getPasswordlessPreAuthSessionIdFromURL(input?: { userContext?: any }): string {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.getPasswordlessPreAuthSessionIdFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async doesPasswordlessUserEmailExist(input: {
         email: string;
         userContext?: any;
         options?: RecipeFunctionOptions;
@@ -210,7 +320,7 @@ export default class Wrapper {
         });
     }
 
-    static doesPasswordlessUserPhoneNumberExist(input: {
+    static async doesPasswordlessUserPhoneNumberExist(input: {
         phoneNumber: string;
         userContext?: any;
         options?: RecipeFunctionOptions;
@@ -225,8 +335,45 @@ export default class Wrapper {
         });
     }
 
+    static async getPasswordlessLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: {
+        userContext?: any;
+    }): Promise<
+        | undefined
+        | ({
+              deviceId: string;
+              preAuthSessionId: string;
+              flowType: PasswordlessFlowType;
+          } & CustomLoginAttemptInfoProperties)
+    > {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.getPasswordlessLoginAttemptInfo({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async setPasswordlessLoginAttemptInfo<CustomStateProperties>(input: {
+        attemptInfo: {
+            deviceId: string;
+            preAuthSessionId: string;
+            flowType: PasswordlessFlowType;
+        } & CustomStateProperties;
+        userContext?: any;
+    }): Promise<void> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.setPasswordlessLoginAttemptInfo({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async clearPasswordlessLoginAttemptInfo(input?: { userContext?: any }): Promise<void> {
+        return ThirdPartyPasswordless.getInstanceOrThrow().recipeImpl.clearPasswordlessLoginAttemptInfo({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
     // have backwards compatibility to allow input as "signin" | "signup"
-    static redirectToAuth(
+    static async redirectToAuth(
         input?:
             | ("signin" | "signup")
             | {
@@ -269,13 +416,29 @@ const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
 const verifyEmail = Wrapper.verifyEmail;
+const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
+const getAuthorisationURLFromBackend = Wrapper.getAuthorisationURLFromBackend;
 const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
+const getThirdPartyStateAndOtherInfoFromStorage = Wrapper.getThirdPartyStateAndOtherInfoFromStorage;
+const setThirdPartyStateAndOtherInfoToStorage = Wrapper.setThirdPartyStateAndOtherInfoToStorage;
+const getThirdPartyAuthorisationURLWithQueryParamsAndSetState =
+    Wrapper.getThirdPartyAuthorisationURLWithQueryParamsAndSetState;
+const generateThirdPartyStateToSendToOAuthProvider = Wrapper.generateThirdPartyStateToSendToOAuthProvider;
+const verifyAndGetThirdPartyStateOrThrowError = Wrapper.verifyAndGetThirdPartyStateOrThrowError;
+const getThirdPartyAuthCodeFromURL = Wrapper.getThirdPartyAuthCodeFromURL;
+const getThirdPartyAuthErrorFromURL = Wrapper.getThirdPartyAuthErrorFromURL;
+const getThirdPartyAuthStateFromURL = Wrapper.getThirdPartyAuthStateFromURL;
 const createPasswordlessCode = Wrapper.createPasswordlessCode;
 const resendPasswordlessCode = Wrapper.resendPasswordlessCode;
 const consumePasswordlessCode = Wrapper.consumePasswordlessCode;
+const getPasswordlessLinkCodeFromURL = Wrapper.getPasswordlessLinkCodeFromURL;
+const getPasswordlessPreAuthSessionIdFromURL = Wrapper.getPasswordlessPreAuthSessionIdFromURL;
 const doesPasswordlessUserEmailExist = Wrapper.doesPasswordlessUserEmailExist;
 const doesPasswordlessUserPhoneNumberExist = Wrapper.doesPasswordlessUserPhoneNumberExist;
+const getPasswordlessLoginAttemptInfo = Wrapper.getPasswordlessLoginAttemptInfo;
+const setPasswordlessLoginAttemptInfo = Wrapper.setPasswordlessLoginAttemptInfo;
+const clearPasswordlessLoginAttemptInfo = Wrapper.clearPasswordlessLoginAttemptInfo;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
@@ -292,13 +455,28 @@ export {
     isEmailVerified,
     sendVerificationEmail,
     verifyEmail,
+    getEmailVerificationTokenFromURL,
     redirectToThirdPartyLogin,
+    getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,
+    getThirdPartyStateAndOtherInfoFromStorage,
+    setThirdPartyStateAndOtherInfoToStorage,
+    getThirdPartyAuthorisationURLWithQueryParamsAndSetState,
+    generateThirdPartyStateToSendToOAuthProvider,
+    verifyAndGetThirdPartyStateOrThrowError,
+    getThirdPartyAuthCodeFromURL,
+    getThirdPartyAuthErrorFromURL,
+    getThirdPartyAuthStateFromURL,
     createPasswordlessCode,
     resendPasswordlessCode,
     consumePasswordlessCode,
+    getPasswordlessLinkCodeFromURL,
+    getPasswordlessPreAuthSessionIdFromURL,
     doesPasswordlessUserEmailExist,
     doesPasswordlessUserPhoneNumberExist,
+    getPasswordlessLoginAttemptInfo,
+    setPasswordlessLoginAttemptInfo,
+    clearPasswordlessLoginAttemptInfo,
     SignInAndUp,
     SignInUpTheme,
     ThirdPartySignInAndUpCallback,

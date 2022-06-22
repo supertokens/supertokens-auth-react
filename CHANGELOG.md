@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Changes in the Reset Password Email Sent success screen in `emailpassword` and `thirdpartyemailpassword` recipes
     -   Updated text of the success message displayed
     -   Updated text of the 'Resend' button which redirects user back to Reset Password form
+-   Update supertokens-web-js dependency version
+-   Added new tests for checking general error handling
+-   Refactors example apps to not import from build directories
 
 ### Added
 
@@ -28,6 +31,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking changes
 
 -   Removes `setCookieSync` and `getCookieSync` from the interface for `cookieHandler` when calling `SuperTokens.init`
+
+## [0.22.4] - 2022-06-20
+
+### Added
+
+-   Exposes more functions from each recipe.
+-   Updates the dependency version of supertokens-auth-react for example apps
 
 ## [0.22.3] - 2022-06-14
 

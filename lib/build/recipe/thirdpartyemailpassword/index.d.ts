@@ -9,8 +9,10 @@ import {
     RecipeInterface,
     EmailPasswordUserType as UserType,
     ThirdPartyUserType,
+    RecipeFunctionOptions,
 } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 import { SignInAndUpCallbackTheme as ThirdPartySignInAndUpCallbackTheme } from "../thirdparty/components/themes/signInAndUpCallback";
+import { StateObject } from "supertokens-web-js/recipe/thirdparty";
 export default class Wrapper {
     static init(
         config: UserInput
@@ -20,20 +22,21 @@ export default class Wrapper {
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static signOut(): Promise<void>;
-    static isEmailVerified(input?: { userContext?: any }): Promise<{
+    static signOut(input?: { userContext?: any }): Promise<void>;
+    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         isVerified: boolean;
         fetchResponse: Response;
     }>;
-    static verifyEmail(input?: { userContext?: any }): Promise<{
-        status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK";
+    static verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
         fetchResponse: Response;
     }>;
-    static sendVerificationEmail(input?: { userContext?: any }): Promise<{
+    static sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
         fetchResponse: Response;
     }>;
+    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string;
     static redirectToAuth(
         input?:
             | ("signin" | "signup")
@@ -47,7 +50,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
-        token: string;
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -68,6 +71,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -88,6 +92,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -109,6 +114,7 @@ export default class Wrapper {
             id: string;
             value: string;
         }[];
+        options?: RecipeFunctionOptions;
         userContext?: any;
     }): Promise<
         | {
@@ -129,15 +135,25 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
-    static doesEmailExist(input: { email: string; userContext?: any }): Promise<{
+    static doesEmailExist(input: { email: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
     }>;
+    static getResetPasswordTokenFromURL(input?: { userContext?: any }): string;
     static redirectToThirdPartyLogin(input: { thirdPartyId: string; userContext?: any }): Promise<{
         status: "OK" | "ERROR";
     }>;
-    static thirdPartySignInAndUp(input?: { userContext?: any }): Promise<
+    static getAuthorisationURLFromBackend(input: {
+        providerId: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        url: string;
+        fetchResponse: Response;
+    }>;
+    static thirdPartySignInAndUp(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<
         | {
               status: "OK";
               user: ThirdPartyUserType;
@@ -149,6 +165,29 @@ export default class Wrapper {
               fetchResponse: Response;
           }
     >;
+    static getStateAndOtherInfoFromStorage<CustomStateProperties>(input?: {
+        userContext?: any;
+    }): (StateObject & CustomStateProperties) | undefined;
+    static setStateAndOtherInfoToStorage<CustomStateProperties>(input: {
+        state: StateObject & CustomStateProperties;
+        userContext?: any;
+    }): Promise<void>;
+    static getAuthorisationURLWithQueryParamsAndSetState(input: {
+        providerId: string;
+        authorisationURL: string;
+        providerClientId?: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<string>;
+    static generateStateToSendToOAuthProvider(input?: { userContext?: any }): string;
+    static verifyAndGetStateOrThrowError<CustomStateProperties>(input: {
+        stateFromAuthProvider: string | undefined;
+        stateObjectFromStorage: (StateObject & CustomStateProperties) | undefined;
+        userContext?: any;
+    }): Promise<StateObject & CustomStateProperties>;
+    static getAuthCodeFromURL(input?: { userContext?: any }): string;
+    static getAuthErrorFromURL(input?: { userContext?: any }): string | undefined;
+    static getAuthStateFromURL(input?: { userContext?: any }): string;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
@@ -174,6 +213,7 @@ declare const signOut: typeof Wrapper.signOut;
 declare const isEmailVerified: typeof Wrapper.isEmailVerified;
 declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
+declare const getEmailVerificationTokenFromURL: typeof Wrapper.getEmailVerificationTokenFromURL;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
@@ -184,8 +224,18 @@ declare const sendPasswordResetEmail: typeof Wrapper.sendPasswordResetEmail;
 declare const emailPasswordSignIn: typeof Wrapper.emailPasswordSignIn;
 declare const emailPasswordSignUp: typeof Wrapper.emailPasswordSignUp;
 declare const doesEmailExist: typeof Wrapper.doesEmailExist;
+declare const getResetPasswordTokenFromURL: typeof Wrapper.getResetPasswordTokenFromURL;
 declare const redirectToThirdPartyLogin: typeof Wrapper.redirectToThirdPartyLogin;
+declare const getAuthorisationURLFromBackend: typeof Wrapper.getAuthorisationURLFromBackend;
 declare const thirdPartySignInAndUp: typeof Wrapper.thirdPartySignInAndUp;
+declare const getStateAndOtherInfoFromStorage: typeof Wrapper.getStateAndOtherInfoFromStorage;
+declare const setStateAndOtherInfoToStorage: typeof Wrapper.setStateAndOtherInfoToStorage;
+declare const getAuthorisationURLWithQueryParamsAndSetState: typeof Wrapper.getAuthorisationURLWithQueryParamsAndSetState;
+declare const generateStateToSendToOAuthProvider: typeof Wrapper.generateStateToSendToOAuthProvider;
+declare const verifyAndGetStateOrThrowError: typeof Wrapper.verifyAndGetStateOrThrowError;
+declare const getAuthCodeFromURL: typeof Wrapper.getAuthCodeFromURL;
+declare const getAuthErrorFromURL: typeof Wrapper.getAuthErrorFromURL;
+declare const getAuthStateFromURL: typeof Wrapper.getAuthStateFromURL;
 export {
     ThirdPartyEmailPasswordAuth,
     init,
@@ -196,6 +246,7 @@ export {
     isEmailVerified,
     verifyEmail,
     sendVerificationEmail,
+    getEmailVerificationTokenFromURL,
     SignInAndUp,
     SignInAndUpTheme,
     ThirdPartySignInAndUpCallback,
@@ -207,8 +258,18 @@ export {
     emailPasswordSignIn,
     emailPasswordSignUp,
     doesEmailExist,
+    getResetPasswordTokenFromURL,
     redirectToThirdPartyLogin,
+    getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,
+    getStateAndOtherInfoFromStorage,
+    setStateAndOtherInfoToStorage,
+    getAuthorisationURLWithQueryParamsAndSetState,
+    generateStateToSendToOAuthProvider,
+    verifyAndGetStateOrThrowError,
+    getAuthCodeFromURL,
+    getAuthErrorFromURL,
+    getAuthStateFromURL,
     EmailVerification,
     EmailVerificationTheme,
     ResetPasswordUsingToken,

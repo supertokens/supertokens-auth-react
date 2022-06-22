@@ -1,7 +1,5 @@
-import { redirectToAuth } from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import axios from "axios";
-import { getApiDomain } from "../App";
 import { RecipeInterface } from "supertokens-auth-react/recipe/passwordless";
 Session.addAxiosInterceptors(axios);
 

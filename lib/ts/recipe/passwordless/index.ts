@@ -29,12 +29,14 @@ export default class Wrapper {
         return Passwordless.init(config);
     }
 
-    static async signOut(): Promise<void> {
-        return Passwordless.getInstanceOrThrow().signOut();
+    static async signOut(input?: { userContext?: any }): Promise<void> {
+        return Passwordless.getInstanceOrThrow().signOut({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"
-    static redirectToAuth(
+    static async redirectToAuth(
         input?:
             | ("signin" | "signup")
             | {
@@ -70,7 +72,7 @@ export default class Wrapper {
         });
     }
 
-    static async resendCode(input: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static async resendCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK" | "RESTART_FLOW_ERROR";
         fetchResponse: Response;
     }> {
@@ -112,7 +114,21 @@ export default class Wrapper {
         });
     }
 
-    static doesEmailExist(input: { email: string; userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+    static getLinkCodeFromURL(input?: { userContext?: any }): string {
+        return Passwordless.getInstanceOrThrow().recipeImpl.getLinkCodeFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getPreAuthSessionIdFromURL(input?: { userContext?: any }): string {
+        return Passwordless.getInstanceOrThrow().recipeImpl.getPreAuthSessionIdFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async doesEmailExist(input: { email: string; userContext?: any; options?: RecipeFunctionOptions }): Promise<{
         status: "OK";
         doesExist: boolean;
         fetchResponse: Response;
@@ -123,7 +139,7 @@ export default class Wrapper {
         });
     }
 
-    static doesPhoneNumberExist(input: {
+    static async doesPhoneNumberExist(input: {
         phoneNumber: string;
         userContext?: any;
         options?: RecipeFunctionOptions;
@@ -135,6 +151,41 @@ export default class Wrapper {
         return Passwordless.getInstanceOrThrow().recipeImpl.doesPhoneNumberExist({
             ...input,
             userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async getLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: any }): Promise<
+        | undefined
+        | ({
+              deviceId: string;
+              preAuthSessionId: string;
+              flowType: PasswordlessFlowType;
+          } & CustomLoginAttemptInfoProperties)
+    > {
+        return Passwordless.getInstanceOrThrow().recipeImpl.getLoginAttemptInfo({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async setLoginAttemptInfo<CustomStateProperties>(input: {
+        attemptInfo: {
+            deviceId: string;
+            preAuthSessionId: string;
+            flowType: PasswordlessFlowType;
+        } & CustomStateProperties;
+        userContext?: any;
+    }): Promise<void> {
+        return Passwordless.getInstanceOrThrow().recipeImpl.setLoginAttemptInfo({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async clearLoginAttemptInfo(input?: { userContext?: any }): Promise<void> {
+        return Passwordless.getInstanceOrThrow().recipeImpl.clearLoginAttemptInfo({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
         });
     }
 
@@ -151,8 +202,13 @@ const init = Wrapper.init;
 const createCode = Wrapper.createCode;
 const resendCode = Wrapper.resendCode;
 const consumeCode = Wrapper.consumeCode;
+const getLinkCodeFromURL = Wrapper.getLinkCodeFromURL;
+const getPreAuthSessionIdFromURL = Wrapper.getPreAuthSessionIdFromURL;
 const doesEmailExist = Wrapper.doesEmailExist;
 const doesPhoneNumberExist = Wrapper.doesPhoneNumberExist;
+const getLoginAttemptInfo = Wrapper.getLoginAttemptInfo;
+const setLoginAttemptInfo = Wrapper.setLoginAttemptInfo;
+const clearLoginAttemptInfo = Wrapper.clearLoginAttemptInfo;
 const signOut = Wrapper.signOut;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInUp = Wrapper.SignInUp;
@@ -168,8 +224,13 @@ export {
     createCode,
     resendCode,
     consumeCode,
+    getLinkCodeFromURL,
+    getPreAuthSessionIdFromURL,
     doesEmailExist,
     doesPhoneNumberExist,
+    getLoginAttemptInfo,
+    setLoginAttemptInfo,
+    clearLoginAttemptInfo,
     signOut,
     redirectToAuth,
     GetRedirectionURLContext,
