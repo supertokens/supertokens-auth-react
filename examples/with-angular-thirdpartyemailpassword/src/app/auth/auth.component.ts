@@ -16,15 +16,11 @@ export class AuthComponent implements OnDestroy, AfterViewInit {
 
     // We use the ngAfterViewInit lifecycle hook to render the React component after the Angular component  view gets initialized
     ngAfterViewInit() {
-        this.render();
+        ReactDOM.render(React.createElement(SuperTokensReactComponent), document.getElementById(this.rootId));
     }
 
     // We use the ngOnDestroy lifecycle hook to unmount the React component when the Angular wrapper component is destroyed.
     ngOnDestroy() {
         ReactDOM.unmountComponentAtNode(document.getElementById(this.rootId) as Element);
-    }
-
-    private render() {
-        ReactDOM.render(React.createElement(SuperTokensReactComponent), document.getElementById(this.rootId));
     }
 }
