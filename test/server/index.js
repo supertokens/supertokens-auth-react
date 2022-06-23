@@ -33,7 +33,8 @@ let bodyParser = require("body-parser");
 let http = require("http");
 let cors = require("cors");
 const morgan = require("morgan");
-let { startST, killAllST, setupST, cleanST, setKeyValueInConfig, customAuth0Provider } = require("./utils");
+let { startST, killAllST, setupST, cleanST, setKeyValueInConfig, customAuth0Provider, maxVersion } = require("./utils");
+let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
 
 let passwordlessSupported;
 let PasswordlessRaw;
@@ -57,6 +58,15 @@ try {
     thirdPartyPasswordlessSupported = true;
 } catch (ex) {
     thirdPartyPasswordlessSupported = false;
+}
+
+let generalErrorSupported;
+
+if (maxVersion(nodeSDKVersion, "9.9.9") === "9.9.9") {
+    // General error is only supported by 10.0.0 and above
+    generalErrorSupported = false;
+} else {
+    generalErrorSupported = true;
 }
 
 let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
@@ -207,8 +217,9 @@ app.get("/test/featureFlags", (req, res) => {
         available.push("thirdpartypasswordless");
     }
 
-    // TODO: only if above certain node version
-    available.push("generalerror");
+    if (generalErrorSupported) {
+        available.push("generalerror");
+    }
 
     res.send({
         available,
