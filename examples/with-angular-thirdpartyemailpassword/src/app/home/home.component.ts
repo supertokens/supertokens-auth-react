@@ -1,6 +1,6 @@
 import { AfterViewInit, Component } from "@angular/core";
 
-import * as SuperTokens from "supertokens-website";
+import * as SuperTokens from "supertokens-web-js/recipe/session";
 
 @Component({
     selector: "app-home",

@@ -27,6 +27,7 @@
         "rxjs": "~7.5.0",
         "supertokens-auth-react": "^0.22.3",
         "supertokens-node": "^9.2.1",
+        "supertokens-web-js": "^0.0.2",
         "ts-node": "^10.8.0",
         "tslib": "^2.3.0",
         "zone.js": "~0.11.4"
