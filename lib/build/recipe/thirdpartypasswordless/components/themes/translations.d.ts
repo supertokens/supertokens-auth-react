@@ -41,6 +41,9 @@ export declare const defaultTranslationsThirdPartyPasswordless: {
         PWLESS_LINK_SENT_RESEND_DESC_END_PHONE: string;
         PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL: string;
         PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE: string;
+        PWLESS_LINK_CLICKED_CONTINUE_HEADER: string;
+        PWLESS_LINK_CLICKED_CONTINUE_DESC: string;
+        PWLESS_LINK_CLICKED_CONTINUE_BUTTON: string;
         PWLESS_RESEND_SUCCESS_EMAIL: string;
         PWLESS_RESEND_SUCCESS_PHONE: string;
         PWLESS_RESEND_BTN_DISABLED_START: string;
@@ -79,5 +82,8 @@ export declare const defaultTranslationsThirdPartyPasswordless: {
         EMAIL_VERIFICATION_EXPIRED: string;
         EMAIL_VERIFICATION_ERROR_TITLE: string;
         EMAIL_VERIFICATION_ERROR_DESC: string;
+        EMAIL_VERIFICATION_LINK_CLICKED_HEADER: string;
+        EMAIL_VERIFICATION_LINK_CLICKED_DESC: string;
+        EMAIL_VERIFICATION_LINK_CLICKED_CONTINUE_BUTTON: string;
     };
 };

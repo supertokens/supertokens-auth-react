@@ -33,7 +33,8 @@ let bodyParser = require("body-parser");
 let http = require("http");
 let cors = require("cors");
 const morgan = require("morgan");
-let { startST, killAllST, setupST, cleanST, setKeyValueInConfig, customAuth0Provider } = require("./utils");
+let { startST, killAllST, setupST, cleanST, setKeyValueInConfig, customAuth0Provider, maxVersion } = require("./utils");
+let { version: nodeSDKVersion } = require("supertokens-node/lib/build/version");
 
 let passwordlessSupported;
 let PasswordlessRaw;
@@ -57,6 +58,15 @@ try {
     thirdPartyPasswordlessSupported = true;
 } catch (ex) {
     thirdPartyPasswordlessSupported = false;
+}
+
+let generalErrorSupported;
+
+if (maxVersion(nodeSDKVersion, "9.9.9") === "9.9.9") {
+    // General error is only supported by 10.0.0 and above
+    generalErrorSupported = false;
+} else {
+    generalErrorSupported = true;
 }
 
 let urlencodedParser = bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 });
@@ -207,6 +217,10 @@ app.get("/test/featureFlags", (req, res) => {
         available.push("thirdpartypasswordless");
     }
 
+    if (generalErrorSupported) {
+        available.push("generalerror");
+    }
+
     res.send({
         available,
     });
@@ -265,6 +279,96 @@ function initST({ passwordlessConfig } = {}) {
 
     const recipeList = [
         EmailPassword.init({
+            override: {
+                emailVerificationFeature: {
+                    apis: (oI) => {
+                        return {
+                            ...oI,
+                            generateEmailVerifyTokenPOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API email verification code",
+                                    };
+                                }
+                                return oI.generateEmailVerifyTokenPOST(input);
+                            },
+                            verifyEmailPOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API email verify",
+                                    };
+                                }
+                                return oI.verifyEmailPOST(input);
+                            },
+                        };
+                    },
+                },
+                apis: (oI) => {
+                    return {
+                        ...oI,
+                        passwordResetPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API reset password consume",
+                                };
+                            }
+                            return oI.passwordResetPOST(input);
+                        },
+                        generatePasswordResetTokenPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API reset password",
+                                };
+                            }
+                            return oI.generatePasswordResetTokenPOST(input);
+                        },
+                        emailExistsGET: async function (input) {
+                            let generalError = input.options.req.getKeyValueFromQuery("generalError");
+                            if (generalError === "true") {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API email exists",
+                                };
+                            }
+                            return oI.emailExistsGET(input);
+                        },
+                        signUpPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API sign up",
+                                };
+                            }
+                            return oI.signUpPOST(input);
+                        },
+                        signInPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                let message = "general error from API sign in";
+
+                                if (body.generalErrorMessage !== undefined) {
+                                    message = body.generalErrorMessage;
+                                }
+
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message,
+                                };
+                            }
+                            return oI.signInPOST(input);
+                        },
+                    };
+                },
+            },
             signUpFeature: {
                 formFields,
             },
@@ -299,6 +403,35 @@ function initST({ passwordlessConfig } = {}) {
                     customAuth0Provider(),
                 ],
             },
+            override: {
+                apis: (originalImplementation) => {
+                    return {
+                        ...originalImplementation,
+                        authorisationUrlGET: async function (input) {
+                            let generalErrorFromQuery = input.options.req.getKeyValueFromQuery("generalError");
+                            if (generalErrorFromQuery === "true") {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API authorisation url get",
+                                };
+                            }
+
+                            return originalImplementation.authorisationUrlGET(input);
+                        },
+                        signInUpPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API sign in up",
+                                };
+                            }
+
+                            return originalImplementation.signInUpPOST(input);
+                        },
+                    };
+                },
+            },
         }),
         ThirdPartyEmailPassword.init({
             signUpFeature: {
@@ -325,8 +458,106 @@ function initST({ passwordlessConfig } = {}) {
                 }),
                 customAuth0Provider(),
             ],
+            override: {
+                apis: (originalImplementation) => {
+                    return {
+                        ...originalImplementation,
+                        emailPasswordSignUpPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API sign up",
+                                };
+                            }
+
+                            return originalImplementation.emailPasswordSignUpPOST(input);
+                        },
+                        passwordResetPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API reset password consume",
+                                };
+                            }
+                            return originalImplementation.passwordResetPOST(input);
+                        },
+                        generatePasswordResetTokenPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API reset password",
+                                };
+                            }
+                            return originalImplementation.generatePasswordResetTokenPOST(input);
+                        },
+                        emailPasswordEmailExistsGET: async function (input) {
+                            let generalError = input.options.req.getKeyValueFromQuery("generalError");
+                            if (generalError === "true") {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API email exists",
+                                };
+                            }
+                            return originalImplementation.emailPasswordEmailExistsGET(input);
+                        },
+                        emailPasswordSignInPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API sign in",
+                                };
+                            }
+                            return originalImplementation.emailPasswordSignInPOST(input);
+                        },
+                        authorisationUrlGET: async function (input) {
+                            let generalErrorFromQuery = input.options.req.getKeyValueFromQuery("generalError");
+                            if (generalErrorFromQuery === "true") {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API authorisation url get",
+                                };
+                            }
+
+                            return originalImplementation.authorisationUrlGET(input);
+                        },
+                        thirdPartySignInUpPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API sign in up",
+                                };
+                            }
+
+                            return originalImplementation.thirdPartySignInUpPOST(input);
+                        },
+                    };
+                },
+            },
         }),
-        Session.init({}),
+        Session.init({
+            override: {
+                apis: function (originalImplementation) {
+                    return {
+                        ...originalImplementation,
+                        signOutPOST: async (input) => {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from signout API",
+                                };
+                            }
+                            return originalImplementation.signOutPOST(input);
+                        },
+                    };
+                },
+            },
+        }),
     ];
 
     passwordlessConfig = {
@@ -337,7 +568,48 @@ function initST({ passwordlessConfig } = {}) {
         ...passwordlessConfig,
     };
     if (passwordlessSupported) {
-        recipeList.push(Passwordless.init(passwordlessConfig));
+        recipeList.push(
+            Passwordless.init({
+                ...passwordlessConfig,
+                override: {
+                    apis: (originalImplementation) => {
+                        return {
+                            ...originalImplementation,
+                            createCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API create code",
+                                    };
+                                }
+                                return originalImplementation.createCodePOST(input);
+                            },
+                            resendCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API resend code",
+                                    };
+                                }
+                                return originalImplementation.resendCodePOST(input);
+                            },
+                            consumeCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API consume code",
+                                    };
+                                }
+                                return originalImplementation.consumeCodePOST(input);
+                            },
+                        };
+                    },
+                },
+            })
+        );
     }
 
     if (thirdPartyPasswordlessSupported) {
@@ -359,6 +631,65 @@ function initST({ passwordlessConfig } = {}) {
                     }),
                     customAuth0Provider(),
                 ],
+                override: {
+                    apis: (originalImplementation) => {
+                        return {
+                            ...originalImplementation,
+                            authorisationUrlGET: async function (input) {
+                                let generalErrorFromQuery = input.options.req.getKeyValueFromQuery("generalError");
+                                if (generalErrorFromQuery === "true") {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API authorisation url get",
+                                    };
+                                }
+
+                                return originalImplementation.authorisationUrlGET(input);
+                            },
+                            thirdPartySignInUpPOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API sign in up",
+                                    };
+                                }
+
+                                return originalImplementation.thirdPartySignInUpPOST(input);
+                            },
+                            createCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API create code",
+                                    };
+                                }
+                                return originalImplementation.createCodePOST(input);
+                            },
+                            resendCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API resend code",
+                                    };
+                                }
+                                return originalImplementation.resendCodePOST(input);
+                            },
+                            consumeCodePOST: async function (input) {
+                                let body = await input.options.req.getJSONBody();
+                                if (body.generalError === true) {
+                                    return {
+                                        status: "GENERAL_ERROR",
+                                        message: "general error from API consume code",
+                                    };
+                                }
+                                return originalImplementation.consumeCodePOST(input);
+                            },
+                        };
+                    },
+                },
             })
         );
     }
