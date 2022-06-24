@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Added new tests for checking general error handling
 -   Refactors example apps to not import from build directories
 -   fixes to angular example app
+-   Not importing helpers from `tslib`
 
 ### Added
 
