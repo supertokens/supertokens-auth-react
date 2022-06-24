@@ -60,7 +60,7 @@ trap "killServers" EXIT # Trap to execute on script shutdown
 
 
 # Start by killing any servers up on 8082 and 3031 if any.
-# killServers
+killServers
 
 mkdir -p test_report/logs
 # Run node server in background.
