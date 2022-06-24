@@ -4,12 +4,7 @@ import * as ReactDOM from "react-dom";
 import SuperTokensReactComponent from "../components/Supertokens";
 
 export default {
-    beforeMount() {
-        this.render();
-    },
-    beforeUpdate() {
-        this.render();
-    },
+
     mounted() {
         this.render();
     },

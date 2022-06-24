@@ -13,7 +13,6 @@ export default {
     },
     methods: {
         redirectToLogin() {
-            console.log("redirectToLogin called with");
             window.location.href = "/auth";
         },
         async getUserInfo() {
