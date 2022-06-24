@@ -45,14 +45,6 @@ The app will start on `http://localhost:4200`
 -   Since both the `home` and `auth` components (since `supertokens-auth-react` SDK uses `supertokens-web-js`) depend on `supertokens-web-js`, we can initialize this library in our root component. This will also reduce the bundle sizes for the `home` and `auth` component.
 -   The `root` component contains our routing logic with refrences to the the `home` and `auth` component modules to enable code splitting.
 
-## Code splitting and bundle analysis
-
-Since we use references to the `home` and `auth` components in our routing logic, code splitting will be enabled. During the build process Angular will create separate bundles for the `auth` and `home` components.
-
-This will decrease the main bundle size and allow us to lazy-load the `home` and `auth` component chunks depending on which route we visit.
-
-If we were to take a took look at the apps network traffic, we would observe that when we visit our home route, the chunk loaded will contain the angular component (since `supertokens-web-js` gets initialized in our root component) and only when we visit an auth related route will the chunk containing the `supertokens-auth-react` SDK be loaded.
-
 ## Author
 
 Created with :heart: by the folks at supertokens.com.
