@@ -63,14 +63,9 @@ trap "killServers" EXIT # Trap to execute on script shutdown
 killServers
 
 mkdir -p test_report/logs
-# Run node server in background.
-(cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend.log 2>&1 &)
 
-(cd ./examples/for-tests/ && cat | CI=true BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start >> ../../test_report/logs/frontend.log 2>&1 &)
-# Start front end test app and run tests.
-startEndToEnd
-
-if ! [[ -z "${RUN_REACT_16_TESTS}" ]]; then
+if [[ "${RUN_REACT_16_TESTS}" == "true" ]]; then
+    echo "Running tests with React 16"
     (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend-react16.log 2>&1 &)
     
     (cd examples/for-tests-react-16/ && cat | CI=true BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start >> ../../test_report/logs/frontend-react-16.log 2>&1 &)
@@ -79,7 +74,15 @@ if ! [[ -z "${RUN_REACT_16_TESTS}" ]]; then
 
     echo "React 16 tests passed"
 else
-    echo "Skipped React 16 tests"
+    echo "Running tests with React 18"
+    # Run node server in background.
+    (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend.log 2>&1 &)
+
+    (cd ./examples/for-tests/ && cat | CI=true BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start >> ../../test_report/logs/frontend.log 2>&1 &)
+    # Start front end test app and run tests.
+    startEndToEnd
+
+    echo "React 18 tests passed"
 fi
 
 exit 0

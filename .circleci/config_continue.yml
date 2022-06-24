@@ -30,10 +30,12 @@ jobs:
             - image: rishabhpoddar/supertokens_website_sdk_testing_node_16
         environment:
             MOCHA_FILE: test_report/report_node-<< parameters.fdi-version >>.xml
-            RUN_REACT_16_TESTS: true
+            RUN_REACT_16_TESTS: << parameters.run-react-16-tests >>
         parameters:
             fdi-version:
                 type: string
+            run-react-16-tests:
+                type: boolean
         parallelism: 4
         steps:
             - run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/ # This makes npm use http instead of ssh (required for node 16)
@@ -84,6 +86,9 @@ workflows:
                   matrix:
                       parameters:
                           fdi-version: placeholder
+                          run-react-16-tests:
+                              - true
+                              - false
 
             - mark-passed:
                   context:
