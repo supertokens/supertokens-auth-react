@@ -24,6 +24,7 @@ jobs:
                       - root/project/node_modules
                       - root/project/test/server/node_modules
                       - root/project/examples/for-tests/node_modules
+                      - root/project/examples/for-tests-react-16/node_modules
     test:
         docker:
             - image: rishabhpoddar/supertokens_website_sdk_testing_node_16
