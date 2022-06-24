@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.23.0] - 2022-06-24
+
 ### Changed
 
 -   Showing a confirmation button before consuming a passwordless link if there is no stored login attempt info or if it doesn't match the link
@@ -24,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   The reset password form has a back button which takes the user back to the 'Sign in' form in `emailpassword` and `thirdpartyemailpassword` recipes.
 -   Back button in the reset password email sent success screen that redirects user to the 'Sign In' form in `emailpassword` and `thirdpartyemailpassword` recipe.
+-   Support for FDI 1.14
 
 ### Added
 
