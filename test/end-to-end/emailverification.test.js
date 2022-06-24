@@ -664,6 +664,16 @@ describe("Email verification signOut errors", function () {
         });
     });
 
+    after(async function () {
+        await browser.close();
+        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+            method: "POST",
+        }).catch(console.error);
+        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+            method: "POST",
+        }).catch(console.error);
+    });
+
     afterEach(function () {
         return screenshotOnFailure(this, browser);
     });
