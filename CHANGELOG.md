@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.23.1] - 2022-06-25
+
+-   [CI]: Changes dependency for node SDK in integration tests so that tests pass when using node 14
+
 ## [0.23.0] - 2022-06-24
 
 ### Changed
