@@ -686,7 +686,7 @@ describe("SuperTokens SignIn => Server Error", function () {
     });
 
     it("shows translated general error", async function () {
-        if (!isGeneralErrorSupported()) {
+        if (!(await isGeneralErrorSupported())) {
             this.skip();
         }
 
@@ -708,7 +708,7 @@ describe("SuperTokens SignIn => Server Error", function () {
     });
 
     it("shows raw message for non-translation key general error", async function () {
-        if (!isGeneralErrorSupported()) {
+        if (!(await isGeneralErrorSupported())) {
             this.skip();
         }
 

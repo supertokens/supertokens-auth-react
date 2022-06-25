@@ -476,7 +476,7 @@ describe("SuperTokens Email Verification general errors", function () {
 
     describe("Verify Email with token screen", function () {
         beforeEach(async function () {
-            if (!isGeneralErrorSupported()) {
+            if (!(await isGeneralErrorSupported())) {
                 this.skip();
             }
 
@@ -522,7 +522,7 @@ describe("SuperTokens Email Verification general errors", function () {
 
     describe("Send verification email screen", function () {
         beforeEach(async function () {
-            if (!isGeneralErrorSupported()) {
+            if (!(await isGeneralErrorSupported())) {
                 this.skip();
             }
 
