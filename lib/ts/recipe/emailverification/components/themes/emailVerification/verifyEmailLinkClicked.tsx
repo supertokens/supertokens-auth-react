@@ -49,14 +49,14 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
         // If there is no active session we know that the verification was started elsewhere, since it requires a session
         // otherwise we assume it's the same session. The main purpose of this is to prevent mail scanners
         // from accidentally validating an email address
-        if (sessionContext.loading === false && sessionContext.doesSessionExist) {
+        if (sessionContext.loading === false && !sessionContext.doesSessionExist) {
             return "INTERACTION_REQUIRED";
         }
 
         return props.recipeImplementation.verifyEmail({
             userContext,
         });
-    }, [props.recipeImplementation]);
+    }, [props.recipeImplementation, sessionContext]);
 
     const handleVerifyResp = useCallback(
         async (response: Awaited<ReturnType<typeof verifyEmailOnMount>>): Promise<void> => {
@@ -80,7 +80,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
         },
         [setStatus, setErrorMessage]
     );
-    useOnMountAPICall(verifyEmailOnMount, handleVerifyResp, handleError);
+    useOnMountAPICall(verifyEmailOnMount, handleVerifyResp, handleError, sessionContext.loading === false);
 
     const { onTokenInvalidRedirect, onSuccess } = props;
 

@@ -37,5 +37,6 @@ export declare function getNormalisedUserContext(userContext?: any): any;
 export declare const useOnMountAPICall: <T>(
     fetch: () => Promise<T>,
     handleResponse: (consumeResp: T) => Promise<void>,
-    handleError?: ((err: unknown, consumeResp: T | undefined) => void) | undefined
+    handleError?: ((err: unknown, consumeResp: T | undefined) => void) | undefined,
+    startLoading?: boolean
 ) => void;

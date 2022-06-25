@@ -393,7 +393,8 @@ export function getNormalisedUserContext(userContext?: any): any {
 export const useOnMountAPICall = <T>(
     fetch: () => Promise<T>,
     handleResponse: (consumeResp: T) => Promise<void>,
-    handleError?: (err: unknown, consumeResp: T | undefined) => void
+    handleError?: (err: unknown, consumeResp: T | undefined) => void,
+    startLoading = true
 ) => {
     const consumeReq = useRef<Promise<T>>();
 
@@ -416,11 +417,14 @@ export const useOnMountAPICall = <T>(
                 }
             }
         };
-        const ctrl = new AbortController();
+        if (startLoading) {
+            const ctrl = new AbortController();
 
-        void effect(ctrl.signal);
-        return () => {
-            ctrl.abort();
-        };
-    }, [consumeReq, fetch, handleResponse, handleError]);
+            void effect(ctrl.signal);
+            return () => {
+                ctrl.abort();
+            };
+        }
+        return;
+    }, [consumeReq, fetch, handleResponse, handleError, startLoading]);
 };

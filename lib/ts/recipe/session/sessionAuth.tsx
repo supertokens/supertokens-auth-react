@@ -71,7 +71,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             return parentSessionContext;
         }
 
-        if (context) {
+        if (!context.loading) {
             return context;
         }
 
@@ -107,10 +107,10 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             if (toSetContext.loading === false && !toSetContext.doesSessionExist && props.requireAuth === true) {
                 props.redirectToLogin();
             } else {
-                setContext((context) => (context !== undefined ? context : toSetContext));
+                setContext((context) => (!context.loading ? context : toSetContext));
             }
         },
-        [props]
+        [props.requireAuth, props.requireAuth === true && props.redirectToLogin]
     );
 
     useOnMountAPICall(buildContext, setInitialContextAndMaybeRedirect);
@@ -129,22 +129,14 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     setContext(event.sessionContext);
                     return;
                 case "SIGN_OUT":
-                    if (props.requireAuth !== true) {
-                        setContext(event.sessionContext);
-                    }
+                    setContext(event.sessionContext);
                     return;
                 case "UNAUTHORISED":
-                    if (props.requireAuth === true) {
-                        if (props.onSessionExpired !== undefined) {
-                            props.onSessionExpired();
-                        } else {
-                            props.redirectToLogin();
-                        }
-                    } else {
-                        setContext(event.sessionContext);
-                        if (props.onSessionExpired !== undefined) {
-                            props.onSessionExpired();
-                        }
+                    setContext(event.sessionContext);
+                    if (props.onSessionExpired !== undefined) {
+                        props.onSessionExpired();
+                    } else if (props.requireAuth === true) {
+                        props.redirectToLogin();
                     }
                     return;
             }
@@ -160,14 +152,12 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         return session.current!.addEventListener(onHandleEvent);
     }, [props]);
 
-    // this will display null only if initially the below condition is true.
-    // cause if the session goes from existing to non existing, then
-    // the context is not updated if props.requireAuth === true
-    if (props.requireAuth === true && (context.loading || !context.doesSessionExist)) {
+    const actualContext = !isDefaultContext(parentSessionContext) ? parentSessionContext : context;
+    if (props.requireAuth === true && (actualContext.loading || !actualContext.doesSessionExist)) {
         return null;
     }
 
-    return <SessionContext.Provider value={{ ...context, isDefault: false }}>{children}</SessionContext.Provider>;
+    return <SessionContext.Provider value={{ ...actualContext, isDefault: false }}>{children}</SessionContext.Provider>;
 };
 
 const SessionAuthWrapper: React.FC<

@@ -51,7 +51,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     const fetchIsEmailVerified = useCallback(async () => {
         const token = getQueryParams("token") ?? undefined;
         if (token === undefined) {
-            if (sessionContext.loading === true || !sessionContext.doesSessionExist) {
+            if (sessionContext.loading === false && !sessionContext.doesSessionExist) {
                 await props.recipe.config.redirectToSignIn(props.history);
             } else {
                 // we check if the email is already verified, and if it is, then we redirect the user
@@ -59,7 +59,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
             }
         }
         return false;
-    }, [props.recipe]);
+    }, [props.recipe, sessionContext]);
 
     const checkIsEmailVerified = useCallback(
         async (isVerified: boolean): Promise<void> => {
@@ -70,7 +70,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         },
         [props.recipe, setStatus]
     );
-    useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified);
+    useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified, undefined, sessionContext.loading === false);
 
     const signOut = useCallback(async (): Promise<void> => {
         await props.recipe.config.signOut();

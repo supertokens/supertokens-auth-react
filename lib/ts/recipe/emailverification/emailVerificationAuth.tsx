@@ -57,7 +57,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
         [doesSessionExist, emailVerificationMode]
     );
 
-    useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified);
+    useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified, undefined, sessionContext.loading === false);
 
     if (doesSessionExist === false) {
         return <>{children}</>;
