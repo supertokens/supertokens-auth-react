@@ -76,7 +76,7 @@ workflows:
                           ignore: /.*/
 
             - test:
-                  name: "test-<< matrix.fdi-version >>-reach-16-<< matrix.run-react-16-tests >>"
+                  name: "test-<< matrix.fdi-version >>-react-16-<< matrix.run-react-16-tests >>"
                   requires:
                       - build
                   filters:
