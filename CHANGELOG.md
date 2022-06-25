@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changes
+
+-   Added `loading` to the session context
+-   Added `SuperTokensWrapper` intended to wrap around whole applications, providing a session context
+-   Made auth wrappers SSR compatible
+
 ## [0.23.1] - 2022-06-25
 
 -   [CI]: Changes dependency for node SDK in integration tests so that tests pass when using node 14
