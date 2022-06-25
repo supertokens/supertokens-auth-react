@@ -1,14 +1,13 @@
 import React from "react";
 import { SessionContextType } from "./types";
 
-const SessionContext = React.createContext<SessionContextType>({
-    doesSessionExist: false,
-    userId: "DEFAULT_USER_ID",
-    accessTokenPayload: {},
+const SessionContext = React.createContext<SessionContextType & { isDefault: boolean }>({
+    loading: true,
+    isDefault: true,
 });
 
-export function isDefaultContext(sessionContext: SessionContextType): boolean {
-    return sessionContext.userId === "DEFAULT_USER_ID";
+export function isDefaultContext(sessionContext: SessionContextType & { isDefault: boolean }): boolean {
+    return sessionContext.isDefault;
 }
 
 export default SessionContext;

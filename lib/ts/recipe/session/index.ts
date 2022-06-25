@@ -20,11 +20,13 @@ import useSessionContextFunc from "./useSessionContext";
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 import { getNormalisedUserContext } from "../../utils";
+import { SuperTokensWrapper } from "./supertokensWrapper";
 
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
 
     static SessionAuth = SessionAuthWrapper;
+    static SuperTokensWrapper = SuperTokensWrapper;
 
     static init(config?: InputType) {
         return Session.init(config);
@@ -76,6 +78,7 @@ const signOut = SessionAPIWrapper.signOut;
 export {
     useSessionContext,
     SessionAuth,
+    SuperTokensWrapper,
     init,
     getUserId,
     getAccessTokenPayloadSecurely,

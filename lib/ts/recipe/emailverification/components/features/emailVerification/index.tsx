@@ -51,7 +51,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     const fetchIsEmailVerified = useCallback(async () => {
         const token = getQueryParams("token") ?? undefined;
         if (token === undefined) {
-            if (!sessionContext.doesSessionExist) {
+            if (sessionContext.loading === true || !sessionContext.doesSessionExist) {
                 await props.recipe.config.redirectToSignIn(props.history);
             } else {
                 // we check if the email is already verified, and if it is, then we redirect the user

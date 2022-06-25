@@ -24,10 +24,6 @@ import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { useOnMountAPICall } from "../../utils";
 
-// if it's not the default context, it means SessionAuth from top has
-// given us a sessionContext.
-const hasParentProvider = (ctx: SessionContextType) => !isDefaultContext(ctx);
-
 type PropsWithoutAuth = {
     requireAuth?: false;
 };
@@ -37,11 +33,11 @@ type PropsWithAuth = {
     redirectToLogin: () => void;
 };
 
-type Props = (PropsWithoutAuth | PropsWithAuth) & {
+export type SessionAuthProps = (PropsWithoutAuth | PropsWithAuth) & {
     onSessionExpired?: () => void;
 };
 
-const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props }) => {
+const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, ...props }) => {
     if (props.requireAuth === true && props.redirectToLogin === undefined) {
         throw new Error("You have to provide redirectToLogin or onSessionExpired function when requireAuth is true");
     }
@@ -58,14 +54,20 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
 
     // assign the parent context here itself so that there is no flicker in the UI
     const [context, setContext] = useState<SessionContextType | undefined>(
-        hasParentProvider(parentSessionContext) ? parentSessionContext : undefined
+        !isDefaultContext(parentSessionContext) ? parentSessionContext : undefined
     );
 
-    const session = useRef(Session.getInstanceOrThrow());
+    const session = useRef<Session>();
     const userContext = useUserContext();
 
     const buildContext = useCallback(async (): Promise<SessionContextType> => {
-        if (hasParentProvider(parentSessionContext)) {
+        if (session.current === undefined) {
+            session.current = Session.getInstanceOrThrow();
+        }
+
+        // if it's not the default context, it means SessionAuth from top has
+        // given us a sessionContext.
+        if (!isDefaultContext(parentSessionContext)) {
             return parentSessionContext;
         }
 
@@ -82,6 +84,7 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
                 doesSessionExist: false,
                 accessTokenPayload: {},
                 userId: "",
+                loading: false,
             };
         }
 
@@ -93,6 +96,7 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
             userId: await session.current.getUserId({
                 userContext,
             }),
+            loading: false,
         };
     }, []);
 
@@ -100,12 +104,10 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
         async (toSetContext: SessionContextType) => {
             // if this component is unmounting, or the context has already
             // been set, then we don't need to proceed...
-            if (!toSetContext.doesSessionExist && props.requireAuth === true) {
+            if (toSetContext.loading === false && !toSetContext.doesSessionExist && props.requireAuth === true) {
                 props.redirectToLogin();
             } else {
-                if (context === undefined) {
-                    setContext(toSetContext);
-                }
+                setContext((context) => (context !== undefined ? context : toSetContext));
             }
         },
         [props]
@@ -148,10 +150,14 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
             }
         }
 
+        if (session.current === undefined) {
+            session.current = Session.getInstanceOrThrow();
+        }
+
         // we return here cause addEventListener returns a function that removes
         // the listener, and this function will be called by useEffect when
         // onHandleEvent changes or if the component is unmounting.
-        return session.current.addEventListener(onHandleEvent);
+        return session.current!.addEventListener(onHandleEvent);
     }, [props]);
 
     if (context === undefined) {
@@ -161,16 +167,16 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
     // this will display null only if initially the below condition is true.
     // cause if the session goes from existing to non existing, then
     // the context is not updated if props.requireAuth === true
-    if (!context.doesSessionExist && props.requireAuth === true) {
+    if (props.requireAuth === true && (context.loading || !context.doesSessionExist)) {
         return null;
     }
 
-    return <SessionContext.Provider value={context}>{children}</SessionContext.Provider>;
+    return <SessionContext.Provider value={{ ...context, isDefault: false }}>{children}</SessionContext.Provider>;
 };
 
 const SessionAuthWrapper: React.FC<
     PropsWithChildren<
-        Props & {
+        SessionAuthProps & {
             userContext?: any;
         }
     >

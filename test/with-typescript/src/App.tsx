@@ -6,7 +6,7 @@ import EmailPassword, {
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
     PreAPIHookContext as EmailPasswordPreAPIHookContext,
 } from "../../../recipe/emailpassword";
-import Session from "../../../recipe/session";
+import Session, { SuperTokensWrapper } from "../../../recipe/session";
 import ThirdParty, {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,
@@ -80,32 +80,34 @@ SuperTokens.init({
 function App() {
     return (
         <div className="App">
-            <Router>
-                <div className="fill">
-                    <Routes>
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-                        <Route
-                            path="/"
-                            element={
-                                <Auth>
-                                    <Home />
-                                </Auth>
-                            }
-                        />
-                        <Route
-                            path="/redirect-to-this-custom-path"
-                            element={
-                                <Auth>
-                                    <Home />
-                                </Auth>
-                            }
-                        />
-                    </Routes>
-                </div>
-                <div className="footer">
-                    <Footer />
-                </div>
-            </Router>
+            <SuperTokensWrapper>
+                <Router>
+                    <div className="fill">
+                        <Routes>
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                            <Route
+                                path="/"
+                                element={
+                                    <Auth>
+                                        <Home />
+                                    </Auth>
+                                }
+                            />
+                            <Route
+                                path="/redirect-to-this-custom-path"
+                                element={
+                                    <Auth>
+                                        <Home />
+                                    </Auth>
+                                }
+                            />
+                        </Routes>
+                    </div>
+                    <div className="footer">
+                        <Footer />
+                    </div>
+                </Router>
+            </SuperTokensWrapper>
         </div>
     );
 }

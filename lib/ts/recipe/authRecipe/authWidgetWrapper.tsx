@@ -55,11 +55,10 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
     const [alwaysShow, updateAlwaysShow] = useState(false);
 
     useEffect(() => {
-        // we want to do this just once, so we supply it an empty array.
-        // if we supply it with props, sessionContext,
-        // then once the user signs in, then this will route the
+        // we want to do this just once, so we supply it with only the loading statet.
+        // if we supply it with props, sessionContext, then once the user signs in, then this will route the
         // user to the dashboard, as opposed to the sign up / sign in functions.
-        if (sessionContext.doesSessionExist) {
+        if (sessionContext.loading === false && sessionContext.doesSessionExist) {
             if (props.onSessionAlreadyExists !== undefined) {
                 props.onSessionAlreadyExists();
             } else {
@@ -80,9 +79,9 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
             // cause the child component will take care of redirecting etc..
             updateAlwaysShow(true);
         }
-    }, []);
+    }, [sessionContext.loading]);
 
-    if (sessionContext.doesSessionExist && !alwaysShow) {
+    if ((sessionContext.loading === true || sessionContext.doesSessionExist) && !alwaysShow) {
         return null;
     } else {
         return <>{props.children}</>;

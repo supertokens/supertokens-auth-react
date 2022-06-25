@@ -37,7 +37,7 @@ import useSessionContext from "../../../../session/useSessionContext";
 export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkClickedThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
-    const { doesSessionExist } = useSessionContext();
+    const sessionContext = useSessionContext();
     const userContext = useUserContext();
     const [status, setStatus] = useState<
         "LOADING" | "INTERACTION_REQUIRED" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL"
@@ -49,7 +49,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
         // If there is no active session we know that the verification was started elsewhere, since it requires a session
         // otherwise we assume it's the same session. The main purpose of this is to prevent mail scanners
         // from accidentally validating an email address
-        if (!doesSessionExist) {
+        if (sessionContext.loading === false && sessionContext.doesSessionExist) {
             return "INTERACTION_REQUIRED";
         }
 

@@ -14,9 +14,9 @@ const MockSession = {
 };
 
 const MockSessionConsumer = () => {
-    const session = useContext<SessionContextType>(SessionContext);
+    const session = useContext(SessionContext);
 
-    if (!session.doesSessionExist) {
+    if (session.loading === true || !session.doesSessionExist) {
         return (
             <>
                 <h1>Session doesn't exist</h1>
@@ -33,6 +33,9 @@ const MockSessionConsumer = () => {
 };
 
 const setMockResolves = (ctx: SessionContextType) => {
+    if (ctx.loading === true) {
+        throw new Error();
+    }
     MockSession.getUserId.mockResolvedValue(ctx.userId);
     MockSession.getAccessTokenPayloadSecurely.mockResolvedValue(ctx.accessTokenPayload);
     MockSession.doesSessionExist.mockResolvedValue(ctx.doesSessionExist);
@@ -48,6 +51,7 @@ describe("SessionAuth", () => {
             userId: "mock-user-id",
             accessTokenPayload: {},
             doesSessionExist: true,
+            loading: false,
         });
     });
 
@@ -135,6 +139,7 @@ describe("SessionAuth", () => {
                     doesSessionExist,
                     accessTokenPayload: {},
                     userId: "mock-id",
+                    loading: false,
                 });
 
                 // when
@@ -307,6 +312,7 @@ describe("SessionAuth", () => {
                 doesSessionExist: true,
                 accessTokenPayload: { foo: "bar" },
                 userId: "before-id",
+                loading: false,
             });
 
             const result = render(

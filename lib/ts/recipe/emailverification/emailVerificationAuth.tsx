@@ -33,7 +33,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     // doesn't rerun just because the sessionContext or props objects
     // have changed, even though the doesSessionExist & emailVerificationMode
     // have not.
-    const doesSessionExist = sessionContext.doesSessionExist;
+    const doesSessionExist = sessionContext.loading === false && sessionContext.doesSessionExist;
     const emailVerificationMode = props.recipe.config.mode;
     const propsRef = React.useRef(props);
     const userContext = useUserContext();
@@ -59,7 +59,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
 
     useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified);
 
-    if (sessionContext.doesSessionExist === false) {
+    if (doesSessionExist === false) {
         return <>{children}</>;
     }
 
