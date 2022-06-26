@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Fixes
+
+-   Fixed dropdown interactivity of the country dropdown of the phone number input
+-   Added memoization to reduce unnecessary rerenders of phone number input sub-components
+-   Disabled smart-caret to fix a caret positioning bug on android phones in phone number input
+
 ## [0.22.4] - 2022-06-20
 
 ### Added
