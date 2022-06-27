@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.23.2] - 2022-06-27
+
 ### Fixes
 
 -   Fixed dropdown interactivity of the country dropdown of the phone number input
