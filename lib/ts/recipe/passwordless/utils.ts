@@ -146,6 +146,9 @@ export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
     value: string,
     defaultCountryFromConfig?: CountryCode
 ) {
+    if (value === undefined || value.length === 0) {
+        return value;
+    }
     if (defaultCountryFromConfig !== undefined) {
         try {
             return parsePhoneNumber(value, {
