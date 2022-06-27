@@ -50,6 +50,10 @@ import {
     toggleSignInSignUp,
     defaultSignUp,
     screenshotOnFailure,
+    getAuthPageHeaderText,
+    getResetPasswordFormBackButton,
+    waitForSTElement,
+    getResetPasswordSuccessBackToSignInButton,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
@@ -118,6 +122,22 @@ describe("SuperTokens Reset password", function () {
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/reset-password`);
         });
 
+        it("Should redirect to Sign In screen when back button is clicked", async function () {
+            const backButton = await getResetPasswordFormBackButton(page);
+
+            await backButton.click();
+
+            const signInPageHeader = await waitForSTElement(page, "[data-supertokens='headerTitle']");
+
+            // checks if the window path has changed to '/auth'
+            const pathAfterBackButtonClick = await page.evaluate(() => window.location.pathname);
+            assert.equal(pathAfterBackButtonClick, "/auth");
+
+            // checks if the page title is 'Sign In'
+            const pageTitle = await signInPageHeader.evaluate((header) => header.innerText);
+            assert.equal(pageTitle, "Sign In");
+        });
+
         it("Should send reset password for valid email", async function () {
             const inputNames = await getInputNames(page);
             assert.deepStrictEqual(inputNames, ["email"]);
@@ -166,9 +186,12 @@ describe("SuperTokens Reset password", function () {
             // Assert success page.
             const successMessage = await sendEmailResetPasswordSuccessMessage(page);
 
-            assert.deepStrictEqual(successMessage, "Please check your email for the password recovery link. Resend");
+            assert.deepStrictEqual(
+                successMessage,
+                "A password reset email has been sent to john.doe@supertokens.io, if it exists in our system. Resend or change email"
+            );
 
-            // Click on "resend => go back to form.
+            // Click on "resend or change email" => go back to form.
             const resendResetPasswordEmailLink = await getResendResetPasswordEmailLink(page);
             await resendResetPasswordEmailLink.click();
             const buttonLabel = await getSubmitFormButtonLabel(page);
@@ -180,6 +203,40 @@ describe("SuperTokens Reset password", function () {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS SEND_RESET_PASSWORD_EMAIL",
                 "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT RESET_PASSWORD_EMAIL_SENT",
             ]);
+        });
+
+        it("Should redirect the user back to sign in screen when link is clicked on success page", async function () {
+            await setInputValues(page, [{ name: "email", value: "john.doe@supertokens.io" }]);
+
+            // Submit.
+            const [{ request, response }, hasEmailExistMethodBeenCalled] = await Promise.all([
+                submitFormReturnRequestAndResponse(page, RESET_PASSWORD_TOKEN_API),
+                hasMethodBeenCalled(page, EMAIL_EXISTS_API),
+            ]);
+
+            // Assert Request.
+            assert.strictEqual(hasEmailExistMethodBeenCalled, false);
+            assert.strictEqual(request.headers().rid, "emailpassword");
+            assert.strictEqual(request.postData(), '{"formFields":[{"id":"email","value":"john.doe@supertokens.io"}]}');
+
+            // Assert Response.
+            assert.strictEqual(response.status, "OK");
+
+            // Assert success page.
+            const successMessage = await sendEmailResetPasswordSuccessMessage(page);
+
+            assert.deepStrictEqual(
+                successMessage,
+                "A password reset email has been sent to john.doe@supertokens.io, if it exists in our system. Resend or change email"
+            );
+
+            // click on "<- Sign in" button
+            const backToSignInButton = await getResetPasswordSuccessBackToSignInButton(page);
+            await backToSignInButton.click();
+
+            // check if redirected to sign in form
+            const buttonLabel = await getSubmitFormButtonLabel(page);
+            assert.deepStrictEqual(buttonLabel, "SIGN IN");
         });
     });
 

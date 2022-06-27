@@ -88,6 +88,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         enterEmailSuccessMessage: {
             marginTop: "15px",
             marginBottom: "15px",
+            wordBreak: "break-word",
         },
 
         submitNewPasswordSuccessMessage: {
@@ -179,6 +180,33 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             paddingTop: "25px",
             maxWidth: "96px",
             margin: "0 auto",
+        },
+
+        resetPasswordHeaderTitle: {
+            position: "relative",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+        },
+
+        backButtonCommon: {
+            width: "16px",
+            height: "13px",
+        },
+
+        backButton: {
+            cursor: "pointer",
+            border: "none",
+            backgroundColor: "transparent",
+            padding: "0px",
+        },
+
+        backButtonPlaceholder: {
+            display: "block",
+        },
+
+        resendEmailLink: {
+            display: "inline-block",
         },
     } as NormalisedDefaultStyles;
     return getMergedStyles(baseStyles, recipeStyles);

@@ -15,35 +15,52 @@
 /*
  * Imports.
  */
-import { PureComponent } from "react";
+import React, { useContext, useState } from "react";
 import SpinnerIcon from "../../../../../components/assets/spinnerIcon";
 import StyleContext from "../../../../../styles/styleContext";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import { LinkClickedScreenProps } from "../../../types";
-/*
- * Component.
- */
+import { useTranslation } from "../../../../../translation/translationContext";
+import { Button } from "../../../../emailpassword/components/library";
 
-class PasswordlessLinkClickedScreen extends PureComponent<LinkClickedScreenProps> {
-    static contextType = StyleContext;
+const PasswordlessLinkClickedScreen: React.FC<LinkClickedScreenProps> = (props) => {
+    const styles = useContext(StyleContext);
+    const t = useTranslation();
+    const [loading, setLoading] = useState(false);
 
-    /*
-     * Methods.
-     */
-
-    render = (): JSX.Element => {
-        const styles = this.context;
-
-        return (
-            <div data-supertokens="container" css={styles.container}>
-                <div data-supertokens="row" css={styles.row}>
+    return (
+        <div data-supertokens="container" css={styles.container}>
+            <div data-supertokens="row" css={styles.row}>
+                {props.requireUserInteraction === true ? (
+                    <React.Fragment>
+                        <div data-supertokens="headerTitle" css={styles.headerTitle}>
+                            {t("PWLESS_LINK_CLICKED_CONTINUE_HEADER")}
+                        </div>
+                        <div
+                            data-supertokens="headerSubtitle secondaryText"
+                            css={[styles.headerSubtitle, styles.secondaryText]}>
+                            {t("PWLESS_LINK_CLICKED_CONTINUE_DESC")}
+                        </div>
+                        <div data-supertokens="continueButtonWrapper" css={styles.continueButtonWrapper}>
+                            <Button
+                                isLoading={loading}
+                                onClick={() => {
+                                    setLoading(true);
+                                    props.consumeCode();
+                                }}
+                                type="button"
+                                label={"PWLESS_LINK_CLICKED_CONTINUE_BUTTON"}
+                            />
+                        </div>
+                    </React.Fragment>
+                ) : (
                     <div data-supertokens="spinner" css={styles.spinner}>
                         <SpinnerIcon color={styles.palette.colors.primary} />
                     </div>
-                </div>
+                )}
             </div>
-        );
-    };
-}
+        </div>
+    );
+};
 
 export const LinkClickedScreen = withOverride("PasswordlessLinkClickedScreen", PasswordlessLinkClickedScreen);

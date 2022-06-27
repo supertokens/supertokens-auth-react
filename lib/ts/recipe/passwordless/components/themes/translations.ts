@@ -54,6 +54,10 @@ export const defaultTranslationsPasswordless = {
         PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL: "Change email",
         PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_PHONE: "Change phone number",
 
+        PWLESS_LINK_CLICKED_CONTINUE_HEADER: "Sign Up or Log In",
+        PWLESS_LINK_CLICKED_CONTINUE_DESC: "Click the button below to log in on this device",
+        PWLESS_LINK_CLICKED_CONTINUE_BUTTON: "CONTINUE",
+
         PWLESS_RESEND_SUCCESS_EMAIL: "Email resent",
         PWLESS_RESEND_SUCCESS_PHONE: "SMS resent",
 

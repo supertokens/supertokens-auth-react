@@ -73,21 +73,15 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified);
 
     const signOut = useCallback(async (): Promise<void> => {
-        try {
-            await props.recipe.config.signOut();
-            return await props.recipe.config.redirectToSignIn(props.history);
-        } catch (e) {}
+        await props.recipe.config.signOut();
+        return await props.recipe.config.redirectToSignIn(props.history);
     }, [props.recipe]);
 
     const onTokenInvalidRedirect = useCallback(
         () => props.recipe.config.redirectToSignIn(props.history),
         [props.recipe, props.history]
     );
-    const onEmailAlreadyVerified = useCallback(
-        () => props.recipe.config.postVerificationRedirect(props.history),
-        [props.recipe, props.history]
-    );
-    const onContinueClicked = useCallback(
+    const onSuccess = useCallback(
         () => props.recipe.config.postVerificationRedirect(props.history),
         [props.recipe, props.history]
     );
@@ -105,7 +99,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         recipeImplementation: modifiedRecipeImplementation,
         config: props.recipe.config,
         signOut: signOut,
-        onEmailAlreadyVerified: onEmailAlreadyVerified,
+        onEmailAlreadyVerified: onSuccess,
     };
 
     const verifyEmailLinkClickedScreenFeature = props.recipe.config.verifyEmailLinkClickedScreen;
@@ -117,7 +111,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
             : {
                   styleFromInit: verifyEmailLinkClickedScreenFeature.style,
                   onTokenInvalidRedirect: onTokenInvalidRedirect,
-                  onContinueClicked: onContinueClicked,
+                  onSuccess,
                   recipeImplementation: modifiedRecipeImplementation,
                   config: props.recipe.config,
                   token,

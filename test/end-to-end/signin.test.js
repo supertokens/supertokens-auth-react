@@ -50,6 +50,8 @@ import {
     getTextInDashboardNoAuth,
     waitForSTElement,
     screenshotOnFailure,
+    isGeneralErrorSupported,
+    setGeneralErrorToLocalStorage,
 } from "../helpers";
 import fetch from "isomorphic-fetch";
 import { SOMETHING_WENT_WRONG_ERROR } from "../constants";
@@ -657,9 +659,12 @@ describe("SuperTokens SignIn => Server Error", function () {
                 consoleLogs.push(log);
             }
         });
+
+        await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+        await page.evaluate(() => localStorage.removeItem("TRANSLATED_GENERAL_ERROR"));
     });
 
-    it("Server Error shows Something went wrong general error", async function () {
+    it("Server Error shows Something went wrong network error", async function () {
         await setInputValues(page, [
             { name: "email", value: "john.doe@supertokens.io" },
             { name: "password", value: "Str0ngP@ssw0rd" },
@@ -681,33 +686,19 @@ describe("SuperTokens SignIn => Server Error", function () {
     });
 
     it("shows translated general error", async function () {
+        if (!(await isGeneralErrorSupported())) {
+            this.skip();
+        }
+
+        await setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_IN", page);
+        await page.evaluate(() =>
+            localStorage.setItem("TRANSLATED_GENERAL_ERROR", "EMAIL_PASSWORD_SIGN_UP_FOOTER_TOS")
+        );
+
         await setInputValues(page, [
             { name: "email", value: "john.doe@supertokens.io" },
             { name: "password", value: "Str0ngP@ssw0rd" },
         ]);
-
-        await page.setRequestInterception(true);
-        const requestHandler = (request) => {
-            if (request.method() === "POST" && request.url() === SIGN_IN_API) {
-                request.respond({
-                    status: 200,
-                    contentType: "application/json",
-                    headers: {
-                        "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                        "access-control-allow-credentials": "true",
-                    },
-                    body: JSON.stringify({
-                        status: "GENERAL_ERROR",
-                        message: "EMAIL_PASSWORD_SIGN_UP_FOOTER_TOS",
-                    }),
-                });
-                page.off("request", requestHandler);
-                page.setRequestInterception(false);
-            } else {
-                request.continue();
-            }
-        };
-        page.on("request", requestHandler);
 
         await submitForm(page);
 
@@ -717,39 +708,22 @@ describe("SuperTokens SignIn => Server Error", function () {
     });
 
     it("shows raw message for non-translation key general error", async function () {
+        if (!(await isGeneralErrorSupported())) {
+            this.skip();
+        }
+
+        await setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_IN", page);
+
         await setInputValues(page, [
             { name: "email", value: "john.doe@supertokens.io" },
             { name: "password", value: "Str0ngP@ssw0rd" },
         ]);
 
-        await page.setRequestInterception(true);
-        const requestHandler = (request) => {
-            if (request.method() === "POST" && request.url() === SIGN_IN_API) {
-                request.respond({
-                    status: 200,
-                    contentType: "application/json",
-                    headers: {
-                        "access-control-allow-origin": TEST_CLIENT_BASE_URL,
-                        "access-control-allow-credentials": "true",
-                    },
-                    body: JSON.stringify({
-                        status: "GENERAL_ERROR",
-                        message: "Test message!!!!",
-                    }),
-                });
-                page.off("request", requestHandler);
-                page.setRequestInterception(false);
-            } else {
-                request.continue();
-            }
-        };
-        page.on("request", requestHandler);
-
         await submitForm(page);
 
         // Assert server Error
         const generalError = await getGeneralError(page);
-        assert.strictEqual(generalError, "Test message!!!!");
+        assert.strictEqual(generalError, "general error from API sign in");
     });
 
     it("shows translated field error", async function () {

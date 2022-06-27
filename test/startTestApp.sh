@@ -10,16 +10,6 @@ export EXIT_PID=$$
 
 apiPort=$1
 
-function startFrontEnd () {
-    (
-        echo "Starting test example app"
-        # go to test app.
-        cd ./examples/for-tests$1/
-        # Run static react app on PORT 3031.
-        BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start
-    )
-}
-
 function killServers () {
     echo "Kill servers."
     lsof -i tcp:8082 | grep node | awk '{printf $2}' | cut -c 1- | xargs -I {} kill -9 {} > /dev/null 2>&1
@@ -73,21 +63,26 @@ trap "killServers" EXIT # Trap to execute on script shutdown
 killServers
 
 mkdir -p test_report/logs
-# Run node server in background.
-(cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend.log 2>&1 &)
 
-# Start front end test app and run tests.
-startEndToEnd &
-startFrontEnd >> test_report/logs/frontend.log 2>&1
-
-if ! [[ -z "${RUN_REACT_16_TESTS}" ]]; then
+if [[ "${RUN_REACT_16_TESTS}" == "true" ]]; then
+    echo "Running tests with React 16"
     (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend-react16.log 2>&1 &)
+    
+    (cd examples/for-tests-react-16/ && cat | CI=true BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start >> ../../test_report/logs/frontend-react-16.log 2>&1 &)
+    
+    IS_REACT_16=true RUN_RRD5=true startEndToEnd
 
-    IS_REACT_16=true RUN_RRD5=true startEndToEnd &
-    startFrontEnd -react-16 >> test_report/logs/frontend-react-16.log 2>&1
     echo "React 16 tests passed"
 else
-    echo "Skipped React 16 tests"
+    echo "Running tests with React 18"
+    # Run node server in background.
+    (cd test/server/ && TEST_MODE=testing INSTALL_PATH=../../../supertokens-root NODE_PORT=8082 node . >> ../../test_report/logs/backend.log 2>&1 &)
+
+    (cd ./examples/for-tests/ && cat | CI=true BROWSER=none PORT=3031 REACT_APP_API_PORT=$apiPort npm run start >> ../../test_report/logs/frontend.log 2>&1 &)
+    # Start front end test app and run tests.
+    startEndToEnd
+
+    echo "React 18 tests passed"
 fi
 
 exit 0

@@ -1,20 +1,17 @@
 import React from "react";
-import ThirdPartyPasswordlessRecipeRaw from "supertokens-auth-react/lib/build/recipe/thirdpartypasswordless/recipe";
+import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
 
 export default function Footer() {
     let [showSMSMessage, setShowSMSMessage] = React.useState(false);
     React.useEffect(() => {
         function checkLoginAttemptInfo() {
-            // TODO: change this to not use the build folder
-            ThirdPartyPasswordlessRecipeRaw.getInstanceOrThrow()
-                .recipeImpl.getPasswordlessLoginAttemptInfo()
-                .then((info) => {
-                    if (info !== undefined && info.contactMethod === "PHONE") {
-                        setShowSMSMessage(true);
-                    } else {
-                        setShowSMSMessage(false);
-                    }
-                });
+            ThirdPartyPasswordless.getPasswordlessLoginAttemptInfo().then((info) => {
+                if (info !== undefined && info.contactMethod === "PHONE") {
+                    setShowSMSMessage(true);
+                } else {
+                    setShowSMSMessage(false);
+                }
+            });
         }
         const intervalId = setInterval(checkLoginAttemptInfo, 500);
         return () => {

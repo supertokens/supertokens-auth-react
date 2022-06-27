@@ -74,7 +74,7 @@ export declare type SendVerifyEmailThemeProps = ThemeBaseProps & {
 export declare type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    onContinueClicked: () => Promise<void>;
+    onSuccess: () => Promise<void>;
     onTokenInvalidRedirect: () => Promise<void>;
     token: string;
 };

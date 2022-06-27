@@ -39,7 +39,7 @@ export default class SuperTokensAPIWrapper {
         return SuperTokens.getRoutingComponent();
     }
 
-    static changeLanguage(language: string): void {
+    static changeLanguage(language: string): Promise<void> {
         return SuperTokens.getInstanceOrThrow().changeLanguage(language);
     }
 

@@ -13,6 +13,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Added memoization to reduce unnecessary rerenders of phone number input sub-components
 -   Disabled smart-caret to fix a caret positioning bug on android phones in phone number input
 
+## [0.23.1] - 2022-06-25
+
+-   [CI]: Changes dependency for node SDK in integration tests so that tests pass when using node 14
+
+## [0.23.0] - 2022-06-24
+
+### Changed
+
+-   Showing a confirmation button before consuming a passwordless link if there is no stored login attempt info or if it doesn't match the link
+-   Showing a confirmation button before consuming an email verification token if there is no active session to prevent mail scanners validating the email address
+-   Adds an example app with Email Verification with OTP
+-   Changes in the Reset Password Email Sent success screen in `emailpassword` and `thirdpartyemailpassword` recipes
+    -   Updated text of the success message displayed
+    -   Updated text of the 'Resend' button which redirects user back to Reset Password form
+-   Update supertokens-web-js dependency version
+-   Added new tests for checking general error handling
+-   Refactors example apps to not import from build directories
+-   fixes to angular example app
+-   Not importing helpers from `tslib`
+
+### Added
+
+-   The reset password form has a back button which takes the user back to the 'Sign in' form in `emailpassword` and `thirdpartyemailpassword` recipes.
+-   Back button in the reset password email sent success screen that redirects user to the 'Sign In' form in `emailpassword` and `thirdpartyemailpassword` recipe.
+-   Support for FDI 1.14
+
+### Added
+
+-   The reset password form has a back button which takes the user back to the 'Sign in' form in `emailpassword` and `thirdpartyemailpassword` recipes.
+
+### Breaking changes
+
+-   Removes `setCookieSync` and `getCookieSync` from the interface for `cookieHandler` when calling `SuperTokens.init`
+
 ## [0.22.4] - 2022-06-20
 
 ### Added
@@ -48,7 +82,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### CI changes
 
 -   Only running React 16 tests on CircleCI (when an explicit envvar is set)
--   Adds an example app with Email Verification with OTP
 
 ## [0.22.0] - 2022-06-03
 
