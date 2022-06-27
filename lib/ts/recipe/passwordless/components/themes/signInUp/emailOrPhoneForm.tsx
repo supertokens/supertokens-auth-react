@@ -18,7 +18,7 @@ import { withOverride } from "../../../../../components/componentOverride/withOv
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultEmailValidator, defaultValidate } from "../../../../emailpassword/validators";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
 import { SignInUpFooter } from "./signInUpFooter";
@@ -29,6 +29,15 @@ export const EmailOrPhoneForm = withOverride(
         const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
         const userContext = useUserContext();
 
+        const emailOrPhoneInput = useMemo(
+            () =>
+                isPhoneNumber
+                    ? phoneNumberInputWithInjectedProps({
+                          defaultCountry: props.config.signInUpFeature.defaultCountry,
+                      })
+                    : undefined,
+            [props.config.signInUpFeature.defaultCountry, isPhoneNumber]
+        );
         return (
             <FormBase
                 clearError={props.clearError}
@@ -37,11 +46,7 @@ export const EmailOrPhoneForm = withOverride(
                     {
                         id: "emailOrPhone",
                         label: "PWLESS_SIGN_IN_UP_EMAIL_OR_PHONE_LABEL",
-                        inputComponent: isPhoneNumber
-                            ? phoneNumberInputWithInjectedProps({
-                                  defaultCountry: props.config.signInUpFeature.defaultCountry,
-                              })
-                            : undefined,
+                        inputComponent: emailOrPhoneInput,
                         optional: false,
                         autofocus: true,
                         placeholder: "",
