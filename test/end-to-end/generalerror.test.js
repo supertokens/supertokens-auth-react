@@ -86,6 +86,16 @@ describe("General error rendering", function () {
             });
         });
 
+        after(async function () {
+            await browser.close();
+            await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                method: "POST",
+            }).catch(console.error);
+            await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                method: "POST",
+            }).catch(console.error);
+        });
+
         afterEach(function () {
             return screenshotOnFailure(this, browser);
         });
@@ -240,6 +250,16 @@ function getEmailPasswordTests(rid, ridForStorage) {
             });
         });
 
+        after(async function () {
+            await browser.close();
+            await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                method: "POST",
+            }).catch(console.error);
+            await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                method: "POST",
+            }).catch(console.error);
+        });
+
         afterEach(function () {
             return screenshotOnFailure(this, browser);
         });
@@ -368,6 +388,16 @@ function getThirdPartyTests(rid, ridForStorage) {
                 args: ["--no-sandbox", "--disable-setuid-sandbox"],
                 headless: true,
             });
+        });
+
+        after(async function () {
+            await browser.close();
+            await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                method: "POST",
+            }).catch(console.error);
+            await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                method: "POST",
+            }).catch(console.error);
         });
 
         afterEach(function () {
