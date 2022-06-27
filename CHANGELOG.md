@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.23.2] - 2022-06-27
 
+### Changes
+
+-   Updates to supertokens-web-js version to reflect interface change in `cookieHandler`
+
 ### Fixes
 
 -   Fixed dropdown interactivity of the country dropdown of the phone number input
