@@ -1,4 +1,3 @@
-exit: true
 spec:
     - test/unit/**/*.test.js
     - test/end-to-end/**/*.test.js

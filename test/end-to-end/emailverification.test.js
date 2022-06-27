@@ -476,7 +476,7 @@ describe("SuperTokens Email Verification general errors", function () {
 
     describe("Verify Email with token screen", function () {
         beforeEach(async function () {
-            if (!isGeneralErrorSupported()) {
+            if (!(await isGeneralErrorSupported())) {
                 this.skip();
             }
 
@@ -522,7 +522,7 @@ describe("SuperTokens Email Verification general errors", function () {
 
     describe("Send verification email screen", function () {
         beforeEach(async function () {
-            if (!isGeneralErrorSupported()) {
+            if (!(await isGeneralErrorSupported())) {
                 this.skip();
             }
 
@@ -662,6 +662,16 @@ describe("Email verification signOut errors", function () {
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
             headless: true,
         });
+    });
+
+    after(async function () {
+        await browser.close();
+        await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+            method: "POST",
+        }).catch(console.error);
+        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+            method: "POST",
+        }).catch(console.error);
     });
 
     afterEach(function () {
