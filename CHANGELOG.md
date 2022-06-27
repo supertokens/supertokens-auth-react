@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   updates angular example app to use `supertokens-web-js`
 
+## [0.23.2] - 2022-06-27
+
+### Fixes
+
+-   Fixed dropdown interactivity of the country dropdown of the phone number input
+-   Added memoization to reduce unnecessary rerenders of phone number input sub-components
+-   Disabled smart-caret to fix a caret positioning bug on android phones in phone number input
+
 ## [0.23.1] - 2022-06-25
 
 -   [CI]: Changes dependency for node SDK in integration tests so that tests pass when using node 14
