@@ -9,7 +9,7 @@ This demo app demonstrates the following use cases:
 -   Forgot password flow
 -   Session management
 
-In this demo, when our root component loads we will initialize the `supertokens-website` SDK which will be used by our other components for session management. When we visit an auth related route (`/auth/*` in this case), we will load a React component which will initialize the `supertokens-auth-react` SDK and handle the authentication flow.
+In this demo, when our root component loads we will initialize the `supertokens-web-js` SDK which will be used by our other components for session management. When we visit an auth related route (`/auth/*` in this case), we will load a React component which will initialize the `supertokens-auth-react` SDK and handle the authentication flow.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.6.
 
