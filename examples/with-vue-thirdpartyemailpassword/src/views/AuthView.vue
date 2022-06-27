@@ -4,17 +4,11 @@ import * as ReactDOM from "react-dom";
 import SuperTokensReactComponent from "../components/Supertokens";
 
 export default {
-
     mounted() {
-        this.render();
+        ReactDOM.render(React.createElement(SuperTokensReactComponent), document.getElementById("app"));
     },
     beforeDestroy() {
         ReactDOM.unmountComponentAtNode(document.getElementById("app") as Element);
-    },
-    methods: {
-        render() {
-            ReactDOM.render(React.createElement(SuperTokensReactComponent), document.getElementById("app"));
-        },
     },
 };
 </script>

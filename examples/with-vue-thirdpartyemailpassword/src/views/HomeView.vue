@@ -1,5 +1,5 @@
 <script lang="ts">
-import * as SuperTokens from "supertokens-website";
+import * as Session from "supertokens-web-js/recipe/session";
 
 export default {
     data() {
@@ -16,13 +16,13 @@ export default {
             window.location.href = "/auth";
         },
         async getUserInfo() {
-            this.session = await SuperTokens.doesSessionExist();
+            this.session = await Session.doesSessionExist();
             if (this.session) {
-                this.userId = await SuperTokens.getUserId();
+                this.userId = await Session.getUserId();
             }
         },
         async onLogout() {
-            await SuperTokens.signOut();
+            await Session.signOut();
             window.location.reload();
         },
     },
