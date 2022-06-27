@@ -5,16 +5,16 @@ import SuperTokensReactComponent from "../components/Supertokens";
 
 export default {
     mounted() {
-        ReactDOM.render(React.createElement(SuperTokensReactComponent), document.getElementById("app"));
+        ReactDOM.render(React.createElement(SuperTokensReactComponent), document.getElementById("authId"));
     },
     beforeDestroy() {
-        ReactDOM.unmountComponentAtNode(document.getElementById("app") as Element);
+        ReactDOM.unmountComponentAtNode(document.getElementById("authId") as Element);
     },
 };
 </script>
 
 <template>
     <main>
-        <h1>Auth</h1>
+        <div id="authId" />
     </main>
 </template>
