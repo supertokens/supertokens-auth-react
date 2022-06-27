@@ -7,11 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-### Changes
+### Added
 
--   Added `loading` to the session context
 -   Added `SuperTokensWrapper` intended to wrap around whole applications, providing a session context
+
+### Changed
+
 -   Made auth wrappers SSR compatible
+
+### Breaking changes
+
+-   Added `loading` to the session context. Please check if the session context is still loading before using other props. `loading` is always true inside components wrapped by `AuthWrapper`s with `requireAuth=true`
+-   Rendering components wrapped by `AuthWrappers` while loading if `requireAuth` is set to false.
 
 ## [0.23.1] - 2022-06-25
 

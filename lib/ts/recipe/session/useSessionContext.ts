@@ -7,7 +7,7 @@ const useSessionContext = (): SessionContextType => {
     const ctx = React.useContext(SessionContext);
 
     if (ctx.isDefault) {
-        throw new Error("Cannot use useSessionContext outside auth components.");
+        throw new Error("Cannot use useSessionContext outside auth wrapper components.");
     }
     return ctx;
 };
