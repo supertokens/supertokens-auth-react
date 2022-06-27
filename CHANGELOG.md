@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Adds an example app with Vue
+
 ## [0.23.2] - 2022-06-27
 
 ### Fixes
@@ -34,7 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Refactors example apps to not import from build directories
 -   fixes to angular example app
 -   Not importing helpers from `tslib`
--   Adds an example app with Vue
 
 ### Added
 
