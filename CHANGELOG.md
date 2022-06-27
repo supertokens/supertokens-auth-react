@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   updates angular example app to use `supertokens-web-js`
+
 ## [0.23.2] - 2022-06-27
 
 ### Changes
