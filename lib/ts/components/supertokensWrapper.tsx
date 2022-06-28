@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
-import UserContextWrapper from "../../usercontext/userContextWrapper";
-import SessionAuthWrapper, { SessionAuthProps } from "./sessionAuth";
+import UserContextWrapper from "../usercontext/userContextWrapper";
+import SessionAuthWrapper, { SessionAuthProps } from "../recipe/session/sessionAuth";
 
 export const SuperTokensWrapper: React.FC<
     PropsWithChildren<

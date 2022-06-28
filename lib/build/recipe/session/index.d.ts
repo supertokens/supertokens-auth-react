@@ -2,17 +2,9 @@
 import { RecipeInterface } from "supertokens-web-js/recipe/session";
 import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
-import { SuperTokensWrapper } from "./supertokensWrapper";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
     static SessionAuth: import("react").FC<
-        import("react").PropsWithChildren<
-            import("./sessionAuth").SessionAuthProps & {
-                userContext?: any;
-            }
-        >
-    >;
-    static SuperTokensWrapper: import("react").FC<
         import("react").PropsWithChildren<
             import("./sessionAuth").SessionAuthProps & {
                 userContext?: any;
@@ -45,7 +37,6 @@ declare const signOut: typeof SessionAPIWrapper.signOut;
 export {
     useSessionContext,
     SessionAuth,
-    SuperTokensWrapper,
     init,
     getUserId,
     getAccessTokenPayloadSecurely,

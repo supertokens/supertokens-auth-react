@@ -1,12 +1,12 @@
 import * as React from "react";
 import "./App.css";
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "../../../";
+import SuperTokens, { getSuperTokensRoutesForReactRouterDom, SuperTokensWrapper } from "../../../";
 import EmailPassword, {
     GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
     PreAPIHookContext as EmailPasswordPreAPIHookContext,
 } from "../../../recipe/emailpassword";
-import Session, { SuperTokensWrapper } from "../../../recipe/session";
+import Session from "../../../recipe/session";
 import ThirdParty, {
     GetRedirectionURLContext as ThirdPartyGetRedirectionURLContext,
     OnHandleEventContext as ThirdPartyOnHandleEventContext,

@@ -29,24 +29,27 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
 
     const [isEmailVerified, setIsEmailVerified] = useState(false);
 
-    // we extract these three this way so that the useEffect below
-    // doesn't rerun just because the sessionContext or props objects
-    // have changed, even though the doesSessionExist & emailVerificationMode
-    // have not.
-    const doesSessionExist = sessionContext.loading === false && sessionContext.doesSessionExist;
     const emailVerificationMode = props.recipe.config.mode;
     const propsRef = React.useRef(props);
     const userContext = useUserContext();
 
     const checkIsEmailVerified = useCallback(async () => {
-        if (doesSessionExist && emailVerificationMode === "REQUIRED") {
+        if (sessionContext.loading === true) {
+            // This callback should only be called if the session is already loaded
+            throw new Error("Should never come here");
+        }
+        if (sessionContext.doesSessionExist && emailVerificationMode === "REQUIRED") {
             return (await propsRef.current.recipe.isEmailVerified(userContext)).isVerified;
         }
         return undefined;
-    }, [doesSessionExist, emailVerificationMode]);
+    }, [sessionContext, emailVerificationMode]);
     const useIsEmailVerified = useCallback(
         async (isEmailVerified: boolean | undefined) => {
-            if (doesSessionExist && emailVerificationMode === "REQUIRED") {
+            if (sessionContext.loading === true) {
+                // This callback should only be called if the session is already loaded
+                throw new Error("Should never come here");
+            }
+            if (sessionContext.doesSessionExist && emailVerificationMode === "REQUIRED") {
                 if (isEmailVerified === false) {
                     await propsRef.current.recipe.redirect({ action: "VERIFY_EMAIL" }, propsRef.current.history);
                 } else {
@@ -54,20 +57,16 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
                 }
             }
         },
-        [doesSessionExist, emailVerificationMode]
+        [sessionContext.loading, emailVerificationMode]
     );
 
     useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified, undefined, sessionContext.loading === false);
 
-    if (doesSessionExist === false) {
+    if (props.recipe.config.mode !== "REQUIRED" || isEmailVerified) {
         return <>{children}</>;
     }
 
-    if (props.recipe.config.mode !== "REQUIRED") {
-        return <>{children}</>;
-    }
-
-    return isEmailVerified ? <>{children}</> : null;
+    return null;
 };
 
 const EmailVerificationAuthWrapper: React.FC<

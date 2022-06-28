@@ -46,10 +46,14 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
     const [verifyLoading, setVerifyLoading] = useState(false);
 
     const verifyEmailOnMount = useCallback(async () => {
+        if (sessionContext.loading === true) {
+            // This callback should only be called if the session is already loaded
+            throw new Error("Should never come here");
+        }
         // If there is no active session we know that the verification was started elsewhere, since it requires a session
         // otherwise we assume it's the same session. The main purpose of this is to prevent mail scanners
         // from accidentally validating an email address
-        if (sessionContext.loading === false && !sessionContext.doesSessionExist) {
+        if (!sessionContext.doesSessionExist) {
             return "INTERACTION_REQUIRED";
         }
 

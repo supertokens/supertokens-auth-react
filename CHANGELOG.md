@@ -17,8 +17,117 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking changes
 
--   Added `loading` to the session context. Please check if the session context is still loading before using other props. `loading` is always true inside components wrapped by `AuthWrapper`s with `requireAuth=true`
--   Rendering components wrapped by `AuthWrappers` while loading if `requireAuth` is set to false.
+-   Added `loading` to the session context. Please check if the session context is still loading before using other props. `loading` is always false inside components wrapped by `AuthWrapper`s with `requireAuth=true`
+
+### Migration
+
+Following is an example of how your components may have to change. If you had components like this:
+
+```tsx
+// .... other imports
+import SuperTokens, { getSuperTokensRoutesForReactRouterDom, SuperTokensWrapper } from "supertokens-auth-react";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { ThirdPartyEmailPasswordAuth } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+
+function Component() {
+    const sessionContext = useSessionContext();
+
+    return <div className="fill">{sessionContext.doesSessionExist ? "logged in" : "logged out"}</div>;
+}
+
+SuperTokens.init({
+    /* config... */
+});
+
+function App() {
+    return (
+        <div className="App">
+            <Router>
+                <div className="fill">
+                    <Routes>
+                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                        <Route
+                            path="/some-path"
+                            element={
+                                <ThirdPartyEmailPasswordAuth requireAuth={true}>
+                                    {/*
+                                        In this case, Component will always display logged in.
+                                        If doesSessionExist is false after the session is loaded, the user is redirected to the login screen
+                                    */}
+                                    <Component />
+                                </ThirdPartyEmailPasswordAuth>
+                            }
+                        />
+                        <Route
+                            path="/"
+                            element={
+                                <ThirdPartyEmailPasswordAuth requireAuth={false}>
+                                    <Component />
+                                </ThirdPartyEmailPasswordAuth>
+                            }
+                        />
+                    </Routes>
+                </div>
+            </Router>
+        </div>
+    );
+}
+```
+
+It'd look like this after the update:
+
+```tsx
+// .... other imports
+import SuperTokens, { getSuperTokensRoutesForReactRouterDom, SuperTokensWrapper } from "supertokens-auth-react";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { ThirdPartyEmailPasswordAuth } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+
+function Component() {
+    const sessionContext = useSessionContext();
+
+    if (sessionContext.loading === true) {
+        // You could display a loading screen here, but session context loading is very fast
+        // so returning null is better in most cases to avoid content popping in and out
+        return null;
+    }
+
+    return <div className="fill">{sessionContext.doesSessionExist ? "logged in" : "logged out"}</div>;
+}
+
+SuperTokens.init({
+    /* config is unchanged */
+});
+
+function App() {
+    return (
+        <div className="App">
+            <SuperTokensWrapper>
+                <Router>
+                    <div className="fill">
+                        <Routes>
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                            <Route
+                                path="/some-path"
+                                element={
+                                    <ThirdPartyEmailPasswordAuth requireAuth={true}>
+                                        {/* 
+                                            In this case, Component will never hit the loading === true branch.
+                                            It will only be rendered if `loading === false && doesSessionExist === true`
+                                            If doesSessionExist is false after the session is loaded, the user is redirected to the login screen
+                                        */}
+                                        <Component />
+                                    </ThirdPartyEmailPasswordAuth>
+                                }
+                            />
+                            <Route path="/" element={<Component />} />
+                        </Routes>
+                    </div>
+                </Router>
+            </SuperTokensWrapper>
+        </div>
+    );
+}
+```
 
 ## [0.23.1] - 2022-06-25
 
