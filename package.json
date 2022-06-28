@@ -105,7 +105,7 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "16kb"
+            "limit": "28kb"
         },
         {
             "path": "recipe/session/index.js",
