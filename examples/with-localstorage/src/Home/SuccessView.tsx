@@ -1,6 +1,7 @@
+import React from "react";
 import CallAPIView from "./CallAPIView";
 
-export default function SuccessView(props) {
+export default function SuccessView(props: { userId: string }) {
     let userId = props.userId;
 
     return (
@@ -42,7 +43,7 @@ export default function SuccessView(props) {
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />
             <a
-                href="https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-localstorage"
+                href="https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-thirdparty"
                 target="_blank"
                 rel="noreferrer">
                 View the code on GitHub
