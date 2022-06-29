@@ -62,7 +62,12 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
 
     useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified, undefined, sessionContext.loading === false);
 
-    if (props.recipe.config.mode !== "REQUIRED" || isEmailVerified) {
+    if (
+        sessionContext.loading === true ||
+        sessionContext.doesSessionExist === false ||
+        props.recipe.config.mode !== "REQUIRED" ||
+        isEmailVerified
+    ) {
         return <>{children}</>;
     }
 
