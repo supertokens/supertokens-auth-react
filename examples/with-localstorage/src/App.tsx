@@ -23,82 +23,85 @@ export function getWebsiteDomain() {
     return websiteUrl;
 }
 
-function isApiDomain(str) {
+function isApiDomain(str: string | undefined) {
+    if (str === undefined) {
+        return false;
+    }
     return str.startsWith(getApiDomain());
 }
 
-// We need to add interceptors to axios if the app uses it to make requests
-// Whatever library you use to make requests needs to do something similar:
-// add the extra header to the and process the extra header on the response
-axios.interceptors.request.use(
-    function (config) {
-        // Check if the we need to add the cookies
-        if (isApiDomain(config.url)) {
-            const stCookies = localStorage.getItem("st-cookie");
-            if (stCookies) {
-                // Simply add the stored string into a header, it's already in the correct format.
-                config.headers["st-cookie"] = stCookies;
-            }
-        }
-        return config;
-    },
-    function (error) {
-        return Promise.reject(error);
-    }
-);
+// // We need to add interceptors to axios if the app uses it to make requests
+// // Whatever library you use to make requests needs to do something similar:
+// // add the extra header to the and process the extra header on the response
+// axios.interceptors.request.use(
+//     function (config) {
+//         // Check if the we need to add the cookies
+//         if (isApiDomain(config.url)) {
+//             const stCookies = localStorage.getItem("st-cookie");
+//             if (stCookies) {
+//                 // Simply add the stored string into a header, it's already in the correct format.
+//                 config.headers["st-cookie"] = stCookies;
+//             }
+//         }
+//         return config;
+//     },
+//     function (error) {
+//         return Promise.reject(error);
+//     }
+// );
 
-axios.interceptors.response.use(
-    function (res) {
-        // Check if the we need to process the cookies in the response
-        if (isApiDomain(res.config.url)) {
-            const respCookies = res.headers["st-cookie"];
+// axios.interceptors.response.use(
+//     function (res) {
+//         // Check if the we need to process the cookies in the response
+//         if (isApiDomain(res.config.url)) {
+//             const respCookies = res.headers["st-cookie"];
 
-            setCookiesInLocalstorage(respCookies);
-        }
-        return res;
-    },
-    // We need to process error responses as well
-    function (error) {
-        // Check if the we need to process the cookies in the response
-        if (isApiDomain(error.config.url)) {
-            const res = error.response;
-            const respCookies = res.headers["st-cookie"];
+//             setCookiesInLocalstorage(respCookies);
+//         }
+//         return res;
+//     },
+//     // We need to process error responses as well
+//     function (error) {
+//         // Check if the we need to process the cookies in the response
+//         if (isApiDomain(error.config.url)) {
+//             const res = error.response;
+//             const respCookies = res.headers["st-cookie"];
 
-            setCookiesInLocalstorage(respCookies);
-        }
-        return Promise.reject(error);
-    }
-);
+//             setCookiesInLocalstorage(respCookies);
+//         }
+//         return Promise.reject(error);
+//     }
+// );
 
-// We need to override the global fetch, because this is used internally by the SuperTokens SDK and we have no other way of getting access to response headers.
-const origFetch = window.fetch;
-window.fetch = async (input, init) => {
-    // Check if the we need to add the cookies
-    if (isApiDomain(input.url || input)) {
-        if (init === undefined) {
-            init = {};
-        }
-        if (init.headers === undefined) {
-            init.headers = {};
-        }
+// // We need to override the global fetch, because this is used internally by the SuperTokens SDK and we have no other way of getting access to response headers.
+// const origFetch = window.fetch;
+// window.fetch = async (input, init) => {
+//     // Check if the we need to add the cookies
+//     if (isApiDomain("url" in input ? input.url : undefined)) {
+//         if (init === undefined) {
+//             init = {};
+//         }
+//         if (init.headers === undefined) {
+//             init.headers = {};
+//         }
 
-        // Simply add the stored string into a header, it's already in the correct format.
-        const stCookies = localStorage.getItem("st-cookie");
-        if (stCookies) {
-            init.headers["st-cookie"] = stCookies;
-        }
-    }
+//         // Simply add the stored string into a header, it's already in the correct format.
+//         const stCookies = localStorage.getItem("st-cookie");
+//         if (stCookies) {
+//             init.headers["st-cookie"] = stCookies;
+//         }
+//     }
 
-    const res = await origFetch(input, init);
+//     const res = await origFetch(input, init);
 
-    // Check if the we need to process the cookies in the response
-    if (isApiDomain(input.url || input)) {
-        const respCookies = res.headers.get("st-cookie");
+//     // Check if the we need to process the cookies in the response
+//     if (isApiDomain(input.url || input)) {
+//         const respCookies = res.headers.get("st-cookie");
 
-        setCookiesInLocalstorage(respCookies);
-    }
-    return res;
-};
+//         setCookiesInLocalstorage(respCookies);
+//     }
+//     return res;
+// };
 
 SuperTokens.init({
     appInfo: {
@@ -113,17 +116,30 @@ SuperTokens.init({
             },
         }),
         Session.init({
+            override: {
+                functions: (oI) => {
+                    return {
+                        ...oI,
+                        addAxiosInterceptors: function (input) {
+                            return oI.addAxiosInterceptors(input);
+                        },
+                        addFetchInterceptorsAndReturnModifiedFetch: function (input) {
+                            return oI.addFetchInterceptorsAndReturnModifiedFetch(input);
+                        },
+                    };
+                },
+            },
             onHandleEvent: (recipeEvent) => {
-                // Clear all cookies if the session expired and on signout
-                if (["SIGN_OUT", "UNAUTHORISED"].includes(recipeEvent.action)) {
-                    localStorage.removeItem("st-cookie");
-                }
+                // // Clear all cookies if the session expired and on signout
+                // if (["SIGN_OUT", "UNAUTHORISED"].includes(recipeEvent.action)) {
+                //     localStorage.removeItem("st-cookie");
+                // }
             },
         }),
     ],
 });
 
-function setCookiesInLocalstorage(respCookies) {
+function setCookiesInLocalstorage(respCookies: any) {
     if (respCookies) {
         // Split and parse cookies received
         const respCookieMap = parseSetCookieString(splitCookiesString(respCookies), { decodeValues: false, map: true });
