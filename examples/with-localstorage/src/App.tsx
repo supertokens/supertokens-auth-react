@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
@@ -7,9 +7,7 @@ import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
-
-import axios from "axios";
-import { splitCookiesString, parse as parseSetCookieString } from "set-cookie-parser";
+import { addCustomInterceptorsToGlobalFetch, addCustomInterceptosToAxios } from "./utils";
 
 export function getApiDomain() {
     const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -23,85 +21,9 @@ export function getWebsiteDomain() {
     return websiteUrl;
 }
 
-function isApiDomain(str: string | undefined) {
-    if (str === undefined) {
-        return false;
-    }
-    return str.startsWith(getApiDomain());
-}
-
-// // We need to add interceptors to axios if the app uses it to make requests
-// // Whatever library you use to make requests needs to do something similar:
-// // add the extra header to the and process the extra header on the response
-// axios.interceptors.request.use(
-//     function (config) {
-//         // Check if the we need to add the cookies
-//         if (isApiDomain(config.url)) {
-//             const stCookies = localStorage.getItem("st-cookie");
-//             if (stCookies) {
-//                 // Simply add the stored string into a header, it's already in the correct format.
-//                 config.headers["st-cookie"] = stCookies;
-//             }
-//         }
-//         return config;
-//     },
-//     function (error) {
-//         return Promise.reject(error);
-//     }
-// );
-
-// axios.interceptors.response.use(
-//     function (res) {
-//         // Check if the we need to process the cookies in the response
-//         if (isApiDomain(res.config.url)) {
-//             const respCookies = res.headers["st-cookie"];
-
-//             setCookiesInLocalstorage(respCookies);
-//         }
-//         return res;
-//     },
-//     // We need to process error responses as well
-//     function (error) {
-//         // Check if the we need to process the cookies in the response
-//         if (isApiDomain(error.config.url)) {
-//             const res = error.response;
-//             const respCookies = res.headers["st-cookie"];
-
-//             setCookiesInLocalstorage(respCookies);
-//         }
-//         return Promise.reject(error);
-//     }
-// );
-
-// // We need to override the global fetch, because this is used internally by the SuperTokens SDK and we have no other way of getting access to response headers.
-// const origFetch = window.fetch;
-// window.fetch = async (input, init) => {
-//     // Check if the we need to add the cookies
-//     if (isApiDomain("url" in input ? input.url : undefined)) {
-//         if (init === undefined) {
-//             init = {};
-//         }
-//         if (init.headers === undefined) {
-//             init.headers = {};
-//         }
-
-//         // Simply add the stored string into a header, it's already in the correct format.
-//         const stCookies = localStorage.getItem("st-cookie");
-//         if (stCookies) {
-//             init.headers["st-cookie"] = stCookies;
-//         }
-//     }
-
-//     const res = await origFetch(input, init);
-
-//     // Check if the we need to process the cookies in the response
-//     if (isApiDomain(input.url || input)) {
-//         const respCookies = res.headers.get("st-cookie");
-
-//         setCookiesInLocalstorage(respCookies);
-//     }
-//     return res;
-// };
+// This will modify the global fetch so that it adds the session tokens before the request to
+// the API, and also saves the tokens in case of sign in or token change.
+addCustomInterceptorsToGlobalFetch();
 
 SuperTokens.init({
     appInfo: {
@@ -120,55 +42,21 @@ SuperTokens.init({
                 functions: (oI) => {
                     return {
                         ...oI,
+                        // this override is only required if you are using axios
                         addAxiosInterceptors: function (input) {
+                            addCustomInterceptosToAxios(input);
                             return oI.addAxiosInterceptors(input);
                         },
-                        addFetchInterceptorsAndReturnModifiedFetch: function (input) {
-                            return oI.addFetchInterceptorsAndReturnModifiedFetch(input);
+                        signOut: async function (input) {
+                            await oI.signOut(input);
+                            localStorage.removeItem("st-cookie");
                         },
                     };
                 },
             },
-            onHandleEvent: (recipeEvent) => {
-                // // Clear all cookies if the session expired and on signout
-                // if (["SIGN_OUT", "UNAUTHORISED"].includes(recipeEvent.action)) {
-                //     localStorage.removeItem("st-cookie");
-                // }
-            },
         }),
     ],
 });
-
-function setCookiesInLocalstorage(respCookies: any) {
-    if (respCookies) {
-        // Split and parse cookies received
-        const respCookieMap = parseSetCookieString(splitCookiesString(respCookies), { decodeValues: false, map: true });
-
-        // Check if we have anything stored already
-        const localstorageCookies = localStorage.getItem("st-cookie");
-        if (localstorageCookies !== null) {
-            // Split and parse cookies we have in stored previously
-            const splitStoredCookies = localstorageCookies.split("; ").map((cookie) => cookie.split("="));
-
-            for (const [name, value] of splitStoredCookies) {
-                // Keep old cookies if they weren't overwritten
-                if (respCookieMap[name] === undefined) {
-                    respCookieMap[name] = { name, value };
-                }
-            }
-        }
-
-        // Save the combined cookies in a the format of a Cookie header
-        // Please keep in mind that these have no expiration and lack many of the things done automatically for cookies
-        // Many of these features can be implemented, but they are out of scope for this example
-        localStorage.setItem(
-            "st-cookie",
-            Object.values(respCookieMap)
-                .map((cookie) => `${cookie.name}=${cookie.value}`)
-                .join("; ")
-        );
-    }
-}
 
 function App() {
     let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);

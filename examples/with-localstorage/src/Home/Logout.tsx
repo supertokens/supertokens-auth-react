@@ -1,3 +1,4 @@
+import React from "react";
 export default function Logout(props: { logoutClicked: () => void }) {
     let logoutClicked = props.logoutClicked;
 
