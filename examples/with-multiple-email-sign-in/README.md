@@ -1,16 +1,21 @@
 ![SuperTokens banner](https://raw.githubusercontent.com/supertokens/supertokens-logo/master/images/Artboard%20%E2%80%93%2027%402x.png)
 
-# SuperTokens ThirdPartyEmailPassword + Passwordless Demo app
+# SuperTokens EmailPassword with multiple emails per user
 
 This demo app demonstrates the following use cases:
 
--   Social Login / Sign up
--   Email & Password login
--   OTP / Magic link passwordless Sign up
--   Forgot password flow
+-   Email & Password login with any email associated with a user
+-   Reset password flow
 -   Logout
 -   Session management & Calling APIs
--   Account linking across all login methods
+-   Allows a user to associated multiple emails with their account and make use of any of them to login
+-   Email verification flow for all the associated emails.
+
+## Explanation of the customization
+
+-   We store a map that maps a primary email ID to a list of secondary email IDs. The primary email of a user is one that they used to first sign up. Note that this map needs to be created and managed by you in your own db.
+-   We override the email password recipe functions on the backend make use of this map for all the functions whose input is an email ID. We take the input email and get the primary email associated with that email, and then call the original implementation. This way, a user can sign in with any of the emails associated with their account.
+-   We override the email verification functions to run its logic by looping through all the emails associated with the user and not just the input email. This way, even if one of the emails associated with a user is unverified, they will be asked to verify it.
 
 ## Project setup
 
