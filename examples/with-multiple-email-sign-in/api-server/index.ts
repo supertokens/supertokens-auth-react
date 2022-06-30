@@ -5,6 +5,8 @@ import Session from "supertokens-node/recipe/session";
 import { verifySession } from "supertokens-node/recipe/session/framework/express";
 import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
+import { associateNewEmailWithPrimaryEmail } from "./emailLinkingMap";
+import { epOverride } from "./epOverride";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -26,10 +28,20 @@ supertokens.init({
         apiDomain, // TODO: Change to your app's API domain
         websiteDomain, // TODO: Change to your app's website domain
     },
-    recipeList: [EmailPassword.init(), Session.init()],
+    recipeList: [
+        EmailPassword.init({
+            override: {
+                functions: (oI) => {
+                    return epOverride(oI);
+                },
+            },
+        }),
+        Session.init(),
+    ],
 });
 
 const app = express();
+app.use(express.json());
 
 app.use(
     cors({
@@ -42,13 +54,13 @@ app.use(
 
 app.use(middleware());
 
-// custom API that requires session verification
-app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
-    let session = req.session!;
+// This API adds a new email to a given user (who is logged in)
+app.post("/add-email", verifySession(), async (req: SessionRequest, res) => {
+    let userId = req.session!.getUserId();
+    let emailToAdd = req.body.email;
+    let success = associateNewEmailWithPrimaryEmail(emailToAdd, (await EmailPassword.getUserById(userId))!.email);
     res.send({
-        sessionHandle: session.getHandle(),
-        userId: session.getUserId(),
-        accessTokenPayload: session.getAccessTokenPayload(),
+        status: success ? "OK" : "INPUT_EMAIL_ASSOCIATED_WITH_ANOTHER_USER",
     });
 });
 

@@ -1,9 +1,12 @@
 import React from "react";
-import CallAPIView from "./CallAPIView";
+import axios from "axios";
+import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { getApiDomain } from "../App";
+Session.addAxiosInterceptors(axios);
 
-export default function SuccessView(props: { userId: string }) {
-    let userId = props.userId;
-
+export default function SuccessView() {
+    let { userId } = useSessionContext();
+    let [email, setEmail] = React.useState("");
     return (
         <div
             className="fill"
@@ -17,37 +20,35 @@ export default function SuccessView(props: { userId: string }) {
                 paddingTop: "10px",
                 paddingBottom: "40px",
             }}>
-            <span
+            {"UserId: " + userId}
+            <div
                 style={{
-                    fontSize: "50px",
+                    height: "10px",
+                }}
+            />
+            New Email:
+            <input
+                type="text"
+                value={email}
+                onChange={(e) => {
+                    setEmail(e.target.value);
+                }}
+            />
+            <div
+                style={{
+                    height: "10px",
+                }}
+            />
+            <button
+                onClick={async () => {
+                    let response = await axios.post(getApiDomain() + "/add-email", {
+                        email,
+                    });
+                    let data = response.data;
+                    window.alert(JSON.stringify(data));
                 }}>
-                🥳🎉
-            </span>
-            Login successful
-            <div style={{ height: "10px" }} />
-            <div style={{ height: "10px" }} />
-            Your user ID is
-            <div />
-            {userId}
-            <div style={{ height: "10px" }} />
-            <div style={{ height: "10px" }} />
-            <div style={{ height: "10px" }} />
-            <div style={{ height: "10px" }} />
-            <CallAPIView />
-            <div style={{ height: "10px" }} />
-            <div style={{ height: "10px" }} />
-            <div style={{ height: "10px" }} />
-            ------------------------------------
-            <div style={{ height: "10px" }} />
-            <div style={{ height: "10px" }} />
-            <div style={{ height: "10px" }} />
-            <div style={{ height: "10px" }} />
-            <a
-                href="https://github.com/supertokens/supertokens-auth-react/tree/master/examples/with-multiple-email-sign-in"
-                target="_blank"
-                rel="noreferrer">
-                View the code on GitHub
-            </a>
+                Add new email
+            </button>
         </div>
     );
 }
