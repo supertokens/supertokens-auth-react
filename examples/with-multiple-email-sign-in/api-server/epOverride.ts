@@ -11,5 +11,19 @@ export function epOverride(oI: RecipeInterface): RecipeInterface {
             }
             return oI.signIn(input);
         },
+        signUp: async function (input) {
+            let primaryEmail = getPrimaryEmailFromInputEmail(input.email);
+            if (primaryEmail !== undefined) {
+                input.email = primaryEmail;
+            }
+            return oI.signUp(input);
+        },
+        getUserByEmail: async function (input) {
+            let primaryEmail = getPrimaryEmailFromInputEmail(input.email);
+            if (primaryEmail !== undefined) {
+                input.email = primaryEmail;
+            }
+            return oI.getUserByEmail(input);
+        },
     };
 }

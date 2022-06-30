@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import { getApiDomain } from "../App";
 Session.addAxiosInterceptors(axios);
 
@@ -45,7 +46,12 @@ export default function SuccessView() {
                         email,
                     });
                     let data = response.data;
-                    window.alert(JSON.stringify(data));
+                    if (data.status === "OK") {
+                        // the user may need to verify their email, so we redirect them to auth
+                        EmailPassword.redirectToAuth();
+                    } else {
+                        window.alert(JSON.stringify(data));
+                    }
                 }}>
                 Add new email
             </button>

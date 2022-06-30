@@ -7,6 +7,7 @@ import { middleware, errorHandler, SessionRequest } from "supertokens-node/frame
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import { associateNewEmailWithPrimaryEmail } from "./emailLinkingMap";
 import { epOverride } from "./epOverride";
+import { evOverride } from "./evOverride";
 require("dotenv").config();
 
 const apiPort = process.env.REACT_APP_API_PORT || 3001;
@@ -30,7 +31,27 @@ supertokens.init({
     },
     recipeList: [
         EmailPassword.init({
+            emailDelivery: {
+                override: (oI) => {
+                    return {
+                        ...oI,
+                        sendEmail: async function (input) {
+                            if (input.userContext.unverifiedAssociatedEmail !== undefined) {
+                                input.user.email = input.userContext.unverifiedAssociatedEmail;
+                            }
+                            // console log for development purposes.
+                            console.log(input);
+                            return oI.sendEmail(input);
+                        },
+                    };
+                },
+            },
             override: {
+                emailVerificationFeature: {
+                    functions: (oI) => {
+                        return evOverride(oI);
+                    },
+                },
                 functions: (oI) => {
                     return epOverride(oI);
                 },

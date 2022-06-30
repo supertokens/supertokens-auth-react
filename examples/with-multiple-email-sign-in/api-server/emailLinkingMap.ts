@@ -1,10 +1,6 @@
 /**
- * Primary user ID => {contactInfo (email or phone number), id (primary User ID), time joined, pwlessUserId, tpepUserIds }
- * Primary key: user ID,
- * Unique: contactInfo,
- *
- * This will map an email or phone number to a primary user. That primary user will then be used
- * for all users that have the same contact info, regardless of which login method they used.
+ * Primary email => [email1, email2, ...]
+ * Where email1, email2 are secondary emails added by this user.
  */
 import fs from "fs";
 
@@ -60,4 +56,12 @@ export function getPrimaryEmailFromInputEmail(inputEmail: string): string | unde
         }
     }
     return undefined;
+}
+
+export function getAllAssociatedEmailsWithPrimaryEmail(primaryEmail: string): string[] {
+    let result = primaryUserStore[primaryEmail];
+    if (result === undefined) {
+        return [primaryEmail];
+    }
+    return [primaryEmail, ...result];
 }
