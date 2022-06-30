@@ -22,51 +22,65 @@ import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { useOnMountAPICall } from "../../utils";
 
-type Props = FeatureBaseProps & { recipe: Recipe };
+type Props = FeatureBaseProps & { getRecipe: () => Recipe };
 
 const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     const sessionContext = useContext(SessionContext);
 
     const [isEmailVerified, setIsEmailVerified] = useState(false);
 
-    const emailVerificationMode = props.recipe.config.mode;
+    const recipe = React.useRef<Recipe>();
     const propsRef = React.useRef(props);
     const userContext = useUserContext();
+
+    if (recipe.current === undefined) {
+        try {
+            recipe.current = propsRef.current.getRecipe();
+        } catch {
+            // We are in either an SSR environment or the user forgot to initialize the recipe
+            // We are ignoring this exception here, because in SSR we don't want to throw and the callback below will throw in a browser
+        }
+    }
 
     const checkIsEmailVerified = useCallback(async () => {
         if (sessionContext.loading === true) {
             // This callback should only be called if the session is already loaded
             throw new Error("Should never come here");
         }
-        if (sessionContext.doesSessionExist && emailVerificationMode === "REQUIRED") {
-            return (await propsRef.current.recipe.isEmailVerified(userContext)).isVerified;
+        if (!recipe.current) {
+            // If the recipe.current isn't initialized here, this will likely throw and produce a user friendly error
+            recipe.current = propsRef.current.getRecipe();
+        }
+
+        if (sessionContext.doesSessionExist && recipe.current!.config.mode === "REQUIRED") {
+            return (await recipe.current!.isEmailVerified(userContext)).isVerified;
         }
         return undefined;
-    }, [sessionContext, emailVerificationMode]);
+    }, [sessionContext]);
     const useIsEmailVerified = useCallback(
         async (isEmailVerified: boolean | undefined) => {
             if (sessionContext.loading === true) {
                 // This callback should only be called if the session is already loaded
                 throw new Error("Should never come here");
             }
-            if (sessionContext.doesSessionExist && emailVerificationMode === "REQUIRED") {
+            if (sessionContext.doesSessionExist && recipe.current!.config.mode === "REQUIRED") {
                 if (isEmailVerified === false) {
-                    await propsRef.current.recipe.redirect({ action: "VERIFY_EMAIL" }, propsRef.current.history);
+                    await recipe.current!.redirect({ action: "VERIFY_EMAIL" }, propsRef.current.history);
                 } else {
                     setIsEmailVerified(true);
                 }
             }
         },
-        [sessionContext.loading, emailVerificationMode]
+        [sessionContext.loading]
     );
 
     useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified, undefined, sessionContext.loading === false);
 
+    const isNotRequired = recipe.current !== undefined && recipe.current.config.mode !== "REQUIRED";
     if (
-        sessionContext.loading === true ||
-        sessionContext.doesSessionExist === false ||
-        props.recipe.config.mode !== "REQUIRED" ||
-        isEmailVerified
+        // We only render after loading has finished to eliminate flicker
+        sessionContext.loading === false &&
+        (isNotRequired || sessionContext.doesSessionExist === false || isEmailVerified)
     ) {
         return <>{children}</>;
     }

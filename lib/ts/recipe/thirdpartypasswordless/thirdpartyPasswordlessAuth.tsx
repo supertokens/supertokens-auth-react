@@ -24,19 +24,19 @@ import { FeatureBaseProps } from "../../types";
 import SessionAuth from "../session/sessionAuth";
 import EmailVerificationAuth from "../emailverification/emailVerificationAuth";
 import SuperTokens from "../../superTokens";
-import Recipe from "./recipe";
 import { PropsWithChildren } from "react";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 
 type Props = FeatureBaseProps & {
-    recipe: Recipe;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
 };
 
 function ThirdPartyPasswordlessAuth(props: Props) {
     const emailVerification = (
-        <EmailVerificationAuth recipe={props.recipe.emailVerification} history={props.history}>
+        <EmailVerificationAuth
+            getRecipe={() => ThirdPartyPasswordless.getInstanceOrThrow().emailVerification}
+            history={props.history}>
             {props.children}
         </EmailVerificationAuth>
     );
@@ -69,15 +69,14 @@ const ThirdPartyPasswordlessAuthWrapper: React.FC<
         userContext?: any;
     }>
 > = ({ children, requireAuth, onSessionExpired, userContext }) => {
-    const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
+    const routerInfo = SuperTokens.getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
     return (
         <UserContextWrapper userContext={userContext}>
             <ThirdPartyPasswordlessAuthMemo
                 history={history}
                 onSessionExpired={onSessionExpired}
-                requireAuth={requireAuth}
-                recipe={ThirdPartyPasswordless.getInstanceOrThrow()}>
+                requireAuth={requireAuth}>
                 {children}
             </ThirdPartyPasswordlessAuthMemo>
         </UserContextWrapper>

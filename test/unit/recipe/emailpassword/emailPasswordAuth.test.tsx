@@ -280,7 +280,7 @@ describe("EmailPasswordAuth", () => {
             expect(child).not.toBeInTheDocument();
         });
 
-        test("do render when requireAuth=false and session is loading", async () => {
+        test("don't render when requireAuth=false and session is loading", async () => {
             // given
             setMockResolvesSession({
                 loading: true,
@@ -296,7 +296,7 @@ describe("EmailPasswordAuth", () => {
             const child = await result.findByText(/Children/i).catch(() => null);
 
             // then
-            expect(child).toBeInTheDocument();
+            expect(child).not.toBeInTheDocument();
         });
     });
 });
