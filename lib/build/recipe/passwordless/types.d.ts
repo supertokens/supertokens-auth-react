@@ -20,128 +20,15 @@ import { UserInputCodeFormFooter } from "./components/themes/signInUp/userInputC
 import { LinkSent } from "./components/themes/signInUp/linkSent";
 import { CloseTabScreen } from "./components/themes/signInUp/closeTabScreen";
 import { EmailOrPhoneForm } from "./components/themes/signInUp/emailOrPhoneForm";
-export declare type PasswordlessUser = {
-    id: string;
-    email?: string;
-    phoneNumber?: string;
-    timeJoined: number;
-};
-export declare type RecipeInterface = {
-    createCode: (
-        input: (
-            | {
-                  email: string;
-              }
-            | {
-                  phoneNumber: string;
-              }
-        ) & {
-            config: NormalisedConfig;
-        }
-    ) => Promise<
-        | {
-              status: "OK";
-              deviceId: string;
-              preAuthSessionId: string;
-              flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
-          }
-        | {
-              status: "GENERAL_ERROR";
-              message: string;
-          }
-    >;
-    resendCode: (
-        input: {
-            deviceId: string;
-            preAuthSessionId: string;
-        } & {
-            config: NormalisedConfig;
-        }
-    ) => Promise<
-        | {
-              status: "OK" | "RESTART_FLOW_ERROR";
-          }
-        | {
-              status: "GENERAL_ERROR";
-              message: string;
-          }
-    >;
-    consumeCode: (
-        input: (
-            | {
-                  userInputCode: string;
-                  deviceId: string;
-                  preAuthSessionId: string;
-              }
-            | {
-                  preAuthSessionId: string;
-                  linkCode: string;
-              }
-        ) & {
-            config: NormalisedConfig;
-        }
-    ) => Promise<
-        | {
-              status: "OK";
-              createdUser: boolean;
-              user: PasswordlessUser;
-          }
-        | {
-              status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
-              failedCodeInputAttemptCount: number;
-              maximumCodeInputAttempts: number;
-          }
-        | {
-              status: "GENERAL_ERROR";
-              message: string;
-          }
-        | {
-              status: "RESTART_FLOW_ERROR";
-          }
-    >;
-    doesEmailExist: (input: { email: string; config: NormalisedConfig }) => Promise<boolean>;
-    doesPhoneNumberExist: (input: { phoneNumber: string; config: NormalisedConfig }) => Promise<boolean>;
-    getLoginAttemptInfo: () =>
-        | Promise<
-              | undefined
-              | {
-                    deviceId: string;
-                    preAuthSessionId: string;
-                    contactInfo: string;
-                    contactMethod: "EMAIL" | "PHONE";
-                    flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
-                    lastResend: number;
-                    redirectToPath?: string;
-                }
-          >
-        | {
-              deviceId: string;
-              preAuthSessionId: string;
-              contactInfo: string;
-              contactMethod: "EMAIL" | "PHONE";
-              flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
-              lastResend: number;
-              redirectToPath?: string;
-          }
-        | undefined;
-    setLoginAttemptInfo: (input: {
-        deviceId: string;
-        preAuthSessionId: string;
-        contactInfo: string;
-        contactMethod: "EMAIL" | "PHONE";
-        flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
-        lastResend: number;
-        redirectToPath?: string;
-    }) => Promise<void> | void;
-    clearLoginAttemptInfo: () => Promise<void> | void;
-};
+import { RecipeInterface, PasswordlessUser } from "supertokens-web-js/recipe/passwordless";
+export declare type PreAndPostAPIHookAction =
+    | "PASSWORDLESS_CREATE_CODE"
+    | "PASSWORDLESS_CONSUME_CODE"
+    | "PASSWORDLESS_RESEND_CODE"
+    | "EMAIL_EXISTS"
+    | "PHONE_NUMBER_EXISTS";
 export declare type PreAPIHookContext = {
-    action:
-        | "PASSWORDLESS_CREATE_CODE"
-        | "PASSWORDLESS_CONSUME_CODE"
-        | "PASSWORDLESS_RESEND_CODE"
-        | "EMAIL_EXISTS"
-        | "PHONE_NUMBER_EXISTS";
+    action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
 };
@@ -161,7 +48,7 @@ export declare type OnHandleEventContext =
       }
     | AuthRecipeModuleOnHandleEventContext;
 export declare type PasswordlessNormalisedBaseConfig = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
 } & NormalisedBaseConfig;
 export declare type NormalisedConfig = {
     validateEmailAddress: (email: string) => Promise<string | undefined> | string | undefined;
@@ -179,7 +66,7 @@ export declare type NormalisedConfig = {
         userInputCodeFormStyle: Styles;
         linkSentScreenStyle: Styles;
         closeTabScreenStyle: Styles;
-        disableDefaultImplementation?: boolean;
+        disableDefaultUI?: boolean;
     };
     linkClickedScreenFeature: PasswordlessNormalisedBaseConfig;
     contactMethod: "PHONE" | "EMAIL" | "EMAIL_OR_PHONE";
@@ -187,14 +74,14 @@ export declare type NormalisedConfig = {
         functions: (originalImplementation: RecipeInterface) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedAuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
-    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+    AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type PasswordlessFeatureBaseConfig = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
 } & FeatureBaseConfig;
 export declare type SignInUpFeatureConfigInput = {
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     resendEmailOrSMSGapInSeconds?: number;
     privacyPolicyLink?: string;
     termsOfServiceLink?: string;
@@ -234,7 +121,7 @@ export declare type UserInput = (
         components?: ComponentOverrideMap;
     };
     linkClickedScreenFeature?: PasswordlessFeatureBaseConfig;
-} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type SignInUpProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
@@ -246,6 +133,7 @@ export declare type SignInUpProps = {
         successInAnotherTab: boolean;
         error: string | undefined;
     };
+    userContext?: any;
 };
 export declare type LoginAttemptInfo = {
     deviceId: string;
@@ -255,6 +143,19 @@ export declare type LoginAttemptInfo = {
     lastResend: number;
     redirectToPath?: string;
     flowType: "USER_INPUT_CODE" | "MAGIC_LINK" | "USER_INPUT_CODE_AND_MAGIC_LINK";
+};
+/**
+ * When calling getLoginAttemptInfo/setLoginAttemptInfo from web-js we use generics to get
+ * access to properties in local storage that web-js does not set by default.
+ * This allows us to strongly type the response while keeping it dynamic.
+ *
+ * In the context of auth-react this type indicates all the additional properties we need.
+ */
+export declare type AdditionalLoginAttemptInfoProperties = {
+    contactInfo: string;
+    contactMethod: "EMAIL" | "PHONE";
+    lastResend: number;
+    redirectToPath?: string;
 };
 export declare type SignInUpEmailFormProps = {
     clearError: () => void;
@@ -292,6 +193,8 @@ export declare type SignInUpUserInputCodeFormProps = {
 export declare type LinkClickedScreenProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
+    requireUserInteraction: boolean;
+    consumeCode: () => void;
     onSuccess?: () => void;
 };
 export declare type CloseTabScreenProps = {

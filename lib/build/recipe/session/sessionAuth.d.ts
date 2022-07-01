@@ -1,7 +1,6 @@
 import React, { PropsWithChildren } from "react";
 import { SessionClaimValidator } from "./types";
-import { FeatureBaseProps } from "../../types";
-declare type Props = FeatureBaseProps & {
+export declare type SessionAuthProps = {
     requireAuth?: boolean;
     redirectToLogin?: () => void;
     onSessionExpired?: () => void;
@@ -9,5 +8,11 @@ declare type Props = FeatureBaseProps & {
         defaultClaimValidators: SessionClaimValidator<any>[]
     ) => SessionClaimValidator<any>[];
 };
-declare const SessionAuth: React.FC<PropsWithChildren<Props>>;
-export default SessionAuth;
+declare const SessionAuthWrapper: React.FC<
+    PropsWithChildren<
+        SessionAuthProps & {
+            userContext?: any;
+        }
+    >
+>;
+export default SessionAuthWrapper;

@@ -16,20 +16,26 @@
 import { UserInput } from "./types";
 
 import Passwordless from "./recipe";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInUpThemeWrapper from "./components/themes/signInUp";
+import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
+import { getNormalisedUserContext } from "../../utils";
+import * as UtilFunctions from "./utils";
 
 export default class Wrapper {
     static init(config: UserInput) {
         return Passwordless.init(config);
     }
 
-    static async signOut(): Promise<void> {
-        return Passwordless.getInstanceOrThrow().signOut();
+    static async signOut(input?: { userContext?: any }): Promise<void> {
+        return Passwordless.getInstanceOrThrow().signOut({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"
-    static redirectToAuth(
+    static async redirectToAuth(
         input?:
             | ("signin" | "signup")
             | {
@@ -48,6 +54,140 @@ export default class Wrapper {
         }
     }
 
+    static async createCode(
+        input:
+            | { email: string; userContext?: any; options?: RecipeFunctionOptions }
+            | { phoneNumber: string; userContext?: any; options?: RecipeFunctionOptions }
+    ): Promise<{
+        status: "OK";
+        deviceId: string;
+        preAuthSessionId: string;
+        flowType: PasswordlessFlowType;
+        fetchResponse: Response;
+    }> {
+        return UtilFunctions.createCode({
+            ...input,
+            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
+        });
+    }
+
+    static async resendCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "RESTART_FLOW_ERROR";
+        fetchResponse: Response;
+    }> {
+        return UtilFunctions.resendCode({
+            ...input,
+            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
+        });
+    }
+
+    static async consumeCode(
+        input:
+            | {
+                  userInputCode: string;
+                  userContext?: any;
+                  options?: RecipeFunctionOptions;
+              }
+            | {
+                  userContext?: any;
+                  options?: RecipeFunctionOptions;
+              }
+    ): Promise<
+        | {
+              status: "OK";
+              createdUser: boolean;
+              user: PasswordlessUser;
+              fetchResponse: Response;
+          }
+        | {
+              status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
+              failedCodeInputAttemptCount: number;
+              maximumCodeInputAttempts: number;
+              fetchResponse: Response;
+          }
+        | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
+    > {
+        return UtilFunctions.consumeCode({
+            ...input,
+            recipeImplementation: Passwordless.getInstanceOrThrow().recipeImpl,
+        });
+    }
+
+    static getLinkCodeFromURL(input?: { userContext?: any }): string {
+        return Passwordless.getInstanceOrThrow().recipeImpl.getLinkCodeFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getPreAuthSessionIdFromURL(input?: { userContext?: any }): string {
+        return Passwordless.getInstanceOrThrow().recipeImpl.getPreAuthSessionIdFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async doesEmailExist(input: { email: string; userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }> {
+        return Passwordless.getInstanceOrThrow().recipeImpl.doesEmailExist({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async doesPhoneNumberExist(input: {
+        phoneNumber: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }> {
+        return Passwordless.getInstanceOrThrow().recipeImpl.doesPhoneNumberExist({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async getLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: any }): Promise<
+        | undefined
+        | ({
+              deviceId: string;
+              preAuthSessionId: string;
+              flowType: PasswordlessFlowType;
+          } & CustomLoginAttemptInfoProperties)
+    > {
+        return Passwordless.getInstanceOrThrow().recipeImpl.getLoginAttemptInfo({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async setLoginAttemptInfo<CustomStateProperties>(input: {
+        attemptInfo: {
+            deviceId: string;
+            preAuthSessionId: string;
+            flowType: PasswordlessFlowType;
+        } & CustomStateProperties;
+        userContext?: any;
+    }): Promise<void> {
+        return Passwordless.getInstanceOrThrow().recipeImpl.setLoginAttemptInfo({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async clearLoginAttemptInfo(input?: { userContext?: any }): Promise<void> {
+        return Passwordless.getInstanceOrThrow().recipeImpl.clearLoginAttemptInfo({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
     static SignInUp = (prop?: any) => Passwordless.getInstanceOrThrow().getFeatureComponent("signInUp", prop);
     static SignInUpTheme = SignInUpThemeWrapper;
 
@@ -56,6 +196,16 @@ export default class Wrapper {
 }
 
 const init = Wrapper.init;
+const createCode = Wrapper.createCode;
+const resendCode = Wrapper.resendCode;
+const consumeCode = Wrapper.consumeCode;
+const getLinkCodeFromURL = Wrapper.getLinkCodeFromURL;
+const getPreAuthSessionIdFromURL = Wrapper.getPreAuthSessionIdFromURL;
+const doesEmailExist = Wrapper.doesEmailExist;
+const doesPhoneNumberExist = Wrapper.doesPhoneNumberExist;
+const getLoginAttemptInfo = Wrapper.getLoginAttemptInfo;
+const setLoginAttemptInfo = Wrapper.setLoginAttemptInfo;
+const clearLoginAttemptInfo = Wrapper.clearLoginAttemptInfo;
 const signOut = Wrapper.signOut;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInUp = Wrapper.SignInUp;
@@ -67,6 +217,16 @@ export {
     SignInUpTheme,
     LinkClicked,
     init,
+    createCode,
+    resendCode,
+    consumeCode,
+    getLinkCodeFromURL,
+    getPreAuthSessionIdFromURL,
+    doesEmailExist,
+    doesPhoneNumberExist,
+    getLoginAttemptInfo,
+    setLoginAttemptInfo,
+    clearLoginAttemptInfo,
     signOut,
     redirectToAuth,
     GetRedirectionURLContext,

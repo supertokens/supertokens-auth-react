@@ -15,7 +15,6 @@
 /*
  * Imports.
  */
-import React from "react";
 import Provider from ".";
 import { isTest } from "../../../utils";
 import { BuiltInProviderConfig } from "./types";

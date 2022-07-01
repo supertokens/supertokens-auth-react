@@ -16,13 +16,14 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 
 import { SignInThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { validateForm } from "../../../../../utils";
+import STGeneralError from "supertokens-web-js/utils/error";
+import { useUserContext } from "../../../../../usercontext";
 
 export const SignInForm = withOverride(
     "EmailPasswordSignInForm",
@@ -32,6 +33,8 @@ export const SignInForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
+        const userContext = useUserContext();
+
         return (
             <FormBase
                 formFields={props.formFields}
@@ -40,15 +43,24 @@ export const SignInForm = withOverride(
                 buttonLabel={"EMAIL_PASSWORD_SIGN_IN_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
                 callAPI={async (formFields) => {
+                    const validationErrors = await validateForm(
+                        formFields,
+                        props.config.signInAndUpFeature.signInForm.formFields
+                    );
+
+                    if (validationErrors.length > 0) {
+                        return {
+                            status: "FIELD_ERROR",
+                            formFields: validationErrors,
+                        };
+                    }
+
                     const response = await props.recipeImplementation.signIn({
                         formFields,
-                        config: props.config,
+                        userContext,
                     });
                     if (response.status === "WRONG_CREDENTIALS_ERROR") {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR",
-                        };
+                        throw new STGeneralError("EMAIL_PASSWORD_SIGN_IN_WRONG_CREDENTIALS_ERROR");
                     } else {
                         return response;
                     }

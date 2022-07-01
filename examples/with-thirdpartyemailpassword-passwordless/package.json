@@ -14,15 +14,18 @@
         "react-dom": "^18.0.0",
         "react-router-dom": "^6.2.1",
         "react-scripts": "4.0.0",
-        "supertokens-auth-react": "^0.21.2",
-        "supertokens-node": "^9.2.0",
+        "supertokens-auth-react": "^0.22.3",
+        "supertokens-node": "^9.3.0",
+        "ts-node-dev": "^2.0.0",
         "web-vitals": "^0.2.4"
     },
     "devDependencies": {
-        "nodemon": "^2.0.6",
         "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^11.2.7",
-        "@testing-library/user-event": "^12.1.10"
+        "@testing-library/user-event": "^12.1.10",
+        "@types/cors": "^2.8.12",
+        "@types/express": "^4.17.13",
+        "nodemon": "^2.0.6"
     },
     "scripts": {
         "start": "npm-run-all --parallel spa api-server",
@@ -30,11 +33,10 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "api-server": "node api-server/index.js",
-        "api-server:dev": "nodemon api-server/index.js",
+        "api-server": "npx ts-node-dev --project api-server/tsconfig.json api-server/index.ts",
         "server": "node ignore_this.js",
         "server:dev": "nodemon ignore_this.js",
-        "dev": "npm-run-all --parallel spa api-server:dev",
+        "dev": "npm-run-all --parallel spa api-server",
         "prod": "npm-run-all --parallel server api-server",
         "release": "bash -c './scripts/release.sh'"
     },

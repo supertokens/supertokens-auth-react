@@ -38,12 +38,19 @@ import {
     getAuthPageHeaderText,
     getLoginWithRedirectToSignUp,
     screenshotOnFailure,
-    isReact16,
+    getGeneralError,
+    waitForSTElement,
 } from "../helpers";
 
 // Run the tests in a DOM environment.
 require("jsdom-global")();
-import { EMAIL_EXISTS_API, TEST_CLIENT_BASE_URL, TEST_SERVER_BASE_URL } from "../constants";
+import {
+    EMAIL_EXISTS_API,
+    SIGN_UP_API,
+    SOMETHING_WENT_WRONG_ERROR,
+    TEST_CLIENT_BASE_URL,
+    TEST_SERVER_BASE_URL,
+} from "../constants";
 
 /*
  * Tests.
@@ -187,10 +194,12 @@ describe("SuperTokens SignUp", function () {
             // // Assert.
             formFieldErrors = await getFieldErrors(page);
             assert.deepStrictEqual(formFieldErrors, ["Email is invalid", "You must be over 18 to register"]);
-            assert.deepStrictEqual(consoleLogs, [
-                "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
-                "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_UP",
-            ]);
+            /**
+             * This is because form validations now occur on the frontend side of things and not
+             * in the recipe implementation. Which means that when you get a field error the recipe
+             * implementation function does not actually get called
+             */
+            assert.deepStrictEqual(consoleLogs, []);
         });
 
         it("Successful signup", async function () {
@@ -253,17 +262,8 @@ describe("SuperTokens SignUp", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                ...(isReact16()
-                    ? [
-                          "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
-                          "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                      ]
-                    : [
-                          "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
-                          "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                          "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
-                          "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
-                      ]),
+                "ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT SESSION_ALREADY_EXISTS",
+                "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SUCCESS",
                 "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                 "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
@@ -274,5 +274,76 @@ describe("SuperTokens SignUp", function () {
                 "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_EXISTS",
             ]);
         });
+    });
+});
+
+describe("SuperTokens SignUp => Server Error", function () {
+    let browser;
+    let page;
+    let consoleLogs;
+
+    before(async function () {
+        browser = await puppeteer.launch({
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            headless: true,
+        });
+    });
+
+    after(async function () {
+        await browser.close();
+    });
+
+    beforeEach(async function () {
+        page = await browser.newPage();
+        consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, []);
+        page.on("console", (consoleObj) => {
+            const log = consoleObj.text();
+            if (log.startsWith("ST_LOGS")) {
+                consoleLogs.push(log);
+            }
+        });
+        await toggleSignInSignUp(page);
+    });
+
+    afterEach(function () {
+        return screenshotOnFailure(this, browser);
+    });
+
+    it("Server Error shows Something went wrong general error", async function () {
+        await setInputValues(page, [
+            { name: "email", value: "john.doe@supertokens.io" },
+            { name: "password", value: "Str0ngP@ssw0rd" },
+            { name: "name", value: "John Doe" },
+            { name: "age", value: "20" },
+        ]);
+        await submitForm(page);
+
+        await page.waitForResponse((response) => {
+            return response.url() === SIGN_UP_API && response.status() === 500;
+        });
+
+        // Assert server Error
+        const generalError = await getGeneralError(page);
+        assert.strictEqual(generalError, SOMETHING_WENT_WRONG_ERROR);
+    });
+
+    it("should clear errors when switching to sign in", async function () {
+        await setInputValues(page, [
+            { name: "email", value: "john.doe@supertokens.io" },
+            { name: "password", value: "Str0ngP@ssw0rd" },
+            { name: "name", value: "John Doe" },
+            { name: "age", value: "20" },
+        ]);
+        await submitForm(page);
+
+        await page.waitForResponse((response) => {
+            return response.url() === SIGN_UP_API && response.status() === 500;
+        });
+
+        // Assert server Error
+        const generalError = await getGeneralError(page);
+        assert.strictEqual(generalError, SOMETHING_WENT_WRONG_ERROR);
+        await toggleSignInSignUp(page);
+        await waitForSTElement(page, "[data-supertokens~=generalError]", true);
     });
 });

@@ -13,7 +13,6 @@
  * under the License.
  */
 
-/** @jsx jsx */
 import { CSSObject, keyframes } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
 import chroma from "chroma-js";
@@ -242,6 +241,19 @@ export function getDefaultStyles(palette: NormalisedPalette): NormalisedDefaultS
         linkButton: {
             backgroundColor: "transparent",
             border: 0,
+        },
+
+        secondaryLinkWithLeftArrow: {
+            marginTop: "10px",
+            marginBottom: "40px",
+            cursor: "pointer",
+            "& svg": {
+                marginRight: "0.3em",
+            },
+            "&:hover svg": {
+                position: "relative",
+                left: "-4px",
+            },
         },
     };
 }

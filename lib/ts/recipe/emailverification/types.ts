@@ -19,6 +19,7 @@ import { ComponentOverride } from "../../components/componentOverride/componentO
 import { SendVerifyEmail } from "./components/themes/emailVerification/sendVerifyEmail";
 import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/verifyEmailLinkClicked";
 import OverrideableBuilder from "supertokens-js-override";
+import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
 // For AuthRecipeModule, we don't need to take signOut,
 // redirectToSignIn and postVerificationRedirect as inputs from the user.
@@ -26,7 +27,7 @@ import OverrideableBuilder from "supertokens-js-override";
 // for anyone who wants to use this recipe directly.
 export type UserInputForAuthRecipeModule = {
     mode?: "OFF" | "REQUIRED";
-    disableDefaultImplementation?: boolean;
+    disableDefaultUI?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
 };
@@ -50,11 +51,12 @@ export type UserInput = UserInputForAuthRecipeModule & {
 };
 
 // Config is what does in the constructor of the recipe.
-export type Config = UserInput & RecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+export type Config = UserInput &
+    RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
     mode: "OFF" | "REQUIRED";
-    disableDefaultImplementation: boolean;
+    disableDefaultUI: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
     signOut(): Promise<void>;
@@ -67,26 +69,31 @@ export type NormalisedConfig = {
         ) => RecipeInterface;
         components: ComponentOverrideMap;
     };
-} & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext>;
+} & NormalisedRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type GetRedirectionURLContext = {
     action: "VERIFY_EMAIL";
 };
 
+export type PreAndPostAPIHookAction = "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED";
+
 export type PreAPIHookContext = {
-    action: "VERIFY_EMAIL" | "SEND_VERIFY_EMAIL" | "IS_EMAIL_VERIFIED";
+    action: PreAndPostAPIHookAction;
     requestInit: RequestInit;
     url: string;
+    userContext: any;
 };
 
 export type OnHandleEventContext = {
     action: "VERIFY_EMAIL_SENT" | "EMAIL_VERIFIED_SUCCESSFUL";
+    userContext: any;
 };
 
 export type EmailVerificationThemeProps = {
     sendVerifyEmailScreen: SendVerifyEmailThemeProps;
     verifyEmailLinkClickedScreen?: VerifyEmailLinkClickedThemeProps;
     config: NormalisedConfig;
+    userContext?: any;
 };
 
 export type SendVerifyEmailThemeProps = ThemeBaseProps & {
@@ -99,20 +106,7 @@ export type SendVerifyEmailThemeProps = ThemeBaseProps & {
 export type VerifyEmailLinkClickedThemeProps = ThemeBaseProps & {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    onContinueClicked: () => Promise<void>;
+    onSuccess: () => Promise<void>;
     onTokenInvalidRedirect: () => Promise<void>;
     token: string;
-};
-
-export type RecipeInterface = {
-    verifyEmail: (input: {
-        token: string;
-        config: NormalisedConfig;
-    }) => Promise<{ status: "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR" | "OK" }>;
-
-    sendVerificationEmail: (input: {
-        config: NormalisedConfig;
-    }) => Promise<{ status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK" }>;
-
-    isEmailVerified: (input: { config: NormalisedConfig }) => Promise<boolean>;
 };

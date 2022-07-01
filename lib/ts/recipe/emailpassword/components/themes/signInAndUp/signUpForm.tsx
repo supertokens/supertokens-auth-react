@@ -15,12 +15,12 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { SignUpThemeProps } from "../../../types";
 
 import FormBase from "../../library/formBase";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
+import { validateForm } from "../../../../../utils";
+import { useUserContext } from "../../../../../usercontext";
 
 /*
  * Component.
@@ -34,6 +34,8 @@ export const SignUpForm = withOverride(
             footer?: JSX.Element;
         }
     ): JSX.Element {
+        const userContext = useUserContext();
+
         return (
             <FormBase
                 formFields={props.formFields}
@@ -41,12 +43,24 @@ export const SignUpForm = withOverride(
                 onError={props.onError}
                 buttonLabel={"EMAIL_PASSWORD_SIGN_UP_SUBMIT_BTN"}
                 onSuccess={props.onSuccess}
-                callAPI={(formFields) =>
-                    props.recipeImplementation.signUp({
+                callAPI={async (formFields) => {
+                    const validationErrors = await validateForm(
                         formFields,
-                        config: props.config,
-                    })
-                }
+                        props.config.signInAndUpFeature.signUpForm.formFields
+                    );
+
+                    if (validationErrors.length > 0) {
+                        return {
+                            status: "FIELD_ERROR",
+                            formFields: validationErrors,
+                        };
+                    }
+
+                    return props.recipeImplementation.signUp({
+                        formFields,
+                        userContext,
+                    });
+                }}
                 validateOnBlur={true}
                 showLabels={true}
                 footer={props.footer}

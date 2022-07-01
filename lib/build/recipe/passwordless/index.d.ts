@@ -1,17 +1,19 @@
 /// <reference types="react" />
 import { UserInput } from "./types";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
 import SignInUpThemeWrapper from "./components/themes/signInUp";
+import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
+import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
 export default class Wrapper {
     static init(
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
         import("../authRecipe/types").GetRedirectionURLContext,
-        PreAPIHookContext,
+        import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
     >;
-    static signOut(): Promise<void>;
+    static signOut(input?: { userContext?: any }): Promise<void>;
     static redirectToAuth(
         input?:
             | ("signin" | "signup")
@@ -20,11 +22,106 @@ export default class Wrapper {
                   redirectBack?: boolean;
               }
     ): Promise<void>;
+    static createCode(
+        input:
+            | {
+                  email: string;
+                  userContext?: any;
+                  options?: RecipeFunctionOptions;
+              }
+            | {
+                  phoneNumber: string;
+                  userContext?: any;
+                  options?: RecipeFunctionOptions;
+              }
+    ): Promise<{
+        status: "OK";
+        deviceId: string;
+        preAuthSessionId: string;
+        flowType: PasswordlessFlowType;
+        fetchResponse: Response;
+    }>;
+    static resendCode(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "RESTART_FLOW_ERROR";
+        fetchResponse: Response;
+    }>;
+    static consumeCode(
+        input:
+            | {
+                  userInputCode: string;
+                  userContext?: any;
+                  options?: RecipeFunctionOptions;
+              }
+            | {
+                  userContext?: any;
+                  options?: RecipeFunctionOptions;
+              }
+    ): Promise<
+        | {
+              status: "OK";
+              createdUser: boolean;
+              user: PasswordlessUser;
+              fetchResponse: Response;
+          }
+        | {
+              status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
+              failedCodeInputAttemptCount: number;
+              maximumCodeInputAttempts: number;
+              fetchResponse: Response;
+          }
+        | {
+              status: "RESTART_FLOW_ERROR";
+              fetchResponse: Response;
+          }
+    >;
+    static getLinkCodeFromURL(input?: { userContext?: any }): string;
+    static getPreAuthSessionIdFromURL(input?: { userContext?: any }): string;
+    static doesEmailExist(input: { email: string; userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }>;
+    static doesPhoneNumberExist(input: {
+        phoneNumber: string;
+        userContext?: any;
+        options?: RecipeFunctionOptions;
+    }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }>;
+    static getLoginAttemptInfo<CustomLoginAttemptInfoProperties>(input?: { userContext?: any }): Promise<
+        | undefined
+        | ({
+              deviceId: string;
+              preAuthSessionId: string;
+              flowType: PasswordlessFlowType;
+          } & CustomLoginAttemptInfoProperties)
+    >;
+    static setLoginAttemptInfo<CustomStateProperties>(input: {
+        attemptInfo: {
+            deviceId: string;
+            preAuthSessionId: string;
+            flowType: PasswordlessFlowType;
+        } & CustomStateProperties;
+        userContext?: any;
+    }): Promise<void>;
+    static clearLoginAttemptInfo(input?: { userContext?: any }): Promise<void>;
     static SignInUp: (prop?: any) => JSX.Element;
     static SignInUpTheme: typeof SignInUpThemeWrapper;
     static LinkClicked: (prop?: any) => JSX.Element;
 }
 declare const init: typeof Wrapper.init;
+declare const createCode: typeof Wrapper.createCode;
+declare const resendCode: typeof Wrapper.resendCode;
+declare const consumeCode: typeof Wrapper.consumeCode;
+declare const getLinkCodeFromURL: typeof Wrapper.getLinkCodeFromURL;
+declare const getPreAuthSessionIdFromURL: typeof Wrapper.getPreAuthSessionIdFromURL;
+declare const doesEmailExist: typeof Wrapper.doesEmailExist;
+declare const doesPhoneNumberExist: typeof Wrapper.doesPhoneNumberExist;
+declare const getLoginAttemptInfo: typeof Wrapper.getLoginAttemptInfo;
+declare const setLoginAttemptInfo: typeof Wrapper.setLoginAttemptInfo;
+declare const clearLoginAttemptInfo: typeof Wrapper.clearLoginAttemptInfo;
 declare const signOut: typeof Wrapper.signOut;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInUp: (prop?: any) => JSX.Element;
@@ -35,6 +132,16 @@ export {
     SignInUpTheme,
     LinkClicked,
     init,
+    createCode,
+    resendCode,
+    consumeCode,
+    getLinkCodeFromURL,
+    getPreAuthSessionIdFromURL,
+    doesEmailExist,
+    doesPhoneNumberExist,
+    getLoginAttemptInfo,
+    setLoginAttemptInfo,
+    clearLoginAttemptInfo,
     signOut,
     redirectToAuth,
     GetRedirectionURLContext,

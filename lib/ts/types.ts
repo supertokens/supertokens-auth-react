@@ -13,8 +13,8 @@
  * under the License.
  */
 import RecipeModule from "./recipe/recipeModule";
-import NormalisedURLPath from "./normalisedURLPath";
-import NormalisedURLDomain from "./normalisedURLDomain";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
@@ -280,19 +280,6 @@ export type FeatureBaseProps = PropsWithChildren<{
      */
     history?: any;
 }>;
-
-export type PreAPIHookFunction = (context: {
-    requestInit: RequestInit;
-    url: string;
-}) => Promise<{ url: string; requestInit: RequestInit }>;
-
-export type PostAPIHookFunction = (context: {
-    requestInit: RequestInit;
-    url: string;
-    response: Response;
-}) => Promise<Response>;
-
-export type Awaitable<T> = Promise<T> | T;
 
 // Built-in in later versions of TS
 export type Awaited<T> = T extends null | undefined

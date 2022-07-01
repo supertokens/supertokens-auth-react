@@ -1,13 +1,22 @@
 /// <reference types="react" />
 import { RecipeFeatureComponentMap } from "../../types";
 import { NormalisedConfig } from "./types";
-export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T, S, R>> {
+export default abstract class RecipeModule<
+    GetRedirectionURLContextType,
+    Action,
+    OnHandleEventContextType,
+    N extends NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType>
+> {
     config: N;
     constructor(config: N);
-    redirect: (context: T, history?: any, queryParams?: Record<string, string> | undefined) => Promise<void>;
+    redirect: (
+        context: GetRedirectionURLContextType,
+        history?: any,
+        queryParams?: Record<string, string>
+    ) => Promise<void>;
     redirectToUrl: (redirectUrl: string, history?: any) => Promise<void>;
-    getRedirectUrl: (context: T) => Promise<string>;
-    getDefaultRedirectionURL(_: T): Promise<string>;
+    getRedirectUrl: (context: GetRedirectionURLContextType) => Promise<string>;
+    getDefaultRedirectionURL(_: GetRedirectionURLContextType): Promise<string>;
     abstract getFeatures(): RecipeFeatureComponentMap;
     abstract getFeatureComponent(componentName: string, props: any): JSX.Element;
 }

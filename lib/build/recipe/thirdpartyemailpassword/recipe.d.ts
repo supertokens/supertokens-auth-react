@@ -1,21 +1,20 @@
 /// <reference types="react" />
 import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
-import { CreateRecipeFunction } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap } from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
     NormalisedConfig,
-    PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
+    PreAndPostAPIHookAction,
 } from "./types";
 import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import EmailVerification from "../emailverification/recipe";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
 export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
-    PreAPIHookContext,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -32,15 +31,15 @@ export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerifica
             emailPasswordInstance: EmailPassword | undefined;
         }
     );
-    getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
-    getDefaultRedirectionURL: (context: import("../emailpassword").GetRedirectionURLContext) => Promise<string>;
+    getFeatures: () => RecipeFeatureComponentMap;
+    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     getFeatureComponent: (
-        componentName: "emailverification" | "signinup" | "resetpassword" | "signinupcallback",
+        componentName: "signinup" | "signinupcallback" | "resetpassword" | "emailverification",
         props: any
     ) => JSX.Element;
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>;
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): ThirdPartyEmailPassword;
     static reset(): void;
 }

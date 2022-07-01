@@ -13,18 +13,26 @@
  * under the License.
  */
 
-import { CountryCode } from "libphonenumber-js";
+import { CountryCode, NumberType } from "libphonenumber-js";
 import parsePhoneNumber, { parseIncompletePhoneNumber } from "libphonenumber-js/min";
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
-import { Config, NormalisedConfig, SignInUpFeatureConfigInput } from "./types";
-import { RecipeInterface } from "./types";
+import {
+    AdditionalLoginAttemptInfoProperties,
+    Config,
+    LoginAttemptInfo,
+    NormalisedConfig,
+    SignInUpFeatureConfigInput,
+} from "./types";
+import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 import {
     defaultPhoneNumberValidator,
     defaultPhoneNumberValidatorForCombinedInput,
     defaultEmailValidator,
     defaultEmailValidatorForCombinedInput,
 } from "./validators";
+import { PasswordlessFlowType, PasswordlessUser } from "supertokens-web-js/recipe/passwordless/types";
+import WebJSUtils from "supertokens-web-js/recipe/passwordless/utils";
 
 export function normalisePasswordlessConfig(config: Config): NormalisedConfig {
     if (!["EMAIL", "PHONE", "EMAIL_OR_PHONE"].includes(config.contactMethod)) {
@@ -157,4 +165,90 @@ export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
         return undefined;
     }
     return value;
+}
+
+export async function getLoginAttemptInfo(input: {
+    recipeImplementation: RecipeInterface;
+    userContext: any;
+}): Promise<LoginAttemptInfo | undefined> {
+    return await input.recipeImplementation.getLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
+        userContext: input.userContext,
+    });
+}
+
+export async function setLoginAttemptInfo(input: {
+    recipeImplementation: RecipeInterface;
+    userContext: NumberType;
+    attemptInfo: LoginAttemptInfo;
+}): Promise<void> {
+    return await input.recipeImplementation.setLoginAttemptInfo<AdditionalLoginAttemptInfoProperties>({
+        userContext: input.userContext,
+        attemptInfo: input.attemptInfo,
+    });
+}
+
+/**
+ * These functions are helper functions so that the logic can be exposed from both
+ * passwordless and thirdpartypasswordless recipes without having to duplicate code
+ */
+
+export async function createCode(
+    input:
+        | { email: string; userContext?: any; options?: RecipeFunctionOptions; recipeImplementation: RecipeInterface }
+        | {
+              phoneNumber: string;
+              userContext?: any;
+              options?: RecipeFunctionOptions;
+              recipeImplementation: RecipeInterface;
+          }
+): Promise<{
+    status: "OK";
+    deviceId: string;
+    preAuthSessionId: string;
+    flowType: PasswordlessFlowType;
+    fetchResponse: Response;
+}> {
+    return WebJSUtils.createCode(input);
+}
+
+export async function resendCode(input: {
+    userContext?: any;
+    options?: RecipeFunctionOptions;
+    recipeImplementation: RecipeInterface;
+}): Promise<{
+    status: "OK" | "RESTART_FLOW_ERROR";
+    fetchResponse: Response;
+}> {
+    return WebJSUtils.resendCode(input);
+}
+
+export async function consumeCode(
+    input:
+        | {
+              userInputCode: string;
+              userContext?: any;
+              options?: RecipeFunctionOptions;
+              recipeImplementation: RecipeInterface;
+          }
+        | {
+              userContext?: any;
+              options?: RecipeFunctionOptions;
+              recipeImplementation: RecipeInterface;
+          }
+): Promise<
+    | {
+          status: "OK";
+          createdUser: boolean;
+          user: PasswordlessUser;
+          fetchResponse: Response;
+      }
+    | {
+          status: "INCORRECT_USER_INPUT_CODE_ERROR" | "EXPIRED_USER_INPUT_CODE_ERROR";
+          failedCodeInputAttemptCount: number;
+          maximumCodeInputAttempts: number;
+          fetchResponse: Response;
+      }
+    | { status: "RESTART_FLOW_ERROR"; fetchResponse: Response }
+> {
+    return WebJSUtils.consumeCode(input);
 }

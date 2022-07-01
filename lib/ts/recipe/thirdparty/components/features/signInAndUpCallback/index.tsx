@@ -15,60 +15,56 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { Fragment, useCallback } from "react";
 
 import { Awaited, FeatureBaseProps } from "../../../../../types";
-import { getCurrentNormalisedUrlPath, useOnMountAPICall } from "../../../../../utils";
+import { useOnMountAPICall } from "../../../../../utils";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette } from "../../../../../styles/styles";
 import { getStyles } from "../../themes/styles";
-import {} from "../../../types";
+import { CustomStateProperties } from "../../../types";
 import { SignInAndUpCallbackTheme } from "../../themes/signInAndUpCallback";
 import Recipe from "../../../recipe";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
+import STGeneralError from "supertokens-web-js/utils/error";
+import { useUserContext } from "../../../../../usercontext";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
 const SignInAndUpCallback: React.FC<PropType> = (props) => {
+    const userContext = useUserContext();
+
     const verifyCode = useCallback(() => {
-        const pathName = getCurrentNormalisedUrlPath().getAsStringDangerous();
-        const providerId = pathName.split("/")[pathName.split("/").length - 1];
         return props.recipe.recipeImpl.signInAndUp({
-            thirdPartyId: providerId,
-            config: props.recipe.config,
+            userContext,
         });
     }, [props.recipe, props.history]);
 
     const handleVerifyResponse = useCallback(
         async (response: Awaited<ReturnType<typeof verifyCode>>): Promise<void> => {
-            if (response.status === "GENERAL_ERROR") {
-                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "signin",
-                });
-            }
             if (response.status === "NO_EMAIL_GIVEN_BY_PROVIDER") {
                 return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
                     error: "no_email_present",
                 });
             }
-            if (response.status === "FIELD_ERROR") {
-                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "custom",
-                    message: response.error,
-                });
-            }
+
             if (response.status === "OK") {
-                const state = props.recipe.recipeImpl.getOAuthState();
-                const redirectToPath = state === undefined ? undefined : state.redirectToPath;
+                const stateResponse = props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
+                    userContext,
+                });
+
+                const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
                 if (props.recipe.emailVerification.config.mode === "REQUIRED") {
                     let isEmailVerified = true;
                     try {
-                        isEmailVerified = await props.recipe.emailVerification.isEmailVerified();
+                        isEmailVerified = (
+                            await props.recipe.emailVerification.isEmailVerified({
+                                userContext,
+                            })
+                        ).isVerified;
                     } catch (ignored) {}
                     if (!isEmailVerified) {
                         await props.recipe.savePostEmailVerificationSuccessRedirectState({
@@ -93,11 +89,21 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
         [props.recipe, props.history]
     );
 
-    const handleError = useCallback(() => {
-        return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-            error: "signin",
-        });
-    }, [props.recipe, props.history]);
+    const handleError = useCallback(
+        (err) => {
+            if (STGeneralError.isThisError(err)) {
+                return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                    error: "custom",
+                    message: err.message,
+                });
+            }
+
+            return props.recipe.redirectToAuthWithoutRedirectToPath(undefined, props.history, {
+                error: "signin",
+            });
+        },
+        [props.recipe, props.history]
+    );
 
     useOnMountAPICall(verifyCode, handleVerifyResponse, handleError);
 

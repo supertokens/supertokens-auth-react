@@ -17,8 +17,7 @@
  * Imports.
  */
 
-/** @jsx jsx */
-import { CSSObject, jsx } from "@emotion/react";
+import { CSSObject } from "@emotion/react";
 import Select, { components } from "react-select";
 
 import React, { useContext } from "react";

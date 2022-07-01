@@ -19,23 +19,62 @@ import EmailPassword from "./recipe";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
 import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
-import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, RecipeInterface } from "./types";
+import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
+import { getNormalisedUserContext } from "../../utils";
+import { User } from "../authRecipeWithEmailVerification/types";
+import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 
 export default class Wrapper {
     static init(config?: UserInput) {
         return EmailPassword.init(config);
     }
 
-    static async signOut(): Promise<void> {
-        return EmailPassword.getInstanceOrThrow().signOut();
+    static async signOut(input?: { userContext?: any }): Promise<void> {
+        return EmailPassword.getInstanceOrThrow().signOut({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
-    static async isEmailVerified(): Promise<boolean> {
-        return EmailPassword.getInstanceOrThrow().emailVerification.isEmailVerified();
+    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK";
+        isVerified: boolean;
+        fetchResponse: Response;
+    }> {
+        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.isEmailVerified({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
+        fetchResponse: Response;
+    }> {
+        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
+        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
+        fetchResponse: Response;
+    }> {
+        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
+    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
+        return EmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.getEmailVerificationTokenFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"
-    static redirectToAuth(
+    static async redirectToAuth(
         input?:
             | ("signin" | "signup")
             | {
@@ -54,6 +93,138 @@ export default class Wrapper {
         }
     }
 
+    static async submitNewPassword(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        options?: RecipeFunctionOptions;
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK" | "RESET_PASSWORD_INVALID_TOKEN_ERROR";
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        return EmailPassword.getInstanceOrThrow().recipeImpl.submitNewPassword({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async sendPasswordResetEmail(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        options?: RecipeFunctionOptions;
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        return EmailPassword.getInstanceOrThrow().recipeImpl.sendPasswordResetEmail({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async signUp(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        options?: RecipeFunctionOptions;
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              user: User;
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+    > {
+        return EmailPassword.getInstanceOrThrow().recipeImpl.signUp({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async signIn(input: {
+        formFields: {
+            id: string;
+            value: string;
+        }[];
+        options?: RecipeFunctionOptions;
+        userContext?: any;
+    }): Promise<
+        | {
+              status: "OK";
+              user: User;
+              fetchResponse: Response;
+          }
+        | {
+              status: "FIELD_ERROR";
+              formFields: {
+                  id: string;
+                  error: string;
+              }[];
+              fetchResponse: Response;
+          }
+        | {
+              status: "WRONG_CREDENTIALS_ERROR";
+              fetchResponse: Response;
+          }
+    > {
+        return EmailPassword.getInstanceOrThrow().recipeImpl.signIn({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static async doesEmailExist(input: { email: string; options?: RecipeFunctionOptions; userContext?: any }): Promise<{
+        status: "OK";
+        doesExist: boolean;
+        fetchResponse: Response;
+    }> {
+        return EmailPassword.getInstanceOrThrow().recipeImpl.doesEmailExist({
+            ...input,
+            userContext: getNormalisedUserContext(input.userContext),
+        });
+    }
+
+    static getResetPasswordTokenFromURL(input?: { userContext?: any }): string {
+        return EmailPassword.getInstanceOrThrow().recipeImpl.getResetPasswordTokenFromURL({
+            ...input,
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
+    }
+
     static SignInAndUp = (prop?: any) => EmailPassword.getInstanceOrThrow().getFeatureComponent("signinup", prop);
     static SignInAndUpTheme = SignInAndUpTheme;
     static ResetPasswordUsingToken = (prop?: any) =>
@@ -67,18 +238,36 @@ export default class Wrapper {
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
 const isEmailVerified = Wrapper.isEmailVerified;
+const verifyEmail = Wrapper.verifyEmail;
+const sendVerificationEmail = Wrapper.sendVerificationEmail;
+const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
 const redirectToAuth = Wrapper.redirectToAuth;
+const submitNewPassword = Wrapper.submitNewPassword;
+const sendPasswordResetEmail = Wrapper.sendPasswordResetEmail;
+const signUp = Wrapper.signUp;
+const signIn = Wrapper.signIn;
+const doesEmailExist = Wrapper.doesEmailExist;
 const SignInAndUp = Wrapper.SignInAndUp;
+const getResetPasswordTokenFromURL = Wrapper.getResetPasswordTokenFromURL;
 const ResetPasswordUsingToken = Wrapper.ResetPasswordUsingToken;
 const EmailVerification = Wrapper.EmailVerification;
 
 export {
     init,
     isEmailVerified,
+    verifyEmail,
+    sendVerificationEmail,
+    getEmailVerificationTokenFromURL,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
     redirectToAuth,
+    submitNewPassword,
+    sendPasswordResetEmail,
+    signUp,
+    signIn,
+    doesEmailExist,
+    getResetPasswordTokenFromURL,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
     EmailVerification,

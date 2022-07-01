@@ -16,8 +16,6 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { FormEvent, Fragment, useState } from "react";
 import { Button, FormRow, Input, InputError, Label } from ".";
 
@@ -27,6 +25,7 @@ import { MANDATORY_FORM_FIELDS_ID_ARRAY } from "../../constants";
 import { useCallback } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
+import STGeneralError from "supertokens-web-js/utils/error";
 
 type FieldState = {
     id: string;
@@ -118,13 +117,24 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                 };
             });
 
+            const fieldUpdates: FieldState[] = [];
             // Call API.
             try {
-                const fieldUpdates: FieldState[] = [];
-                const result = await props.callAPI(apiFields, (id, value) => fieldUpdates.push({ id, value }));
+                let result;
+                let generalError: STGeneralError | undefined;
+                try {
+                    result = await props.callAPI(apiFields, (id, value) => fieldUpdates.push({ id, value }));
+                } catch (e) {
+                    if (STGeneralError.isThisError(e)) {
+                        generalError = e;
+                    } else {
+                        throw e;
+                    }
+                }
                 if (unmounting.current.signal.aborted) {
                     return;
                 }
+
                 for (const field of formFields) {
                     const update = fieldUpdates.find((f) => f.id === field.id);
                     if (update || field.clearOnSubmit === true) {
@@ -133,27 +143,26 @@ export const FormBase: React.FC<FormBaseProps<any>> = (props) => {
                     }
                 }
 
-                // If successful
-                if (result.status === "OK") {
-                    setIsLoading(false);
-                    props.clearError();
-                    if (props.onSuccess !== undefined) {
-                        props.onSuccess(result);
+                if (generalError !== undefined) {
+                    props.onError(generalError.message);
+                } else {
+                    // If successful
+                    if (result.status === "OK") {
+                        setIsLoading(false);
+                        props.clearError();
+                        if (props.onSuccess !== undefined) {
+                            props.onSuccess(result);
+                        }
                     }
-                }
 
-                // If field error.
-                if (result.status === "FIELD_ERROR") {
-                    const errorFields = result.formFields;
+                    // If field error.
+                    if (result.status === "FIELD_ERROR") {
+                        const errorFields = result.formFields;
 
-                    setFieldStates((os) =>
-                        os.map((fs) => ({ ...fs, error: errorFields.find((ef: any) => ef.id === fs.id)?.error }))
-                    );
-                }
-
-                // Otherwise if message, set generalError
-                if (result.status === "GENERAL_ERROR") {
-                    props.onError(result.message);
+                        setFieldStates((os) =>
+                            os.map((fs) => ({ ...fs, error: errorFields.find((ef: any) => ef.id === fs.id)?.error }))
+                        );
+                    }
                 }
             } catch (e) {
                 props.onError("SOMETHING_WENT_WRONG_ERROR");

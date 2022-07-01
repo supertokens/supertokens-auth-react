@@ -15,25 +15,18 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import * as React from "react";
 import { Fragment } from "react";
 import SignInAndUpTheme from "../../themes/signInAndUp";
 import FeatureWrapper from "../../../../../components/featureWrapper";
 import { FeatureBaseProps } from "../../../../../types";
 import { getQueryParams } from "../../../../../utils";
-import {
-    ThirdPartySignInAndUpState,
-    RecipeInterface,
-    ThirdPartySignInUpActions,
-    ThirdPartySignInUpChildProps,
-} from "../../../types";
+import { ThirdPartySignInAndUpState, ThirdPartySignInUpActions, ThirdPartySignInUpChildProps } from "../../../types";
 import Recipe from "../../../recipe";
-import { getRedirectToPathFromURL } from "../../../../../utils";
 import { ComponentOverrideContext } from "../../../../../components/componentOverride/componentOverrideContext";
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 import { useMemo } from "react";
+import { RecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 
 export const useFeatureReducer = () => {
     return React.useReducer(
@@ -92,6 +85,7 @@ export function useChildProps(recipe: Recipe | undefined): ThirdPartySignInUpChi
             providers: providers,
             recipeImplementation,
             config: recipe.config,
+            recipe,
         };
     }, [recipe]);
 }
@@ -134,15 +128,5 @@ export default SignInAndUpFeature;
 const getModifiedRecipeImplementation = (origImpl: RecipeInterface): RecipeInterface => {
     return {
         ...origImpl,
-        redirectToThirdPartyLogin: (input) => {
-            input = {
-                ...input,
-                state: {
-                    ...input.state,
-                    redirectToPath: getRedirectToPathFromURL(),
-                },
-            };
-            return origImpl.redirectToThirdPartyLogin(input);
-        },
     };
 };

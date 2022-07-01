@@ -14,11 +14,12 @@
  */
 
 import Session from "./recipe";
-import { RecipeInterface } from "supertokens-website";
+import { RecipeInterface } from "supertokens-web-js/recipe/session";
 import SessionAuthWrapper from "./sessionAuth";
 import useSessionContextFunc from "./useSessionContext";
 import { ClaimValidationError, InputType, SessionClaimValidator, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
+import { getNormalisedUserContext } from "../../utils";
 
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
@@ -29,29 +30,36 @@ export default class SessionAPIWrapper {
         return Session.init(config);
     }
 
-    static getUserId(): Promise<string> {
-        return Session.getInstanceOrThrow().getUserId();
+    static async getUserId(input?: { userContext?: any }): Promise<string> {
+        return Session.getInstanceOrThrow().getUserId({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
-    static async getAccessTokenPayloadSecurely(): Promise<any> {
-        return Session.getInstanceOrThrow().getAccessTokenPayloadSecurely();
+    static async getAccessTokenPayloadSecurely(input?: { userContext?: any }): Promise<any> {
+        return Session.getInstanceOrThrow().getAccessTokenPayloadSecurely({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     static async attemptRefreshingSession(): Promise<boolean> {
         return Session.getInstanceOrThrow().attemptRefreshingSession();
     }
 
-    static doesSessionExist(): Promise<boolean> {
-        return Session.getInstanceOrThrow().doesSessionExist();
+    static async doesSessionExist(input?: { userContext?: any }): Promise<boolean> {
+        return Session.getInstanceOrThrow().doesSessionExist({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    static addAxiosInterceptors(axiosInstance: any): void {
-        return Session.addAxiosInterceptors(axiosInstance);
+    static addAxiosInterceptors(axiosInstance: any, userContext?: any): void {
+        return Session.addAxiosInterceptors(axiosInstance, getNormalisedUserContext(userContext));
     }
 
-    static signOut(): Promise<void> {
-        return Session.getInstanceOrThrow().signOut();
+    static async signOut(input?: { userContext?: any }): Promise<void> {
+        return Session.getInstanceOrThrow().signOut({
+            userContext: getNormalisedUserContext(input?.userContext),
+        });
     }
 
     static validateClaims(claimValidators: SessionClaimValidator<any>[]): Promise<ClaimValidationError | undefined> {

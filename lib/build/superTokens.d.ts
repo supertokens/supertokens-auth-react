@@ -1,7 +1,8 @@
 /// <reference types="react" />
 import RecipeModule from "./recipe/recipeModule";
 import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensConfig } from "./types";
-import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import { BaseFeatureComponentMap } from "./types";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
 import { TranslationController, TranslationFunc, TranslationStore } from "./translation/translationHelpers";
 export default class SuperTokens {
@@ -24,9 +25,17 @@ export default class SuperTokens {
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[];
+    static getReactRouterDomWithCustomHistory():
+        | {
+              router: {
+                  Route: any;
+              };
+              useHistoryCustom: () => any;
+          }
+        | undefined;
     canHandleRoute: () => boolean;
     getRoutingComponent: () => JSX.Element | null;
-    getPathsToFeatureComponentWithRecipeIdMap: () => Record<string, ComponentWithRecipeAndMatchingMethod[]>;
+    getPathsToFeatureComponentWithRecipeIdMap: () => BaseFeatureComponentMap;
     getMatchingComponentForRouteAndRecipeId: (
         normalisedUrl: NormalisedURLPath
     ) => ComponentWithRecipeAndMatchingMethod | undefined;
@@ -41,7 +50,7 @@ export default class SuperTokens {
               useHistoryCustom: () => any;
           }
         | undefined;
-    changeLanguage(lang: string): void;
+    changeLanguage: (lang: string) => Promise<void>;
     loadTranslation(store: TranslationStore): void;
     static reset(): void;
 }

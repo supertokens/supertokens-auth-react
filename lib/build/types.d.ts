@@ -1,6 +1,6 @@
 import RecipeModule from "./recipe/recipeModule";
-import NormalisedURLPath from "./normalisedURLPath";
-import NormalisedURLDomain from "./normalisedURLDomain";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
+import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
 import { CSSObject } from "@emotion/react/types/index";
 import { ComponentClass, PropsWithChildren } from "react";
 import { NormalisedConfig as NormalisedRecipeModuleConfig } from "./recipe/recipeModule/types";
@@ -92,16 +92,6 @@ export declare type ThemeBaseProps = {
 export declare type FeatureBaseProps = PropsWithChildren<{
     history?: any;
 }>;
-export declare type PreAPIHookFunction = (context: { requestInit: RequestInit; url: string }) => Promise<{
-    url: string;
-    requestInit: RequestInit;
-}>;
-export declare type PostAPIHookFunction = (context: {
-    requestInit: RequestInit;
-    url: string;
-    response: Response;
-}) => Promise<Response>;
-export declare type Awaitable<T> = Promise<T> | T;
 export declare type Awaited<T> = T extends null | undefined
     ? T
     : T extends object & {

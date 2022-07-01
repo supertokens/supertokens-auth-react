@@ -13,20 +13,21 @@
  * under the License.
  */
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { SignInUpEmailOrPhoneFormProps } from "../../../types";
 import { withOverride } from "../../../../../components/componentOverride/withOverride";
 import FormBase from "../../../../emailpassword/components/library/formBase";
 import { phoneNumberInputWithInjectedProps } from "./phoneNumberInput";
 import { defaultEmailValidator, defaultValidate } from "../../../../emailpassword/validators";
 import { useState } from "react";
+import STGeneralError from "supertokens-web-js/utils/error";
+import { useUserContext } from "../../../../../usercontext";
 import { SignInUpFooter } from "./signInUpFooter";
 
 export const EmailOrPhoneForm = withOverride(
     "PasswordlessEmailOrPhoneForm",
     function PasswordlessEmailOrPhoneForm(props: SignInUpEmailOrPhoneFormProps): JSX.Element {
         const [isPhoneNumber, setIsPhoneNumber] = useState<boolean>(false);
+        const userContext = useUserContext();
 
         return (
             <FormBase
@@ -52,10 +53,7 @@ export const EmailOrPhoneForm = withOverride(
                 callAPI={async (formFields, setValue) => {
                     const emailOrPhone = formFields.find((field) => field.id === "emailOrPhone")?.value;
                     if (emailOrPhone === undefined) {
-                        return {
-                            status: "GENERAL_ERROR",
-                            message: "GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED",
-                        };
+                        throw new STGeneralError("GENERAL_ERROR_EMAIL_OR_PHONE_UNDEFINED");
                     }
 
                     // We check if it looks like an email by default. Even if this fails (e.g., the user mistyped the @ symbol),
@@ -66,23 +64,24 @@ export const EmailOrPhoneForm = withOverride(
                     if ((await defaultEmailValidator(emailOrPhone)) === undefined) {
                         const emailValidationRes = await props.config.validateEmailAddress(emailOrPhone);
                         if (emailValidationRes === undefined) {
-                            return await props.recipeImplementation.createCode({
+                            const response = await props.recipeImplementation.createCode({
                                 email: emailOrPhone,
-                                config: props.config,
+                                userContext,
                             });
+
+                            return response;
                         } else {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: emailValidationRes,
-                            };
+                            throw new STGeneralError(emailValidationRes);
                         }
                     } else {
                         const phoneValidationRes = await props.config.validatePhoneNumber(emailOrPhone);
                         if (phoneValidationRes === undefined) {
-                            return await props.recipeImplementation.createCode({
+                            const response = await props.recipeImplementation.createCode({
                                 phoneNumber: emailOrPhone,
-                                config: props.config,
+                                userContext,
                             });
+
+                            return response;
                         }
 
                         const intPhoneNumber =
@@ -94,15 +93,9 @@ export const EmailOrPhoneForm = withOverride(
                         if (intPhoneNumber && isPhoneNumber !== true) {
                             setValue("emailOrPhone", intPhoneNumber);
                             setIsPhoneNumber(true);
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: "PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR",
-                            };
+                            throw new STGeneralError("PWLESS_EMAIL_OR_PHONE_INVALID_INPUT_GUESS_PHONE_ERR");
                         } else {
-                            return {
-                                status: "GENERAL_ERROR",
-                                message: phoneValidationRes,
-                            };
+                            throw new STGeneralError(phoneValidationRes);
                         }
                     }
                 }}

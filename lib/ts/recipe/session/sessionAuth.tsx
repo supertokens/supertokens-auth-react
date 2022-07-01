@@ -19,21 +19,14 @@
 import React, { useEffect, useState, useContext, useRef, PropsWithChildren, useCallback } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
-import {
-    SessionClaimValidator,
-    RecipeEventWithSessionContext,
-    SessionContextType,
-    SessionContextTypeWithoutInvalidClaim,
-    ClaimValidationError,
-} from "./types";
+import { SessionClaimValidator, SessionContextTypeWithoutInvalidClaim, ClaimValidationError } from "./types";
+import { RecipeEventWithSessionContext, SessionContextType } from "./types";
+import { useUserContext } from "../../usercontext";
+import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { useOnMountAPICall } from "../../utils";
-import { FeatureBaseProps } from "../../types";
+import SuperTokens from "../../superTokens";
 
-// if it's not the default context, it means SessionAuth from top has
-// given us a sessionContext.
-const hasParentProvider = (ctx: SessionContextType) => !isDefaultContext(ctx);
-
-type Props = FeatureBaseProps & {
+export type SessionAuthProps = {
     requireAuth?: boolean;
     redirectToLogin?: () => void;
     onSessionExpired?: () => void;
@@ -42,8 +35,11 @@ type Props = FeatureBaseProps & {
     ) => SessionClaimValidator<any>[];
 };
 
-const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props }) => {
-    const requireAuth = useRef(props.requireAuth ?? true);
+const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, ...props }) => {
+    if (props.requireAuth === true && props.redirectToLogin === undefined) {
+        throw new Error("You have to provide redirectToLogin or onSessionExpired function when requireAuth is true");
+    }
+    const requireAuth = useRef(props.requireAuth);
 
     if (props.requireAuth !== requireAuth.current) {
         throw new Error(
@@ -55,10 +51,23 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
     const parentSessionContext = useContext(SessionContext);
 
     // assign the parent context here itself so that there is no flicker in the UI
-    const [context, setContext] = useState<SessionContextType | undefined>(undefined);
-
+    const [context, setContext] = useState<SessionContextType>(
+        !isDefaultContext(parentSessionContext) ? parentSessionContext : { loading: true }
+    );
     const [contextUpdate, setContextUpdate] = useState<SessionContextTypeWithoutInvalidClaim | undefined>(undefined);
-    const session = useRef(Session.getInstanceOrThrow());
+
+    const session = useRef<Session>();
+    const userContext = useUserContext();
+
+    const redirectToLogin = useCallback(() => {
+        if (props.redirectToLogin !== undefined) {
+            props.redirectToLogin();
+        } else {
+            void session.current!.redirectToAuthWithRedirectToPath(
+                SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory()?.useHistoryCustom()
+            );
+        }
+    }, [props.redirectToLogin]);
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -72,7 +81,7 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
                 // TODO: user proper userContext
                 // TODO: only one of these should be running at any time, but refreshing a claim could start this again.
                 let accessTokenPayload = contextUpdate.accessTokenPayload;
-                const defaultValidators = session.current.getDefaultClaimValidators();
+                const defaultValidators = session.current!.getDefaultClaimValidators();
 
                 const requiredClaims =
                     props.overwriteDefaultClaimValidators !== undefined
@@ -83,7 +92,7 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
                 for (const validator of requiredClaims) {
                     if (await validator.shouldRefresh(accessTokenPayload, userContext)) {
                         await validator.refresh(userContext);
-                        accessTokenPayload = await session.current.getAccessTokenPayloadSecurely();
+                        accessTokenPayload = await session.current!.getAccessTokenPayloadSecurely({ userContext });
                     }
                     const validationRes = await validator.validate(accessTokenPayload, userContext);
                     if (!validationRes.isValid) {
@@ -100,13 +109,13 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
             }
             if (!abortController.signal.aborted) {
                 setContext((os) => {
-                    return os !== undefined &&
+                    return os.loading === false &&
                         // We do these checks to prevent unnecessary rerenders
                         os.userId === contextUpdate.userId &&
                         JSON.stringify(os.accessTokenPayload) === JSON.stringify(contextUpdate.accessTokenPayload) &&
                         JSON.stringify(os.invalidClaim) === JSON.stringify(invalidClaim)
                         ? os
-                        : { ...contextUpdate, invalidClaim: invalidClaim };
+                        : { ...contextUpdate, invalidClaim: invalidClaim, loading: false };
                 });
             }
         }
@@ -115,15 +124,17 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
     }, [contextUpdate, props.overwriteDefaultClaimValidators]);
 
     const buildContext = useCallback(async (): Promise<SessionContextType> => {
-        if (hasParentProvider(parentSessionContext)) {
-            return parentSessionContext;
+        if (session.current === undefined) {
+            session.current = Session.getInstanceOrThrow();
         }
 
-        if (context) {
+        if (!context.loading) {
             return context;
         }
 
-        const sessionExists = await session.current.doesSessionExist();
+        const sessionExists = await session.current.doesSessionExist({
+            userContext,
+        });
 
         if (sessionExists === false) {
             return {
@@ -131,34 +142,37 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
                 accessTokenPayload: {},
                 userId: "",
                 invalidClaim: undefined,
+                loading: false,
             };
         }
 
         return {
             doesSessionExist: true,
-            accessTokenPayload: await session.current.getAccessTokenPayloadSecurely(),
-            userId: await session.current.getUserId(),
+            accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
+                userContext,
+            }),
+            userId: await session.current.getUserId({
+                userContext,
+            }),
             invalidClaim: undefined,
+            loading: false,
         };
     }, []);
 
     const setInitialContextAndMaybeRedirect = useCallback(
         async (toSetContext: SessionContextType) => {
-            // if this component is unmounting, or the context has already
-            // been set, then we don't need to proceed...
+            if (toSetContext.loading === true) {
+                // We should not be updating the context to loading
+                throw new Error("Should never come here");
+            }
+
             if (!toSetContext.doesSessionExist && props.requireAuth === true) {
-                if (props.redirectToLogin !== undefined) {
-                    props.redirectToLogin();
-                } else {
-                    void session.current.redirectToAuthWithRedirectToPath(props.history);
-                }
+                redirectToLogin();
             } else {
-                if (context === undefined) {
-                    setContextUpdate(toSetContext);
-                }
+                setContextUpdate(toSetContext);
             }
         },
-        [props]
+        [props.requireAuth, redirectToLogin]
     );
 
     useOnMountAPICall(buildContext, setInitialContextAndMaybeRedirect);
@@ -182,27 +196,21 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
                     setContextUpdate(event.sessionContext);
                     return;
                 case "SIGN_OUT":
-                    if (props.requireAuth !== true) {
-                        setContextUpdate(event.sessionContext);
-                    }
+                    setContextUpdate(event.sessionContext);
                     return;
                 case "UNAUTHORISED":
-                    if (props.requireAuth === true) {
-                        if (props.onSessionExpired !== undefined) {
-                            props.onSessionExpired();
-                        } else if (props.redirectToLogin !== undefined) {
-                            props.redirectToLogin();
-                        } else {
-                            void session.current.redirectToAuthWithRedirectToPath(props.history);
-                        }
-                    } else {
-                        setContextUpdate(event.sessionContext);
-                        if (props.onSessionExpired !== undefined) {
-                            props.onSessionExpired();
-                        }
+                    setContextUpdate(event.sessionContext);
+                    if (props.onSessionExpired !== undefined) {
+                        props.onSessionExpired();
+                    } else if (props.requireAuth === true) {
+                        redirectToLogin();
                     }
                     return;
             }
+        }
+
+        if (session.current === undefined) {
+            session.current = Session.getInstanceOrThrow();
         }
 
         // we return here cause addEventListener returns a function that removes
@@ -211,24 +219,26 @@ const SessionAuth: React.FC<PropsWithChildren<Props>> = ({ children, ...props })
         return session.current.addEventListener(onHandleEvent);
     }, [props, setContextUpdate]);
 
-    if (context === undefined) {
+    const actualContext = !isDefaultContext(parentSessionContext) ? parentSessionContext : context;
+    if (props.requireAuth === true && (actualContext.loading || !actualContext.doesSessionExist)) {
         return null;
     }
 
-    // this will display null only if initially the below condition is true.
-    // cause if the session goes from existing to non existing, then
-    // the context is not updated if props.requireAuth === true
-    if (!context.doesSessionExist && props.requireAuth === true) {
-        return null;
-    }
-
-    return <SessionContext.Provider value={context}>{children}</SessionContext.Provider>;
+    return <SessionContext.Provider value={{ ...actualContext, isDefault: false }}>{children}</SessionContext.Provider>;
 };
 
-// const SessionAuthWithKey: React.FC<Props> = (props) => (
-//     <SessionAuth key={`st-${props.requireAuth}-${props.claimValidators?.map((p) => p.id)}`} {...props}>
-//         {props.children}
-//     </SessionAuth>
-// );
+const SessionAuthWrapper: React.FC<
+    PropsWithChildren<
+        SessionAuthProps & {
+            userContext?: any;
+        }
+    >
+> = (props) => {
+    return (
+        <UserContextWrapper userContext={props.userContext}>
+            <SessionAuth {...props} />
+        </UserContextWrapper>
+    );
+};
 
-export default SessionAuth;
+export default SessionAuthWrapper;

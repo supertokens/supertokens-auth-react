@@ -1,212 +1,124 @@
-import { RecipeInterface, NormalisedConfig, StateObject } from "./types";
-import { User } from "../authRecipeWithEmailVerification/types";
+import { OnHandleEventContext, PreAndPostAPIHookAction, StateObject } from "./types";
+import { getRedirectToPathFromURL } from "../../utils";
+import { RecipeInterface, ThirdPartyUserType } from "supertokens-web-js/recipe/thirdparty";
+import { getRecipeImplementation as WebJSRecipeImplementation } from "supertokens-web-js/recipe/thirdparty/recipeImplementation";
 import { NormalisedAppInfo } from "../../types";
-import Querier from "../../querier";
 import {
-    appendQueryParamsToURL,
-    getSessionStorage,
-    setSessionStorage,
-    getQueryParams,
-    redirectWithFullPageReload,
-} from "../../utils";
+    RecipeOnHandleEventFunction,
+    RecipePostAPIHookFunction,
+    RecipePreAPIHookFunction,
+} from "../recipeModule/types";
 
-export default function getRecipeImplementation(recipeId: string, appInfo: NormalisedAppInfo): RecipeInterface {
-    const querier = new Querier(recipeId, appInfo);
+export default function getRecipeImplementation(recipeInput: {
+    recipeId: string;
+    appInfo: NormalisedAppInfo;
+    preAPIHook: RecipePreAPIHookFunction<PreAndPostAPIHookAction>;
+    postAPIHook: RecipePostAPIHookFunction<PreAndPostAPIHookAction>;
+    onHandleEvent: RecipeOnHandleEventFunction<OnHandleEventContext>;
+}): RecipeInterface {
+    const webJsImplementation = WebJSRecipeImplementation({
+        recipeId: recipeInput.recipeId,
+        appInfo: recipeInput.appInfo,
+        preAPIHook: recipeInput.preAPIHook,
+        postAPIHook: recipeInput.postAPIHook,
+    });
+
     return {
-        getOAuthAuthorisationURL: async function (input: {
-            thirdPartyId: string;
-            config: NormalisedConfig;
-        }): Promise<string> {
-            const response: AuthorisationURLAPIResponse = await querier.get(
-                "/authorisationurl",
-                {},
-                { thirdPartyId: input.thirdPartyId },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "GET_AUTHORISATION_URL",
-                    });
-                }
-            );
+        getAuthorisationURLFromBackend: async function (input): Promise<{
+            status: "OK";
+            url: string;
+            fetchResponse: Response;
+        }> {
+            const response = await webJsImplementation.getAuthorisationURLFromBackend.bind(this)({
+                providerId: input.providerId,
+                userContext: input.userContext,
+            });
 
-            return response.url;
+            return response;
         },
 
-        signInAndUp: async function (input: { thirdPartyId: string; config: NormalisedConfig }): Promise<
+        signInAndUp: async function (input): Promise<
             | {
                   status: "OK";
-                  user: User;
+                  user: ThirdPartyUserType;
                   createdNewUser: boolean;
+                  fetchResponse: Response;
               }
             | {
-                  status: "NO_EMAIL_GIVEN_BY_PROVIDER" | "GENERAL_ERROR";
-              }
-            | {
-                  status: "FIELD_ERROR";
-                  error: string;
+                  status: "NO_EMAIL_GIVEN_BY_PROVIDER";
+                  fetchResponse: Response;
               }
         > {
-            const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
-
-            const stateFromStorage = this.getOAuthState();
-
-            const code = getQueryParams("code");
-
-            const stateFromQueryParams = getQueryParams("state");
-
-            if (
-                getQueryParams("error") !== null ||
-                stateFromStorage === undefined ||
-                stateFromStorage.thirdPartyId !== input.thirdPartyId ||
-                stateFromStorage.state !== stateFromQueryParams ||
-                code === null ||
-                provider === undefined
-            ) {
-                return { status: "GENERAL_ERROR" };
-            }
-
-            const redirectURI = await provider.getRedirectURL();
-
-            const response: SignInAndUpAPIResponse = await querier.post(
-                "/signinup",
-                {
-                    body: JSON.stringify({
-                        code,
-                        thirdPartyId: input.thirdPartyId,
-                        redirectURI,
-                        clientId: provider.clientId,
-                    }),
-                },
-                (context) => {
-                    return input.config.preAPIHook({
-                        ...context,
-                        action: "THIRD_PARTY_SIGN_IN_UP",
-                    });
-                }
-            );
+            const response = await webJsImplementation.signInAndUp.bind(this)({
+                userContext: input.userContext,
+            });
 
             if (response.status === "OK") {
-                input.config.onHandleEvent({
+                recipeInput.onHandleEvent({
                     action: "SUCCESS",
                     isNewUser: response.createdNewUser,
                     user: response.user,
+                    userContext: input.userContext,
                 });
             }
 
             return response;
         },
-        getOAuthState: function (): StateObject | undefined {
-            try {
-                let stateFromStorage = getSessionStorage("supertokens-oauth-state");
-
-                if (stateFromStorage === null) {
-                    /**
-                     * JSON.parse casts any input to string. null gets cast as "null"
-                     * which is a valid JSON string representation of null. This
-                     * conversion is to avoid type errors during compilation as reading
-                     * from storage can result in a null result
-                     */
-                    stateFromStorage = "null";
-                }
-
-                const state = JSON.parse(stateFromStorage);
-                if (state === null) {
-                    return undefined;
-                }
-
-                if (Date.now() > state.expiresAt) {
-                    return undefined;
-                }
-
-                return state;
-            } catch (e) {
-                return undefined;
-            }
+        getStateAndOtherInfoFromStorage: function <CustomStateProperties>(input: {
+            userContext: any;
+        }): (StateObject & CustomStateProperties) | undefined {
+            return webJsImplementation.getStateAndOtherInfoFromStorage.bind(this)<CustomStateProperties>({
+                userContext: input.userContext,
+            });
         },
 
-        setOAuthState: function (state: StateObject) {
-            const expiresAt = Date.now() + 1000 * 60 * 10; // 10 minutes expiry.
-            const value = JSON.stringify({
-                redirectToPath: state.redirectToPath,
-                state: state.state,
-                thirdPartyId: state.thirdPartyId,
-                rid: state.rid,
-                expiresAt,
+        setStateAndOtherInfoToStorage: function (input): Promise<void> {
+            return webJsImplementation.setStateAndOtherInfoToStorage.bind(this)<{
+                rid?: string;
+                redirectToPath?: string;
+            }>({
+                state: {
+                    ...input.state,
+                    rid: recipeInput.recipeId,
+                    redirectToPath: getRedirectToPathFromURL(),
+                },
+                userContext: input.userContext,
             });
-            setSessionStorage("supertokens-oauth-state", value);
         },
 
-        redirectToThirdPartyLogin: async function (input: {
-            thirdPartyId: string;
-            config: NormalisedConfig;
-            state?: StateObject;
-        }): Promise<{ status: "OK" | "ERROR" }> {
-            const provider = input.config.signInAndUpFeature.providers.find((p) => p.id === input.thirdPartyId);
-            if (provider === undefined) {
-                return { status: "ERROR" };
-            }
-
-            // 1. Generate state.
-            const state =
-                input.state === undefined || input.state.state === undefined
-                    ? provider.generateState()
-                    : input.state.state;
-
-            // 2. Store state in Session Storage.
-            this.setOAuthState({
-                ...input.state,
-                rid:
-                    input.state === undefined || input.state.rid === undefined
-                        ? input.config.recipeId
-                        : input.state.rid,
-                thirdPartyId:
-                    input.state === undefined || input.state.thirdPartyId === undefined
-                        ? input.thirdPartyId
-                        : input.state.thirdPartyId,
-                state,
+        getAuthorisationURLWithQueryParamsAndSetState: async function (input) {
+            return webJsImplementation.getAuthorisationURLWithQueryParamsAndSetState.bind(this)({
+                ...input,
             });
+        },
 
-            // 3. Get Authorisation URL.
-            const url = await this.getOAuthAuthorisationURL({
-                thirdPartyId: provider.id,
-                config: input.config,
+        getAuthStateFromURL: function (input): string {
+            return webJsImplementation.getAuthStateFromURL.bind(this)(input);
+        },
+
+        generateStateToSendToOAuthProvider: function (input) {
+            return webJsImplementation.generateStateToSendToOAuthProvider.bind(this)({
+                ...input,
             });
+        },
+        verifyAndGetStateOrThrowError: function (input) {
+            return webJsImplementation.verifyAndGetStateOrThrowError.bind(this)({
+                stateFromAuthProvider: input.stateFromAuthProvider,
+                stateObjectFromStorage: input.stateObjectFromStorage,
+                userContext: input.userContext,
+            });
+        },
 
-            // for some third party providers, the redirect_uri is set on the backend itself (for example in the case of apple). In these cases, we don't set them here...
-            const urlObj = new URL(url);
-            const alreadyContainsRedirectURI = urlObj.searchParams.get("redirect_uri") !== null;
+        getAuthCodeFromURL: function (input): string {
+            return webJsImplementation.getAuthCodeFromURL.bind(this)({
+                userContext: input.userContext,
+            });
+        },
 
-            const urlWithState = alreadyContainsRedirectURI
-                ? appendQueryParamsToURL(url, {
-                      state,
-                  })
-                : appendQueryParamsToURL(url, {
-                      state,
-                      redirect_uri: provider.getRedirectURL(),
-                  });
-
-            // 4. Redirect to provider authorisation URL.
-            redirectWithFullPageReload(urlWithState);
-
-            return { status: "OK" };
+        getAuthErrorFromURL: function (input): string | undefined {
+            return webJsImplementation.getAuthErrorFromURL.bind(this)({
+                userContext: input.userContext,
+            });
         },
     };
 }
-type SignInAndUpAPIResponse =
-    | {
-          status: "OK";
-          createdNewUser: boolean;
-          user: User;
-      }
-    | {
-          status: "NO_EMAIL_GIVEN_BY_PROVIDER";
-      }
-    | {
-          status: "FIELD_ERROR";
-          error: string;
-      };
-
-type AuthorisationURLAPIResponse = {
-    status: "OK";
-    url: string;
-};

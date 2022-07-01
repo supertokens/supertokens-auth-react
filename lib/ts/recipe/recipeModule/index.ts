@@ -21,7 +21,12 @@ import { NormalisedConfig } from "./types";
 /*
  * Class.
  */
-export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T, S, R>> {
+export default abstract class RecipeModule<
+    GetRedirectionURLContextType,
+    Action,
+    OnHandleEventContextType,
+    N extends NormalisedConfig<GetRedirectionURLContextType, Action, OnHandleEventContextType>
+> {
     config: N;
 
     /*
@@ -31,7 +36,11 @@ export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T
         this.config = config;
     }
 
-    redirect = async (context: T, history?: any, queryParams?: Record<string, string>): Promise<void> => {
+    redirect = async (
+        context: GetRedirectionURLContextType,
+        history?: any,
+        queryParams?: Record<string, string>
+    ): Promise<void> => {
         let redirectUrl = await this.getRedirectUrl(context);
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
 
@@ -61,7 +70,7 @@ export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    getRedirectUrl = async (context: T): Promise<string> => {
+    getRedirectUrl = async (context: GetRedirectionURLContextType): Promise<string> => {
         // If getRedirectionURL provided by user.
         const redirectUrl = await this.config.getRedirectionURL(context);
         if (redirectUrl !== undefined) {
@@ -73,7 +82,7 @@ export default abstract class RecipeModule<T, S, R, N extends NormalisedConfig<T
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async getDefaultRedirectionURL(_: T): Promise<string> {
+    async getDefaultRedirectionURL(_: GetRedirectionURLContextType): Promise<string> {
         throw new Error("getDefaultRedirectionURL is not implemented.");
     }
 

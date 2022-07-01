@@ -16,8 +16,8 @@
 import { useEffect, useRef } from "react";
 import { DEFAULT_API_BASE_PATH, DEFAULT_WEBSITE_BASE_PATH, RECIPE_ID_QUERY_PARAM } from "./constants";
 import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
-import NormalisedURLDomain from "./normalisedURLDomain";
-import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
@@ -237,32 +237,24 @@ export function isIE(): boolean {
     return WindowHandlerReference.getReferenceOrThrow().windowHandler.getDocument().documentMode !== undefined;
 }
 
-export function setSessionStorage(key: string, value: string): void {
-    WindowHandlerReference.getReferenceOrThrow().windowHandler.getSessionStorage().setItem(key, value);
-}
-
-export function getSessionStorage(key: string): string | null {
-    return WindowHandlerReference.getReferenceOrThrow().windowHandler.getSessionStorage().getItem(key);
-}
-
 export function getOriginOfPage(): NormalisedURLDomain {
     return new NormalisedURLDomain(WindowHandlerReference.getReferenceOrThrow().windowHandler.location.getOrigin());
 }
 
-export function getLocalStorage(key: string): string | null {
-    const res = WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().getItem(key);
+export async function getLocalStorage(key: string): Promise<string | null> {
+    const res = WindowHandlerReference.getReferenceOrThrow().windowHandler.localStorage.getItem(key);
     if (res === null || res === undefined) {
         return null;
     }
     return res;
 }
 
-export function setLocalStorage(key: string, value: string): void {
-    WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().setItem(key, value);
+export async function setLocalStorage(key: string, value: string): Promise<void> {
+    await WindowHandlerReference.getReferenceOrThrow().windowHandler.localStorage.setItem(key, value);
 }
 
-export function removeFromLocalStorage(key: string): void {
-    WindowHandlerReference.getReferenceOrThrow().windowHandler.getLocalStorage().removeItem(key);
+export async function removeFromLocalStorage(key: string): Promise<void> {
+    await WindowHandlerReference.getReferenceOrThrow().windowHandler.localStorage.removeItem(key);
 }
 
 export function mergeObjects<T>(obj1: T, obj2: T): T {
@@ -337,8 +329,8 @@ export function getDefaultCookieScope(): string | undefined {
     }
 }
 
-export function getCookieValue(name: string): string | null {
-    const value = "; " + CookieHandlerReference.getReferenceOrThrow().cookieHandler.getCookieSync();
+export async function getCookieValue(name: string): Promise<string | null> {
+    const value = "; " + (await CookieHandlerReference.getReferenceOrThrow().cookieHandler.getCookie());
     const parts = value.split("; " + name + "=");
     if (parts.length >= 2) {
         const last = parts.pop();
@@ -354,7 +346,11 @@ export function getCookieValue(name: string): string | null {
 }
 
 // undefined value will remove the cookie
-export function setFrontendCookie(name: string, value: string | undefined, scope: string | undefined): void {
+export async function setFrontendCookie(
+    name: string,
+    value: string | undefined,
+    scope: string | undefined
+): Promise<void> {
     let expires: string | undefined = "Thu, 01 Jan 1970 00:00:01 GMT";
     let cookieVal = "";
     if (value !== undefined) {
@@ -369,31 +365,47 @@ export function setFrontendCookie(name: string, value: string | undefined, scope
         // since some browsers ignore cookies with domain set to localhost
         // see https://github.com/supertokens/supertokens-website/issues/25
         if (expires !== undefined) {
-            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            await CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookie(
                 `${name}=${cookieVal};expires=${expires};path=/;samesite=lax`
             );
         } else {
-            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            await CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookie(
                 `${name}=${cookieVal};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`
             );
         }
     } else {
         if (expires !== undefined) {
-            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            await CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookie(
                 `${name}=${cookieVal};expires=${expires};domain=${scope};path=/;samesite=lax`
             );
         } else {
-            CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookieSync(
+            await CookieHandlerReference.getReferenceOrThrow().cookieHandler.setCookie(
                 `${name}=${cookieVal};domain=${scope};expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;samesite=lax`
             );
         }
     }
 }
 
+export function getNormalisedUserContext(userContext?: any): any {
+    return userContext === undefined ? {} : userContext;
+}
+
+/**
+ * This function handles calling APIs that should only be called once during mount (mostly on mount of a route/feature component).
+ * It's split into multiple callbacks (fetch + handleResponse/handleError) because we expect fetch to take longer and
+ * and the component may be unmounted during the first fetch, in which case we want to avoid updating state/redirecting.
+ * This is especially relevant for development in strict mode with React 18 (and in the future for concurrent rendering).
+ *
+ * @param fetch This is a callback that is only called once on mount. Mostly it's for consuming tokens/doing one time only API calls
+ * @param handleResponse This is called with the result of the first (fetch) call if it succeeds.
+ * @param handleError This is called with the error of the first (fetch) call if it rejects.
+ * @param startLoading Will start the whole process if this is set to true (or omitted). Mostly used to wait for session loading.
+ */
 export const useOnMountAPICall = <T>(
     fetch: () => Promise<T>,
     handleResponse: (consumeResp: T) => Promise<void>,
-    handleError?: (err: unknown, consumeResp: T | undefined) => void
+    handleError?: (err: unknown, consumeResp: T | undefined) => void,
+    startLoading = true
 ) => {
     const consumeReq = useRef<Promise<T>>();
 
@@ -416,11 +428,14 @@ export const useOnMountAPICall = <T>(
                 }
             }
         };
-        const ctrl = new AbortController();
+        if (startLoading) {
+            const ctrl = new AbortController();
 
-        void effect(ctrl.signal);
-        return () => {
-            ctrl.abort();
-        };
-    }, [consumeReq, fetch, handleResponse, handleError]);
+            void effect(ctrl.signal);
+            return () => {
+                ctrl.abort();
+            };
+        }
+        return;
+    }, [consumeReq, fetch, handleResponse, handleError, startLoading]);
 };

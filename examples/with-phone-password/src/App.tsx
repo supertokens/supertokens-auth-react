@@ -52,7 +52,7 @@ SuperTokens.init({
             contactMethod: "PHONE",
             signInUpFeature: {
                 // this will not show the passwordless UI unless we render it ourselves.
-                disableDefaultImplementation: true,
+                disableDefaultUI: true,
             },
             override: {
                 components: {
@@ -77,7 +77,7 @@ SuperTokens.init({
                                     // This will send the user an OTP and also display the enter OTP screen.
                                     await props.recipeImplementation.createCode({
                                         phoneNumber: phoneNumber,
-                                        config: props.config,
+                                        userContext: {},
                                     });
                                 })
                                 .catch((err) => {
@@ -125,11 +125,15 @@ SuperTokens.init({
                 functions: (oI) => {
                     return {
                         ...oI,
-                        doesSessionExist: async function (config) {
-                            let sessionExists = await oI.doesSessionExist(config);
+                        doesSessionExist: async function (input) {
+                            let sessionExists = await oI.doesSessionExist(input);
                             if (!sessionExists) {
                                 // none of the login challenges are complete. So we do not give access
                                 return false;
+                            }
+
+                            if (input.userContext.forceOriginalCheck === true) {
+                                return true;
                             }
 
                             if (window.location.pathname.startsWith("/auth")) {

@@ -16,9 +16,9 @@
 /*
  * Imports.
  */
-import * as React from "react";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
+import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 import { getStyles } from "../../../../emailpassword/components/themes/styles/styles";
 import { ThemeBase } from "../../../../emailpassword/components/themes/themeBase";
 import { EmailVerificationThemeProps } from "../../../types";
@@ -65,9 +65,11 @@ function EmailVerificationThemeWrapper(props: EmailVerificationThemeProps): JSX.
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     return (
-        <ThemeBase loadDefaultFont={!hasFont}>
-            <EmailVerificationTheme {...props} />
-        </ThemeBase>
+        <UserContextWrapper userContext={props.userContext}>
+            <ThemeBase loadDefaultFont={!hasFont}>
+                <EmailVerificationTheme {...props} />
+            </ThemeBase>
+        </UserContextWrapper>
     );
 }
 

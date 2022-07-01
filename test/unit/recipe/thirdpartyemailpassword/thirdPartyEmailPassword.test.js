@@ -52,13 +52,11 @@ describe("ThirdPartyEmailPassword", function () {
             },
             recipeList: [ThirdPartyEmailPassword.init({})],
         });
-        assert(
-            ThirdPartyEmailPasswordRaw.getInstanceOrThrow().emailPasswordRecipe !== undefined &&
-                ThirdPartyEmailPasswordRaw.getInstanceOrThrow().thirdPartyRecipe === undefined
-        );
+        assert(ThirdPartyEmailPasswordRaw.getInstanceOrThrow().emailPasswordRecipe !== undefined);
+        assert(ThirdPartyEmailPasswordRaw.getInstanceOrThrow().thirdPartyRecipe === undefined);
     });
 
-    it("Initializing without empty third party providers", async function () {
+    it("Initializing with empty third party providers", async function () {
         SuperTokens.init({
             appInfo: {
                 appName: "SuperTokens",
@@ -73,10 +71,8 @@ describe("ThirdPartyEmailPassword", function () {
                 }),
             ],
         });
-        assert(
-            ThirdPartyEmailPasswordRaw.getInstanceOrThrow().emailPasswordRecipe !== undefined &&
-                ThirdPartyEmailPasswordRaw.getInstanceOrThrow().thirdPartyRecipe === undefined
-        );
+        assert(ThirdPartyEmailPasswordRaw.getInstanceOrThrow().emailPasswordRecipe !== undefined);
+        assert(ThirdPartyEmailPasswordRaw.getInstanceOrThrow().thirdPartyRecipe === undefined);
     });
 
     it("Initializing with disable email password", async function () {
@@ -95,10 +91,8 @@ describe("ThirdPartyEmailPassword", function () {
                 }),
             ],
         });
-        assert(
-            ThirdPartyEmailPasswordRaw.getInstanceOrThrow().emailPasswordRecipe === undefined &&
-                ThirdPartyEmailPasswordRaw.getInstanceOrThrow().thirdPartyRecipe !== undefined
-        );
+        assert(ThirdPartyEmailPasswordRaw.getInstanceOrThrow().emailPasswordRecipe === undefined);
+        assert(ThirdPartyEmailPasswordRaw.getInstanceOrThrow().thirdPartyRecipe !== undefined);
     });
 
     it("Initializing with disable email password and no third party - should throw an error", async function () {

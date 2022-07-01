@@ -26,7 +26,7 @@ import {
     normaliseCookieScopeOrThrowError,
     normaliseInputAppInfoOrThrowError,
 } from "./utils";
-import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { getSuperTokensRoutesForReactRouterDom } from "./components/superTokensRoute";
 import { getSuperTokensRoutesForReactRouterDomV6 } from "./components/superTokensRouteV6";
 import { BaseFeatureComponentMap } from "./types";
@@ -182,6 +182,10 @@ export default class SuperTokens {
         return getSuperTokensRoutesForReactRouterDom(SuperTokens.getInstanceOrThrow());
     }
 
+    static getReactRouterDomWithCustomHistory(): { router: { Route: any }; useHistoryCustom: () => any } | undefined {
+        return this.instance !== undefined ? this.instance.getReactRouterDomWithCustomHistory() : undefined;
+    }
+
     /*
      * Instance Methods.
      */
@@ -257,10 +261,10 @@ export default class SuperTokens {
         return SuperTokens.reactRouterDom;
     };
 
-    changeLanguage(lang: string): void {
-        saveCurrentLanguage(lang, this.languageTranslations.currentLanguageCookieScope);
+    changeLanguage = async (lang: string): Promise<void> => {
+        await saveCurrentLanguage(lang, this.languageTranslations.currentLanguageCookieScope);
         this.languageTranslations.translationEventSource.emit("LanguageChange", lang);
-    }
+    };
 
     loadTranslation(store: TranslationStore): void {
         this.languageTranslations.translationEventSource.emit("TranslationLoaded", store);

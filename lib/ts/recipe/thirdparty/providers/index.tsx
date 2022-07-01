@@ -13,8 +13,7 @@
  * under the License.
  */
 
-import React from "react";
-import NormalisedURLPath from "../../../normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import SuperTokens from "../../../superTokens";
 import ProviderButton from "../components/library/providerButton";
 import { ProviderConfig } from "./types";

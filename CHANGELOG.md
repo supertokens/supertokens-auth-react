@@ -7,10 +7,381 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Added
+
+-   Added `SuperTokensWrapper` intended to wrap around whole applications, providing a session context
+
+### Changed
+
+-   Made auth wrappers SSR compatible
+
+### Breaking changes
+
+-   Added `loading` to the session context. Please check if the session context is still loading before using other props. `loading` is always false inside components wrapped by `AuthWrapper`s with `requireAuth=true`
+
+### Migration
+
+Following is an example of how your components may have to change. If you had components like this:
+
+```tsx
+// .... other imports
+import SuperTokens, { getSuperTokensRoutesForReactRouterDom, SuperTokensWrapper } from "supertokens-auth-react";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { ThirdPartyEmailPasswordAuth } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+
+function Component() {
+    const sessionContext = useSessionContext();
+
+    return <div className="fill">{sessionContext.doesSessionExist ? "logged in" : "logged out"}</div>;
+}
+
+SuperTokens.init({
+    /* config... */
+});
+
+function App() {
+    return (
+        <div className="App">
+            <Router>
+                <div className="fill">
+                    <Routes>
+                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                        <Route
+                            path="/some-path"
+                            element={
+                                <ThirdPartyEmailPasswordAuth requireAuth={true}>
+                                    {/*
+                                        In this case, Component will always display logged in.
+                                        If doesSessionExist is false after the session is loaded, the user is redirected to the login screen
+                                    */}
+                                    <Component />
+                                </ThirdPartyEmailPasswordAuth>
+                            }
+                        />
+                        <Route
+                            path="/"
+                            element={
+                                <ThirdPartyEmailPasswordAuth requireAuth={false}>
+                                    <Component />
+                                </ThirdPartyEmailPasswordAuth>
+                            }
+                        />
+                    </Routes>
+                </div>
+            </Router>
+        </div>
+    );
+}
+```
+
+It'd look like this after the update:
+
+```tsx
+// .... other imports
+import SuperTokens, { getSuperTokensRoutesForReactRouterDom, SuperTokensWrapper } from "supertokens-auth-react";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { ThirdPartyEmailPasswordAuth } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+
+function Component() {
+    const sessionContext = useSessionContext();
+
+    if (sessionContext.loading === true) {
+        // You could display a loading screen here, but session context loading is very fast
+        // so returning null is better in most cases to avoid content popping in and out
+        return null;
+    }
+
+    return <div className="fill">{sessionContext.doesSessionExist ? "logged in" : "logged out"}</div>;
+}
+
+SuperTokens.init({
+    /* config is unchanged */
+});
+
+function App() {
+    return (
+        <div className="App">
+            <SuperTokensWrapper>
+                <Router>
+                    <div className="fill">
+                        <Routes>
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                            <Route
+                                path="/some-path"
+                                element={
+                                    <ThirdPartyEmailPasswordAuth requireAuth={true}>
+                                        {/* 
+                                            In this case, Component will never hit the loading === true branch.
+                                            It will only be rendered if `loading === false && doesSessionExist === true`
+                                            If doesSessionExist is false after the session is loaded, the user is redirected to the login screen
+                                        */}
+                                        <Component />
+                                    </ThirdPartyEmailPasswordAuth>
+                                }
+                            />
+                            <Route path="/" element={<Component />} />
+                        </Routes>
+                    </div>
+                </Router>
+            </SuperTokensWrapper>
+        </div>
+    );
+}
+```
+
+## [0.23.1] - 2022-06-25
+
+-   [CI]: Changes dependency for node SDK in integration tests so that tests pass when using node 14
+
+## [0.23.0] - 2022-06-24
+
+### Changed
+
+-   Showing a confirmation button before consuming a passwordless link if there is no stored login attempt info or if it doesn't match the link
+-   Showing a confirmation button before consuming an email verification token if there is no active session to prevent mail scanners validating the email address
+-   Adds an example app with Email Verification with OTP
+-   Changes in the Reset Password Email Sent success screen in `emailpassword` and `thirdpartyemailpassword` recipes
+    -   Updated text of the success message displayed
+    -   Updated text of the 'Resend' button which redirects user back to Reset Password form
+-   Update supertokens-web-js dependency version
+-   Added new tests for checking general error handling
+-   Refactors example apps to not import from build directories
+-   fixes to angular example app
+-   Not importing helpers from `tslib`
+
+### Added
+
+-   The reset password form has a back button which takes the user back to the 'Sign in' form in `emailpassword` and `thirdpartyemailpassword` recipes.
+-   Back button in the reset password email sent success screen that redirects user to the 'Sign In' form in `emailpassword` and `thirdpartyemailpassword` recipe.
+-   Support for FDI 1.14
+
+### Added
+
+-   The reset password form has a back button which takes the user back to the 'Sign in' form in `emailpassword` and `thirdpartyemailpassword` recipes.
+
+### Breaking changes
+
+-   Removes `setCookieSync` and `getCookieSync` from the interface for `cookieHandler` when calling `SuperTokens.init`
+
+## [0.22.4] - 2022-06-20
+
+### Added
+
+-   Exposes more functions from each recipe.
+-   Updates the dependency version of supertokens-auth-react for example apps
+
+## [0.22.3] - 2022-06-14
+
+### Build changes
+
+-   Updated typescript to latest
+-   Using tsconfig to set jsx import source instead of pragma comments
+-   Updated react-shadow
+
+## [0.22.2] - 2022-06-11
+
+### Changes
+
+-   Clearing errors when switching between sign-in and up
+
+### Build changes
+
+-   Updated typescript to latest
+-   Using tsconfig to set jsx import source instead of pragma comments
+-   Updated react-shadow
+
+## [0.22.1] - 2022-06-11
+
+-   Updates the example app for ThirdPartyEmailPassword + Passwordless login with SuperTokens
+-   Adds new tests for testing resend code button in passwordless recipe
+
+### CI changes
+
+-   Only running React 16 tests on CircleCI (when an explicit envvar is set)
+
+## [0.22.0] - 2022-06-03
+
 -   Adds a SuperTokens + Supabase example app
 -   Adds an example app with svelte
 -   Adds phone number and password demo app
 -   Adds an example app with Angular + React
+
+### CI changes
+
+-   Now using parallel builds
+-   Screenshotting failed tests
+-   Exporting test results
+
+### Changed
+
+-   The return type of `user` in the following functions to include information returned by the third party provider
+    -   `signInAndUp` function for ThirdParty recipe
+    -   `thirdPartySignInAndUp` function for the ThirdPartyEmailPassword recipe
+    -   `thirdPartySignInAndUp` function for the ThirdPartyPasswordless recipe
+
+### Added
+
+-   All recipe functions now accept an additional parameter `userContext`, learn more about this by visiting the advanced cusotmisations section in the documentation
+-   All UI components exported by the SDK now accept an additional `userContext` prop, learn more about this by visiting the advanced cusotmisations section in the documentation
+-   Exports more recipe functions for emailverification recipe to allow them to be called without using the pre-built UI. Newly exported functions: `verifyEmail`, `sendVerificationEmail`
+-   Exports all emailverification recipe functions from emailpassword, thirdparty, thirdpartyemailpassword and thirdpartypasswordless recipes.
+-   Exports more recipe functions for emailpassword recipe to allow them to be called without using the pre-built UI. Newly exported functions: `submitNewPassword`, `sendPasswordResetEmail`, `signUp`, `signIn`, `doesEmailExist`.
+-   Exports more recipe functions for thirdparty recipe to allow them to be called without using the pre-built UI. Newly exported functions: `getAuthorisationURLWithQueryParamsAndSetState`, `signInAndUp`.
+-   Exports emailpassword and thidparty recipe functions from thirdpartyemailpassword recipe to allow them to be called without using the pre-built UI. Also exports `redirectToThirdPartyLogin` from thirdpartyemailpassword recipe.
+-   Exports more recipe functions for passwordless recipe to allow them to be called without using the pre-built UI. Newly exported functions: `createCode`, `resendCode`, `consumeCode`, `doesEmailExist`, `doesPhoneNumberExist`
+-   Exports more recipe functions for thirdpartypasswordless recipe to allow them to be called without using the pre-built UI. Newly exported functions: `redirectToThirdPartyLogin`, `thirdPartySignInAndUp`, `createCode`, `resendCode`, `consumeCode`, `doesPasswordlessUserEmailExist`, `doesPasswordlessUserPhoneNumberExist`
+-   Changes recipe functions for email verification recipe **(this is breaking change if you use the override feature)**:
+    -   `verifyEmail` -> No longer accepts `token` as a parameter, instead it calls `getEmailVerificationTokenFromURL`
+    -   `getEmailVerificationTokenFromURL` -> NEW FUNCTION
+-   Changes recipe functions for email password recipe **(this is breaking change if you use the override feature)**:
+    -   `submitNewPassword` -> No longer accepts `token` as a parameter, instead calls `getResetPasswordTokenFromURL`
+    -   `getResetPasswordTokenFromURL` -> NEW FUNCTION
+-   Changes recipe functions for third party recipe (this is breaking change if you use the override feature):
+    -   `getOAuthState` -> RENAMED TO `getStateAndOtherInfoFromStorage`
+    -   `setOAuthState` -> RENAMED TO `setStateAndOtherInfoToStorage`
+    -   `getOAuthAuthorisationURL` -> RENAMED TO `getAuthorisationURLFromBackend`
+    -   `getAuthorisationURLWithQueryParamsAndSetState` -> NEW FUNCTION
+    -   `generateStateToSendToOAuthProvider` -> NEW FUNCTION
+    -   `verifyAndGetStateOrThrowError` -> NEW FUNCTION
+    -   `getAuthCodeFromURL` -> NEW FUNCTION
+    -   `getAuthErrorFromURL` -> NEW FUNCTION
+    -   `getAuthStateFromURL` -> NEW FUNCTION
+    -   `redirectToThirdPartyLogin` -> REMOVED (use `getAuthorisationURLWithQueryParamsAndSetState` instead). NOTE: If you call this function yourself the SDK will no longer auto-redirect, you will need to redirect to the result url manually.
+-   Changes recipe funtions for third party email password recipe **(this is breaking change if you use the override feature)**:
+    -   Changes for email password functions explained above
+    -   Changes for third party functions explained above
+    -   `signInAndUp` -> REMOVED, this function has been split into 3 new functions for simplicity (explained below)
+    -   `emailPasswordSignUp` -> NEW FUNCTION
+    -   `emailPasswordSignIn` -> NEW FUNCTION
+    -   `thirdPartySignInAndUp` -> NEW FUNCTION
+-   Changes recipe functions for passwordless recipe **(this is breaking change if you use the override feature)**:
+    -   `getLinkCodeFromURL` -> NEW FUNCTION
+    -   `getPreAuthSessionIdFromURL` -> NEW FUNCTION
+-   Changes recipe functions for thirdpartpasswordless recipe : **(this is breaking change if you use the override feature)**:
+    -   Changes for third party functions explained above
+    -   Changes for passwordless recipe explained above
+    -   `clearLoginAttemptInfo` -> RENAMED TO `clearPasswordlessLoginAttemptInfo`
+-   Session recipe now uses supertokens-web-js internally (previously used supertokens-website)
+-   All recipes now include a `postAPIHook` configuration parameter that can be used to respond to network actions.
+-   General error handling for email verification components
+
+### Breaking changes
+
+1.  Updates function return types for all recipes to allow for custom API response handling when calling recipe functions manually
+2.  All recipe functions now return an object which contains a `status` field along with other properties (instead of returning a boolean directly for example), to make function return types more consistent across recipes
+3.  Updates signatures for functions exported from recipe/index to accept objects instead of params directly, to make function signatures consistent across all recipes
+4.  Recipe config parameter `disableDefaultImplementation` has been renamed to `disableDefaultUI` to make the name more accurate to the effect the property has. This is applicable only if you are using the SDK with custom UI and disabling the pre-built UI that SuperTokens provides.
+
+### Migration
+
+1. Function return types now include a `fetchResponse` field for any function that makes a network request. If you override functions and return a custom object you will need to update your code to include a `fetchResponse` field that should be a clone of the original response object ([Refer to this page](https://developer.mozilla.org/en-US/docs/Web/API/Response/clone))
+
+For example if your override looks like this:
+
+```ts
+import SuperTokens from "supertokens-auth-react";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "..."
+    },
+    recipeList: [
+        EmailPassword.init({
+            override: {
+                functions: (originalImplementation) => {
+                    return {
+                        ...originalImplementation,
+                        signIn: async function (input) {
+                            let response = makeNetworkRequest();
+                            // TODO: some custom logic
+
+                            return {
+                                status: "OK",
+                                user: {...},
+                            };
+                        },
+                    }
+                },
+            }
+        })
+    ]
+});
+```
+
+You will need to modify the function like this:
+
+```ts
+...
+signIn: async function (input) {
+    let response = makeNetworkRequest();
+    // TODO: some custom logic
+
+    return {
+        status: "OK",
+        user: {...},
+        fetchResponse: response.clone()
+    };
+},
+...
+```
+
+NOTE: If you use the originalImplementation in your overrides, you can access `fetchResponse` from the returned object
+
+```ts
+import SuperTokens from "supertokens-auth-react";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+
+SuperTokens.init({
+    appInfo: {
+        apiDomain: "...",
+        appName: "...",
+        websiteDomain: "..."
+    },
+    recipeList: [
+        EmailPassword.init({
+            override: {
+                functions: (originalImplementation) => {
+                    return {
+                        ...originalImplementation,
+                        signIn: async function (input) {
+                            let response = await originalImplementation.signIn(input);
+                            // TODO: some custom logic
+
+                            return {
+                                status: "OK",
+                                user: {...},
+                                fetchResponse: response.fetchResponse;
+                            };
+
+                            // OR return the default implementation
+                            // return await originalImplementation.signIn(input)
+                        },
+                    }
+                },
+            }
+        })
+    ]
+});
+```
+
+2. All recipe functions now return an object instead of returning properties directly. For example:
+
+```ts
+async function isEmailVerified(input): Promise<boolean> {...}
+```
+
+Now returns
+
+```ts
+async function isEmailVerified(input): Promise<{
+    status: "OK",
+    isVerified: boolean,
+    fetchResponse: Response, // Refer to point above
+}> {...}
+```
 
 ## [0.21.3] - 2022-05-14
 

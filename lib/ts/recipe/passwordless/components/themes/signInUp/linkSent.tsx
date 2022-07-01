@@ -16,8 +16,6 @@
  * Imports.
  */
 
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import StyleContext from "../../../../../styles/styleContext";
@@ -29,10 +27,13 @@ import { ResendButton } from "./resendButton";
 import SMSLargeIcon from "../../../../../components/assets/smsLargeIcon";
 import { useTranslation } from "../../../../../translation/translationContext";
 import GeneralError from "../../../../emailpassword/components/library/generalError";
+import { useUserContext } from "../../../../../usercontext";
+import STGeneralError from "supertokens-web-js/utils/error";
 
 const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
+    const userContext = useUserContext();
     const [status, setStatus] = useState(props.error !== undefined ? "ERROR" : "READY");
 
     // Any because node types are included here, messing with return type of setTimeout
@@ -50,13 +51,24 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
     const resendEmail = useCallback(async () => {
         try {
             props.clearError();
-            const response = await props.recipeImplementation.resendCode({
-                deviceId: props.loginAttemptInfo.deviceId,
-                preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
-                config: props.config,
-            });
+            let response;
+            let generalError: STGeneralError | undefined;
 
-            if (response.status === "OK") {
+            try {
+                response = await props.recipeImplementation.resendCode({
+                    deviceId: props.loginAttemptInfo.deviceId,
+                    preAuthSessionId: props.loginAttemptInfo.preAuthSessionId,
+                    userContext,
+                });
+            } catch (e) {
+                if (STGeneralError.isThisError(e)) {
+                    generalError = e;
+                } else {
+                    throw e;
+                }
+            }
+
+            if (response !== undefined && response.status === "OK") {
                 setStatus("LINK_RESENT");
                 resendNotifTimeout.current = setTimeout(() => {
                     setStatus((status) => (status === "LINK_RESENT" ? "READY" : status));
@@ -64,8 +76,9 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                 }, 2000);
             } else {
                 setStatus("ERROR");
-                if (response.status === "GENERAL_ERROR") {
-                    props.onError(response.message);
+
+                if (generalError !== undefined) {
+                    props.onError(generalError.message);
                 }
             }
         } catch (e) {
@@ -110,7 +123,11 @@ const PasswordlessLinkSent: React.FC<LinkSentThemeProps> = (props) => {
                     <div
                         data-supertokens="secondaryText secondaryLinkWithLeftArrow"
                         css={[styles.secondaryText, styles.secondaryLinkWithLeftArrow]}
-                        onClick={() => props.recipeImplementation.clearLoginAttemptInfo()}>
+                        onClick={() =>
+                            props.recipeImplementation.clearLoginAttemptInfo({
+                                userContext,
+                            })
+                        }>
                         <ArrowLeftIcon color={styles.palette.colors.textPrimary} />
                         {props.loginAttemptInfo.contactMethod === "EMAIL"
                             ? t("PWLESS_SIGN_IN_UP_CHANGE_CONTACT_INFO_EMAIL")

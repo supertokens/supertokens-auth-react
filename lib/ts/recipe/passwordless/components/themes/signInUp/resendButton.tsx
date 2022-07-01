@@ -16,8 +16,6 @@
 /*
  * Imports.
  */
-/** @jsx jsx */
-import { jsx } from "@emotion/react";
 
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import StyleContext from "../../../../../styles/styleContext";
@@ -40,7 +38,7 @@ export const ResendButton = withOverride(
         const styles = useContext(StyleContext);
 
         const getTimeLeft = useCallback(() => {
-            const timeLeft = loginAttemptInfo.lastResend + resendEmailOrSMSGapInSeconds * 1000 - new Date().getTime();
+            const timeLeft = loginAttemptInfo.lastResend + resendEmailOrSMSGapInSeconds * 1000 - Date.now();
             return timeLeft < 0 ? undefined : Math.ceil(timeLeft / 1000);
         }, [loginAttemptInfo, resendEmailOrSMSGapInSeconds]);
 

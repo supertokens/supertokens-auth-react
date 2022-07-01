@@ -147,6 +147,11 @@ export async function submitForm(page) {
     await submitButton.click();
 }
 
+export async function clickOnPasswordlessResendButton(page) {
+    const resendButton = await waitForSTElement(page, "[data-supertokens='link linkButton resendCodeBtn']");
+    resendButton.click();
+}
+
 export async function getLogoutButton(page) {
     return await page.waitForSelector(".logoutButton");
 }
@@ -303,6 +308,17 @@ export async function sendVerifyEmail(page) {
     );
 }
 
+export async function logoutFromEmailVerification(page) {
+    return await page.evaluate(
+        ({ ST_ROOT_SELECTOR }) =>
+            document
+                .querySelector(ST_ROOT_SELECTOR)
+                .shadowRoot.querySelector("[data-supertokens~='secondaryLinkWithArrow']")
+                .click(),
+        { ST_ROOT_SELECTOR }
+    );
+}
+
 export async function clickLinkWithRightArrow(page) {
     return await page.evaluate(
         ({ ST_ROOT_SELECTOR }) =>
@@ -344,6 +360,10 @@ export async function getVerificationEmailTitle(page) {
 
 export async function getVerificationEmailErrorTitle(page) {
     return getTextByDataSupertokens(page, "error");
+}
+
+export async function getVerificationEmailErrorMessage(page) {
+    return getTextByDataSupertokens(page, "primaryText");
 }
 
 export async function setInputValues(page, fields) {
@@ -480,22 +500,29 @@ export async function assertProviders(page) {
 export async function clickOnProviderButton(page, provider) {
     await waitForSTElement(page);
     return await Promise.all([
-        page.evaluate(
-            ({ ST_ROOT_SELECTOR, provider }) => {
-                Array.from(
-                    document
-                        .querySelector(ST_ROOT_SELECTOR)
-                        .shadowRoot.querySelectorAll("[data-supertokens~='providerButton']")
-                )
-                    .find((button) => {
-                        return button.innerText === `Continue with ${provider}`;
-                    })
-                    .click();
-            },
-            { ST_ROOT_SELECTOR, provider }
-        ),
+        clickOnProviderButtonWithoutWaiting(page, provider),
         page.waitForNavigation({ waitUntil: "networkidle0" }),
     ]);
+}
+
+// Clicks on the provider button but does not wait for navigation
+// This is useful if you want to listen to network requests after clicking
+export async function clickOnProviderButtonWithoutWaiting(page, provider) {
+    await waitForSTElement(page);
+    return page.evaluate(
+        ({ ST_ROOT_SELECTOR, provider }) => {
+            Array.from(
+                document
+                    .querySelector(ST_ROOT_SELECTOR)
+                    .shadowRoot.querySelectorAll("[data-supertokens~='providerButton']")
+            )
+                .find((button) => {
+                    return button.innerText === `Continue with ${provider}`;
+                })
+                .click();
+        },
+        { ST_ROOT_SELECTOR, provider }
+    );
 }
 
 export async function loginWithGoogle(page) {
@@ -689,4 +716,38 @@ export function setPasswordlessFlowType(contactMethod, flowType) {
 
 export function isReact16() {
     return process.env.IS_REACT_16 === "true";
+}
+
+export async function getResetPasswordFormBackButton(page) {
+    const backButtonSelector =
+        "[data-supertokens='headerTitle resetPasswordHeaderTitle'] > [data-supertokens='backButton backButtonCommon']";
+
+    return await waitForSTElement(page, backButtonSelector);
+}
+
+export async function getResetPasswordSuccessBackToSignInButton(page) {
+    const backToSignInSelector =
+        "[data-supertokens='container'] > [data-supertokens='row'] > [data-supertokens='secondaryText secondaryLinkWithLeftArrow']";
+
+    return await waitForSTElement(page, backToSignInSelector);
+}
+
+export async function isGeneralErrorSupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("generalerror") || isReact16()) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
+ * set for signUp in email password
+ */
+export async function setGeneralErrorToLocalStorage(recipeName, action, page) {
+    return page.evaluate((data) => localStorage.setItem("SHOW_GENERAL_ERROR", `${data.recipeName} ${data.action}`), {
+        recipeName,
+        action,
+    });
 }

@@ -20,12 +20,16 @@ import { useTranslation } from "./translation/translationContext";
 import SuperTokens from "./superTokens";
 import { TranslationStore } from "./translation/translationHelpers";
 import { SuperTokensConfig } from "./types";
+import { useUserContext } from "./usercontext";
+import { SuperTokensWrapper } from "./components/supertokensWrapper";
 
 /*
  * API Wrapper exposed to user.
  */
 
 export default class SuperTokensAPIWrapper {
+    static SuperTokensWrapper = SuperTokensWrapper;
+
     static init(config: SuperTokensConfig): void {
         SuperTokens.init(config);
     }
@@ -38,7 +42,7 @@ export default class SuperTokensAPIWrapper {
         return SuperTokens.getRoutingComponent();
     }
 
-    static changeLanguage(language: string): void {
+    static changeLanguage(language: string): Promise<void> {
         return SuperTokens.getInstanceOrThrow().changeLanguage(language);
     }
 
@@ -51,6 +55,8 @@ export default class SuperTokensAPIWrapper {
     }
 
     static useTranslation = useTranslation;
+
+    static useUserContext = useUserContext;
 }
 
 export const canHandleRoute = SuperTokensAPIWrapper.canHandleRoute;
@@ -60,4 +66,6 @@ export const loadTranslation = SuperTokensAPIWrapper.loadTranslation;
 export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
 export const getSuperTokensRoutesForReactRouterDom = SuperTokens.getSuperTokensRoutesForReactRouterDom;
 
+export { SuperTokensWrapper } from "./components/supertokensWrapper";
 export { useTranslation } from "./translation/translationContext";
+export { useUserContext } from "./usercontext";

@@ -3,26 +3,6 @@
  */
 module.exports = {
     rules: {
-        "jsx-first-import": {
-            create: function (context) {
-                return {
-                    Program(node) {
-                        const importDeclarations = node.body.filter((n) => n.type === "ImportDeclaration");
-                        importDeclarations.forEach((importDeclaration, index) => {
-                            importDeclaration.specifiers.forEach((specifier) => {
-                                if (specifier.imported && specifier.imported.name === "jsx" && index > 0) {
-                                    context.report(
-                                        node,
-                                        '/** @jsx jsx */\nimport { jsx } from "@emotion/react";\n must be the first import of the file.'
-                                    );
-                                }
-                            });
-                        });
-                    },
-                };
-            },
-        },
-
         "no-direct-window-object": {
             create: function (context) {
                 return {

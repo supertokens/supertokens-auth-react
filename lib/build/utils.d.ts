@@ -1,5 +1,5 @@
-import NormalisedURLDomain from "./normalisedURLDomain";
-import NormalisedURLPath from "./normalisedURLPath";
+import NormalisedURLDomain from "supertokens-web-js/utils/normalisedURLDomain";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { FormFieldError } from "./recipe/emailpassword/types";
 import { APIFormField, AppInfoUserInput, NormalisedAppInfo, NormalisedFormField } from "./types";
 export declare function getRecipeIdFromSearch(search: string): string | null;
@@ -20,19 +20,34 @@ export declare function matchRecipeIdUsingQueryParams(recipeId: string): () => b
 export declare function redirectWithFullPageReload(to: string): void;
 export declare function redirectWithHistory(to: string, history: any): void;
 export declare function isIE(): boolean;
-export declare function setSessionStorage(key: string, value: string): void;
-export declare function getSessionStorage(key: string): string | null;
 export declare function getOriginOfPage(): NormalisedURLDomain;
-export declare function getLocalStorage(key: string): string | null;
-export declare function setLocalStorage(key: string, value: string): void;
-export declare function removeFromLocalStorage(key: string): void;
+export declare function getLocalStorage(key: string): Promise<string | null>;
+export declare function setLocalStorage(key: string, value: string): Promise<void>;
+export declare function removeFromLocalStorage(key: string): Promise<void>;
 export declare function mergeObjects<T>(obj1: T, obj2: T): T;
 export declare function normaliseCookieScopeOrThrowError(cookieScope: string): string;
 export declare function getDefaultCookieScope(): string | undefined;
-export declare function getCookieValue(name: string): string | null;
-export declare function setFrontendCookie(name: string, value: string | undefined, scope: string | undefined): void;
+export declare function getCookieValue(name: string): Promise<string | null>;
+export declare function setFrontendCookie(
+    name: string,
+    value: string | undefined,
+    scope: string | undefined
+): Promise<void>;
+export declare function getNormalisedUserContext(userContext?: any): any;
+/**
+ * This function handles calling APIs that should only be called once during mount (mostly on mount of a route/feature component).
+ * It's split into multiple callbacks (fetch + handleResponse/handleError) because we expect fetch to take longer and
+ * and the component may be unmounted during the first fetch, in which case we want to avoid updating state/redirecting.
+ * This is especially relevant for development in strict mode with React 18 (and in the future for concurrent rendering).
+ *
+ * @param fetch This is a callback that is only called once on mount. Mostly it's for consuming tokens/doing one time only API calls
+ * @param handleResponse This is called with the result of the first (fetch) call if it succeeds.
+ * @param handleError This is called with the error of the first (fetch) call if it rejects.
+ * @param startLoading Will start the whole process if this is set to true (or omitted). Mostly used to wait for session loading.
+ */
 export declare const useOnMountAPICall: <T>(
     fetch: () => Promise<T>,
     handleResponse: (consumeResp: T) => Promise<void>,
-    handleError?: ((err: unknown, consumeResp: T | undefined) => void) | undefined
+    handleError?: ((err: unknown, consumeResp: T | undefined) => void) | undefined,
+    startLoading?: boolean
 ) => void;

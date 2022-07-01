@@ -1,42 +1,39 @@
 /// <reference types="react" />
 import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
-import { CreateRecipeFunction } from "../../types";
+import { CreateRecipeFunction, RecipeFeatureComponentMap } from "../../types";
 import {
     GetRedirectionURLContext,
     Config,
     NormalisedConfig,
-    PreAPIHookContext,
+    PreAndPostAPIHookAction,
     OnHandleEventContext,
     UserInput,
-    RecipeInterface,
 } from "./types";
 import EmailVerification from "../emailverification/recipe";
+import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 export default class ThirdParty extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
-    PreAPIHookContext,
     OnHandleEventContext,
     NormalisedConfig
 > {
     static instance?: ThirdParty;
     static RECIPE_ID: string;
-    recipeImpl: RecipeInterface;
+    recipeImpl: WebJSRecipeInterface;
     constructor(
         config: Config,
         recipes: {
             emailVerificationInstance: EmailVerification | undefined;
         }
     );
-    getFeatures: () => Record<string, import("../../types").ComponentWithRecipeAndMatchingMethod>;
+    getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (
-        componentName: "emailverification" | "signinup" | "signinupcallback",
+        componentName: "signinup" | "signinupcallback" | "emailverification",
         props: any
     ) => JSX.Element;
-    getDefaultRedirectionURL: (
-        context: import("../authRecipeWithEmailVerification/types").GetRedirectionURLContext
-    ) => Promise<string>;
+    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>;
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig>;
     static getInstanceOrThrow(): ThirdParty;
     static reset(): void;
 }

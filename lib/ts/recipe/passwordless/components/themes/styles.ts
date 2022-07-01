@@ -13,7 +13,6 @@
  * under the License.
  */
 
-/** @jsx jsx */
 import { getDefaultStyles, getMergedStyles, swingIn } from "../../../../styles/styles";
 import { NormalisedPalette, NormalisedDefaultStyles } from "../../../../types";
 import { getStyles as getEmailPasswordStyles } from "../../../emailpassword/components/themes/styles/styles";
@@ -51,18 +50,6 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-            },
-        },
-        secondaryLinkWithLeftArrow: {
-            marginTop: "10px",
-            marginBottom: "40px",
-            cursor: "pointer",
-            "& svg": {
-                marginRight: "0.3em",
-            },
-            "&:hover svg": {
-                position: "relative",
-                left: "-4px",
             },
         },
         resendCodeBtn: {
@@ -173,6 +160,10 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
         },
         phoneInputCountryDropdownIndicator: {
             padding: "0 12px 0 6px",
+        },
+        continueButtonWrapper: {
+            marginTop: "10px",
+            marginBottom: "30px",
         },
     };
     const recipeStyles = getMergedStyles(emailPasswordStyles, passwordlessStyles);

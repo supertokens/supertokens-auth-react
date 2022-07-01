@@ -16,7 +16,6 @@
 /*
  * Imports.
  */
-import * as React from "react";
 import { ResetPasswordUsingTokenThemeProps } from "../../../types";
 import { ThemeBase } from "../themeBase";
 
@@ -25,6 +24,7 @@ import { SubmitNewPassword } from "./submitNewPassword";
 import { getStyles } from "../styles/styles";
 import { StyleProvider } from "../../../../../styles/styleContext";
 import { defaultPalette, hasFontDefined } from "../../../../../styles/styles";
+import UserContextWrapper from "../../../../../usercontext/userContextWrapper";
 
 /*
  * Component.
@@ -66,9 +66,11 @@ function ResetPasswordUsingTokenThemeWrapper(props: ResetPasswordUsingTokenTheme
     const hasFont = hasFontDefined(props.config.rootStyle);
 
     return (
-        <ThemeBase loadDefaultFont={!hasFont}>
-            <ResetPasswordUsingTokenTheme {...props} />
-        </ThemeBase>
+        <UserContextWrapper userContext={props.userContext}>
+            <ThemeBase loadDefaultFont={!hasFont}>
+                <ResetPasswordUsingTokenTheme {...props} />
+            </ThemeBase>
+        </UserContextWrapper>
     );
 }
 

@@ -17,21 +17,19 @@
  * Imports.
  */
 
-import React from "react";
 import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     Config,
     GetRedirectionURLContext,
     NormalisedConfig,
-    PreAPIHookContext,
     OnHandleEventContext,
     UserInput,
-    TPPWlessRecipeInterface,
+    PreAndPostAPIHookAction,
 } from "./types";
 import { isTest, matchRecipeIdUsingQueryParams } from "../../utils";
 import { normaliseThirdPartyPasswordlessConfig } from "./utils";
-import NormalisedURLPath from "../../normalisedURLPath";
+import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { SSR_ERROR } from "../../constants";
 import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
@@ -43,10 +41,10 @@ import getThirdPartyImpl from "./recipeImplementation/thirdPartyImplementation";
 import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import OverrideableBuilder from "supertokens-js-override";
+import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerification<
     GetRedirectionURLContext,
-    PreAPIHookContext,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -72,7 +70,15 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
         });
 
         {
-            const builder = new OverrideableBuilder(RecipeImplementation(this.config.recipeId, this.config.appInfo));
+            const builder = new OverrideableBuilder(
+                RecipeImplementation({
+                    appInfo: this.config.appInfo,
+                    recipeId: this.config.recipeId,
+                    onHandleEvent: this.config.onHandleEvent,
+                    preAPIHook: this.config.preAPIHook,
+                    postAPIHook: this.config.postAPIHook,
+                })
+            );
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
 
@@ -133,9 +139,9 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
 
         if (
             (this.config.passwordlessUserInput !== undefined &&
-                this.config.passwordlessUserInput.signInUpFeature?.disableDefaultImplementation !== true) ||
+                this.config.passwordlessUserInput.signInUpFeature?.disableDefaultUI !== true) ||
             (this.config.thirdpartyUserInput !== undefined &&
-                this.config.thirdpartyUserInput.signInAndUpFeature?.disableDefaultImplementation !== true)
+                this.config.thirdpartyUserInput.signInAndUpFeature?.disableDefaultUI !== true)
         ) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(new NormalisedURLPath("/"));
             features[normalisedFullPath.getAsStringDangerous()] = {
@@ -160,7 +166,12 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
     ): JSX.Element => {
         if (componentName === "signInUp") {
             return (
-                <AuthWidgetWrapper<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig>
+                <AuthWidgetWrapper<
+                    GetRedirectionURLContext,
+                    PreAndPostAPIHookAction,
+                    OnHandleEventContext,
+                    NormalisedConfig
+                >
                     authRecipe={this}
                     history={props.history}>
                     <SignInAndUp recipe={this} {...props} />
@@ -191,10 +202,10 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
 
     static init(
         config: UserInput
-    ): CreateRecipeFunction<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> {
+    ): CreateRecipeFunction<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> {
         return (
             appInfo: NormalisedAppInfo
-        ): RecipeModule<GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext, NormalisedConfig> => {
+        ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
             ThirdPartyPasswordless.instance = new ThirdPartyPasswordless(
                 {
                     ...config,

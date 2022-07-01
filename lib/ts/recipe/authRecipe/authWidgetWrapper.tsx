@@ -34,11 +34,11 @@ type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, 
  */
 const AuthWidgetWrapper = <
     T,
-    S,
+    Action,
     R,
-    N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>
+    N extends NormalisedConfig<T | GetRedirectionURLContext, Action, R | OnHandleEventContext>
 >(
-    props: PropsWithChildren<Props<T, S, R, N>>
+    props: PropsWithChildren<Props<T, Action, R, N>>
 ): React.ReactElement | null => {
     return (
         <SessionAuth requireAuth={false}>
@@ -55,34 +55,35 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
     const [alwaysShow, updateAlwaysShow] = useState(false);
 
     useEffect(() => {
-        // we want to do this just once, so we supply it an empty array.
-        // if we supply it with props, sessionContext,
-        // then once the user signs in, then this will route the
+        // we want to do this just once, so we supply it with only the loading state.
+        // if we supply it with props, sessionContext, then once the user signs in, then this will route the
         // user to the dashboard, as opposed to the sign up / sign in functions.
-        if (sessionContext.doesSessionExist) {
-            if (props.onSessionAlreadyExists !== undefined) {
-                props.onSessionAlreadyExists();
+        if (sessionContext.loading === false) {
+            if (sessionContext.doesSessionExist) {
+                if (props.onSessionAlreadyExists !== undefined) {
+                    props.onSessionAlreadyExists();
+                } else {
+                    props.authRecipe.config.onHandleEvent({
+                        action: "SESSION_ALREADY_EXISTS",
+                    });
+                    void props.authRecipe.redirect(
+                        {
+                            action: "SUCCESS",
+                            isNewUser: false,
+                            redirectToPath: getRedirectToPathFromURL(),
+                        },
+                        props.history
+                    );
+                }
             } else {
-                props.authRecipe.config.onHandleEvent({
-                    action: "SESSION_ALREADY_EXISTS",
-                });
-                void props.authRecipe.redirect(
-                    {
-                        action: "SUCCESS",
-                        isNewUser: false,
-                        redirectToPath: getRedirectToPathFromURL(),
-                    },
-                    props.history
-                );
+                // this means even if a session exists, we will still show the children
+                // cause the child component will take care of redirecting etc..
+                updateAlwaysShow(true);
             }
-        } else {
-            // this means even if a session exists, we will still show the children
-            // cause the child component will take care of redirecting etc..
-            updateAlwaysShow(true);
         }
-    }, []);
+    }, [sessionContext.loading]);
 
-    if (sessionContext.doesSessionExist && !alwaysShow) {
+    if ((sessionContext.loading === true || sessionContext.doesSessionExist) && !alwaysShow) {
         return null;
     } else {
         return <>{props.children}</>;
