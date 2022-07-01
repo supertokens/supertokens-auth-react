@@ -50,7 +50,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
 
     const fetchIsEmailVerified = useCallback(async () => {
         if (sessionContext.loading === true) {
-            // This callback should only be called if
+            // This callback should only be called if the session is already loaded
             throw new Error("Should never come here");
         }
         const token = getQueryParams("token") ?? undefined;

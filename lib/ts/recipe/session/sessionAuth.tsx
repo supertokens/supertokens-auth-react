@@ -65,12 +65,6 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             session.current = Session.getInstanceOrThrow();
         }
 
-        // if it's not the default context, it means SessionAuth from top has
-        // given us a sessionContext.
-        if (!isDefaultContext(parentSessionContext)) {
-            return parentSessionContext;
-        }
-
         if (!context.loading) {
             return context;
         }
@@ -102,8 +96,11 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
     const setInitialContextAndMaybeRedirect = useCallback(
         async (toSetContext: SessionContextType) => {
-            // if this component is unmounting, or the context has already
-            // been set, then we don't need to proceed...
+            if (toSetContext.loading === true) {
+                // We should not be updating the context to loading
+                throw new Error("Should never come here");
+            }
+
             if (toSetContext.loading === false && !toSetContext.doesSessionExist && props.requireAuth === true) {
                 props.redirectToLogin();
             } else {

@@ -57,6 +57,7 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
         }
         return undefined;
     }, [sessionContext]);
+
     const useIsEmailVerified = useCallback(
         async (isEmailVerified: boolean | undefined) => {
             if (sessionContext.loading === true) {
@@ -76,12 +77,13 @@ const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
 
     useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified, undefined, sessionContext.loading === false);
 
-    const isNotRequired = recipe.current !== undefined && recipe.current.config.mode !== "REQUIRED";
-    if (
-        // We only render after loading has finished to eliminate flicker
-        sessionContext.loading === false &&
-        (isNotRequired || sessionContext.doesSessionExist === false || isEmailVerified)
-    ) {
+    // We only render after loading has finished to eliminate flicker
+    // recipe.current should only be undefined during SSR but this makes the type system happy
+    if (sessionContext.loading === true || recipe.current === undefined) {
+        return null;
+    }
+
+    if (recipe.current.config.mode !== "REQUIRED" || sessionContext.doesSessionExist === false || isEmailVerified) {
         return <>{children}</>;
     }
 

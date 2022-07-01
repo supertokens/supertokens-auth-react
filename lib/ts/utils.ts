@@ -390,6 +390,17 @@ export function getNormalisedUserContext(userContext?: any): any {
     return userContext === undefined ? {} : userContext;
 }
 
+/**
+ * This function handles calling APIs that should only be called once during mount (mostly on mount of a route/feature component).
+ * It's split into multiple callbacks (fetch + handleResponse/handleError) because we expect fetch to take longer and
+ * and the component may be unmounted during the first fetch, in which case we want to avoid updating state/redirecting.
+ * This is especially relevant for development in strict mode with React 18 (and in the future for concurrent rendering).
+ *
+ * @param fetch This is a callback that is only called once on mount. Mostly it's for consuming tokens/doing one time only API calls
+ * @param handleResponse This is called with the result of the first (fetch) call if it succeeds.
+ * @param handleError This is called with the error of the first (fetch) call if it rejects.
+ * @param startLoading Will start the whole process if this is set to true (or omitted). Mostly used to wait for session loading.
+ */
 export const useOnMountAPICall = <T>(
     fetch: () => Promise<T>,
     handleResponse: (consumeResp: T) => Promise<void>,
