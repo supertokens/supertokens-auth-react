@@ -22,52 +22,72 @@ import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { useOnMountAPICall } from "../../utils";
 
-type Props = FeatureBaseProps & { recipe: Recipe };
+type Props = FeatureBaseProps & { getRecipe: () => Recipe };
 
 const EmailVerificationAuth: React.FC<Props> = ({ children, ...props }) => {
     const sessionContext = useContext(SessionContext);
 
     const [isEmailVerified, setIsEmailVerified] = useState(false);
 
-    // we extract these three this way so that the useEffect below
-    // doesn't rerun just because the sessionContext or props objects
-    // have changed, even though the doesSessionExist & emailVerificationMode
-    // have not.
-    const doesSessionExist = sessionContext.doesSessionExist;
-    const emailVerificationMode = props.recipe.config.mode;
+    const recipe = React.useRef<Recipe>();
     const propsRef = React.useRef(props);
     const userContext = useUserContext();
 
+    if (recipe.current === undefined) {
+        try {
+            recipe.current = propsRef.current.getRecipe();
+        } catch {
+            // We are in either an SSR environment or the user forgot to initialize the recipe
+            // We are ignoring this exception here, because in SSR we don't want to throw and the callback below will throw in a browser
+        }
+    }
+
     const checkIsEmailVerified = useCallback(async () => {
-        if (doesSessionExist && emailVerificationMode === "REQUIRED") {
-            return (await propsRef.current.recipe.isEmailVerified(userContext)).isVerified;
+        if (sessionContext.loading === true) {
+            // This callback should only be called if the session is already loaded
+            throw new Error("Should never come here");
+        }
+        if (!recipe.current) {
+            // If the recipe.current isn't initialized here, this will likely throw and produce a user friendly error
+            recipe.current = propsRef.current.getRecipe();
+        }
+
+        if (sessionContext.doesSessionExist && recipe.current!.config.mode === "REQUIRED") {
+            return (await recipe.current!.isEmailVerified(userContext)).isVerified;
         }
         return undefined;
-    }, [doesSessionExist, emailVerificationMode]);
+    }, [sessionContext]);
+
     const useIsEmailVerified = useCallback(
         async (isEmailVerified: boolean | undefined) => {
-            if (doesSessionExist && emailVerificationMode === "REQUIRED") {
+            if (sessionContext.loading === true) {
+                // This callback should only be called if the session is already loaded
+                throw new Error("Should never come here");
+            }
+            if (sessionContext.doesSessionExist && recipe.current!.config.mode === "REQUIRED") {
                 if (isEmailVerified === false) {
-                    await propsRef.current.recipe.redirect({ action: "VERIFY_EMAIL" }, propsRef.current.history);
+                    await recipe.current!.redirect({ action: "VERIFY_EMAIL" }, propsRef.current.history);
                 } else {
                     setIsEmailVerified(true);
                 }
             }
         },
-        [doesSessionExist, emailVerificationMode]
+        [sessionContext.loading]
     );
 
-    useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified);
+    useOnMountAPICall(checkIsEmailVerified, useIsEmailVerified, undefined, sessionContext.loading === false);
 
-    if (sessionContext.doesSessionExist === false) {
+    // We only render after loading has finished to eliminate flicker
+    // recipe.current should only be undefined during SSR but this makes the type system happy
+    if (sessionContext.loading === true || recipe.current === undefined) {
+        return null;
+    }
+
+    if (recipe.current.config.mode !== "REQUIRED" || sessionContext.doesSessionExist === false || isEmailVerified) {
         return <>{children}</>;
     }
 
-    if (props.recipe.config.mode !== "REQUIRED") {
-        return <>{children}</>;
-    }
-
-    return isEmailVerified ? <>{children}</> : null;
+    return null;
 };
 
 const EmailVerificationAuthWrapper: React.FC<

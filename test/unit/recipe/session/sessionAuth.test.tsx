@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import "@testing-library/jest-dom";
-import { act, render, waitFor } from "@testing-library/react";
+import { act, render, waitFor, waitForElementToBeRemoved } from "@testing-library/react";
 import Session from "../../../../lib/ts/recipe/session/recipe";
 import SessionAuth from "../../../../lib/ts/recipe/session/sessionAuth";
 import SessionContext from "../../../../lib/ts/recipe/session/sessionContext";
@@ -14,14 +14,13 @@ const MockSession = {
 };
 
 const MockSessionConsumer = () => {
-    const session = useContext<SessionContextType>(SessionContext);
+    const session = useContext(SessionContext);
+    if (session.loading === true) {
+        return <h1>Loading</h1>;
+    }
 
     if (!session.doesSessionExist) {
-        return (
-            <>
-                <h1>Session doesn't exist</h1>
-            </>
-        );
+        return <h1>Session doesn't exist</h1>;
     }
 
     return (
@@ -33,9 +32,16 @@ const MockSessionConsumer = () => {
 };
 
 const setMockResolves = (ctx: SessionContextType) => {
-    MockSession.getUserId.mockResolvedValue(ctx.userId);
-    MockSession.getAccessTokenPayloadSecurely.mockResolvedValue(ctx.accessTokenPayload);
-    MockSession.doesSessionExist.mockResolvedValue(ctx.doesSessionExist);
+    if (ctx.loading === true) {
+        // We "simulate" loading by returning these promises that won't ever resolve
+        MockSession.getUserId.mockReturnValue(new Promise<any>(() => {}));
+        MockSession.getAccessTokenPayloadSecurely.mockReturnValue(new Promise<any>(() => {}));
+        MockSession.doesSessionExist.mockReturnValue(new Promise<any>(() => {}));
+    } else {
+        MockSession.getUserId.mockResolvedValue(ctx.userId);
+        MockSession.getAccessTokenPayloadSecurely.mockResolvedValue(ctx.accessTokenPayload);
+        MockSession.doesSessionExist.mockResolvedValue(ctx.doesSessionExist);
+    }
 };
 
 jest.spyOn(Session, "getInstanceOrThrow").mockImplementation(() => MockSession as any);
@@ -48,6 +54,7 @@ describe("SessionAuth", () => {
             userId: "mock-user-id",
             accessTokenPayload: {},
             doesSessionExist: true,
+            loading: false,
         });
     });
 
@@ -135,17 +142,24 @@ describe("SessionAuth", () => {
                     doesSessionExist,
                     accessTokenPayload: {},
                     userId: "mock-id",
+                    loading: false,
                 });
 
                 // when
                 const result = render(
                     // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
                     <SessionAuth requireAuth={requireAuth as any} redirectToLogin={noop}>
-                        <h1>Children</h1>
+                        <MockSessionConsumer />
                     </SessionAuth>
                 );
 
-                const child = await result.findByText(/Children/i).catch(() => null);
+                if (!requireAuth) {
+                    await waitForElementToBeRemoved(() => result.queryByText("Loading"));
+                }
+
+                const child = await result
+                    .findByText(doesSessionExist ? /userId:/i : "Session doesn't exist")
+                    .catch(() => null);
 
                 // then
                 if (shouldRender) {
@@ -155,23 +169,114 @@ describe("SessionAuth", () => {
                 }
             });
         });
+
+        test("don't render when requireAuth=true and session is loading", async () => {
+            // given
+            const noop = jest.fn();
+            setMockResolves({
+                loading: true,
+            });
+
+            // when
+            const result = render(
+                // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
+                <SessionAuth requireAuth={true} redirectToLogin={noop}>
+                    <h1>Children</h1>
+                </SessionAuth>
+            );
+
+            const child = await result.findByText(/Children/i).catch(() => null);
+
+            // then
+            expect(child).not.toBeInTheDocument();
+        });
+
+        test("do render when requireAuth=false and session is loading", async () => {
+            // given
+            setMockResolves({
+                loading: true,
+            });
+
+            // when
+            const result = render(
+                // We're passing redirectToLogin just to make sure it doesn't throw when requireAuth=true
+                <SessionAuth requireAuth={false}>
+                    <h1>Children</h1>
+                </SessionAuth>
+            );
+
+            const child = await result.findByText(/Children/i).catch(() => null);
+
+            // then
+            expect(child).toBeInTheDocument();
+        });
     });
 
     describe("handle events", () => {
         test("call onSessionExpired on UNAUTHORISED", async () => {
             // given
             const mockOnSessionExpired = jest.fn();
-
-            MockSession.addEventListener.mockImplementationOnce((fn) => fn({ action: "UNAUTHORISED" }));
+            let listenerFn: (event: any) => void;
+            MockSession.addEventListener.mockImplementation((fn) => {
+                listenerFn = fn;
+            });
 
             // when
-            const result = render(<SessionAuth onSessionExpired={mockOnSessionExpired}>mockRenderedText</SessionAuth>);
+            const result = render(
+                <SessionAuth onSessionExpired={mockOnSessionExpired}>
+                    <MockSessionConsumer />
+                </SessionAuth>
+            );
 
             // Wait for full rendering
-            expect(await result.findByText(`mockRenderedText`)).toBeInTheDocument();
+            expect(await result.findByText(/^userId:/)).toBeInTheDocument();
+
+            act(() =>
+                listenerFn({
+                    action: "UNAUTHORISED",
+                    sessionContext: {
+                        doesSessionExist: false,
+                        accessTokenPayload: {},
+                        userId: "",
+                    },
+                })
+            );
 
             // then
             expect(mockOnSessionExpired).toHaveBeenCalledTimes(1);
+
+            await result.findByText("Session doesn't exist");
+        });
+
+        test("update context on SIGN_OUT", async () => {
+            // given
+            let listenerFn: (event: any) => void;
+            MockSession.addEventListener.mockImplementation((fn) => {
+                listenerFn = fn;
+            });
+
+            // when
+            const result = render(
+                <SessionAuth>
+                    <MockSessionConsumer />
+                </SessionAuth>
+            );
+
+            // Wait for full rendering
+            expect(await result.findByText(/^userId:/)).toBeInTheDocument();
+
+            act(() =>
+                listenerFn({
+                    action: "SIGN_OUT",
+                    sessionContext: {
+                        doesSessionExist: false,
+                        accessTokenPayload: {},
+                        userId: "",
+                    },
+                })
+            );
+
+            await result.findByText("Session doesn't exist");
         });
 
         test("update context on SESSION_CREATED", async () => {
@@ -289,161 +394,5 @@ describe("SessionAuth", () => {
         expect(await result.findByText(/^accessTokenPayload:/)).toHaveTextContent(
             `accessTokenPayload: ${JSON.stringify(mockAccessTokenPayload)}`
         );
-    });
-
-    describe("onSessionExpired", () => {
-        test("not update context when prop is passed", async () => {
-            // given
-            const mockOnSessionExpired = jest.fn();
-            let listenerFn: (event: any) => void;
-
-            MockSession.addEventListener.mockImplementationOnce((listener) => {
-                listenerFn = listener;
-
-                return () => {};
-            });
-
-            setMockResolves({
-                doesSessionExist: true,
-                accessTokenPayload: { foo: "bar" },
-                userId: "before-id",
-            });
-
-            const result = render(
-                <SessionAuth requireAuth={true} redirectToLogin={() => {}}>
-                    <MockSessionConsumer />
-                </SessionAuth>
-            );
-
-            const UserId = () => result.findByText(/^userId/);
-            const AccessTokenPayload = () => result.findByText(/^accessTokenPayload/);
-
-            expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await AccessTokenPayload()).toHaveTextContent(
-                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
-            );
-
-            // when
-            await act(() =>
-                listenerFn({
-                    action: "UNAUTHORISED",
-                    sessionContext: {
-                        doesSessionExist: false,
-                        accessTokenPayload: { foo: "baz" },
-                        userId: "after-id",
-                    },
-                })
-            );
-
-            // then
-            expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await AccessTokenPayload()).toHaveTextContent(
-                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
-            );
-        });
-
-        test("not update context when prop is passed in parent SessionAuth", async () => {
-            // given
-            const mockOnSessionExpired = jest.fn();
-            let listenerFn: (event: any) => void;
-
-            MockSession.addEventListener.mockImplementation((fn) => {
-                listenerFn = fn;
-
-                return () => {};
-            });
-
-            MockSession.doesSessionExist.mockResolvedValue(true);
-            MockSession.getUserId.mockResolvedValue("before-id");
-            MockSession.getAccessTokenPayloadSecurely.mockResolvedValue({
-                foo: "bar",
-            });
-
-            const result = render(
-                <SessionAuth onSessionExpired={mockOnSessionExpired}>
-                    <SessionAuth requireAuth={true} redirectToLogin={() => {}}>
-                        <MockSessionConsumer />
-                    </SessionAuth>
-                </SessionAuth>
-            );
-
-            const UserId = () => result.findByText(/^userId/);
-            const AccessTokenPayload = () => result.findByText(/^accessTokenPayload/);
-
-            expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await AccessTokenPayload()).toHaveTextContent(
-                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
-            );
-
-            // when
-            await act(() =>
-                listenerFn({
-                    action: "UNAUTHORISED",
-                    sessionContext: {
-                        doesSessionExist: false,
-                        accessTokenPayload: {},
-                        userId: "",
-                    },
-                })
-            );
-
-            // then
-            expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await AccessTokenPayload()).toHaveTextContent(
-                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
-            );
-        });
-    });
-
-    describe("onSignOut", () => {
-        test("not update context when sign out event is fired and requireAuth is true", async () => {
-            // given
-            const mockOnSessionExpired = jest.fn();
-            let listenerFn: (event: any) => void;
-
-            MockSession.addEventListener.mockImplementation((fn) => {
-                listenerFn = fn;
-
-                return () => {};
-            });
-
-            MockSession.doesSessionExist.mockResolvedValue(true);
-            MockSession.getUserId.mockResolvedValue("before-id");
-            MockSession.getAccessTokenPayloadSecurely.mockResolvedValue({
-                foo: "bar",
-            });
-
-            const result = render(
-                <SessionAuth requireAuth={true} redirectToLogin={() => {}}>
-                    <MockSessionConsumer />
-                </SessionAuth>
-            );
-
-            const UserId = () => result.findByText(/^userId/);
-            const AccessTokenPayload = () => result.findByText(/^accessTokenPayload/);
-
-            expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await AccessTokenPayload()).toHaveTextContent(
-                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
-            );
-
-            // when
-            await act(() =>
-                listenerFn({
-                    action: "SIGN_OUT",
-                    sessionContext: {
-                        doesSessionExist: false,
-                        accessTokenPayload: {},
-                        userId: "",
-                    },
-                })
-            );
-
-            // then
-            expect(await UserId()).toHaveTextContent(`userId: before-id`);
-            expect(await AccessTokenPayload()).toHaveTextContent(
-                `accessTokenPayload: ${JSON.stringify({ foo: "bar" })}`
-            );
-        });
     });
 });

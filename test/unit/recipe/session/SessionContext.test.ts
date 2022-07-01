@@ -2,12 +2,11 @@ import { isDefaultContext } from "../../../../lib/ts/recipe/session/sessionConte
 import { SessionContextType } from "../../../../lib/ts/recipe/session";
 
 describe("SessionContext", () => {
-    test("return true if user id is DEFAULT_USER_ID", () => {
+    test("return true if isDefault is true", () => {
         // given
-        const mockSessionContext: SessionContextType = {
-            accessTokenPayload: {},
-            userId: "DEFAULT_USER_ID",
-            doesSessionExist: false,
+        const mockSessionContext: { loading: true; isDefault: true } = {
+            loading: true,
+            isDefault: true,
         };
 
         // when
@@ -17,12 +16,14 @@ describe("SessionContext", () => {
         expect(isDefault).toBe(true);
     });
 
-    test("return false if user id isn't DEFAULT_USER_ID", () => {
+    test("return false if user isDefault is false", () => {
         // given
-        const mockSessionContext: SessionContextType = {
+        const mockSessionContext = {
             accessTokenPayload: {},
             doesSessionExist: false,
             userId: "NOT_DEFAULT_USER_ID",
+            loading: false,
+            isDefault: false,
         };
 
         // when

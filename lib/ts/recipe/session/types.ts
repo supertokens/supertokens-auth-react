@@ -21,8 +21,13 @@ export type InputType = WebJSInputType & {
     onHandleEvent?: (event: RecipeEventWithSessionContext) => void;
 };
 
-export type SessionContextType = {
-    doesSessionExist: boolean;
-    userId: string;
-    accessTokenPayload: any;
-};
+export type SessionContextType =
+    | {
+          doesSessionExist: boolean;
+          userId: string;
+          accessTokenPayload: any;
+          loading: false;
+      }
+    | {
+          loading: true;
+      };

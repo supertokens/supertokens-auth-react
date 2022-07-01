@@ -6,12 +6,12 @@ declare type PropsWithAuth = {
     requireAuth: true;
     redirectToLogin: () => void;
 };
-declare type Props = (PropsWithoutAuth | PropsWithAuth) & {
+export declare type SessionAuthProps = (PropsWithoutAuth | PropsWithAuth) & {
     onSessionExpired?: () => void;
 };
 declare const SessionAuthWrapper: React.FC<
     PropsWithChildren<
-        Props & {
+        SessionAuthProps & {
             userContext?: any;
         }
     >

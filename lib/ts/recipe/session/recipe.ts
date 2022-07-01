@@ -129,6 +129,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 doesSessionExist: true,
                 accessTokenPayload,
                 userId,
+                loading: false,
             };
         }
 
@@ -137,6 +138,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
                 doesSessionExist: false,
                 accessTokenPayload: {},
                 userId: "",
+                loading: false,
             };
         }
 

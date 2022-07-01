@@ -25,6 +25,14 @@ export default class SuperTokens {
     static canHandleRoute(): boolean;
     static getRoutingComponent(): JSX.Element | null;
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[];
+    static getReactRouterDomWithCustomHistory():
+        | {
+              router: {
+                  Route: any;
+              };
+              useHistoryCustom: () => any;
+          }
+        | undefined;
     canHandleRoute: () => boolean;
     getRoutingComponent: () => JSX.Element | null;
     getPathsToFeatureComponentWithRecipeIdMap: () => BaseFeatureComponentMap;

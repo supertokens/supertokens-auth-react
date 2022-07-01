@@ -1,6 +1,6 @@
 import * as React from "react";
 import "./App.css";
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "../../../";
+import SuperTokens, { getSuperTokensRoutesForReactRouterDom, SuperTokensWrapper } from "../../../";
 import EmailPassword, {
     GetRedirectionURLContext as EmailPasswordGetRedirectionURLContext,
     OnHandleEventContext as EmailPasswordOnHandleEventContext,
@@ -80,32 +80,34 @@ SuperTokens.init({
 function App() {
     return (
         <div className="App">
-            <Router>
-                <div className="fill">
-                    <Routes>
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-                        <Route
-                            path="/"
-                            element={
-                                <Auth>
-                                    <Home />
-                                </Auth>
-                            }
-                        />
-                        <Route
-                            path="/redirect-to-this-custom-path"
-                            element={
-                                <Auth>
-                                    <Home />
-                                </Auth>
-                            }
-                        />
-                    </Routes>
-                </div>
-                <div className="footer">
-                    <Footer />
-                </div>
-            </Router>
+            <SuperTokensWrapper>
+                <Router>
+                    <div className="fill">
+                        <Routes>
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                            <Route
+                                path="/"
+                                element={
+                                    <Auth>
+                                        <Home />
+                                    </Auth>
+                                }
+                            />
+                            <Route
+                                path="/redirect-to-this-custom-path"
+                                element={
+                                    <Auth>
+                                        <Home />
+                                    </Auth>
+                                }
+                            />
+                        </Routes>
+                    </div>
+                    <div className="footer">
+                        <Footer />
+                    </div>
+                </Router>
+            </SuperTokensWrapper>
         </div>
     );
 }
