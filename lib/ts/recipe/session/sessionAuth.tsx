@@ -101,7 +101,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 throw new Error("Should never come here");
             }
 
-            if (toSetContext.loading === false && !toSetContext.doesSessionExist && props.requireAuth === true) {
+            if (!toSetContext.doesSessionExist && props.requireAuth === true) {
                 props.redirectToLogin();
             } else {
                 setContext((context) => (!context.loading ? context : toSetContext));
