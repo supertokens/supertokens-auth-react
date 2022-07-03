@@ -1,8 +1,9 @@
 /// <reference types="react" />
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
-import { RecipeEventWithSessionContext, InputType, SessionClaimValidator, ClaimValidationError } from "./types";
+import { RecipeEventWithSessionContext, InputType } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
+import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 declare type ConfigType = InputType & {
     recipeId: string;
     appInfo: NormalisedAppInfo;
@@ -13,7 +14,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     static RECIPE_ID: string;
     webJsRecipe: WebJSSessionRecipe;
     private eventListeners;
-    private readonly defaultClaimValidators;
     constructor(config: ConfigType);
     getFeatureComponent: (_: string) => JSX.Element;
     getFeatures: () => RecipeFeatureComponentMap;
@@ -24,12 +24,21 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     attemptRefreshingSession: () => Promise<boolean>;
     redirectToAuthWithRedirectToPath(history?: any, queryParams?: Record<string, string>): Promise<void>;
     redirectToAuthWithoutRedirectToPath(history?: any, queryParams?: Record<string, string>): Promise<void>;
-    validateClaims: (
-        claimValidators: SessionClaimValidator<any>[],
-        userContext?: any
-    ) => Promise<ClaimValidationError | undefined>;
-    addDefaultClaimValidator: (claimValidator: SessionClaimValidator<any>) => void;
-    getDefaultClaimValidators: () => SessionClaimValidator<any>[];
+    validateClaims(input: {
+        overrideGlobalClaimValidators?: (
+            globalClaimValidators: SessionClaimValidator[],
+            userContext: any
+        ) => SessionClaimValidator[];
+        userContext: any;
+    }): Promise<ClaimValidationError[]> | ClaimValidationError[];
+    getInvalidClaimsFromResponse(input: {
+        response:
+            | {
+                  data: any;
+              }
+            | Response;
+        userContext: any;
+    }): Promise<ClaimValidationError[]>;
     /**
      * @returns Function to remove event listener
      */

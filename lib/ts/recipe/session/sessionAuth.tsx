@@ -19,20 +19,21 @@
 import React, { useEffect, useState, useContext, useRef, PropsWithChildren, useCallback } from "react";
 import SessionContext, { isDefaultContext } from "./sessionContext";
 import Session from "./recipe";
-import { SessionClaimValidator, SessionContextTypeWithoutInvalidClaim, ClaimValidationError } from "./types";
 import { RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { useOnMountAPICall } from "../../utils";
 import SuperTokens from "../../superTokens";
+import { SessionClaimValidator } from "supertokens-website";
 
 export type SessionAuthProps = {
     requireAuth?: boolean;
     redirectToLogin?: () => void;
     onSessionExpired?: () => void;
-    overwriteDefaultClaimValidators?: (
-        defaultClaimValidators: SessionClaimValidator<any>[]
-    ) => SessionClaimValidator<any>[];
+    overrideGlobalClaimValidators?: (
+        globalClaimValidators: SessionClaimValidator[],
+        userContext: any
+    ) => SessionClaimValidator[];
 };
 
 const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, ...props }) => {
@@ -54,7 +55,6 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     const [context, setContext] = useState<SessionContextType>(
         !isDefaultContext(parentSessionContext) ? parentSessionContext : { loading: true }
     );
-    const [contextUpdate, setContextUpdate] = useState<SessionContextTypeWithoutInvalidClaim | undefined>(undefined);
 
     const session = useRef<Session>();
     const userContext = useUserContext();
@@ -68,60 +68,6 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             );
         }
     }, [props.redirectToLogin]);
-
-    useEffect(() => {
-        const abortController = new AbortController();
-        async function effect() {
-            let invalidClaim: ClaimValidationError | undefined = undefined;
-            if (contextUpdate === undefined) {
-                return;
-            }
-            if (contextUpdate.doesSessionExist && props.overwriteDefaultClaimValidators !== undefined) {
-                const userContext = {};
-                // TODO: user proper userContext
-                // TODO: only one of these should be running at any time, but refreshing a claim could start this again.
-                let accessTokenPayload = contextUpdate.accessTokenPayload;
-                const defaultValidators = session.current!.getDefaultClaimValidators();
-
-                const requiredClaims =
-                    props.overwriteDefaultClaimValidators !== undefined
-                        ? props.overwriteDefaultClaimValidators(defaultValidators)
-                        : defaultValidators;
-
-                // We first refresh all claims that needs this, so we avoid ha
-                for (const validator of requiredClaims) {
-                    if (await validator.shouldRefresh(accessTokenPayload, userContext)) {
-                        await validator.refresh(userContext);
-                        accessTokenPayload = await session.current!.getAccessTokenPayloadSecurely({ userContext });
-                    }
-                    const validationRes = await validator.validate(accessTokenPayload, userContext);
-                    if (!validationRes.isValid) {
-                        invalidClaim = {
-                            validatorId: validator.id,
-                            reason: validationRes.reason,
-                        };
-                        break;
-                    }
-                    if (abortController.signal.aborted) {
-                        return;
-                    }
-                }
-            }
-            if (!abortController.signal.aborted) {
-                setContext((os) => {
-                    return os.loading === false &&
-                        // We do these checks to prevent unnecessary rerenders
-                        os.userId === contextUpdate.userId &&
-                        JSON.stringify(os.accessTokenPayload) === JSON.stringify(contextUpdate.accessTokenPayload) &&
-                        JSON.stringify(os.invalidClaim) === JSON.stringify(invalidClaim)
-                        ? os
-                        : { ...contextUpdate, invalidClaim: invalidClaim, loading: false };
-                });
-            }
-        }
-        void effect();
-        return () => abortController.abort();
-    }, [contextUpdate, props.overwriteDefaultClaimValidators]);
 
     const buildContext = useCallback(async (): Promise<SessionContextType> => {
         if (session.current === undefined) {
@@ -138,24 +84,28 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
         if (sessionExists === false) {
             return {
+                loading: false,
                 doesSessionExist: false,
                 accessTokenPayload: {},
+                invalidClaims: [],
                 userId: "",
-                invalidClaim: undefined,
-                loading: false,
             };
         }
+        const invalidClaims = await session.current.validateClaims({
+            overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+            userContext,
+        });
 
         return {
+            loading: false,
             doesSessionExist: true,
             accessTokenPayload: await session.current.getAccessTokenPayloadSecurely({
                 userContext,
             }),
+            invalidClaims,
             userId: await session.current.getUserId({
                 userContext,
             }),
-            invalidClaim: undefined,
-            loading: false,
         };
     }, []);
 
@@ -169,7 +119,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             if (!toSetContext.doesSessionExist && props.requireAuth === true) {
                 redirectToLogin();
             } else {
-                setContextUpdate(toSetContext);
+                setContext((os) => (os.loading === false ? os : toSetContext));
             }
         },
         [props.requireAuth, redirectToLogin]
@@ -179,27 +129,26 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
     // subscribe to events on mount
     useEffect(() => {
-        function onHandleEvent(event: RecipeEventWithSessionContext) {
+        async function onHandleEvent(event: RecipeEventWithSessionContext) {
             switch (event.action) {
+                // We intentionally fall through as they are all handled the same way.
                 case "SESSION_CREATED":
-                    setContextUpdate(event.sessionContext);
-                    return;
                 case "REFRESH_SESSION":
-                    setContextUpdate(event.sessionContext);
-                    return;
                 case "ACCESS_TOKEN_PAYLOAD_UPDATED":
-                    setContextUpdate(event.sessionContext);
-                    return;
-                case "API_INVALID_CLAIM":
-                    // In general the user should not be calling APIs that throw this
-                    // so this may suggest that a claim was invalidated
-                    setContextUpdate(event.sessionContext);
-                    return;
                 case "SIGN_OUT":
-                    setContextUpdate(event.sessionContext);
+                case "API_INVALID_CLAIM": {
+                    // In general the user should not be calling APIs that fail w/ invalid claim
+                    // This may suggest that a claim was invalidated in the meantime
+                    // so we re-validate even if the session context wasn't updated.
+                    const invalidClaims = await session.current!.validateClaims({
+                        overrideGlobalClaimValidators: props.overrideGlobalClaimValidators,
+                        userContext,
+                    });
+                    setContext({ ...event.sessionContext, loading: false, invalidClaims });
                     return;
+                }
                 case "UNAUTHORISED":
-                    setContextUpdate(event.sessionContext);
+                    setContext({ ...event.sessionContext, loading: false, invalidClaims: [] });
                     if (props.onSessionExpired !== undefined) {
                         props.onSessionExpired();
                     } else if (props.requireAuth === true) {
@@ -217,14 +166,15 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         // the listener, and this function will be called by useEffect when
         // onHandleEvent changes or if the component is unmounting.
         return session.current.addEventListener(onHandleEvent);
-    }, [props, setContextUpdate]);
+    }, [props, setContext]);
 
-    const actualContext = !isDefaultContext(parentSessionContext) ? parentSessionContext : context;
-    if (props.requireAuth === true && (actualContext.loading || !actualContext.doesSessionExist)) {
+    if (props.requireAuth === true && (context.loading || !context.doesSessionExist)) {
         return null;
     }
 
-    return <SessionContext.Provider value={{ ...actualContext, isDefault: false }}>{children}</SessionContext.Provider>;
+    return (
+        <SessionContext.Provider value={{ ...context, isDefault: false } as any}>{children}</SessionContext.Provider>
+    );
 };
 
 const SessionAuthWrapper: React.FC<

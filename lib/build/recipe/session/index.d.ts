@@ -1,7 +1,8 @@
 /// <reference types="react" />
 import { RecipeInterface } from "supertokens-web-js/recipe/session";
-import { ClaimValidationError, InputType, SessionClaimValidator, SessionContextType } from "./types";
+import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
+import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 export default class SessionAPIWrapper {
     static useSessionContext: () => SessionContextType;
     static SessionAuth: import("react").FC<
@@ -18,7 +19,21 @@ export default class SessionAPIWrapper {
     static doesSessionExist(input?: { userContext?: any }): Promise<boolean>;
     static addAxiosInterceptors(axiosInstance: any, userContext?: any): void;
     static signOut(input?: { userContext?: any }): Promise<void>;
-    static validateClaims(claimValidators: SessionClaimValidator<any>[]): Promise<ClaimValidationError | undefined>;
+    static validateClaims(input: {
+        overrideGlobalClaimValidators?: (
+            globalClaimValidators: SessionClaimValidator[],
+            userContext: any
+        ) => SessionClaimValidator[];
+        userContext: any;
+    }): Promise<ClaimValidationError[]> | ClaimValidationError[];
+    getInvalidClaimsFromResponse(input: {
+        response:
+            | {
+                  data: any;
+              }
+            | Response;
+        userContext: any;
+    }): Promise<ClaimValidationError[]>;
     static redirectToAuth(input?: { redirectBack?: boolean }): Promise<void>;
 }
 declare const useSessionContext: () => SessionContextType;

@@ -81,10 +81,10 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
     // This is not normally the case, the claim refreshing shouldn't rerender the auth component,
     // it's just a weird test setup because of logging.
     const route1ClaimOverride = useCallback(
-        (defaultClaims) => [...defaultClaims, RolesClaim.hasRole.includes("admin"), MFAClaim.completed2FA()],
+        (globalClaims) => [...globalClaims, RolesClaim.hasRole.includes("admin"), MFAClaim.completed2FA()],
         []
     );
-    const route2ClaimsOverride = useCallback((defaultClaims) => [...defaultClaims, EmailVerifiedClaim.isVerified], []);
+    const route2ClaimsOverride = useCallback((globalClaims) => [...globalClaims, EmailVerifiedClaim.isVerified], []);
 
     return (
         <div className="fill">

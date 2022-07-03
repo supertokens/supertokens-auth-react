@@ -17,9 +17,10 @@ import Session from "./recipe";
 import { RecipeInterface } from "supertokens-web-js/recipe/session";
 import SessionAuthWrapper from "./sessionAuth";
 import useSessionContextFunc from "./useSessionContext";
-import { ClaimValidationError, InputType, SessionClaimValidator, SessionContextType } from "./types";
+import { InputType, SessionContextType } from "./types";
 import SessionContext from "./sessionContext";
 import { getNormalisedUserContext } from "../../utils";
+import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 
 export default class SessionAPIWrapper {
     static useSessionContext = useSessionContextFunc;
@@ -62,8 +63,21 @@ export default class SessionAPIWrapper {
         });
     }
 
-    static validateClaims(claimValidators: SessionClaimValidator<any>[]): Promise<ClaimValidationError | undefined> {
-        return Session.getInstanceOrThrow().validateClaims(claimValidators);
+    static validateClaims(input: {
+        overrideGlobalClaimValidators?: (
+            globalClaimValidators: SessionClaimValidator[],
+            userContext: any
+        ) => SessionClaimValidator[];
+        userContext: any;
+    }): Promise<ClaimValidationError[]> | ClaimValidationError[] {
+        return Session.getInstanceOrThrow().validateClaims(input);
+    }
+
+    getInvalidClaimsFromResponse(input: {
+        response: { data: any } | Response;
+        userContext: any;
+    }): Promise<ClaimValidationError[]> {
+        return Session.getInstanceOrThrow().getInvalidClaimsFromResponse(input);
     }
 
     // have backwards compatibility to allow input as "signin" | "signup"

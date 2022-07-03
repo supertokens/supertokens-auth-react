@@ -19,15 +19,10 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import { appendQueryParamsToURL, getCurrentNormalisedUrlPath, isTest } from "../../utils";
-import {
-    RecipeEventWithSessionContext,
-    InputType,
-    SessionClaimValidator,
-    ClaimValidationError,
-    SessionContextTypeWithoutInvalidClaim,
-} from "./types";
+import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
+import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
@@ -38,7 +33,6 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     webJsRecipe: WebJSSessionRecipe;
 
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
-    private readonly defaultClaimValidators: SessionClaimValidator<any>[] = [];
 
     constructor(config: ConfigType) {
         super(config);
@@ -118,37 +112,22 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return this.redirectToUrl(redirectUrl, history);
     }
 
-    validateClaims = async (
-        claimValidators: SessionClaimValidator<any>[],
-        userContext?: any
-    ): Promise<ClaimValidationError | undefined> => {
-        let accessTokenPayload = await this.webJsRecipe.getAccessTokenPayloadSecurely({ userContext });
-        // We first refresh all claims that needs this, so we avoid ha
-        for (const validator of claimValidators) {
-            if (await validator.shouldRefresh(accessTokenPayload, userContext)) {
-                await validator.refresh(userContext);
-                accessTokenPayload = await this.webJsRecipe.getAccessTokenPayloadSecurely({ userContext });
-            }
-        }
-        for (const validator of claimValidators) {
-            const validationRes = await validator.validate(accessTokenPayload, userContext);
-            if (!validationRes.isValid) {
-                return {
-                    validatorId: validator.id,
-                    reason: validationRes.reason,
-                };
-            }
-        }
-        return undefined;
-    };
+    validateClaims(input: {
+        overrideGlobalClaimValidators?: (
+            globalClaimValidators: SessionClaimValidator[],
+            userContext: any
+        ) => SessionClaimValidator[];
+        userContext: any;
+    }): Promise<ClaimValidationError[]> | ClaimValidationError[] {
+        return this.webJsRecipe.validateClaims(input);
+    }
 
-    addDefaultClaimValidator = (claimValidator: SessionClaimValidator<any>) => {
-        this.defaultClaimValidators.push(claimValidator);
-    };
-
-    getDefaultClaimValidators = () => {
-        return this.defaultClaimValidators;
-    };
+    getInvalidClaimsFromResponse(input: {
+        response: { data: any } | Response;
+        userContext: any;
+    }): Promise<ClaimValidationError[]> {
+        return this.webJsRecipe.getInvalidClaimsFromResponse(input);
+    }
 
     /**
      * @returns Function to remove event listener
@@ -170,10 +149,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         );
     };
 
-    private async getSessionContext({
-        action,
-        userContext,
-    }: RecipeEvent): Promise<SessionContextTypeWithoutInvalidClaim> {
+    private async getSessionContext({ action, userContext }: RecipeEvent): Promise<SessionContextUpdate> {
         if (
             action === "SESSION_CREATED" ||
             action === "REFRESH_SESSION" ||

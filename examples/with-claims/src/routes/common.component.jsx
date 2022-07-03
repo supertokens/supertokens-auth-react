@@ -18,9 +18,10 @@ export const Common = () => {
     const logs = useTestLogs();
 
     const session = useSessionContext();
+    console.log(session);
 
-    if (session.invalidClaim) {
-        console.log("redirect", session.invalidClaim);
+    if (session.invalidClaims.length > 0) {
+        console.log("redirect", session.invalidClaims.length > 0);
         return <Navigate to="/" />;
     }
 

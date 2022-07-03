@@ -21,13 +21,13 @@ describe("SessionContext", () => {
             accessTokenPayload: {},
             doesSessionExist: false,
             userId: "NOT_DEFAULT_USER_ID",
-            invalidClaim: undefined,
+            invalidClaims: undefined,
             loading: false,
             isDefault: false,
         };
 
         // when
-        const isDefault = isDefaultContext(mockSessionContext);
+        const isDefault = isDefaultContext(mockSessionContext as any);
 
         // then
         expect(isDefault).toBe(false);

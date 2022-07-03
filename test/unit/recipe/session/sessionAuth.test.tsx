@@ -54,7 +54,7 @@ describe("SessionAuth", () => {
             userId: "mock-user-id",
             accessTokenPayload: {},
             doesSessionExist: true,
-            invalidClaim: undefined,
+            invalidClaims: undefined,
             loading: false,
         });
     });
@@ -143,7 +143,7 @@ describe("SessionAuth", () => {
                     doesSessionExist,
                     accessTokenPayload: {},
                     userId: "mock-id",
-                    invalidClaim: undefined,
+                    invalidClaims: undefined,
                     loading: false,
                 });
 

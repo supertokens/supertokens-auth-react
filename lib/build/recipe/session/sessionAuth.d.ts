@@ -1,12 +1,13 @@
 import React, { PropsWithChildren } from "react";
-import { SessionClaimValidator } from "./types";
+import { SessionClaimValidator } from "supertokens-website";
 export declare type SessionAuthProps = {
     requireAuth?: boolean;
     redirectToLogin?: () => void;
     onSessionExpired?: () => void;
-    overwriteDefaultClaimValidators?: (
-        defaultClaimValidators: SessionClaimValidator<any>[]
-    ) => SessionClaimValidator<any>[];
+    overrideGlobalClaimValidators?: (
+        globalClaimValidators: SessionClaimValidator[],
+        userContext: any
+    ) => SessionClaimValidator[];
 };
 declare const SessionAuthWrapper: React.FC<
     PropsWithChildren<

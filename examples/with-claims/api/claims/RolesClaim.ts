@@ -1,13 +1,14 @@
-import Session, { SessionClaim, SessionClaimValidator, SessionContainer } from "supertokens-node/recipe/session";
+import { SessionClaim } from "supertokens-node/recipe/session/claims";
+import Session, { SessionClaimValidator, SessionContainer } from "supertokens-node/recipe/session";
 import { roleDB } from "../mockRoleDb";
 
 class RolesClaimClass extends SessionClaim<string[]> {
     constructor() {
         super("st-r");
         this.hasRole = {
-            validatorTypeId: this.key,
+            id: this.key,
             including: (role: string) => ({
-                validatorTypeId: this.key,
+                id: this.key,
                 claim: this,
                 shouldRefetch: (payload, ctx) => {
                     return this.getValueFromPayload(payload, ctx) === undefined;
@@ -25,7 +26,7 @@ class RolesClaimClass extends SessionClaim<string[]> {
         };
     }
     readonly hasRole: {
-        validatorTypeId: string;
+        id: string;
         including: (role: string) => SessionClaimValidator;
     };
 
@@ -41,7 +42,7 @@ class RolesClaimClass extends SessionClaim<string[]> {
     }
 
     refreshRolesFromDb(session: SessionContainer, userContext?: any) {
-        const roles = this.fetch(session.getUserId(userContext), userContext);
+        const roles = this.fetchValue(session.getUserId(userContext), userContext);
         return session.mergeIntoAccessTokenPayload(this.addToPayload_internal({}, roles, userContext));
     }
 
@@ -64,7 +65,7 @@ class RolesClaimClass extends SessionClaim<string[]> {
     }
 
     updateRolesUsingSessionHandle(sessionHandle: string, userId: string, userContext?: any) {
-        const roles = this.fetch(userId, userContext);
+        const roles = this.fetchValue(userId, userContext);
         return Session.mergeIntoAccessTokenPayload(sessionHandle, this.addToPayload_internal({}, roles, userContext));
     }
 
@@ -90,7 +91,7 @@ class RolesClaimClass extends SessionClaim<string[]> {
         return payload[this.key]?.v;
     }
 
-    fetch(userId: string, ctx: any) {
+    fetchValue(userId: string, ctx: any) {
         return roleDB.get(userId) || [];
     }
 }

@@ -38,21 +38,18 @@ supertokens.init({
                     getGlobalClaimValidators: (input) => {
                         console.log(
                             "Default validators: ",
-                            input.defaultClaimValidators.map((a) => a.validatorTypeId).join(", ")
+                            input.claimValidatorsAddedByOtherRecipes.map((a) => a.id).join(", ")
                         );
-                        return [...input.defaultClaimValidators, EmailVerifiedClaim.isVerified];
+                        return [...input.claimValidatorsAddedByOtherRecipes, EmailVerifiedClaim.isVerified];
                     },
                     createNewSession: async (input) => {
-                        input.accessTokenPayload = await RolesClaim.applyToPayload(
-                            input.userId,
-                            input.accessTokenPayload
-                        );
-                        input.accessTokenPayload = await EmailVerifiedClaim.applyToPayload(
-                            input.userId,
-                            input.accessTokenPayload
-                        );
                         input.accessTokenPayload = {
                             ...input.accessTokenPayload,
+                            ...(await RolesClaim.fetchAndGetAccessTokenPayloadUpdate(input.userId, input.userContext)),
+                            ...(await EmailVerifiedClaim.fetchAndGetAccessTokenPayloadUpdate(
+                                input.userId,
+                                input.userContext
+                            )),
                             "app-custom-claim": { userId: input.userId, why: "Info" },
                         };
                         return oI.createNewSession(input);
@@ -99,17 +96,17 @@ app.use(
 app.use(morgan("dev") as any);
 app.use(bodyParser.json());
 
-app.use(middleware());
+app.use(middleware() as any);
 
 app.get(
     "/api1",
     verifySession({
-        overwriteDefaultValidators: (_, defaultValidators) => [
+        overrideGlobalClaimValidators: (_, defaultValidators) => [
             ...defaultValidators,
             RolesClaim.hasRole.including("admin"),
             SecondFactorClaimValidators.any2Factors,
         ],
-    }),
+    }) as any,
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
 
@@ -124,7 +121,7 @@ app.get(
 
 app.get(
     "/api2",
-    verifySession(), // This only requires the default EmailVerifiedClaim
+    verifySession() as any, // This only requires the default EmailVerifiedClaim
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
 
@@ -136,7 +133,7 @@ app.get(
     }
 );
 
-app.post("/second-factor", verifySession(), async (req, res) => {
+app.post("/second-factor", verifySession() as any, async (req, res) => {
     const session: SessionContainer = (req as any).session;
     await session.setClaimValue(SecondFactorOTPClaim, true);
     res.send({
@@ -146,7 +143,7 @@ app.post("/second-factor", verifySession(), async (req, res) => {
 
 app.post(
     "/refresh-roles",
-    verifySession(), // This only requires the default EmailVerifiedClaim
+    verifySession() as any, // This only requires the default EmailVerifiedClaim
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
 
@@ -160,11 +157,11 @@ app.post(
 
 app.post(
     "/refresh-email-verified",
-    verifySession({ overwriteDefaultValidators: () => [] }), // This requires no claims
+    verifySession({ overrideGlobalClaimValidators: () => [] }) as any, // This requires no claims
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
 
-        await session.applyClaimBuilder(EmailVerifiedClaim);
+        await session.fetchAndGetAccessTokenPayloadUpdate(EmailVerifiedClaim);
 
         res.send({
             status: "OK",
@@ -175,7 +172,7 @@ app.post(
 /************************* Utils *************************/
 app.get(
     "/get-user-info",
-    verifySession({ sessionRequired: false }), // This only requires the default EmailVerifiedClaim
+    verifySession({ sessionRequired: false }) as any, // This only requires the default EmailVerifiedClaim
     async (req, res) => {
         const session: SessionContainer | undefined = (req as any).session;
         let userId = session?.getUserId();
@@ -213,7 +210,7 @@ app.post("/verify-email", async (req, res) => {
     });
 });
 
-app.use(errorHandler());
+app.use(errorHandler() as any);
 
 app.use((err, req, res, next) => {
     res.status(500).send("Internal error: " + err.message);

@@ -14,48 +14,22 @@
  */
 
 import { UserInput as WebJSInputType, RecipeEvent } from "supertokens-web-js/recipe/session/types";
+import { ClaimValidationError } from "supertokens-website";
 
-export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextTypeWithoutInvalidClaim };
+export type RecipeEventWithSessionContext = RecipeEvent & { sessionContext: SessionContextUpdate };
 
 export type InputType = WebJSInputType & {
     onHandleEvent?: (event: RecipeEventWithSessionContext) => void;
 };
 
-export type SessionContextTypeWithoutInvalidClaim = Omit<LoadedSessionContext, "invalidClaim" | "loading">;
-export type ClaimValidationResult = { isValid: true } | { isValid: false; reason?: any };
-export type ClaimValidationError = {
-    validatorId: string;
-    reason?: any;
-};
+export type SessionContextUpdate = Omit<LoadedSessionContext, "invalidClaims" | "loading">;
 
-export abstract class SessionClaimValidator<T> {
-    constructor(public readonly id: string) {}
-
-    /**
-     * Makes an API call that will refresh the claim in the token.
-     */
-    abstract refresh(userContext: any): Promise<T | undefined> | T | undefined;
-
-    /**
-     * Decides if we need to refresh the claim value before checking the payload with `isClaimValid`.
-     * E.g.: if the information in the payload is expired, or is not sufficient for this check.
-     */
-    abstract shouldRefresh(accessTokenPayload: any, userContext: any): Promise<boolean> | boolean;
-
-    /**
-     * Decides if the claim is valid based on the accessTokenPayload object (and not checking DB or anything else)
-     */
-    abstract validate(
-        accessTokenPayload: any,
-        userContext: any
-    ): Promise<ClaimValidationResult> | ClaimValidationResult;
-}
 type LoadedSessionContext = {
     loading: false;
     doesSessionExist: boolean;
     userId: string;
     accessTokenPayload: any;
-    invalidClaim: ClaimValidationError | undefined;
+    invalidClaims: ClaimValidationError[];
 };
 
 export type SessionContextType =
