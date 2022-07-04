@@ -56,6 +56,12 @@ function ProtectedPage() {
         }
     }
 
+    if (sessionContext.loading === true) {
+        // It should never come here, because this is wrapped by an Auth component without requireAuth set to false
+        // Even in other cases it's safe to return null, since session loading is very fast.
+        return null;
+    }
+
     return (
         <div className={styles.container}>
             <Head>

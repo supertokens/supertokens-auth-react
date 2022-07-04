@@ -6,7 +6,8 @@ import { signOut } from "supertokens-auth-react/recipe/emailpassword";
 import { getAuthDomain, redirectIfOnWrongSubdomain } from "../utils";
 
 export default function Home() {
-    let session = useSessionContext();
+    const session = useSessionContext();
+
     let [show, setShow] = useState(false);
     async function logoutClicked() {
         await signOut();
@@ -22,6 +23,12 @@ export default function Home() {
             }
         });
     }, []);
+
+    if (session.loading === true) {
+        // It should never come here, because this is wrapped by an Auth component without requireAuth set to false
+        // Even in other cases it's safe to return null, since session loading is very fast.
+        return null;
+    }
 
     if (show) {
         return (

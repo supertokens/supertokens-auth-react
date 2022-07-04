@@ -23,17 +23,22 @@ export default function Home() {
 
 function ProtectedPage() {
     // retrieve the authenticated user's accessTokenPayload and userId from the sessionContext
-    const { accessTokenPayload, userId } = useSessionContext();
+    const sessionContext = useSessionContext();
 
     const [userEmail, setEmail] = useState("");
     useEffect(() => {
         async function getUserEmail() {
+            if (sessionContext.loading === true) {
+                // It should never come here, because this is wrapped by an Auth component without requireAuth set to false
+                return;
+            }
+
             // retrieve the supabase client who's JWT contains users userId, this will be
             // used by supabase to check that the user can only access table entries which contain their own userId
-            const supabase = getSupabase(accessTokenPayload.supabase_token);
+            const supabase = getSupabase(sessionContext.accessTokenPayload.supabase_token);
 
             // retrieve the user's name from the users table whose email matches the email in the JWT
-            const { data } = await supabase.from("users").select("email").eq("user_id", userId);
+            const { data } = await supabase.from("users").select("email").eq("user_id", sessionContext.userId);
 
             if (data.length > 0) {
                 setEmail(data[0].email);
@@ -55,6 +60,12 @@ function ProtectedPage() {
         }
     }
 
+    if (sessionContext.loading) {
+        // It should never come here, because this is wrapped by an Auth component without requireAuth set to false
+        // Even in other cases it's safe to return null, since session loading is very fast.
+        return null;
+    }
+
     return (
         <div className={styles.container}>
             <Head>
@@ -67,7 +78,7 @@ function ProtectedPage() {
                     Welcome to <a href="https://nextjs.org">Next.js!</a>
                 </h1>
                 <p className={styles.description}>
-                    You are authenticated with SuperTokens! (UserId: {userId})
+                    You are authenticated with SuperTokens! (UserId: {sessionContext.userId})
                     <br />
                     Your email retrieved from Supabase: {userEmail}
                 </p>

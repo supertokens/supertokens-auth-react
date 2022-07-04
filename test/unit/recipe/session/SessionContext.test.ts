@@ -1,5 +1,4 @@
 import { isDefaultContext } from "../../../../lib/ts/recipe/session/sessionContext";
-import { SessionContextType } from "../../../../lib/ts/recipe/session";
 
 describe("SessionContext", () => {
     test("return true if isDefault is true", () => {

@@ -5,7 +5,7 @@ import AppWithoutRouter from "./AppWithoutRouter";
 import AppWithReactDomRouter from "./AppWithReactDomRouter";
 import Footer from "./Footer";
 /* SuperTokens imports */
-import SuperTokens from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
@@ -285,10 +285,10 @@ export default App;
 
 export function BaseComponent({ children }) {
     return (
-        <Fragment>
+        <SuperTokensWrapper>
             <div className="fill">{children}</div>
             <Footer />
-        </Fragment>
+        </SuperTokensWrapper>
     );
 }
 
@@ -357,6 +357,10 @@ export const DashboardNoAuthRequired = doNotUseReactRouterDom
 export function DashboardNoAuthRequiredHelper(props) {
     let sessionContext = useSessionContext();
 
+    if (sessionContext.loading) {
+        return null;
+    }
+
     if (sessionContext.doesSessionExist) {
         return Dashboard({ redirectOnLogout: false, ...props });
     } else {
@@ -419,6 +423,13 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
     }, []);
 
     let sessionContext = useSessionContext();
+
+    if (sessionContext.loading === true) {
+        // You could display a loading screen here, but session context loading is very fast
+        // so returning null is better in most cases to avoid content popping in and out
+        return null;
+    }
+
     return (
         <div className="dashboard">
             <div

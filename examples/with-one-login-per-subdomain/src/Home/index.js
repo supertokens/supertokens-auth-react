@@ -6,7 +6,7 @@ import { signOut, redirectToAuth } from "supertokens-auth-react/recipe/emailpass
 import { getRedirectToIfOnWrongSubdomain } from "../utils";
 
 export default function Home() {
-    const { userId } = useSessionContext();
+    const session = useSessionContext();
     let [show, setShow] = useState(false);
 
     useEffect(() => {
@@ -29,11 +29,17 @@ export default function Home() {
         redirectToAuth();
     }
 
+    if (session.loading === true) {
+        // It should never come here, because this is wrapped by an Auth component without requireAuth set to false
+        // Even in other cases it's safe to return null, since session loading is very fast.
+        return null;
+    }
+
     if (show) {
         return (
             <div className="fill">
                 <Logout logoutClicked={logoutClicked} />
-                <SuccessView userId={userId} />
+                <SuccessView userId={session.userId} />
             </div>
         );
     } else {

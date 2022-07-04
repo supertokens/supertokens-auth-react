@@ -1,5 +1,5 @@
 import "./App.css";
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword, { EmailPasswordAuth } from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
@@ -31,26 +31,28 @@ SuperTokens.init({
 
 function App() {
     return (
-        <Router>
-            <div className="App">
-                <div className="fill">
-                    <Routes>
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-                        <Route
-                            path="/"
-                            element={
-                                <EmailPasswordAuth>
-                                    <Home />
-                                </EmailPasswordAuth>
-                            }
-                        />
-                    </Routes>
+        <SuperTokensWrapper>
+            <Router>
+                <div className="App">
+                    <div className="fill">
+                        <Routes>
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                            <Route
+                                path="/"
+                                element={
+                                    <EmailPasswordAuth>
+                                        <Home />
+                                    </EmailPasswordAuth>
+                                }
+                            />
+                        </Routes>
+                    </div>
+                    <div className="footer">
+                        <Footer />
+                    </div>
                 </div>
-                <div className="footer">
-                    <Footer />
-                </div>
-            </div>
-        </Router>
+            </Router>
+        </SuperTokensWrapper>
     );
 }
 

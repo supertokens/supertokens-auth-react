@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { signOut } from "supertokens-auth-react/recipe/passwordless";
 
 export default function Home() {
-    const { userId } = useSessionContext();
+    const session = useSessionContext();
     const navigate = useNavigate();
 
     async function logoutClicked() {
@@ -14,10 +14,16 @@ export default function Home() {
         navigate("/auth");
     }
 
+    if (session.loading === true) {
+        // It should never come here, because this is wrapped by an Auth component without requireAuth set to false
+        // Even in other cases it's safe to return null, since session loading is very fast.
+        return null;
+    }
+
     return (
         <div className="fill">
             <Logout logoutClicked={logoutClicked} />
-            <SuccessView userId={userId} />
+            <SuccessView userId={session.userId} />
         </div>
     );
 }
