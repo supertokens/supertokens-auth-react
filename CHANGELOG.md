@@ -129,6 +129,23 @@ function App() {
 }
 ```
 
+## [0.23.2] - 2022-06-27
+
+### Adds
+
+-   Adds an example app with Vue + React
+
+### Changes
+
+-   Updates to supertokens-web-js version to reflect interface change in `cookieHandler`
+-   Updates angular example app to use `supertokens-web-js`
+
+### Fixes
+
+-   Fixed dropdown interactivity of the country dropdown of the phone number input
+-   Added memoization to reduce unnecessary rerenders of phone number input sub-components
+-   Disabled smart-caret to fix a caret positioning bug on android phones in phone number input
+
 ## [0.23.1] - 2022-06-25
 
 -   [CI]: Changes dependency for node SDK in integration tests so that tests pass when using node 14

@@ -18,11 +18,11 @@
  */
 
 import { CSSObject } from "@emotion/react";
-import Select, { components } from "react-select";
+import Select, { components as ReactSelectComps } from "react-select";
 
-import React, { useContext } from "react";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
 
-import PhoneInputWithCountrySelect, { getCountryCallingCode } from "react-phone-number-input/min";
+import PhoneInputWithCountrySelect, { getCountryCallingCode, getCountries } from "react-phone-number-input/min";
 
 import StyleContext from "../../../../../styles/styleContext";
 import { InputProps } from "../../../../emailpassword/components/library/input";
@@ -77,6 +77,13 @@ function PhoneNumberInput({
         }
     }
 
+    useEffect(() => {
+        const countries = getCountries();
+        for (const code of countries) {
+            new Image().src = `http://purecatamphetamine.github.io/country-flag-icons/3x2/${code}.svg`;
+        }
+    }, []);
+
     const errorStyle: CSSObject | undefined = hasError === true ? styles.inputError : undefined;
     /*
      * Render.
@@ -99,6 +106,13 @@ function PhoneNumberInput({
                     international={true}
                     placeholder={placeholder}
                     defaultCountry={defaultCountry}
+                    smartCaret={
+                        false
+                        /*
+                            This is set to false to avoid this bug: https://gitlab.com/catamphetamine/react-phone-number-input/-/issues/128
+                            We should monitor this and update it to true whenever it's fixed
+                        */
+                    }
                 />
                 {hasError === true && (
                     <div
@@ -127,62 +141,85 @@ function CountrySelectWithIcon({
 
     const selectedOption = options.find((o) => o.value === value);
 
-    const CustomOption = ({ innerProps, data, isSelected, isDisabled }: any) => {
-        return !isDisabled ? (
-            <div
-                {...innerProps}
-                data-supertokens="phoneInputCountryOption"
-                css={style.phoneInputCountryOption}
-                aria-selected={isSelected}>
-                <Icon country={data.value} label={data.label} />
-                <span data-supertokens="phoneInputCountryOptionLabel" css={style.phoneInputCountryOptionLabel}>
-                    {data.label}
-                </span>
-                {data.value && (
-                    <span
-                        data-supertokens="phoneInputCountryOptionCallingCode"
-                        css={style.phoneInputCountryOptionCallingCode}>
-                        +{getCountryCallingCode(data.value)}
-                    </span>
-                )}
-            </div>
-        ) : null;
-    };
-    const Control = ({ children, ...rest }: any) => {
-        return (
-            <components.SingleValue
-                data-supertokens="phoneInputCountrySelect"
-                css={style.phoneInputCountrySelect}
-                {...rest}>
-                <Icon country={selectedOption?.value} label={children} />
-            </components.SingleValue>
-        );
-    };
+    const selectStyles = useMemo(
+        () => ({
+            menu: (provided: CSSObject) => ({
+                ...provided,
+                ...style.phoneInputCountryDropdown,
+                // These elements are added inside CustomOption below
+                // We are styling them here, to avoid emotion processing on each element (200+ countries)
+                "& [data-supertokens=phoneInputCountryOptionLabel]": {
+                    ...style.phoneInputCountryOptionLabel,
+                },
+                "& [data-supertokens=phoneInputCountryOption]": {
+                    ...style.phoneInputCountryOption,
+                },
+                "& [data-supertokens=phoneInputCountryOptionCallingCode]": {
+                    ...style.phoneInputCountryOptionCallingCode,
+                },
+            }),
+            control: (provided: CSSObject) => ({
+                ...provided,
+                ...style.phoneInputCountryControl,
+            }),
+            valueContainer: (provided: CSSObject) => ({
+                ...provided,
+                ...style.phoneInputCountryValueContainer,
+            }),
+            dropdownIndicator: (provided: CSSObject) => ({
+                ...provided,
+                ...style.phoneInputCountryDropdownIndicator,
+            }),
+        }),
+        [style]
+    );
+    const selectOnChange = useCallback(
+        (selected) => {
+            onChange(selected === null ? undefined : selected.value);
+        },
+        [onChange]
+    );
+    const components = useMemo(() => {
+        const CustomOption = ({ innerProps, data, isSelected, isDisabled }: any) => {
+            return !isDisabled ? (
+                <div
+                    {...innerProps}
+                    data-supertokens="phoneInputCountryOption"
+                    onTouchEnd={(ev) => {
+                        // We need to stop propagation here, to prevent the menu closing before the click is fired
+                        ev.stopPropagation();
+                    }}
+                    aria-selected={isSelected}>
+                    <Icon country={data.value} label={data.label} />
+                    <span data-supertokens="phoneInputCountryOptionLabel">{data.label}</span>
+                    {data.value && (
+                        <span data-supertokens="phoneInputCountryOptionCallingCode">
+                            +{getCountryCallingCode(data.value)}
+                        </span>
+                    )}
+                </div>
+            ) : null;
+        };
+        const Control = ({ children, ...rest }: any) => {
+            return (
+                <ReactSelectComps.SingleValue
+                    data-supertokens="phoneInputCountrySelect"
+                    css={style.phoneInputCountrySelect}
+                    {...rest}>
+                    <Icon country={rest.getValue()[0]?.value} label={children} />
+                </ReactSelectComps.SingleValue>
+            );
+        };
+        return { Option: CustomOption, SingleValue: Control, IndicatorSeparator: undefined };
+    }, []);
 
     return (
         <Select
             options={options}
-            styles={{
-                menu: (provided) => ({
-                    ...provided,
-                    ...style.phoneInputCountryDropdown,
-                }),
-                control: (provided) => ({
-                    ...provided,
-                    ...style.phoneInputCountryControl,
-                }),
-                valueContainer: (provided) => ({
-                    ...provided,
-                    ...style.phoneInputCountryValueContainer,
-                }),
-                dropdownIndicator: (provided) => ({
-                    ...provided,
-                    ...style.phoneInputCountryDropdownIndicator,
-                }),
-            }}
+            styles={selectStyles}
             value={selectedOption}
-            onChange={(selected) => onChange(selected === null ? undefined : selected.value)}
-            components={{ Option: CustomOption, SingleValue: Control, IndicatorSeparator: undefined }}
+            onChange={selectOnChange}
+            components={components}
         />
     );
 }

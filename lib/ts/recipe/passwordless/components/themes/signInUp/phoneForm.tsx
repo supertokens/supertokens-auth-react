@@ -21,12 +21,20 @@ import { defaultValidate } from "../../../../emailpassword/validators";
 import { SignInUpFooter } from "./signInUpFooter";
 import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
+import { useMemo } from "react";
 
 export const PhoneForm = withOverride(
     "PasswordlessPhoneForm",
     function PasswordlessPhoneForm(props: SignInUpPhoneFormProps): JSX.Element {
         const userContext = useUserContext();
 
+        const phoneInput = useMemo(
+            () =>
+                phoneNumberInputWithInjectedProps({
+                    defaultCountry: props.config.signInUpFeature.defaultCountry,
+                }),
+            [props.config.signInUpFeature.defaultCountry]
+        );
         return (
             <FormBase
                 clearError={props.clearError}
@@ -35,9 +43,7 @@ export const PhoneForm = withOverride(
                     {
                         id: "phoneNumber",
                         label: "PWLESS_SIGN_IN_UP_PHONE_LABEL",
-                        inputComponent: phoneNumberInputWithInjectedProps({
-                            defaultCountry: props.config.signInUpFeature.defaultCountry,
-                        }),
+                        inputComponent: phoneInput,
                         optional: false,
                         autofocus: true,
                         placeholder: "",

@@ -9,7 +9,7 @@ This demo app demonstrates the following use cases while using _no cookies set b
 -   Logout
 -   Forgot password flow
 -   Session management & Calling APIs
--   Using localstorage instead of cookies to store tokens (there are some locally used cookies set on the front-end)
+-   Using localstorage instead of cookies to store tokens (there are some locally used cookies set on the front-end, but those are not the session tokens themselves.)
 
 Storing tokens in localstorage comes with a few drawbacks:
 
@@ -22,8 +22,7 @@ For a detailed comparison please see [our blog](https://supertokens.com/blog/coo
 
 ## How the modification works
 
-The basic idea behind it is that we can use a custom header to transfer tokens. This way, the frontend can access and
-store them in localstorage or wherever desired and use them to authenticate requests.
+The basic idea behind it is that we can use a custom header to transfer tokens. This way, the frontend can access and store them in localstorage.
 
 ### Backend
 
