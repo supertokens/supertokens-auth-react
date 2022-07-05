@@ -79,8 +79,8 @@ SuperTokens.init({
 
 function App() {
     return (
-        <div className="App">
-            <SuperTokensWrapper>
+        <SuperTokensWrapper>
+            <div className="App">
                 <Router>
                     <div className="fill">
                         <Routes>
@@ -107,8 +107,8 @@ function App() {
                         <Footer />
                     </div>
                 </Router>
-            </SuperTokensWrapper>
-        </div>
+            </div>
+        </SuperTokensWrapper>
     );
 }
 
