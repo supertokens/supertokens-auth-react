@@ -5,7 +5,8 @@ import { FeatureBaseProps } from "../../../../../types";
 import { RecipeInterface } from "supertokens-web-js/recipe/passwordless";
 export declare const useSuccessInAnotherTabChecker: (
     state: SignInUpState,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    userContext: any
 ) => React.MutableRefObject<boolean>;
 export declare const useFeatureReducer: (
     recipeImpl: RecipeInterface | undefined,
