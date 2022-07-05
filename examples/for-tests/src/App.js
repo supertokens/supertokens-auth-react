@@ -5,7 +5,7 @@ import AppWithoutRouter from "./AppWithoutRouter";
 import AppWithReactDomRouter from "./AppWithReactDomRouter";
 import Footer from "./Footer";
 /* SuperTokens imports */
-import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import SuperTokens from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
@@ -285,10 +285,10 @@ export default App;
 
 export function BaseComponent({ children }) {
     return (
-        <SuperTokensWrapper>
+        <>
             <div className="fill">{children}</div>
             <Footer />
-        </SuperTokensWrapper>
+        </>
     );
 }
 
