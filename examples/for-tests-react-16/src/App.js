@@ -279,10 +279,10 @@ export default App;
 
 export function BaseComponent({ children }) {
     return (
-        <Fragment>
+        <>
             <div className="fill">{children}</div>
             <Footer />
-        </Fragment>
+        </>
     );
 }
 
@@ -351,6 +351,10 @@ export const DashboardNoAuthRequired = doNotUseReactRouterDom
 export function DashboardNoAuthRequiredHelper(props) {
     let sessionContext = useSessionContext();
 
+    if (sessionContext.loading) {
+        return null;
+    }
+
     if (sessionContext.doesSessionExist) {
         return Dashboard({ redirectOnLogout: false, ...props });
     } else {
@@ -413,6 +417,13 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
     }, []);
 
     let sessionContext = useSessionContext();
+
+    if (sessionContext.loading === true) {
+        // You could display a loading screen here, but session context loading is very fast
+        // so returning null is better in most cases to avoid content popping in and out
+        return null;
+    }
+
     return (
         <div className="dashboard">
             <div

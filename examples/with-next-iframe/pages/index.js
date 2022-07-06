@@ -2,13 +2,10 @@ import React from "react";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
-import dynamic from "next/dynamic";
 import supertokensNode from "supertokens-node";
 import SessionNode from "supertokens-node/recipe/session";
 import SessionReact from "supertokens-auth-react/recipe/session";
 import { backendConfig } from "../config/backendConfig";
-
-const EmailPasswordAuthNoSSR = dynamic(new Promise((res) => res(EmailPassword.EmailPasswordAuth)), { ssr: false });
 
 export async function getServerSideProps(context) {
     // this runs on the backend, so we must call init on supertokens-node SDK
@@ -33,9 +30,9 @@ export async function getServerSideProps(context) {
 
 export default function Home(props) {
     return (
-        <EmailPasswordAuthNoSSR>
+        <EmailPassword.EmailPasswordAuth>
             <ProtectedPage />
-        </EmailPasswordAuthNoSSR>
+        </EmailPassword.EmailPasswordAuth>
     );
 }
 
@@ -54,6 +51,10 @@ function ProtectedPage() {
             const json = await res.json();
             alert(JSON.stringify(json));
         }
+    }
+
+    if (sessionContext.loading === true) {
+        return null;
     }
 
     return (

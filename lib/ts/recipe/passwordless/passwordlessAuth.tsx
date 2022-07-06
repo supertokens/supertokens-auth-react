@@ -26,7 +26,6 @@ import SessionAuthWrapper from "../session/sessionAuth";
 import Passwordless from "./recipe";
 
 type Props = FeatureBaseProps & {
-    recipe: Passwordless;
     requireAuth?: boolean;
     onSessionExpired?: () => void;
 };
@@ -60,16 +59,12 @@ export default function PasswordlessAuthWrapper({
     onSessionExpired?: () => void;
     userContext?: any;
 }>) {
-    const routerInfo = SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory();
+    const routerInfo = SuperTokens.getReactRouterDomWithCustomHistory();
     const history = routerInfo === undefined ? undefined : routerInfo.useHistoryCustom();
 
     return (
         <UserContextWrapper userContext={userContext}>
-            <PasswordlessAuthMemo
-                history={history}
-                onSessionExpired={onSessionExpired}
-                requireAuth={requireAuth}
-                recipe={Passwordless.getInstanceOrThrow()}>
+            <PasswordlessAuthMemo history={history} onSessionExpired={onSessionExpired} requireAuth={requireAuth}>
                 {children}
             </PasswordlessAuthMemo>
         </UserContextWrapper>

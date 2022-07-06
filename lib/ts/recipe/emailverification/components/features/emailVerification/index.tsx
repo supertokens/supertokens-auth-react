@@ -49,6 +49,10 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     );
 
     const fetchIsEmailVerified = useCallback(async () => {
+        if (sessionContext.loading === true) {
+            // This callback should only be called if the session is already loaded
+            throw new Error("Should never come here");
+        }
         const token = getQueryParams("token") ?? undefined;
         if (token === undefined) {
             if (!sessionContext.doesSessionExist) {
@@ -59,7 +63,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
             }
         }
         return false;
-    }, [props.recipe]);
+    }, [props.recipe, sessionContext]);
 
     const checkIsEmailVerified = useCallback(
         async (isVerified: boolean): Promise<void> => {
@@ -70,7 +74,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         },
         [props.recipe, setStatus]
     );
-    useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified);
+    useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified, undefined, sessionContext.loading === false);
 
     const signOut = useCallback(async (): Promise<void> => {
         await props.recipe.config.signOut();

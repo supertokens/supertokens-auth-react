@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { signOut } from "../../../../recipe/emailpassword";
 
 export default function Home() {
-    const userId = useSessionContext().userId;
+    const sessionContext = useSessionContext();
     const navigate = useNavigate();
 
     async function logoutClicked() {
@@ -14,10 +14,14 @@ export default function Home() {
         navigate("/auth");
     }
 
+    if (sessionContext.loading === true) {
+        return null;
+    }
+
     return (
         <div className="fill">
             <Logout logoutClicked={logoutClicked} />
-            <SuccessView userId={userId} />
+            <SuccessView userId={sessionContext.userId} />
         </div>
     );
 }

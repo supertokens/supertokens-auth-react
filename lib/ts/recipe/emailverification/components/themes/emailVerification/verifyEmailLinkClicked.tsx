@@ -37,7 +37,7 @@ import useSessionContext from "../../../../session/useSessionContext";
 export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkClickedThemeProps> = (props) => {
     const styles = useContext(StyleContext);
     const t = useTranslation();
-    const { doesSessionExist } = useSessionContext();
+    const sessionContext = useSessionContext();
     const userContext = useUserContext();
     const [status, setStatus] = useState<
         "LOADING" | "INTERACTION_REQUIRED" | "INVALID" | "GENERAL_ERROR" | "SUCCESSFUL"
@@ -46,17 +46,21 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
     const [verifyLoading, setVerifyLoading] = useState(false);
 
     const verifyEmailOnMount = useCallback(async () => {
+        if (sessionContext.loading === true) {
+            // This callback should only be called if the session is already loaded
+            throw new Error("Should never come here");
+        }
         // If there is no active session we know that the verification was started elsewhere, since it requires a session
         // otherwise we assume it's the same session. The main purpose of this is to prevent mail scanners
         // from accidentally validating an email address
-        if (!doesSessionExist) {
+        if (!sessionContext.doesSessionExist) {
             return "INTERACTION_REQUIRED";
         }
 
         return props.recipeImplementation.verifyEmail({
             userContext,
         });
-    }, [props.recipeImplementation]);
+    }, [props.recipeImplementation, sessionContext]);
 
     const handleVerifyResp = useCallback(
         async (response: Awaited<ReturnType<typeof verifyEmailOnMount>>): Promise<void> => {
@@ -80,7 +84,7 @@ export const EmailVerificationVerifyEmailLinkClicked: React.FC<VerifyEmailLinkCl
         },
         [setStatus, setErrorMessage]
     );
-    useOnMountAPICall(verifyEmailOnMount, handleVerifyResp, handleError);
+    useOnMountAPICall(verifyEmailOnMount, handleVerifyResp, handleError, sessionContext.loading === false);
 
     const { onTokenInvalidRedirect, onSuccess } = props;
 

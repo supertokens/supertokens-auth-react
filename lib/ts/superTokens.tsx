@@ -182,6 +182,10 @@ export default class SuperTokens {
         return getSuperTokensRoutesForReactRouterDom(SuperTokens.getInstanceOrThrow());
     }
 
+    static getReactRouterDomWithCustomHistory(): { router: { Route: any }; useHistoryCustom: () => any } | undefined {
+        return this.instance !== undefined ? this.instance.getReactRouterDomWithCustomHistory() : undefined;
+    }
+
     /*
      * Instance Methods.
      */

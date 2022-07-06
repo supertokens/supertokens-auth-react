@@ -1,5 +1,5 @@
 import "./App.css";
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword, { EmailPasswordAuth } from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
@@ -27,29 +27,31 @@ SuperTokens.init({
 
 function App() {
     return (
-        <div className="App">
-            <Router>
-                <div className="fill">
-                    <Routes>
-                        {/* This shows the login UI on "/auth" route */}
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+        <SuperTokensWrapper>
+            <div className="App">
+                <Router>
+                    <div className="fill">
+                        <Routes>
+                            {/* This shows the login UI on "/auth" route */}
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
 
-                        <Route
-                            path="/"
-                            element={
-                                /* This protects the "/" route so that it shows 
-                                <Home /> only if the user is logged in.
-                                Else it redirects the user to "/auth" */
-                                <EmailPasswordAuth>
-                                    <Home />
-                                </EmailPasswordAuth>
-                            }
-                        />
-                    </Routes>
-                </div>
-                <Footer />
-            </Router>
-        </div>
+                            <Route
+                                path="/"
+                                element={
+                                    /* This protects the "/" route so that it shows 
+                                        <Home /> only if the user is logged in.
+                                        Else it redirects the user to "/auth" */
+                                    <EmailPasswordAuth>
+                                        <Home />
+                                    </EmailPasswordAuth>
+                                }
+                            />
+                        </Routes>
+                    </div>
+                    <Footer />
+                </Router>
+            </div>
+        </SuperTokensWrapper>
     );
 }
 

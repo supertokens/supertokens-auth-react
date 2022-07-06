@@ -1,12 +1,17 @@
 import { useSessionContext, signOut } from "supertokens-auth-react/recipe/session";
 
 export default function Home() {
-    const { userId } = useSessionContext();
+    const sessionContext = useSessionContext();
 
     async function signOutUser() {
         await signOut();
         window.location.reload();
     }
+
+    if (sessionContext.loading === true) {
+        return null;
+    }
+
     return (
         <div
             className="fill"
@@ -28,7 +33,7 @@ export default function Home() {
             <div style={{ height: "10px" }} />
             Your user ID is
             <div />
-            {userId}
+            {sessionContext.userId}
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />
             <div style={{ height: "10px" }} />

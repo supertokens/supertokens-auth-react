@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.css";
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import ThirdParty, { ThirdPartyAuth } from "supertokens-auth-react/recipe/thirdparty";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
@@ -119,44 +119,46 @@ function App() {
     let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
 
     return (
-        <div className="App">
-            <Router>
-                <div className="fill">
-                    <Routes>
-                        {/* This shows the login UI on "/auth" route */}
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+        <SuperTokensWrapper>
+            <div className="App">
+                <Router>
+                    <div className="fill">
+                        <Routes>
+                            {/* This shows the login UI on "/auth" route */}
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
 
-                        <Route
-                            path="/"
-                            element={
-                                /* This protects the "/" route so that it shows 
-                                <Home /> only if the user is logged in.
-                                Else it redirects the user to "/auth" */
-                                <ThirdPartyAuth
-                                    onSessionExpired={() => {
-                                        updateShowSessionExpiredPopup(true);
-                                    }}>
-                                    <Home />
-                                    {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                </ThirdPartyAuth>
-                            }
-                        />
-                        <Route
-                            path="/auth"
-                            element={
-                                <ThirdParty.SignInAndUp
-                                    userContext={{
-                                        forceOriginalCheck: true,
-                                    }}
-                                />
-                            }
-                        />
-                        <Route path="/second-factor" element={<SecondFactor />} />
-                    </Routes>
-                </div>
-                <Footer />
-            </Router>
-        </div>
+                            <Route
+                                path="/"
+                                element={
+                                    /* This protects the "/" route so that it shows 
+                                        <Home /> only if the user is logged in.
+                                        Else it redirects the user to "/auth" */
+                                    <ThirdPartyAuth
+                                        onSessionExpired={() => {
+                                            updateShowSessionExpiredPopup(true);
+                                        }}>
+                                        <Home />
+                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
+                                    </ThirdPartyAuth>
+                                }
+                            />
+                            <Route
+                                path="/auth"
+                                element={
+                                    <ThirdParty.SignInAndUp
+                                        userContext={{
+                                            forceOriginalCheck: true,
+                                        }}
+                                    />
+                                }
+                            />
+                            <Route path="/second-factor" element={<SecondFactor />} />
+                        </Routes>
+                    </div>
+                    <Footer />
+                </Router>
+            </div>
+        </SuperTokensWrapper>
     );
 }
 

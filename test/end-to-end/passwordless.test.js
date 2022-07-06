@@ -1330,17 +1330,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-                    ...(isReact16()
-                        ? [
-                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
-                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
-                          ]
-                        : [
-                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
-                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
-                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
-                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
-                          ]),
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);
@@ -1471,18 +1462,8 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
-
-                    ...(isReact16()
-                        ? [
-                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
-                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
-                          ]
-                        : [
-                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
-                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
-                              `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
-                              `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
-                          ]),
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SESSION_ALREADY_EXISTS`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     "ST_LOGS SESSION OVERRIDE GET_USER_ID",
                 ]);

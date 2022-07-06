@@ -21,12 +21,15 @@ import SuperTokens from "./superTokens";
 import { TranslationStore } from "./translation/translationHelpers";
 import { SuperTokensConfig } from "./types";
 import { useUserContext } from "./usercontext";
+import { SuperTokensWrapper } from "./components/supertokensWrapper";
 
 /*
  * API Wrapper exposed to user.
  */
 
 export default class SuperTokensAPIWrapper {
+    static SuperTokensWrapper = SuperTokensWrapper;
+
     static init(config: SuperTokensConfig): void {
         SuperTokens.init(config);
     }
@@ -63,5 +66,6 @@ export const loadTranslation = SuperTokensAPIWrapper.loadTranslation;
 export const getRoutingComponent = SuperTokensAPIWrapper.getRoutingComponent;
 export const getSuperTokensRoutesForReactRouterDom = SuperTokens.getSuperTokensRoutesForReactRouterDom;
 
+export { SuperTokensWrapper } from "./components/supertokensWrapper";
 export { useTranslation } from "./translation/translationContext";
 export { useUserContext } from "./usercontext";
