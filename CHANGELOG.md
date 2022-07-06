@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Additional tests for `getRedirectionURL`
 
+### Changed
+
+-   Update `supertokens-web-js` dependency version
+
 ## [0.24.0] - 2022-07-06
 
 ### Bug fixes
