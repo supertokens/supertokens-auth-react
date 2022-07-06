@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Bug fixes
+
+-   Fixes an issue where `userContext` would not get passed correctly for `ThirdPartyPasswordless` recipe
+
 ### Added
 
 -   Added `SuperTokensWrapper` intended to wrap around whole applications, providing a session context

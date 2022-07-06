@@ -117,7 +117,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         [pwlessDispatch, dispatch]
     );
 
-    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(pwlessState, combinedPwlessDispatch);
+    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(pwlessState, combinedPwlessDispatch, userContext);
 
     const pwlessChildProps = usePasswordlessChildProps(
         props.recipe.passwordlessRecipe,

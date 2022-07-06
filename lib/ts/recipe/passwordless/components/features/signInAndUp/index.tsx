@@ -36,7 +36,8 @@ import { getLoginAttemptInfo, setLoginAttemptInfo } from "../../../utils";
 
 export const useSuccessInAnotherTabChecker = (
     state: SignInUpState,
-    dispatch: React.Dispatch<PasswordlessSignInUpAction>
+    dispatch: React.Dispatch<PasswordlessSignInUpAction>,
+    userContext: any
 ) => {
     const callingConsumeCodeRef = useRef(false);
 
@@ -45,7 +46,9 @@ export const useSuccessInAnotherTabChecker = (
         if (state.loginAttemptInfo && !state.successInAnotherTab) {
             const checkSessionIntervalHandle = setInterval(async () => {
                 if (callingConsumeCodeRef.current === false) {
-                    const hasSession = await Session.doesSessionExist();
+                    const hasSession = await Session.doesSessionExist({
+                        userContext,
+                    });
                     if (hasSession) {
                         dispatch({ type: "successInAnotherTab" });
                     }
@@ -231,7 +234,7 @@ export const SignInUpFeature: React.FC<
     const componentOverrides = props.recipe.config.override.components;
     const userContext = useUserContext();
     const [state, dispatch] = useFeatureReducer(props.recipe.recipeImpl, userContext);
-    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch);
+    const callingConsumeCodeRef = useSuccessInAnotherTabChecker(state, dispatch, userContext);
     const childProps = useChildProps(props.recipe, dispatch, state, callingConsumeCodeRef, props.history)!;
 
     return (
