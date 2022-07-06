@@ -14,8 +14,8 @@
         "react-dom": "^18.0.0",
         "react-router-dom": "^6.2.1",
         "react-scripts": "4.0.0",
-        "supertokens-auth-react": "^0.22.3",
-        "supertokens-node": "^9.2.0",
+        "supertokens-auth-react": "^0.24.0",
+        "supertokens-node": "^11.0.0",
         "web-vitals": "^0.2.4"
     },
     "devDependencies": {
