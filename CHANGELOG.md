@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Bug fixes
+
+-   Fixes an issue where `userContext` would not get passed correctly for `ThirdPartyPasswordless` recipe
+
 ## [0.23.2] - 2022-06-27
 
 ### Adds
