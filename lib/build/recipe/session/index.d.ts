@@ -34,7 +34,6 @@ export default class SessionAPIWrapper {
             | Response;
         userContext: any;
     }): Promise<ClaimValidationError[]>;
-    static redirectToAuth(input?: { redirectBack?: boolean }): Promise<void>;
 }
 declare const useSessionContext: () => SessionContextType;
 declare const SessionAuth: import("react").FC<

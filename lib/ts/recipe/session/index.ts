@@ -79,15 +79,6 @@ export default class SessionAPIWrapper {
     }): Promise<ClaimValidationError[]> {
         return Session.getInstanceOrThrow().getInvalidClaimsFromResponse(input);
     }
-
-    // have backwards compatibility to allow input as "signin" | "signup"
-    static redirectToAuth(input?: { redirectBack?: boolean }): Promise<void> {
-        if (input?.redirectBack !== true) {
-            return Session.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath();
-        } else {
-            return Session.getInstanceOrThrow().redirectToAuthWithRedirectToPath();
-        }
-    }
 }
 
 const useSessionContext = SessionAPIWrapper.useSessionContext;

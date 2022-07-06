@@ -48,6 +48,9 @@ class RolesClaimClass extends SessionClaim<string[]> {
 
     async addRoleUsingSessionHandle(sessionHandle: string, role: string, userContext?: any) {
         const sessionInfo = await Session.getSessionInformation(sessionHandle, userContext);
+        if (!sessionInfo) {
+            return false;
+        }
         const origRoles = this.getValueFromPayload(sessionInfo.accessTokenPayload, userContext);
         const newRoles = Array.from(new Set([...origRoles, role]));
         return Session.mergeIntoAccessTokenPayload(

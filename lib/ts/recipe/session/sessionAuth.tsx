@@ -135,7 +135,6 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 case "SESSION_CREATED":
                 case "REFRESH_SESSION":
                 case "ACCESS_TOKEN_PAYLOAD_UPDATED":
-                case "SIGN_OUT":
                 case "API_INVALID_CLAIM": {
                     // In general the user should not be calling APIs that fail w/ invalid claim
                     // This may suggest that a claim was invalidated in the meantime
@@ -147,6 +146,9 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     setContext({ ...event.sessionContext, loading: false, invalidClaims });
                     return;
                 }
+                case "SIGN_OUT":
+                    setContext({ ...event.sessionContext, loading: false, invalidClaims: [] });
+                    return;
                 case "UNAUTHORISED":
                     setContext({ ...event.sessionContext, loading: false, invalidClaims: [] });
                     if (props.onSessionExpired !== undefined) {

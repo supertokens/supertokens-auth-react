@@ -45,11 +45,8 @@ supertokens.init({
                     createNewSession: async (input) => {
                         input.accessTokenPayload = {
                             ...input.accessTokenPayload,
-                            ...(await RolesClaim.fetchAndGetAccessTokenPayloadUpdate(input.userId, input.userContext)),
-                            ...(await EmailVerifiedClaim.fetchAndGetAccessTokenPayloadUpdate(
-                                input.userId,
-                                input.userContext
-                            )),
+                            ...(await RolesClaim.build(input.userId, input.userContext)),
+                            ...(await EmailVerifiedClaim.build(input.userId, input.userContext)),
                             "app-custom-claim": { userId: input.userId, why: "Info" },
                         };
                         return oI.createNewSession(input);
@@ -161,7 +158,7 @@ app.post(
     async (req, res) => {
         const session: SessionContainer = (req as any).session;
 
-        await session.fetchAndGetAccessTokenPayloadUpdate(EmailVerifiedClaim);
+        await session.fetchAndSetClaim(EmailVerifiedClaim);
 
         res.send({
             status: "OK",
