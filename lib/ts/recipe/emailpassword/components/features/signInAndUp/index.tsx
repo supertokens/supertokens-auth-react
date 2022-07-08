@@ -38,6 +38,7 @@ import { useCallback } from "react";
 import { Dispatch } from "react";
 import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
+import Session from "../../../../session/recipe";
 
 export const useFeatureReducer = (recipe: Recipe | undefined) => {
     return React.useReducer(
@@ -109,66 +110,28 @@ export function useChildProps(
     const userContext = useUserContext();
 
     const onSignInSuccess = useCallback(async (): Promise<void> => {
-        if (!recipe) {
-            return;
-        }
-        if (recipe.emailVerification.config.mode === "REQUIRED") {
-            let isEmailVerified = true;
-            try {
-                isEmailVerified = (await recipe.emailVerification.isEmailVerified(userContext)).isVerified;
-            } catch (ignored) {}
-            if (!isEmailVerified) {
-                await recipe.savePostEmailVerificationSuccessRedirectState({
-                    redirectToPath: getRedirectToPathFromURL(),
-                    isNewUser: false,
-                    action: "SUCCESS",
-                });
-                return recipe.emailVerification.redirect(
-                    {
-                        action: "VERIFY_EMAIL",
-                    },
-                    history
-                );
-            }
-        }
-
-        return await recipe.redirect(
+        return Session.getInstanceOrThrow().validateGlobalClaimsAndRedirect(
             {
                 action: "SUCCESS",
                 isNewUser: false,
                 redirectToPath: getRedirectToPathFromURL(),
             },
+            userContext,
             history
         );
-    }, [recipe]);
+    }, [recipe, userContext, history]);
 
     const onSignUpSuccess = useCallback(async (): Promise<void> => {
-        if (!recipe) {
-            return;
-        }
-        if (recipe.emailVerification.config.mode === "REQUIRED") {
-            await recipe.savePostEmailVerificationSuccessRedirectState({
-                redirectToPath: getRedirectToPathFromURL(),
-                isNewUser: true,
+        return Session.getInstanceOrThrow().validateGlobalClaimsAndRedirect(
+            {
                 action: "SUCCESS",
-            });
-            return await recipe.emailVerification.redirect(
-                {
-                    action: "VERIFY_EMAIL",
-                },
-                history
-            );
-        } else {
-            return await recipe.redirect(
-                {
-                    redirectToPath: getRedirectToPathFromURL(),
-                    isNewUser: true,
-                    action: "SUCCESS",
-                },
-                history
-            );
-        }
-    }, [recipe]);
+                isNewUser: true,
+                redirectToPath: getRedirectToPathFromURL(),
+            },
+            userContext,
+            history
+        );
+    }, [recipe, userContext, history]);
 
     return useMemo(() => {
         if (recipe === undefined || recipeImplementation === undefined) {

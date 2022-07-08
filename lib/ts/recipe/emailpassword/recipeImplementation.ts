@@ -1,5 +1,5 @@
 import { OnHandleEventContext, PreAndPostAPIHookAction } from "./types";
-import { User } from "../authRecipeWithEmailVerification/types";
+import { User } from "../authRecipe/types";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 import { getRecipeImplementation as WebJSRecipeImplementation } from "supertokens-web-js/recipe/emailpassword/recipeImplementation";
 import { NormalisedAppInfo } from "../../types";

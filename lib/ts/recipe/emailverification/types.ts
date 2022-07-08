@@ -21,26 +21,17 @@ import { VerifyEmailLinkClicked } from "./components/themes/emailVerification/ve
 import OverrideableBuilder from "supertokens-js-override";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 
-// For AuthRecipeModule, we don't need to take signOut,
-// redirectToSignIn and postVerificationRedirect as inputs from the user.
-// So we have UserInputForAuthRecipeModule for AuthRecipeModule, and UserInput
-// for anyone who wants to use this recipe directly.
-export type UserInputForAuthRecipeModule = {
-    mode?: "OFF" | "REQUIRED";
-    disableDefaultUI?: boolean;
-    sendVerifyEmailScreen?: FeatureBaseConfig;
-    verifyEmailLinkClickedScreen?: FeatureBaseConfig;
-};
-
 export type ComponentOverrideMap = {
     EmailVerificationSendVerifyEmail_Override?: ComponentOverride<typeof SendVerifyEmail>;
     EmailVerificationVerifyEmailLinkClicked_Override?: ComponentOverride<typeof VerifyEmailLinkClicked>;
 };
 
-export type UserInput = UserInputForAuthRecipeModule & {
-    signOut(): Promise<void>;
-    redirectToSignIn(history?: any): Promise<void>;
-    postVerificationRedirect(history?: any): Promise<void>;
+export type UserInput = {
+    mode?: "OFF" | "OPTIONAL" | "REQUIRED";
+    disableDefaultUI?: boolean;
+    sendVerifyEmailScreen?: FeatureBaseConfig;
+    verifyEmailLinkClickedScreen?: FeatureBaseConfig;
+
     override?: {
         functions?: (
             originalImplementation: RecipeInterface,
@@ -55,13 +46,10 @@ export type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
-    mode: "OFF" | "REQUIRED";
+    mode: "OFF" | "OPTIONAL" | "REQUIRED";
     disableDefaultUI: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;
-    signOut(): Promise<void>;
-    redirectToSignIn(history?: any): Promise<void>;
-    postVerificationRedirect(history?: any): Promise<void>;
     override: {
         functions: (
             originalImplementation: RecipeInterface,

@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import "./App.css";
 import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -9,7 +10,6 @@ import SessionExpiredPopup from "./SessionExpiredPopup";
 import { RolesClaim } from "./claims/rolesClaim";
 import { ThemeProvider } from "@emotion/react";
 import { CssBaseline } from "@mui/material";
-import { EmailVerifiedClaim } from "./claims/emailVerifiedClaim";
 import { api, TestContextProvider, useTestLogger } from "./test.context";
 import { TestScreen } from "./routes/testScreen.component";
 import { MFAClaim } from "./claims/mfaClaim";
@@ -33,10 +33,8 @@ SuperTokens.init({
         websiteDomain: getWebsiteDomain(), // TODO: Change to your app's website domain
     },
     recipeList: [
+        EmailVerification.init({ mode: "REQUIRED" }),
         EmailPassword.init({
-            emailVerificationFeature: {
-                mode: "OFF",
-            },
             onHandleEvent: (ev) => {
                 api.addLogItem("EP Event: " + JSON.stringify(ev));
             },
@@ -84,7 +82,6 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
         (globalClaims) => [...globalClaims, RolesClaim.hasRole.includes("admin"), MFAClaim.completed2FA()],
         []
     );
-    const route2ClaimsOverride = useCallback((globalClaims) => [...globalClaims, EmailVerifiedClaim.isVerified], []);
 
     return (
         <div className="fill">
@@ -102,7 +99,7 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
                             onSessionExpired={() => {
                                 updateShowSessionExpiredPopup(true);
                             }}
-                            overwriteDefaultClaimValidators={route1ClaimOverride}>
+                            overrideGlobalClaimValidators={route1ClaimOverride}>
                             <TestScreen title="Route1" subTitle={"Required: Role(admin), Email.isVerified"} />
                             {showSessionExpiredPopup && <SessionExpiredPopup />}
                         </SessionAuth>
@@ -117,8 +114,7 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
                             redirectToLogin={EmailPassword.redirectToAuth}
                             onSessionExpired={() => {
                                 updateShowSessionExpiredPopup(true);
-                            }}
-                            claimValidators={route2ClaimsOverride}>
+                            }}>
                             <TestScreen title="Route2" subTitle={"Required: Email.isVerified"} />
                             {showSessionExpiredPopup && <SessionExpiredPopup />}
                         </SessionAuth>
@@ -130,13 +126,7 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
                         /* This protects the "/" route so that it shows
             <Home /> only if the user is logged in.
             Else it redirects the user to "/auth" */
-                        <SessionAuth
-                            key="/"
-                            requireAuth={true}
-                            redirectToLogin={EmailPassword.redirectToAuth}
-                            onSessionExpired={() => {
-                                updateShowSessionExpiredPopup(true);
-                            }}>
+                        <SessionAuth key="/" requireAuth={true} overrideGlobalClaimValidators={() => []}>
                             <TestScreen title="Home" subTitle={"No claims required"} />
                             {showSessionExpiredPopup && <SessionExpiredPopup />}
                         </SessionAuth>

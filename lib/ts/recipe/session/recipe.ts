@@ -18,15 +18,23 @@
  */
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
-import { appendQueryParamsToURL, getCurrentNormalisedUrlPath, isTest } from "../../utils";
-import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
+import {
+    appendQueryParamsToURL,
+    getCurrentNormalisedUrlPath,
+    getLocalStorage,
+    isTest,
+    removeFromLocalStorage,
+    setLocalStorage,
+} from "../../utils";
+import { RecipeEventWithSessionContext, InputType, SessionContextUpdate, GetRedirectionURLContext } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
+import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
-export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
+export default class Session extends RecipeModule<GetRedirectionURLContext, unknown, unknown, any> {
     static instance?: Session;
     static RECIPE_ID = "session";
 
@@ -35,10 +43,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
 
     constructor(config: ConfigType) {
-        super(config);
+        const normalizedConfig = { ...config, ...normaliseRecipeModuleConfig(config) };
+        super(normalizedConfig);
 
         this.webJsRecipe = new WebJSSessionRecipe({
-            ...config,
+            ...normalizedConfig,
             onHandleEvent: (event) => {
                 if (config.onHandleEvent !== undefined) {
                     config.onHandleEvent(event);
@@ -95,7 +104,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return this.webJsRecipe.attemptRefreshingSession();
     };
 
-    redirectToAuthWithRedirectToPath(history?: any, queryParams?: Record<string, string>) {
+    redirectToAuthWithRedirectToPath = (history?: any, queryParams?: Record<string, string>) => {
         const redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
         if (queryParams === undefined) {
             queryParams = {};
@@ -105,29 +114,37 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
             redirectToPath,
         };
         return this.redirectToAuthWithoutRedirectToPath(history, queryParams);
-    }
+    };
 
-    redirectToAuthWithoutRedirectToPath(history?: any, queryParams?: Record<string, string>) {
+    redirectToAuthWithoutRedirectToPath = (history?: any, queryParams?: Record<string, string>) => {
         const redirectUrl = appendQueryParamsToURL(this.config.appInfo.websiteBasePath, queryParams);
         return this.redirectToUrl(redirectUrl, history);
-    }
+    };
 
-    validateClaims(input: {
+    validateClaims = (input: {
         overrideGlobalClaimValidators?: (
             globalClaimValidators: SessionClaimValidator[],
             userContext: any
         ) => SessionClaimValidator[];
         userContext: any;
-    }): Promise<ClaimValidationError[]> | ClaimValidationError[] {
+    }): Promise<ClaimValidationError[]> | ClaimValidationError[] => {
         return this.webJsRecipe.validateClaims(input);
-    }
+    };
 
-    getInvalidClaimsFromResponse(input: {
+    getInvalidClaimsFromResponse = (input: {
         response: { data: any } | Response;
         userContext: any;
-    }): Promise<ClaimValidationError[]> {
+    }): Promise<ClaimValidationError[]> => {
         return this.webJsRecipe.getInvalidClaimsFromResponse(input);
-    }
+    };
+
+    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
+        if (context.action === "SUCCESS") {
+            return context.redirectToPath === undefined ? "/" : context.redirectToPath;
+        } else {
+            throw new Error("Should never come here");
+        }
+    };
 
     /**
      * @returns Function to remove event listener
@@ -136,6 +153,38 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         this.eventListeners.add(listener);
 
         return () => this.eventListeners.delete(listener);
+    };
+
+    validateGlobalClaimsAndRedirect = async (
+        successEvent?: GetRedirectionURLContext,
+        userContext?: any,
+        history?: any
+    ): Promise<void> => {
+        const invalidClaims = await this.validateClaims({ userContext });
+        const firstRedirectingClaimError = invalidClaims.find((err) => err.redirectPath !== undefined);
+        if (firstRedirectingClaimError) {
+            if (successEvent !== undefined) {
+                const jsonContext = JSON.stringify(successEvent);
+                await setLocalStorage("supertokens-post-email-verification", jsonContext);
+            }
+            return this.redirectToUrl(firstRedirectingClaimError.redirectPath!, history);
+        }
+        if (successEvent === undefined) {
+            const successContextStr = await getLocalStorage("supertokens-post-email-verification");
+            if (successContextStr !== null) {
+                try {
+                    successEvent = JSON.parse(successContextStr);
+                } finally {
+                    await removeFromLocalStorage("supertokens-post-email-verification");
+                }
+            } else {
+                successEvent = {
+                    action: "SUCCESS",
+                    isNewUser: false,
+                };
+            }
+        }
+        return this.redirect(successEvent!);
     };
 
     private notifyListeners = async (event: RecipeEvent) => {
@@ -188,8 +237,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return WebJSSessionRecipe.addAxiosInterceptors(axiosInstance, userContext);
     }
 
-    static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any> {
-        return (appInfo: NormalisedAppInfo, enableDebugLogs: boolean): RecipeModule<unknown, unknown, unknown, any> => {
+    static init(config?: InputType): CreateRecipeFunction<GetRedirectionURLContext, unknown, unknown, any> {
+        return (
+            appInfo: NormalisedAppInfo,
+            enableDebugLogs: boolean
+        ): RecipeModule<GetRedirectionURLContext, unknown, unknown, any> => {
             Session.instance = new Session({
                 ...config,
                 appInfo,

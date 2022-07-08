@@ -28,6 +28,7 @@ import { SessionContext } from "../../../../session";
 import { defaultTranslationsEmailVerification } from "../../themes/translations";
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { useUserContext } from "../../../../../usercontext";
+import Session from "../../../../session/recipe";
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
 
@@ -48,6 +49,10 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         [props.recipe]
     );
 
+    const onSuccess = useCallback(async () => {
+        return Session.getInstanceOrThrow().validateGlobalClaimsAndRedirect(undefined, userContext, props.history);
+    }, [props.recipe, props.history, userContext]);
+
     const fetchIsEmailVerified = useCallback(async () => {
         if (sessionContext.loading === true) {
             // This callback should only be called if the session is already loaded
@@ -56,7 +61,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         const token = getQueryParams("token") ?? undefined;
         if (token === undefined) {
             if (!sessionContext.doesSessionExist) {
-                await props.recipe.config.redirectToSignIn(props.history);
+                await Session.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(props.history);
             } else {
                 // we check if the email is already verified, and if it is, then we redirect the user
                 return (await props.recipe.recipeImpl.isEmailVerified({ userContext })).isVerified;
@@ -68,25 +73,22 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     const checkIsEmailVerified = useCallback(
         async (isVerified: boolean): Promise<void> => {
             if (isVerified) {
-                return props.recipe.config.postVerificationRedirect(props.history);
+                return onSuccess();
             }
             setStatus("READY");
         },
-        [props.recipe, setStatus]
+        [props.recipe, setStatus, onSuccess]
     );
     useOnMountAPICall(fetchIsEmailVerified, checkIsEmailVerified, undefined, sessionContext.loading === false);
 
     const signOut = useCallback(async (): Promise<void> => {
-        await props.recipe.config.signOut();
-        return await props.recipe.config.redirectToSignIn(props.history);
+        const session = Session.getInstanceOrThrow();
+        await session.signOut(props.userContext);
+        return session.redirectToAuthWithoutRedirectToPath(props.history);
     }, [props.recipe]);
 
     const onTokenInvalidRedirect = useCallback(
-        () => props.recipe.config.redirectToSignIn(props.history),
-        [props.recipe, props.history]
-    );
-    const onSuccess = useCallback(
-        () => props.recipe.config.postVerificationRedirect(props.history),
+        () => Session.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(props.history),
         [props.recipe, props.history]
     );
 

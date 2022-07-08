@@ -21,6 +21,7 @@ import { SessionAuth, SessionContext } from "../session";
 import AuthRecipe from ".";
 import { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
 import { getRedirectToPathFromURL } from "../../utils";
+import Session from "../session/recipe";
 
 type Props<T, S, R, N extends NormalisedConfig<T | GetRedirectionURLContext, S, R | OnHandleEventContext>> = {
     onSessionAlreadyExists?: () => void;
@@ -41,7 +42,7 @@ const AuthWidgetWrapper = <
     props: PropsWithChildren<Props<T, Action, R, N>>
 ): React.ReactElement | null => {
     return (
-        <SessionAuth requireAuth={false}>
+        <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
             <Redirector {...props} />
         </SessionAuth>
     );
@@ -66,7 +67,7 @@ const Redirector = <T, S, R, N extends NormalisedConfig<T | GetRedirectionURLCon
                     props.authRecipe.config.onHandleEvent({
                         action: "SESSION_ALREADY_EXISTS",
                     });
-                    void props.authRecipe.redirect(
+                    void Session.getInstanceOrThrow().redirect(
                         {
                             action: "SUCCESS",
                             isNewUser: false,

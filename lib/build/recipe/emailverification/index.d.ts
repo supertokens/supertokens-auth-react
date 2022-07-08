@@ -6,6 +6,7 @@ import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recip
 export default class Wrapper {
     static EmailVerification: (prop?: any) => JSX.Element;
     static EmailVerificationTheme: typeof EmailVerificationTheme;
+    static EmailVerifiedClaim: import("supertokens-web-js/recipe/emailverification").EmailVerifiedClaimClass;
     static init(
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
@@ -35,6 +36,7 @@ declare const verifyEmail: typeof Wrapper.verifyEmail;
 declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
 declare const EmailVerification: (prop?: any) => JSX.Element;
 declare const getEmailVerificationTokenFromURL: typeof Wrapper.getEmailVerificationTokenFromURL;
+declare const EmailVerifiedClaim: import("supertokens-web-js/recipe/emailverification").EmailVerifiedClaimClass;
 export {
     init,
     isEmailVerified,
@@ -48,4 +50,5 @@ export {
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
+    EmailVerifiedClaim,
 };

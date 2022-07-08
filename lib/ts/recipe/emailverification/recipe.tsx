@@ -36,7 +36,8 @@ import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
-import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
+import { RecipeInterface, EmailVerifiedClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { SessionClaimValidatorStore } from "supertokens-website/utils/sessionClaimValidatorStore";
 import OverrideableBuilder from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
@@ -49,6 +50,7 @@ export default class EmailVerification extends RecipeModule<
 > {
     static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
+    static EmailVerifiedClaim = new EmailVerifiedClaimClass(() => EmailVerification.getInstanceOrThrow().recipeImpl);
 
     recipeImpl: RecipeInterface;
 
@@ -66,6 +68,14 @@ export default class EmailVerification extends RecipeModule<
                 })
             );
             this.recipeImpl = builder.override(this.config.override.functions).build();
+        }
+        if (this.config.mode !== "OFF") {
+            SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
+                EmailVerification.EmailVerifiedClaim.validators.isValidated(
+                    10,
+                    this.config.mode === "REQUIRED" ? () => this.getRedirectUrl({ action: "VERIFY_EMAIL" }) : undefined
+                )
+            );
         }
     }
 
@@ -116,7 +126,7 @@ export default class EmailVerification extends RecipeModule<
     getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
         return (
             <UserContextWrapper userContext={props.userContext}>
-                <SessionAuth requireAuth={false}>
+                <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
                     {/**
                      * EmailVerificationFeature is a class component that accepts userContext
                      * as a prop. If we pass userContext as a prop directly then Emailverification

@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
+import AuthRecipe from "../authRecipe";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -35,7 +35,6 @@ import RecipeModule from "../recipeModule";
 import SignInAndUp from "./components/features/signInAndUp";
 import SignInAndUpCallback from "./components/features/signInAndUpCallback";
 import RecipeImplementation from "./recipeImplementation";
-import EmailVerification from "../emailverification/recipe";
 import AuthWidgetWrapper from "../authRecipe/authWidgetWrapper";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
 import OverrideableBuilder from "supertokens-js-override";
@@ -44,8 +43,9 @@ import UserContextWrapper from "../../usercontext/userContextWrapper";
 /*
  * Class.
  */
-export default class ThirdParty extends AuthRecipeWithEmailVerification<
+export default class ThirdParty extends AuthRecipe<
     GetRedirectionURLContext,
+    never,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -54,15 +54,8 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
 
     recipeImpl: WebJSRecipeInterface;
 
-    constructor(
-        config: Config,
-        recipes: {
-            emailVerificationInstance: EmailVerification | undefined;
-        }
-    ) {
-        super(normaliseThirdPartyConfig(config), {
-            emailVerificationInstance: recipes.emailVerificationInstance,
-        });
+    constructor(config: Config) {
+        super(normaliseThirdPartyConfig(config));
 
         const builder = new OverrideableBuilder(
             RecipeImplementation({
@@ -101,10 +94,7 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
             };
         });
 
-        return {
-            ...features,
-            ...this.getAuthRecipeWithEmailVerificationFeatures(),
-        };
+        return features;
     };
 
     getFeatureComponent = (
@@ -133,12 +123,12 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
                 </UserContextWrapper>
             );
         } else {
-            return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);
+            throw new Error("Should never come here");
         }
     };
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        return this.getAuthRecipeWithEmailVerificationDefaultRedirectionURL(context);
+        return this.getAuthRecipeDefaultRedirectionURL(context);
     };
 
     static init(
@@ -147,16 +137,11 @@ export default class ThirdParty extends AuthRecipeWithEmailVerification<
         return (
             appInfo: NormalisedAppInfo
         ): RecipeModule<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext, NormalisedConfig> => {
-            ThirdParty.instance = new ThirdParty(
-                {
-                    ...config,
-                    appInfo,
-                    recipeId: ThirdParty.RECIPE_ID,
-                },
-                {
-                    emailVerificationInstance: undefined,
-                }
-            );
+            ThirdParty.instance = new ThirdParty({
+                ...config,
+                appInfo,
+                recipeId: ThirdParty.RECIPE_ID,
+            });
             return ThirdParty.instance;
         };
     }

@@ -41,46 +41,6 @@ export default class Wrapper {
         });
     }
 
-    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK";
-        isVerified: boolean;
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.isEmailVerified({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
-        return ThirdPartyPasswordless.getInstanceOrThrow().emailVerification.recipeImpl.getEmailVerificationTokenFromURL(
-            {
-                ...input,
-                userContext: getNormalisedUserContext(input?.userContext),
-            }
-        );
-    }
-
     static async redirectToThirdPartyLogin(input: {
         thirdPartyId: string;
         userContext?: any;
@@ -411,10 +371,6 @@ export default class Wrapper {
 
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
-const isEmailVerified = Wrapper.isEmailVerified;
-const sendVerificationEmail = Wrapper.sendVerificationEmail;
-const verifyEmail = Wrapper.verifyEmail;
-const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
 const redirectToThirdPartyLogin = Wrapper.redirectToThirdPartyLogin;
 const getAuthorisationURLFromBackend = Wrapper.getAuthorisationURLFromBackend;
 const thirdPartySignInAndUp = Wrapper.thirdPartySignInAndUp;
@@ -449,10 +405,6 @@ export {
     Google,
     Facebook,
     Github,
-    isEmailVerified,
-    sendVerificationEmail,
-    verifyEmail,
-    getEmailVerificationTokenFromURL,
     redirectToThirdPartyLogin,
     getAuthorisationURLFromBackend,
     thirdPartySignInAndUp,

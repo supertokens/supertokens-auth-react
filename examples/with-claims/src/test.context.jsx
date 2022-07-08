@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useCallback } from "react";
 import { createContext } from "react";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
+import { EmailVerifiedClaim } from "supertokens-auth-react/recipe/emailverification";
 
 import { getApiDomain } from "./App";
 
@@ -56,7 +57,7 @@ export const TestContextProvider = ({ children }) => {
                 return post("/refresh-roles");
             },
             refreshEmailVerifiedInToken() {
-                return post("/refresh-email-verified");
+                return EmailVerifiedClaim.refresh();
             },
             getUserInfo() {
                 return get("/get-user-info");

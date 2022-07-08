@@ -4,7 +4,7 @@ import { Button, Card, CardActions, CardContent, CardHeader, Container, Typograp
 import React, { useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { signOut, useSessionContext } from "supertokens-auth-react/recipe/session";
-import { EmailVerifiedClaim } from "../claims/emailVerifiedClaim";
+import { EmailVerifiedClaim } from "supertokens-auth-react/recipe/emailverification";
 import { MFAClaim } from "../claims/mfaClaim";
 import { RolesClaim } from "../claims/rolesClaim";
 import { useTestApi, useTestLogs } from "../test.context";

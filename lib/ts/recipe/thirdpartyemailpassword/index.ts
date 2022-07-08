@@ -41,46 +41,6 @@ export default class Wrapper {
         });
     }
 
-    static async isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK";
-        isVerified: boolean;
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.isEmailVerified({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.verifyEmail({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static async sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-        fetchResponse: Response;
-    }> {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.sendVerificationEmail({
-            ...input,
-            userContext: getNormalisedUserContext(input?.userContext),
-        });
-    }
-
-    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string {
-        return ThirdPartyEmailPassword.getInstanceOrThrow().emailVerification.recipeImpl.getEmailVerificationTokenFromURL(
-            {
-                ...input,
-                userContext: getNormalisedUserContext(input?.userContext),
-            }
-        );
-    }
-
     // have backwards compatibility to allow input as "signin" | "signup"
     static async redirectToAuth(
         input?:
@@ -377,10 +337,6 @@ export default class Wrapper {
 
 const init = Wrapper.init;
 const signOut = Wrapper.signOut;
-const isEmailVerified = Wrapper.isEmailVerified;
-const verifyEmail = Wrapper.verifyEmail;
-const sendVerificationEmail = Wrapper.sendVerificationEmail;
-const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
 const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
@@ -410,10 +366,6 @@ export {
     Google,
     Facebook,
     Github,
-    isEmailVerified,
-    verifyEmail,
-    sendVerificationEmail,
-    getEmailVerificationTokenFromURL,
     SignInAndUp,
     SignInAndUpTheme,
     ThirdPartySignInAndUpCallback,

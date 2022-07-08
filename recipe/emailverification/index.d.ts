@@ -12,12 +12,6 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import React from "react";
-import SessionAuth from "./sessionAuth";
-
-/*
- * Imports.
- */
-const SuperTokens: React.FC = ({ children }) => <SessionAuth requireAuth={false}>{children}</SessionAuth>;
-
-export default SuperTokens;
+export * from "../../lib/build/recipe/emailverification";
+import * as _default from "../../lib/build/recipe/emailverification";
+export default _default;

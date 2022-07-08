@@ -35,8 +35,6 @@ export default abstract class AuthRecipe<
     getAuthRecipeDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
         if (context.action === "SIGN_IN_AND_UP") {
             return `${this.config.appInfo.websiteBasePath.getAsStringDangerous()}?rid=${this.config.recipeId}`;
-        } else if (context.action === "SUCCESS") {
-            return context.redirectToPath === undefined ? "/" : context.redirectToPath;
         } else {
             throw new Error("Should never come here");
         }

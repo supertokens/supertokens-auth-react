@@ -16,6 +16,7 @@ export declare function useChildProps(
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    userContext: any,
     history: any
 ): SignInUpChildProps;
 export declare function useChildProps(
@@ -23,6 +24,7 @@ export declare function useChildProps(
     dispatch: React.Dispatch<PasswordlessSignInUpAction>,
     state: SignInUpState,
     callingConsumeCodeRef: React.MutableRefObject<boolean>,
+    userContext: any,
     history: any
 ): SignInUpChildProps | undefined;
 export declare const SignInUpFeature: React.FC<

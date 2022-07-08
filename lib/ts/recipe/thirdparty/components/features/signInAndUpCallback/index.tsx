@@ -30,6 +30,7 @@ import { ComponentOverrideContext } from "../../../../../components/componentOve
 import { defaultTranslationsThirdParty } from "../../themes/translations";
 import STGeneralError from "supertokens-web-js/utils/error";
 import { useUserContext } from "../../../../../usercontext";
+import Session from "../../../../session/recipe";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -57,33 +58,11 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
 
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
-                if (props.recipe.emailVerification.config.mode === "REQUIRED") {
-                    let isEmailVerified = true;
-                    try {
-                        isEmailVerified = (
-                            await props.recipe.emailVerification.isEmailVerified({
-                                userContext,
-                            })
-                        ).isVerified;
-                    } catch (ignored) {}
-                    if (!isEmailVerified) {
-                        await props.recipe.savePostEmailVerificationSuccessRedirectState({
-                            redirectToPath: redirectToPath,
-                            isNewUser: true,
-                            action: "SUCCESS",
-                        });
-                        return props.recipe.emailVerification.redirect(
-                            {
-                                action: "VERIFY_EMAIL",
-                            },
-                            props.history
-                        );
-                    }
-                }
-                return props.recipe.redirect(
-                    { action: "SUCCESS", isNewUser: response.createdNewUser, redirectToPath },
-                    props.history
-                );
+                return Session.getInstanceOrThrow().validateGlobalClaimsAndRedirect({
+                    action: "SUCCESS",
+                    isNewUser: response.createdNewUser,
+                    redirectToPath,
+                });
             }
         },
         [props.recipe, props.history]

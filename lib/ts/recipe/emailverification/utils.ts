@@ -52,9 +52,6 @@ export function normaliseEmailVerificationFeature(config: Config): NormalisedCon
         mode,
         sendVerifyEmailScreen,
         verifyEmailLinkClickedScreen,
-        signOut: config.signOut,
-        postVerificationRedirect: config.postVerificationRedirect,
-        redirectToSignIn: config.redirectToSignIn,
         override,
     };
 }
