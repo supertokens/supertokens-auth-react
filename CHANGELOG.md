@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.24.1] - 2022-07-12
+
 ### Added
 
 -   Additional tests for `getRedirectionURL`
@@ -14,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 -   Update `supertokens-web-js` dependency version
+
+### Fixed
+
+-   Fixes https://github.com/supertokens/supertokens-auth-react/issues/523
 
 ## [0.24.0] - 2022-07-06
 
