@@ -182,186 +182,186 @@ describe("getRedirectionURL Tests", function () {
             });
         });
 
-        describe("Passwordless recipe", function () {
-            let browser;
-            let page;
-            const exampleEmail = "test@example.com";
-            // Mocha calls cleanup functions even if the test block is skipped, this helps skipping the after block
-            let didSkip = false;
+        // describe("Passwordless recipe", function () {
+        //     let browser;
+        //     let page;
+        //     const exampleEmail = "test@example.com";
+        //     // Mocha calls cleanup functions even if the test block is skipped, this helps skipping the after block
+        //     let didSkip = false;
 
-            before(async function () {
-                let _isPasswordlessSupported = await isPasswordlessSupported();
-                if (!_isPasswordlessSupported) {
-                    didSkip = true;
-                    this.skip();
-                    return;
-                }
+        //     before(async function () {
+        //         let _isPasswordlessSupported = await isPasswordlessSupported();
+        //         if (!_isPasswordlessSupported) {
+        //             didSkip = true;
+        //             this.skip();
+        //             return;
+        //         }
 
-                await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                    method: "POST",
-                }).catch(console.error);
+        //         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+        //             method: "POST",
+        //         }).catch(console.error);
 
-                await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                    method: "POST",
-                    headers: [["content-type", "application/json"]],
-                    body: JSON.stringify({
-                        configUpdates: [
-                            { key: "passwordless_code_lifetime", value: 4000 },
-                            { key: "passwordless_max_code_input_attempts", value: 3 },
-                        ],
-                    }),
-                }).catch(console.error);
+        //         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+        //             method: "POST",
+        //             headers: [["content-type", "application/json"]],
+        //             body: JSON.stringify({
+        //                 configUpdates: [
+        //                     { key: "passwordless_code_lifetime", value: 4000 },
+        //                     { key: "passwordless_max_code_input_attempts", value: 3 },
+        //                 ],
+        //             }),
+        //         }).catch(console.error);
 
-                browser = await puppeteer.launch({
-                    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                    headless: true,
-                });
-            });
+        //         browser = await puppeteer.launch({
+        //             args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        //             headless: true,
+        //         });
+        //     });
 
-            after(async function () {
-                // Dont cleanup if tests were skipped
-                if (didSkip) {
-                    return;
-                }
-                await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
-            });
+        //     after(async function () {
+        //         // Dont cleanup if tests were skipped
+        //         if (didSkip) {
+        //             return;
+        //         }
+        //         await browser.close();
+        //         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+        //             method: "POST",
+        //         }).catch(console.error);
+        //         await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
+        //             method: "POST",
+        //         }).catch(console.error);
+        //     });
 
-            afterEach(function () {
-                return screenshotOnFailure(this, browser);
-            });
+        //     afterEach(function () {
+        //         return screenshotOnFailure(this, browser);
+        //     });
 
-            beforeEach(async function () {
-                page = await browser.newPage();
-                await clearBrowserCookiesWithoutAffectingConsole(page, []);
-                await Promise.all([
-                    page.goto(
-                        `${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactMethodType=EMAIL`
-                    ),
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                ]);
-                await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
-                await setPasswordlessFlowType("EMAIL", "USER_INPUT_CODE");
-            });
+        //     beforeEach(async function () {
+        //         page = await browser.newPage();
+        //         await clearBrowserCookiesWithoutAffectingConsole(page, []);
+        //         await Promise.all([
+        //             page.goto(
+        //                 `${TEST_CLIENT_BASE_URL}/auth?authRecipe=passwordless&passwordlessContactMethodType=EMAIL`
+        //             ),
+        //             page.waitForNavigation({ waitUntil: "networkidle0" }),
+        //         ]);
+        //         await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
+        //         await setPasswordlessFlowType("EMAIL", "USER_INPUT_CODE");
+        //     });
 
-            it("Test that isNewUser is passed correctly", async function () {
-                await setInputValues(page, [{ name: "email", value: exampleEmail }]);
-                await submitForm(page);
-                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+        //     it("Test that isNewUser is passed correctly", async function () {
+        //         await setInputValues(page, [{ name: "email", value: exampleEmail }]);
+        //         await submitForm(page);
+        //         await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
-                const loginAttemptInfo = JSON.parse(
-                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-                );
-                const device = await getPasswordlessDevice(loginAttemptInfo);
-                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-                await submitForm(page);
-                await page.waitForSelector(".sessionInfo-user-id");
+        //         const loginAttemptInfo = JSON.parse(
+        //             await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+        //         );
+        //         const device = await getPasswordlessDevice(loginAttemptInfo);
+        //         await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+        //         await submitForm(page);
+        //         await page.waitForSelector(".sessionInfo-user-id");
 
-                const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                assert.equal(newUserCheck, "passwordless-true");
-            });
-        });
+        //         const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
+        //         assert.equal(newUserCheck, "passwordless-true");
+        //     });
+        // });
 
-        describe("ThirdPartyPasswordless recipe", function () {
-            let browser;
-            let page;
-            const exampleEmail = "test@example.com";
-            // Mocha calls cleanup functions even if the test block is skipped, this helps skipping the after block
-            let didSkip = false;
+        // describe("ThirdPartyPasswordless recipe", function () {
+        //     let browser;
+        //     let page;
+        //     const exampleEmail = "test@example.com";
+        //     // Mocha calls cleanup functions even if the test block is skipped, this helps skipping the after block
+        //     let didSkip = false;
 
-            before(async function () {
-                let _isThirdPartyPasswordlessSupported = await isThirdPartyPasswordlessSupported();
-                if (!_isThirdPartyPasswordlessSupported) {
-                    didSkip = true;
-                    this.skip();
-                    return;
-                }
+        //     before(async function () {
+        //         let _isThirdPartyPasswordlessSupported = await isThirdPartyPasswordlessSupported();
+        //         if (!_isThirdPartyPasswordlessSupported) {
+        //             didSkip = true;
+        //             this.skip();
+        //             return;
+        //         }
 
-                await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-                    method: "POST",
-                }).catch(console.error);
+        //         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+        //             method: "POST",
+        //         }).catch(console.error);
 
-                await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-                    method: "POST",
-                    headers: [["content-type", "application/json"]],
-                    body: JSON.stringify({
-                        configUpdates: [
-                            { key: "passwordless_code_lifetime", value: 4000 },
-                            { key: "passwordless_max_code_input_attempts", value: 3 },
-                        ],
-                    }),
-                }).catch(console.error);
+        //         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+        //             method: "POST",
+        //             headers: [["content-type", "application/json"]],
+        //             body: JSON.stringify({
+        //                 configUpdates: [
+        //                     { key: "passwordless_code_lifetime", value: 4000 },
+        //                     { key: "passwordless_max_code_input_attempts", value: 3 },
+        //                 ],
+        //             }),
+        //         }).catch(console.error);
 
-                browser = await puppeteer.launch({
-                    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-                    headless: true,
-                });
-            });
+        //         browser = await puppeteer.launch({
+        //             args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        //             headless: true,
+        //         });
+        //     });
 
-            after(async function () {
-                // Dont cleanup if tests were skipped
-                if (didSkip) {
-                    return;
-                }
+        //     after(async function () {
+        //         // Dont cleanup if tests were skipped
+        //         if (didSkip) {
+        //             return;
+        //         }
 
-                await browser.close();
-                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-                    method: "POST",
-                }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-                    method: "POST",
-                }).catch(console.error);
-            });
+        //         await browser.close();
+        //         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+        //             method: "POST",
+        //         }).catch(console.error);
+        //         await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
+        //             method: "POST",
+        //         }).catch(console.error);
+        //     });
 
-            afterEach(function () {
-                return screenshotOnFailure(this, browser);
-            });
+        //     afterEach(function () {
+        //         return screenshotOnFailure(this, browser);
+        //     });
 
-            beforeEach(async function () {
-                page = await browser.newPage();
-                await clearBrowserCookiesWithoutAffectingConsole(page, []);
-                await Promise.all([
-                    page.goto(
-                        `${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartypasswordless&passwordlessContactMethodType=EMAIL`
-                    ),
-                    page.waitForNavigation({ waitUntil: "networkidle0" }),
-                ]);
-                await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
-                await setPasswordlessFlowType("EMAIL", "USER_INPUT_CODE");
-            });
+        //     beforeEach(async function () {
+        //         page = await browser.newPage();
+        //         await clearBrowserCookiesWithoutAffectingConsole(page, []);
+        //         await Promise.all([
+        //             page.goto(
+        //                 `${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartypasswordless&passwordlessContactMethodType=EMAIL`
+        //             ),
+        //             page.waitForNavigation({ waitUntil: "networkidle0" }),
+        //         ]);
+        //         await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
+        //         await setPasswordlessFlowType("EMAIL", "USER_INPUT_CODE");
+        //     });
 
-            it("Test that isNewUser is passed correctly", async function () {
-                await setInputValues(page, [{ name: "email", value: exampleEmail }]);
-                await submitForm(page);
-                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+        //     it("Test that isNewUser is passed correctly", async function () {
+        //         await setInputValues(page, [{ name: "email", value: exampleEmail }]);
+        //         await submitForm(page);
+        //         await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
 
-                const loginAttemptInfo = JSON.parse(
-                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
-                );
-                const device = await getPasswordlessDevice(loginAttemptInfo);
-                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
-                await submitForm(page);
-                await page.waitForSelector(".sessionInfo-user-id");
+        //         const loginAttemptInfo = JSON.parse(
+        //             await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+        //         );
+        //         const device = await getPasswordlessDevice(loginAttemptInfo);
+        //         await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+        //         await submitForm(page);
+        //         await page.waitForSelector(".sessionInfo-user-id");
 
-                const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                assert.equal(newUserCheck, "thirdpartypasswordless-true");
-            });
+        //         const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
+        //         assert.equal(newUserCheck, "thirdpartypasswordless-true");
+        //     });
 
-            it("Test that isNewUser works correctly when signing up with auth 0", async function () {
-                await assertProviders(page);
-                await clickOnProviderButton(page, "Auth0");
-                await Promise.all([
-                    loginWithAuth0(page),
-                    page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
-                ]);
-                const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-                assert.equal(newUserCheck, "thirdpartypasswordless-true");
-            });
-        });
+        //     it("Test that isNewUser works correctly when signing up with auth 0", async function () {
+        //         await assertProviders(page);
+        //         await clickOnProviderButton(page, "Auth0");
+        //         await Promise.all([
+        //             loginWithAuth0(page),
+        //             page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+        //         ]);
+        //         const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
+        //         assert.equal(newUserCheck, "thirdpartypasswordless-true");
+        //     });
+        // });
     });
 });
