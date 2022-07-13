@@ -186,10 +186,13 @@ describe("getRedirectionURL Tests", function () {
             let browser;
             let page;
             const exampleEmail = "test@example.com";
+            // Mocha calls cleanup functions even if the test block is skipped, this helps skipping the after block
+            let didSkip = false;
 
             before(async function () {
                 let _isPasswordlessSupported = await isPasswordlessSupported();
                 if (!_isPasswordlessSupported) {
+                    didSkip = true;
                     this.skip();
                 }
 
@@ -215,6 +218,10 @@ describe("getRedirectionURL Tests", function () {
             });
 
             after(async function () {
+                // Dont cleanup if tests were skipped
+                if (didSkip) {
+                    return;
+                }
                 await browser.close();
                 await fetch(`${TEST_SERVER_BASE_URL}/after`, {
                     method: "POST",
@@ -263,10 +270,13 @@ describe("getRedirectionURL Tests", function () {
             let browser;
             let page;
             const exampleEmail = "test@example.com";
+            // Mocha calls cleanup functions even if the test block is skipped, this helps skipping the after block
+            let didSkip = false;
 
             before(async function () {
                 let _isThirdPartyPasswordlessSupported = await isThirdPartyPasswordlessSupported();
                 if (!_isThirdPartyPasswordlessSupported) {
+                    didSkip = true;
                     this.skip();
                 }
 
@@ -292,6 +302,11 @@ describe("getRedirectionURL Tests", function () {
             });
 
             after(async function () {
+                // Dont cleanup if tests were skipped
+                if (didSkip) {
+                    return;
+                }
+
                 await browser.close();
                 await fetch(`${TEST_SERVER_BASE_URL}/after`, {
                     method: "POST",
