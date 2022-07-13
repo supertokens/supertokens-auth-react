@@ -124,63 +124,63 @@ describe("getRedirectionURL Tests", function () {
             });
         });
 
-        // describe("Thirdpartyemailpassword recipe", function () {
-        //     let browser;
-        //     let page;
-        //     before(async function () {
-        //         await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
-        //             method: "POST",
-        //         }).catch(console.error);
+        describe("Thirdpartyemailpassword recipe", function () {
+            let browser;
+            let page;
+            before(async function () {
+                await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
+                    method: "POST",
+                }).catch(console.error);
 
-        //         await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
-        //             method: "POST",
-        //         }).catch(console.error);
+                await fetch(`${TEST_SERVER_BASE_URL}/startst`, {
+                    method: "POST",
+                }).catch(console.error);
 
-        //         browser = await puppeteer.launch({
-        //             args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        //             headless: true,
-        //         });
-        //     });
+                browser = await puppeteer.launch({
+                    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                    headless: true,
+                });
+            });
 
-        //     after(async function () {
-        //         await browser.close();
-        //         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
-        //             method: "POST",
-        //         }).catch(console.error);
-        //         await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
-        //             method: "POST",
-        //         }).catch(console.error);
-        //     });
+            after(async function () {
+                await browser.close();
+                await fetch(`${TEST_SERVER_BASE_URL}/after`, {
+                    method: "POST",
+                }).catch(console.error);
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
+                    method: "POST",
+                }).catch(console.error);
+            });
 
-        //     afterEach(function () {
-        //         return screenshotOnFailure(this, browser);
-        //     });
+            afterEach(function () {
+                return screenshotOnFailure(this, browser);
+            });
 
-        //     beforeEach(async function () {
-        //         page = await browser.newPage();
-        //         await clearBrowserCookiesWithoutAffectingConsole(page, []);
-        //         await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`);
-        //         await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
-        //     });
+            beforeEach(async function () {
+                page = await browser.newPage();
+                await clearBrowserCookiesWithoutAffectingConsole(page, []);
+                await page.goto(`${TEST_CLIENT_BASE_URL}/auth?authRecipe=thirdpartyemailpassword`);
+                await page.evaluate(() => localStorage.removeItem("isNewUserCheck"));
+            });
 
-        //     it("Test that isNewUser is true when signing up with email", async function () {
-        //         await toggleSignInSignUp(page);
-        //         await defaultSignUp(page, "thirdpartyemailpassword");
-        //         const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-        //         assert.equal(newUserCheck, "thirdpartyemailpassword-true");
-        //     });
+            it("Test that isNewUser is true when signing up with email", async function () {
+                await toggleSignInSignUp(page);
+                await defaultSignUp(page, "thirdpartyemailpassword");
+                const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
+                assert.equal(newUserCheck, "thirdpartyemailpassword-true");
+            });
 
-        //     it("Test that isNewUser works correctly when signing up with auth 0", async function () {
-        //         await assertProviders(page);
-        //         await clickOnProviderButton(page, "Auth0");
-        //         await Promise.all([
-        //             loginWithAuth0(page),
-        //             page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
-        //         ]);
-        //         const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
-        //         assert.equal(newUserCheck, "thirdpartyemailpassword-true");
-        //     });
-        // });
+            // it("Test that isNewUser works correctly when signing up with auth 0", async function () {
+            //     await assertProviders(page);
+            //     await clickOnProviderButton(page, "Auth0");
+            //     await Promise.all([
+            //         loginWithAuth0(page),
+            //         page.waitForResponse((response) => response.url() === SIGN_IN_UP_API && response.status() === 200),
+            //     ]);
+            //     const newUserCheck = await page.evaluate(() => localStorage.getItem("isNewUserCheck"));
+            //     assert.equal(newUserCheck, "thirdpartyemailpassword-true");
+            // });
+        });
 
         // describe("Passwordless recipe", function () {
         //     let browser;
