@@ -99,7 +99,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     method: "POST",
                 }).catch(console.error);
 
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });
@@ -241,7 +241,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         method: "POST",
                     }).catch(console.error);
 
-                    await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                         method: "POST",
                     }).catch(console.error);
                 });
@@ -329,7 +329,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         method: "POST",
                     }).catch(console.error);
 
-                    await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                         method: "POST",
                     }).catch(console.error);
                 });
@@ -419,7 +419,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         method: "POST",
                     }).catch(console.error);
 
-                    await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                         method: "POST",
                     }).catch(console.error);
                 });
@@ -514,7 +514,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     method: "POST",
                 }).catch(console.error);
 
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });
@@ -864,7 +864,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     method: "POST",
                 }).catch(console.error);
 
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });
@@ -1237,7 +1237,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     method: "POST",
                 }).catch(console.error);
 
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });

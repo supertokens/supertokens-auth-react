@@ -71,7 +71,7 @@ describe("SuperTokens userContext with UI components test", function () {
             method: "POST",
         }).catch(console.error);
 
-        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
             method: "POST",
         }).catch(console.error);
     });

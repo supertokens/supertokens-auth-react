@@ -84,7 +84,7 @@ describe("SuperTokens Email Verification", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST",
         }).catch(console.error);
-        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
             method: "POST",
         }).catch(console.error);
     });
@@ -469,7 +469,7 @@ describe("SuperTokens Email Verification general errors", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST",
         }).catch(console.error);
-        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
             method: "POST",
         }).catch(console.error);
     });
@@ -610,7 +610,7 @@ describe("SuperTokens Email Verification isEmailVerified server error", function
         //     await defaultSignUp(page);
 
         //     // Stop server.
-        //     await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+        //     await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
         //         method: "POST",
         //     }).catch(console.error);
 
@@ -669,7 +669,7 @@ describe("Email verification signOut errors", function () {
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST",
         }).catch(console.error);
-        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
             method: "POST",
         }).catch(console.error);
     });

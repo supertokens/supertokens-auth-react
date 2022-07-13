@@ -94,7 +94,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
             method: "POST",
         }).catch(console.error);
 
-        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
             method: "POST",
         }).catch(console.error);
     });
