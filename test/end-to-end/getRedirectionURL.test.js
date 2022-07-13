@@ -14,6 +14,8 @@ import {
     setInputValues,
     submitForm,
     clearBrowserCookiesWithoutAffectingConsole,
+    isPasswordlessSupported,
+    isThirdPartyPasswordlessSupported,
 } from "../helpers";
 // Run the tests in a DOM environment.
 require("jsdom-global")();
@@ -186,6 +188,11 @@ describe("getRedirectionURL Tests", function () {
             const exampleEmail = "test@example.com";
 
             before(async function () {
+                let isPasswordlessSupported = await isPasswordlessSupported();
+                if (!isPasswordlessSupported) {
+                    this.skip();
+                }
+
                 await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
                     method: "POST",
                 }).catch(console.error);
@@ -258,6 +265,11 @@ describe("getRedirectionURL Tests", function () {
             const exampleEmail = "test@example.com";
 
             before(async function () {
+                let isThirdPartyPasswordlessSupported = await isThirdPartyPasswordlessSupported();
+                if (!isThirdPartyPasswordlessSupported) {
+                    this.skip();
+                }
+
                 await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
                     method: "POST",
                 }).catch(console.error);
