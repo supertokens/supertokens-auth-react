@@ -188,8 +188,8 @@ describe("getRedirectionURL Tests", function () {
             const exampleEmail = "test@example.com";
 
             before(async function () {
-                let isPasswordlessSupported = await isPasswordlessSupported();
-                if (!isPasswordlessSupported) {
+                let _isPasswordlessSupported = await isPasswordlessSupported();
+                if (!_isPasswordlessSupported) {
                     this.skip();
                 }
 
@@ -265,8 +265,8 @@ describe("getRedirectionURL Tests", function () {
             const exampleEmail = "test@example.com";
 
             before(async function () {
-                let isThirdPartyPasswordlessSupported = await isThirdPartyPasswordlessSupported();
-                if (!isThirdPartyPasswordlessSupported) {
+                let _isThirdPartyPasswordlessSupported = await isThirdPartyPasswordlessSupported();
+                if (!_isThirdPartyPasswordlessSupported) {
                     this.skip();
                 }
 
