@@ -741,6 +741,24 @@ export async function isGeneralErrorSupported() {
     return true;
 }
 
+export async function isPasswordlessSupported() {
+    const features = await getFeatureFlags();
+    if (features.includes("passwordless")) {
+        return true;
+    }
+
+    return false;
+}
+
+export async function isThirdPartyPasswordlessSupported() {
+    const features = await getFeatureFlags();
+    if (features.includes("thirdpartypasswordless")) {
+        return true;
+    }
+
+    return false;
+}
+
 /**
  * For example setGeneralErrorToLocalStorage("EMAIL_PASSWORD", "EMAIL_PASSWORD_SIGN_UP", page) to
  * set for signUp in email password
