@@ -46,7 +46,7 @@ describe("getRedirectionURL Tests", function () {
                 await fetch(`${TEST_SERVER_BASE_URL}/after`, {
                     method: "POST",
                 }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });
@@ -96,7 +96,7 @@ describe("getRedirectionURL Tests", function () {
                 await fetch(`${TEST_SERVER_BASE_URL}/after`, {
                     method: "POST",
                 }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });
@@ -147,7 +147,7 @@ describe("getRedirectionURL Tests", function () {
                 await fetch(`${TEST_SERVER_BASE_URL}/after`, {
                     method: "POST",
                 }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });
@@ -194,6 +194,7 @@ describe("getRedirectionURL Tests", function () {
                 if (!_isPasswordlessSupported) {
                     didSkip = true;
                     this.skip();
+                    return;
                 }
 
                 await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
@@ -226,7 +227,7 @@ describe("getRedirectionURL Tests", function () {
                 await fetch(`${TEST_SERVER_BASE_URL}/after`, {
                     method: "POST",
                 }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });
@@ -278,6 +279,7 @@ describe("getRedirectionURL Tests", function () {
                 if (!_isThirdPartyPasswordlessSupported) {
                     didSkip = true;
                     this.skip();
+                    return;
                 }
 
                 await fetch(`${TEST_SERVER_BASE_URL}/beforeeach`, {
@@ -311,7 +313,7 @@ describe("getRedirectionURL Tests", function () {
                 await fetch(`${TEST_SERVER_BASE_URL}/after`, {
                     method: "POST",
                 }).catch(console.error);
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });
