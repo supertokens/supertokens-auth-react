@@ -30,7 +30,7 @@ import {
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import { matchRecipeIdUsingQueryParams } from "../../utils";
+import { matchRecipeIdUsingQueryParams, saveInvalidClaimRedirectPathInContext } from "../../utils";
 import { normaliseEmailVerificationFeature } from "./utils";
 import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
@@ -69,14 +69,19 @@ export default class EmailVerification extends RecipeModule<
             );
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
-        if (this.config.mode !== "OFF") {
-            SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
-                EmailVerification.EmailVerifiedClaim.validators.isValidated(
-                    10,
-                    this.config.mode === "REQUIRED" ? () => this.getRedirectUrl({ action: "VERIFY_EMAIL" }) : undefined
-                )
-            );
-        }
+        SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
+            EmailVerification.EmailVerifiedClaim.validators.isVerified(
+                10,
+                this.config.mode === "REQUIRED"
+                    ? async (userContext: any) => {
+                          saveInvalidClaimRedirectPathInContext(
+                              userContext,
+                              await this.getRedirectUrl({ action: "VERIFY_EMAIL" })
+                          );
+                      }
+                    : undefined
+            )
+        );
     }
 
     static init(
@@ -110,7 +115,7 @@ export default class EmailVerification extends RecipeModule<
 
     getFeatures = (): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
-        if (this.config.mode !== "OFF" && this.config.disableDefaultUI !== true) {
+        if (this.config.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
             );

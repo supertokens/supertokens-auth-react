@@ -21,6 +21,7 @@ import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } fr
 import {
     appendQueryParamsToURL,
     getCurrentNormalisedUrlPath,
+    popInvalidClaimRedirectPathFromContext,
     getLocalStorage,
     isTest,
     removeFromLocalStorage,
@@ -117,7 +118,10 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
     };
 
     redirectToAuthWithoutRedirectToPath = (history?: any, queryParams?: Record<string, string>) => {
-        const redirectUrl = appendQueryParamsToURL(this.config.appInfo.websiteBasePath, queryParams);
+        const redirectUrl = appendQueryParamsToURL(
+            this.config.appInfo.websiteBasePath.getAsStringDangerous(),
+            queryParams
+        );
         return this.redirectToUrl(redirectUrl, history);
     };
 
@@ -161,14 +165,17 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         history?: any
     ): Promise<void> => {
         const invalidClaims = await this.validateClaims({ userContext });
-        const firstRedirectingClaimError = invalidClaims.find((err) => err.redirectPath !== undefined);
-        if (firstRedirectingClaimError) {
+
+        // Test if we
+        const invalidClaimRedirectPath = popInvalidClaimRedirectPathFromContext(userContext);
+        if (invalidClaims.length > 0 && invalidClaimRedirectPath !== undefined) {
             if (successEvent !== undefined) {
                 const jsonContext = JSON.stringify(successEvent);
                 await setLocalStorage("supertokens-post-email-verification", jsonContext);
             }
-            return this.redirectToUrl(firstRedirectingClaimError.redirectPath!, history);
+            return this.redirectToUrl(invalidClaimRedirectPath, history);
         }
+
         if (successEvent === undefined) {
             const successContextStr = await getLocalStorage("supertokens-post-email-verification");
             if (successContextStr !== null) {

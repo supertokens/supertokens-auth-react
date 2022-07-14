@@ -22,7 +22,7 @@ import Session from "./recipe";
 import { RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { useOnMountAPICall } from "../../utils";
+import { popInvalidClaimRedirectPathFromContext, useOnMountAPICall } from "../../utils";
 import { SessionClaimValidator } from "supertokens-website";
 
 export type SessionAuthProps = {
@@ -114,11 +114,9 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 redirectToLogin();
             } else {
                 setContext(toSetContext);
-                const firstRedirectingClaimError = toSetContext.invalidClaims.find(
-                    (err) => err.redirectPath !== undefined
-                );
-                if (firstRedirectingClaimError) {
-                    await Session.getInstanceOrThrow().redirectToUrl(firstRedirectingClaimError.redirectPath!);
+                const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
+                if (redirectPath) {
+                    await Session.getInstanceOrThrow().redirectToUrl(redirectPath);
                 }
             }
         },
@@ -145,9 +143,9 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     });
                     setContext({ ...event.sessionContext, loading: false, invalidClaims });
 
-                    const firstRedirectingClaimError = invalidClaims.find((err) => err.redirectPath !== undefined);
-                    if (firstRedirectingClaimError) {
-                        await Session.getInstanceOrThrow().redirectToUrl(firstRedirectingClaimError.redirectPath!);
+                    const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
+                    if (redirectPath) {
+                        await Session.getInstanceOrThrow().redirectToUrl(redirectPath);
                     }
 
                     return;

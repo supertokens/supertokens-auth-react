@@ -10,7 +10,7 @@ export declare type ComponentOverrideMap = {
     EmailVerificationVerifyEmailLinkClicked_Override?: ComponentOverride<typeof VerifyEmailLinkClicked>;
 };
 export declare type UserInput = {
-    mode?: "OFF" | "OPTIONAL" | "REQUIRED";
+    mode?: "OPTIONAL" | "REQUIRED";
     disableDefaultUI?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
@@ -25,7 +25,7 @@ export declare type UserInput = {
 export declare type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type NormalisedConfig = {
-    mode: "OFF" | "OPTIONAL" | "REQUIRED";
+    mode: "OPTIONAL" | "REQUIRED";
     disableDefaultUI: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;

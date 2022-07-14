@@ -27,7 +27,7 @@ export type ComponentOverrideMap = {
 };
 
 export type UserInput = {
-    mode?: "OFF" | "OPTIONAL" | "REQUIRED";
+    mode?: "OPTIONAL" | "REQUIRED";
     disableDefaultUI?: boolean;
     sendVerifyEmailScreen?: FeatureBaseConfig;
     verifyEmailLinkClickedScreen?: FeatureBaseConfig;
@@ -46,7 +46,7 @@ export type Config = UserInput &
     RecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type NormalisedConfig = {
-    mode: "OFF" | "OPTIONAL" | "REQUIRED";
+    mode: "OPTIONAL" | "REQUIRED";
     disableDefaultUI: boolean;
     sendVerifyEmailScreen: FeatureBaseConfig;
     verifyEmailLinkClickedScreen: FeatureBaseConfig;

@@ -109,7 +109,10 @@ export const TestContextProvider = ({ children }) => {
     api.addLogItem = addLogItem;
 
     return (
-        <SessionAuth requireAuth={false} onSessionExpired={() => addLogItem("SESSION_EXPIRED")}>
+        <SessionAuth
+            requireAuth={false}
+            overrideGlobalClaimValidators={() => []}
+            onSessionExpired={() => addLogItem("SESSION_EXPIRED")}>
             <TestContext.Provider
                 value={{
                     logs,
