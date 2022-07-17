@@ -14,6 +14,7 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
     static RECIPE_ID: string;
     webJsRecipe: WebJSSessionRecipe;
     private eventListeners;
+    private redirectionHandlersFromAuthRecipes;
     constructor(config: ConfigType);
     getFeatureComponent: (_: string) => JSX.Element;
     getFeatures: () => RecipeFeatureComponentMap;
@@ -43,8 +44,12 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
      * @returns Function to remove event listener
      */
     addEventListener: (listener: (ctx: RecipeEventWithSessionContext) => void) => () => void;
-    validateGlobalClaimsAndRedirect: (
-        successEvent?: GetRedirectionURLContext,
+    addAuthRecipeRedirectionHandler: (rid: string, redirect: (ctx: any) => Promise<void>) => void;
+    validateGlobalClaimsAndHandleSuccessRedirection: (
+        redirectInfo?: {
+            rid: string;
+            successRedirectContext: any;
+        },
         userContext?: any,
         history?: any
     ) => Promise<void>;

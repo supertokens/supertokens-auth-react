@@ -10,7 +10,7 @@ import {
     PreAndPostAPIHookAction,
 } from "./types";
 import { CreateRecipeFunction } from "../../types";
-import { RecipeInterface, EmailVerifiedClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
     PreAndPostAPIHookAction,
@@ -19,7 +19,7 @@ export default class EmailVerification extends RecipeModule<
 > {
     static instance?: EmailVerification;
     static RECIPE_ID: string;
-    static EmailVerifiedClaim: EmailVerifiedClaimClass;
+    static EmailVerificationClaim: EmailVerificationClaimClass;
     recipeImpl: RecipeInterface;
     constructor(config: Config);
     static init(

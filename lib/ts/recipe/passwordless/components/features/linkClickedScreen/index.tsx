@@ -88,11 +88,14 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 await props.recipe.recipeImpl.clearLoginAttemptInfo({
                     userContext,
                 });
-                return Session.getInstanceOrThrow().validateGlobalClaimsAndRedirect(
+                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                     {
-                        action: "SUCCESS",
-                        isNewUser: response.createdUser,
-                        redirectToPath: loginAttemptInfo?.redirectToPath,
+                        rid: props.recipe.config.recipeId,
+                        successRedirectContext: {
+                            action: "SUCCESS",
+                            isNewUser: response.createdUser,
+                            redirectToPath: loginAttemptInfo?.redirectToPath,
+                        },
                     },
                     userContext,
                     props.history

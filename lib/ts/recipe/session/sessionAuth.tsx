@@ -110,7 +110,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 return;
             }
 
-            if (!toSetContext.doesSessionExist && props.requireAuth === true) {
+            if (!toSetContext.doesSessionExist && props.requireAuth !== false) {
                 redirectToLogin();
             } else {
                 setContext(toSetContext);
@@ -157,7 +157,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     setContext({ ...event.sessionContext, loading: false, invalidClaims: [] });
                     if (props.onSessionExpired !== undefined) {
                         props.onSessionExpired();
-                    } else if (props.requireAuth === true) {
+                    } else if (props.requireAuth !== false) {
                         redirectToLogin();
                     }
                     return;
@@ -174,7 +174,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         return session.current.addEventListener(onHandleEvent);
     }, [props, setContext]);
 
-    if (props.requireAuth === true && (context.loading || !context.doesSessionExist)) {
+    if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;
     }
 

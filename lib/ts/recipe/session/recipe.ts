@@ -42,6 +42,7 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
     webJsRecipe: WebJSSessionRecipe;
 
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
+    private redirectionHandlersFromAuthRecipes = new Map<string, (ctx: any) => Promise<void>>();
 
     constructor(config: ConfigType) {
         const normalizedConfig = { ...config, ...normaliseRecipeModuleConfig(config) };
@@ -159,39 +160,76 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         return () => this.eventListeners.delete(listener);
     };
 
-    validateGlobalClaimsAndRedirect = async (
-        successEvent?: GetRedirectionURLContext,
+    addAuthRecipeRedirectionHandler = (rid: string, redirect: (ctx: any) => Promise<void>) => {
+        this.redirectionHandlersFromAuthRecipes.set(rid, redirect);
+    };
+
+    validateGlobalClaimsAndHandleSuccessRedirection = async (
+        redirectInfo?: {
+            rid: string;
+            successRedirectContext: any;
+        },
         userContext?: any,
         history?: any
     ): Promise<void> => {
+        // First we check if there is an active session
+        if (!(await this.doesSessionExist({ userContext }))) {
+            // If there is none, we have no way of checking claims, so we redirect to the auth page
+            // This can happen e.g.: if the user clicked on the email verification link in a browser without an active session
+            return this.redirectToAuthWithoutRedirectToPath(history);
+        }
+
+        // We validate all the global claims
         const invalidClaims = await this.validateClaims({ userContext });
 
-        // Test if we
+        // Check if any of those claim errors requests a redirection
         const invalidClaimRedirectPath = popInvalidClaimRedirectPathFromContext(userContext);
         if (invalidClaims.length > 0 && invalidClaimRedirectPath !== undefined) {
-            if (successEvent !== undefined) {
-                const jsonContext = JSON.stringify(successEvent);
-                await setLocalStorage("supertokens-post-email-verification", jsonContext);
+            if (redirectInfo !== undefined) {
+                // if we have to redirect and we have success context we wanted to use we save it in localstorage
+                // this way after the other page did solved the validation error it can contine
+                // the sign in process by calling this function without passing the redirect info
+                const jsonContext = JSON.stringify(redirectInfo);
+                await setLocalStorage("supertokens-success-redirection-context", jsonContext);
             }
+            // then we do the redirection.
             return this.redirectToUrl(invalidClaimRedirectPath, history);
         }
 
-        if (successEvent === undefined) {
-            const successContextStr = await getLocalStorage("supertokens-post-email-verification");
+        // If we don't need to redirect because of a claim, we try and execute the original redirection
+        if (redirectInfo === undefined) {
+            // if this wasn't set directly we try and grab it from local storage
+            const successContextStr = await getLocalStorage("supertokens-success-redirection-context");
             if (successContextStr !== null) {
                 try {
-                    successEvent = JSON.parse(successContextStr);
+                    redirectInfo = JSON.parse(successContextStr);
                 } finally {
-                    await removeFromLocalStorage("supertokens-post-email-verification");
+                    await removeFromLocalStorage("supertokens-success-redirection-context");
                 }
             } else {
-                successEvent = {
-                    action: "SUCCESS",
-                    isNewUser: false,
+                // If there was nothing in localstorage we set a default
+                // this can happen if the user visited email verification screen without an auth recipe redirecting them there
+                // but already had the email verified and an active session
+                redirectInfo = {
+                    rid: Session.RECIPE_ID,
+                    successRedirectContext: {
+                        action: "SUCCESS",
+                        isNewUser: false,
+                    },
                 };
             }
         }
-        return this.redirect(successEvent!);
+
+        // We get the redirection handler registered by the relevant auth recipe
+        const authRecipeRedirectHandler = this.redirectionHandlersFromAuthRecipes.get(redirectInfo!.rid);
+        if (authRecipeRedirectHandler !== undefined) {
+            // and call it with the saved info
+            return authRecipeRedirectHandler(redirectInfo!.successRedirectContext);
+        }
+
+        // This should only happen if the configuration changed between saving the context and finishing the sign in process
+        // This should be a really rare edgecase
+        return this.redirect(redirectInfo!.successRedirectContext!);
     };
 
     private notifyListeners = async (event: RecipeEvent) => {

@@ -58,10 +58,13 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
 
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
-                return Session.getInstanceOrThrow().validateGlobalClaimsAndRedirect({
-                    action: "SUCCESS",
-                    isNewUser: response.createdNewUser,
-                    redirectToPath,
+                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection({
+                    rid: props.recipe.config.recipeId,
+                    successRedirectContext: {
+                        action: "SUCCESS",
+                        isNewUser: response.createdNewUser,
+                        redirectToPath,
+                    },
                 });
             }
         },

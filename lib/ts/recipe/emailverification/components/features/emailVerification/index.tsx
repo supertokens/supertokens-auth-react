@@ -50,7 +50,11 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     );
 
     const onSuccess = useCallback(async () => {
-        return Session.getInstanceOrThrow().validateGlobalClaimsAndRedirect(undefined, userContext, props.history);
+        return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+            undefined,
+            userContext,
+            props.history
+        );
     }, [props.recipe, props.history, userContext]);
 
     const fetchIsEmailVerified = useCallback(async () => {

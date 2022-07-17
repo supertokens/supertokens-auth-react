@@ -110,11 +110,14 @@ export function useChildProps(
     const userContext = useUserContext();
 
     const onSignInSuccess = useCallback(async (): Promise<void> => {
-        return Session.getInstanceOrThrow().validateGlobalClaimsAndRedirect(
+        return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
             {
-                action: "SUCCESS",
-                isNewUser: false,
-                redirectToPath: getRedirectToPathFromURL(),
+                rid: recipe!.config.recipeId,
+                successRedirectContext: {
+                    action: "SUCCESS",
+                    isNewUser: false,
+                    redirectToPath: getRedirectToPathFromURL(),
+                },
             },
             userContext,
             history
@@ -122,11 +125,14 @@ export function useChildProps(
     }, [recipe, userContext, history]);
 
     const onSignUpSuccess = useCallback(async (): Promise<void> => {
-        return Session.getInstanceOrThrow().validateGlobalClaimsAndRedirect(
+        return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
             {
-                action: "SUCCESS",
-                isNewUser: true,
-                redirectToPath: getRedirectToPathFromURL(),
+                rid: recipe!.config.recipeId,
+                successRedirectContext: {
+                    action: "SUCCESS",
+                    isNewUser: true,
+                    redirectToPath: getRedirectToPathFromURL(),
+                },
             },
             userContext,
             history
