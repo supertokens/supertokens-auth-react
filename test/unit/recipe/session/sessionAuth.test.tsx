@@ -11,6 +11,7 @@ const MockSession = {
     getUserId: jest.fn(),
     getAccessTokenPayloadSecurely: jest.fn(),
     doesSessionExist: jest.fn(),
+    validateClaims: jest.fn(),
 };
 
 const MockSessionConsumer = () => {
@@ -233,7 +234,7 @@ describe("SessionAuth", () => {
             // Wait for full rendering
             expect(await result.findByText(/^userId:/)).toBeInTheDocument();
 
-            act(() =>
+            await act(() =>
                 listenerFn({
                     action: "UNAUTHORISED",
                     sessionContext: {
@@ -267,7 +268,7 @@ describe("SessionAuth", () => {
             // Wait for full rendering
             expect(await result.findByText(/^userId:/)).toBeInTheDocument();
 
-            act(() =>
+            await act(() =>
                 listenerFn({
                     action: "SIGN_OUT",
                     sessionContext: {
@@ -297,7 +298,7 @@ describe("SessionAuth", () => {
 
             expect(await result.findByText(/^userId:/)).toHaveTextContent(`userId: mock-user-id`);
 
-            act(() =>
+            await act(() =>
                 listenerFn({
                     action: "SESSION_CREATED",
                     sessionContext: {
@@ -341,7 +342,7 @@ describe("SessionAuth", () => {
             };
 
             // when
-            act(() =>
+            await act(() =>
                 listenerFn({
                     action: "REFRESH_SESSION",
                     sessionContext: {
@@ -382,7 +383,7 @@ describe("SessionAuth", () => {
         };
 
         // when
-        act(() =>
+        await act(() =>
             listenerFn({
                 action: "ACCESS_TOKEN_PAYLOAD_UPDATED",
                 sessionContext: {
