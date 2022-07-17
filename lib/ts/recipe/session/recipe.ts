@@ -143,14 +143,6 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         return this.webJsRecipe.getInvalidClaimsFromResponse(input);
     };
 
-    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        if (context.action === "SUCCESS") {
-            return context.redirectToPath === undefined ? "/" : context.redirectToPath;
-        } else {
-            throw new Error("Should never come here");
-        }
-    };
-
     /**
      * @returns Function to remove event listener
      */
