@@ -91,7 +91,7 @@ describe("General error rendering", function () {
             await fetch(`${TEST_SERVER_BASE_URL}/after`, {
                 method: "POST",
             }).catch(console.error);
-            await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+            await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                 method: "POST",
             }).catch(console.error);
         });
@@ -255,7 +255,7 @@ function getEmailPasswordTests(rid, ridForStorage) {
             await fetch(`${TEST_SERVER_BASE_URL}/after`, {
                 method: "POST",
             }).catch(console.error);
-            await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+            await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                 method: "POST",
             }).catch(console.error);
         });
@@ -395,7 +395,7 @@ function getThirdPartyTests(rid, ridForStorage) {
             await fetch(`${TEST_SERVER_BASE_URL}/after`, {
                 method: "POST",
             }).catch(console.error);
-            await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+            await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                 method: "POST",
             }).catch(console.error);
         });

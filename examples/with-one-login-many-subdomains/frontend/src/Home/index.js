@@ -6,7 +6,8 @@ import { signOut } from "supertokens-auth-react/recipe/emailpassword";
 import { getAuthDomain, redirectIfOnWrongSubdomain } from "../utils";
 
 export default function Home() {
-    let session = useSessionContext();
+    const session = useSessionContext();
+
     let [show, setShow] = useState(false);
     async function logoutClicked() {
         await signOut();
@@ -22,6 +23,10 @@ export default function Home() {
             }
         });
     }, []);
+
+    if (session.loading === true) {
+        return null;
+    }
 
     if (show) {
         return (

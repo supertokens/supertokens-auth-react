@@ -35,7 +35,7 @@ describe("Embed components", async () => {
         await fetch(`${TEST_SERVER_BASE_URL}/after`, {
             method: "POST",
         }).catch(console.error);
-        await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+        await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
             method: "POST",
         }).catch(console.error);
 

@@ -99,7 +99,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     method: "POST",
                 }).catch(console.error);
 
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });
@@ -241,7 +241,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         method: "POST",
                     }).catch(console.error);
 
-                    await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                         method: "POST",
                     }).catch(console.error);
                 });
@@ -329,7 +329,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         method: "POST",
                     }).catch(console.error);
 
-                    await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                         method: "POST",
                     }).catch(console.error);
                 });
@@ -350,7 +350,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await setInputValues(page, [{ name: inputName, value: "06701234324" }]);
                     await submitForm(page);
                     const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
-                    await checkInputValue(page, input, "06701234324");
+                    await checkInputValue(page, input, "+06701234324");
                 });
 
                 it("should show phone UI for a shorter local number", async function () {
@@ -362,7 +362,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await setInputValues(page, [{ name: inputName, value: "701234325" }]);
                     await submitForm(page);
                     const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
-                    await checkInputValue(page, input, "701234325");
+                    await checkInputValue(page, input, "+701234325");
                 });
 
                 it("should show phone UI for missed + sign", async function () {
@@ -374,7 +374,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await setInputValues(page, [{ name: inputName, value: "36701234326" }]);
                     await submitForm(page);
                     const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
-                    await checkInputValue(page, input, "36701234326");
+                    await checkInputValue(page, input, "+36701234326");
                 });
 
                 it("should show phone UI for too long input", async function () {
@@ -386,7 +386,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await setInputValues(page, [{ name: inputName, value: "654654654654654654654" }]);
                     await submitForm(page);
                     const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
-                    await checkInputValue(page, input, "654654654654654654654");
+                    await checkInputValue(page, input, "+654654654654654654654");
                 });
 
                 it("should show phone UI for too short input", async function () {
@@ -398,7 +398,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     await setInputValues(page, [{ name: inputName, value: "654" }]);
                     await submitForm(page);
                     const input = await waitForSTElement(page, `[data-supertokens~=input][name=emailOrPhone_text]`);
-                    await checkInputValue(page, input, "654");
+                    await checkInputValue(page, input, "+654");
                 });
             });
 
@@ -419,7 +419,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                         method: "POST",
                     }).catch(console.error);
 
-                    await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                    await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                         method: "POST",
                     }).catch(console.error);
                 });
@@ -514,7 +514,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     method: "POST",
                 }).catch(console.error);
 
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });
@@ -864,7 +864,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     method: "POST",
                 }).catch(console.error);
 
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });
@@ -1237,7 +1237,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     method: "POST",
                 }).catch(console.error);
 
-                await fetch(`${TEST_SERVER_BASE_URL}/stop`, {
+                await fetch(`${TEST_SERVER_BASE_URL}/stopst`, {
                     method: "POST",
                 }).catch(console.error);
             });

@@ -21,7 +21,7 @@ describe("SessionContext", () => {
             accessTokenPayload: {},
             doesSessionExist: false,
             userId: "NOT_DEFAULT_USER_ID",
-            invalidClaims: undefined,
+            invalidClaims: [],
             loading: false,
             isDefault: false,
         };

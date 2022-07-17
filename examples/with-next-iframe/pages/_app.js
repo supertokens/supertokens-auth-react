@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import React from "react";
 import { useEffect } from "react";
-import SuperTokensReact from "supertokens-auth-react";
+import SuperTokensReact, { SuperTokensWrapper } from "supertokens-auth-react";
 import Session from "supertokens-auth-react/recipe/session";
 import { redirectToAuth } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import { frontendConfig } from "../config/frontendConfig";
@@ -27,7 +27,11 @@ function MyApp({ Component, pageProps }) {
     if (pageProps.fromSupertokens === "needs-refresh") {
         return null;
     }
-    return <Component {...pageProps} />;
+    return (
+        <SuperTokensWrapper>
+            <Component {...pageProps} />
+        </SuperTokensWrapper>
+    );
 }
 
 export default MyApp;

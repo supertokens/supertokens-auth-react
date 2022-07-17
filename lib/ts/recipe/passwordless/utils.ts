@@ -14,7 +14,7 @@
  */
 
 import { CountryCode, NumberType } from "libphonenumber-js";
-import parsePhoneNumber, { parseIncompletePhoneNumber } from "libphonenumber-js/min";
+import parsePhoneNumber, { formatIncompletePhoneNumber, parseIncompletePhoneNumber } from "libphonenumber-js/min";
 import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import { normaliseAuthRecipe } from "../authRecipe/utils";
 import {
@@ -146,6 +146,9 @@ export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
     value: string,
     defaultCountryFromConfig?: CountryCode
 ) {
+    if (value === undefined || value.length === 0) {
+        return value;
+    }
     if (defaultCountryFromConfig !== undefined) {
         try {
             return parsePhoneNumber(value, {
@@ -164,7 +167,13 @@ export function defaultGuessInternationPhoneNumberFromInputPhoneNumber(
     if (value.includes("@") || incomplete.length < value.length / 2) {
         return undefined;
     }
-    return value;
+    const incompleteIntlNum = formatIncompletePhoneNumber(value, defaultCountryFromConfig);
+    if (incompleteIntlNum !== value) {
+        return incompleteIntlNum;
+    }
+
+    // We want to return the value as an international number because the phone number input lib expects it this way
+    return `+${value}`;
 }
 
 export async function getLoginAttemptInfo(input: {
