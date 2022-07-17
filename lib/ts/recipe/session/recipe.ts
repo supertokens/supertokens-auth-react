@@ -95,7 +95,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return this.webJsRecipe.attemptRefreshingSession();
     };
 
-    redirectToAuthWithRedirectToPath(history?: any, queryParams?: Record<string, string>) {
+    redirectToAuthWithRedirectToPath = (history?: any, queryParams?: Record<string, string>) => {
         const redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
         if (queryParams === undefined) {
             queryParams = {};
@@ -105,29 +105,29 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
             redirectToPath,
         };
         return this.redirectToAuthWithoutRedirectToPath(history, queryParams);
-    }
+    };
 
-    redirectToAuthWithoutRedirectToPath(history?: any, queryParams?: Record<string, string>) {
+    redirectToAuthWithoutRedirectToPath = (history?: any, queryParams?: Record<string, string>) => {
         const redirectUrl = appendQueryParamsToURL(this.config.appInfo.websiteBasePath, queryParams);
         return this.redirectToUrl(redirectUrl, history);
-    }
+    };
 
-    validateClaims(input: {
+    validateClaims = (input: {
         overrideGlobalClaimValidators?: (
             globalClaimValidators: SessionClaimValidator[],
             userContext: any
         ) => SessionClaimValidator[];
         userContext: any;
-    }): Promise<ClaimValidationError[]> | ClaimValidationError[] {
+    }): Promise<ClaimValidationError[]> | ClaimValidationError[] => {
         return this.webJsRecipe.validateClaims(input);
-    }
+    };
 
-    getInvalidClaimsFromResponse(input: {
+    getInvalidClaimsFromResponse = (input: {
         response: { data: any } | Response;
         userContext: any;
-    }): Promise<ClaimValidationError[]> {
+    }): Promise<ClaimValidationError[]> => {
         return this.webJsRecipe.getInvalidClaimsFromResponse(input);
-    }
+    };
 
     /**
      * @returns Function to remove event listener

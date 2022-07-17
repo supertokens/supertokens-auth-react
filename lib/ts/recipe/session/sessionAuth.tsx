@@ -74,7 +74,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
             session.current = Session.getInstanceOrThrow();
         }
 
-        if (!context.loading) {
+        if (context.loading === false) {
             return context;
         }
 

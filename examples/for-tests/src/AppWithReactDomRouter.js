@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import { SignInAndUp } from "supertokens-auth-react/recipe/emailpassword";
-import { SessionAuth } from "../../../recipe/session";
+import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import {
     ResetPasswordUsingToken,
     SignInAndUp as TPSignInAndUp,

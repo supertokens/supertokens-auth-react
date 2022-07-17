@@ -22,23 +22,22 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     doesSessionExist: (input: { userContext: any }) => Promise<boolean>;
     signOut: (input: { userContext: any }) => Promise<void>;
     attemptRefreshingSession: () => Promise<boolean>;
-    redirectToAuthWithRedirectToPath(history?: any, queryParams?: Record<string, string>): Promise<void>;
-    redirectToAuthWithoutRedirectToPath(history?: any, queryParams?: Record<string, string>): Promise<void>;
-    validateClaims(input: {
-        overrideGlobalClaimValidators?: (
-            globalClaimValidators: SessionClaimValidator[],
-            userContext: any
-        ) => SessionClaimValidator[];
+    redirectToAuthWithRedirectToPath: (history?: any, queryParams?: Record<string, string>) => Promise<void>;
+    redirectToAuthWithoutRedirectToPath: (history?: any, queryParams?: Record<string, string>) => Promise<void>;
+    validateClaims: (input: {
+        overrideGlobalClaimValidators?:
+            | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])
+            | undefined;
         userContext: any;
-    }): Promise<ClaimValidationError[]> | ClaimValidationError[];
-    getInvalidClaimsFromResponse(input: {
+    }) => Promise<ClaimValidationError[]> | ClaimValidationError[];
+    getInvalidClaimsFromResponse: (input: {
         response:
             | {
                   data: any;
               }
             | Response;
         userContext: any;
-    }): Promise<ClaimValidationError[]>;
+    }) => Promise<ClaimValidationError[]>;
     /**
      * @returns Function to remove event listener
      */
