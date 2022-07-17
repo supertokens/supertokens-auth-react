@@ -1,4 +1,4 @@
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import ThirdPartyEmailpassword, {
     Github,
     Google,
@@ -56,24 +56,26 @@ SuperTokens.init({
 
 function App() {
     return (
-        <div className="App">
-            <Router>
-                <Routes>
-                    {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-                    <Route
-                        path="/"
-                        element={
-                            /* This protects the "/" route so that it shows 
-       <Home /> only if the user is logged in.
-       Else it redirects the user to "/auth" */
-                            <ThirdPartyEmailPasswordAuth>
-                                <Home />
-                            </ThirdPartyEmailPasswordAuth>
-                        }
-                    />
-                </Routes>
-            </Router>
-        </div>
+        <SuperTokensWrapper>
+            <div className="App">
+                <Router>
+                    <Routes>
+                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                        <Route
+                            path="/"
+                            element={
+                                /* This protects the "/" route so that it shows 
+                                <Home /> only if the user is logged in.
+                                Else it redirects the user to "/auth" */
+                                <ThirdPartyEmailPasswordAuth>
+                                    <Home />
+                                </ThirdPartyEmailPasswordAuth>
+                            }
+                        />
+                    </Routes>
+                </Router>
+            </div>
+        </SuperTokensWrapper>
     );
 }
 

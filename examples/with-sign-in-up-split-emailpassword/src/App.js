@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
@@ -122,42 +122,44 @@ function App() {
     let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
 
     return (
-        <div className="App">
-            <Router>
-                <div className="fill">
-                    <Routes>
-                        {/* This shows the login UI on "/auth" route */}
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+        <SuperTokensWrapper>
+            <div className="App">
+                <Router>
+                    <div className="fill">
+                        <Routes>
+                            {/* This shows the login UI on "/auth" route */}
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
 
-                        <Route
-                            path="/"
-                            element={
-                                /* This protects the "/" route so that it shows 
-                                <Home /> only if the user is logged in.
-                                Else it redirects the user to "/auth" */
-                                <EmailPassword.EmailPasswordAuth
-                                    onSessionExpired={() => {
-                                        updateShowSessionExpiredPopup(true);
-                                    }}>
-                                    <Home />
-                                    {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                </EmailPassword.EmailPasswordAuth>
-                            }
-                        />
-                        {/* we want to render the sign in component in /signin.
-                        We will override the <SignInAndUp> component to only show the sign in
-                        UI on this route. See the init function call above for how to do this*/}
-                        <Route path="/signin" element={<EmailPassword.SignInAndUp />} />
+                            <Route
+                                path="/"
+                                element={
+                                    /* This protects the "/" route so that it shows
+                                        <Home /> only if the user is logged in.
+                                        Else it redirects the user to "/auth" */
+                                    <EmailPassword.EmailPasswordAuth
+                                        onSessionExpired={() => {
+                                            updateShowSessionExpiredPopup(true);
+                                        }}>
+                                        <Home />
+                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
+                                    </EmailPassword.EmailPasswordAuth>
+                                }
+                            />
+                            {/* we want to render the sign in component in /signin.
+                                We will override the <SignInAndUp> component to only show the sign in
+                                UI on this route. See the init function call above for how to do this*/}
+                            <Route path="/signin" element={<EmailPassword.SignInAndUp />} />
 
-                        {/* we want to render the sign up component in /signup.
-                        We will override the <SignInAndUp> component to only show the sign up
-                        UI on this route. See the init function call above for how to do this*/}
-                        <Route path="/signup" element={<EmailPassword.SignInAndUp />} />
-                    </Routes>
-                </div>
-                <Footer />
-            </Router>
-        </div>
+                            {/* we want to render the sign up component in /signup.
+                                We will override the <SignInAndUp> component to only show the sign up
+                                UI on this route. See the init function call above for how to do this*/}
+                            <Route path="/signup" element={<EmailPassword.SignInAndUp />} />
+                        </Routes>
+                    </div>
+                    <Footer />
+                </Router>
+            </div>
+        </SuperTokensWrapper>
     );
 }
 

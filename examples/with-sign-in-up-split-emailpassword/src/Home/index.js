@@ -6,18 +6,21 @@ import { useNavigate } from "react-router-dom";
 import { signOut } from "supertokens-auth-react/recipe/emailpassword";
 
 export default function Home() {
-    const { userId } = useSessionContext();
+    const session = useSessionContext();
     const navigate = useNavigate();
 
     async function logoutClicked() {
         await signOut();
         navigate("/signin");
     }
+    if (session.loading === true) {
+        return null;
+    }
 
     return (
         <div className="fill">
             <Logout logoutClicked={logoutClicked} />
-            <SuccessView userId={userId} />
+            <SuccessView userId={session.userId} />
         </div>
     );
 }

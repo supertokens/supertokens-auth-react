@@ -279,10 +279,10 @@ export default App;
 
 export function BaseComponent({ children }) {
     return (
-        <Fragment>
+        <>
             <div className="fill">{children}</div>
             <Footer />
-        </Fragment>
+        </>
     );
 }
 
@@ -351,6 +351,10 @@ export const DashboardNoAuthRequired = doNotUseReactRouterDom
 export function DashboardNoAuthRequiredHelper(props) {
     let sessionContext = useSessionContext();
 
+    if (sessionContext.loading) {
+        return null;
+    }
+
     if (sessionContext.doesSessionExist) {
         return Dashboard({ redirectOnLogout: false, ...props });
     } else {
@@ -413,6 +417,13 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
     }, []);
 
     let sessionContext = useSessionContext();
+
+    if (sessionContext.loading === true) {
+        // You could display a loading screen here, but session context loading is very fast
+        // so returning null is better in most cases to avoid content popping in and out
+        return null;
+    }
+
     return (
         <div className="dashboard">
             <div
@@ -515,6 +526,7 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
+                setIsNewUserToStorage("emailpassword", context.isNewUser);
                 return context.redirectToPath || "/dashboard";
             }
         },
@@ -664,6 +676,7 @@ function getThirdPartyPasswordlessConfigs({ disableDefaultUI }) {
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRDPARTYPASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
+                setIsNewUserToStorage("thirdpartypasswordless", context.isNewUser);
                 return context.redirectToPath || "/dashboard";
             }
         },
@@ -766,6 +779,7 @@ function getPasswordlessConfigs({ disableDefaultUI }) {
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS PASSWORDLESS GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
+                setIsNewUserToStorage("passwordless", context.isNewUser);
                 return context.redirectToPath || "/dashboard";
             }
         },
@@ -807,6 +821,7 @@ function getThirdPartyConfigs({ disableDefaultUI }) {
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
+                setIsNewUserToStorage("thirdparty", context.isNewUser);
                 return context.redirectToPath || "/dashboard";
             }
         },
@@ -905,6 +920,7 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI }) {
         getRedirectionURL: async (context) => {
             console.log(`ST_LOGS THIRD_PARTY_EMAIL_PASSWORD GET_REDIRECTION_URL ${context.action}`);
             if (context.action === "SUCCESS") {
+                setIsNewUserToStorage("thirdpartyemailpassword", context.isNewUser);
                 return context.redirectToPath || "/dashboard";
             }
         },
@@ -1090,6 +1106,10 @@ function getThirdPartyEmailPasswordConfigs({ disableDefaultUI }) {
             style: theme.style,
         },
     });
+}
+
+function setIsNewUserToStorage(recipeName, isNewUser) {
+    localStorage.setItem("isNewUserCheck", `${recipeName}-${isNewUser}`);
 }
 
 window.SuperTokens = SuperTokens;

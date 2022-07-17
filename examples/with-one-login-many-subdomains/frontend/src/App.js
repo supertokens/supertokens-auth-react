@@ -1,5 +1,5 @@
 import "./App.css";
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
@@ -35,30 +35,32 @@ SuperTokens.init({
 
 function App() {
     return (
-        <div className="App">
-            <Router>
-                <div className="fill">
-                    <Routes>
-                        {/* Present users with login/signup when they are on auth.example.com. 
-            If not try rendering our protected route. In case the user is unauthenticated 
-            the auth wrapper will simply redirect them to the login page */}
-                        {window.location.origin === getAuthDomain() ? (
-                            getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))
-                        ) : (
-                            <Route
-                                path="/"
-                                element={
-                                    <EmailPassword.EmailPasswordAuth>
-                                        <Home />
-                                    </EmailPassword.EmailPasswordAuth>
-                                }
-                            />
-                        )}
-                    </Routes>
-                </div>
-                <Footer />
-            </Router>
-        </div>
+        <SuperTokensWrapper>
+            <div className="App">
+                <Router>
+                    <div className="fill">
+                        <Routes>
+                            {/* Present users with login/signup when they are on auth.example.com. 
+                                If not try rendering our protected route. In case the user is unauthenticated 
+                                the auth wrapper will simply redirect them to the login page */}
+                            {window.location.origin === getAuthDomain() ? (
+                                getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))
+                            ) : (
+                                <Route
+                                    path="/"
+                                    element={
+                                        <EmailPassword.EmailPasswordAuth>
+                                            <Home />
+                                        </EmailPassword.EmailPasswordAuth>
+                                    }
+                                />
+                            )}
+                        </Routes>
+                    </div>
+                    <Footer />
+                </Router>
+            </div>
+        </SuperTokensWrapper>
     );
 }
 

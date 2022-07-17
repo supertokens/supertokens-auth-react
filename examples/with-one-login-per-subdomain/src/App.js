@@ -1,5 +1,5 @@
 import "./App.css";
-import SuperTokens, { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
@@ -23,24 +23,26 @@ SuperTokens.init({
 
 function App() {
     return (
-        <div className="App">
-            <Router>
-                <div className="fill">
-                    <Routes>
-                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
-                        <Route
-                            path="/"
-                            element={
-                                <EmailPassword.EmailPasswordAuth>
-                                    <Home />
-                                </EmailPassword.EmailPasswordAuth>
-                            }
-                        />
-                    </Routes>
-                </div>
-                <Footer />
-            </Router>
-        </div>
+        <SuperTokensWrapper>
+            <div className="App">
+                <Router>
+                    <div className="fill">
+                        <Routes>
+                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                            <Route
+                                path="/"
+                                element={
+                                    <EmailPassword.EmailPasswordAuth>
+                                        <Home />
+                                    </EmailPassword.EmailPasswordAuth>
+                                }
+                            />
+                        </Routes>
+                    </div>
+                    <Footer />
+                </Router>
+            </div>
+        </SuperTokensWrapper>
     );
 }
 

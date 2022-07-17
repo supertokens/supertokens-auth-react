@@ -21,6 +21,11 @@ export default function ProtectRoute(props: any) {
 
 function AuthWrapperSelector(props: any) {
     let sessionInfo = useSessionContext();
+
+    if (sessionInfo.loading) {
+        return null;
+    }
+
     if (sessionInfo.accessTokenPayload.isPasswordless === true) {
         return <PasswordlessAuth {...props}>{props.children}</PasswordlessAuth>;
     } else {

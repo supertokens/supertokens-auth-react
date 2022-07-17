@@ -159,7 +159,7 @@ app.post("/after", async (req, res) => {
     res.send();
 });
 
-app.post("/stopst", async (req, res) => {
+app.post("/stopstst", async (req, res) => {
     await stopST(req.body.pid);
     res.send("");
 });

@@ -126,6 +126,7 @@ export function getStyles(palette: NormalisedPalette): NormalisedDefaultStyles {
             display: "flex",
             alignItems: "center",
             height: "34px",
+            cursor: "pointer",
 
             padding: "0 8px",
 

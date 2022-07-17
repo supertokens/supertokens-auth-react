@@ -73,7 +73,7 @@ export default class SessionAPIWrapper {
         return Session.getInstanceOrThrow().validateClaims(input);
     }
 
-    getInvalidClaimsFromResponse(input: {
+    static getInvalidClaimsFromResponse(input: {
         response: { data: any } | Response;
         userContext: any;
     }): Promise<ClaimValidationError[]> {
@@ -91,6 +91,7 @@ const doesSessionExist = SessionAPIWrapper.doesSessionExist;
 const addAxiosInterceptors = SessionAPIWrapper.addAxiosInterceptors;
 const signOut = SessionAPIWrapper.signOut;
 const validateClaims = SessionAPIWrapper.validateClaims;
+const getInvalidClaimsFromResponse = SessionAPIWrapper.getInvalidClaimsFromResponse;
 
 export {
     useSessionContext,
@@ -103,6 +104,7 @@ export {
     addAxiosInterceptors,
     signOut,
     validateClaims,
+    getInvalidClaimsFromResponse,
     RecipeInterface,
     InputType,
     SessionContext,
