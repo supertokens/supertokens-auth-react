@@ -24,6 +24,7 @@ const { default: SessionRaw } = require("supertokens-node/lib/build/recipe/sessi
 let Session = require("supertokens-node/recipe/session");
 let EmailPassword = require("supertokens-node/recipe/emailpassword");
 let ThirdParty = require("supertokens-node/recipe/thirdparty");
+let EmailVerification = require("supertokens-node/recipe/emailverification");
 let ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 let { verifySession } = require("supertokens-node/recipe/session/framework/express");
 let { middleware, errorHandler } = require("supertokens-node/framework/express");
@@ -278,35 +279,42 @@ function initST({ passwordlessConfig } = {}) {
     }
 
     const recipeList = [
+        EmailVerification.init({
+            mode: "OPTIONAL",
+            createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
+                console.log(emailVerificationURLWithToken);
+                latestURLWithToken = emailVerificationURLWithToken;
+            },
+            override: {
+                apis: (oI) => {
+                    return {
+                        ...oI,
+                        generateEmailVerifyTokenPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API email verification code",
+                                };
+                            }
+                            return oI.generateEmailVerifyTokenPOST(input);
+                        },
+                        verifyEmailPOST: async function (input) {
+                            let body = await input.options.req.getJSONBody();
+                            if (body.generalError === true) {
+                                return {
+                                    status: "GENERAL_ERROR",
+                                    message: "general error from API email verify",
+                                };
+                            }
+                            return oI.verifyEmailPOST(input);
+                        },
+                    };
+                },
+            },
+        }),
         EmailPassword.init({
             override: {
-                emailVerificationFeature: {
-                    apis: (oI) => {
-                        return {
-                            ...oI,
-                            generateEmailVerifyTokenPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API email verification code",
-                                    };
-                                }
-                                return oI.generateEmailVerifyTokenPOST(input);
-                            },
-                            verifyEmailPOST: async function (input) {
-                                let body = await input.options.req.getJSONBody();
-                                if (body.generalError === true) {
-                                    return {
-                                        status: "GENERAL_ERROR",
-                                        message: "general error from API email verify",
-                                    };
-                                }
-                                return oI.verifyEmailPOST(input);
-                            },
-                        };
-                    },
-                },
                 apis: (oI) => {
                     return {
                         ...oI,
@@ -376,12 +384,6 @@ function initST({ passwordlessConfig } = {}) {
                 createAndSendCustomEmail: (_, passwordResetURLWithToken) => {
                     console.log(passwordResetURLWithToken);
                     latestURLWithToken = passwordResetURLWithToken;
-                },
-            },
-            emailVerificationFeature: {
-                createAndSendCustomEmail: (_, emailVerificationURLWithToken) => {
-                    console.log(emailVerificationURLWithToken);
-                    latestURLWithToken = emailVerificationURLWithToken;
                 },
             },
         }),

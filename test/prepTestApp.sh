@@ -12,11 +12,11 @@ rm ../../supertokens-auth-react-*.tgz
 
 cd node_modules/supertokens-auth-react
 
-rm -rf node_modules/supertokens-web-js || true
-rm -rf node_modules/supertokens-website || true
-
 # install prod dependencies only
 npm i --production --legacy-peer-deps || exit $?
+
+rm -rf node_modules/supertokens-web-js || true
+rm -rf node_modules/supertokens-website || true
 
 # We symlink the supertokens-web-js dep to ensure it's the same version (maybe linked locally)
 ln -s ../../../../node_modules/supertokens-web-js node_modules/supertokens-web-js
