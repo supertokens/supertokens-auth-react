@@ -39,6 +39,7 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
             | Response;
         userContext: any;
     }) => Promise<ClaimValidationError[]>;
+    getDefaultRedirectionURL: (context: GetRedirectionURLContext) => Promise<string>;
     /**
      * @returns Function to remove event listener
      */
