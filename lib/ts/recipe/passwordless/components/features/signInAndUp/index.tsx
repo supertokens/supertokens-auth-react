@@ -211,13 +211,13 @@ export function useChildProps(
             return undefined;
         }
         return {
-            onSuccess: (result: { createdUser: boolean; user: PasswordlessUser }) => {
+            onSuccess: (result: { createdNewUser: boolean; user: PasswordlessUser }) => {
                 return SessionRecipe.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                     {
                         rid: recipe.config.recipeId,
                         successRedirectContext: {
                             action: "SUCCESS",
-                            isNewUser: result.createdUser,
+                            isNewUser: result.createdNewUser,
                             redirectToPath: getRedirectToPathFromURL(),
                         },
                     },

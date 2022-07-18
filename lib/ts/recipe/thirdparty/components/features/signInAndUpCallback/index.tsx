@@ -41,7 +41,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
         return props.recipe.recipeImpl.signInAndUp({
             userContext,
         });
-    }, [props.recipe, props.history]);
+    }, [props.recipe, props.history, userContext]);
 
     const handleVerifyResponse = useCallback(
         async (response: Awaited<ReturnType<typeof verifyCode>>): Promise<void> => {
@@ -55,20 +55,23 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 const stateResponse = props.recipe.recipeImpl.getStateAndOtherInfoFromStorage<CustomStateProperties>({
                     userContext,
                 });
-
                 const redirectToPath = stateResponse === undefined ? undefined : stateResponse.redirectToPath;
 
-                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection({
-                    rid: props.recipe.config.recipeId,
-                    successRedirectContext: {
-                        action: "SUCCESS",
-                        isNewUser: response.createdNewUser,
-                        redirectToPath,
+                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
+                    {
+                        rid: props.recipe.config.recipeId,
+                        successRedirectContext: {
+                            action: "SUCCESS",
+                            isNewUser: response.createdNewUser,
+                            redirectToPath,
+                        },
                     },
-                });
+                    userContext,
+                    props.history
+                );
             }
         },
-        [props.recipe, props.history]
+        [props.recipe, props.history, userContext]
     );
 
     const handleError = useCallback(

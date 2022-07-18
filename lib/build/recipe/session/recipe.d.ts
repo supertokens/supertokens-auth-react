@@ -44,7 +44,7 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
      * @returns Function to remove event listener
      */
     addEventListener: (listener: (ctx: RecipeEventWithSessionContext) => void) => () => void;
-    addAuthRecipeRedirectionHandler: (rid: string, redirect: (ctx: any) => Promise<void>) => void;
+    addAuthRecipeRedirectionHandler: (rid: string, redirect: (ctx: any, history: any) => Promise<void>) => void;
     validateGlobalClaimsAndHandleSuccessRedirection: (
         redirectInfo?: {
             rid: string;
@@ -58,6 +58,7 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
     static addAxiosInterceptors(axiosInstance: any, userContext: any): void;
     static init(config?: InputType): CreateRecipeFunction<GetRedirectionURLContext, unknown, unknown, any>;
     static getInstanceOrThrow(): Session;
+    static getInstance(): Session | undefined;
     static reset(): void;
 }
 export {};
