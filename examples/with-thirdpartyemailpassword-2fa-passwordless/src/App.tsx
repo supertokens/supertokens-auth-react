@@ -45,7 +45,7 @@ SuperTokens.init({
             getRedirectionURL: async function (context) {
                 if (context.action === "SUCCESS") {
                     let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
-                    if (accessTokenPayload.phoneNumberVerified === true) {
+                    if (accessTokenPayload.is2faComplete === true) {
                         // we have completed both the factors and the user is going back to /auth manually for some reason.
                         return "/";
                     }
@@ -88,13 +88,13 @@ SuperTokens.init({
                                 })
                                 .catch((err) => {
                                     // it can come here if a session doesn't exist.
-                                    // in this case, the screen we will should redirect to the
+                                    // in this case, the screen we should redirect to the
                                     // first login challenge
                                     ThirdPartyEmailPassword.redirectToAuth({
                                         redirectBack: false,
                                     });
                                 });
-                        }, []);
+                        }, [props.recipeImplementation]);
                         if (showDefaultUI) {
                             return <DefaultComponent {...props} />;
                         }
@@ -153,7 +153,7 @@ SuperTokens.init({
                                 return true;
                             }
                             let accessTokenPayload = await this.getAccessTokenPayloadSecurely(input);
-                            if (accessTokenPayload.phoneNumberVerified !== true) {
+                            if (accessTokenPayload.is2faComplete !== true) {
                                 // if both the factors have not been completed, we return false.
                                 return false;
                             }
@@ -170,46 +170,44 @@ function App() {
     let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
 
     return (
-        <SuperTokensWrapper>
-            <div className="App">
-                <Router>
-                    <div className="fill">
-                        <Routes>
-                            {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+        <div className="App">
+            <Router>
+                <div className="fill">
+                    <Routes>
+                        {/* This shows the login UI on "/auth" route */}
+                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
 
-                            <Route
-                                path="/"
-                                element={
-                                    /* This protects the "/" route so that it shows
-                                        <Home /> only if the user is logged in.
-                                        Else it redirects the user to "/auth" */
-                                    <ThirdPartyEmailPasswordAuth
-                                        onSessionExpired={() => {
-                                            updateShowSessionExpiredPopup(true);
-                                        }}>
-                                        <Home />
-                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </ThirdPartyEmailPasswordAuth>
-                                }
-                            />
-                            <Route
-                                path="/auth"
-                                element={
-                                    <ThirdPartyEmailPassword.SignInAndUp
-                                        userContext={{
-                                            forceOriginalCheck: true,
-                                        }}
-                                    />
-                                }
-                            />
-                            <Route path="/second-factor" element={<SecondFactor />} />
-                        </Routes>
-                    </div>
-                    <Footer />
-                </Router>
-            </div>
-        </SuperTokensWrapper>
+                        <Route
+                            path="/"
+                            element={
+                                /* This protects the "/" route so that it shows
+                                    <Home /> only if the user is logged in.
+                                    Else it redirects the user to "/auth" */
+                                <ThirdPartyEmailPasswordAuth
+                                    onSessionExpired={() => {
+                                        updateShowSessionExpiredPopup(true);
+                                    }}>
+                                    <Home />
+                                    {showSessionExpiredPopup && <SessionExpiredPopup />}
+                                </ThirdPartyEmailPasswordAuth>
+                            }
+                        />
+                        <Route
+                            path="/auth"
+                            element={
+                                <ThirdPartyEmailPassword.SignInAndUp
+                                    userContext={{
+                                        forceOriginalCheck: true,
+                                    }}
+                                />
+                            }
+                        />
+                        <Route path="/second-factor" element={<SecondFactor />} />
+                    </Routes>
+                </div>
+                <Footer />
+            </Router>
+        </div>
     );
 }
 
