@@ -6,7 +6,7 @@ import ThirdPartyEmailPassword, {
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Session from "supertokens-auth-react/recipe/session";
 import Home from "./Home";
-import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
+import { Routes, BrowserRouter as Router, Route, useLocation } from "react-router-dom";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
@@ -168,10 +168,19 @@ SuperTokens.init({
 
 function App() {
     let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
+    let location = useLocation();
 
+    /**
+     * We give a key to SuperTokensWrapper such that it causes a recalculation of
+     * the session context whenever the pathname changes in the way described below.
+     *
+     * This is needed because we have provided an override for doesSessionExist in which
+     * the logic depends on if location.pathname.startsWith("/auth") is true or not.
+     */
+    let key = location.pathname.startsWith("/auth") + "";
     return (
-        <div className="App">
-            <Router>
+        <SuperTokensWrapper key={key}>
+            <div className="App">
                 <div className="fill">
                     <Routes>
                         {/* This shows the login UI on "/auth" route */}
@@ -206,9 +215,15 @@ function App() {
                     </Routes>
                 </div>
                 <Footer />
-            </Router>
-        </div>
+            </div>
+        </SuperTokensWrapper>
     );
 }
 
-export default App;
+export default function AppWithRouter() {
+    return (
+        <Router>
+            <App />
+        </Router>
+    );
+}
