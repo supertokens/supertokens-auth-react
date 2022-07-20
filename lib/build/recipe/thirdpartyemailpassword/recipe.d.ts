@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
+import AuthRecipe from "../authRecipe";
 import { CreateRecipeFunction, RecipeFeatureComponentMap } from "../../types";
 import {
     Config,
@@ -13,8 +13,9 @@ import EmailPassword from "../emailpassword/recipe";
 import ThirdParty from "../thirdparty/recipe";
 import EmailVerification from "../emailverification/recipe";
 import { RecipeInterface } from "supertokens-web-js/recipe/thirdpartyemailpassword";
-export default class ThirdPartyEmailPassword extends AuthRecipeWithEmailVerification<
+export default class ThirdPartyEmailPassword extends AuthRecipe<
     GetRedirectionURLContext,
+    never,
     OnHandleEventContext,
     NormalisedConfig
 > {

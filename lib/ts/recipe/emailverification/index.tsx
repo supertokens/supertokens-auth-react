@@ -28,6 +28,8 @@ export default class Wrapper {
         EmailVerificationRecipe.getInstanceOrThrow().getFeatureComponent("emailverification", prop);
     static EmailVerificationTheme = EmailVerificationTheme;
 
+    static EmailVerificationClaim = EmailVerificationRecipe.EmailVerificationClaim;
+
     static init(config: UserInput) {
         return EmailVerificationRecipe.init(config);
     }
@@ -77,6 +79,7 @@ const verifyEmail = Wrapper.verifyEmail;
 const sendVerificationEmail = Wrapper.sendVerificationEmail;
 const EmailVerification = Wrapper.EmailVerification;
 const getEmailVerificationTokenFromURL = Wrapper.getEmailVerificationTokenFromURL;
+const EmailVerificationClaim = EmailVerificationRecipe.EmailVerificationClaim;
 
 export {
     init,
@@ -91,4 +94,5 @@ export {
     OnHandleEventContext,
     UserInput,
     RecipeInterface,
+    EmailVerificationClaim,
 };

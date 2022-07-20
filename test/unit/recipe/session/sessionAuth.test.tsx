@@ -110,7 +110,7 @@ describe("SessionAuth", () => {
             {
                 requireAuth: undefined,
                 doesSessionExist: false,
-                shouldRender: true,
+                shouldRender: false,
             },
             {
                 requireAuth: true,
@@ -156,7 +156,7 @@ describe("SessionAuth", () => {
                     </SessionAuth>
                 );
 
-                if (!requireAuth) {
+                if (requireAuth === false) {
                     await waitForElementToBeRemoved(() => result.queryByText("Loading"));
                 }
 
@@ -226,7 +226,7 @@ describe("SessionAuth", () => {
 
             // when
             const result = render(
-                <SessionAuth onSessionExpired={mockOnSessionExpired}>
+                <SessionAuth requireAuth={false} onSessionExpired={mockOnSessionExpired}>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
@@ -260,7 +260,7 @@ describe("SessionAuth", () => {
 
             // when
             const result = render(
-                <SessionAuth>
+                <SessionAuth requireAuth={false}>
                     <MockSessionConsumer />
                 </SessionAuth>
             );

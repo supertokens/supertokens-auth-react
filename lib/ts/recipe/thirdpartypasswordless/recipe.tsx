@@ -17,7 +17,7 @@
  * Imports.
  */
 
-import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
+import AuthRecipe from "../authRecipe";
 import { CreateRecipeFunction, RecipeFeatureComponentMap, NormalisedAppInfo } from "../../types";
 import {
     Config,
@@ -44,8 +44,9 @@ import OverrideableBuilder from "supertokens-js-override";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 
-export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerification<
+export default class ThirdPartyPasswordless extends AuthRecipe<
     GetRedirectionURLContext,
+    never,
     OnHandleEventContext,
     NormalisedConfig
 > {
@@ -66,9 +67,7 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
             passwordlessInstance: Passwordless | undefined;
         }
     ) {
-        super(normaliseThirdPartyPasswordlessConfig(config), {
-            emailVerificationInstance: recipes.emailVerificationInstance,
-        });
+        super(normaliseThirdPartyPasswordlessConfig(config));
 
         {
             const builder = new OverrideableBuilder(
@@ -105,20 +104,15 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
                 ? recipes.thirdPartyInstance
                 : this.config.thirdpartyUserInput === undefined
                 ? undefined
-                : new ThirdParty(
-                      {
-                          ...this.config.thirdpartyUserInput,
-                          appInfo: this.config.appInfo,
-                          recipeId: this.config.recipeId,
-                          override: {
-                              ...this.config.thirdpartyUserInput.override,
-                              functions: () => getThirdPartyImpl(this.recipeImpl),
-                          },
+                : new ThirdParty({
+                      ...this.config.thirdpartyUserInput,
+                      appInfo: this.config.appInfo,
+                      recipeId: this.config.recipeId,
+                      override: {
+                          ...this.config.thirdpartyUserInput.override,
+                          functions: () => getThirdPartyImpl(this.recipeImpl),
                       },
-                      {
-                          emailVerificationInstance: this.emailVerification,
-                      }
-                  );
+                  });
     }
 
     getFeatures = (): RecipeFeatureComponentMap => {
@@ -153,12 +147,11 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
 
         return {
             ...features,
-            ...this.getAuthRecipeWithEmailVerificationFeatures(),
         };
     };
 
     getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        return this.getAuthRecipeWithEmailVerificationDefaultRedirectionURL(context);
+        return this.getAuthRecipeDefaultRedirectionURL(context);
     };
 
     getFeatureComponent = (
@@ -195,7 +188,7 @@ export default class ThirdPartyPasswordless extends AuthRecipeWithEmailVerificat
             }
             return this.thirdPartyRecipe.getFeatureComponent(componentName, props);
         } else {
-            return this.getAuthRecipeWithEmailVerificationFeatureComponent(componentName, props);
+            throw new Error("Should never come here.");
         }
     };
 

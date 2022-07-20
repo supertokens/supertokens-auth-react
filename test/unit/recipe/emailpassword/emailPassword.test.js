@@ -84,7 +84,6 @@ describe("EmailPassword", function () {
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] !== undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/verify-email"] === undefined);
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().config.recipeId, "emailpassword");
-        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().emailVerification.config.mode, "OFF");
     });
 
     it("Initializing EmailPassword and disable default implementation but Email verification required", async function () {
@@ -107,8 +106,6 @@ describe("EmailPassword", function () {
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth"] === undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/reset-password"] === undefined);
         assert(EmailPassword.getInstanceOrThrow().getFeatures()["/auth/verify-email"] !== undefined);
-        assert(EmailPassword.getInstanceOrThrow().emailVerification.getFeatures()["/auth/verify-email"] !== undefined);
-        assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().emailVerification.config.mode, "REQUIRED");
     });
 
     it("Initializing EmailPassword with optional custom Fields for SignUp", async function () {

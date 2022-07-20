@@ -17,7 +17,7 @@
  * Imports.
  */
 import { Config, NormalisedConfig } from "./types";
-import { normaliseAuthRecipeWithEmailVerificationConfig } from "../authRecipeWithEmailVerification/utils";
+import { normaliseAuthRecipe } from "../authRecipe/utils";
 import { RecipeInterface as TPPWlessRecipeInterface } from "supertokens-web-js/recipe/thirdpartypasswordless";
 
 export function normaliseThirdPartyPasswordlessConfig(config: Config): NormalisedConfig {
@@ -41,13 +41,12 @@ export function normaliseThirdPartyPasswordlessConfig(config: Config): Normalise
             ? {}
             : config?.signInUpFeature.thirdPartyProviderAndEmailOrPhoneFormStyle;
     return {
-        ...normaliseAuthRecipeWithEmailVerificationConfig(config),
+        ...normaliseAuthRecipe(config),
 
         thirdPartyProviderAndEmailOrPhoneFormStyle,
         thirdpartyUserInput: disableThirdParty
             ? undefined
             : {
-                  emailVerificationFeature: config.emailVerificationFeature,
                   getRedirectionURL: config.getRedirectionURL,
                   style: config.style,
                   onHandleEvent: config.onHandleEvent,

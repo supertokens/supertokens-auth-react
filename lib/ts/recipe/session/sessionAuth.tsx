@@ -16,14 +16,13 @@
 /*
  * Imports.
  */
-import React, { useEffect, useState, useContext, useRef, PropsWithChildren, useCallback } from "react";
-import SessionContext, { isDefaultContext } from "./sessionContext";
+import React, { useEffect, useState, useRef, PropsWithChildren, useCallback } from "react";
+import SessionContext from "./sessionContext";
 import Session from "./recipe";
 import { RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
-import { useOnMountAPICall } from "../../utils";
-import SuperTokens from "../../superTokens";
+import { popInvalidClaimRedirectPathFromContext, useOnMountAPICall } from "../../utils";
 import { SessionClaimValidator } from "supertokens-website";
 
 export type SessionAuthProps = {
@@ -37,9 +36,6 @@ export type SessionAuthProps = {
 };
 
 const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, ...props }) => {
-    if (props.requireAuth === true && props.redirectToLogin === undefined) {
-        throw new Error("You have to provide redirectToLogin or onSessionExpired function when requireAuth is true");
-    }
     const requireAuth = useRef(props.requireAuth);
 
     if (props.requireAuth !== requireAuth.current) {
@@ -49,12 +45,9 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         );
     }
 
-    const parentSessionContext = useContext(SessionContext);
-
-    // assign the parent context here itself so that there is no flicker in the UI
-    const [context, setContext] = useState<SessionContextType>(
-        !isDefaultContext(parentSessionContext) ? parentSessionContext : { loading: true }
-    );
+    // TODO: check if using the parent context here reduces flickering
+    // It was removed because reusing it (including invalidclaim) caused a redirect loop in an edge case
+    const [context, setContext] = useState<SessionContextType>({ loading: true });
 
     const session = useRef<Session>();
     const userContext = useUserContext();
@@ -63,9 +56,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         if (props.redirectToLogin !== undefined) {
             props.redirectToLogin();
         } else {
-            void session.current!.redirectToAuthWithRedirectToPath(
-                SuperTokens.getInstanceOrThrow().getReactRouterDomWithCustomHistory()?.useHistoryCustom()
-            );
+            void session.current!.redirectToAuthWithRedirectToPath();
         }
     }, [props.redirectToLogin]);
 
@@ -115,14 +106,21 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 // We should not be updating the context to loading
                 throw new Error("Should never come here");
             }
+            if (context.loading === false) {
+                return;
+            }
 
-            if (!toSetContext.doesSessionExist && props.requireAuth === true) {
+            if (!toSetContext.doesSessionExist && props.requireAuth !== false) {
                 redirectToLogin();
             } else {
-                setContext((os) => (os.loading === false ? os : toSetContext));
+                setContext(toSetContext);
+                const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
+                if (redirectPath) {
+                    await Session.getInstanceOrThrow().redirectToUrl(redirectPath);
+                }
             }
         },
-        [props.requireAuth, redirectToLogin]
+        [props.requireAuth, redirectToLogin, context]
     );
 
     useOnMountAPICall(buildContext, setInitialContextAndMaybeRedirect);
@@ -144,6 +142,12 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                         userContext,
                     });
                     setContext({ ...event.sessionContext, loading: false, invalidClaims });
+
+                    const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
+                    if (redirectPath) {
+                        await Session.getInstanceOrThrow().redirectToUrl(redirectPath);
+                    }
+
                     return;
                 }
                 case "SIGN_OUT":
@@ -153,7 +157,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                     setContext({ ...event.sessionContext, loading: false, invalidClaims: [] });
                     if (props.onSessionExpired !== undefined) {
                         props.onSessionExpired();
-                    } else if (props.requireAuth === true) {
+                    } else if (props.requireAuth !== false) {
                         redirectToLogin();
                     }
                     return;
@@ -170,7 +174,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         return session.current.addEventListener(onHandleEvent);
     }, [props, setContext]);
 
-    if (props.requireAuth === true && (context.loading || !context.doesSessionExist)) {
+    if (props.requireAuth !== false && (context.loading || !context.doesSessionExist)) {
         return null;
     }
 

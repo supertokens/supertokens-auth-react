@@ -17,10 +17,12 @@
  * Imports.
  */
 
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 import Session from "../session/recipe";
 import RecipeModule from "../recipeModule";
 import { NormalisedConfig, GetRedirectionURLContext, OnHandleEventContext } from "./types";
 import { getCurrentNormalisedUrlPath, getNormalisedUserContext } from "../../utils";
+import SessionRecipe from "../session/recipe";
 
 export default abstract class AuthRecipe<
     T,
@@ -30,6 +32,12 @@ export default abstract class AuthRecipe<
 > extends RecipeModule<T | GetRedirectionURLContext, Action, R | OnHandleEventContext, N> {
     constructor(config: N) {
         super(config);
+        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            const session = SessionRecipe.getInstance();
+            if (session !== undefined) {
+                session.addAuthRecipeRedirectionHandler(this.config.recipeId, this.redirect.bind(this));
+            }
+        });
     }
 
     getAuthRecipeDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {

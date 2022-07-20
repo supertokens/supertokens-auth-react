@@ -30,16 +30,18 @@ import {
 import { default as EmailVerificationFeature } from "./components/features/emailVerification";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { DEFAULT_VERIFY_EMAIL_PATH } from "./constants";
-import { matchRecipeIdUsingQueryParams } from "../../utils";
+import { matchRecipeIdUsingQueryParams, saveInvalidClaimRedirectPathInContext } from "../../utils";
 import { normaliseEmailVerificationFeature } from "./utils";
 import { CreateRecipeFunction, NormalisedAppInfo } from "../../types";
 import { SSR_ERROR } from "../../constants";
 import RecipeImplementation from "./recipeImplementation";
 import { SessionAuth } from "../session";
-import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
+import { RecipeInterface, EmailVerificationClaimClass } from "supertokens-web-js/recipe/emailverification";
+import { SessionClaimValidatorStore } from "supertokens-website/utils/sessionClaimValidatorStore";
 import OverrideableBuilder from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -49,6 +51,9 @@ export default class EmailVerification extends RecipeModule<
 > {
     static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
+    static EmailVerificationClaim = new EmailVerificationClaimClass(
+        () => EmailVerification.getInstanceOrThrow().recipeImpl
+    );
 
     recipeImpl: RecipeInterface;
 
@@ -67,6 +72,22 @@ export default class EmailVerification extends RecipeModule<
             );
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
+
+        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
+                EmailVerification.EmailVerificationClaim.validators.isVerified(
+                    10,
+                    this.config.mode === "REQUIRED"
+                        ? async (userContext: any) => {
+                              saveInvalidClaimRedirectPathInContext(
+                                  userContext,
+                                  await this.getRedirectUrl({ action: "VERIFY_EMAIL" })
+                              );
+                          }
+                        : undefined
+                )
+            );
+        });
     }
 
     static init(
@@ -100,7 +121,7 @@ export default class EmailVerification extends RecipeModule<
 
     getFeatures = (): RecipeFeatureComponentMap => {
         const features: RecipeFeatureComponentMap = {};
-        if (this.config.mode !== "OFF" && this.config.disableDefaultUI !== true) {
+        if (this.config.disableDefaultUI !== true) {
             const normalisedFullPath = this.config.appInfo.websiteBasePath.appendPath(
                 new NormalisedURLPath(DEFAULT_VERIFY_EMAIL_PATH)
             );
@@ -116,7 +137,7 @@ export default class EmailVerification extends RecipeModule<
     getFeatureComponent = (_: "emailverification", props: any): JSX.Element => {
         return (
             <UserContextWrapper userContext={props.userContext}>
-                <SessionAuth requireAuth={false}>
+                <SessionAuth requireAuth={false} overrideGlobalClaimValidators={() => []}>
                     {/**
                      * EmailVerificationFeature is a class component that accepts userContext
                      * as a prop. If we pass userContext as a prop directly then Emailverification

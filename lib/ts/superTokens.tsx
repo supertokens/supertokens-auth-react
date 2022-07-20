@@ -41,6 +41,7 @@ import {
 } from "./translation/translationHelpers";
 import { CookieHandlerReference } from "supertokens-website/utils/cookieHandler";
 import { WindowHandlerReference } from "supertokens-website/utils/windowHandler";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 /*
  * Class.
@@ -116,6 +117,8 @@ export default class SuperTokens {
         }
 
         SuperTokens.instance = new SuperTokens(config);
+
+        PostSuperTokensInitCallbacks.runPostInitCallbacks();
     }
 
     static getInstanceOrThrow(): SuperTokens {

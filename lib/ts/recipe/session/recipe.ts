@@ -18,27 +18,38 @@
  */
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
-import { appendQueryParamsToURL, getCurrentNormalisedUrlPath, isTest } from "../../utils";
-import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
+import {
+    appendQueryParamsToURL,
+    getCurrentNormalisedUrlPath,
+    popInvalidClaimRedirectPathFromContext,
+    getLocalStorage,
+    isTest,
+    removeFromLocalStorage,
+    setLocalStorage,
+} from "../../utils";
+import { RecipeEventWithSessionContext, InputType, SessionContextUpdate, GetRedirectionURLContext } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
+import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
-export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
+export default class Session extends RecipeModule<GetRedirectionURLContext, unknown, unknown, any> {
     static instance?: Session;
     static RECIPE_ID = "session";
 
     webJsRecipe: WebJSSessionRecipe;
 
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
+    private redirectionHandlersFromAuthRecipes = new Map<string, (ctx: any, history: any) => Promise<void>>();
 
     constructor(config: ConfigType) {
-        super(config);
+        const normalizedConfig = { ...config, ...normaliseRecipeModuleConfig(config) };
+        super(normalizedConfig);
 
         this.webJsRecipe = new WebJSSessionRecipe({
-            ...config,
+            ...normalizedConfig,
             onHandleEvent: (event) => {
                 if (config.onHandleEvent !== undefined) {
                     config.onHandleEvent(event);
@@ -108,7 +119,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
     };
 
     redirectToAuthWithoutRedirectToPath = (history?: any, queryParams?: Record<string, string>) => {
-        const redirectUrl = appendQueryParamsToURL(this.config.appInfo.websiteBasePath, queryParams);
+        const redirectUrl = appendQueryParamsToURL(
+            this.config.appInfo.websiteBasePath.getAsStringDangerous(),
+            queryParams
+        );
         return this.redirectToUrl(redirectUrl, history);
     };
 
@@ -129,6 +143,14 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return this.webJsRecipe.getInvalidClaimsFromResponse(input);
     };
 
+    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
+        if (context.action === "SUCCESS") {
+            return context.redirectToPath === undefined ? "/" : context.redirectToPath;
+        } else {
+            throw new Error("Should never come here");
+        }
+    };
+
     /**
      * @returns Function to remove event listener
      */
@@ -136,6 +158,78 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         this.eventListeners.add(listener);
 
         return () => this.eventListeners.delete(listener);
+    };
+
+    addAuthRecipeRedirectionHandler = (rid: string, redirect: (ctx: any, history: any) => Promise<void>) => {
+        this.redirectionHandlersFromAuthRecipes.set(rid, redirect);
+    };
+
+    validateGlobalClaimsAndHandleSuccessRedirection = async (
+        redirectInfo?: {
+            rid: string;
+            successRedirectContext: any;
+        },
+        userContext?: any,
+        history?: any
+    ): Promise<void> => {
+        // First we check if there is an active session
+        if (!(await this.doesSessionExist({ userContext }))) {
+            // If there is none, we have no way of checking claims, so we redirect to the auth page
+            // This can happen e.g.: if the user clicked on the email verification link in a browser without an active session
+            return this.redirectToAuthWithoutRedirectToPath(history);
+        }
+
+        // We validate all the global claims
+        const invalidClaims = await this.validateClaims({ userContext });
+
+        // Check if any of those claim errors requests a redirection
+        const invalidClaimRedirectPath = popInvalidClaimRedirectPathFromContext(userContext);
+        if (invalidClaims.length > 0 && invalidClaimRedirectPath !== undefined) {
+            if (redirectInfo !== undefined) {
+                // if we have to redirect and we have success context we wanted to use we save it in localstorage
+                // this way after the other page did solved the validation error it can contine
+                // the sign in process by calling this function without passing the redirect info
+                const jsonContext = JSON.stringify(redirectInfo);
+                await setLocalStorage("supertokens-success-redirection-context", jsonContext);
+            }
+            // then we do the redirection.
+            return this.redirectToUrl(invalidClaimRedirectPath, history);
+        }
+
+        // If we don't need to redirect because of a claim, we try and execute the original redirection
+        if (redirectInfo === undefined) {
+            // if this wasn't set directly we try and grab it from local storage
+            const successContextStr = await getLocalStorage("supertokens-success-redirection-context");
+            if (successContextStr !== null) {
+                try {
+                    redirectInfo = JSON.parse(successContextStr);
+                } finally {
+                    await removeFromLocalStorage("supertokens-success-redirection-context");
+                }
+            } else {
+                // If there was nothing in localstorage we set a default
+                // this can happen if the user visited email verification screen without an auth recipe redirecting them there
+                // but already had the email verified and an active session
+                redirectInfo = {
+                    rid: Session.RECIPE_ID,
+                    successRedirectContext: {
+                        action: "SUCCESS",
+                        isNewUser: false,
+                    },
+                };
+            }
+        }
+
+        // We get the redirection handler registered by the relevant auth recipe
+        const authRecipeRedirectHandler = this.redirectionHandlersFromAuthRecipes.get(redirectInfo!.rid);
+        if (authRecipeRedirectHandler !== undefined) {
+            // and call it with the saved info
+            return authRecipeRedirectHandler(redirectInfo!.successRedirectContext, history);
+        }
+
+        // This should only happen if the configuration changed between saving the context and finishing the sign in process
+        // This should be a really rare edgecase
+        return this.redirect(redirectInfo!.successRedirectContext!, history);
     };
 
     private notifyListeners = async (event: RecipeEvent) => {
@@ -188,8 +282,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         return WebJSSessionRecipe.addAxiosInterceptors(axiosInstance, userContext);
     }
 
-    static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any> {
-        return (appInfo: NormalisedAppInfo, enableDebugLogs: boolean): RecipeModule<unknown, unknown, unknown, any> => {
+    static init(config?: InputType): CreateRecipeFunction<GetRedirectionURLContext, unknown, unknown, any> {
+        return (
+            appInfo: NormalisedAppInfo,
+            enableDebugLogs: boolean
+        ): RecipeModule<GetRedirectionURLContext, unknown, unknown, any> => {
             Session.instance = new Session({
                 ...config,
                 appInfo,
@@ -207,6 +304,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
             );
         }
 
+        return Session.instance;
+    }
+
+    static getInstance(): Session | undefined {
         return Session.instance;
     }
 

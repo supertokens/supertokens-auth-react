@@ -218,15 +218,6 @@ function getRecipeList() {
 function getEmailPasswordConfigs() {
     return EmailPassword.init({
         palette: theme.colors,
-        emailVerificationFeature: {
-            sendVerifyEmailScreen: {
-                style: theme.style,
-            },
-            verifyEmailLinkClickedScreen: {
-                style: theme.style,
-            },
-            mode: "REQUIRED",
-        },
         resetPasswordUsingTokenFeature: {
             enterEmailForm: {
                 style: theme.style,
@@ -307,53 +298,26 @@ function getEmailPasswordConfigs() {
                 };
             },
             components: {
-                EmailPasswordSignIn: ({ DefaultComponent, ...props }) => {
+                EmailPasswordSignIn_Override: ({ DefaultComponent, ...props }) => {
                     return (
                         <div>
                             <DefaultComponent {...props} />
                         </div>
                     );
                 },
-                EmailPasswordSignInHeader: ({ DefaultComponent, ...props }) => {
+                EmailPasswordSignInHeader_Override: ({ DefaultComponent, ...props }) => {
                     return (
                         <div>
                             <DefaultComponent {...props} />
                         </div>
                     );
                 },
-                EmailPasswordSubmitNewPassword: ({ DefaultComponent, ...props }) => {
+                EmailPasswordSubmitNewPassword_Override: ({ DefaultComponent, ...props }) => {
                     return (
                         <div>
                             <DefaultComponent {...props} />
                         </div>
                     );
-                },
-            },
-            emailVerification: {
-                functions: (oI) => {
-                    return {
-                        isEmailVerified: (input) => {
-                            return oI.isEmailVerified(input);
-                        },
-                        sendVerificationEmail: (input) => {
-                            return oI.sendVerificationEmail(input);
-                        },
-                        verifyEmail: (input) => {
-                            return oI.verifyEmail(input);
-                        },
-                        getEmailVerificationTokenFromURL: (input) => {
-                            return oI.getEmailVerificationTokenFromURL(input);
-                        },
-                    };
-                },
-                components: {
-                    EmailVerificationSendVerifyEmail: ({ DefaultComponent, ...props }) => {
-                        return (
-                            <div>
-                                <DefaultComponent {...props} />
-                            </div>
-                        );
-                    },
                 },
             },
         },
@@ -398,28 +362,12 @@ function getThirdPartyConfigs() {
                 };
             },
             components: {
-                ThirdPartySignInAndUpCallbackTheme: ({ DefaultComponent }) => {
+                ThirdPartySignInAndUpCallbackTheme_Override: ({ DefaultComponent }) => {
                     return (
                         <div>
                             <DefaultComponent />
                         </div>
                     );
-                },
-            },
-            emailVerification: {
-                functions: (oI) => {
-                    return {
-                        ...oI,
-                    };
-                },
-                components: {
-                    EmailVerificationVerifyEmailLinkClicked: ({ DefaultComponent, ...props }) => {
-                        return (
-                            <div>
-                                <DefaultComponent {...props} />
-                            </div>
-                        );
-                    },
                 },
             },
         },
@@ -460,30 +408,19 @@ function getThirdPartyEmailPasswordConfigs() {
         },
         override: {
             components: {
-                ThirdPartySignInAndUpProvidersForm: ({ DefaultComponent, ...props }) => {
+                ThirdPartySignInAndUpProvidersForm_Override: ({ DefaultComponent, ...props }) => {
                     return (
                         <div>
                             <DefaultComponent {...props} />
                         </div>
                     );
                 },
-                EmailPasswordResetPasswordEmail: ({ DefaultComponent, ...props }) => {
+                EmailPasswordResetPasswordEmail_Override: ({ DefaultComponent, ...props }) => {
                     return (
                         <div>
                             <DefaultComponent {...props} />
                         </div>
                     );
-                },
-            },
-            emailVerification: {
-                components: {
-                    EmailVerificationVerifyEmailLinkClicked: ({ DefaultComponent, ...props }) => {
-                        return (
-                            <div>
-                                <DefaultComponent {...props} />
-                            </div>
-                        );
-                    },
                 },
             },
         },
@@ -531,20 +468,6 @@ Passwordless.init({
     getRedirectionURL: async (context) => {
         if (context.action === "SIGN_IN_AND_UP") {
             // called when the user is navigating to sign in / up page
-        } else if (context.action === "SUCCESS") {
-            // called on a successful sign in / up. Where should the user go next?
-            let redirectToPath = context.redirectToPath;
-            if (redirectToPath !== undefined) {
-                // we are navigating back to where the user was before they authenticated
-                return redirectToPath;
-            }
-            if (context.isNewUser) {
-                // user signed up
-                return "/onboarding";
-            } else {
-                // user signed in
-                return "/dashboard";
-            }
         }
         // return undefined to let the default behaviour play out
         return undefined;
@@ -583,15 +506,6 @@ EmailPassword.getResetPasswordTokenFromURL({
 EmailPassword.getResetPasswordTokenFromURL(undefined);
 EmailPassword.getResetPasswordTokenFromURL();
 
-EmailPassword.isEmailVerified({
-    options: {
-        preAPIHook: undefined,
-    },
-    userContext: undefined,
-});
-EmailPassword.isEmailVerified(undefined);
-EmailPassword.isEmailVerified();
-
 EmailPassword.sendPasswordResetEmail({
     userContext: undefined,
     options: {
@@ -608,15 +522,6 @@ EmailPassword.sendPasswordResetEmail({
 EmailPassword.sendPasswordResetEmail(undefined);
 //@ts-expect-error
 EmailPassword.sendPasswordResetEmail();
-
-EmailPassword.sendVerificationEmail({
-    options: {
-        preAPIHook: undefined,
-    },
-    userContext: undefined,
-});
-EmailPassword.sendVerificationEmail(undefined);
-EmailPassword.sendVerificationEmail();
 
 EmailPassword.signIn({
     userContext: undefined,
@@ -674,15 +579,6 @@ EmailPassword.submitNewPassword({
 EmailPassword.submitNewPassword(undefined);
 // @ts-expect-error
 EmailPassword.submitNewPassword();
-
-EmailPassword.verifyEmail({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-EmailPassword.verifyEmail(undefined);
-EmailPassword.verifyEmail();
 
 // Passwordless
 Passwordless.clearLoginAttemptInfo({
@@ -977,24 +873,6 @@ function getStateAndOtherInfoFromStorage() {
         | undefined = ThirdParty.getStateAndOtherInfoFromStorage();
 }
 
-ThirdParty.isEmailVerified({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-ThirdParty.isEmailVerified(undefined);
-ThirdParty.isEmailVerified();
-
-ThirdParty.sendVerificationEmail({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-ThirdParty.sendVerificationEmail(undefined);
-ThirdParty.sendVerificationEmail();
-
 ThirdParty.setStateAndOtherInfoToStorage({
     userContext: undefined,
     state: {
@@ -1112,15 +990,6 @@ ThirdParty.verifyAndGetStateOrThrowError<{
         customData: "",
     },
 });
-
-ThirdParty.verifyEmail({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-ThirdParty.verifyEmail(undefined);
-ThirdParty.verifyEmail();
 
 // TPEP
 ThirdPartyEmailPassword.doesEmailExist({
@@ -1270,13 +1139,6 @@ function tpepgetStateAndOtherInfoFromStorage() {
     });
 }
 
-ThirdPartyEmailPassword.isEmailVerified({
-    userContext: undefined,
-    options: undefined,
-});
-ThirdPartyEmailPassword.isEmailVerified(undefined);
-ThirdPartyEmailPassword.isEmailVerified();
-
 ThirdPartyEmailPassword.sendPasswordResetEmail({
     userContext: undefined,
     options: {
@@ -1293,15 +1155,6 @@ ThirdPartyEmailPassword.sendPasswordResetEmail({
 ThirdPartyEmailPassword.sendPasswordResetEmail(undefined);
 // @ts-expect-error
 ThirdPartyEmailPassword.sendPasswordResetEmail();
-
-ThirdPartyEmailPassword.sendVerificationEmail({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-ThirdPartyEmailPassword.sendVerificationEmail(undefined);
-ThirdPartyEmailPassword.sendVerificationEmail();
 
 ThirdPartyEmailPassword.setStateAndOtherInfoToStorage({
     userContext: undefined,
@@ -1437,15 +1290,6 @@ ThirdPartyEmailPassword.verifyAndGetStateOrThrowError<{
         customData: "",
     },
 });
-
-ThirdPartyEmailPassword.verifyEmail({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-ThirdPartyEmailPassword.verifyEmail(undefined);
-ThirdPartyEmailPassword.verifyEmail();
 
 // TPP
 ThirdPartyPasswordless.clearPasswordlessLoginAttemptInfo({
@@ -1657,13 +1501,6 @@ function tppgetThirdPartyStateAndOtherInfoFromStorage() {
     });
 }
 
-ThirdPartyPasswordless.isEmailVerified({
-    userContext: undefined,
-    options: undefined,
-});
-ThirdPartyPasswordless.isEmailVerified(undefined);
-ThirdPartyPasswordless.isEmailVerified();
-
 ThirdPartyPasswordless.resendPasswordlessCode({
     userContext: undefined,
     options: {
@@ -1672,15 +1509,6 @@ ThirdPartyPasswordless.resendPasswordlessCode({
 });
 ThirdPartyPasswordless.resendPasswordlessCode(undefined);
 ThirdPartyPasswordless.resendPasswordlessCode();
-
-ThirdPartyPasswordless.sendVerificationEmail({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-ThirdPartyPasswordless.sendVerificationEmail(undefined);
-ThirdPartyPasswordless.sendVerificationEmail();
 
 ThirdPartyPasswordless.setPasswordlessLoginAttemptInfo({
     attemptInfo: {
@@ -1862,12 +1690,3 @@ ThirdPartyPasswordless.verifyAndGetThirdPartyStateOrThrowError<{
         customData: "",
     },
 });
-
-ThirdPartyPasswordless.verifyEmail({
-    userContext: undefined,
-    options: {
-        preAPIHook: undefined,
-    },
-});
-ThirdPartyPasswordless.verifyEmail(undefined);
-ThirdPartyPasswordless.verifyEmail();
