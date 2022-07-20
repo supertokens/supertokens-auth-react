@@ -85,7 +85,7 @@ SuperTokens.init({
                                         redirectBack: false,
                                     });
                                 });
-                        }, [props.recipeImplementation]);
+                        }, []);
                         if (showDefaultUI) {
                             return <DefaultComponent {...props} />;
                         }
