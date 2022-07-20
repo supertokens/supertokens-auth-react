@@ -190,7 +190,7 @@ export type UserInput = (
 export type SignInUpProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
-    onSuccess?: (result: { createdUser: boolean; user: PasswordlessUser }) => void;
+    onSuccess?: (result: { createdNewUser: boolean; user: PasswordlessUser }) => void;
     dispatch: Dispatch<PasswordlessSignInUpAction>;
     featureState: {
         loginAttemptInfo?: LoginAttemptInfo;
@@ -258,7 +258,7 @@ export type SignInUpUserInputCodeFormProps = {
     recipeImplementation: RecipeInterface;
     config: NormalisedConfig;
     loginAttemptInfo: LoginAttemptInfo;
-    onSuccess?: (result: { createdUser: boolean; user: PasswordlessUser }) => void;
+    onSuccess?: (result: { createdNewUser: boolean; user: PasswordlessUser }) => void;
 };
 
 export type LinkClickedScreenProps = {

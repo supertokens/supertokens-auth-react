@@ -42,7 +42,7 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
     webJsRecipe: WebJSSessionRecipe;
 
     private eventListeners = new Set<(ctx: RecipeEventWithSessionContext) => void>();
-    private redirectionHandlersFromAuthRecipes = new Map<string, (ctx: any) => Promise<void>>();
+    private redirectionHandlersFromAuthRecipes = new Map<string, (ctx: any, history: any) => Promise<void>>();
 
     constructor(config: ConfigType) {
         const normalizedConfig = { ...config, ...normaliseRecipeModuleConfig(config) };
@@ -160,7 +160,7 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         return () => this.eventListeners.delete(listener);
     };
 
-    addAuthRecipeRedirectionHandler = (rid: string, redirect: (ctx: any) => Promise<void>) => {
+    addAuthRecipeRedirectionHandler = (rid: string, redirect: (ctx: any, history: any) => Promise<void>) => {
         this.redirectionHandlersFromAuthRecipes.set(rid, redirect);
     };
 
@@ -224,12 +224,12 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         const authRecipeRedirectHandler = this.redirectionHandlersFromAuthRecipes.get(redirectInfo!.rid);
         if (authRecipeRedirectHandler !== undefined) {
             // and call it with the saved info
-            return authRecipeRedirectHandler(redirectInfo!.successRedirectContext);
+            return authRecipeRedirectHandler(redirectInfo!.successRedirectContext, history);
         }
 
         // This should only happen if the configuration changed between saving the context and finishing the sign in process
         // This should be a really rare edgecase
-        return this.redirect(redirectInfo!.successRedirectContext!);
+        return this.redirect(redirectInfo!.successRedirectContext!, history);
     };
 
     private notifyListeners = async (event: RecipeEvent) => {
@@ -304,6 +304,10 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
             );
         }
 
+        return Session.instance;
+    }
+
+    static getInstance(): Session | undefined {
         return Session.instance;
     }
 

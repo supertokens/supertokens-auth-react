@@ -41,6 +41,7 @@ import { SessionClaimValidatorStore } from "supertokens-website/utils/sessionCla
 import OverrideableBuilder from "supertokens-js-override";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { UserContextContext } from "../../usercontext";
+import { PostSuperTokensInitCallbacks } from "supertokens-web-js/utils/postSuperTokensInitCallbacks";
 
 export default class EmailVerification extends RecipeModule<
     GetRedirectionURLContext,
@@ -71,19 +72,22 @@ export default class EmailVerification extends RecipeModule<
             );
             this.recipeImpl = builder.override(this.config.override.functions).build();
         }
-        SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
-            EmailVerification.EmailVerificationClaim.validators.isVerified(
-                10,
-                this.config.mode === "REQUIRED"
-                    ? async (userContext: any) => {
-                          saveInvalidClaimRedirectPathInContext(
-                              userContext,
-                              await this.getRedirectUrl({ action: "VERIFY_EMAIL" })
-                          );
-                      }
-                    : undefined
-            )
-        );
+
+        PostSuperTokensInitCallbacks.addPostInitCallback(() => {
+            SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
+                EmailVerification.EmailVerificationClaim.validators.isVerified(
+                    10,
+                    this.config.mode === "REQUIRED"
+                        ? async (userContext: any) => {
+                              saveInvalidClaimRedirectPathInContext(
+                                  userContext,
+                                  await this.getRedirectUrl({ action: "VERIFY_EMAIL" })
+                              );
+                          }
+                        : undefined
+                )
+            );
+        });
     }
 
     static init(
