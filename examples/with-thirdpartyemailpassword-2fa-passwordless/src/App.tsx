@@ -201,16 +201,6 @@ function App() {
                                 </ThirdPartyEmailPasswordAuth>
                             }
                         />
-                        <Route
-                            path="/auth"
-                            element={
-                                <ThirdPartyEmailPassword.SignInAndUp
-                                    userContext={{
-                                        forceOriginalCheck: true,
-                                    }}
-                                />
-                            }
-                        />
                         <Route path="/second-factor" element={<SecondFactor />} />
                     </Routes>
                 </div>
