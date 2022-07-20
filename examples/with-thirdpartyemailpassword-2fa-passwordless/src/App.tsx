@@ -68,6 +68,27 @@ SuperTokens.init({
             override: {
                 components: {
                     PasswordlessUserInputCodeFormFooter_Override: ({ DefaultComponent, ...props }) => {
+                        let [showDefaultUI, setShowDefaultUI] = useState(false);
+                        useEffect(() => {
+                            Session.getAccessTokenPayloadSecurely()
+                                .then(async (accessTokenPayload) => {
+                                    let phoneNumber = accessTokenPayload.phoneNumber;
+                                    if (phoneNumber === undefined) {
+                                        setShowDefaultUI(true);
+                                    }
+                                })
+                                .catch((err) => {
+                                    // it can come here if a session doesn't exist.
+                                    // in this case, the screen we should redirect to the
+                                    // first login challenge
+                                    ThirdPartyEmailPassword.redirectToAuth({
+                                        redirectBack: false,
+                                    });
+                                });
+                        }, [props.recipeImplementation]);
+                        if (showDefaultUI) {
+                            return <DefaultComponent {...props} />;
+                        }
                         return null;
                     },
                     PasswordlessPhoneForm_Override: ({ DefaultComponent, ...props }) => {
