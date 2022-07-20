@@ -52,7 +52,16 @@ export default class EmailVerification extends RecipeModule<
     static instance?: EmailVerification;
     static RECIPE_ID = "emailverification";
     static EmailVerificationClaim = new EmailVerificationClaimClass(
-        () => EmailVerification.getInstanceOrThrow().recipeImpl
+        () => EmailVerification.getInstanceOrThrow().recipeImpl,
+        async (userContext: any) => {
+            const recipe = EmailVerification.getInstanceOrThrow();
+            if (recipe.config.mode === "REQUIRED") {
+                saveInvalidClaimRedirectPathInContext(
+                    userContext,
+                    await recipe.getRedirectUrl({ action: "VERIFY_EMAIL" })
+                );
+            }
+        }
     );
 
     recipeImpl: RecipeInterface;
@@ -75,17 +84,7 @@ export default class EmailVerification extends RecipeModule<
 
         PostSuperTokensInitCallbacks.addPostInitCallback(() => {
             SessionClaimValidatorStore.addClaimValidatorFromOtherRecipe(
-                EmailVerification.EmailVerificationClaim.validators.isVerified(
-                    10,
-                    this.config.mode === "REQUIRED"
-                        ? async (userContext: any) => {
-                              saveInvalidClaimRedirectPathInContext(
-                                  userContext,
-                                  await this.getRedirectUrl({ action: "VERIFY_EMAIL" })
-                              );
-                          }
-                        : undefined
-                )
+                EmailVerification.EmailVerificationClaim.validators.isVerified(10)
             );
         });
     }

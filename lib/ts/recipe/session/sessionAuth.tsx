@@ -23,6 +23,7 @@ import { RecipeEventWithSessionContext, SessionContextType } from "./types";
 import { useUserContext } from "../../usercontext";
 import UserContextWrapper from "../../usercontext/userContextWrapper";
 import { popInvalidClaimRedirectPathFromContext, useOnMountAPICall } from "../../utils";
+import SuperTokens from "../../superTokens";
 import { SessionClaimValidator } from "supertokens-website";
 
 export type SessionAuthProps = {
@@ -50,13 +51,14 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
     const [context, setContext] = useState<SessionContextType>({ loading: true });
 
     const session = useRef<Session>();
+    const history = SuperTokens.getReactRouterDomWithCustomHistory()?.useHistoryCustom();
     const userContext = useUserContext();
 
     const redirectToLogin = useCallback(() => {
         if (props.redirectToLogin !== undefined) {
             props.redirectToLogin();
         } else {
-            void session.current!.redirectToAuthWithRedirectToPath();
+            void session.current!.redirectToAuthWithRedirectToPath(history);
         }
     }, [props.redirectToLogin]);
 
@@ -116,7 +118,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 setContext(toSetContext);
                 const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
                 if (redirectPath) {
-                    await Session.getInstanceOrThrow().redirectToUrl(redirectPath);
+                    await Session.getInstanceOrThrow().redirectToUrl(redirectPath, history);
                 }
             }
         },
@@ -145,7 +147,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
                     const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
                     if (redirectPath) {
-                        await Session.getInstanceOrThrow().redirectToUrl(redirectPath);
+                        await Session.getInstanceOrThrow().redirectToUrl(redirectPath, history);
                     }
 
                     return;
