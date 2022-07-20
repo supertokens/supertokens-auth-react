@@ -481,6 +481,9 @@ function getEmailVerificationConfigs({ disableDefaultUI }) {
             style: theme.style,
         },
         mode: emailVerificationMode,
+        getRedirectionURL: async (context) => {
+            console.log(`ST_LOGS EMAIL_VERIFICATION GET_REDIRECTION_URL ${context.action}`);
+        },
         override: {
             functions: (implementation) => {
                 const log = logWithPrefix(`ST_LOGS EMAIL_VERIFICATION OVERRIDE`);

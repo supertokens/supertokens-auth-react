@@ -15,6 +15,7 @@
 require("dotenv").config();
 let SuperTokens = require("supertokens-node");
 let { default: SuperTokensRaw } = require("supertokens-node/lib/build/supertokens");
+const { default: EmailVerificationRaw } = require("supertokens-node/lib/build/recipe/emailverification/recipe");
 const { default: EmailPasswordRaw } = require("supertokens-node/lib/build/recipe/emailpassword/recipe");
 const { default: ThirdPartyRaw } = require("supertokens-node/lib/build/recipe/thirdparty/recipe");
 const {
@@ -270,6 +271,7 @@ function initST({ passwordlessConfig } = {}) {
             PasswordlessRaw.reset();
         }
 
+        EmailVerificationRaw.reset();
         EmailPasswordRaw.reset();
         ThirdPartyRaw.reset();
         ThirdPartyEmailPasswordRaw.reset();
