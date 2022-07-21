@@ -241,6 +241,7 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SESSION OVERRIDE SIGN_OUT",
                 "ST_LOGS SESSION PRE_API_HOOKS SIGN_OUT",
                 "ST_LOGS SESSION ON_HANDLE_EVENT SIGN_OUT",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
         });
     });
@@ -276,6 +277,7 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS VERIFY_EMAIL",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
         });
 
@@ -296,6 +298,7 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS EMAIL_VERIFICATION OVERRIDE VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION PRE_API_HOOKS VERIFY_EMAIL",
                 "ST_LOGS EMAIL_VERIFICATION ON_HANDLE_EVENT EMAIL_VERIFIED_SUCCESSFUL",
+                "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
         });
 

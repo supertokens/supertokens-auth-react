@@ -561,7 +561,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    // "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                    "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
                     "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                     "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
@@ -601,7 +601,7 @@ describe("SuperTokens SignIn with react router dom v5", function () {
                 assert.deepStrictEqual(consoleLogs, [
                     "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
                     "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
-                    // "ST_LOGS EMAIL_PASSWORD GET_REDIRECTION_URL SIGN_IN_AND_UP",
+                    "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
                     "ST_LOGS EMAIL_PASSWORD OVERRIDE SIGN_IN",
                     "ST_LOGS EMAIL_PASSWORD PRE_API_HOOKS EMAIL_PASSWORD_SIGN_IN",
                     "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
