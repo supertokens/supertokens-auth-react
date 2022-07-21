@@ -3,7 +3,7 @@ import React from "react";
 import { useEffect } from "react";
 import SuperTokensReact, { SuperTokensWrapper } from "supertokens-auth-react";
 import Session from "supertokens-auth-react/recipe/session";
-import { redirectToAuth } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import { redirectToAuthWithoutRedirectToPath } from "supertokens-auth-react";
 import { frontendConfig } from "../config/frontendConfig";
 
 if (typeof window !== "undefined") {
@@ -18,7 +18,7 @@ function MyApp({ Component, pageProps }) {
                     location.reload();
                 } else {
                     // user has been logged out
-                    redirectToAuth();
+                    redirectToAuthWithoutRedirectToPath();
                 }
             }
         }

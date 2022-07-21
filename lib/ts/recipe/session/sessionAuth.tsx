@@ -58,7 +58,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         if (props.redirectToLogin !== undefined) {
             props.redirectToLogin();
         } else {
-            void session.current!.redirectToAuthWithRedirectToPath(history);
+            void SuperTokens.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, history);
         }
     }, [props.redirectToLogin]);
 
@@ -118,7 +118,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
                 setContext(toSetContext);
                 const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
                 if (redirectPath) {
-                    await Session.getInstanceOrThrow().redirectToUrl(redirectPath, history);
+                    await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
                 }
             }
         },
@@ -147,7 +147,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
 
                     const redirectPath = popInvalidClaimRedirectPathFromContext(userContext);
                     if (redirectPath) {
-                        await Session.getInstanceOrThrow().redirectToUrl(redirectPath, history);
+                        await SuperTokens.getInstanceOrThrow().redirectToUrl(redirectPath, history);
                     }
 
                     return;

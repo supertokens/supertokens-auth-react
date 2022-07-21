@@ -1,10 +1,12 @@
 import { useEffect } from "react";
-import { redirectToAuth } from "supertokens-auth-react/recipe/emailpassword";
+import { useNavigate } from "react-router-dom";
+import { redirectToAuthWithoutRedirectToPath } from "supertokens-auth-react";
 
 export default function SessionExpiredPopup() {
+    const history = useNavigate();
     useEffect(() => {
         window.alert("Session Expired. Please login again");
-        redirectToAuth();
+        redirectToAuthWithoutRedirectToPath("signin", history);
     }, []);
 
     return null;

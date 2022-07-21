@@ -18,13 +18,22 @@
  */
 import * as React from "react";
 import RecipeModule from "./recipe/recipeModule";
-import { ComponentWithRecipeAndMatchingMethod, NormalisedAppInfo, SuperTokensConfig } from "./types";
 import {
+    ComponentWithRecipeAndMatchingMethod,
+    GetRedirectionURLContext,
+    NormalisedAppInfo,
+    SuperTokensConfig,
+} from "./types";
+import {
+    appendQueryParamsToURL,
     getCurrentNormalisedUrlPath,
     getDefaultCookieScope,
+    getOriginOfPage,
     isTest,
     normaliseCookieScopeOrThrowError,
     normaliseInputAppInfoOrThrowError,
+    redirectWithFullPageReload,
+    redirectWithHistory,
 } from "./utils";
 import NormalisedURLPath from "supertokens-web-js/utils/normalisedURLPath";
 import { getSuperTokensRoutesForReactRouterDom } from "./components/superTokensRoute";
@@ -69,7 +78,7 @@ export default class SuperTokens {
     };
     recipeList: RecipeModule<any, any, any, any>[] = [];
     private pathsToFeatureComponentWithRecipeIdMap?: BaseFeatureComponentMap;
-
+    private userGetRedirectionURL: SuperTokensConfig["getRedirectionURL"];
     /*
      * Constructor.
      */
@@ -98,6 +107,8 @@ export default class SuperTokens {
         if (config.enableDebugLogs !== undefined) {
             enableDebugLogs = config.enableDebugLogs;
         }
+
+        this.userGetRedirectionURL = config.getRedirectionURL;
 
         this.recipeList = config.recipeList.map((recipe) => {
             return recipe(this.appInfo, enableDebugLogs);
@@ -272,6 +283,72 @@ export default class SuperTokens {
     loadTranslation(store: TranslationStore): void {
         this.languageTranslations.translationEventSource.emit("TranslationLoaded", store);
     }
+
+    async getRedirectUrl(context: GetRedirectionURLContext): Promise<string> {
+        if (this.userGetRedirectionURL) {
+            const userRes = await this.userGetRedirectionURL(context);
+            if (userRes !== undefined) {
+                return userRes;
+            }
+        }
+        if (context.action === "TO_AUTH") {
+            return this.appInfo.websiteBasePath.getAsStringDangerous();
+        }
+        throw new Error("Should never come here: unexpected redirection context");
+    }
+
+    redirectToAuthWithRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
+        const redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
+        if (queryParams === undefined) {
+            queryParams = {};
+        }
+        queryParams = {
+            ...queryParams,
+            redirectToPath,
+        };
+        return this.redirectToAuthWithoutRedirectToPath(show, history, queryParams);
+    };
+
+    redirectToAuthWithoutRedirectToPath = async (show?: "signin" | "signup", history?: any, queryParams?: any) => {
+        if (queryParams === undefined) {
+            queryParams = {};
+        }
+        if (show !== undefined) {
+            queryParams = {
+                ...queryParams,
+                show,
+            };
+        }
+
+        let redirectUrl = await this.getRedirectUrl({
+            action: "TO_AUTH",
+            showSignIn: show === "signin",
+        });
+        redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
+        return this.redirectToUrl(redirectUrl, history);
+    };
+
+    redirectToUrl = async (redirectUrl: string, history?: any): Promise<void> => {
+        try {
+            new URL(redirectUrl); // If full URL, no error thrown, skip in app redirection.
+        } catch (e) {
+            // For multi tenancy, If mismatch between websiteDomain and current location, prepand URL relative path with websiteDomain.
+            const origin = getOriginOfPage().getAsStringDangerous();
+            if (origin !== this.appInfo.websiteDomain.getAsStringDangerous()) {
+                redirectUrl = `${this.appInfo.websiteDomain.getAsStringDangerous()}${redirectUrl}`;
+                redirectWithFullPageReload(redirectUrl);
+                return;
+            }
+
+            // If history was provided, use to redirect without reloading.
+            if (history !== undefined) {
+                redirectWithHistory(redirectUrl, history);
+                return;
+            }
+        }
+        // Otherwise, redirect in app.
+        redirectWithFullPageReload(redirectUrl);
+    };
 
     /*
      * Tests methods.

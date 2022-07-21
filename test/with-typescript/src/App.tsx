@@ -74,6 +74,12 @@ SuperTokens.init({
         apiDomain: getApiDomain(),
         websiteDomain: window.location.origin,
     },
+    async getRedirectionURL(context) {
+        if (context.action === "TO_AUTH") {
+            return "/auth";
+        }
+        return undefined;
+    },
     recipeList,
 });
 
@@ -466,9 +472,6 @@ Passwordless.init({
         }
     },
     getRedirectionURL: async (context) => {
-        if (context.action === "SIGN_IN_AND_UP") {
-            // called when the user is navigating to sign in / up page
-        }
         // return undefined to let the default behaviour play out
         return undefined;
     },

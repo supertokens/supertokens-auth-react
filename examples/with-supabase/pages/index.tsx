@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
+import { redirectToAuthWithoutRedirectToPath } from "supertokens-auth-react";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import dynamic from "next/dynamic";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -49,7 +50,7 @@ function ProtectedPage() {
 
     async function logoutClicked() {
         await ThirdPartyEmailPassword.signOut();
-        ThirdPartyEmailPassword.redirectToAuth();
+        redirectToAuthWithoutRedirectToPath();
     }
 
     async function fetchUserData() {

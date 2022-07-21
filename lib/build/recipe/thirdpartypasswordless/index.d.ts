@@ -14,7 +14,7 @@ export default class Wrapper {
     static init(
         config: UserInput
     ): import("../../types").CreateRecipeFunction<
-        GetRedirectionURLContext,
+        import("../authRecipe/types").GetRedirectionURLContext,
         import("./types").PreAndPostAPIHookAction,
         OnHandleEventContext,
         import("./types").NormalisedConfig
@@ -156,14 +156,6 @@ export default class Wrapper {
         userContext?: any;
     }): Promise<void>;
     static clearPasswordlessLoginAttemptInfo(input?: { userContext?: any }): Promise<void>;
-    static redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void>;
     static Google: typeof Google;
     static Apple: typeof Apple;
     static Facebook: typeof Facebook;
@@ -203,7 +195,6 @@ declare const doesPasswordlessUserPhoneNumberExist: typeof Wrapper.doesPasswordl
 declare const getPasswordlessLoginAttemptInfo: typeof Wrapper.getPasswordlessLoginAttemptInfo;
 declare const setPasswordlessLoginAttemptInfo: typeof Wrapper.setPasswordlessLoginAttemptInfo;
 declare const clearPasswordlessLoginAttemptInfo: typeof Wrapper.clearPasswordlessLoginAttemptInfo;
-declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
 declare const EmailVerification: (prop?: any) => JSX.Element;
@@ -239,7 +230,6 @@ export {
     SignInUpTheme,
     ThirdPartySignInAndUpCallback,
     signOut,
-    redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
     PasswordlessLinkClicked,

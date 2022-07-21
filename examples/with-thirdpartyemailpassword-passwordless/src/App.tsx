@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import "./App.css";
-import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
+import SuperTokens, {
+    SuperTokensWrapper,
+    getSuperTokensRoutesForReactRouterDom,
+    redirectToAuthWithoutRedirectToPath,
+} from "supertokens-auth-react";
 import ThirdPartyEmailPassword, { Google, Github, Apple } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Session from "supertokens-auth-react/recipe/session";
@@ -56,7 +60,7 @@ SuperTokens.init({
                                         cursor: "pointer",
                                     }}
                                     onClick={() => {
-                                        Passwordless.redirectToAuth();
+                                        redirectToAuthWithoutRedirectToPath();
                                     }}>
                                     Passwordless login
                                 </div>

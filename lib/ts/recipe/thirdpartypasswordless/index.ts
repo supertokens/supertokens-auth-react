@@ -331,26 +331,6 @@ export default class Wrapper {
         });
     }
 
-    // have backwards compatibility to allow input as "signin" | "signup"
-    static async redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void> {
-        if (input === undefined || typeof input === "string") {
-            return ThirdPartyPasswordless.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input);
-        } else {
-            if (input.redirectBack === false || input.redirectBack === undefined) {
-                return ThirdPartyPasswordless.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(input.show);
-            } else {
-                return ThirdPartyPasswordless.getInstanceOrThrow().redirectToAuthWithRedirectToPath(input.show);
-            }
-        }
-    }
-
     static Google = Google;
     static Apple = Apple;
     static Facebook = Facebook;
@@ -393,7 +373,6 @@ const doesPasswordlessUserPhoneNumberExist = Wrapper.doesPasswordlessUserPhoneNu
 const getPasswordlessLoginAttemptInfo = Wrapper.getPasswordlessLoginAttemptInfo;
 const setPasswordlessLoginAttemptInfo = Wrapper.setPasswordlessLoginAttemptInfo;
 const clearPasswordlessLoginAttemptInfo = Wrapper.clearPasswordlessLoginAttemptInfo;
-const redirectToAuth = Wrapper.redirectToAuth;
 const SignInAndUp = Wrapper.SignInAndUp;
 const ThirdPartySignInAndUpCallback = Wrapper.ThirdPartySignInAndUpCallback;
 const EmailVerification = Wrapper.EmailVerification;
@@ -430,7 +409,6 @@ export {
     SignInUpTheme,
     ThirdPartySignInAndUpCallback,
     signOut,
-    redirectToAuth,
     EmailVerification,
     EmailVerificationTheme,
     PasswordlessLinkClicked,

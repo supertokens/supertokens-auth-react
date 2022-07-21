@@ -95,7 +95,6 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
                         <SessionAuth
                             key="/route1"
                             requireAuth={true}
-                            redirectToLogin={EmailPassword.redirectToAuth}
                             onSessionExpired={() => {
                                 updateShowSessionExpiredPopup(true);
                             }}
@@ -111,7 +110,6 @@ function AppRoutes({ updateShowSessionExpiredPopup, showSessionExpiredPopup }) {
                         <SessionAuth
                             key="/route2"
                             requireAuth={true}
-                            redirectToLogin={EmailPassword.redirectToAuth}
                             onSessionExpired={() => {
                                 updateShowSessionExpiredPopup(true);
                             }}>

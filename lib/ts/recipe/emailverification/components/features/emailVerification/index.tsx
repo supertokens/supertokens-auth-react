@@ -29,6 +29,7 @@ import { defaultTranslationsEmailVerification } from "../../themes/translations"
 import { RecipeInterface } from "supertokens-web-js/recipe/emailverification";
 import { useUserContext } from "../../../../../usercontext";
 import Session from "../../../../session/recipe";
+import SuperTokens from "../../../../../superTokens";
 
 type Prop = FeatureBaseProps & { recipe: Recipe; userContext?: any };
 
@@ -65,7 +66,7 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         const token = getQueryParams("token") ?? undefined;
         if (token === undefined) {
             if (!sessionContext.doesSessionExist) {
-                await Session.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(props.history);
+                await SuperTokens.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, props.history);
             } else {
                 // we check if the email is already verified, and if it is, then we redirect the user
                 return (await props.recipe.recipeImpl.isEmailVerified({ userContext })).isVerified;
@@ -88,11 +89,11 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     const signOut = useCallback(async (): Promise<void> => {
         const session = Session.getInstanceOrThrow();
         await session.signOut(props.userContext);
-        return session.redirectToAuthWithoutRedirectToPath(props.history);
+        return SuperTokens.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, props.history);
     }, [props.recipe]);
 
     const onTokenInvalidRedirect = useCallback(
-        () => Session.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(props.history),
+        () => SuperTokens.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, props.history),
         [props.recipe, props.history]
     );
 

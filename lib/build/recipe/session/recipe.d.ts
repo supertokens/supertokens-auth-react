@@ -23,8 +23,6 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
     doesSessionExist: (input: { userContext: any }) => Promise<boolean>;
     signOut: (input: { userContext: any }) => Promise<void>;
     attemptRefreshingSession: () => Promise<boolean>;
-    redirectToAuthWithRedirectToPath: (history?: any, queryParams?: Record<string, string>) => Promise<void>;
-    redirectToAuthWithoutRedirectToPath: (history?: any, queryParams?: Record<string, string>) => Promise<void>;
     validateClaims: (input: {
         overrideGlobalClaimValidators?:
             | ((globalClaimValidators: SessionClaimValidator[], userContext: any) => SessionClaimValidator[])

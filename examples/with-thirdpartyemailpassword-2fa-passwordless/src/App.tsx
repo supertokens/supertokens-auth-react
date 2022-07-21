@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
-import ThirdPartyEmailPassword, {
-    ThirdPartyEmailPasswordAuth,
-} from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import Session from "supertokens-auth-react/recipe/session";
+import SuperTokens, {
+    SuperTokensWrapper,
+    getSuperTokensRoutesForReactRouterDom,
+    redirectToAuthWithoutRedirectToPath,
+} from "supertokens-auth-react";
+import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
+import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import Home from "./Home";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./Footer";
@@ -32,9 +35,6 @@ SuperTokens.init({
     },
     recipeList: [
         ThirdPartyEmailPassword.init({
-            emailVerificationFeature: {
-                mode: "REQUIRED",
-            },
             signInAndUpFeature: {
                 providers: [
                     ThirdPartyEmailPassword.Github.init(),
@@ -90,9 +90,7 @@ SuperTokens.init({
                                     // it can come here if a session doesn't exist.
                                     // in this case, the screen we will should redirect to the
                                     // first login challenge
-                                    ThirdPartyEmailPassword.redirectToAuth({
-                                        redirectBack: false,
-                                    });
+                                    redirectToAuthWithoutRedirectToPath();
                                 });
                         }, []);
                         if (showDefaultUI) {
@@ -114,9 +112,7 @@ SuperTokens.init({
                                     // it can come here if a session doesn't exist.
                                     // in this case, the screen we will should redirect to the
                                     // first login challenge
-                                    ThirdPartyEmailPassword.redirectToAuth({
-                                        redirectBack: false,
-                                    });
+                                    redirectToAuthWithoutRedirectToPath();
                                 });
                         }, []);
                         if (!showHeader) {
@@ -184,13 +180,13 @@ function App() {
                                     /* This protects the "/" route so that it shows
                                         <Home /> only if the user is logged in.
                                         Else it redirects the user to "/auth" */
-                                    <ThirdPartyEmailPasswordAuth
+                                    <SessionAuth
                                         onSessionExpired={() => {
                                             updateShowSessionExpiredPopup(true);
                                         }}>
                                         <Home />
                                         {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </ThirdPartyEmailPasswordAuth>
+                                    </SessionAuth>
                                 }
                             />
                             <Route

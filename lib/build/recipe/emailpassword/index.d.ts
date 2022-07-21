@@ -15,14 +15,6 @@ export default class Wrapper {
         import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: any }): Promise<void>;
-    static redirectToAuth(
-        input?:
-            | ("signin" | "signup")
-            | {
-                  show?: "signin" | "signup";
-                  redirectBack?: boolean;
-              }
-    ): Promise<void>;
     static submitNewPassword(input: {
         formFields: {
             id: string;
@@ -126,7 +118,6 @@ export default class Wrapper {
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
-declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const submitNewPassword: typeof Wrapper.submitNewPassword;
 declare const sendPasswordResetEmail: typeof Wrapper.sendPasswordResetEmail;
 declare const signUp: typeof Wrapper.signUp;
@@ -140,7 +131,6 @@ export {
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
-    redirectToAuth,
     submitNewPassword,
     sendPasswordResetEmail,
     signUp,

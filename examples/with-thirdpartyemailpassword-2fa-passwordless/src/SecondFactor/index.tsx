@@ -1,7 +1,7 @@
 import React from "react";
+import { redirectToAuthWithoutRedirectToPath } from "supertokens-auth-react";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Session from "supertokens-auth-react/recipe/session";
-import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 
 export default function SecondFactor() {
     React.useEffect(() => {
@@ -15,9 +15,7 @@ export default function SecondFactor() {
                     },
                 }))
             ) {
-                ThirdPartyEmailPassword.redirectToAuth({
-                    redirectBack: false,
-                });
+                redirectToAuthWithoutRedirectToPath();
             }
         }
         doCheck();
@@ -38,9 +36,7 @@ export default function SecondFactor() {
                             forceOriginalCheck: true,
                         },
                     });
-                    ThirdPartyEmailPassword.redirectToAuth({
-                        redirectBack: false,
-                    });
+                    redirectToAuthWithoutRedirectToPath();
                 }}
                 style={{
                     cursor: "pointer",

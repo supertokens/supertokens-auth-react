@@ -22,6 +22,11 @@ import { TranslationFunc, TranslationStore } from "./translation/translationHelp
 import { CookieHandlerInput } from "supertokens-website/utils/cookieHandler/types";
 import { WindowHandlerInput } from "supertokens-website/utils/windowHandler/types";
 
+export type GetRedirectionURLContext = {
+    action: "TO_AUTH";
+    showSignIn: boolean | undefined;
+};
+
 /*
  * Recipe Module Manager Config Types.
  */
@@ -71,6 +76,7 @@ export type SuperTokensConfig = {
         translationFunc?: TranslationFunc;
     };
     enableDebugLogs?: boolean;
+    getRedirectionURL?: (context: GetRedirectionURLContext) => Promise<string | undefined>;
 };
 
 export type CreateRecipeFunction<T, S, R, N extends NormalisedRecipeModuleConfig<T, S, R>> = (

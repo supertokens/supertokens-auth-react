@@ -19,8 +19,6 @@
 import RecipeModule from "../recipeModule";
 import { CreateRecipeFunction, NormalisedAppInfo, RecipeFeatureComponentMap } from "../../types";
 import {
-    appendQueryParamsToURL,
-    getCurrentNormalisedUrlPath,
     popInvalidClaimRedirectPathFromContext,
     getLocalStorage,
     isTest,
@@ -32,6 +30,7 @@ import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
 import { normaliseRecipeModuleConfig } from "../recipeModule/utils";
+import SuperTokens from "../../superTokens";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
@@ -106,26 +105,6 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         return this.webJsRecipe.attemptRefreshingSession();
     };
 
-    redirectToAuthWithRedirectToPath = (history?: any, queryParams?: Record<string, string>) => {
-        const redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
-        if (queryParams === undefined) {
-            queryParams = {};
-        }
-        queryParams = {
-            ...queryParams,
-            redirectToPath,
-        };
-        return this.redirectToAuthWithoutRedirectToPath(history, queryParams);
-    };
-
-    redirectToAuthWithoutRedirectToPath = (history?: any, queryParams?: Record<string, string>) => {
-        const redirectUrl = appendQueryParamsToURL(
-            this.config.appInfo.websiteBasePath.getAsStringDangerous(),
-            queryParams
-        );
-        return this.redirectToUrl(redirectUrl, history);
-    };
-
     validateClaims = (input: {
         overrideGlobalClaimValidators?: (
             globalClaimValidators: SessionClaimValidator[],
@@ -176,7 +155,7 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         if (!(await this.doesSessionExist({ userContext }))) {
             // If there is none, we have no way of checking claims, so we redirect to the auth page
             // This can happen e.g.: if the user clicked on the email verification link in a browser without an active session
-            return this.redirectToAuthWithoutRedirectToPath(history);
+            return SuperTokens.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, history);
         }
 
         // We validate all the global claims
@@ -193,7 +172,7 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
                 await setLocalStorage("supertokens-success-redirection-context", jsonContext);
             }
             // then we do the redirection.
-            return this.redirectToUrl(invalidClaimRedirectPath, history);
+            return SuperTokens.getInstanceOrThrow().redirectToUrl(invalidClaimRedirectPath, history);
         }
 
         // If we don't need to redirect because of a claim, we try and execute the original redirection

@@ -268,6 +268,9 @@ SuperTokens.init({
             },
         },
     },
+    getRedirectionURL: (context) => {
+        console.log(`ST_LOGS SUPERTOKENS GET_REDIRECTION_URL ${context.action}`);
+    },
     recipeList,
 });
 
@@ -331,19 +334,7 @@ function goToAuth(show) {
     if (fromLocalstorage !== undefined && fromLocalstorage !== null) {
         recipe = fromLocalstorage;
     }
-    if (recipe === "emailpassword") {
-        EmailPassword.redirectToAuth(show);
-    } else if (recipe === "passwordless") {
-        Passwordless.redirectToAuth(show);
-    } else if (recipe === "thirdpartypasswordless") {
-        ThirdPartyPasswordless.redirectToAuth(show);
-    } else if (recipe === "thirdparty") {
-        ThirdParty.redirectToAuth(show);
-    } else if (recipe === "thirdpartyemailpassword") {
-        ThirdPartyEmailPassword.redirectToAuth(show);
-    } else {
-        window.location.href = websiteBasePath || "/auth";
-    }
+    SuperTokens.redirectToAuthWithoutRedirectToPath(show, undefined, { rid: recipe });
 }
 
 export function About() {
