@@ -7,6 +7,107 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+-   Updates supabase example app to use supertokens-auth-react version 0.24
+-   Updates grammar for "Something went wrong" error text.
+
+### Added
+
+-   Added `overrideGlobalClaimValidators` callback to `SessionAuth`
+-   Added `validateClaims` and `getInvalidClaimsFromResponse` to the `Session` recipe
+-   Added `API_INVALID_CLAIM` event to the `Session` recipe
+-   Export for `EmailVerification` recipe
+
+### Fixes
+
+-   Fixed typing of `onSuccess` prop on passwordless `SignInUpProps`
+-   Fixed some full-page redirect that happened even when using react-router-dom
+
+### Breaking changes
+
+-   EmailVerification recipe is now not initialized as part of auth recipes. You can add it to the recipe list as `EmailVerification.init` like other recipes.
+-   Removed `OFF` from possible `EmailVerification` recipe modes, default is updated to `REQUIRED`.
+-   Moved email verification related events, overrides, pre-api hooks and redirection contexts into the `EmailVerification` recipe. You should configure them while initializing the `EmailVerification` recipe.
+-   Removed recipe specific auth wrapper components. You should use `SessionAuth` instead.
+-   Removed email verification methods from auth recipes. You should now call them on the `EmailVerification` recipe directly.
+-   `requireAuth` now defaults to true in `SessionAuth` to match the behavior of the removed recipe specific wrappers.
+-   Removed `redirectToLogin` from `SessionAuth`.
+-   Moved `redirectToAuth` to SuperTokens out of auth recipes. You should now call `SuperTokens.redirectToAuthWithoutRedirectToPath()` for the same behavior.
+-   Removed `SIGN_IN_AND_UP` action from `GetRedirectionURLContext` of auth recipes. This should now be handled by passing a `getRedirectionURL` to `SuperTokens.init` that handles a context with the `TO_AUTH` action.
+
+### Migration
+
+#### EmailVerification recipe init
+
+```ts
+SuperTokens.init({
+    // Normal init conf...
+    recipeList: [
+        EmailPassword.init({
+            getRedirectionURL: (context) => {
+                if (context.action === "SIGN_IN_AND_UP") {
+                    // This handler should be moved to the SuperTokens.init level
+                    return "/auth";
+                }
+                // All email verification related context should be now handled in the config of the EmailVerification recipe
+            },
+            onHandleEvent: () => {
+                // Handle email verification related events here in the onHandleEvent of the EmailVerification config
+            },
+            preAPIHook: (context) => {
+                // Move email verification related pre-API hooks into the preAPIHook of the EmailVerification config
+            },
+            postAPIHook: (context) => {
+                // Move email verification related post-API hooks into the postAPIHook of the EmailVerification config
+            }
+            emailVerificationFeature: {
+                mode: "REQUIRED",
+                // Any other props here should be moved into the config of the EmailVerification recipe
+            },
+            override: {
+                emailVerificationFeature: {
+                    // These overrides should be moved into the config of the EmailVerification recipe
+                }
+            }
+        }),
+    ]
+})
+```
+
+```ts
+SuperTokens.init({
+    // Normal init conf...
+    getRedirectionURL: (context) => {
+        if (context.action === "TO_AUTH") {
+            // Move handling the SIGN_IN_AND_UP action here
+            return "/auth";
+        }
+    },
+    recipeList: [
+        EmailVerification.init({
+            mode: "REQUIRED",
+            // Props from emailVerificationFeature of the EmailPassword.init config should be moved here.
+            override: {
+                // The overrides from emailVerificationFeature in the overrides of the EmailPassword config should be moved here
+            },
+
+            getRedirectionURL: (context) => {
+                // Move handling email verification related redirects here
+            },
+            onHandleEvent: () => {
+                // Handle email verification related events here
+            },
+            preAPIHook: (context) => {
+                // Move email verification related pre-API hooks here
+            },
+            postAPIHook: (context) => {
+                // Move email verification related post-API hooks here
+            },
+        }),
+        EmailPassword.init({}),
+    ],
+});
+```
+
 ## [0.24.1] - 2022-07-12
 
 ### Added
