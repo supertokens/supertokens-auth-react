@@ -11,6 +11,7 @@ const MockSession = {
     getUserId: jest.fn(),
     getAccessTokenPayloadSecurely: jest.fn(),
     doesSessionExist: jest.fn(),
+    validateClaims: jest.fn(),
 };
 
 const MockSessionConsumer = () => {
@@ -109,7 +110,7 @@ describe("SessionAuth", () => {
             {
                 requireAuth: undefined,
                 doesSessionExist: false,
-                shouldRender: true,
+                shouldRender: false,
             },
             {
                 requireAuth: true,
@@ -155,7 +156,7 @@ describe("SessionAuth", () => {
                     </SessionAuth>
                 );
 
-                if (!requireAuth) {
+                if (requireAuth === false) {
                     await waitForElementToBeRemoved(() => result.queryByText("Loading"));
                 }
 
@@ -225,7 +226,7 @@ describe("SessionAuth", () => {
 
             // when
             const result = render(
-                <SessionAuth onSessionExpired={mockOnSessionExpired}>
+                <SessionAuth requireAuth={false} onSessionExpired={mockOnSessionExpired}>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
@@ -233,7 +234,7 @@ describe("SessionAuth", () => {
             // Wait for full rendering
             expect(await result.findByText(/^userId:/)).toBeInTheDocument();
 
-            act(() =>
+            await act(() =>
                 listenerFn({
                     action: "UNAUTHORISED",
                     sessionContext: {
@@ -259,7 +260,7 @@ describe("SessionAuth", () => {
 
             // when
             const result = render(
-                <SessionAuth>
+                <SessionAuth requireAuth={false}>
                     <MockSessionConsumer />
                 </SessionAuth>
             );
@@ -267,7 +268,7 @@ describe("SessionAuth", () => {
             // Wait for full rendering
             expect(await result.findByText(/^userId:/)).toBeInTheDocument();
 
-            act(() =>
+            await act(() =>
                 listenerFn({
                     action: "SIGN_OUT",
                     sessionContext: {
@@ -297,7 +298,7 @@ describe("SessionAuth", () => {
 
             expect(await result.findByText(/^userId:/)).toHaveTextContent(`userId: mock-user-id`);
 
-            act(() =>
+            await act(() =>
                 listenerFn({
                     action: "SESSION_CREATED",
                     sessionContext: {
@@ -341,7 +342,7 @@ describe("SessionAuth", () => {
             };
 
             // when
-            act(() =>
+            await act(() =>
                 listenerFn({
                     action: "REFRESH_SESSION",
                     sessionContext: {
@@ -382,7 +383,7 @@ describe("SessionAuth", () => {
         };
 
         // when
-        act(() =>
+        await act(() =>
             listenerFn({
                 action: "ACCESS_TOKEN_PAYLOAD_UPDATED",
                 sessionContext: {

@@ -43,7 +43,6 @@ export default abstract class RecipeModule<
     ): Promise<void> => {
         let redirectUrl = await this.getRedirectUrl(context);
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
-
         return this.redirectToUrl(redirectUrl, history);
     };
 

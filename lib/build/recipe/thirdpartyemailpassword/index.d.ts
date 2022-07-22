@@ -22,20 +22,6 @@ export default class Wrapper {
         import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: any }): Promise<void>;
-    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK";
-        isVerified: boolean;
-        fetchResponse: Response;
-    }>;
-    static verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-        fetchResponse: Response;
-    }>;
-    static sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-        fetchResponse: Response;
-    }>;
-    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string;
     static redirectToAuth(
         input?:
             | ("signin" | "signup")
@@ -202,10 +188,6 @@ export default class Wrapper {
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
-declare const isEmailVerified: typeof Wrapper.isEmailVerified;
-declare const verifyEmail: typeof Wrapper.verifyEmail;
-declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
-declare const getEmailVerificationTokenFromURL: typeof Wrapper.getEmailVerificationTokenFromURL;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const ThirdPartySignInAndUpCallback: (prop?: any) => JSX.Element;
@@ -234,10 +216,6 @@ export {
     Google,
     Facebook,
     Github,
-    isEmailVerified,
-    verifyEmail,
-    sendVerificationEmail,
-    getEmailVerificationTokenFromURL,
     SignInAndUp,
     SignInAndUpTheme,
     ThirdPartySignInAndUpCallback,

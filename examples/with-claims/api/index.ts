@@ -7,9 +7,9 @@ import supertokens from "supertokens-node";
 import Session, { SessionContainer } from "supertokens-node/recipe/session";
 import { verifySession } from "supertokens-node/recipe/session/framework/express";
 import { middleware, errorHandler } from "supertokens-node/framework/express";
+import EmailVerification from "supertokens-node/recipe/emailverification";
 import EmailPassword from "supertokens-node/recipe/emailpassword";
 import { RolesClaim } from "./claims/RolesClaim";
-import { EmailVerifiedClaim } from "./claims/EmailVerifiedClaim";
 import { SecondFactorClaimValidators, SecondFactorOTPClaim } from "./claims/MFAClaim";
 import { roleDB } from "./mockRoleDb";
 
@@ -31,6 +31,9 @@ supertokens.init({
         websiteDomain, // TODO: Change to your app's website domain
     },
     recipeList: [
+        EmailVerification.init({
+            mode: "OPTIONAL",
+        }),
         Session.init({
             override: {
                 functions: (oI) => ({
@@ -40,13 +43,12 @@ supertokens.init({
                             "Default validators: ",
                             input.claimValidatorsAddedByOtherRecipes.map((a) => a.id).join(", ")
                         );
-                        return [...input.claimValidatorsAddedByOtherRecipes, EmailVerifiedClaim.isVerified];
+                        return [...input.claimValidatorsAddedByOtherRecipes];
                     },
                     createNewSession: async (input) => {
                         input.accessTokenPayload = {
                             ...input.accessTokenPayload,
                             ...(await RolesClaim.build(input.userId, input.userContext)),
-                            ...(await EmailVerifiedClaim.build(input.userId, input.userContext)),
                             "app-custom-claim": { userId: input.userId, why: "Info" },
                         };
                         return oI.createNewSession(input);
@@ -152,24 +154,10 @@ app.post(
     }
 );
 
-app.post(
-    "/refresh-email-verified",
-    verifySession({ overrideGlobalClaimValidators: () => [] }) as any, // This requires no claims
-    async (req, res) => {
-        const session: SessionContainer = (req as any).session;
-
-        await session.fetchAndSetClaim(EmailVerifiedClaim);
-
-        res.send({
-            status: "OK",
-        });
-    }
-);
-
 /************************* Utils *************************/
 app.get(
     "/get-user-info",
-    verifySession({ sessionRequired: false }) as any, // This only requires the default EmailVerifiedClaim
+    verifySession({ sessionRequired: false }), // This only requires the default EmailVerifiedClaim
     async (req, res) => {
         const session: SessionContainer | undefined = (req as any).session;
         let userId = session?.getUserId();
@@ -192,15 +180,16 @@ app.post("/set-roles", async (req, res) => {
 });
 
 app.post("/verify-email", async (req, res) => {
+    const user = await EmailPassword.getUserById(req.body.userId);
     if (req.body.unverify) {
-        await EmailPassword.unverifyEmail(req.body.userId);
+        await EmailVerification.unverifyEmail(req.body.userId, user!.email);
     } else {
-        const verifyToken = await EmailPassword.createEmailVerificationToken(req.body.userId);
+        const verifyToken = await EmailVerification.createEmailVerificationToken(req.body.userId, user!.email);
         if (verifyToken.status !== "OK") {
             res.send(verifyToken);
             return;
         }
-        await EmailPassword.verifyEmailUsingToken(verifyToken.token);
+        await EmailVerification.verifyEmailUsingToken(verifyToken.token);
     }
     res.send({
         status: "OK",

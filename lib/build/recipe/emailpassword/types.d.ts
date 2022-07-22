@@ -11,13 +11,11 @@ import React, { Dispatch } from "react";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
-    PreAndPostAPIHookAction as AuthRecipeModulePreAPIHookAction,
     User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
-    UserInputOverride as AuthRecipeUserInputOverride,
-} from "../authRecipeWithEmailVerification/types";
+} from "../authRecipe/types";
 import OverrideableBuilder from "supertokens-js-override";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
 import { SignInHeader } from "./components/themes/signInAndUp/signInHeader";
@@ -53,7 +51,7 @@ export declare type UserInput = {
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
-    } & AuthRecipeUserInputOverride;
+    };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
@@ -156,7 +154,6 @@ export declare type FormFieldError = {
     error: string;
 };
 export declare type PreAndPostAPIHookAction =
-    | AuthRecipeModulePreAPIHookAction
     | "EMAIL_PASSWORD_SIGN_UP"
     | "EMAIL_PASSWORD_SIGN_IN"
     | "SEND_RESET_PASSWORD_EMAIL"

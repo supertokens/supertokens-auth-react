@@ -3,12 +3,10 @@ import { FeatureBaseConfig, NormalisedBaseConfig } from "../../types";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
-    PreAndPostAPIHookAction as AuthRecipePreAndPostAPIHookAction,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
-    UserInputOverride as AuthRecipeUserInputOverride,
-} from "../authRecipeWithEmailVerification/types";
+} from "../authRecipe/types";
 import Provider from "./providers";
 import { CustomProviderConfig } from "./providers/types";
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
@@ -31,7 +29,7 @@ export declare type UserInput = {
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
-    } & AuthRecipeUserInputOverride;
+    };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 export declare type Config = UserInput &
     AuthRecipeModuleConfig<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
@@ -59,10 +57,7 @@ export declare type NormalisedSignInAndUpFeatureConfig = NormalisedBaseConfig & 
     providers: Provider[];
 };
 export declare type GetRedirectionURLContext = AuthRecipeModuleGetRedirectionURLContext;
-export declare type PreAndPostAPIHookAction =
-    | AuthRecipePreAndPostAPIHookAction
-    | "GET_AUTHORISATION_URL"
-    | "THIRD_PARTY_SIGN_IN_UP";
+export declare type PreAndPostAPIHookAction = "GET_AUTHORISATION_URL" | "THIRD_PARTY_SIGN_IN_UP";
 export declare type PreAPIHookContext = {
     action: PreAndPostAPIHookAction;
     requestInit: RequestInit;

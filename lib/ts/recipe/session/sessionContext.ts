@@ -6,6 +6,7 @@ const SessionContext = React.createContext<SessionContextType & { isDefault: boo
     isDefault: true,
 });
 
+// ts-prune-ignore-next
 export function isDefaultContext(sessionContext: SessionContextType & { isDefault: boolean }): boolean {
     return sessionContext.isDefault;
 }

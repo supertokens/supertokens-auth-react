@@ -2,9 +2,8 @@
 import { UserInput } from "./types";
 import SignInAndUpTheme from "./components/themes/signInAndUp";
 import ResetPasswordUsingTokenTheme from "./components/themes/resetPasswordUsingToken";
-import EmailVerificationTheme from "../emailverification/components/themes/emailVerification";
 import { GetRedirectionURLContext, PreAPIHookContext, OnHandleEventContext } from "./types";
-import { User } from "../authRecipeWithEmailVerification/types";
+import { User } from "../authRecipe/types";
 import { RecipeFunctionOptions, RecipeInterface } from "supertokens-web-js/recipe/emailpassword";
 export default class Wrapper {
     static init(
@@ -16,20 +15,6 @@ export default class Wrapper {
         import("./types").NormalisedConfig
     >;
     static signOut(input?: { userContext?: any }): Promise<void>;
-    static isEmailVerified(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK";
-        isVerified: boolean;
-        fetchResponse: Response;
-    }>;
-    static verifyEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "OK" | "EMAIL_VERIFICATION_INVALID_TOKEN_ERROR";
-        fetchResponse: Response;
-    }>;
-    static sendVerificationEmail(input?: { userContext?: any; options?: RecipeFunctionOptions }): Promise<{
-        status: "EMAIL_ALREADY_VERIFIED_ERROR" | "OK";
-        fetchResponse: Response;
-    }>;
-    static getEmailVerificationTokenFromURL(input?: { userContext?: any }): string;
     static redirectToAuth(
         input?:
             | ("signin" | "signup")
@@ -138,15 +123,9 @@ export default class Wrapper {
     static SignInAndUpTheme: typeof SignInAndUpTheme;
     static ResetPasswordUsingToken: (prop?: any) => JSX.Element;
     static ResetPasswordUsingTokenTheme: typeof ResetPasswordUsingTokenTheme;
-    static EmailVerification: (prop?: any) => JSX.Element;
-    static EmailVerificationTheme: typeof EmailVerificationTheme;
 }
 declare const init: typeof Wrapper.init;
 declare const signOut: typeof Wrapper.signOut;
-declare const isEmailVerified: typeof Wrapper.isEmailVerified;
-declare const verifyEmail: typeof Wrapper.verifyEmail;
-declare const sendVerificationEmail: typeof Wrapper.sendVerificationEmail;
-declare const getEmailVerificationTokenFromURL: typeof Wrapper.getEmailVerificationTokenFromURL;
 declare const redirectToAuth: typeof Wrapper.redirectToAuth;
 declare const submitNewPassword: typeof Wrapper.submitNewPassword;
 declare const sendPasswordResetEmail: typeof Wrapper.sendPasswordResetEmail;
@@ -156,13 +135,8 @@ declare const doesEmailExist: typeof Wrapper.doesEmailExist;
 declare const SignInAndUp: (prop?: any) => JSX.Element;
 declare const getResetPasswordTokenFromURL: typeof Wrapper.getResetPasswordTokenFromURL;
 declare const ResetPasswordUsingToken: (prop?: any) => JSX.Element;
-declare const EmailVerification: (prop?: any) => JSX.Element;
 export {
     init,
-    isEmailVerified,
-    verifyEmail,
-    sendVerificationEmail,
-    getEmailVerificationTokenFromURL,
     SignInAndUp,
     SignInAndUpTheme,
     signOut,
@@ -175,8 +149,6 @@ export {
     getResetPasswordTokenFromURL,
     ResetPasswordUsingToken,
     ResetPasswordUsingTokenTheme,
-    EmailVerification,
-    EmailVerificationTheme,
     GetRedirectionURLContext,
     PreAPIHookContext,
     OnHandleEventContext,

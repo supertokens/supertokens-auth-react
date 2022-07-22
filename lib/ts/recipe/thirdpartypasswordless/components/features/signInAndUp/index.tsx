@@ -124,6 +124,7 @@ const SignInAndUp: React.FC<PropType> = (props) => {
         combinedPwlessDispatch,
         pwlessState,
         callingConsumeCodeRef,
+        userContext,
         props.history
     )!;
 

@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import AuthRecipeWithEmailVerification from "../authRecipeWithEmailVerification";
+import AuthRecipe from "../authRecipe";
 import { CreateRecipeFunction, RecipeFeatureComponentMap } from "../../types";
 import {
     GetRedirectionURLContext,
@@ -9,22 +9,17 @@ import {
     OnHandleEventContext,
     UserInput,
 } from "./types";
-import EmailVerification from "../emailverification/recipe";
 import { RecipeInterface as WebJSRecipeInterface } from "supertokens-web-js/recipe/thirdparty";
-export default class ThirdParty extends AuthRecipeWithEmailVerification<
+export default class ThirdParty extends AuthRecipe<
     GetRedirectionURLContext,
+    never,
     OnHandleEventContext,
     NormalisedConfig
 > {
     static instance?: ThirdParty;
     static RECIPE_ID: string;
     recipeImpl: WebJSRecipeInterface;
-    constructor(
-        config: Config,
-        recipes: {
-            emailVerificationInstance: EmailVerification | undefined;
-        }
-    );
+    constructor(config: Config);
     getFeatures: () => RecipeFeatureComponentMap;
     getFeatureComponent: (
         componentName: "signinup" | "signinupcallback" | "emailverification",

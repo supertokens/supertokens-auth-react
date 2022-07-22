@@ -26,13 +26,11 @@ import React, { Dispatch } from "react";
 import {
     GetRedirectionURLContext as AuthRecipeModuleGetRedirectionURLContext,
     OnHandleEventContext as AuthRecipeModuleOnHandleEventContext,
-    PreAndPostAPIHookAction as AuthRecipeModulePreAPIHookAction,
     User,
     Config as AuthRecipeModuleConfig,
     NormalisedConfig as NormalisedAuthRecipeModuleConfig,
     UserInput as AuthRecipeModuleUserInput,
-    UserInputOverride as AuthRecipeUserInputOverride,
-} from "../authRecipeWithEmailVerification/types";
+} from "../authRecipe/types";
 import OverrideableBuilder from "supertokens-js-override";
 
 import { ComponentOverride } from "../../components/componentOverride/componentOverride";
@@ -71,7 +69,7 @@ export type UserInput = {
             builder?: OverrideableBuilder<RecipeInterface>
         ) => RecipeInterface;
         components?: ComponentOverrideMap;
-    } & AuthRecipeUserInputOverride;
+    };
 } & AuthRecipeModuleUserInput<GetRedirectionURLContext, PreAndPostAPIHookAction, OnHandleEventContext>;
 
 export type Config = UserInput &
@@ -307,7 +305,6 @@ export type FormFieldError = {
 };
 
 export type PreAndPostAPIHookAction =
-    | AuthRecipeModulePreAPIHookAction
     | "EMAIL_PASSWORD_SIGN_UP"
     | "EMAIL_PASSWORD_SIGN_IN"
     | "SEND_RESET_PASSWORD_EMAIL"

@@ -31,6 +31,7 @@ import { defaultTranslationsPasswordless } from "../../themes/translations";
 import { useUserContext } from "../../../../../usercontext";
 import { getLoginAttemptInfo } from "../../../utils";
 import STGeneralError from "supertokens-web-js/utils/error";
+import Session from "../../../../session/recipe";
 
 type PropType = FeatureBaseProps & { recipe: Recipe };
 
@@ -87,12 +88,16 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 await props.recipe.recipeImpl.clearLoginAttemptInfo({
                     userContext,
                 });
-                return props.recipe.redirect(
+                return Session.getInstanceOrThrow().validateGlobalClaimsAndHandleSuccessRedirection(
                     {
-                        action: "SUCCESS",
-                        isNewUser: response.createdUser,
-                        redirectToPath: loginAttemptInfo?.redirectToPath,
+                        rid: props.recipe.config.recipeId,
+                        successRedirectContext: {
+                            action: "SUCCESS",
+                            isNewUser: response.createdUser,
+                            redirectToPath: loginAttemptInfo?.redirectToPath,
+                        },
                     },
+                    userContext,
                     props.history
                 );
             }
