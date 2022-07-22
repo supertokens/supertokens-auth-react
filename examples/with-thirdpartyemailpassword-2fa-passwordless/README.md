@@ -46,7 +46,6 @@ npm run build && npm run start
 
 ## Current drawbacks:
 
--   Sending SMS is something that you need to implement yourself entirely
 -   No way of passing on redirectToPath across the 2 factors.
 
 ## Author
