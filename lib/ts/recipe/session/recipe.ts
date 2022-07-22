@@ -25,7 +25,7 @@ import {
     removeFromLocalStorage,
     setLocalStorage,
 } from "../../utils";
-import { RecipeEventWithSessionContext, InputType, SessionContextUpdate, GetRedirectionURLContext } from "./types";
+import { RecipeEventWithSessionContext, InputType, SessionContextUpdate } from "./types";
 import { Recipe as WebJSSessionRecipe } from "supertokens-web-js/recipe/session/recipe";
 import { RecipeEvent } from "supertokens-web-js/recipe/session/types";
 import { ClaimValidationError, SessionClaimValidator } from "supertokens-website";
@@ -34,7 +34,7 @@ import SuperTokens from "../../superTokens";
 
 type ConfigType = InputType & { recipeId: string; appInfo: NormalisedAppInfo; enableDebugLogs: boolean };
 
-export default class Session extends RecipeModule<GetRedirectionURLContext, unknown, unknown, any> {
+export default class Session extends RecipeModule<unknown, unknown, unknown, any> {
     static instance?: Session;
     static RECIPE_ID = "session";
 
@@ -120,14 +120,6 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         userContext: any;
     }): Promise<ClaimValidationError[]> => {
         return this.webJsRecipe.getInvalidClaimsFromResponse(input);
-    };
-
-    getDefaultRedirectionURL = async (context: GetRedirectionURLContext): Promise<string> => {
-        if (context.action === "SUCCESS") {
-            return context.redirectToPath === undefined ? "/" : context.redirectToPath;
-        } else {
-            throw new Error("Should never come here");
-        }
     };
 
     /**
@@ -261,11 +253,8 @@ export default class Session extends RecipeModule<GetRedirectionURLContext, unkn
         return WebJSSessionRecipe.addAxiosInterceptors(axiosInstance, userContext);
     }
 
-    static init(config?: InputType): CreateRecipeFunction<GetRedirectionURLContext, unknown, unknown, any> {
-        return (
-            appInfo: NormalisedAppInfo,
-            enableDebugLogs: boolean
-        ): RecipeModule<GetRedirectionURLContext, unknown, unknown, any> => {
+    static init(config?: InputType): CreateRecipeFunction<unknown, unknown, unknown, any> {
+        return (appInfo: NormalisedAppInfo, enableDebugLogs: boolean): RecipeModule<unknown, unknown, unknown, any> => {
             Session.instance = new Session({
                 ...config,
                 appInfo,
