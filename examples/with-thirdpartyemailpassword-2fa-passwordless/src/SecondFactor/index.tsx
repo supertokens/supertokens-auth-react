@@ -31,6 +31,7 @@ export default function SecondFactor() {
             <Passwordless.SignInUp />
             <div
                 onClick={async () => {
+                    await Passwordless.clearLoginAttemptInfo();
                     await Session.signOut({
                         userContext: {
                             forceOriginalCheck: true,

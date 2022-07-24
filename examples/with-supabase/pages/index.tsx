@@ -4,27 +4,24 @@ import styles from "../styles/Home.module.css";
 import { redirectToAuthWithoutRedirectToPath } from "supertokens-auth-react";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import dynamic from "next/dynamic";
-import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { useSessionContext, SessionAuth } from "supertokens-auth-react/recipe/session";
 import { getSupabase } from "../utils/supabase";
-
-const ThirdPartyEmailPasswordAuthNoSSR = dynamic(
-    new Promise<typeof ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth>((res) =>
-        res(ThirdPartyEmailPassword.ThirdPartyEmailPasswordAuth)
-    ),
-    { ssr: false }
-);
 
 export default function Home() {
     return (
-        <ThirdPartyEmailPasswordAuthNoSSR>
+        <SessionAuth>
             <ProtectedPage />
-        </ThirdPartyEmailPasswordAuthNoSSR>
+        </SessionAuth>
     );
 }
 
 function ProtectedPage() {
     // retrieve the authenticated user's accessTokenPayload and userId from the sessionContext
     const sessionContext = useSessionContext();
+
+    if (sessionContext.loading === true) {
+        return null;
+    }
 
     const [userEmail, setEmail] = useState("");
     useEffect(() => {

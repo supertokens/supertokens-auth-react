@@ -9,7 +9,7 @@ import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyema
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import Home from "./Home";
-import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
+import { Routes, BrowserRouter as Router, Route, useLocation } from "react-router-dom";
 import Footer from "./Footer";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
@@ -45,7 +45,7 @@ SuperTokens.init({
             getRedirectionURL: async function (context) {
                 if (context.action === "SUCCESS") {
                     let accessTokenPayload = await Session.getAccessTokenPayloadSecurely();
-                    if (accessTokenPayload.phoneNumberVerified === true) {
+                    if (accessTokenPayload.is2faComplete === true) {
                         // we have completed both the factors and the user is going back to /auth manually for some reason.
                         return "/";
                     }
@@ -68,6 +68,27 @@ SuperTokens.init({
             override: {
                 components: {
                     PasswordlessUserInputCodeFormFooter_Override: ({ DefaultComponent, ...props }) => {
+                        let [showDefaultUI, setShowDefaultUI] = useState(false);
+                        useEffect(() => {
+                            Session.getAccessTokenPayloadSecurely()
+                                .then(async (accessTokenPayload) => {
+                                    let phoneNumber = accessTokenPayload.phoneNumber;
+                                    if (phoneNumber === undefined) {
+                                        setShowDefaultUI(true);
+                                    }
+                                })
+                                .catch((err) => {
+                                    // it can come here if a session doesn't exist.
+                                    // in this case, the screen we should redirect to the
+                                    // first login challenge
+                                    ThirdPartyEmailPassword.redirectToAuth({
+                                        redirectBack: false,
+                                    });
+                                });
+                        }, []);
+                        if (showDefaultUI) {
+                            return <DefaultComponent {...props} />;
+                        }
                         return null;
                     },
                     PasswordlessPhoneForm_Override: ({ DefaultComponent, ...props }) => {
@@ -88,11 +109,11 @@ SuperTokens.init({
                                 })
                                 .catch((err) => {
                                     // it can come here if a session doesn't exist.
-                                    // in this case, the screen we will should redirect to the
+                                    // in this case, the screen we should redirect to the
                                     // first login challenge
                                     redirectToAuthWithoutRedirectToPath();
                                 });
-                        }, []);
+                        }, [props.recipeImplementation]);
                         if (showDefaultUI) {
                             return <DefaultComponent {...props} />;
                         }
@@ -149,7 +170,7 @@ SuperTokens.init({
                                 return true;
                             }
                             let accessTokenPayload = await this.getAccessTokenPayloadSecurely(input);
-                            if (accessTokenPayload.phoneNumberVerified !== true) {
+                            if (accessTokenPayload.is2faComplete !== true) {
                                 // if both the factors have not been completed, we return false.
                                 return false;
                             }
@@ -164,49 +185,62 @@ SuperTokens.init({
 
 function App() {
     let [showSessionExpiredPopup, updateShowSessionExpiredPopup] = useState(false);
+    let location = useLocation();
 
+    /**
+     * We give a key to SuperTokensWrapper such that it causes a recalculation of
+     * the session context whenever the pathname changes in the way described below.
+     *
+     * This is needed because we have provided an override for doesSessionExist in which
+     * the logic depends on if location.pathname.startsWith("/auth") is true or not.
+     */
+    let key = location.pathname.startsWith("/auth") + "";
     return (
-        <SuperTokensWrapper>
+        <SuperTokensWrapper key={key}>
             <div className="App">
-                <Router>
-                    <div className="fill">
-                        <Routes>
-                            {/* This shows the login UI on "/auth" route */}
-                            {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
+                <div className="fill">
+                    <Routes>
+                        {/* This shows the login UI on "/auth" route */}
+                        {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
 
-                            <Route
-                                path="/"
-                                element={
-                                    /* This protects the "/" route so that it shows
-                                        <Home /> only if the user is logged in.
-                                        Else it redirects the user to "/auth" */
-                                    <SessionAuth
-                                        onSessionExpired={() => {
-                                            updateShowSessionExpiredPopup(true);
-                                        }}>
-                                        <Home />
-                                        {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                    </SessionAuth>
-                                }
-                            />
-                            <Route
-                                path="/auth"
-                                element={
-                                    <ThirdPartyEmailPassword.SignInAndUp
-                                        userContext={{
-                                            forceOriginalCheck: true,
-                                        }}
-                                    />
-                                }
-                            />
-                            <Route path="/second-factor" element={<SecondFactor />} />
-                        </Routes>
-                    </div>
-                    <Footer />
-                </Router>
+                          <Route
+                              path="/"
+                              element={
+                                  /* This protects the "/" route so that it shows
+                                      <Home /> only if the user is logged in.
+                                      Else it redirects the user to "/auth" */
+                                  <SessionAuth
+                                      onSessionExpired={() => {
+                                          updateShowSessionExpiredPopup(true);
+                                      }}>
+                                      <Home />
+                                      {showSessionExpiredPopup && <SessionExpiredPopup />}
+                                  </SessionAuth>
+                              }
+                          />
+                          <Route
+                              path="/auth"
+                              element={
+                                  <ThirdPartyEmailPassword.SignInAndUp
+                                      userContext={{
+                                          forceOriginalCheck: true,
+                                      }}
+                                  />
+                              }
+                          />
+                          <Route path="/second-factor" element={<SecondFactor />} />
+                      </Routes>
+                  </div>
+                  <Footer />
             </div>
         </SuperTokensWrapper>
     );
 }
 
-export default App;
+export default function AppWithRouter() {
+    return (
+        <Router>
+            <App />
+        </Router>
+    );
+}
