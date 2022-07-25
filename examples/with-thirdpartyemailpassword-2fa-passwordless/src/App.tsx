@@ -203,35 +203,35 @@ function App() {
                         {/* This shows the login UI on "/auth" route */}
                         {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"))}
 
-                          <Route
-                              path="/"
-                              element={
-                                  /* This protects the "/" route so that it shows
+                        <Route
+                            path="/"
+                            element={
+                                /* This protects the "/" route so that it shows
                                       <Home /> only if the user is logged in.
                                       Else it redirects the user to "/auth" */
-                                  <SessionAuth
-                                      onSessionExpired={() => {
-                                          updateShowSessionExpiredPopup(true);
-                                      }}>
-                                      <Home />
-                                      {showSessionExpiredPopup && <SessionExpiredPopup />}
-                                  </SessionAuth>
-                              }
-                          />
-                          <Route
-                              path="/auth"
-                              element={
-                                  <ThirdPartyEmailPassword.SignInAndUp
-                                      userContext={{
-                                          forceOriginalCheck: true,
-                                      }}
-                                  />
-                              }
-                          />
-                          <Route path="/second-factor" element={<SecondFactor />} />
-                      </Routes>
-                  </div>
-                  <Footer />
+                                <SessionAuth
+                                    onSessionExpired={() => {
+                                        updateShowSessionExpiredPopup(true);
+                                    }}>
+                                    <Home />
+                                    {showSessionExpiredPopup && <SessionExpiredPopup />}
+                                </SessionAuth>
+                            }
+                        />
+                        <Route
+                            path="/auth"
+                            element={
+                                <ThirdPartyEmailPassword.SignInAndUp
+                                    userContext={{
+                                        forceOriginalCheck: true,
+                                    }}
+                                />
+                            }
+                        />
+                        <Route path="/second-factor" element={<SecondFactor />} />
+                    </Routes>
+                </div>
+                <Footer />
             </div>
         </SuperTokensWrapper>
     );
