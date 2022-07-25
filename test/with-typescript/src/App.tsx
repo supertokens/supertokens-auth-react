@@ -27,6 +27,7 @@ import { CSSObject } from "@emotion/react";
 import Passwordless from "../../../recipe/passwordless";
 import { PasswordlessFlowType } from "supertokens-web-js/recipe/passwordless/types";
 import ThirdPartyPasswordless from "../../../recipe/thirdpartypasswordless";
+import { PermissionClaim, UserRoleClaim } from "../../../recipe/userroles";
 
 /*
  * This application is used with the purpose of illustrating Supertokens with typescript.
@@ -94,7 +95,13 @@ function App() {
                             <Route
                                 path="/"
                                 element={
-                                    <SessionAuth requireAuth={true}>
+                                    <SessionAuth
+                                        requireAuth={true}
+                                        overrideGlobalClaimValidators={(o) => [
+                                            ...o,
+                                            UserRoleClaim.validators.includes("admin"),
+                                            PermissionClaim.validators.excludesAll(["delete_user", "delete_post"]),
+                                        ]}>
                                         <Home />
                                     </SessionAuth>
                                 }
