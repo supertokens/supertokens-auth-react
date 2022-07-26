@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking changes
 
+-   Backend SDK has to be updated first to a version that supports session claims before enabling EmailVerification!
 -   EmailVerification recipe is now not initialized as part of auth recipes. You can add it to the recipe list as `EmailVerification.init` like other recipes.
 -   Removed `OFF` from possible `EmailVerification` recipe modes, default is updated to `REQUIRED`.
 -   Moved email verification related events, overrides, pre-api hooks and redirection contexts into the `EmailVerification` recipe. You should configure them while initializing the `EmailVerification` recipe.
@@ -31,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Removed email verification methods from auth recipes. You should now call them on the `EmailVerification` recipe directly.
 -   `requireAuth` now defaults to true in `SessionAuth` to match the behavior of the removed recipe specific wrappers.
 -   Removed `redirectToLogin` from `SessionAuth`.
--   Moved `redirectToAuth` to SuperTokens out of auth recipes. You should now call `SuperTokens.redirectToAuthWithoutRedirectToPath()` for the same behavior.
+-   Moved `redirectToAuth` to SuperTokens out of auth recipes. You should now call `SuperTokens.redirectToAuth()` instead.
 -   Removed `SIGN_IN_AND_UP` action from `GetRedirectionURLContext` of auth recipes. This should now be handled by passing a `getRedirectionURL` to `SuperTokens.init` that handles a context with the `TO_AUTH` action.
 
 ### Migration
@@ -73,6 +74,8 @@ SuperTokens.init({
 })
 ```
 
+Should become:
+
 ```ts
 SuperTokens.init({
     // Normal init conf...
@@ -106,6 +109,30 @@ SuperTokens.init({
         EmailPassword.init({}),
     ],
 });
+```
+
+#### Auth wrappers
+
+```tsx
+function ProtectedHomeComponent() {
+    return (
+        <EmailPasswordAuth>
+            <Home />
+        </EmailPasswordAuth>
+    );
+}
+```
+
+Should become:
+
+```tsx
+function ProtectedHomeComponent() {
+    return (
+        <SessionAuth>
+            <Home />
+        </SessionAuth>
+    );
+}
 ```
 
 ## [0.24.1] - 2022-07-12
