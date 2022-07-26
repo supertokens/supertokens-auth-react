@@ -3,7 +3,7 @@ import "./App.css";
 import SuperTokens, {
     SuperTokensWrapper,
     getSuperTokensRoutesForReactRouterDom,
-    redirectToAuthWithoutRedirectToPath,
+    redirectToAuth,
 } from "supertokens-auth-react";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
@@ -88,7 +88,7 @@ SuperTokens.init({
                                     // it can come here if a session doesn't exist.
                                     // in this case, the screen we will should redirect to the
                                     // first login challenge
-                                    redirectToAuthWithoutRedirectToPath();
+                                    redirectToAuth();
                                 });
                         }, []);
                         return null;

@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { redirectToAuthWithoutRedirectToPath } from "supertokens-auth-react";
+import { redirectToAuth } from "supertokens-auth-react";
 import Session, { useSessionContext } from "supertokens-auth-react/recipe/session";
 import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import { getApiDomain } from "../App";
@@ -49,7 +49,7 @@ export default function SuccessView() {
                     let data = response.data;
                     if (data.status === "OK") {
                         // the user may need to verify their email, so we redirect them to auth
-                        redirectToAuthWithoutRedirectToPath();
+                        redirectToAuth();
                     } else {
                         window.alert(JSON.stringify(data));
                     }

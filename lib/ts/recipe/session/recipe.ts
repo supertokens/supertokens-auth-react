@@ -147,7 +147,7 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         if (!(await this.doesSessionExist({ userContext }))) {
             // If there is none, we have no way of checking claims, so we redirect to the auth page
             // This can happen e.g.: if the user clicked on the email verification link in a browser without an active session
-            return SuperTokens.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, history);
+            return SuperTokens.getInstanceOrThrow().redirectToAuth({ history });
         }
 
         // We validate all the global claims

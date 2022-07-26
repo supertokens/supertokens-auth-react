@@ -297,32 +297,23 @@ export default class SuperTokens {
         throw new Error("Should never come here: unexpected redirection context");
     }
 
-    redirectToAuthWithRedirectToPath = (show?: "signin" | "signup", history?: any, queryParams?: any) => {
-        const redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
-        if (queryParams === undefined) {
-            queryParams = {};
+    redirectToAuth = async (options: {
+        show?: "signin" | "signup";
+        history?: any;
+        queryParams?: any;
+        redirectBack?: boolean;
+    }) => {
+        const queryParams = options.queryParams === undefined ? {} : options.queryParams;
+        if (options.show !== undefined) {
+            queryParams.show = options.show;
         }
-        queryParams = {
-            ...queryParams,
-            redirectToPath,
-        };
-        return this.redirectToAuthWithoutRedirectToPath(show, history, queryParams);
-    };
-
-    redirectToAuthWithoutRedirectToPath = async (show?: "signin" | "signup", history?: any, queryParams?: any) => {
-        if (queryParams === undefined) {
-            queryParams = {};
-        }
-        if (show !== undefined) {
-            queryParams = {
-                ...queryParams,
-                show,
-            };
+        if (options.redirectBack === true) {
+            queryParams.redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
         }
 
         let redirectUrl = await this.getRedirectUrl({
             action: "TO_AUTH",
-            showSignIn: show === "signin",
+            showSignIn: options.show === "signin",
         });
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
         return this.redirectToUrl(redirectUrl, history);

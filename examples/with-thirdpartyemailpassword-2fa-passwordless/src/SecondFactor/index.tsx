@@ -1,5 +1,5 @@
 import React from "react";
-import { redirectToAuthWithoutRedirectToPath } from "supertokens-auth-react";
+import { redirectToAuth } from "supertokens-auth-react";
 import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import Session from "supertokens-auth-react/recipe/session";
 
@@ -15,7 +15,7 @@ export default function SecondFactor() {
                     },
                 }))
             ) {
-                redirectToAuthWithoutRedirectToPath();
+                redirectToAuth();
             }
         }
         doCheck();
@@ -37,7 +37,7 @@ export default function SecondFactor() {
                             forceOriginalCheck: true,
                         },
                     });
-                    redirectToAuthWithoutRedirectToPath();
+                    redirectToAuth();
                 }}
                 style={{
                     cursor: "pointer",

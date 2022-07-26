@@ -45,8 +45,11 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
         const linkCode = getURLHash();
 
         if (preAuthSessionId === null || preAuthSessionId.length === 0 || linkCode.length === 0) {
-            await SuperTokens.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                error: "signin",
+            await SuperTokens.getInstanceOrThrow().redirectToAuth({
+                history: props.history,
+                queryParams: {
+                    error: "signin",
+                },
             });
             return "REDIRECTING";
         }
@@ -76,8 +79,11 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
             }
 
             if (response.status === "RESTART_FLOW_ERROR") {
-                return SuperTokens.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "restart_link",
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: "restart_link",
+                    },
                 });
             }
 
@@ -109,13 +115,19 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
     const handleConsumeError = useCallback(
         (err) => {
             if (STGeneralError.isThisError(err)) {
-                return SuperTokens.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "custom",
-                    message: err.message,
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: "custom",
+                        message: err.message,
+                    },
                 });
             } else {
-                return SuperTokens.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(undefined, props.history, {
-                    error: "restart_link",
+                return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    queryParams: {
+                        error: "restart_link",
+                    },
                 });
             }
         },

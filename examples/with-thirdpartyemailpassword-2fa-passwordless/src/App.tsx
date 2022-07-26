@@ -3,7 +3,7 @@ import "./App.css";
 import SuperTokens, {
     SuperTokensWrapper,
     getSuperTokensRoutesForReactRouterDom,
-    redirectToAuthWithoutRedirectToPath,
+    redirectToAuth,
 } from "supertokens-auth-react";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import Session, { SessionAuth } from "supertokens-auth-react/recipe/session";
@@ -111,7 +111,7 @@ SuperTokens.init({
                                     // it can come here if a session doesn't exist.
                                     // in this case, the screen we should redirect to the
                                     // first login challenge
-                                    redirectToAuthWithoutRedirectToPath();
+                                    redirectToAuth();
                                 });
                         }, [props.recipeImplementation]);
                         if (showDefaultUI) {
@@ -133,7 +133,7 @@ SuperTokens.init({
                                     // it can come here if a session doesn't exist.
                                     // in this case, the screen we will should redirect to the
                                     // first login challenge
-                                    redirectToAuthWithoutRedirectToPath();
+                                    redirectToAuth();
                                 });
                         }, []);
                         if (!showHeader) {
