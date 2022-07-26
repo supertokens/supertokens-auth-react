@@ -334,7 +334,7 @@ function goToAuth(show) {
     if (fromLocalstorage !== undefined && fromLocalstorage !== null) {
         recipe = fromLocalstorage;
     }
-    SuperTokens.redirectToAuthWithoutRedirectToPath(show, undefined, { rid: recipe });
+    SuperTokens.redirectToAuth({ show, queryParams: { rid: recipe } });
 }
 
 export function About() {

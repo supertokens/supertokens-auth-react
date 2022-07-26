@@ -316,7 +316,7 @@ export default class SuperTokens {
             showSignIn: options.show === "signin",
         });
         redirectUrl = appendQueryParamsToURL(redirectUrl, queryParams);
-        return this.redirectToUrl(redirectUrl, history);
+        return this.redirectToUrl(redirectUrl, options.history);
     };
 
     redirectToUrl = async (redirectUrl: string, history?: any): Promise<void> => {
