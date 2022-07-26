@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking changes
 
--   Backend SDK has to be updated first to a version that supports session claims before enabling EmailVerification!
+-   Backend SDKs have to be updated first to a version that supports session claims before enabling EmailVerification!
     -   supertokens-node: 12.0
 -   EmailVerification recipe is now not initialized as part of auth recipes. You can add it to the recipe list as `EmailVerification.init` like other recipes.
 -   Removed `OFF` from possible `EmailVerification` recipe modes, default is updated to `REQUIRED`.
