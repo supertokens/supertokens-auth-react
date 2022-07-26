@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Updates supabase example app to use supertokens-auth-react version 0.24
 -   Updates grammar for "Something went wrong" error text.
 
+### Added
+
+-   Added `UserRoleClaim` and `PermissionClaim`
+
 ## [0.24.1] - 2022-07-12
 
 ### Added
