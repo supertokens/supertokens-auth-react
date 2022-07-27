@@ -73,17 +73,17 @@ class ResetPasswordUsingToken extends PureComponent<
                       recipeImplementation: this.props.recipe.recipeImpl,
                       config: this.props.recipe.config,
                       onSignInClicked: () => {
-                          void SuperTokens.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath(
-                              "signin",
-                              this.props.history
-                          );
+                          void SuperTokens.getInstanceOrThrow().redirectToAuth({
+                              show: "signin",
+                              history: this.props.history,
+                          });
                       },
                       token: this.state.token,
                   };
 
         const enterEmailForm = {
             onBackButtonClicked: () =>
-                SuperTokens.getInstanceOrThrow().redirectToAuthWithoutRedirectToPath("signin", this.props.history),
+                SuperTokens.getInstanceOrThrow().redirectToAuth({ show: "signin", history: this.props.history }),
             error: this.state.error,
             onError: (error: string) => this.setState((os) => ({ ...os, error })),
             clearError: () => this.setState((os) => ({ ...os, error: undefined })),

@@ -3,7 +3,7 @@ import Logout from "./Logout";
 import SuccessView from "./SuccessView";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { signOut } from "supertokens-auth-react/recipe/emailpassword";
-import { redirectToAuthWithoutRedirectToPath } from "supertokens-auth-react";
+import { redirectToAuth } from "supertokens-auth-react";
 import { getRedirectToIfOnWrongSubdomain } from "../utils";
 
 export default function Home() {
@@ -27,7 +27,7 @@ export default function Home() {
 
     async function logoutClicked() {
         await signOut();
-        redirectToAuthWithoutRedirectToPath();
+        redirectToAuth();
     }
 
     if (session.loading === true) {

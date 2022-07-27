@@ -113,11 +113,11 @@ supertokens.init({
 
                             if (resp.status === "OK") {
                                 // OTP verification was successful. We can now mark the
-                                // session's payload as phoneNumberVerified: true so that
+                                // session's payload as is2faComplete: true so that
                                 // the user has access to API routes and the frontend UI
                                 await resp.session.updateAccessTokenPayload({
                                     ...resp.session.getAccessTokenPayload(),
-                                    phoneNumberVerified: true,
+                                    is2faComplete: true,
                                 });
 
                                 // we associate the passwordless user ID with the thirdpartyemailpassword
@@ -161,7 +161,7 @@ supertokens.init({
                                 ...input,
                                 accessTokenPayload: {
                                     ...input.accessTokenPayload,
-                                    phoneNumberVerified: false,
+                                    is2faComplete: false,
                                     phoneNumber,
                                 },
                             });
@@ -195,7 +195,7 @@ app.get(
         // has access to the APIs only when they have finished both the login
         // challenges
         let accessTokenPayload = req.session?.getAccessTokenPayload();
-        if (accessTokenPayload.phoneNumberVerified !== true) {
+        if (accessTokenPayload.is2faComplete !== true) {
             // we do not use 401 cause that is a reserved status code for supertokens in case
             // the session doesn't exist
             res.status(403).send("You need to verify your phone number via an OTP");

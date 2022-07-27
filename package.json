@@ -105,11 +105,11 @@
     "size-limit": [
         {
             "path": "lib/build/index.js",
-            "limit": "30kb"
+            "limit": "32kb"
         },
         {
             "path": "recipe/session/index.js",
-            "limit": "30kb"
+            "limit": "32kb"
         },
         {
             "path": "recipe/thirdpartyemailpassword/index.js",
@@ -125,7 +125,7 @@
         },
         {
             "path": "recipe/passwordless/index.js",
-            "limit": "207kb"
+            "limit": "210kb"
         },
         {
             "path": "recipe/thirdpartypasswordless/index.js",

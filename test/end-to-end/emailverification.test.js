@@ -28,13 +28,14 @@ import {
     TEST_CLIENT_BASE_URL,
     TEST_SERVER_BASE_URL,
     SIGN_OUT_API,
+    TEST_APPLICATION_SERVER_BASE_URL,
+    SOMETHING_WENT_WRONG_ERROR,
 } from "../constants";
 import {
     clearBrowserCookiesWithoutAffectingConsole,
     clickLinkWithRightArrow,
     getVerificationEmailErrorTitle,
     getVerificationEmailErrorMessage,
-    getVerificationEmailTitle,
     getTextByDataSupertokens,
     getLatestURLWithToken,
     setInputValues,
@@ -747,6 +748,6 @@ describe("Email verification signOut errors", function () {
         await page.setRequestInterception(false);
 
         const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-        assert.strictEqual(await error.evaluate((e) => e.textContent), "Something went wrong. Please try again");
+        assert.strictEqual(await error.evaluate((e) => e.textContent), SOMETHING_WENT_WRONG_ERROR);
     });
 });

@@ -58,7 +58,7 @@ const SessionAuth: React.FC<PropsWithChildren<SessionAuthProps>> = ({ children, 
         if (props.redirectToLogin !== undefined) {
             props.redirectToLogin();
         } else {
-            void SuperTokens.getInstanceOrThrow().redirectToAuthWithRedirectToPath(undefined, history);
+            void SuperTokens.getInstanceOrThrow().redirectToAuth({ history, redirectBack: true });
         }
     }, [props.redirectToLogin]);
 

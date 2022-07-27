@@ -59,12 +59,12 @@ export default class SuperTokens {
     changeLanguage: (lang: string) => Promise<void>;
     loadTranslation(store: TranslationStore): void;
     getRedirectUrl(context: GetRedirectionURLContext): Promise<string>;
-    redirectToAuthWithRedirectToPath: (show?: "signin" | "signup", history?: any, queryParams?: any) => Promise<void>;
-    redirectToAuthWithoutRedirectToPath: (
-        show?: "signin" | "signup",
-        history?: any,
-        queryParams?: any
-    ) => Promise<void>;
+    redirectToAuth: (options: {
+        show?: "signin" | "signup" | undefined;
+        history?: any;
+        queryParams?: any;
+        redirectBack?: boolean | undefined;
+    }) => Promise<void>;
     redirectToUrl: (redirectUrl: string, history?: any) => Promise<void>;
     static reset(): void;
 }
