@@ -62,6 +62,13 @@ try {
     thirdPartyPasswordlessSupported = false;
 }
 
+try {
+    UserRolesRaw = require("supertokens-node/lib/build/recipe/userroles/recipe").default;
+    UserRoles = require("supertokens-node/recipe/userroles");
+    userRolesSupported = true;
+} catch (ex) {
+    userRolesSupported = false;
+}
 let generalErrorSupported;
 
 if (maxVersion(nodeSDKVersion, "9.9.9") === "9.9.9") {
@@ -186,6 +193,45 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
     }
 });
 
+app.get("/unverifyEmail", verifySession(), async (req, res) => {
+    let session = req.session;
+    await EmailVerification.unverifyEmail(session.getUserId());
+    await session.fetchAndSetClaim(EmailVerification.EmailVerificationClaim);
+    res.send({ status: "OK" });
+});
+
+app.post("/setRole", verifySession(), async (req, res) => {
+    let session = req.session;
+    await UserRoles.createNewRoleOrAddPermissions(req.body.role, req.body.permissions);
+    await UserRoles.addRoleToUser(session.getUserId(), req.body.role);
+    await session.fetchAndSetClaim(UserRoles.UserRoleClaim);
+    await session.fetchAndSetClaim(UserRoles.PermissionClaim);
+    res.send({ status: "OK" });
+});
+
+app.post(
+    "/checkRole",
+    verifySession({
+        overrideGlobalClaimValidators: async (gv, _session, userContext) => {
+            const res = [...gv];
+            const body = await userContext._default.request.getJSONBody();
+            if (body.role !== undefined) {
+                const info = body.role;
+                res.push(UserRoles.UserRoleClaim.validators[info.validator](...info.args));
+            }
+
+            if (body.permission !== undefined) {
+                const info = body.permission;
+                res.push(UserRoles.PermissionClaim.validators[info.validator](...info.args));
+            }
+            return res;
+        },
+    }),
+    async (req, res) => {
+        res.send({ status: "OK" });
+    }
+);
+
 app.get("/token", async (_, res) => {
     res.send({
         latestURLWithToken,
@@ -221,6 +267,10 @@ app.get("/test/featureFlags", (req, res) => {
 
     if (generalErrorSupported) {
         available.push("generalerror");
+    }
+
+    if (userRolesSupported) {
+        available.push("userroles");
     }
 
     res.send({
@@ -263,6 +313,10 @@ server.listen(process.env.NODE_PORT === undefined ? 8080 : process.env.NODE_PORT
 
 function initST({ passwordlessConfig } = {}) {
     if (process.env.TEST_MODE) {
+        if (userRolesSupported) {
+            UserRolesRaw.reset();
+        }
+
         if (thirdPartyPasswordlessSupported) {
             ThirdPartyPasswordlessRaw.reset();
         }
@@ -696,6 +750,10 @@ function initST({ passwordlessConfig } = {}) {
                 },
             })
         );
+    }
+
+    if (userRolesSupported) {
+        recipeList.push(UserRoles.init());
     }
 
     SuperTokens.init({
