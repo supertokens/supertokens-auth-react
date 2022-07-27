@@ -66,7 +66,10 @@ export const EmailVerification: React.FC<Prop> = (props) => {
         const token = getQueryParams("token") ?? undefined;
         if (token === undefined) {
             if (!sessionContext.doesSessionExist) {
-                await SuperTokens.getInstanceOrThrow().redirectToAuth({ history: props.history });
+                await SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    history: props.history,
+                    redirectBack: false,
+                });
             } else {
                 // we check if the email is already verified, and if it is, then we redirect the user
                 return (await props.recipe.recipeImpl.isEmailVerified({ userContext })).isVerified;
@@ -89,11 +92,18 @@ export const EmailVerification: React.FC<Prop> = (props) => {
     const signOut = useCallback(async (): Promise<void> => {
         const session = Session.getInstanceOrThrow();
         await session.signOut(props.userContext);
-        return SuperTokens.getInstanceOrThrow().redirectToAuth({ history: props.history });
+        return SuperTokens.getInstanceOrThrow().redirectToAuth({
+            history: props.history,
+            redirectBack: false,
+        });
     }, [props.recipe]);
 
     const onTokenInvalidRedirect = useCallback(
-        () => SuperTokens.getInstanceOrThrow().redirectToAuth({ history: props.history }),
+        () =>
+            SuperTokens.getInstanceOrThrow().redirectToAuth({
+                history: props.history,
+                redirectBack: false,
+            }),
         [props.recipe, props.history]
     );
 

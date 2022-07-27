@@ -50,6 +50,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                 queryParams: {
                     error: "signin",
                 },
+                redirectBack: false,
             });
             return "REDIRECTING";
         }
@@ -84,6 +85,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                     queryParams: {
                         error: "restart_link",
                     },
+                    redirectBack: false,
                 });
             }
 
@@ -121,6 +123,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                         error: "custom",
                         message: err.message,
                     },
+                    redirectBack: false,
                 });
             } else {
                 return SuperTokens.getInstanceOrThrow().redirectToAuth({
@@ -128,6 +131,7 @@ const LinkClickedScreen: React.FC<PropType> = (props) => {
                     queryParams: {
                         error: "restart_link",
                     },
+                    redirectBack: false,
                 });
             }
         },

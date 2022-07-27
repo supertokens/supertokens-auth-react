@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Added
+
 -   Adds Session claims support and `UserRoleClaim`, `PermissionClaim` and `EmailVerificationClaim`
 -   Added `overrideGlobalClaimValidators` callback to `SessionAuth`
 -   Added `validateClaims` and `getInvalidClaimsFromResponse` to the `Session` recipe
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Fixed some full-page redirect that happened even when using react-router-dom
 
 ### Changes
+
 -   Updates supabase example app to use supertokens-auth-react version 0.24
 -   Updates grammar for "Something went wrong" error text.
 

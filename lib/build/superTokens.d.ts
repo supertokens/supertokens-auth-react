@@ -63,7 +63,7 @@ export default class SuperTokens {
         show?: "signin" | "signup" | undefined;
         history?: any;
         queryParams?: any;
-        redirectBack?: boolean | undefined;
+        redirectBack: boolean;
     }) => Promise<void>;
     redirectToUrl: (redirectUrl: string, history?: any) => Promise<void>;
     static reset(): void;

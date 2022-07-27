@@ -54,13 +54,16 @@ export default class SuperTokensAPIWrapper {
         return SuperTokens.getSuperTokensRoutesForReactRouterDom(reactRouterDom);
     }
 
-    static redirectToAuth = async (options: {
+    static redirectToAuth = async (options?: {
         show?: "signin" | "signup";
         history?: any;
         queryParams?: any;
         redirectBack?: boolean;
     }) => {
-        return SuperTokens.getInstanceOrThrow().redirectToAuth(options);
+        return SuperTokens.getInstanceOrThrow().redirectToAuth({
+            ...options,
+            redirectBack: options?.redirectBack ?? false,
+        });
     };
 
     static useTranslation = useTranslation;

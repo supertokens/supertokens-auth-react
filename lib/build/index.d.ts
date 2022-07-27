@@ -13,7 +13,7 @@ export default class SuperTokensAPIWrapper {
     static changeLanguage(language: string): Promise<void>;
     static loadTranslation(store: TranslationStore): void;
     static getSuperTokensRoutesForReactRouterDom(reactRouterDom: any): JSX.Element[];
-    static redirectToAuth: (options: {
+    static redirectToAuth: (options?: {
         show?: "signin" | "signup";
         history?: any;
         queryParams?: any;
@@ -28,7 +28,7 @@ export declare const changeLanguage: typeof SuperTokensAPIWrapper.changeLanguage
 export declare const loadTranslation: typeof SuperTokensAPIWrapper.loadTranslation;
 export declare const getRoutingComponent: typeof SuperTokensAPIWrapper.getRoutingComponent;
 export declare const getSuperTokensRoutesForReactRouterDom: typeof SuperTokensAPIWrapper.getSuperTokensRoutesForReactRouterDom;
-export declare const redirectToAuth: (options: {
+export declare const redirectToAuth: (options?: {
     show?: "signin" | "signup";
     history?: any;
     queryParams?: any;

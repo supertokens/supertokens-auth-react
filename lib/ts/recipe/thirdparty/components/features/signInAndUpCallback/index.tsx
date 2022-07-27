@@ -52,6 +52,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                     queryParams: {
                         error: "no_email_present",
                     },
+                    redirectBack: false,
                 });
             }
 
@@ -87,6 +88,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                         error: "custom",
                         message: err.message,
                     },
+                    redirectBack: false,
                 });
             }
 
@@ -95,6 +97,7 @@ const SignInAndUpCallback: React.FC<PropType> = (props) => {
                 queryParams: {
                     error: "signin",
                 },
+                redirectBack: false,
             });
         },
         [props.recipe, props.history]

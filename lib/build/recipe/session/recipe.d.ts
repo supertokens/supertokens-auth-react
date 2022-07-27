@@ -50,6 +50,11 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         userContext?: any,
         history?: any
     ) => Promise<void>;
+    /**
+     * This should only get called if validateGlobalClaimsAndHandleSuccessRedirection couldn't get a redirectInfo
+     * @returns "/"
+     */
+    getDefaultRedirectionURL: () => Promise<string>;
     private notifyListeners;
     private getSessionContext;
     static addAxiosInterceptors(axiosInstance: any, userContext: any): void;

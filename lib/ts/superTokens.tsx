@@ -301,7 +301,7 @@ export default class SuperTokens {
         show?: "signin" | "signup";
         history?: any;
         queryParams?: any;
-        redirectBack?: boolean;
+        redirectBack: boolean;
     }) => {
         const queryParams = options.queryParams === undefined ? {} : options.queryParams;
         if (options.show !== undefined) {

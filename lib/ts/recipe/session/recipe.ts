@@ -147,7 +147,10 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         if (!(await this.doesSessionExist({ userContext }))) {
             // If there is none, we have no way of checking claims, so we redirect to the auth page
             // This can happen e.g.: if the user clicked on the email verification link in a browser without an active session
-            return SuperTokens.getInstanceOrThrow().redirectToAuth({ history });
+            return SuperTokens.getInstanceOrThrow().redirectToAuth({
+                history,
+                redirectBack: false,
+            });
         }
 
         // We validate all the global claims
@@ -199,8 +202,17 @@ export default class Session extends RecipeModule<unknown, unknown, unknown, any
         }
 
         // This should only happen if the configuration changed between saving the context and finishing the sign in process
-        // This should be a really rare edgecase
+        // or if the user navigated to a page where they were expected to have a stored redirectInfo but didn't
+        // (e.g.: pressed back after email verification)
         return this.redirect(redirectInfo!.successRedirectContext!, history);
+    };
+
+    /**
+     * This should only get called if validateGlobalClaimsAndHandleSuccessRedirection couldn't get a redirectInfo
+     * @returns "/"
+     */
+    getDefaultRedirectionURL = async (): Promise<string> => {
+        return "/";
     };
 
     private notifyListeners = async (event: RecipeEvent) => {

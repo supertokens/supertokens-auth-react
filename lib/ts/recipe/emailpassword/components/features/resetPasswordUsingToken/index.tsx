@@ -76,6 +76,7 @@ class ResetPasswordUsingToken extends PureComponent<
                           void SuperTokens.getInstanceOrThrow().redirectToAuth({
                               show: "signin",
                               history: this.props.history,
+                              redirectBack: false,
                           });
                       },
                       token: this.state.token,
@@ -83,7 +84,11 @@ class ResetPasswordUsingToken extends PureComponent<
 
         const enterEmailForm = {
             onBackButtonClicked: () =>
-                SuperTokens.getInstanceOrThrow().redirectToAuth({ show: "signin", history: this.props.history }),
+                SuperTokens.getInstanceOrThrow().redirectToAuth({
+                    show: "signin",
+                    history: this.props.history,
+                    redirectBack: false,
+                }),
             error: this.state.error,
             onError: (error: string) => this.setState((os) => ({ ...os, error })),
             clearError: () => this.setState((os) => ({ ...os, error: undefined })),
