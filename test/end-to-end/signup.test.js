@@ -127,6 +127,18 @@ describe("SuperTokens SignUp", function () {
             let text = await getAuthPageHeaderText(page);
             assert.deepStrictEqual(text, "Sign Up");
         });
+
+        it("should redirect to sign in w/ first auth recipe", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}?authRecipe=both`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await page.evaluate(() => window.SuperTokens.redirectToAuth());
+            await page.waitForNavigation({ waitUntil: "networkidle0" });
+            let text = await getAuthPageHeaderText(page);
+            // Only the EmailPassword recipe has this header on the sign in page
+            assert.deepStrictEqual(text, "Sign In");
+        });
     });
 
     describe("SignUp test ", function () {

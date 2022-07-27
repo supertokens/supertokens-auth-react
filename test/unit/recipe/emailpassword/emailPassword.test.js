@@ -86,7 +86,7 @@ describe("EmailPassword", function () {
         assert.deepStrictEqual(EmailPassword.getInstanceOrThrow().config.recipeId, "emailpassword");
     });
 
-    it("Initializing EmailPassword and disable default implementation but Email verification required", async function () {
+    it("Initializing EmailPassword and disable default implementations", async function () {
         EmailPassword.init({
             signInAndUpFeature: {
                 disableDefaultUI: true,

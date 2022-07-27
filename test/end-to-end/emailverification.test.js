@@ -245,7 +245,42 @@ describe("SuperTokens Email Verification", function () {
                 "ST_LOGS SUPERTOKENS GET_REDIRECTION_URL TO_AUTH",
             ]);
         });
+
+        it("Should redirect to verify email screen on successful sign in when mode is REQUIRED after unverify", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await setInputValues(page, [
+                { name: "email", value: "john.doe@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+
+            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+            let pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+
+            const latestURLWithToken = await getLatestURLWithToken();
+            await Promise.all([page.waitForNavigation({ waitUntil: "networkidle0" }), page.goto(latestURLWithToken)]);
+
+            const title = await getTextByDataSupertokens(page, "headerTitle");
+            assert.deepStrictEqual(title, "Email verification successful!");
+
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            await page.waitForSelector(".sessionInfo-user-id");
+            pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+
+            await page.evaluate((url) => window.fetch(url), `${TEST_APPLICATION_SERVER_BASE_URL}/unverifyEmail`);
+            await waitForSTElement(page, "[data-supertokens~='sendVerifyEmailIcon']");
+
+            pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/auth/verify-email");
+        });
     });
+
     describe("Verify Email with token screen", function () {
         beforeEach(async function () {
             page = await browser.newPage();
@@ -364,6 +399,44 @@ describe("SuperTokens Email Verification", function () {
             ]);
         });
 
+        it("should successfully redirect after email verification without react-router-dom", async function () {
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?router=no-router&rid=emailpassword&mode=REQUIRED`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await toggleSignInSignUp(page);
+
+            await signUp(
+                page,
+                [
+                    { name: "email", value: "john.doe3@supertokens.io" },
+                    { name: "password", value: "Str0ngP@ssw0rd" },
+                    { name: "name", value: "John Doe" },
+                    { name: "age", value: "20" },
+                ],
+                '{"formFields":[{"id":"email","value":"john.doe3@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+                "emailpassword"
+            );
+
+            const latestURLWithToken = await getLatestURLWithToken();
+            await Promise.all([
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+                page.goto(latestURLWithToken + "&router=no-router"),
+            ]);
+            const appHeader = await page.waitForSelector(".App > h1");
+            const appHeaderText = await page.evaluate((e) => e.innerText, appHeader);
+            assert.strictEqual(appHeaderText, "Without Routing");
+
+            const title = await getTextByDataSupertokens(page, "headerTitle");
+            assert.deepStrictEqual(title, "Email verification successful!");
+
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            await page.waitForSelector(".sessionInfo-user-id");
+            await page.screenshot({ path: "screenshot2.jpeg" });
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/dashboard");
+        });
+
         it("Should allow to verify an email without a valid session", async function () {
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?token=TOKEN&mode=REQUIRED`);
@@ -395,8 +468,25 @@ describe("SuperTokens Email Verification", function () {
             consoleLogs = await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
             await page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email?mode=REQUIRED`);
         });
+
         it("Should redirect to onSuccessfulRedirect when email is already verified", async function () {
-            // TODO.
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            await setInputValues(page, [
+                { name: "email", value: "john.doe3@supertokens.io" },
+                { name: "password", value: "Str0ngP@ssw0rd" },
+            ]);
+            await Promise.all([submitForm(page), page.waitForNavigation({ waitUntil: "networkidle0" })]);
+            await page.waitForSelector(".sessionInfo-user-id");
+            await Promise.all([
+                page.goto(`${TEST_CLIENT_BASE_URL}/auth/verify-email`),
+                page.waitForNavigation({ waitUntil: "networkidle0" }),
+            ]);
+            // In this case we redirect to the default ("/")
+            const pathname = await page.evaluate(() => window.location.pathname);
+            assert.deepStrictEqual(pathname, "/");
         });
     });
 });
