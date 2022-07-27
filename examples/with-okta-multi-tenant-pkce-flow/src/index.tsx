@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   BrowserRouter,
@@ -7,7 +6,6 @@ import {
 } from "react-router-dom";
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
 import * as reactRouterDom from "react-router-dom";
 
 import SuperTokens, { SuperTokensWrapper, getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react";
@@ -17,6 +15,7 @@ import Session from "supertokens-auth-react/recipe/session";
 
 import Index from "./routes/index"
 import Dashboard from "./routes/dashboard"
+import { PreAndPostAPIHookAction } from 'supertokens-web-js/recipe/thirdparty';
 
 SuperTokens.init({
     appInfo: {
@@ -58,11 +57,11 @@ SuperTokens.init({
             // is the fetch config object that contains the header, body etc..
             let requestInit = context.requestInit;
 
-            let action = context.action;
-            const tenant = window.localStorage.getItem('tenant');
+            let action : PreAndPostAPIHookAction = context.action;
+            const tenant : String | null = window.localStorage.getItem('tenant');
             if (action === "THIRD_PARTY_SIGN_IN_UP") {
-              const params = new Proxy(new URLSearchParams(window.location.search), {
-                get: (searchParams, prop) => searchParams.get(prop),
+              const params: any = new Proxy(new URLSearchParams(window.location.search), {
+                get: (searchParams: URLSearchParams, prop: any) => searchParams.get(prop),
               });
               url += `?state=${params.state}&tenant=${tenant}`
             } else if (action === 'GET_AUTHORISATION_URL') {
@@ -91,7 +90,7 @@ SuperTokens.init({
 });
 
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <SuperTokensWrapper>
     <BrowserRouter>
@@ -104,8 +103,3 @@ root.render(
     </BrowserRouter>
   </SuperTokensWrapper>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

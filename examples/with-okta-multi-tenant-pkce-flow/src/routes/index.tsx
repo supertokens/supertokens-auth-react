@@ -4,7 +4,7 @@ export default function Index() {
 
   const [tenant, setTenant] = useState('');
 
-  function handleClick(e) {
+  function handleClick(e: any) {
     e.preventDefault();
     window.localStorage.setItem('tenant', tenant);
     window.location.href = `http://multitenant.com:3000/auth`
