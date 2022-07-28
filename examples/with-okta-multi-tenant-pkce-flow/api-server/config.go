@@ -43,6 +43,8 @@ func getConfigForTenantId(tenantId string) OktaConfig {
 
 func getStateFromUserContext(userContext supertokens.UserContext) string {
 	// Fetching the state from the request query params, update the logic as per your needs
+	// State is generated from the front end, and it needs to be persisted between the
+	// AuthorisationRedirectURIGET and SignInUpPOST API calls
 	req := getRequestFromUserContext(userContext)
 	return req.URL.Query().Get("state")
 }

@@ -7,8 +7,8 @@ import (
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
+// Optional session override to add TenantID to the accessTokenPayload
 func sessionFunctionsOverride(originalImplementation sessmodels.RecipeInterface) sessmodels.RecipeInterface {
-	// Optional session override to add tenant info to the user context
 	oCreateNewSession := *originalImplementation.CreateNewSession
 	nCreateNewSession := func(res http.ResponseWriter, userID string, accessTokenPayload map[string]interface{}, sessionData map[string]interface{}, userContext supertokens.UserContext) (sessmodels.SessionContainer, error) {
 		tenantId, _ := (*userContext)["tenantId"].(string)

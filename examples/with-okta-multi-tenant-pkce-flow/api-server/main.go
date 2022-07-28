@@ -15,7 +15,7 @@ import (
 func main() {
 	err := supertokens.Init(supertokens.TypeInput{
 		Supertokens: &supertokens.ConnectionInfo{
-			ConnectionURI: "http://localhost:3567",
+			ConnectionURI: "https://try.supertokens.com",
 		},
 		AppInfo: supertokens.AppInfo{
 			AppName: "Demo",

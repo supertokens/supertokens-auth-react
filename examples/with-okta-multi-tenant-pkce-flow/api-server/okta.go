@@ -21,9 +21,10 @@ var oktaProvider = tpmodels.TypeProvider{
 	Get: func(redirectURI, authCodeFromRequest *string, userContext supertokens.UserContext) tpmodels.TypeProviderGetResponse {
 		tenantId := getTenantIdFromUserContext(userContext)
 		config := getConfigForTenantId(tenantId)
-		oktaRedirectURI := "http://multitenant.com:3000/auth/callback/okta"
 
-		// Adding tenantId to the user context so that it can be added to accessTokenPayload while creating session
+		oktaRedirectURI := "http://multitenant.com:3000/auth/callback/okta" // TODO: Update as per your website domain
+
+		// Optional: Adding tenantId to the user context so that it can be added to accessTokenPayload while creating new session
 		(*userContext)["tenantId"] = tenantId
 
 		if authCodeFromRequest == nil {
@@ -82,7 +83,9 @@ var oktaProvider = tpmodels.TypeProvider{
 					return tpmodels.UserInfo{}, err
 				}
 				userInfoMap := userInfoResponse.(map[string]interface{})
-				ID := userInfoMap["sub"].(string)
+				// Appending TenantID to the ID returned by Okta as we do not have support
+				// for user pools. This allows same user to login across multiple tenants.
+				ID := userInfoMap["sub"].(string) + "+" + tenantId
 				email := userInfoMap["email"].(string)
 				if email == "" {
 					return tpmodels.UserInfo{
