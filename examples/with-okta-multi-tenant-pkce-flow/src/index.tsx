@@ -27,7 +27,9 @@ SuperTokens.init({
         ThirdParty.init({
             signInAndUpFeature: {
                 providers: [
-                  { // Adding a custom provider with id "okta" as we don't have support out of the box. Also adding a custom button component for the provider.
+                  { 
+                    // Adding a custom provider with id "okta" as we don't have support out of the box. Also adding a custom button component for the provider.
+                    // ref: https://supertokens.com/docs/thirdparty/common-customizations/sign-in-and-up/custom-providers
                     id: "okta",
                     name: "Okta",
                     buttonComponent: <div style={{
