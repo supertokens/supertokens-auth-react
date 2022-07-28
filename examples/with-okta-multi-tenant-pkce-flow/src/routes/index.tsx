@@ -1,6 +1,6 @@
 import {useState} from 'react';
 
-// This is a login route. Here we accept the Tenant ID to be used for the login.
+// This is a index route. Here we accept the Tenant ID to be used for the login.
 export default function Index() {
 
   const [tenant, setTenant] = useState('');
@@ -11,7 +11,7 @@ export default function Index() {
     // the Supertokens Auth components, as described in the `src/index.tsx` file
     window.localStorage.setItem('tenant', tenant);
     // We redirect the user to the auth page provided by the Supertokens Auth React SDK
-    window.location.href = `http://multitenant.com:3000/auth`
+    window.location.href = `http://localhost:3000/auth`
   }
 
   return (

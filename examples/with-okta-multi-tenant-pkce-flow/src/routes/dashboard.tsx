@@ -7,7 +7,7 @@ import Session from "supertokens-auth-react/recipe/session";
 export default function Dashboard() {
   async function onLogout() {
     await signOut();
-    window.location.href = "http://multitenant.com:3000";
+    window.location.href = "http://localhost:3000";
   }
 
   let sessionContext = Session.useSessionContext();

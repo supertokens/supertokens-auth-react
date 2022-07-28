@@ -20,8 +20,8 @@ func main() {
 		AppInfo: supertokens.AppInfo{
 			AppName: "Demo",
 			// TODO: Change this to your app's API and Website domain
-			WebsiteDomain: "http://multitenant.com:3000",
-			APIDomain:     "http://multitenant.com:8000",
+			WebsiteDomain: "http://localhost:3000",
+			APIDomain:     "http://localhost:8000",
 		},
 		RecipeList: []supertokens.Recipe{
 			session.Init(&sessmodels.TypeInput{
@@ -38,6 +38,9 @@ func main() {
 						oktaProvider,
 					},
 				},
+				Override: &tpmodels.OverrideStruct{
+					APIs: apiOverride,
+				},
 			}),
 		},
 	})
@@ -50,7 +53,7 @@ func main() {
 	http.ListenAndServe("0.0.0.0:8000", handlers.CORS(
 		handlers.AllowedHeaders(append([]string{"Content-Type"}, supertokens.GetAllCORSHeaders()...)),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
-		handlers.AllowedOrigins([]string{"http://multitenant.com:3000"}),
+		handlers.AllowedOrigins([]string{"http://localhost:3000"}),
 		handlers.AllowCredentials(),
 	)(supertokens.Middleware(router)))
 }

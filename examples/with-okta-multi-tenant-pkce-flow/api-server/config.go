@@ -2,26 +2,17 @@ package main
 
 import (
 	"net/http"
+	"sync"
 
-	"github.com/supertokens/supertokens-golang/supertokens"
+	verifier "github.com/nirasan/go-oauth-pkce-code-verifier"
 )
 
-func getRequestFromUserContext(userContext supertokens.UserContext) *http.Request {
-	if _default, ok := (*userContext)["_default"].(map[string]interface{}); ok {
-		if request, ok := _default["request"].(*http.Request); ok {
-			return request
-		}
-	}
-	return nil
-}
-
-func getTenantIdFromUserContext(userContext supertokens.UserContext) string {
+func getTenantIdFromRequest(req *http.Request) string {
 	// Fetching the tenantId from the request query params, update the logic as per your needs
-	req := getRequestFromUserContext(userContext)
 	return req.URL.Query().Get("tenant")
 }
 
-func getConfigForTenantId(tenantId string) OktaConfig {
+func getOktaConfigForTenantId(tenantId string) OktaConfig {
 	var config OktaConfig
 	// TODO Query database to fetch the config corresponding to the tenantId
 	// You will also need APIs to add/manage configs
@@ -41,10 +32,28 @@ func getConfigForTenantId(tenantId string) OktaConfig {
 	return config
 }
 
-func getStateFromUserContext(userContext supertokens.UserContext) string {
+func getStateFromRequest(req *http.Request) string {
 	// Fetching the state from the request query params, update the logic as per your needs
 	// State is generated from the front end, and it needs to be persisted between the
 	// AuthorisationRedirectURIGET and SignInUpPOST API calls
-	req := getRequestFromUserContext(userContext)
 	return req.URL.Query().Get("state")
+}
+
+// Inmemory map to store verifiers for states.
+// TODO You will need to persist this in the database instead.
+var thirdPartyVerifiers = sync.Map{}
+
+func getOrCreateVerifierForState(state string) *verifier.CodeVerifier {
+	// TODO Since we are using the PKCE code flow, we need to persist the verifier for the state
+	// so that we can use it to verify the code returned from Okta. This mapping must be saved
+	// in the database.
+	v, _ := verifier.CreateCodeVerifier()
+	verifierValue, _ := thirdPartyVerifiers.LoadOrStore(state, v.Value)
+	v.Value = verifierValue.(string)
+	return v
+}
+
+func revokeVerifierForState(state string) {
+	// TODO Remove the verifier from the database once done
+	thirdPartyVerifiers.Delete(state)
 }

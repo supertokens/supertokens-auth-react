@@ -19,10 +19,15 @@ var oktaProvider = tpmodels.TypeProvider{
 	ID:        "okta",
 	IsDefault: true,
 	Get: func(redirectURI, authCodeFromRequest *string, userContext supertokens.UserContext) tpmodels.TypeProviderGetResponse {
-		tenantId := getTenantIdFromUserContext(userContext)
-		config := getConfigForTenantId(tenantId)
+		req := getRequestFromUserContext(userContext)
+		tenantId := getTenantIdFromRequest(req)
+		config := getOktaConfigForTenantId(tenantId)
 
-		oktaRedirectURI := "http://multitenant.com:3000/auth/callback/okta" // TODO: Update as per your website domain
+		st, err := supertokens.GetInstanceOrThrowError()
+		if err != nil {
+			panic(err)
+		}
+		oktaRedirectURI := st.AppInfo.WebsiteDomain.GetAsStringDangerous() + st.AppInfo.WebsiteBasePath.GetAsStringDangerous() + "/callback/okta"
 
 		// Optional: Adding tenantId to the user context so that it can be added to accessTokenPayload while creating new session
 		(*userContext)["tenantId"] = tenantId
@@ -32,7 +37,13 @@ var oktaProvider = tpmodels.TypeProvider{
 			authCodeFromRequest = &empty
 		}
 
-		state := getStateFromUserContext(userContext)
+		// `state` is generated from the frontend and passed to the backend, so that
+		// we can create a challenge for the authorisation redirect and later
+		// use the same verifier assoicated with the state during signinup to provide
+		// proof for the PKCE flow.
+		state := getStateFromRequest(req)
+
+		// As explained above, we need to create or get the verifier associated with the state
 		verifier := getOrCreateVerifierForState(state)
 
 		return tpmodels.TypeProviderGetResponse{
@@ -83,9 +94,12 @@ var oktaProvider = tpmodels.TypeProvider{
 					return tpmodels.UserInfo{}, err
 				}
 				userInfoMap := userInfoResponse.(map[string]interface{})
+
 				// Appending TenantID to the ID returned by Okta as we do not have support
-				// for user pools. This allows same user to login across multiple tenants.
+				// for multiple user pools yet (for one core). This modification simulates
+				// multiple user pools and allows the same user to login across multiple tenants.
 				ID := userInfoMap["sub"].(string) + "+" + tenantId
+
 				email := userInfoMap["email"].(string)
 				if email == "" {
 					return tpmodels.UserInfo{

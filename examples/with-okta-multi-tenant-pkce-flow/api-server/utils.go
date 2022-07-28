@@ -1,19 +1,16 @@
 package main
 
 import (
-	"sync"
+	"net/http"
 
-	verifier "github.com/nirasan/go-oauth-pkce-code-verifier"
+	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
-var oktaVerifiers = sync.Map{}
-
-func getOrCreateVerifierForState(state string) *verifier.CodeVerifier {
-	// Since we are using the PKCE code flow, we need to persist the verifier for the state
-	// so that we can use it to verify the code returned from Okta. This mapping must be saved
-	// in the database.
-	v, _ := verifier.CreateCodeVerifier()
-	verifierValue, _ := oktaVerifiers.LoadOrStore(state, v.Value)
-	v.Value = verifierValue.(string)
-	return v
+func getRequestFromUserContext(userContext supertokens.UserContext) *http.Request {
+	if _default, ok := (*userContext)["_default"].(map[string]interface{}); ok {
+		if request, ok := _default["request"].(*http.Request); ok {
+			return request
+		}
+	}
+	return nil
 }
