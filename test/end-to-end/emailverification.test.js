@@ -735,6 +735,6 @@ describe("Email verification signOut errors", function () {
         await page.setRequestInterception(false);
 
         const error = await waitForSTElement(page, "[data-supertokens~='generalError']");
-        assert.strictEqual(await error.evaluate((e) => e.textContent), "Something went wrong. Please try again");
+        assert.strictEqual(await error.evaluate((e) => e.textContent), "Something went wrong. Please try again.");
     });
 });

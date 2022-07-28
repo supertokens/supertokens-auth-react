@@ -38,7 +38,7 @@ i18next.init({
                 THIRD_PARTY_ERROR_NO_EMAIL: "Could not retrieve email. Please try a different method.",
                 BRANDING_POWERED_BY_START: "Powered by ",
                 BRANDING_POWERED_BY_END: "",
-                SOMETHING_WENT_WRONG_ERROR: "Something went wrong. Please try again",
+                SOMETHING_WENT_WRONG_ERROR: "Something went wrong. Please try again.",
                 EMAIL_VERIFICATION_RESEND_SUCCESS: "Email resent",
                 EMAIL_VERIFICATION_SEND_TITLE: "Verify your email address",
                 EMAIL_VERIFICATION_SEND_DESC_START: "",
