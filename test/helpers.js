@@ -637,6 +637,12 @@ export async function getSessionHandleWithFetch(page) {
     );
 }
 
+export async function getInvalidClaimsJSON(page) {
+    return JSON.parse(
+        await page.evaluate(() => document.querySelector("#root > div > div.fill > div > pre.invalidClaims").innerText)
+    );
+}
+
 export async function getUserIdFromSessionContext(page) {
     return await page.evaluate(
         () => document.querySelector("#root > div > div.fill > div > div.session-context-userId").innerText
@@ -757,6 +763,15 @@ export async function isThirdPartyPasswordlessSupported() {
     }
 
     return false;
+}
+
+export async function isUserRolesSupported() {
+    const features = await getFeatureFlags();
+    if (!features.includes("userroles")) {
+        return false;
+    }
+
+    return true;
 }
 
 /**
