@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.24.2] - 2022-07-28
+
+-   Fixes prop passing when custom theme is used with the feature components
 -   Updates supabase example app to use supertokens-auth-react version 0.24
 -   Updates grammar for "Something went wrong" error text.
 
