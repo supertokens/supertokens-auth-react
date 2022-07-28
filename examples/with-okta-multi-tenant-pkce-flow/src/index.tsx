@@ -18,7 +18,7 @@ import { PreAndPostAPIHookAction } from 'supertokens-web-js/recipe/thirdparty';
 
 SuperTokens.init({
     appInfo: {
-        appName: "Multitenant Example",
+        appName: "Demo",
         // TODO Update as per your app's Website and API domains
         apiDomain: "http://multitenant.com:8000",
         websiteDomain: "http://multitenant.com:3000",
