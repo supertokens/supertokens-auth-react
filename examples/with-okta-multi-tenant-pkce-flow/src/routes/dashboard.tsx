@@ -1,14 +1,9 @@
-import React, {useState} from 'react';
 import { signOut } from "supertokens-auth-react/recipe/thirdparty";
 import Session from "supertokens-auth-react/recipe/session";
-import axios from 'axios'
 
-Session.addAxiosInterceptors(axios);
-
-const getTenantId = () => {
-  return window.location.hostname.split('.')[0]
-}
-
+// This route is accessible only to logged in users
+// JWT payload can be inspected using the utility - https://jwt.io/
+// We can find the TenantID added to the jwt payload as described in the API server code
 export default function Dashboard() {
   async function onLogout() {
     await signOut();
