@@ -44,7 +44,7 @@ SuperTokens.init({
                 ]
             },
             getRedirectionURL: async (context) => {
-              // This callback ensure we redirect the logged in user to the dashboard page after login
+              // This callback ensures that we redirect the logged in user to the dashboard page after login
               if (context.action === "SUCCESS") {
                   if (context.redirectToPath !== undefined) {
                       // we are navigating back to where the user was before they authenticated
