@@ -568,6 +568,49 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 ]);
             });
 
+            it("Successful signin w/ email verification", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=REQUIRED`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getPasswordlessDevice(loginAttemptInfo);
+                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                await submitForm(page);
+
+                await page.waitForSelector(".sessionInfo-user-id");
+
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    ...signInUpPageLoadLogs,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                ]);
+            });
+
             it("Successful signin w/ redirectToPath", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here`),
@@ -605,6 +648,48 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                ]);
+            });
+
+            it("Successful signin w/ redirectToPath and email verification", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here&mode=REQUIRED`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=input][name=userInputCode]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getPasswordlessDevice(loginAttemptInfo);
+                await setInputValues(page, [{ name: "userInputCode", value: device.codes[0].userInputCode }]);
+                await submitForm(page);
+
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/redirect-here");
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    ...signInUpPageLoadLogs,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
@@ -920,6 +1005,51 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 ]);
             });
 
+            it("Successful signin w/ email verification", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?mode=required`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getPasswordlessDevice(loginAttemptInfo);
+                await page.goto(device.codes[0].urlWithLinkCode);
+
+                await page.waitForSelector(".sessionInfo-user-id");
+
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    ...signInUpPageLoadLogs,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                ]);
+            });
+
             it("Successful signin on new device", async function () {
                 await Promise.all([
                     page.goto(`${TEST_CLIENT_BASE_URL}/auth`),
@@ -1011,6 +1141,49 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                     `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
                     `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
                     `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
+                ]);
+            });
+
+            it("Successful signin w/ stored redirectToPath and email verification", async function () {
+                await Promise.all([
+                    page.goto(`${TEST_CLIENT_BASE_URL}/auth?redirectToPath=%2Fredirect-here&mode=REQUIRED`),
+                    page.waitForNavigation({ waitUntil: "networkidle0" }),
+                ]);
+                await setInputValues(page, [{ name: inputName, value: contactInfo }]);
+                await submitForm(page);
+
+                await waitForSTElement(page, "[data-supertokens~=sendCodeIcon]");
+
+                const loginAttemptInfo = JSON.parse(
+                    await page.evaluate(() => localStorage.getItem("supertokens-passwordless-loginAttemptInfo"))
+                );
+                const device = await getPasswordlessDevice(loginAttemptInfo);
+                await page.goto(device.codes[0].urlWithLinkCode);
+                await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+                const pathname = await page.evaluate(() => window.location.pathname);
+                assert.deepStrictEqual(pathname, "/redirect-here");
+                assert.deepStrictEqual(consoleLogs, [
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    ...signInUpPageLoadLogs,
+                    `ST_LOGS ${logId} OVERRIDE CREATE_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CREATE_CODE`,
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT PASSWORDLESS_CODE_SENT`,
+                    `ST_LOGS ${logId} OVERRIDE SET_LOGIN_ATTEMPT_INFO`,
+                    "ST_LOGS SESSION OVERRIDE ADD_FETCH_INTERCEPTORS_AND_RETURN_MODIFIED_FETCH",
+                    "ST_LOGS SESSION OVERRIDE ADD_AXIOS_INTERCEPTORS",
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CONSUME_CODE`,
+                    `ST_LOGS ${logId} PRE_API_HOOKS PASSWORDLESS_CONSUME_CODE`,
+                    "ST_LOGS SESSION ON_HANDLE_EVENT SESSION_CREATED",
+                    "ST_LOGS SESSION OVERRIDE GET_USER_ID",
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
+                    `ST_LOGS ${logId} ON_HANDLE_EVENT SUCCESS`,
+                    `ST_LOGS ${logId} OVERRIDE GET_LOGIN_ATTEMPT_INFO`,
+                    `ST_LOGS ${logId} OVERRIDE CLEAR_LOGIN_ATTEMPT_INFO`,
+                    "ST_LOGS SESSION OVERRIDE GET_JWT_PAYLOAD_SECURELY",
                     `ST_LOGS ${logId} GET_REDIRECTION_URL SUCCESS`,
                 ]);
             });
