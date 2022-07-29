@@ -62,7 +62,7 @@ export default class SuperTokensAPIWrapper {
     }) => {
         return SuperTokens.getInstanceOrThrow().redirectToAuth({
             ...options,
-            redirectBack: options?.redirectBack ?? false,
+            redirectBack: options?.redirectBack ?? true,
         });
     };
 

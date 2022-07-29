@@ -307,7 +307,7 @@ export default class SuperTokens {
         if (options.show !== undefined) {
             queryParams.show = options.show;
         }
-        if (options.redirectBack === true) {
+        if (options.redirectBack === false) {
             queryParams.redirectToPath = getCurrentNormalisedUrlPath().getAsStringDangerous();
         }
 
