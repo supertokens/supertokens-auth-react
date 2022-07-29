@@ -409,12 +409,12 @@ describe("SuperTokens Email Verification", function () {
             await signUp(
                 page,
                 [
-                    { name: "email", value: "john.doe3@supertokens.io" },
+                    { name: "email", value: "john.doe4@supertokens.io" },
                     { name: "password", value: "Str0ngP@ssw0rd" },
                     { name: "name", value: "John Doe" },
                     { name: "age", value: "20" },
                 ],
-                '{"formFields":[{"id":"email","value":"john.doe3@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
+                '{"formFields":[{"id":"email","value":"john.doe4@supertokens.io"},{"id":"password","value":"Str0ngP@ssw0rd"},{"id":"name","value":"John Doe"},{"id":"age","value":"20"},{"id":"country","value":""}]}',
                 "emailpassword"
             );
 

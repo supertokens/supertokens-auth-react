@@ -523,6 +523,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 await page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
                 await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+                await page.evaluate(() => localStorage.removeItem("mode"));
 
                 consoleLogs.length = 0;
             });
@@ -958,6 +959,7 @@ export function getPasswordlessTestCases({ authRecipe, logId, generalErrorRecipe
                 await clearBrowserCookiesWithoutAffectingConsole(page, consoleLogs);
                 page.evaluate(() => localStorage.removeItem("supertokens-passwordless-loginAttemptInfo"));
                 await page.evaluate(() => localStorage.removeItem("SHOW_GENERAL_ERROR"));
+                await page.evaluate(() => localStorage.removeItem("mode"));
 
                 consoleLogs.length = 0;
             });
