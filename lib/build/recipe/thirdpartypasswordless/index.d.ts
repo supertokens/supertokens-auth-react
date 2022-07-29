@@ -104,7 +104,7 @@ export default class Wrapper {
     ): Promise<
         | {
               status: "OK";
-              createdUser: boolean;
+              createdNewUser: boolean;
               user: PasswordlessUser;
               fetchResponse: Response;
           }
