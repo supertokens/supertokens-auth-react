@@ -12,6 +12,7 @@ import Passwordless from "supertokens-auth-react/recipe/passwordless";
 import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 import ThirdPartyPasswordless from "supertokens-auth-react/recipe/thirdpartypasswordless";
+import UserRoles from "supertokens-auth-react/recipe/userroles";
 
 import axios from "axios";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
@@ -433,6 +434,7 @@ export function DashboardHelper({ redirectOnLogout, ...props } = {}) {
                 <SessionInfoTable sessionInfo={sessionInfoUsingFetch} />
             </div>
             <div className="session-context-userId">session context userID: {sessionContext.userId}</div>
+            <pre className="invalidClaims">{JSON.stringify(sessionContext.invalidClaims, undefined, 2)}</pre>
         </div>
     );
 }
@@ -522,16 +524,6 @@ function getEmailPasswordConfigs({ disableDefaultUI }) {
             console.log(`ST_LOGS EMAIL_PASSWORD ON_HANDLE_EVENT ${context.action}`);
         },
         useShadowDom,
-        emailVerificationFeature: {
-            disableDefaultUI,
-            sendVerifyEmailScreen: {
-                style: theme.style,
-            },
-            verifyEmailLinkClickedScreen: {
-                style: theme.style,
-            },
-            mode: emailVerificationMode,
-        },
         resetPasswordUsingTokenFeature: {
             disableDefaultUI,
             enterEmailForm: {
@@ -1101,3 +1093,6 @@ function setIsNewUserToStorage(recipeName, isNewUser) {
 }
 
 window.SuperTokens = SuperTokens;
+window.Session = Session;
+window.UserRoleClaim = UserRoles.UserRoleClaim;
+window.PermissionClaim = UserRoles.PermissionClaim;
